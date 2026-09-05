@@ -1,9 +1,11 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>17.3 Markowitz Portfolio Theory</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="cites"><a href="../index.html">สารบัญ</a> · <a href="../chapters/17.html">บทที่ 17</a></nav><section class="topic" id="t17-3">
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>17.3 Markowitz Portfolio Theory</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../chapters/17.html">บทที่ 17</a><span class="topic-progress">หัวข้อ 102/142</span></nav><section class="topic" id="t17-3">
 <h3><span class="tnum">17.3</span> Markowitz Portfolio Theory</h3>
 <p class="subtitle">มองความเสี่ยงของสินทรัพย์ร่วมกัน ก่อนเลือกน้ำหนักที่ดูดีที่สุด</p>
-<div class="hook"><p>บัญชีลงทุนสหรัฐฯ 10,000,000 USD เลือกระหว่างหุ้นวงกว้างกับ UST (ตราสารรัฐบาลสหรัฐฯ) สมมติผลตอบแทนเฉลี่ยรายปี 8% และ 4% ส่วนเบี่ยงเบนมาตรฐาน 20% และ 10% และความสัมพันธ์ 0.2 การแบ่งเงินครึ่งหนึ่งให้ผลตอบแทนเฉลี่ย 6% แต่ต้องยอมรับความเสี่ยงเท่าไร และมีส่วนผสมที่เหมาะกว่าเมื่อฝากเงินสดได้ 2% หรือไม่</p></div>
-<div class="box jargon"><h4>ศัพท์การเงินที่เพิ่งโผล่มา</h4><dl><dt>mean-variance</dt><dd>กรอบเลือกน้ำหนักจากค่าเฉลี่ยและความแปรปรวนของผลตอบแทน ใช้เปรียบเทียบการเติบโตที่คาดกับความเสี่ยงโดยกำหนดช่วงเวลาเดียวกัน</dd><dt>covariance</dt><dd>ค่าเฉลี่ยของผลคูณส่วนเบี่ยงเบนจากค่าเฉลี่ยของสองตัวแปร ใช้วัดการเคลื่อนไหวร่วมที่ส่งผลต่อความเสี่ยงรวม</dd><dt>correlation</dt><dd>covariance ที่หารด้วยส่วนเบี่ยงเบนมาตรฐานของทั้งคู่ ใช้เปรียบเทียบความสัมพันธ์โดยไม่ขึ้นกับมาตราส่วน</dd><dt>variance</dt><dd>ค่าเฉลี่ยของส่วนเบี่ยงเบนจากค่าเฉลี่ยกำลังสอง ใช้วัดการกระจายของผลตอบแทน</dd><dt>standard deviation</dt><dd>รากที่สองของ variance ซึ่งกลับมาอยู่ในหน่วยเดียวกับผลตอบแทน ใช้สื่อขนาดการแกว่งและแปลงความเสี่ยงของพอร์ตเป็นสัดส่วนที่อ่านได้</dd><dt>efficient frontier</dt><dd>ชุดพอร์ตที่ให้ผลตอบแทนเฉลี่ยสูงสุด ณ ความเสี่ยงที่กำหนด ใช้ตัดพอร์ตที่ถูกทางเลือกอื่นเหนือกว่าออก</dd><dt>Sharpe ratio</dt><dd>ผลตอบแทนเฉลี่ยส่วนเกินเงินสดหารด้วยส่วนเบี่ยงเบนมาตรฐาน ใช้เทียบผลตอบแทนต่อความเสี่ยงบนช่วงเวลาที่ตรงกัน</dd><dt>tangency portfolio</dt><dd>พอร์ตสินทรัพย์เสี่ยงที่มี Sharpe ratio สูงสุดภายใต้เงื่อนไขของแบบจำลอง ใช้ผสมกับเงินสดเพื่อเลือกความเสี่ยงรวม</dd></dl></div>
-<h4>สัญลักษณ์ที่ใช้ในหัวข้อนี้</h4><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8458em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='61.038634pt' height='10.149938pt' viewBox='.32279 -7.84259 61.038634 10.149938'>
+<div class="hook"><p>มีถังสองใบที่ให้ผลตอบแทนและการแกว่งต่างกัน; คุณเดาว่าแบ่งครึ่งเท่ากันทำให้ความเสี่ยงต่ำสุดหรือไม่?</p>
+<p>คำตอบคือ: Markowitz ใช้ covariance เพื่อหาว่าส่วนผสมใดแลก return กับ risk ได้จริง.</p>
+<p>มุกของ diversification คือร่มสองคันช่วยกันได้เฉพาะเมื่อฝนไม่ตกจากมุมเดียวกัน</p></div>
+<details class="box jargon reference-panel"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">ศัพท์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">8 คำ</span></summary><div class="reference-body"><dl><dt>mean-variance</dt><dd>กรอบเลือกน้ำหนักจากค่าเฉลี่ยและ variance ของผลตอบแทน ใช้เปรียบเทียบการเติบโตที่คาดกับความเสี่ยงโดยกำหนดช่วงเวลาเดียวกัน</dd><dt>covariance</dt><dd>ค่าเฉลี่ยของผลคูณส่วนเบี่ยงเบนจากค่าเฉลี่ยของสองตัวแปร ใช้วัดการเคลื่อนไหวร่วมที่ส่งผลต่อความเสี่ยงรวม</dd><dt>correlation</dt><dd>covariance ที่หารด้วย standard deviation ของทั้งคู่ ใช้เปรียบเทียบความสัมพันธ์โดยไม่ขึ้นกับมาตราส่วน</dd><dt>variance</dt><dd>ค่าเฉลี่ยของส่วนเบี่ยงเบนจากค่าเฉลี่ยกำลังสอง ใช้วัดการกระจายของผลตอบแทน</dd><dt>standard deviation</dt><dd>รากที่สองของ variance ซึ่งกลับมาอยู่ในหน่วยเดียวกับผลตอบแทน ใช้สื่อขนาดการแกว่งและแปลงความเสี่ยงของพอร์ตเป็นสัดส่วนที่อ่านได้</dd><dt>efficient frontier</dt><dd>ชุดพอร์ตที่ให้ผลตอบแทนเฉลี่ยสูงสุด ณ ความเสี่ยงที่กำหนด ใช้ตัดพอร์ตที่ถูกทางเลือกอื่นเหนือกว่าออก</dd><dt>Sharpe ratio</dt><dd>ผลตอบแทนเฉลี่ยส่วนเกินเงินสดหารด้วย standard deviation ใช้เทียบผลตอบแทนต่อความเสี่ยงบนช่วงเวลาที่ตรงกัน</dd><dt>tangency portfolio</dt><dd>พอร์ตสินทรัพย์เสี่ยงที่มี Sharpe ratio สูงสุดภายใต้เงื่อนไขของแบบจำลอง ใช้ผสมกับเงินสดเพื่อเลือกความเสี่ยงรวม</dd></dl></div></details>
+<details class="reference-panel symbols-box"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">สัญลักษณ์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">5 รายการ</span></summary><div class="reference-body"><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8458em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='61.038634pt' height='10.149938pt' viewBox='.32279 -7.84259 61.038634 10.149938'>
 <defs>
 <path id="inline-0-ab6fa663a9c2f9891123-g2-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="inline-0-ab6fa663a9c2f9891123-g2-119" d='M4.112578-.729265C4.375592-.011955 5.116812 .119552 5.571108 .119552C6.479701 .119552 7.017684-.669489 7.352428-1.494396C7.627397-2.187796 8.069738-3.765878 8.069738-4.471233C8.069738-5.200498 7.699128-5.272229 7.591532-5.272229C7.304608-5.272229 7.041594-4.985305 7.041594-4.746202C7.041594-4.60274 7.12528-4.519054 7.185056-4.471233C7.292653-4.363636 7.603487-4.040847 7.603487-3.419178C7.603487-3.012702 7.268742-1.888917 7.017684-1.327024C6.682939-.597758 6.240598-.119552 5.618929-.119552C4.94944-.119552 4.734247-.621669 4.734247-1.171606C4.734247-1.518306 4.841843-1.936737 4.889664-2.139975L5.391781-4.148443C5.451557-4.387547 5.559153-4.805978 5.559153-4.853798C5.559153-5.033126 5.415691-5.152677 5.236364-5.152677C4.889664-5.152677 4.805978-4.853798 4.734247-4.566874C4.614695-4.100623 4.112578-2.080199 4.064757-1.817186C4.016936-1.613948 4.016936-1.482441 4.016936-1.219427C4.016936-.932503 3.634371-.478207 3.622416-.454296C3.490909-.32279 3.299626-.119552 2.929016-.119552C1.984558-.119552 1.984558-1.016189 1.984558-1.219427C1.984558-1.601993 2.068244-2.12802 2.606227-3.550685C2.749689-3.921295 2.809465-4.076712 2.809465-4.315816C2.809465-4.817933 2.450809-5.272229 1.865006-5.272229C.765131-5.272229 .32279-3.53873 .32279-3.443088C.32279-3.395268 .37061-3.335492 .454296-3.335492C.561893-3.335492 .573848-3.383313 .621669-3.550685C.920548-4.60274 1.3868-5.033126 1.829141-5.033126C1.948692-5.033126 2.139975-5.021171 2.139975-4.638605C2.139975-4.578829 2.139975-4.327771 1.936737-3.801743C1.374844-2.307347 1.255293-1.817186 1.255293-1.362889C1.255293-.107597 2.283437 .119552 2.893151 .119552C3.096389 .119552 3.634371 .119552 4.112578-.729265Z'/>
@@ -22,7 +24,7 @@
 <use x='50.342918' y='0' xlink:href="#inline-0-ab6fa663a9c2f9891123-g2-59"/>
 <use x='55.587077' y='0' xlink:href="#inline-0-ab6fa663a9c2f9891123-g0-49"/>
 </g>
-</svg></td><td>เวกเตอร์น้ำหนัก น้ำหนักหุ้น น้ำหนักพันธบัตร และเวกเตอร์หนึ่ง</td><td class='unit'>สัดส่วน, ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.7243em;vertical-align:-0.2849em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='38.850575pt' height='8.691395pt' viewBox='.334745 -5.272229 38.850575 8.691395'>
+</svg></td><td>weight vector, น้ำหนักหุ้น, น้ำหนักพันธบัตร และ vector ที่ทุกช่องเป็นหนึ่ง</td><td class='unit'>สัดส่วน, ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.7243em;vertical-align:-0.2849em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='38.850575pt' height='8.691395pt' viewBox='.334745 -5.272229 38.850575 8.691395'>
 <defs>
 <path id="inline-1-77c42fe744c39cfe348b-g0-102" d='M3.052553-3.172105H3.793773C3.953176-3.172105 4.048817-3.172105 4.048817-3.323537C4.048817-3.435118 3.945205-3.435118 3.809714-3.435118H3.100374C3.227895-4.152428 3.307597-4.606725 3.387298-4.96538C3.419178-5.100872 3.443088-5.188543 3.56264-5.284184C3.666252-5.371856 3.730012-5.387796 3.817684-5.387796C3.937235-5.387796 4.064757-5.363885 4.168369-5.300125C4.128518-5.284184 4.080697-5.260274 4.040847-5.236364C3.905355-5.164633 3.809714-5.021171 3.809714-4.861768C3.809714-4.678456 3.953176-4.566874 4.128518-4.566874C4.359651-4.566874 4.574844-4.766127 4.574844-5.045081C4.574844-5.419676 4.192279-5.610959 3.809714-5.610959C3.53873-5.610959 3.036613-5.483437 2.781569-4.750187C2.709838-4.566874 2.709838-4.550934 2.494645-3.435118H1.896887C1.737484-3.435118 1.641843-3.435118 1.641843-3.283686C1.641843-3.172105 1.745455-3.172105 1.880946-3.172105H2.446824L1.872976-.079701C1.721544 .72528 1.601993 1.40274 1.179577 1.40274C1.155666 1.40274 .988294 1.40274 .836862 1.307098C1.203487 1.219427 1.203487 .884682 1.203487 .876712C1.203487 .6934 1.060025 .581818 .884682 .581818C.669489 .581818 .438356 .765131 .438356 1.067995C.438356 1.40274 .781071 1.625903 1.179577 1.625903C1.665753 1.625903 2.000498 1.115816 2.10411 .916563C2.391034 .390535 2.574346-.605729 2.590286-.68543L3.052553-3.172105Z'/>
 <path id="inline-1-77c42fe744c39cfe348b-g0-112" d='M.414446 .964384C.350685 1.219427 .334745 1.283188 .01594 1.283188C-.095641 1.283188-.191283 1.283188-.191283 1.43462C-.191283 1.506351-.119552 1.546202-.079701 1.546202C0 1.546202 .03188 1.522291 .621669 1.522291C1.195517 1.522291 1.362889 1.546202 1.41868 1.546202C1.45056 1.546202 1.570112 1.546202 1.570112 1.39477C1.570112 1.283188 1.458531 1.283188 1.362889 1.283188C.980324 1.283188 .980324 1.235367 .980324 1.163636C.980324 1.107846 1.123786 .541968 1.362889-.390535C1.466501-.207223 1.713574 .079701 2.14396 .079701C3.124284 .079701 4.144458-1.052055 4.144458-2.207721C4.144458-2.996762 3.634371-3.514819 2.996762-3.514819C2.518555-3.514819 2.13599-3.188045 1.904857-2.948941C1.737484-3.514819 1.203487-3.514819 1.123786-3.514819C.836862-3.514819 .637609-3.331507 .510087-3.084433C.326775-2.725778 .239103-2.319303 .239103-2.295392C.239103-2.223661 .294894-2.191781 .358655-2.191781C.462267-2.191781 .470237-2.223661 .526027-2.430884C.629639-2.83736 .773101-3.291656 1.099875-3.291656C1.299128-3.291656 1.354919-3.108344 1.354919-2.917061C1.354919-2.83736 1.323039-2.646077 1.307098-2.582316L.414446 .964384ZM1.880946-2.454795C1.920797-2.590286 1.920797-2.606227 2.040349-2.749689C2.343213-3.108344 2.685928-3.291656 2.972852-3.291656C3.371357-3.291656 3.52279-2.901121 3.52279-2.542466C3.52279-2.247572 3.347447-1.39477 3.108344-.924533C2.901121-.494147 2.518555-.143462 2.14396-.143462C1.601993-.143462 1.474471-.765131 1.474471-.820922C1.474471-.836862 1.490411-.924533 1.498381-.948443L1.880946-2.454795Z'/>
@@ -39,7 +41,7 @@
 <use x='29.335168' y='0' xlink:href="#inline-1-77c42fe744c39cfe348b-g1-114"/>
 <use x='34.610476' y='1.793263' xlink:href="#inline-1-77c42fe744c39cfe348b-g0-102"/>
 </g>
-</svg></td><td>ค่าเฉลี่ยสินทรัพย์ ค่าเฉลี่ยพอร์ต และอัตราเงินสดสำหรับหนึ่งปี</td><td class='unit'>สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.9587em;vertical-align:-0.2783em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='35.58141pt' height='11.504845pt' viewBox='.645579 -8.16538 35.58141 11.504845'>
+</svg></td><td>ค่าเฉลี่ยสินทรัพย์ ค่าเฉลี่ยพอร์ต และอัตราเงินสดสำหรับหนึ่งปี</td><td class='unit'>สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.9587em;vertical-align:-0.2783em;width:auto;max-width:100%" class="mathsvg math-role-risk math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='35.58141pt' height='11.504845pt' viewBox='.645579 -8.16538 35.58141 11.504845'>
 <defs>
 <path id="inline-2-cd46ab8b7161f625fbce-g2-6" d='M4.23213-3.88543C4.327771-4.004981 4.351681-4.028892 4.351681-4.088667C4.351681-4.112578 4.351681-4.136488 4.27995-4.23213L1.865006-7.81868H4.686426C6.694894-7.81868 7.304608-7.388294 7.531756-5.499377H7.79477L7.483935-8.16538H.944458C.657534-8.16538 .645579-8.16538 .645579-7.890411L3.550685-3.58655L.777086-.310834C.681445-.203238 .657534-.167372 .657534-.119552C.657534 0 .753176 0 .944458 0H7.483935L7.79477-2.785554H7.531756C7.316563-.812951 6.563387-.466252 4.65056-.466252H1.338979L4.23213-3.88543Z'/>
 <path id="inline-2-cd46ab8b7161f625fbce-g1-26" d='M.37061 2.068244C.358655 2.12802 .334745 2.199751 .334745 2.271482C.334745 2.450809 .478207 2.570361 .657534 2.570361S1.004234 2.450809 1.075965 2.283437C1.123786 2.175841 1.458531 .74122 1.841096-.729265C2.080199-.131507 2.52254 .119552 2.988792 .119552C4.339726 .119552 5.869988-1.554172 5.869988-3.359402C5.869988-4.638605 5.092902-5.272229 4.267995-5.272229C3.21594-5.272229 1.936737-4.184309 1.542217-2.594271L.37061 2.068244ZM2.976837-.119552C2.163885-.119552 1.960648-1.06401 1.960648-1.207472C1.960648-1.279203 2.259527-2.414944 2.295392-2.594271C2.905106-4.97335 4.076712-5.033126 4.25604-5.033126C4.794022-5.033126 5.092902-4.542964 5.092902-3.837609C5.092902-3.227895 4.770112-2.044334 4.566874-1.542217C4.208219-.71731 3.58655-.119552 2.976837-.119552Z'/>
@@ -55,7 +57,7 @@
 <use x='25.112843' y='0' xlink:href="#inline-2-cd46ab8b7161f625fbce-g1-59"/>
 <use x='30.357002' y='0' xlink:href="#inline-2-cd46ab8b7161f625fbce-g1-26"/>
 </g>
-</svg></td><td>เมทริกซ์ covariance หนึ่งปี ส่วนเบี่ยงเบนมาตรฐานพอร์ต และ correlation</td><td class='unit'>สัดส่วนกำลังสอง, สัดส่วน, ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.9036em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='67.356446pt' height='10.843337pt' viewBox='.406476 -8.53599 67.356446 10.843337'>
+</svg></td><td>covariance matrix หนึ่งปี, standard deviation พอร์ต และ correlation</td><td class='unit'>สัดส่วนกำลังสอง, สัดส่วน, ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.9036em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='67.356446pt' height='10.843337pt' viewBox='.406476 -8.53599 67.356446 10.843337'>
 <defs>
 <path id="inline-3-d46e24a41679f74abee6-g0-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="inline-3-d46e24a41679f74abee6-g0-65" d='M2.032379-1.327024C1.613948-.621669 1.207472-.382565 .633624-.3467C.502117-.334745 .406476-.334745 .406476-.119552C.406476-.047821 .466252 0 .549938 0C.765131 0 1.303113-.02391 1.518306-.02391C1.865006-.02391 2.247572 0 2.582316 0C2.654047 0 2.797509 0 2.797509-.227148C2.797509-.334745 2.701868-.3467 2.630137-.3467C2.355168-.37061 2.12802-.466252 2.12802-.753176C2.12802-.920548 2.199751-1.052055 2.355168-1.315068L3.263761-2.82142H6.312329C6.324284-2.713823 6.324284-2.618182 6.336239-2.510585C6.372105-2.199751 6.515567-.956413 6.515567-.729265C6.515567-.37061 5.905853-.3467 5.71457-.3467C5.583064-.3467 5.451557-.3467 5.451557-.131507C5.451557 0 5.559153 0 5.630884 0C5.834122 0 6.073225-.02391 6.276463-.02391H6.957908C7.687173-.02391 8.2132 0 8.225156 0C8.308842 0 8.440349 0 8.440349-.227148C8.440349-.3467 8.332752-.3467 8.153425-.3467C7.49589-.3467 7.483935-.454296 7.44807-.812951L6.718804-8.272976C6.694894-8.51208 6.647073-8.53599 6.515567-8.53599C6.396015-8.53599 6.324284-8.51208 6.216687-8.332752L2.032379-1.327024ZM3.466999-3.16812L5.869988-7.185056L6.276463-3.16812H3.466999Z'/>
@@ -75,7 +77,7 @@
 <use x='52.631839' y='0' xlink:href="#inline-3-d46e24a41679f74abee6-g0-59"/>
 <use x='57.875998' y='0' xlink:href="#inline-3-d46e24a41679f74abee6-g0-109"/>
 </g>
-</svg></td><td>ค่าจากการคูณเมทริกซ์ตามนิยาม และค่าเฉลี่ยเป้าหมายหนึ่งปี</td><td class='unit'>ผกผันสัดส่วนกำลังสอง, ผกผันสัดส่วน, ไม่มีหน่วย, ผกผันสัดส่วนกำลังสอง, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.8837em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='47.344333pt' height='10.604234pt' viewBox='.478207 -8.296887 47.344333 10.604234'>
+</svg></td><td>ค่าจากการคูณ matrix ตามนิยาม และค่าเฉลี่ยเป้าหมายหนึ่งปี</td><td class='unit'>ผกผันสัดส่วนกำลังสอง, ผกผันสัดส่วน, ไม่มีหน่วย, ผกผันสัดส่วนกำลังสอง, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.8837em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='47.344333pt' height='10.604234pt' viewBox='.478207 -8.296887 47.344333 10.604234'>
 <defs>
 <path id="inline-4-6f80bbe8e66428f9ba79-g1-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="inline-4-6f80bbe8e66428f9ba79-g1-97" d='M3.598506-1.422665C3.53873-1.219427 3.53873-1.195517 3.371357-.968369C3.108344-.633624 2.582316-.119552 2.020423-.119552C1.530262-.119552 1.255293-.561893 1.255293-1.267248C1.255293-1.924782 1.625903-3.263761 1.853051-3.765878C2.259527-4.60274 2.82142-5.033126 3.287671-5.033126C4.076712-5.033126 4.23213-4.052802 4.23213-3.957161C4.23213-3.945205 4.196264-3.789788 4.184309-3.765878L3.598506-1.422665ZM4.363636-4.483188C4.23213-4.794022 3.90934-5.272229 3.287671-5.272229C1.936737-5.272229 .478207-3.526775 .478207-1.75741C.478207-.573848 1.171606 .119552 1.984558 .119552C2.642092 .119552 3.203985-.394521 3.53873-.789041C3.658281-.083686 4.220174 .119552 4.578829 .119552S5.224408-.095641 5.439601-.526027C5.630884-.932503 5.798257-1.661768 5.798257-1.709589C5.798257-1.769365 5.750436-1.817186 5.678705-1.817186C5.571108-1.817186 5.559153-1.75741 5.511333-1.578082C5.332005-.872727 5.104857-.119552 4.614695-.119552C4.267995-.119552 4.244085-.430386 4.244085-.669489C4.244085-.944458 4.27995-1.075965 4.387547-1.542217C4.471233-1.841096 4.531009-2.10411 4.62665-2.450809C5.068991-4.244085 5.176588-4.674471 5.176588-4.746202C5.176588-4.913574 5.045081-5.045081 4.865753-5.045081C4.483188-5.045081 4.387547-4.62665 4.363636-4.483188Z'/>
@@ -94,9 +96,10 @@
 <use x='33.516966' y='0' xlink:href="#inline-4-6f80bbe8e66428f9ba79-g1-119"/>
 <use x='41.884806' y='1.793263' xlink:href="#inline-4-6f80bbe8e66428f9ba79-g0-84"/>
 </g>
-</svg></td><td>สัมประสิทธิ์ของเงื่อนไข ทิศน้ำหนักก่อนปรับ และน้ำหนักพอร์ตสัมผัส</td><td class='unit'>สัดส่วนกำลังสอง, สัดส่วน, ผกผันสัดส่วน, สัดส่วน</td></tr></tbody></table></div>
-<h4>เริ่มจากผลตอบแทนที่รวมได้</h4><p>กำหนดน้ำหนักรวมเป็นหนึ่ง ใช้ผลตอบแทนหนึ่งปีที่รวมตามมูลค่าเริ่มต้น ไม่มีค่าซื้อขาย ตัวเลขนี้ไม่ได้อ้างว่า UST (ตราสารรัฐบาลสหรัฐฯ) ปลอดความเสี่ยงด้านราคา และการคำนวณ frontier ช่วงแรกยังไม่มีเงินสด <span class="cite">[FE3 M2 L1–L4]</span></p>
-<h4>สร้าง covariance จากข้อมูลโจทย์</h4><figure class="formula"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='371.238902pt' height='28.680448pt' viewBox='7.47577 -28.792165 371.238902 28.680448'>
+</svg></td><td>coefficient ของเงื่อนไข, ทิศน้ำหนักก่อนปรับ และน้ำหนักพอร์ตสัมผัส</td><td class='unit'>สัดส่วนกำลังสอง, สัดส่วน, ผกผันสัดส่วน, สัดส่วน</td></tr></tbody></table></div></div></details>
+<div class="worked-intro"><div class="box-kicker">เริ่มจากโจทย์</div><h4>ของที่โจทย์ให้ — Worked Example — สองสินทรัพย์กับเงิน 10 ล้าน USD</h4><p>โจทย์ให้หุ้นมี expected return 8% และ standard deviation 20% ต่อปี ส่วน United States Treasury มี 4% และ 10% โดย correlation เท่ากับ 0.20 เรามีเงิน 10 ล้าน USD และให้น้ำหนักสองฝั่งรวมกันเป็นหนึ่ง</p>
+<p>เราจะเช็ก portfolio 50/50 ก่อน แล้วหาส่วนผสมที่ risk ต่ำสุด จากนั้นค่อยเพิ่มอัตราเงินสด 2% เพื่อหา portfolio ที่แลกผลตอบแทนกับ risk ได้ดีที่สุด ตัวอย่างนี้ยังไม่รวมค่าซื้อขาย และไม่ได้บอกว่า Treasury ไม่มีความเสี่ยงด้านราคา</p></div>
+<div class="formula-block formula-role-risk formula-step"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><div class="step-heading"><span class="step-number" aria-label="ขั้นที่ 1">1</span><h4>สร้าง covariance จากข้อมูลโจทย์</h4></div><figure class="formula formula-role-risk"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='371.238902pt' height='28.680448pt' viewBox='7.47577 -28.792165 371.238902 28.680448'>
 <defs>
 <path id="formula-17-3-3-ec9d8d5050d4e098b890-g3-6" d='M4.23213-3.88543C4.327771-4.004981 4.351681-4.028892 4.351681-4.088667C4.351681-4.112578 4.351681-4.136488 4.27995-4.23213L1.865006-7.81868H4.686426C6.694894-7.81868 7.304608-7.388294 7.531756-5.499377H7.79477L7.483935-8.16538H.944458C.657534-8.16538 .645579-8.16538 .645579-7.890411L3.550685-3.58655L.777086-.310834C.681445-.203238 .657534-.167372 .657534-.119552C.657534 0 .753176 0 .944458 0H7.483935L7.79477-2.785554H7.531756C7.316563-.812951 6.563387-.466252 4.65056-.466252H1.338979L4.23213-3.88543Z'/>
 <path id="formula-17-3-3-ec9d8d5050d4e098b890-g3-40" d='M3.88543 2.905106C3.88543 2.86924 3.88543 2.84533 3.682192 2.642092C2.486675 1.43462 1.817186-.537983 1.817186-2.976837C1.817186-5.296139 2.379078-7.292653 3.765878-8.703362C3.88543-8.810959 3.88543-8.834869 3.88543-8.870735C3.88543-8.942466 3.825654-8.966376 3.777833-8.966376C3.622416-8.966376 2.642092-8.105604 2.056289-6.933998C1.446575-5.726526 1.171606-4.447323 1.171606-2.976837C1.171606-1.912827 1.338979-.490162 1.960648 .789041C2.666002 2.223661 3.646326 3.000747 3.777833 3.000747C3.825654 3.000747 3.88543 2.976837 3.88543 2.905106Z'/>
@@ -194,8 +197,8 @@
 <use x='369.5501' y='-4.333785' xlink:href="#formula-17-3-3-ec9d8d5050d4e098b890-g3-52"/>
 <use x='375.40309' y='-28.313958' xlink:href="#formula-17-3-3-ec9d8d5050d4e098b890-g0-21"/>
 </g>
-</svg><div class="reading">ช่องนอกแนวทแยงเกิดจากความสัมพันธ์คูณส่วนเบี่ยงเบนมาตรฐานทั้งคู่ ไม่ใช่ใส่ correlation ลงในเมทริกซ์ตรง ๆ</div></figure>
-<h4>ตรวจพอร์ตครึ่งต่อครึ่ง</h4><figure class="formula"><svg style="height:1.2282em;vertical-align:0.0003em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='473.675879pt' height='14.738028pt' viewBox='.334745 -14.741572 473.675879 14.738028'>
+</svg><div class="reading"><p>ช่องนอกแนวทแยงเกิดจากความสัมพันธ์คูณ standard deviation ทั้งคู่ ไม่ใช่ใส่ correlation ลงใน matrix ตรง ๆ</p></div></figure></div>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>ตรวจพอร์ตครึ่งต่อครึ่ง</h4><figure class="formula formula-role-risk"><svg style="height:1.2282em;vertical-align:0.0003em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='473.675879pt' height='14.738028pt' viewBox='.334745 -14.741572 473.675879 14.738028'>
 <defs>
 <path id="formula-17-3-4-ba1461eb73a6710e7dfa-g3-40" d='M3.88543 2.905106C3.88543 2.86924 3.88543 2.84533 3.682192 2.642092C2.486675 1.43462 1.817186-.537983 1.817186-2.976837C1.817186-5.296139 2.379078-7.292653 3.765878-8.703362C3.88543-8.810959 3.88543-8.834869 3.88543-8.870735C3.88543-8.942466 3.825654-8.966376 3.777833-8.966376C3.622416-8.966376 2.642092-8.105604 2.056289-6.933998C1.446575-5.726526 1.171606-4.447323 1.171606-2.976837C1.171606-1.912827 1.338979-.490162 1.960648 .789041C2.666002 2.223661 3.646326 3.000747 3.777833 3.000747C3.825654 3.000747 3.88543 2.976837 3.88543 2.905106Z'/>
 <path id="formula-17-3-4-ba1461eb73a6710e7dfa-g3-41" d='M3.371357-2.976837C3.371357-3.88543 3.251806-5.36787 2.582316-6.75467C1.876961-8.18929 .896638-8.966376 .765131-8.966376C.71731-8.966376 .657534-8.942466 .657534-8.870735C.657534-8.834869 .657534-8.810959 .860772-8.607721C2.056289-7.400249 2.725778-5.427646 2.725778-2.988792C2.725778-.669489 2.163885 1.327024 .777086 2.737733C.657534 2.84533 .657534 2.86924 .657534 2.905106C.657534 2.976837 .71731 3.000747 .765131 3.000747C.920548 3.000747 1.900872 2.139975 2.486675 .968369C3.096389-.251059 3.371357-1.542217 3.371357-2.976837Z'/>
@@ -296,8 +299,9 @@
 <use x='462.897359' y='-4.505261' xlink:href="#formula-17-3-4-ba1461eb73a6710e7dfa-g3-52"/>
 <use x='468.75035' y='-4.505261' xlink:href="#formula-17-3-4-ba1461eb73a6710e7dfa-g3-53"/>
 </g>
-</svg><div class="reading">ส่วนเบี่ยงเบนมาตรฐานจึงประมาณ 12.04% ต่อหนึ่งปี; ต้องรวมพจน์ร่วมก่อนถอดราก ไม่ใช่เฉลี่ย 20% กับ 10%</div></figure>
-<h4>หาพอร์ตความเสี่ยงต่ำสุด</h4><figure class="formula"><svg style="height:3.9469em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='270.552365pt' height='47.363pt' viewBox='59.067118 -47.363 270.552365 47.363'>
+</svg><div class="reading"><p>standard deviation จึงประมาณ 12.04% ต่อหนึ่งปี;</p>
+<p>ต้องรวมพจน์ร่วมก่อนถอดราก ไม่ใช่เฉลี่ย 20% กับ 10%</p></div></figure></div>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>หาพอร์ตความเสี่ยงต่ำสุด</h4><figure class="formula formula-role-risk"><svg style="height:3.9469em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='270.552365pt' height='47.363pt' viewBox='59.067118 -47.363 270.552365 47.363'>
 <defs>
 <path id="formula-17-3-5-bcb770c45fecbf6eaada-g2-27" d='M6.073225-4.507098C6.228643-4.507098 6.623163-4.507098 6.623163-4.889664C6.623163-5.152677 6.396015-5.152677 6.180822-5.152677H3.53873C1.745455-5.152677 .454296-3.156164 .454296-1.745455C.454296-.729265 1.111831 .119552 2.187796 .119552C3.598506 .119552 5.140722-1.398755 5.140722-3.19203C5.140722-3.658281 5.033126-4.112578 4.746202-4.507098H6.073225ZM2.199751-.119552C1.590037-.119552 1.147696-.585803 1.147696-1.41071C1.147696-2.12802 1.578082-4.507098 3.335492-4.507098C3.849564-4.507098 4.423412-4.25604 4.423412-3.335492C4.423412-2.917061 4.23213-1.912827 3.813699-1.219427C3.383313-.514072 2.737733-.119552 2.199751-.119552Z'/>
 <path id="formula-17-3-5-bcb770c45fecbf6eaada-g2-58" d='M2.199751-.573848C2.199751-.920548 1.912827-1.159651 1.625903-1.159651C1.279203-1.159651 1.0401-.872727 1.0401-.585803C1.0401-.239103 1.327024 0 1.613948 0C1.960648 0 2.199751-.286924 2.199751-.573848Z'/>
@@ -400,7 +404,8 @@
 <use x='320.371228' y='-1.793263' xlink:href="#formula-17-3-5-bcb770c45fecbf6eaada-g4-55"/>
 <use x='327.419732' y='-9.993925' xlink:href="#formula-17-3-5-bcb770c45fecbf6eaada-g2-58"/>
 </g>
-</svg><div class="reading">กระจายพจน์ก่อนหาอนุพันธ์ได้สัมประสิทธิ์กำลังสองเป็นบวก จึงเป็นค่าต่ำสุด น้ำหนักหุ้นประมาณ 14.29% ไม่ใช่ศูนย์ เพราะความสัมพันธ์ไม่สมบูรณ์ช่วยลดความเสี่ยงรวม</div></figure>
+</svg><div class="reading"><p>กระจายพจน์ก่อนหา derivative ได้ coefficient ของพจน์กำลังสองเป็นบวก</p>
+<p>จึงเป็นค่าต่ำสุด น้ำหนักหุ้นประมาณ 14.29% ไม่ใช่ศูนย์ เพราะความสัมพันธ์ไม่สมบูรณ์ช่วยลดความเสี่ยงรวม</p></div></figure></div>
 <h4>ภาพที่ 1 — ถือหุ้นบางส่วนกลับเสี่ยงต่ำกว่าพันธบัตรล้วน</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.156364pt" height="209.52pt" viewBox="0 0 433.156364 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -426,7 +431,7 @@ L 433.156364 209.52
 L 433.156364 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-3-6-axes_1">
    <g id="figure-17-3-6-patch_2">
@@ -435,28 +440,28 @@ L 427.396364 164.71
 L 427.396364 5.76 
 L 41.21 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-3-6-matplotlib.axis_1">
     <g id="figure-17-3-6-xtick_1">
      <g id="figure-17-3-6-line2d_1">
       <path d="M 58.763926 164.71 
 L 58.763926 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_2">
       <defs>
        <path id="figure-17-3-6-mb1ca535c88" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="58.763926" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="58.763926" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(56.363926 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(56.363926 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -498,16 +503,16 @@ z
      <g id="figure-17-3-6-line2d_3">
       <path d="M 128.979628 164.71 
 L 128.979628 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_4">
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="128.979628" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="128.979628" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_2">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(124.179628 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(124.179628 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -550,16 +555,16 @@ z
      <g id="figure-17-3-6-line2d_5">
       <path d="M 199.195331 164.71 
 L 199.195331 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_6">
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="199.195331" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="199.195331" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_3">
       <!-- 40 -->
-      <g style="fill: #6b7280" transform="translate(194.395331 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(194.395331 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -591,16 +596,16 @@ z
      <g id="figure-17-3-6-line2d_7">
       <path d="M 269.411033 164.71 
 L 269.411033 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_8">
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="269.411033" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="269.411033" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_4">
       <!-- 60 -->
-      <g style="fill: #6b7280" transform="translate(264.611033 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(264.611033 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -651,16 +656,16 @@ z
      <g id="figure-17-3-6-line2d_9">
       <path d="M 339.626736 164.71 
 L 339.626736 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_10">
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="339.626736" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="339.626736" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_5">
       <!-- 80 -->
-      <g style="fill: #6b7280" transform="translate(334.826736 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(334.826736 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -721,16 +726,16 @@ z
      <g id="figure-17-3-6-line2d_11">
       <path d="M 409.842438 164.71 
 L 409.842438 5.76 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_12">
       <g>
-       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="409.842438" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-mb1ca535c88" x="409.842438" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_6">
       <!-- 100 -->
-      <g style="fill: #6b7280" transform="translate(402.642438 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(402.642438 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-6-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -756,7 +761,7 @@ z
     </g>
     <g id="figure-17-3-6-text_7">
      <!-- Equity weight (%) -->
-     <g style="fill: #111418" transform="translate(198.758807 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(198.758807 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-6-IBMPlexSansThai-Regular-25" d="M 595 0 
 L 595 4467 
@@ -1156,21 +1161,21 @@ z
      <g id="figure-17-3-6-line2d_13">
       <path d="M 41.21 151.419213 
 L 427.396364 151.419213 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_14">
       <defs>
        <path id="figure-17-3-6-me742daa2f4" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="151.419213" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="151.419213" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_8">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(24.61 155.883213) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 155.883213) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -1180,16 +1185,16 @@ L -3.5 0
      <g id="figure-17-3-6-line2d_15">
       <path d="M 41.21 123.73237 
 L 427.396364 123.73237 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_16">
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="123.73237" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="123.73237" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_9">
       <!-- 12 -->
-      <g style="fill: #6b7280" transform="translate(24.61 128.19637) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 128.19637) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3f" transform="translate(60 0)"/>
       </g>
@@ -1199,16 +1204,16 @@ L 427.396364 123.73237
      <g id="figure-17-3-6-line2d_17">
       <path d="M 41.21 96.045528 
 L 427.396364 96.045528 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_18">
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="96.045528" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="96.045528" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_10">
       <!-- 14 -->
-      <g style="fill: #6b7280" transform="translate(24.61 100.509528) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 100.509528) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-41" transform="translate(60 0)"/>
       </g>
@@ -1218,16 +1223,16 @@ L 427.396364 96.045528
      <g id="figure-17-3-6-line2d_19">
       <path d="M 41.21 68.358685 
 L 427.396364 68.358685 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_20">
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="68.358685" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="68.358685" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_11">
       <!-- 16 -->
-      <g style="fill: #6b7280" transform="translate(24.61 72.822685) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 72.822685) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-43" transform="translate(60 0)"/>
       </g>
@@ -1237,16 +1242,16 @@ L 427.396364 68.358685
      <g id="figure-17-3-6-line2d_21">
       <path d="M 41.21 40.671843 
 L 427.396364 40.671843 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_22">
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="40.671843" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="40.671843" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_12">
       <!-- 18 -->
-      <g style="fill: #6b7280" transform="translate(24.61 45.135843) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 45.135843) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-45" transform="translate(60 0)"/>
       </g>
@@ -1256,16 +1261,16 @@ L 427.396364 40.671843
      <g id="figure-17-3-6-line2d_23">
       <path d="M 41.21 12.985 
 L 427.396364 12.985 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-6-line2d_24">
       <g>
-       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="12.985" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-6-me742daa2f4" x="41.21" y="12.985" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-6-text_13">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(24.61 17.449) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 17.449) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-17-3-6-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -1273,7 +1278,7 @@ L 427.396364 12.985
     </g>
     <g id="figure-17-3-6-text_14">
      <!-- One-year standard deviation (%) -->
-     <g style="fill: #111418" transform="translate(15.804 150.878047) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 150.878047) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-6-IBMPlexSansThai-Regular-2f" d="M 2266 -77 
 Q 1830 -77 1481 73 
@@ -1561,10 +1566,10 @@ C -2.683901 -1.55874 -3 -0.795609 -3 0
 C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
 C -1.55874 2.683901 -0.795609 3 0 3 
 z
-" style="stroke: #dc2626"/>
+" style="stroke: var(--plot-bad)"/>
     </defs>
     <g clip-path="url(#figure-17-3-6-p9dc8cd5237)">
-     <use xlink:href="#figure-17-3-6-m66691b2a57" x="108.917999" y="157.485" style="fill: #dc2626; stroke: #dc2626"/>
+     <use xlink:href="#figure-17-3-6-m66691b2a57" x="108.917999" y="157.485" style="fill: var(--plot-bad); stroke: var(--plot-bad)"/>
     </g>
    </g>
    <g id="figure-17-3-6-line2d_25">
@@ -1606,27 +1611,27 @@ L 387.533101 28.677023
 L 408.668262 13.81801 
 L 409.842438 12.985 
 L 409.842438 12.985 
-" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: #1f77b4; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-6-p9dc8cd5237)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-3-6-patch_3">
     <path d="M 41.21 164.71 
 L 41.21 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-6-patch_4">
     <path d="M 427.396364 164.71 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-6-patch_5">
     <path d="M 41.21 164.71 
 L 427.396364 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-6-patch_6">
     <path d="M 41.21 5.76 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
@@ -1636,8 +1641,8 @@ L 427.396364 5.76
   </clipPath>
  </defs>
 </svg>
-<figcaption>เส้นความเสี่ยงมีค่าต่ำสุดที่หุ้นหนึ่งในเจ็ด ผลของการกระจายเกิดจากพจน์ร่วมที่ต่ำพอ ทุกจุดเป็นผลจากเมทริกซ์สมมติเดียวกัน</figcaption></figure>
-<h4>สร้าง frontier สำหรับหลายสินทรัพย์</h4><figure class="formula"><svg style="height:1.4767em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='295.676041pt' height='17.720243pt' viewBox='46.450731 -18.836055 295.676041 17.720243'>
+<figcaption>เส้นความเสี่ยงมีค่าต่ำสุดที่หุ้นหนึ่งในเจ็ด ผลของการกระจายเกิดจากพจน์ร่วมที่ต่ำพอ ทุกจุดเป็นผลจาก matrix สมมติเดียวกัน</figcaption></figure>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>สร้าง frontier สำหรับหลายสินทรัพย์</h4><figure class="formula formula-role-risk"><svg style="height:1.4767em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='295.676041pt' height='17.720243pt' viewBox='46.450731 -18.836055 295.676041 17.720243'>
 <defs>
 <path id="formula-17-3-7-bbf3797f9eaa4e5db62d-g1-62" d='M3.474969-5.164633H5.810212C5.937733-5.164633 6.113076-5.164633 6.113076-5.347945S5.937733-5.531258 5.810212-5.531258H.781071C.645579-5.531258 .470237-5.531258 .470237-5.347945S.645579-5.164633 .781071-5.164633H3.108344V-.310834C3.108344-.175342 3.108344 0 3.291656 0S3.474969-.175342 3.474969-.302864V-5.164633Z'/>
 <path id="formula-17-3-7-bbf3797f9eaa4e5db62d-g4-6" d='M4.23213-3.88543C4.327771-4.004981 4.351681-4.028892 4.351681-4.088667C4.351681-4.112578 4.351681-4.136488 4.27995-4.23213L1.865006-7.81868H4.686426C6.694894-7.81868 7.304608-7.388294 7.531756-5.499377H7.79477L7.483935-8.16538H.944458C.657534-8.16538 .645579-8.16538 .645579-7.890411L3.550685-3.58655L.777086-.310834C.681445-.203238 .657534-.167372 .657534-.119552C.657534 0 .753176 0 .944458 0H7.483935L7.79477-2.785554H7.531756C7.316563-.812951 6.563387-.466252 4.65056-.466252H1.338979L4.23213-3.88543Z'/>
@@ -1693,8 +1698,8 @@ L 427.396364 5.76
 <use x='330.454772' y='-8.368612' xlink:href="#formula-17-3-7-bbf3797f9eaa4e5db62d-g3-98"/>
 <use x='335.431877' y='-8.368612' xlink:href="#formula-17-3-7-bbf3797f9eaa4e5db62d-g3-22"/>
 </g>
-</svg><div class="reading">ตั้ง Lagrange multiplier แล้วหารเงื่อนไขอันดับหนึ่งด้วยสอง จึงเห็นว่าน้ำหนักเหมาะสมเป็นส่วนผสมของสองทิศทางหลังคูณด้วยอินเวอร์ส</div></figure>
-<h4>แก้ระบบสองตัวแปรแทนหาอินเวอร์สซ้ำ</h4><figure class="formula"><svg style="height:2.1606em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='449.17779pt' height='25.926982pt' viewBox='.406476 -25.926982 449.17779 25.926982'>
+</svg><div class="reading"><p>ตั้ง Lagrange multiplier แล้วหารเงื่อนไขอันดับหนึ่งด้วยสอง จึงเห็นว่าน้ำหนักเหมาะสมเป็นส่วนผสมของสองทิศทางหลังคูณด้วยอินเวอร์ส</p></div></figure></div>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>แก้ระบบสองตัวแปรแทนหาอินเวอร์สซ้ำ</h4><figure class="formula formula-role-risk"><svg style="height:2.1606em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='449.17779pt' height='25.926982pt' viewBox='.406476 -25.926982 449.17779 25.926982'>
 <defs>
 <path id="formula-17-3-8-037aef53befb48de3481-g0-49" d='M4.136488-7.49589C4.136488-7.84259 4.112578-7.84259 3.730012-7.84259C2.84533-7.07746 1.518306-7.07746 1.255293-7.07746H1.028144V-6.563387H1.255293C1.673724-6.563387 2.307347-6.635118 2.785554-6.790535V-.514072H1.123786V0C1.625903-.02391 2.881196-.02391 3.443088-.02391S5.272229-.02391 5.774346 0V-.514072H4.136488V-7.49589Z'/>
 <path id="formula-17-3-8-037aef53befb48de3481-g3-22" d='M1.721544-.263014C2.020423 .011955 2.462765 .119552 2.86924 .119552C3.634371 .119552 4.160399-.394521 4.435367-.765131C4.554919-.131507 5.057036 .119552 5.475467 .119552C5.834122 .119552 6.121046-.095641 6.336239-.526027C6.527522-.932503 6.694894-1.661768 6.694894-1.709589C6.694894-1.769365 6.647073-1.817186 6.575342-1.817186C6.467746-1.817186 6.455791-1.75741 6.40797-1.578082C6.228643-.872727 6.001494-.119552 5.511333-.119552C5.164633-.119552 5.140722-.430386 5.140722-.669489C5.140722-.944458 5.248319-1.374844 5.332005-1.733499L5.66675-3.024658C5.71457-3.251806 5.846077-3.789788 5.905853-4.004981C5.977584-4.291905 6.109091-4.805978 6.109091-4.853798C6.109091-5.033126 5.965629-5.152677 5.786301-5.152677C5.678705-5.152677 5.427646-5.104857 5.332005-4.746202L4.495143-1.422665C4.435367-1.183562 4.435367-1.159651 4.27995-.968369C4.136488-.765131 3.670237-.119552 2.917061-.119552C2.247572-.119552 2.032379-.609714 2.032379-1.171606C2.032379-1.518306 2.139975-1.936737 2.187796-2.139975L2.725778-4.291905C2.785554-4.519054 2.881196-4.901619 2.881196-4.97335C2.881196-5.164633 2.725778-5.272229 2.570361-5.272229C2.462765-5.272229 2.199751-5.236364 2.10411-4.853798L.37061 2.068244C.358655 2.12802 .334745 2.199751 .334745 2.271482C.334745 2.450809 .478207 2.570361 .657534 2.570361C1.004234 2.570361 1.075965 2.295392 1.159651 1.960648L1.721544-.263014Z'/>
@@ -1777,8 +1782,9 @@ L 427.396364 5.76
 <rect x='361.985439' y='-11.428548' height='.478187' width='87.598827'/>
 <use x='400.762616' y='0' xlink:href="#formula-17-3-8-037aef53befb48de3481-g3-68"/>
 </g>
-</svg><div class="reading">นำรูปน้ำหนักกลับเข้าเงื่อนไขสองข้อแล้วแก้ระบบที่มีสัมประสิทธิ์ A B C สูตรต้องมีเมทริกซ์บวกแน่นอนและค่าเฉลี่ยที่ไม่เหมือนกันทุกตัว ส่วนเหนือจุดความเสี่ยงต่ำสุดเท่านั้นเป็นแขนที่มีประสิทธิภาพ</div></figure>
-<h4>แก้เงื่อนไขแล้วประกอบน้ำหนัก</h4><figure class="formula"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='376.331252pt' height='28.680448pt' viewBox='7.009785 -28.792165 376.331252 28.680448'>
+</svg><div class="reading"><p>นำรูปน้ำหนักกลับเข้าเงื่อนไขสองข้อแล้วแก้ระบบที่มี coefficient A B C สูตรต้องมี positive-definite matrix และค่าเฉลี่ยที่ไม่เหมือนกันทุกตัว</p>
+<p>ส่วนเหนือจุดความเสี่ยงต่ำสุดเท่านั้นเป็นแขนที่มีประสิทธิภาพ</p></div></figure></div>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>แก้เงื่อนไขแล้วประกอบน้ำหนัก</h4><figure class="formula formula-role-risk"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='376.331252pt' height='28.680448pt' viewBox='7.009785 -28.792165 376.331252 28.680448'>
 <defs>
 <path id="formula-17-3-9-5abf36ee85e8539ced14-g1-20" d='M2.988792 28.202242H6.133001V27.544707H3.646326V.179328H6.133001V-.478207H2.988792V28.202242Z'/>
 <path id="formula-17-3-9-5abf36ee85e8539ced14-g1-21" d='M2.654047 27.544707H.167372V28.202242H3.311582V-.478207H.167372V.179328H2.654047V27.544707Z'/>
@@ -1851,8 +1857,23 @@ L 427.396364 5.76
 <use x='372.926709' y='-11.457021' xlink:href="#formula-17-3-9-5abf36ee85e8539ced14-g4-22"/>
 <use x='379.969679' y='-11.457021' xlink:href="#formula-17-3-9-5abf36ee85e8539ced14-g6-41"/>
 </g>
-</svg><div class="reading">แทนรูปน้ำหนักในเงื่อนไขลงทุนเต็มและค่าเฉลี่ยเป้าหมาย จะได้ระบบสองตัวแปรนี้ จากนั้นความแปรปรวนคือ a บวก b คูณค่าเฉลี่ยเป้าหมาย จึงได้สูตร frontier ก่อนหน้า</div></figure>
-<h4>เพิ่มเงินสดแล้วหาพอร์ตสัมผัส</h4><figure class="formula"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='307.36751pt' height='28.680448pt' viewBox='39.25007 -28.792165 307.36751 28.680448'>
+</svg><div class="reading"><p>แทนรูปน้ำหนักในเงื่อนไขลงทุนเต็มและค่าเฉลี่ยเป้าหมาย จะได้ระบบสองตัวแปร</p>
+<p>แก้หา <svg style="height:0.4493em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='5.32005pt' height='5.391781pt' viewBox='.478207 -5.272229 5.32005 5.391781'>
+<defs>
+<path id="inline-5-7702a9a4ed631fa053a9-g0-97" d='M3.598506-1.422665C3.53873-1.219427 3.53873-1.195517 3.371357-.968369C3.108344-.633624 2.582316-.119552 2.020423-.119552C1.530262-.119552 1.255293-.561893 1.255293-1.267248C1.255293-1.924782 1.625903-3.263761 1.853051-3.765878C2.259527-4.60274 2.82142-5.033126 3.287671-5.033126C4.076712-5.033126 4.23213-4.052802 4.23213-3.957161C4.23213-3.945205 4.196264-3.789788 4.184309-3.765878L3.598506-1.422665ZM4.363636-4.483188C4.23213-4.794022 3.90934-5.272229 3.287671-5.272229C1.936737-5.272229 .478207-3.526775 .478207-1.75741C.478207-.573848 1.171606 .119552 1.984558 .119552C2.642092 .119552 3.203985-.394521 3.53873-.789041C3.658281-.083686 4.220174 .119552 4.578829 .119552S5.224408-.095641 5.439601-.526027C5.630884-.932503 5.798257-1.661768 5.798257-1.709589C5.798257-1.769365 5.750436-1.817186 5.678705-1.817186C5.571108-1.817186 5.559153-1.75741 5.511333-1.578082C5.332005-.872727 5.104857-.119552 4.614695-.119552C4.267995-.119552 4.244085-.430386 4.244085-.669489C4.244085-.944458 4.27995-1.075965 4.387547-1.542217C4.471233-1.841096 4.531009-2.10411 4.62665-2.450809C5.068991-4.244085 5.176588-4.674471 5.176588-4.746202C5.176588-4.913574 5.045081-5.045081 4.865753-5.045081C4.483188-5.045081 4.387547-4.62665 4.363636-4.483188Z'/>
+</defs>
+<g id="inline-5-7702a9a4ed631fa053a9-page1">
+<use x='0' y='0' xlink:href="#inline-5-7702a9a4ed631fa053a9-g0-97"/>
+</g>
+</svg> กับ <svg style="height:0.7014em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='4.27995pt' height='8.416438pt' viewBox='.537983 -8.296887 4.27995 8.416438'>
+<defs>
+<path id="inline-6-5554757922f406b1adae-g0-98" d='M2.761644-7.998007C2.773599-8.045828 2.797509-8.117559 2.797509-8.177335C2.797509-8.296887 2.677958-8.296887 2.654047-8.296887C2.642092-8.296887 2.211706-8.261021 1.996513-8.237111C1.793275-8.225156 1.613948-8.201245 1.398755-8.18929C1.111831-8.16538 1.028144-8.153425 1.028144-7.938232C1.028144-7.81868 1.147696-7.81868 1.267248-7.81868C1.876961-7.81868 1.876961-7.711083 1.876961-7.591532C1.876961-7.507846 1.78132-7.161146 1.733499-6.945953L1.446575-5.798257C1.327024-5.32005 .645579-2.606227 .597758-2.391034C.537983-2.092154 .537983-1.888917 .537983-1.733499C.537983-.514072 1.219427 .119552 1.996513 .119552C3.383313 .119552 4.817933-1.661768 4.817933-3.395268C4.817933-4.495143 4.196264-5.272229 3.299626-5.272229C2.677958-5.272229 2.116065-4.758157 1.888917-4.519054L2.761644-7.998007ZM2.008468-.119552C1.625903-.119552 1.207472-.406476 1.207472-1.338979C1.207472-1.733499 1.243337-1.960648 1.458531-2.797509C1.494396-2.952927 1.685679-3.718057 1.733499-3.873474C1.75741-3.969116 2.462765-5.033126 3.275716-5.033126C3.801743-5.033126 4.040847-4.507098 4.040847-3.88543C4.040847-3.311582 3.706102-1.960648 3.407223-1.338979C3.108344-.6934 2.558406-.119552 2.008468-.119552Z'/>
+</defs>
+<g id="inline-6-5554757922f406b1adae-page1">
+<use x='0' y='0' xlink:href="#inline-6-5554757922f406b1adae-g0-98"/>
+</g>
+</svg> แล้วนำกลับไปคำนวณ variance จึงได้จุดบน frontier ที่ตรงกับเป้าหมาย</p></div></figure></div>
+<div class="formula-block formula-role-risk"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><h4>เพิ่มเงินสดแล้วหาพอร์ตสัมผัส</h4><figure class="formula formula-role-risk"><svg style="height:2.3900em;vertical-align:0.0093em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='307.36751pt' height='28.680448pt' viewBox='39.25007 -28.792165 307.36751 28.680448'>
 <defs>
 <path id="formula-17-3-10-26ed1c800658195f819e-g1-20" d='M2.988792 28.202242H6.133001V27.544707H3.646326V.179328H6.133001V-.478207H2.988792V28.202242Z'/>
 <path id="formula-17-3-10-26ed1c800658195f819e-g1-21" d='M2.654047 27.544707H.167372V28.202242H3.311582V-.478207H.167372V.179328H2.654047V27.544707Z'/>
@@ -1940,7 +1961,8 @@ L 427.396364 5.76
 <use x='337.453007' y='-4.333785' xlink:href="#formula-17-3-10-26ed1c800658195f819e-g7-55"/>
 <use x='343.305998' y='-28.313958' xlink:href="#formula-17-3-10-26ed1c800658195f819e-g1-21"/>
 </g>
-</svg><div class="reading">เมื่ออัตราเงินสดสมมติเป็น 2% ทิศทางที่ให้ส่วนเกินต่อความเสี่ยงสูงสุดได้จากการแก้ระบบเชิงเส้น จากนั้นปรับน้ำหนักให้รวมหนึ่ง ผลลัพธ์นี้อยู่ในช่วงไม่ขายยืมได้พอดี</div></figure>
+</svg><div class="reading"><p>ของที่ใส่เข้าไปคืออัตราเงินสด 2%, expected returns และ covariance matrix</p>
+<p>แก้ระบบเชิงเส้นเพื่อหาทิศทางที่ให้ส่วนเกินต่อความเสี่ยงสูงสุด แล้วปรับน้ำหนักให้รวมหนึ่ง ผลลัพธ์นี้ไม่ต้อง short ภายใต้ตัวเลขตัวอย่าง</p></div></figure></div>
 <h4>ภาพที่ 2 — Frontier และเส้นผสมเงินสด</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.156364pt" height="209.52pt" viewBox="0 0 433.156364 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -1966,7 +1988,7 @@ L 433.156364 209.52
 L 433.156364 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-3-11-axes_1">
    <g id="figure-17-3-11-patch_2">
@@ -1975,28 +1997,28 @@ L 427.396364 164.71
 L 427.396364 5.76 
 L 41.21 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-3-11-matplotlib.axis_1">
     <g id="figure-17-3-11-xtick_1">
      <g id="figure-17-3-11-line2d_1">
       <path d="M 58.763926 164.71 
 L 58.763926 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_2">
       <defs>
        <path id="figure-17-3-11-m85d29963ae" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="58.763926" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="58.763926" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(56.363926 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(56.363926 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -2038,16 +2060,16 @@ z
      <g id="figure-17-3-11-line2d_3">
       <path d="M 123.778465 164.71 
 L 123.778465 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_4">
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="123.778465" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="123.778465" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_2">
       <!-- 5 -->
-      <g style="fill: #6b7280" transform="translate(121.378465 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(121.378465 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -2094,16 +2116,16 @@ z
      <g id="figure-17-3-11-line2d_5">
       <path d="M 188.793004 164.71 
 L 188.793004 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_6">
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="188.793004" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="188.793004" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_3">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(183.993004 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(183.993004 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -2130,16 +2152,16 @@ z
      <g id="figure-17-3-11-line2d_7">
       <path d="M 253.807544 164.71 
 L 253.807544 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_8">
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="253.807544" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="253.807544" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_4">
       <!-- 15 -->
-      <g style="fill: #6b7280" transform="translate(249.007544 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(249.007544 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -2149,16 +2171,16 @@ L 253.807544 5.76
      <g id="figure-17-3-11-line2d_9">
       <path d="M 318.822083 164.71 
 L 318.822083 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_10">
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="318.822083" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="318.822083" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_5">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(314.022083 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(314.022083 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -2201,16 +2223,16 @@ z
      <g id="figure-17-3-11-line2d_11">
       <path d="M 383.836622 164.71 
 L 383.836622 5.76 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_12">
       <g>
-       <use xlink:href="#figure-17-3-11-m85d29963ae" x="383.836622" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m85d29963ae" x="383.836622" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_6">
       <!-- 25 -->
-      <g style="fill: #6b7280" transform="translate(379.036622 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(379.036622 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -2218,7 +2240,7 @@ L 383.836622 5.76
     </g>
     <g id="figure-17-3-11-text_7">
      <!-- One-year standard deviation (%) -->
-     <g style="fill: #111418" transform="translate(168.660135 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(168.660135 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-11-IBMPlexSansThai-Regular-2f" d="M 2266 -77 
 Q 1830 -77 1481 73 
@@ -2685,21 +2707,21 @@ z
      <g id="figure-17-3-11-line2d_13">
       <path d="M 41.21 157.485 
 L 427.396364 157.485 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_14">
       <defs>
        <path id="figure-17-3-11-m08a5044037" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="157.485" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="157.485" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_8">
       <!-- 2 -->
-      <g style="fill: #6b7280" transform="translate(29.41 161.949) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 161.949) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-3f"/>
       </g>
      </g>
@@ -2708,16 +2730,16 @@ L -3.5 0
      <g id="figure-17-3-11-line2d_15">
       <path d="M 41.21 125.273069 
 L 427.396364 125.273069 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_16">
       <g>
-       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="125.273069" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="125.273069" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_9">
       <!-- 4 -->
-      <g style="fill: #6b7280" transform="translate(29.41 129.737069) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 129.737069) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -2748,16 +2770,16 @@ z
      <g id="figure-17-3-11-line2d_17">
       <path d="M 41.21 93.061138 
 L 427.396364 93.061138 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_18">
       <g>
-       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="93.061138" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="93.061138" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_10">
       <!-- 6 -->
-      <g style="fill: #6b7280" transform="translate(29.41 97.525138) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 97.525138) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -2807,16 +2829,16 @@ z
      <g id="figure-17-3-11-line2d_19">
       <path d="M 41.21 60.849206 
 L 427.396364 60.849206 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_20">
       <g>
-       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="60.849206" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="60.849206" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_11">
       <!-- 8 -->
-      <g style="fill: #6b7280" transform="translate(29.41 65.313206) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 65.313206) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-11-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -2876,16 +2898,16 @@ z
      <g id="figure-17-3-11-line2d_21">
       <path d="M 41.21 28.637275 
 L 427.396364 28.637275 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-11-line2d_22">
       <g>
-       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="28.637275" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-11-m08a5044037" x="41.21" y="28.637275" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-11-text_12">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(24.61 33.101275) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 33.101275) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-3-11-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -2893,7 +2915,7 @@ L 427.396364 28.637275
     </g>
     <g id="figure-17-3-11-text_13">
      <!-- Expected one-year return (%) -->
-     <g style="fill: #111418" transform="translate(15.804 145.031563) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 145.031563) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-11-IBMPlexSansThai-Regular-25" d="M 595 0 
 L 595 4467 
@@ -3058,10 +3080,10 @@ C -2.683901 -1.55874 -3 -0.795609 -3 0
 C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
 C -1.55874 2.683901 -0.795609 3 0 3 
 z
-" style="stroke: #dc2626"/>
+" style="stroke: var(--plot-bad)"/>
     </defs>
     <g clip-path="url(#figure-17-3-11-p0567eb0828)">
-     <use xlink:href="#figure-17-3-11-me4479de79b" x="212.390119" y="94.254172" style="fill: #dc2626; stroke: #dc2626"/>
+     <use xlink:href="#figure-17-3-11-me4479de79b" x="212.390119" y="94.254172" style="fill: var(--plot-bad); stroke: var(--plot-bad)"/>
     </g>
    </g>
    <g id="figure-17-3-11-line2d_23">
@@ -3105,7 +3127,7 @@ L 341.43335 54.697454
 L 375.510911 45.639362 
 L 391.241949 41.522048 
 L 391.241949 41.522048 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #1f77b4; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-3-11-line2d_24">
     <path d="M 58.763926 157.485 
@@ -3208,34 +3230,34 @@ L 399.203695 17.363788
 L 402.749943 15.904192 
 L 406.29619 14.444596 
 L 409.842438 12.985 
-" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: #ff7f0e; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-11-p0567eb0828)" style="fill: none; stroke: var(--plot-warm); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-3-11-patch_3">
     <path d="M 41.21 164.71 
 L 41.21 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-11-patch_4">
     <path d="M 427.396364 164.71 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-11-patch_5">
     <path d="M 41.21 164.71 
 L 427.396364 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-11-patch_6">
     <path d="M 41.21 5.76 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-11-legend_1">
     <g id="figure-17-3-11-line2d_25">
      <path d="M 47.51 17.422 
 L 54.51 17.422 
 L 61.51 17.422 
-" style="fill: none; stroke: #1f77b4; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
     </g>
     <g id="figure-17-3-11-text_14">
      <!-- Risky-asset frontier -->
@@ -3329,7 +3351,7 @@ z
      <path d="M 47.51 32.472 
 L 54.51 32.472 
 L 61.51 32.472 
-" style="fill: none; stroke: #ff7f0e; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-warm); stroke-width: 1.8; stroke-linecap: round"/>
     </g>
     <g id="figure-17-3-11-text_15">
      <!-- Cash + tangency -->
@@ -3513,7 +3535,7 @@ L 433.374545 209.52
 L 433.374545 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-3-12-axes_1">
    <g id="figure-17-3-12-patch_2">
@@ -3522,28 +3544,28 @@ L 427.614545 183.56
 L 427.614545 5.76 
 L 46.01 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-3-12-matplotlib.axis_1">
     <g id="figure-17-3-12-xtick_1">
      <g id="figure-17-3-12-line2d_1">
       <path d="M 112.914693 183.56 
 L 112.914693 5.76 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_2">
       <defs>
        <path id="figure-17-3-12-m57af8ea186" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-12-m57af8ea186" x="112.914693" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m57af8ea186" x="112.914693" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_1">
       <!-- Min variance -->
-      <g style="fill: #6b7280" transform="translate(90.322193 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(90.322193 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-2d" d="M 4077 3763 
 L 4045 3763 
@@ -3760,16 +3782,16 @@ z
      <g id="figure-17-3-12-line2d_3">
       <path d="M 236.812273 183.56 
 L 236.812273 5.76 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_4">
       <g>
-       <use xlink:href="#figure-17-3-12-m57af8ea186" x="236.812273" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m57af8ea186" x="236.812273" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_2">
       <!-- 50 / 50 -->
-      <g style="fill: #6b7280" transform="translate(223.792898 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(223.792898 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -3860,16 +3882,16 @@ z
      <g id="figure-17-3-12-line2d_5">
       <path d="M 360.709852 183.56 
 L 360.709852 5.76 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_6">
       <g>
-       <use xlink:href="#figure-17-3-12-m57af8ea186" x="360.709852" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m57af8ea186" x="360.709852" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_3">
       <!-- Tangency -->
-      <g style="fill: #6b7280" transform="translate(343.729227 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(343.729227 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-34" d="M 2099 3994 
 L 2099 0 
@@ -3985,21 +4007,21 @@ z
      <g id="figure-17-3-12-line2d_7">
       <path d="M 46.01 183.56 
 L 427.614545 183.56 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_8">
       <defs>
        <path id="figure-17-3-12-m3c27ead830" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_4">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(34.21 188.024) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(34.21 188.024) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-12-IBMPlexSansThai-Regular-3b"/>
       </g>
      </g>
@@ -4008,16 +4030,16 @@ L -3.5 0
      <g id="figure-17-3-12-line2d_9">
       <path d="M 46.01 149.693333 
 L 427.614545 149.693333 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_10">
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="149.693333" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="149.693333" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_5">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(29.41 154.157333) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 154.157333) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -4060,16 +4082,16 @@ z
      <g id="figure-17-3-12-line2d_11">
       <path d="M 46.01 115.826667 
 L 427.614545 115.826667 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_12">
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="115.826667" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="115.826667" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_6">
       <!-- 40 -->
-      <g style="fill: #6b7280" transform="translate(29.41 120.290667) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 120.290667) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -4101,16 +4123,16 @@ z
      <g id="figure-17-3-12-line2d_13">
       <path d="M 46.01 81.96 
 L 427.614545 81.96 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_14">
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="81.96" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="81.96" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_7">
       <!-- 60 -->
-      <g style="fill: #6b7280" transform="translate(29.41 86.424) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 86.424) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -4161,16 +4183,16 @@ z
      <g id="figure-17-3-12-line2d_15">
       <path d="M 46.01 48.093333 
 L 427.614545 48.093333 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_16">
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="48.093333" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="48.093333" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_8">
       <!-- 80 -->
-      <g style="fill: #6b7280" transform="translate(29.41 52.557333) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 52.557333) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -4231,16 +4253,16 @@ z
      <g id="figure-17-3-12-line2d_17">
       <path d="M 46.01 14.226667 
 L 427.614545 14.226667 
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-12-line2d_18">
       <g>
-       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="14.226667" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-12-m3c27ead830" x="46.01" y="14.226667" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-12-text_9">
       <!-- 100 -->
-      <g style="fill: #6b7280" transform="translate(24.61 18.690667) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 18.690667) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-12-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -4266,7 +4288,7 @@ z
     </g>
     <g id="figure-17-3-12-text_10">
      <!-- Portfolio weight (%) -->
-     <g style="fill: #111418" transform="translate(15.804 134.700156) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 134.700156) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-12-IBMPlexSansThai-Regular-30" d="M 595 0 
 L 595 4467 
@@ -4535,7 +4557,7 @@ L 162.473725 183.56
 L 162.473725 159.369524 
 L 63.355661 159.369524 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #1f77b4"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-3-12-patch_4">
     <path d="M 187.253241 183.56 
@@ -4543,7 +4565,7 @@ L 286.371305 183.56
 L 286.371305 98.893333 
 L 187.253241 98.893333 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #1f77b4"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-3-12-patch_5">
     <path d="M 311.150821 183.56 
@@ -4551,7 +4573,7 @@ L 410.268884 183.56
 L 410.268884 102.029136 
 L 311.150821 102.029136 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #1f77b4"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-3-12-patch_6">
     <path d="M 63.355661 159.369524 
@@ -4559,7 +4581,7 @@ L 162.473725 159.369524
 L 162.473725 14.226667 
 L 63.355661 14.226667 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #ff7f0e"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-warm)"/>
    </g>
    <g id="figure-17-3-12-patch_7">
     <path d="M 187.253241 98.893333 
@@ -4567,7 +4589,7 @@ L 286.371305 98.893333
 L 286.371305 14.226667 
 L 187.253241 14.226667 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #ff7f0e"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-warm)"/>
    </g>
    <g id="figure-17-3-12-patch_8">
     <path d="M 311.150821 102.029136 
@@ -4575,27 +4597,27 @@ L 410.268884 102.029136
 L 410.268884 14.226667 
 L 311.150821 14.226667 
 z
-" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: #ff7f0e"/>
+" clip-path="url(#figure-17-3-12-p378f158782)" style="fill: var(--plot-warm)"/>
    </g>
    <g id="figure-17-3-12-patch_9">
     <path d="M 46.01 183.56 
 L 46.01 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-12-patch_10">
     <path d="M 427.614545 183.56 
 L 427.614545 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-12-patch_11">
     <path d="M 46.01 183.56 
 L 427.614545 183.56 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-12-patch_12">
     <path d="M 46.01 5.76 
 L 427.614545 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-12-legend_1">
     <g id="figure-17-3-12-patch_13">
@@ -4604,7 +4626,7 @@ L 364.613295 154.888
 L 364.613295 149.288 
 L 348.613295 149.288 
 z
-" style="fill: #1f77b4"/>
+" style="fill: var(--plot-accent)"/>
     </g>
     <g id="figure-17-3-12-text_11">
      <!-- US equities -->
@@ -4781,7 +4803,7 @@ L 364.613295 172.088
 L 364.613295 166.488 
 L 348.613295 166.488 
 z
-" style="fill: #ff7f0e"/>
+" style="fill: var(--plot-warm)"/>
     </g>
     <g id="figure-17-3-12-text_12">
      <!-- US Treasuries -->
@@ -4836,7 +4858,7 @@ L 433.156364 209.52
 L 433.156364 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-3-13-axes_1">
    <g id="figure-17-3-13-patch_2">
@@ -4845,28 +4867,28 @@ L 427.396364 164.71
 L 427.396364 5.76 
 L 41.21 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-3-13-matplotlib.axis_1">
     <g id="figure-17-3-13-xtick_1">
      <g id="figure-17-3-13-line2d_1">
       <path d="M 58.763926 164.71 
 L 58.763926 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_2">
       <defs>
        <path id="figure-17-3-13-m1410a74ac8" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="58.763926" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="58.763926" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_1">
       <!-- 6.0 -->
-      <g style="fill: #6b7280" transform="translate(52.875801 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(52.875801 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -4962,16 +4984,16 @@ z
      <g id="figure-17-3-13-line2d_3">
       <path d="M 102.64874 164.71 
 L 102.64874 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_4">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="102.64874" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="102.64874" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_2">
       <!-- 6.5 -->
-      <g style="fill: #6b7280" transform="translate(96.760615 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(96.760615 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -5020,16 +5042,16 @@ z
      <g id="figure-17-3-13-line2d_5">
       <path d="M 146.533554 164.71 
 L 146.533554 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_6">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="146.533554" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="146.533554" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_3">
       <!-- 7.0 -->
-      <g style="fill: #6b7280" transform="translate(140.645429 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(140.645429 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-44" d="M 1120 0 
 L 2829 4006 
@@ -5054,16 +5076,16 @@ z
      <g id="figure-17-3-13-line2d_7">
       <path d="M 190.418368 164.71 
 L 190.418368 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_8">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="190.418368" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="190.418368" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_4">
       <!-- 7.5 -->
-      <g style="fill: #6b7280" transform="translate(184.530243 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(184.530243 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-44"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5074,16 +5096,16 @@ L 190.418368 5.76
      <g id="figure-17-3-13-line2d_9">
       <path d="M 234.303182 164.71 
 L 234.303182 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_10">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="234.303182" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="234.303182" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_5">
       <!-- 8.0 -->
-      <g style="fill: #6b7280" transform="translate(228.415057 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(228.415057 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -5145,16 +5167,16 @@ z
      <g id="figure-17-3-13-line2d_11">
       <path d="M 278.187996 164.71 
 L 278.187996 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_12">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="278.187996" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="278.187996" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_6">
       <!-- 8.5 -->
-      <g style="fill: #6b7280" transform="translate(272.299871 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(272.299871 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-45"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5165,16 +5187,16 @@ L 278.187996 5.76
      <g id="figure-17-3-13-line2d_13">
       <path d="M 322.07281 164.71 
 L 322.07281 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_14">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="322.07281" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="322.07281" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_7">
       <!-- 9.0 -->
-      <g style="fill: #6b7280" transform="translate(316.184685 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(316.184685 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-46" d="M 3411 2829 
 Q 3411 2330 3264 1891 
@@ -5226,16 +5248,16 @@ z
      <g id="figure-17-3-13-line2d_15">
       <path d="M 365.957624 164.71 
 L 365.957624 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_16">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="365.957624" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="365.957624" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_8">
       <!-- 9.5 -->
-      <g style="fill: #6b7280" transform="translate(360.069499 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(360.069499 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-46"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5246,16 +5268,16 @@ L 365.957624 5.76
      <g id="figure-17-3-13-line2d_17">
       <path d="M 409.842438 164.71 
 L 409.842438 5.76 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_18">
       <g>
-       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="409.842438" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m1410a74ac8" x="409.842438" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_9">
       <!-- 10.0 -->
-      <g style="fill: #6b7280" transform="translate(401.554313 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(401.554313 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -5282,7 +5304,7 @@ z
     </g>
     <g id="figure-17-3-13-text_10">
      <!-- Assumed equity mean return (%) -->
-     <g style="fill: #111418" transform="translate(167.676463 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(167.676463 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-13-IBMPlexSansThai-Regular-21" d="M 3392 0 
 L 2944 1318 
@@ -5773,21 +5795,21 @@ z
      <g id="figure-17-3-13-line2d_19">
       <path d="M 41.21 148.45375 
 L 427.396364 148.45375 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_20">
       <defs>
        <path id="figure-17-3-13-m4280b67211" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="148.45375" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="148.45375" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_11">
       <!-- 35 -->
-      <g style="fill: #6b7280" transform="translate(24.61 152.91775) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 152.91775) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-40" d="M 1670 2573 
 Q 2125 2573 2352 2781 
@@ -5848,16 +5870,16 @@ z
      <g id="figure-17-3-13-line2d_21">
       <path d="M 41.21 121.36 
 L 427.396364 121.36 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_22">
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="121.36" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="121.36" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_12">
       <!-- 40 -->
-      <g style="fill: #6b7280" transform="translate(24.61 125.824) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 125.824) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-13-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -5889,16 +5911,16 @@ z
      <g id="figure-17-3-13-line2d_23">
       <path d="M 41.21 94.26625 
 L 427.396364 94.26625 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_24">
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="94.26625" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="94.26625" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_13">
       <!-- 45 -->
-      <g style="fill: #6b7280" transform="translate(24.61 98.73025) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 98.73025) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-41"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -5908,16 +5930,16 @@ L 427.396364 94.26625
      <g id="figure-17-3-13-line2d_25">
       <path d="M 41.21 67.1725 
 L 427.396364 67.1725 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_26">
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="67.1725" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="67.1725" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_14">
       <!-- 50 -->
-      <g style="fill: #6b7280" transform="translate(24.61 71.6365) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 71.6365) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -5927,16 +5949,16 @@ L 427.396364 67.1725
      <g id="figure-17-3-13-line2d_27">
       <path d="M 41.21 40.07875 
 L 427.396364 40.07875 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_28">
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="40.07875" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="40.07875" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_15">
       <!-- 55 -->
-      <g style="fill: #6b7280" transform="translate(24.61 44.54275) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 44.54275) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -5946,16 +5968,16 @@ L 427.396364 40.07875
      <g id="figure-17-3-13-line2d_29">
       <path d="M 41.21 12.985 
 L 427.396364 12.985 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-13-line2d_30">
       <g>
-       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="12.985" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-13-m4280b67211" x="41.21" y="12.985" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-13-text_16">
       <!-- 60 -->
-      <g style="fill: #6b7280" transform="translate(24.61 17.449) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 17.449) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-43"/>
        <use xlink:href="#figure-17-3-13-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -5963,7 +5985,7 @@ L 427.396364 12.985
     </g>
     <g id="figure-17-3-13-text_17">
      <!-- Tangency equity weight (%) -->
-     <g style="fill: #111418" transform="translate(15.804 140.836719) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 140.836719) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-13-IBMPlexSansThai-Regular-34" d="M 2099 3994 
 L 2099 0 
@@ -6245,27 +6267,27 @@ L 399.203695 16.50939
 L 402.749943 15.329828 
 L 406.29619 14.15504 
 L 409.842438 12.985 
-" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: #1f77b4; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-13-p55929f3457)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-3-13-patch_3">
     <path d="M 41.21 164.71 
 L 41.21 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-13-patch_4">
     <path d="M 427.396364 164.71 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-13-patch_5">
     <path d="M 41.21 164.71 
 L 427.396364 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-13-patch_6">
     <path d="M 41.21 5.76 
 L 427.396364 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
@@ -6301,7 +6323,7 @@ L 433.156364 212.66162
 L 433.156364 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-3-14-axes_1">
    <g id="figure-17-3-14-patch_2">
@@ -6310,28 +6332,28 @@ L 427.396364 167.85162
 L 427.396364 12.726349 
 L 41.21 12.726349 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-3-14-matplotlib.axis_1">
     <g id="figure-17-3-14-xtick_1">
      <g id="figure-17-3-14-line2d_1">
       <path d="M 108.917999 167.85162 
 L 108.917999 12.726349 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_2">
       <defs>
        <path id="figure-17-3-14-m9a47eb7c38" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="108.917999" y="167.85162" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="108.917999" y="167.85162" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_1">
       <!-- -0.5 -->
-      <g style="fill: #6b7280" transform="translate(101.433624 183.77962) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(101.433624 183.77962) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-49" d="M 442 1670 
 L 442 2221 
@@ -6432,16 +6454,16 @@ z
      <g id="figure-17-3-14-line2d_3">
       <path d="M 234.303182 167.85162 
 L 234.303182 12.726349 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_4">
       <g>
-       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="234.303182" y="167.85162" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="234.303182" y="167.85162" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_2">
       <!-- 0.2 -->
-      <g style="fill: #6b7280" transform="translate(228.415057 183.77962) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(228.415057 183.77962) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -6485,16 +6507,16 @@ z
      <g id="figure-17-3-14-line2d_5">
       <path d="M 359.688365 167.85162 
 L 359.688365 12.726349 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_6">
       <g>
-       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="359.688365" y="167.85162" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-m9a47eb7c38" x="359.688365" y="167.85162" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_3">
       <!-- 0.8 -->
-      <g style="fill: #6b7280" transform="translate(353.80024 183.77962) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(353.80024 183.77962) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -6554,7 +6576,7 @@ z
     </g>
     <g id="figure-17-3-14-text_4">
      <!-- Equity–Treasury correlation -->
-     <g style="fill: #111418" transform="translate(178.690916 202.09562) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(178.690916 202.09562) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-14-IBMPlexSansThai-Regular-25" d="M 595 0 
 L 595 4467 
@@ -6965,21 +6987,21 @@ z
      <g id="figure-17-3-14-line2d_7">
       <path d="M 41.21 167.85162 
 L 427.396364 167.85162 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_8">
       <defs>
        <path id="figure-17-3-14-mef061b1690" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="167.85162" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="167.85162" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_5">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(29.41 172.31562) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 172.31562) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-14-IBMPlexSansThai-Regular-3b"/>
       </g>
      </g>
@@ -6988,16 +7010,16 @@ L -3.5 0
      <g id="figure-17-3-14-line2d_9">
       <path d="M 41.21 136.949926 
 L 427.396364 136.949926 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_10">
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="136.949926" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="136.949926" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_6">
       <!-- 2 -->
-      <g style="fill: #6b7280" transform="translate(29.41 141.413926) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 141.413926) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-14-IBMPlexSansThai-Regular-3f"/>
       </g>
      </g>
@@ -7006,16 +7028,16 @@ L 427.396364 136.949926
      <g id="figure-17-3-14-line2d_11">
       <path d="M 41.21 106.048233 
 L 427.396364 106.048233 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_12">
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="106.048233" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="106.048233" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_7">
       <!-- 4 -->
-      <g style="fill: #6b7280" transform="translate(29.41 110.512233) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 110.512233) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -7046,16 +7068,16 @@ z
      <g id="figure-17-3-14-line2d_13">
       <path d="M 41.21 75.146539 
 L 427.396364 75.146539 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_14">
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="75.146539" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="75.146539" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_8">
       <!-- 6 -->
-      <g style="fill: #6b7280" transform="translate(29.41 79.610539) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 79.610539) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -7105,16 +7127,16 @@ z
      <g id="figure-17-3-14-line2d_15">
       <path d="M 41.21 44.244845 
 L 427.396364 44.244845 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_16">
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="44.244845" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="44.244845" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_9">
       <!-- 8 -->
-      <g style="fill: #6b7280" transform="translate(29.41 48.708845) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 48.708845) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-3-14-IBMPlexSansThai-Regular-45"/>
       </g>
      </g>
@@ -7123,16 +7145,16 @@ L 427.396364 44.244845
      <g id="figure-17-3-14-line2d_17">
       <path d="M 41.21 13.343152 
 L 427.396364 13.343152 
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-3-14-line2d_18">
       <g>
-       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="13.343152" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-3-14-mef061b1690" x="41.21" y="13.343152" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-3-14-text_10">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(24.61 17.807152) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 17.807152) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-3-14-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -7157,7 +7179,7 @@ z
     </g>
     <g id="figure-17-3-14-text_11">
      <!-- Minimum-variance standard deviation (%) -->
-     <g style="fill: #111418" transform="translate(15.804 174.817969) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 174.817969) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-3-14-IBMPlexSansThai-Regular-2d" d="M 4077 3763 
 L 4045 3763 
@@ -7403,7 +7425,7 @@ L 159.072072 167.85162
 L 159.072072 66.702084 
 L 58.763926 66.702084 
 z
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: #059669"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: var(--plot-good)"/>
    </g>
    <g id="figure-17-3-14-patch_4">
     <path d="M 184.149109 167.85162 
@@ -7411,7 +7433,7 @@ L 284.457255 167.85162
 L 284.457255 20.113267 
 L 184.149109 20.113267 
 z
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-3-14-patch_5">
     <path d="M 309.534292 167.85162 
@@ -7419,27 +7441,27 @@ L 409.842438 167.85162
 L 409.842438 29.655045 
 L 309.534292 29.655045 
 z
-" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: #dc2626"/>
+" clip-path="url(#figure-17-3-14-pbbcc8f9f59)" style="fill: var(--plot-bad)"/>
    </g>
    <g id="figure-17-3-14-patch_6">
     <path d="M 41.21 167.85162 
 L 41.21 12.726349 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-14-patch_7">
     <path d="M 427.396364 167.85162 
 L 427.396364 12.726349 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-14-patch_8">
     <path d="M 41.21 167.85162 
 L 427.396364 167.85162 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-3-14-patch_9">
     <path d="M 41.21 12.726349 
 L 427.396364 12.726349 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
@@ -7450,15 +7472,16 @@ L 427.396364 12.726349
  </defs>
 </svg>
 <figcaption>เมื่อ standard deviation เดิม แต่ correlation สูงขึ้น พอร์ตความเสี่ยงต่ำสุดยังหาได้แต่ความเสี่ยงต่ำสุดสูงขึ้น แท่งเหล่านี้ใช้ค่าเฉลี่ยไม่เกี่ยวข้องกับการหา minimum variance เพื่อแยกให้เห็นว่า covariance เป็นข้อมูลที่ขับการกระจายโดยตรง</figcaption></figure>
-<h4>เมทริกซ์มีมากกว่าสองคอลัมน์</h4><p>ตัวอย่างสองสินทรัพย์ทำให้เห็นทุกพจน์ แต่ desk จริงถืออายุ UST หลายจุดและแหล่งความเสี่ยงหลายด้าน เมทริกซ์ covariance ขนาดใหญ่จึงยากทั้งต่อการอ่านและต่อการประมาณ หัวข้อถัดไปจะหมุนเมทริกซ์นั้นเป็นทิศทางไม่กี่ทิศที่รายงานและ stress เป็น USD ได้</p>
-<div class="box example"><h4>กลับไปตอบบัญชี 10 ล้าน USD</h4><p>พอร์ตความเสี่ยงต่ำสุดถือหุ้นประมาณ 1,428,571 USD และพันธบัตร 8,571,429 USD ให้ค่าเฉลี่ย 4.5714% และส่วนเบี่ยงเบนมาตรฐาน 9.5618% พอร์ตสัมผัสถือหุ้นประมาณ 4,814,815 USD และพันธบัตร 5,185,185 USD ให้ค่าเฉลี่ย 5.9259% ความเสี่ยง 11.8148% และ Sharpe ratio ประมาณ 0.3323 ตามแบบจำลอง</p></div>
-<div class="box pitfall"><h4>เครื่องขยายความมั่นใจของข้อมูล</h4><p>ตัวแก้ปัญหาไม่รู้ว่าค่าเฉลี่ยที่ป้อนคือการเดาหรือการค้นพบ มันจึงแต่งน้ำหนักให้การเดาดูเป็นวิทยาศาสตร์ อย่าเรียกผลตอบแทนที่สูงขึ้นว่าเงินฟรี: การกู้ ค่าซื้อขาย ความไม่แน่นอนของ covariance และความเสี่ยงหางยังมีอยู่ ใช้การจำกัดน้ำหนักและตรวจนอกชุดประมาณ ก่อนต่อยอดการลดความคลาดเคลื่อนใน 17.8–17.9</p></div>
+<h4>Matrix มีมากกว่าสองคอลัมน์</h4><p>ตัวอย่างสองสินทรัพย์ทำให้เห็นทุกพจน์ แต่ desk จริงถืออายุ UST หลายจุดและแหล่งความเสี่ยงหลายด้าน covariance matrix ขนาดใหญ่จึงยากทั้งต่อการอ่านและต่อการประมาณ หัวข้อถัดไปจะหมุน matrix นั้นเป็นทิศทางไม่กี่ทิศที่รายงานและ stress เป็น USD ได้</p>
+<div class="box example answer"><div class="box-kicker">คำตอบและวิธีเช็ก</div><h4>คำตอบ → ตรวจเอง → ใช้ตัดสินใจ</h4><p>Portfolio ที่ risk ต่ำสุดถือหุ้นประมาณ 1,428,571 USD และ Treasury 8,571,429 USD ให้ expected return 4.5714% และ standard deviation 9.5618%</p>
+<p>Portfolio ที่แตะเส้นจากเงินสดถือหุ้นประมาณ 4,814,815 USD และ Treasury 5,185,185 USD ให้ expected return 5.9259%, standard deviation 11.8148% และ Sharpe ratio ประมาณ 0.3323 ตาม model</p>
+<p>ตรวจเร็ว: เงินสองฝั่งของแต่ละคำตอบรวมกลับมาใกล้ 10 ล้าน USD ถ้าไม่ครบ แปลว่ายังไม่ได้ normalize weights</p></div>
+<div class="box pitfall"><div class="box-kicker">ระวังตรงนี้</div><h4>เครื่องขยายความมั่นใจของข้อมูล</h4><p>ตัวแก้ปัญหาไม่รู้ว่าค่าเฉลี่ยที่ป้อนคือการเดาหรือการค้นพบ มันจึงแต่งน้ำหนักให้การเดาดูเป็นวิทยาศาสตร์ อย่าเรียกผลตอบแทนที่สูงขึ้นว่าเงินฟรี: การกู้ ค่าซื้อขาย ความไม่แน่นอนของ covariance และความเสี่ยงหางยังมีอยู่ ใช้การจำกัดน้ำหนักและตรวจนอกชุดประมาณ ก่อนต่อยอดการลดความคลาดเคลื่อนใน 17.8–17.9</p></div>
 <h4>คำนวณซ้ำได้</h4><pre class="code"><code>import numpy as np
 S=np.array([[.04,.004],[.004,.01]]);m=np.array([.08,.04])
 w0=np.linalg.solve(S,np.ones(2));w0/=w0.sum()
 u=np.linalg.solve(S,m-.02);wt=u/u.sum()
 assert np.allclose(w0,[1/7,6/7]) and np.allclose(wt,[13/27,14/27])
 for w in [w0,wt]: print(w@m,np.sqrt(w@S@w),(w@m-.02)/np.sqrt(w@S@w))</code></pre><div class="reading">โค้ดนี้ตรวจตัวเลขจากสมมติฐานในตัวอย่าง ใช้ Python ร่วมกับ NumPy และ SciPy</div>
-<div class="box takeaway"><h4>สรุปที่ใช้ได้จริง</h4><ul><li>รวม covariance ก่อนถอดรากจึงได้ความเสี่ยงของส่วนผสม</li><li>พอร์ตความเสี่ยงต่ำสุดไม่ต้องรู้ค่าเฉลี่ย แต่พอร์ตสัมผัสไวต่อค่าเฉลี่ยมาก</li><li>Frontier เป็นคำตอบภายใต้ข้อจำกัดและพารามิเตอร์ที่ระบุ ไม่ใช่ข้อสรุปของตลาด</li></ul></div>
-<div class="cites">อ้างอิง: <span class="cite">[FE3 M2 L1–L7]</span> · <span class="cite">[FE3 M4 L1–L2]</span></div>
-</section><nav class="cites"><a href="17.2.html">17.2 The Kelly Criterion</a> <a href="17.4.html">17.4 Principal Component Analysis (PCA)</a></nav></div></body></html>
+<div class="box takeaway"><h4>สรุปที่ใช้ได้จริง</h4><ul><li>รวม covariance ก่อนถอดรากจึงได้ความเสี่ยงของส่วนผสม</li><li>พอร์ตความเสี่ยงต่ำสุดไม่ต้องรู้ค่าเฉลี่ย แต่พอร์ตสัมผัสไวต่อค่าเฉลี่ยมาก</li><li>Frontier เป็นคำตอบภายใต้ข้อจำกัดและ parameter ที่ระบุ ไม่ใช่ข้อสรุปของตลาด</li></ul></div>
+</section><nav class="book-nav bottom-nav"><div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="17.2.html" aria-label="17.2 The Kelly Criterion">17.2 The Kelly Criterion</a></div><div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="17.4.html" aria-label="17.4 Principal Component Analysis (PCA)">17.4 Principal Component Analysis (PCA)</a></div></nav></div></body></html>

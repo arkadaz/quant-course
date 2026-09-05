@@ -1,8 +1,9 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>14.6 The Multiple Testing Problem</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="cites"><a href="../index.html">สารบัญ</a> · <a href="../chapters/14.html">บทที่ 14</a></nav><section class="topic" id="t14-6">
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>14.6 The Multiple Testing Problem</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../chapters/14.html">บทที่ 14</a><span class="topic-progress">หัวข้อ 88/142</span></nav><section class="topic" id="t14-6">
 <h3><span class="tnum">14.6</span> The Multiple Testing Problem</h3>
-<p class="subtitle">ก่อนเชื่อ Sharpe ที่ดีที่สุด ให้เปิดสมุดบัญชีของทุกกฎ universe parameter และการดูข้อมูลที่ลองมา</p>
-<div class="hook"><p>research pod ลอง strategy 200 แบบบนข้อมูลห้าปี ทุกแบบไม่มี alpha จริง แต่สิบแบบมี p-value ต่ำกว่า 5% โดยเฉลี่ย และแบบที่ดีที่สุดมี Sharpe ที่ดูน่าเล่าใน meeting. นี่ไม่ใช่ความโชคร้ายของสถิติ; นี่คือสิ่งที่ความบังเอิญทำเป็นงานประจำเมื่อเราเปิดประตูให้มัน 200 บาน.</p></div>
-<div class="box jargon"><h4>ศัพท์การเงินที่เพิ่งโผล่มา</h4><dl><dt>multiple testing</dt><dd>multiple testing คือการทดสอบ hypotheses หลายข้อแล้วตีความผู้ชนะด้วยเกณฑ์ของการทดสอบเดียว ใช้ระบุ selection bias จาก parameter search, universe search และ researcher degrees of freedom</dd><dt>family-wise error rate (FWER)</dt><dd>family-wise error rate คือโอกาสที่จะเกิด false positive อย่างน้อยหนึ่งครั้งในทั้งชุดการทดสอบ ใช้คุมความเสี่ยงเมื่อของปลอมเพียงหนึ่งกลยุทธ์มีต้นทุนสูงมาก</dd><dt>false discovery rate (FDR)</dt><dd>false discovery rate คือสัดส่วนเฉลี่ยของ false positives ในกลุ่มที่ประกาศ discovery ใช้คัด candidate จำนวนมากเพื่อนำไปทดลองต่อ โดยยอมให้มีของปลอมปนในงบที่ประกาศ</dd><dt>Bonferroni correction</dt><dd>Bonferroni correction แบ่ง error budget ทั้งชุดให้แต่ละ test โดยใช้ <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24.416537pt' height='11.955168pt' viewBox='.478207 -8.966376 24.416537 11.955168'>
+<p class="subtitle">นับทุกแบบที่เคยลอง ก่อนเชื่อผู้ชนะ</p>
+<div class="hook"><p>ลองกุญแจ 200 ดอกกับประตูที่ไม่มีดอกใดถูก; คุณเดาว่าจะมีบางดอกดูเหมือนเปิดได้เพราะความบังเอิญหรือไม่? เฉลย: มี และ research ที่เก็บแต่ผู้ชนะกำลังรายงาน noise ที่ได้ถ้วยรางวัล.</p>
+<p>มุกของ multiple testing คือสุ่มโทรหา 200 เบอร์แล้วดีใจกับคนรับสาย — p-value เดี่ยวไม่รู้ว่าคุณโทรมากี่ครั้ง</p></div>
+<details class="box jargon reference-panel"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">ศัพท์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">9 คำ</span></summary><div class="reference-body"><dl><dt>multiple testing</dt><dd>multiple testing คือการทดสอบ hypotheses หลายข้อแล้วตีความผู้ชนะด้วยเกณฑ์ของการทดสอบเดียว ใช้ระบุ selection bias จาก parameter search, universe search และ researcher degrees of freedom</dd><dt>family-wise error rate (FWER)</dt><dd>family-wise error rate คือโอกาสที่จะเกิด false positive อย่างน้อยหนึ่งครั้งในทั้งชุดการทดสอบ ใช้คุมความเสี่ยงเมื่อของปลอมเพียงหนึ่งกลยุทธ์มีต้นทุนสูงมาก</dd><dt>false discovery rate (FDR)</dt><dd>false discovery rate คือสัดส่วนเฉลี่ยของ false positives ในกลุ่มที่ประกาศ discovery ใช้คัด candidate จำนวนมากเพื่อนำไปทดลองต่อ โดยยอมให้มีของปลอมปนในงบที่ประกาศ</dd><dt>Bonferroni correction</dt><dd>Bonferroni correction แบ่ง error budget ทั้งชุดให้แต่ละ test โดยใช้ <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24.416537pt' height='11.955168pt' viewBox='.478207 -8.966376 24.416537 11.955168'>
 <defs>
 <path id="inline-0-d577872a609999ba0278-g0-11" d='M5.535243-3.024658C5.535243-4.184309 4.877709-5.272229 3.610461-5.272229C2.044334-5.272229 .478207-3.56264 .478207-1.865006C.478207-.824907 1.123786 .119552 2.343213 .119552C3.084433 .119552 3.969116-.167372 4.817933-.884682C4.985305-.215193 5.355915 .119552 5.869988 .119552C6.515567 .119552 6.838356-.549938 6.838356-.705355C6.838356-.812951 6.75467-.812951 6.718804-.812951C6.623163-.812951 6.611208-.777086 6.575342-.681445C6.467746-.382565 6.192777-.119552 5.905853-.119552C5.535243-.119552 5.535243-.884682 5.535243-1.613948C6.75467-3.072478 7.041594-4.578829 7.041594-4.590785C7.041594-4.698381 6.945953-4.698381 6.910087-4.698381C6.802491-4.698381 6.790535-4.662516 6.742715-4.447323C6.587298-3.921295 6.276463-2.988792 5.535243-2.008468V-3.024658ZM4.782067-1.171606C3.730012-.227148 2.785554-.119552 2.367123-.119552C1.518306-.119552 1.279203-.872727 1.279203-1.43462C1.279203-1.948692 1.542217-3.16812 1.912827-3.825654C2.402989-4.662516 3.072478-5.033126 3.610461-5.033126C4.770112-5.033126 4.770112-3.514819 4.770112-2.510585C4.770112-2.211706 4.758157-1.900872 4.758157-1.601993C4.758157-1.362889 4.770112-1.303113 4.782067-1.171606Z'/>
 <path id="inline-0-d577872a609999ba0278-g0-61" d='M5.128767-8.524035C5.128767-8.53599 5.200498-8.715318 5.200498-8.739228C5.200498-8.88269 5.080946-8.966376 4.985305-8.966376C4.925529-8.966376 4.817933-8.966376 4.722291-8.703362L.71731 2.546451C.71731 2.558406 .645579 2.737733 .645579 2.761644C.645579 2.905106 .765131 2.988792 .860772 2.988792C.932503 2.988792 1.0401 2.976837 1.123786 2.725778L5.128767-8.524035Z'/>
@@ -13,8 +14,8 @@
 <use x='7.521724' y='0' xlink:href="#inline-0-d577872a609999ba0278-g0-61"/>
 <use x='12.724382' y='0' xlink:href="#inline-0-d577872a609999ba0278-g0-77"/>
 </g>
-</svg> ใช้คุม family-wise error โดยไม่ต้องสมมติว่า tests อิสระ</dd><dt>Benjamini-Hochberg procedure</dt><dd>Benjamini-Hochberg procedure เรียง p-values และเทียบกับเส้น threshold ตามลำดับ ใช้ควบคุม false discovery rate ในการ screen signals อย่างเป็นระบบ</dd><dt>data snooping</dt><dd>data snooping คือการให้ผลจากข้อมูลเดิมชี้นำการเลือก model ซ้ำแล้วนำผลนั้นมาทดสอบเหมือนไม่เคยเลือก ใช้เรียกความเสียหายของ out-of-sample evidence ที่ถูกใช้ไปแล้ว</dd><dt>Sharpe ratio (SR)</dt><dd>Sharpe ratio คือ excess return เทียบกับ volatility ใน horizon เดียวกัน ใช้สรุปผลตอบแทนต่อความเสี่ยง แต่ threshold ต้องปรับตามจำนวน trials และ research paths ที่ลอง</dd><dt>Law of Large Numbers (LLN)</dt><dd>LLN บอกว่าค่าเฉลี่ยจากการทำซ้ำจำนวนมากเข้าใกล้ค่าคาดหวังภายใต้เงื่อนไขที่เหมาะสม ใช้เตือนว่าผลชนะระยะสั้นยังไม่ใช่ evidence ระยะยาว</dd><dt>Central Limit Theorem (CLT)</dt><dd>CLT อธิบายรูปโดยประมาณของ sampling distribution เมื่อรวม observations จำนวนมาก ใช้สร้าง test statistic และ interval แต่ไม่ได้ล้างปัญหา selection หรือ tail risk</dd></dl></div>
-<h4>สัญลักษณ์ที่ใช้ในหัวข้อนี้</h4><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.535489pt' height='10.472727pt' viewBox='.585803 -8.16538 40.535489 10.472727'>
+</svg> ใช้คุม family-wise error โดยไม่ต้องสมมติว่า tests อิสระ</dd><dt>Benjamini-Hochberg procedure</dt><dd>Benjamini-Hochberg procedure เรียง p-values และเทียบกับเส้น threshold ตามลำดับ ใช้ควบคุม false discovery rate ในการ screen signals อย่างเป็นระบบ</dd><dt>data snooping</dt><dd>data snooping คือการให้ผลจากข้อมูลเดิมชี้นำการเลือก model ซ้ำแล้วนำผลนั้นมาทดสอบเหมือนไม่เคยเลือก ใช้เรียกความเสียหายของ out-of-sample evidence ที่ถูกใช้ไปแล้ว</dd><dt>Sharpe ratio (SR)</dt><dd>Sharpe ratio คือ excess return เทียบกับ volatility ใน horizon เดียวกัน ใช้สรุปผลตอบแทนต่อความเสี่ยง แต่ threshold ต้องปรับตามจำนวน trials และ research paths ที่ลอง</dd><dt>Law of Large Numbers (LLN)</dt><dd>LLN บอกว่าค่าเฉลี่ยจากการทำซ้ำจำนวนมากเข้าใกล้ expected value หรือค่าเฉลี่ยระยะยาวภายใต้เงื่อนไขที่เหมาะสม ใช้เตือนว่าผลชนะระยะสั้นยังไม่ใช่ evidence ระยะยาว</dd><dt>Central Limit Theorem (CLT)</dt><dd>CLT อธิบายรูปโดยประมาณของ sampling distribution เมื่อรวม observations จำนวนมาก ใช้สร้าง test statistic และ interval แต่ไม่ได้ล้างปัญหา selection หรือ tail risk</dd></dl></div></details>
+<details class="reference-panel symbols-box"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">สัญลักษณ์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">4 รายการ</span></summary><div class="reference-body"><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.535489pt' height='10.472727pt' viewBox='.585803 -8.16538 40.535489 10.472727'>
 <defs>
 <path id="inline-1-43e74d90dd3a8319c912-g1-11" d='M5.535243-3.024658C5.535243-4.184309 4.877709-5.272229 3.610461-5.272229C2.044334-5.272229 .478207-3.56264 .478207-1.865006C.478207-.824907 1.123786 .119552 2.343213 .119552C3.084433 .119552 3.969116-.167372 4.817933-.884682C4.985305-.215193 5.355915 .119552 5.869988 .119552C6.515567 .119552 6.838356-.549938 6.838356-.705355C6.838356-.812951 6.75467-.812951 6.718804-.812951C6.623163-.812951 6.611208-.777086 6.575342-.681445C6.467746-.382565 6.192777-.119552 5.905853-.119552C5.535243-.119552 5.535243-.884682 5.535243-1.613948C6.75467-3.072478 7.041594-4.578829 7.041594-4.590785C7.041594-4.698381 6.945953-4.698381 6.910087-4.698381C6.802491-4.698381 6.790535-4.662516 6.742715-4.447323C6.587298-3.921295 6.276463-2.988792 5.535243-2.008468V-3.024658ZM4.782067-1.171606C3.730012-.227148 2.785554-.119552 2.367123-.119552C1.518306-.119552 1.279203-.872727 1.279203-1.43462C1.279203-1.948692 1.542217-3.16812 1.912827-3.825654C2.402989-4.662516 3.072478-5.033126 3.610461-5.033126C4.770112-5.033126 4.770112-3.514819 4.770112-2.510585C4.770112-2.211706 4.758157-1.900872 4.758157-1.601993C4.758157-1.362889 4.770112-1.303113 4.782067-1.171606Z'/>
 <path id="inline-1-43e74d90dd3a8319c912-g1-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
@@ -29,7 +30,7 @@
 <use x='29.933317' y='0' xlink:href="#inline-1-43e74d90dd3a8319c912-g1-11"/>
 <use x='37.455041' y='-4.338437' xlink:href="#inline-1-43e74d90dd3a8319c912-g0-3"/>
 </g>
-</svg></td><td>จำนวน tests, per-family error budget และ per-test Bonferroni threshold</td><td class='unit'>count; ไม่มีหน่วย; ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.7604em;vertical-align:-0.3210em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.230493pt' height='9.124467pt' viewBox='-.37061 -5.272229 41.230493 9.124467'>
+</svg></td><td>จำนวน tests, per-family error budget และ per-test Bonferroni threshold</td><td class='unit'>count; ไม่มีหน่วย; ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.7604em;vertical-align:-0.3210em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.230493pt' height='9.124467pt' viewBox='-.37061 -5.272229 41.230493 9.124467'>
 <defs>
 <path id="inline-2-fdd04bb61626bf145955-g1-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="inline-2-fdd04bb61626bf145955-g1-112" d='M.514072 1.518306C.430386 1.876961 .382565 1.972603-.107597 1.972603C-.251059 1.972603-.37061 1.972603-.37061 2.199751C-.37061 2.223661-.358655 2.319303-.227148 2.319303C-.071731 2.319303 .095641 2.295392 .251059 2.295392H.765131C1.016189 2.295392 1.625903 2.319303 1.876961 2.319303C1.948692 2.319303 2.092154 2.319303 2.092154 2.10411C2.092154 1.972603 2.008468 1.972603 1.80523 1.972603C1.255293 1.972603 1.219427 1.888917 1.219427 1.793275C1.219427 1.649813 1.75741-.406476 1.829141-.681445C1.960648-.3467 2.283437 .119552 2.905106 .119552C4.25604 .119552 5.71457-1.637858 5.71457-3.395268C5.71457-4.495143 5.092902-5.272229 4.196264-5.272229C3.431133-5.272229 2.785554-4.531009 2.654047-4.363636C2.558406-4.961395 2.092154-5.272229 1.613948-5.272229C1.267248-5.272229 .992279-5.104857 .765131-4.65056C.549938-4.220174 .382565-3.490909 .382565-3.443088S.430386-3.335492 .514072-3.335492C.609714-3.335492 .621669-3.347447 .6934-3.622416C.872727-4.327771 1.099875-5.033126 1.578082-5.033126C1.853051-5.033126 1.948692-4.841843 1.948692-4.483188C1.948692-4.196264 1.912827-4.076712 1.865006-3.861519L.514072 1.518306ZM2.582316-3.730012C2.666002-4.064757 3.000747-4.411457 3.19203-4.578829C3.323537-4.698381 3.718057-5.033126 4.172354-5.033126C4.698381-5.033126 4.937484-4.507098 4.937484-3.88543C4.937484-3.311582 4.60274-1.960648 4.303861-1.338979C4.004981-.6934 3.455044-.119552 2.905106-.119552C2.092154-.119552 1.960648-1.147696 1.960648-1.195517C1.960648-1.231382 1.984558-1.327024 1.996513-1.3868L2.582316-3.730012Z'/>
@@ -49,14 +50,14 @@
 <use x='30.343495' y='0' xlink:href="#inline-2-fdd04bb61626bf145955-g1-59"/>
 <use x='35.587654' y='0' xlink:href="#inline-2-fdd04bb61626bf145955-g1-113"/>
 </g>
-</svg></td><td>p-value ของ test <svg style="height:0.6645em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='3.060523pt' height='7.974097pt' viewBox='.32279 -7.854545 3.060523 7.974097'>
+</svg></td><td>p-value ของ test <svg style="height:0.6645em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='3.060523pt' height='7.974097pt' viewBox='.32279 -7.854545 3.060523 7.974097'>
 <defs>
 <path id="inline-3-523295ef44654ae63bb0-g0-105" d='M3.383313-1.709589C3.383313-1.769365 3.335492-1.817186 3.263761-1.817186C3.156164-1.817186 3.144209-1.78132 3.084433-1.578082C2.773599-.490162 2.283437-.119552 1.888917-.119552C1.745455-.119552 1.578082-.155417 1.578082-.514072C1.578082-.836862 1.721544-1.195517 1.853051-1.554172L2.689913-3.777833C2.725778-3.873474 2.809465-4.088667 2.809465-4.315816C2.809465-4.817933 2.450809-5.272229 1.865006-5.272229C.765131-5.272229 .32279-3.53873 .32279-3.443088C.32279-3.395268 .37061-3.335492 .454296-3.335492C.561893-3.335492 .573848-3.383313 .621669-3.550685C.908593-4.554919 1.362889-5.033126 1.829141-5.033126C1.936737-5.033126 2.139975-5.021171 2.139975-4.638605C2.139975-4.327771 1.984558-3.93325 1.888917-3.670237L1.052055-1.446575C.980324-1.255293 .908593-1.06401 .908593-.848817C.908593-.310834 1.279203 .119552 1.853051 .119552C2.952927 .119552 3.383313-1.625903 3.383313-1.709589ZM3.287671-7.460025C3.287671-7.639352 3.144209-7.854545 2.881196-7.854545C2.606227-7.854545 2.295392-7.591532 2.295392-7.280697C2.295392-6.981818 2.546451-6.886177 2.689913-6.886177C3.012702-6.886177 3.287671-7.197011 3.287671-7.460025Z'/>
 </defs>
 <g id="inline-3-523295ef44654ae63bb0-page1">
 <use x='0' y='0' xlink:href="#inline-3-523295ef44654ae63bb0-g0-105"/>
 </g>
-</svg>, p-value ที่เรียงลำดับ และ false discovery rate target</td><td class='unit'>ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='62.565333pt' height='10.472727pt' viewBox='.490162 -8.16538 62.565333 10.472727'>
+</svg>, p-value ที่เรียงลำดับ และ false discovery rate target</td><td class='unit'>ไม่มีหน่วย</td></tr><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='62.565333pt' height='10.472727pt' viewBox='.490162 -8.16538 62.565333 10.472727'>
 <defs>
 <path id="inline-4-4979a9fc855be0385156-g1-69" d='M7.627397-3.060523H7.364384C7.07746-1.195517 6.790535-.3467 4.770112-.3467H3.144209C2.618182-.3467 2.594271-.430386 2.594271-.824907V-4.052802H3.682192C4.829888-4.052802 4.961395-3.682192 4.961395-2.654047H5.224408V-5.798257H4.961395C4.961395-4.770112 4.829888-4.399502 3.682192-4.399502H2.594271V-7.316563C2.594271-7.711083 2.618182-7.79477 3.144209-7.79477H4.734247C6.491656-7.79477 6.862267-7.197011 7.041594-5.475467H7.304608L6.993773-8.141469H.490162V-7.79477H.729265C1.590037-7.79477 1.625903-7.675218 1.625903-7.232877V-.908593C1.625903-.466252 1.590037-.3467 .729265-.3467H.490162V0H7.149191L7.627397-3.060523Z'/>
 <path id="inline-4-4979a9fc855be0385156-g1-70" d='M6.826401-8.141469H.490162V-7.79477H.729265C1.590037-7.79477 1.625903-7.675218 1.625903-7.232877V-.908593C1.625903-.466252 1.590037-.3467 .729265-.3467H.490162V0C.777086-.02391 1.841096-.02391 2.199751-.02391C2.618182-.02391 3.670237-.02391 4.016936 0V-.3467H3.658281C2.618182-.3467 2.594271-.490162 2.594271-.920548V-3.897385H3.646326C4.770112-3.897385 4.889664-3.502864 4.889664-2.49863H5.152677V-5.642839H4.889664C4.889664-4.638605 4.770112-4.244085 3.646326-4.244085H2.594271V-7.316563C2.594271-7.711083 2.618182-7.79477 3.144209-7.79477H4.638605C6.360149-7.79477 6.706849-7.161146 6.874222-5.475467H7.137235L6.826401-8.141469Z'/>
@@ -76,7 +77,7 @@
 <use x='48.964512' y='0' xlink:href="#inline-4-4979a9fc855be0385156-g0-59"/>
 <use x='54.20867' y='0' xlink:href="#inline-4-4979a9fc855be0385156-g0-82"/>
 </g>
-</svg></td><td>family-wise error rate, จำนวน false discoveries และจำนวน discoveries ทั้งหมด</td><td class='unit'>ไม่มีหน่วย; count; count</td></tr><tr><td class='sym'><svg style="height:1.2132em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='39.083682pt' height='14.558745pt' viewBox='.286924 -12.251398 39.083682 14.558745'>
+</svg></td><td>family-wise error rate, จำนวน false discoveries และจำนวน discoveries ทั้งหมด</td><td class='unit'>ไม่มีหน่วย; count; count</td></tr><tr><td class='sym'><svg style="height:1.2132em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='39.083682pt' height='14.558745pt' viewBox='.286924 -12.251398 39.083682 14.558745'>
 <defs>
 <path id="inline-5-c07993eb1ddd161544bd-g2-82" d='M5.045081-4.064757C6.228643-4.339726 7.149191-5.092902 7.149191-6.01345C7.149191-7.173101 5.798257-8.16538 4.076712-8.16538H.502117V-7.81868H.74122C1.601993-7.81868 1.637858-7.699128 1.637858-7.256787V-.908593C1.637858-.466252 1.601993-.3467 .74122-.3467H.502117V0C.777086-.02391 1.75741-.02391 2.10411-.02391S3.443088-.02391 3.718057 0V-.3467H3.478954C2.618182-.3467 2.582316-.466252 2.582316-.908593V-3.969116H3.969116C4.435367-3.969116 4.877709-3.837609 5.200498-3.502864C5.606974-3.048568 5.606974-2.797509 5.606974-1.972603C5.606974-1.028144 5.606974-.71731 6.133001-.203238C6.312329-.02391 6.814446 .251059 7.483935 .251059C8.416438 .251059 8.571856-.789041 8.571856-1.0401C8.571856-1.111831 8.571856-1.219427 8.440349-1.219427C8.320797-1.219427 8.320797-1.147696 8.308842-1.028144C8.249066-.310834 7.902366 .011955 7.519801 .011955C6.969863 .011955 6.850311-.549938 6.75467-1.183562C6.742715-1.267248 6.670984-1.78132 6.635118-2.080199C6.551432-2.677958 6.503611-3.060523 6.144956-3.431133C6.01345-3.56264 5.702615-3.88543 5.045081-4.064757ZM3.921295-4.208219H2.582316V-7.340473C2.582316-7.615442 2.582316-7.758904 2.833375-7.806725C2.940971-7.81868 3.299626-7.81868 3.53873-7.81868C4.507098-7.81868 6.03736-7.81868 6.03736-6.01345C6.03736-4.97335 5.475467-4.208219 3.921295-4.208219Z'/>
 <path id="inline-5-c07993eb1ddd161544bd-g2-83" d='M2.486675-4.985305C1.876961-5.140722 1.338979-5.738481 1.338979-6.503611C1.338979-7.340473 2.008468-8.093649 2.940971-8.093649C4.901619-8.093649 5.164633-6.156912 5.236364-5.642839C5.260274-5.499377 5.260274-5.451557 5.379826-5.451557C5.511333-5.451557 5.511333-5.511333 5.511333-5.726526V-8.141469C5.511333-8.356663 5.511333-8.416438 5.391781-8.416438C5.355915-8.416438 5.308095-8.416438 5.224408-8.261021L4.829888-7.531756C4.25604-8.272976 3.466999-8.416438 2.940971-8.416438C1.613948-8.416438 .645579-7.352428 .645579-6.133001C.645579-5.559153 .848817-5.033126 1.291158-4.554919C1.709589-4.088667 2.12802-3.981071 2.976837-3.765878C3.395268-3.670237 4.052802-3.502864 4.220174-3.431133C4.782067-3.156164 5.152677-2.510585 5.152677-1.841096C5.152677-.944458 4.519054-.095641 3.526775-.095641C2.988792-.095641 2.247572-.227148 1.661768-.74122C.968369-1.362889 .920548-2.223661 .908593-2.618182C.896638-2.713823 .800996-2.713823 .777086-2.713823C.645579-2.713823 .645579-2.654047 .645579-2.438854V-.02391C.645579 .191283 .645579 .251059 .765131 .251059C.836862 .251059 .848817 .227148 .932503 .083686C.980324-.011955 1.231382-.454296 1.327024-.633624C1.75741-.155417 2.510585 .251059 3.53873 .251059C4.877709 .251059 5.846077-.884682 5.846077-2.199751C5.846077-2.929016 5.571108-3.466999 5.248319-3.861519C4.805978-4.399502 4.267995-4.531009 3.801743-4.65056L2.486675-4.985305Z'/>
@@ -94,10 +95,10 @@
 <use x='24.295428' y='0' xlink:href="#inline-5-c07993eb1ddd161544bd-g2-83"/>
 <use x='30.79875' y='0' xlink:href="#inline-5-c07993eb1ddd161544bd-g2-82"/>
 </g>
-</svg></td><td>จำนวนปีอิสระ, normal critical value และ Sharpe ratio ที่รายงาน</td><td class='unit'>years; ไม่มีหน่วย; ไม่มีหน่วย</td></tr></tbody></table></div>
-<h4>สิ่งที่ต้องนับคือ research path ทั้งหมด</h4><p>จำนวน tests ไม่ได้หมายถึงแค่จำนวนแถวใน presentation. ทุก universe, factor transform, lookback, rebalance day, stop rule, cost assumption, filter และ chart ที่ใช้ตัดสินใจอาจเป็น research path. ตัวอย่างเช่น 20 lookbacks, 5 rebalance schedules และ 4 exit rules สร้าง candidate ได้ 400 แบบก่อนเริ่มเปลี่ยน test statistic</p>
-<p>ในตัวอย่างนี้สมมติ 200 variants ที่ใช้ข้อมูลยาวเท่ากันและมี null ว่า alpha เป็นศูนย์ โดยตั้ง family error budget 5%. จำนวน 200 เป็น illustration ที่ตรวจได้; ถ้า search history กว้างกว่านี้ต้องนับให้กว้างตามจริง <span class="cite">[FE3 M4 L11–L12]</span></p>
-<h4>ของปลอมที่คาดว่าจะผ่าน และโอกาสเจออย่างน้อยหนึ่งตัว</h4><figure class="formula"><svg style="height:1.1150em;vertical-align:-0.0010em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='340.863211pt' height='13.38052pt' viewBox='23.524391 -13.368565 340.863211 13.38052'>
+</svg></td><td>จำนวนปีอิสระ, normal critical value และ Sharpe ratio ที่รายงาน</td><td class='unit'>years; ไม่มีหน่วย; ไม่มีหน่วย</td></tr></tbody></table></div></div></details>
+<div class="worked-intro"><div class="box-kicker">เริ่มจากโจทย์</div><h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4><p class="example-givens"><span class="teaching-label">ของที่โจทย์ให้</span>จำนวน tests ไม่ได้หมายถึงแค่จำนวนแถวใน presentation. ทุก universe, factor transform, lookback, rebalance day, stop rule, cost assumption, filter และ chart ที่ใช้ตัดสินใจอาจเป็น research path. ตัวอย่างเช่น 20 lookbacks, 5 rebalance schedules และ 4 exit rules สร้าง candidate ได้ 400 แบบก่อนเริ่มเปลี่ยน test statistic</p>
+<p>ในตัวอย่างนี้สมมติ 200 variants ที่ใช้ข้อมูลยาวเท่ากันและมี null ว่า alpha เป็นศูนย์ โดยตั้ง family error budget 5%. จำนวน 200 เป็น illustration ที่ตรวจได้; ถ้า search history กว้างกว่านี้ต้องนับให้กว้างตามจริง</p></div>
+<div class="formula-block formula-role-input formula-step"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><div class="step-heading"><span class="step-number" aria-label="ขั้นที่ 1">1</span><h4>ของปลอมที่คาดว่าจะผ่าน และโอกาสเจออย่างน้อยหนึ่งตัว</h4></div><figure class="formula formula-role-input"><svg style="height:1.1150em;vertical-align:-0.0010em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='340.863211pt' height='13.38052pt' viewBox='23.524391 -13.368565 340.863211 13.38052'>
 <defs>
 <path id="formula-14-6-3-aa827e3384726bc6b8ad-g2-11" d='M5.535243-3.024658C5.535243-4.184309 4.877709-5.272229 3.610461-5.272229C2.044334-5.272229 .478207-3.56264 .478207-1.865006C.478207-.824907 1.123786 .119552 2.343213 .119552C3.084433 .119552 3.969116-.167372 4.817933-.884682C4.985305-.215193 5.355915 .119552 5.869988 .119552C6.515567 .119552 6.838356-.549938 6.838356-.705355C6.838356-.812951 6.75467-.812951 6.718804-.812951C6.623163-.812951 6.611208-.777086 6.575342-.681445C6.467746-.382565 6.192777-.119552 5.905853-.119552C5.535243-.119552 5.535243-.884682 5.535243-1.613948C6.75467-3.072478 7.041594-4.578829 7.041594-4.590785C7.041594-4.698381 6.945953-4.698381 6.910087-4.698381C6.802491-4.698381 6.790535-4.662516 6.742715-4.447323C6.587298-3.921295 6.276463-2.988792 5.535243-2.008468V-3.024658ZM4.782067-1.171606C3.730012-.227148 2.785554-.119552 2.367123-.119552C1.518306-.119552 1.279203-.872727 1.279203-1.43462C1.279203-1.948692 1.542217-3.16812 1.912827-3.825654C2.402989-4.662516 3.072478-5.033126 3.610461-5.033126C4.770112-5.033126 4.770112-3.514819 4.770112-2.510585C4.770112-2.211706 4.758157-1.900872 4.758157-1.601993C4.758157-1.362889 4.770112-1.303113 4.782067-1.171606Z'/>
 <path id="formula-14-6-3-aa827e3384726bc6b8ad-g2-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
@@ -171,7 +172,7 @@
 <use x='356.398886' y='-2.988792' xlink:href="#formula-14-6-3-aa827e3384726bc6b8ad-g3-115"/>
 <use x='361.016245' y='-2.988792' xlink:href="#formula-14-6-3-aa827e3384726bc6b8ad-g3-41"/>
 </g>
-</svg><div class="reading">expectation <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='60.106769pt' height='11.955168pt' viewBox='.549938 -8.966376 60.106769 11.955168'>
+</svg><div class="reading"><p>expectation <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='60.106769pt' height='11.955168pt' viewBox='.549938 -8.966376 60.106769 11.955168'>
 <defs>
 <path id="inline-6-772d94b06f846b92e656-g0-11" d='M5.535243-3.024658C5.535243-4.184309 4.877709-5.272229 3.610461-5.272229C2.044334-5.272229 .478207-3.56264 .478207-1.865006C.478207-.824907 1.123786 .119552 2.343213 .119552C3.084433 .119552 3.969116-.167372 4.817933-.884682C4.985305-.215193 5.355915 .119552 5.869988 .119552C6.515567 .119552 6.838356-.549938 6.838356-.705355C6.838356-.812951 6.75467-.812951 6.718804-.812951C6.623163-.812951 6.611208-.777086 6.575342-.681445C6.467746-.382565 6.192777-.119552 5.905853-.119552C5.535243-.119552 5.535243-.884682 5.535243-1.613948C6.75467-3.072478 7.041594-4.578829 7.041594-4.590785C7.041594-4.698381 6.945953-4.698381 6.910087-4.698381C6.802491-4.698381 6.790535-4.662516 6.742715-4.447323C6.587298-3.921295 6.276463-2.988792 5.535243-2.008468V-3.024658ZM4.782067-1.171606C3.730012-.227148 2.785554-.119552 2.367123-.119552C1.518306-.119552 1.279203-.872727 1.279203-1.43462C1.279203-1.948692 1.542217-3.16812 1.912827-3.825654C2.402989-4.662516 3.072478-5.033126 3.610461-5.033126C4.770112-5.033126 4.770112-3.514819 4.770112-2.510585C4.770112-2.211706 4.758157-1.900872 4.758157-1.601993C4.758157-1.362889 4.770112-1.303113 4.782067-1.171606Z'/>
 <path id="inline-6-772d94b06f846b92e656-g0-69" d='M8.308842-2.773599C8.320797-2.809465 8.356663-2.893151 8.356663-2.940971C8.356663-3.000747 8.308842-3.060523 8.237111-3.060523C8.18929-3.060523 8.16538-3.048568 8.129514-3.012702C8.105604-3.000747 8.105604-2.976837 7.998007-2.737733C7.292653-1.06401 6.77858-.3467 4.865753-.3467H3.120299C2.952927-.3467 2.929016-.3467 2.857285-.358655C2.725778-.37061 2.713823-.394521 2.713823-.490162C2.713823-.573848 2.737733-.645579 2.761644-.753176L3.58655-4.052802H4.770112C5.702615-4.052802 5.774346-3.849564 5.774346-3.490909C5.774346-3.371357 5.774346-3.263761 5.69066-2.905106C5.66675-2.857285 5.654795-2.809465 5.654795-2.773599C5.654795-2.689913 5.71457-2.654047 5.786301-2.654047C5.893898-2.654047 5.905853-2.737733 5.953674-2.905106L6.635118-5.678705C6.635118-5.738481 6.587298-5.798257 6.515567-5.798257C6.40797-5.798257 6.396015-5.750436 6.348194-5.583064C6.109091-4.662516 5.869988-4.399502 4.805978-4.399502H3.670237L4.411457-7.340473C4.519054-7.758904 4.542964-7.79477 5.033126-7.79477H6.742715C8.2132-7.79477 8.51208-7.400249 8.51208-6.491656C8.51208-6.479701 8.51208-6.144956 8.464259-5.750436C8.452304-5.702615 8.440349-5.630884 8.440349-5.606974C8.440349-5.511333 8.500125-5.475467 8.571856-5.475467C8.655542-5.475467 8.703362-5.523288 8.727273-5.738481L8.978331-7.830635C8.978331-7.866501 9.002242-7.986052 9.002242-8.009963C9.002242-8.141469 8.894645-8.141469 8.679452-8.141469H2.84533C2.618182-8.141469 2.49863-8.141469 2.49863-7.926276C2.49863-7.79477 2.582316-7.79477 2.785554-7.79477C3.526775-7.79477 3.526775-7.711083 3.526775-7.579577C3.526775-7.519801 3.514819-7.47198 3.478954-7.340473L1.865006-.884682C1.75741-.466252 1.733499-.3467 .896638-.3467C.669489-.3467 .549938-.3467 .549938-.131507C.549938 0 .621669 0 .860772 0H6.862267C7.12528 0 7.137235-.011955 7.220922-.203238L8.308842-2.773599Z'/>
@@ -190,7 +191,7 @@
 <use x='41.041506' y='0' xlink:href="#inline-6-772d94b06f846b92e656-g0-77"/>
 <use x='53.615113' y='0' xlink:href="#inline-6-772d94b06f846b92e656-g0-11"/>
 </g>
-</svg> ไม่ต้องอาศัย independence; แต่สูตร FWER แบบเท่ากับด้านขวาใช้ tests อิสระ และมีไว้สร้าง intuition ว่าการเลือกผู้ชนะทำให้ threshold เดี่ยวพังเร็วเพียงใด</div></figure>
+</svg> ไม่ต้องอาศัย independence; แต่สูตร FWER แบบเท่ากับด้านขวาใช้ tests อิสระ และมีไว้สร้าง intuition ว่าการเลือกผู้ชนะทำให้ threshold เดี่ยวพังเร็วเพียงใด</p></div></figure></div>
 <h4>ภาพ 14.6a — 5% ต่อครั้งกลายเป็นเกือบแน่นอนเมื่อสะสม</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.374545pt" height="209.52pt" viewBox="0 0 433.374545 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -216,7 +217,7 @@ L 433.374545 209.52
 L 433.374545 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-14-6-4-axes_1">
    <g id="figure-14-6-4-patch_2">
@@ -225,28 +226,28 @@ L 427.614545 164.71
 L 427.614545 5.76 
 L 46.01 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-14-6-4-matplotlib.axis_1">
     <g id="figure-14-6-4-xtick_1">
      <g id="figure-14-6-4-line2d_1">
       <path d="M 61.612379 164.71 
 L 61.612379 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_2">
       <defs>
        <path id="figure-14-6-4-m0ea878b4b9" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="61.612379" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="61.612379" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(59.212379 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(59.212379 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -288,16 +289,16 @@ z
      <g id="figure-14-6-4-line2d_3">
       <path d="M 105.194442 164.71 
 L 105.194442 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_4">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="105.194442" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="105.194442" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_2">
       <!-- 25 -->
-      <g style="fill: #6b7280" transform="translate(100.394442 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(100.394442 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -376,16 +377,16 @@ z
      <g id="figure-14-6-4-line2d_5">
       <path d="M 148.776505 164.71 
 L 148.776505 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_6">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="148.776505" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="148.776505" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_3">
       <!-- 50 -->
-      <g style="fill: #6b7280" transform="translate(143.976505 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(143.976505 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-42"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -395,16 +396,16 @@ L 148.776505 5.76
      <g id="figure-14-6-4-line2d_7">
       <path d="M 192.358568 164.71 
 L 192.358568 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_8">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="192.358568" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="192.358568" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_4">
       <!-- 75 -->
-      <g style="fill: #6b7280" transform="translate(187.558568 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(187.558568 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-44" d="M 1120 0 
 L 2829 4006 
@@ -428,16 +429,16 @@ z
      <g id="figure-14-6-4-line2d_9">
       <path d="M 235.940631 164.71 
 L 235.940631 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_10">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="235.940631" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="235.940631" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_5">
       <!-- 100 -->
-      <g style="fill: #6b7280" transform="translate(228.740631 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(228.740631 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -465,16 +466,16 @@ z
      <g id="figure-14-6-4-line2d_11">
       <path d="M 279.522695 164.71 
 L 279.522695 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_12">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="279.522695" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="279.522695" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_6">
       <!-- 125 -->
-      <g style="fill: #6b7280" transform="translate(272.322695 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(272.322695 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3f" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-42" transform="translate(120 0)"/>
@@ -485,16 +486,16 @@ L 279.522695 5.76
      <g id="figure-14-6-4-line2d_13">
       <path d="M 323.104758 164.71 
 L 323.104758 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_14">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="323.104758" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="323.104758" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_7">
       <!-- 150 -->
-      <g style="fill: #6b7280" transform="translate(315.904758 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(315.904758 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(120 0)"/>
@@ -505,16 +506,16 @@ L 323.104758 5.76
      <g id="figure-14-6-4-line2d_15">
       <path d="M 366.686821 164.71 
 L 366.686821 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_16">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="366.686821" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="366.686821" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_8">
       <!-- 175 -->
-      <g style="fill: #6b7280" transform="translate(359.486821 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(359.486821 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-44" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-42" transform="translate(120 0)"/>
@@ -525,16 +526,16 @@ L 366.686821 5.76
      <g id="figure-14-6-4-line2d_17">
       <path d="M 410.268884 164.71 
 L 410.268884 5.76 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_18">
       <g>
-       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="410.268884" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-m0ea878b4b9" x="410.268884" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_9">
       <!-- 200 -->
-      <g style="fill: #6b7280" transform="translate(403.068884 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(403.068884 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(120 0)"/>
@@ -543,7 +544,7 @@ L 410.268884 5.76
     </g>
     <g id="figure-14-6-4-text_10">
      <!-- Number of tests M -->
-     <g style="fill: #111418" transform="translate(199.660554 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(199.660554 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-4-IBMPlexSansThai-Regular-2e" d="M 1677 2726 
 L 1139 3718 
@@ -867,21 +868,21 @@ z
      <g id="figure-14-6-4-line2d_19">
       <path d="M 46.01 164.71 
 L 427.614545 164.71 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_20">
       <defs>
        <path id="figure-14-6-4-maadbfb7d96" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_11">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(34.21 169.174) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(34.21 169.174) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b"/>
       </g>
      </g>
@@ -890,16 +891,16 @@ L -3.5 0
      <g id="figure-14-6-4-line2d_21">
       <path d="M 46.01 133.845922 
 L 427.614545 133.845922 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_22">
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="133.845922" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="133.845922" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_12">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(29.41 138.309922) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 138.309922) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -909,16 +910,16 @@ L 427.614545 133.845922
      <g id="figure-14-6-4-line2d_23">
       <path d="M 46.01 102.981845 
 L 427.614545 102.981845 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_24">
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="102.981845" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="102.981845" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_13">
       <!-- 40 -->
-      <g style="fill: #6b7280" transform="translate(29.41 107.445845) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 107.445845) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -950,16 +951,16 @@ z
      <g id="figure-14-6-4-line2d_25">
       <path d="M 46.01 72.117767 
 L 427.614545 72.117767 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_26">
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="72.117767" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="72.117767" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_14">
       <!-- 60 -->
-      <g style="fill: #6b7280" transform="translate(29.41 76.581767) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 76.581767) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -1010,16 +1011,16 @@ z
      <g id="figure-14-6-4-line2d_27">
       <path d="M 46.01 41.253689 
 L 427.614545 41.253689 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_28">
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="41.253689" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="41.253689" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_15">
       <!-- 80 -->
-      <g style="fill: #6b7280" transform="translate(29.41 45.717689) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 45.717689) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-4-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -1080,16 +1081,16 @@ z
      <g id="figure-14-6-4-line2d_29">
       <path d="M 46.01 10.389612 
 L 427.614545 10.389612 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-4-line2d_30">
       <g>
-       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="10.389612" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-4-maadbfb7d96" x="46.01" y="10.389612" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-4-text_16">
       <!-- 100 -->
-      <g style="fill: #6b7280" transform="translate(24.61 14.853612) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 14.853612) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-4-IBMPlexSansThai-Regular-3b" transform="translate(120 0)"/>
@@ -1098,7 +1099,7 @@ L 427.614545 10.389612
     </g>
     <g id="figure-14-6-4-text_17">
      <!-- P(at least one false positive) % -->
-     <g style="fill: #111418" transform="translate(15.804 147.371563) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 147.371563) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-4-IBMPlexSansThai-Regular-30" d="M 595 0 
 L 595 4467 
@@ -1428,27 +1429,27 @@ L 305.671933 10.507028
 L 366.686821 10.409113 
 L 410.268884 10.395021 
 L 410.268884 10.395021 
-" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-4-pb57867e04a)" style="fill: none; stroke: var(--plot-bad); stroke-width: 2; stroke-linecap: round"/>
    </g>
    <g id="figure-14-6-4-patch_3">
     <path d="M 46.01 164.71 
 L 46.01 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-4-patch_4">
     <path d="M 427.614545 164.71 
 L 427.614545 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-4-patch_5">
     <path d="M 46.01 164.71 
 L 427.614545 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-4-patch_6">
     <path d="M 46.01 5.76 
 L 427.614545 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-4-PathCollection_1">
     <defs>
@@ -1465,16 +1466,16 @@ z
 "/>
     </defs>
     <g clip-path="url(#figure-14-6-4-pb57867e04a)">
-     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="63.355661" y="156.993981" style="fill: #1d4ed8; stroke: #1d4ed8"/>
+     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="63.355661" y="156.993981" style="fill: var(--plot-accent); stroke: var(--plot-accent)"/>
     </g>
     <g clip-path="url(#figure-14-6-4-pb57867e04a)">
-     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="86.018334" y="85.647804" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="86.018334" y="85.647804" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-4-pb57867e04a)">
-     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="140.060092" y="25.735271" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="140.060092" y="25.735271" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-4-pb57867e04a)">
-     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="410.268884" y="10.395021" style="fill: #dc2626; stroke: #dc2626"/>
+     <use xlink:href="#figure-14-6-4-C0_0_0216e0b770" x="410.268884" y="10.395021" style="fill: var(--plot-bad); stroke: var(--plot-bad)"/>
     </g>
    </g>
   </g>
@@ -1485,17 +1486,58 @@ z
   </clipPath>
  </defs>
 </svg>
-<figcaption>เส้นแสดง <svg style="height:0.6625em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='13.061957pt' height='7.950187pt' viewBox='1.08792 -7.950187 13.061957 7.950187'>
+<figcaption>เส้นแสดง <svg style="height:1.0652em;vertical-align:-0.2501em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='78.428474pt' height='12.78277pt' viewBox='1.08792 -9.782023 78.428474 12.78277'>
 <defs>
-<path id="inline-7-373adb6b2e6cc0c784b0-g1-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
-<path id="inline-7-373adb6b2e6cc0c784b0-g0-0" d='M7.878456-2.749689C8.081694-2.749689 8.296887-2.749689 8.296887-2.988792S8.081694-3.227895 7.878456-3.227895H1.41071C1.207472-3.227895 .992279-3.227895 .992279-2.988792S1.207472-2.749689 1.41071-2.749689H7.878456Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g3-40" d='M3.88543 2.905106C3.88543 2.86924 3.88543 2.84533 3.682192 2.642092C2.486675 1.43462 1.817186-.537983 1.817186-2.976837C1.817186-5.296139 2.379078-7.292653 3.765878-8.703362C3.88543-8.810959 3.88543-8.834869 3.88543-8.870735C3.88543-8.942466 3.825654-8.966376 3.777833-8.966376C3.622416-8.966376 2.642092-8.105604 2.056289-6.933998C1.446575-5.726526 1.171606-4.447323 1.171606-2.976837C1.171606-1.912827 1.338979-.490162 1.960648 .789041C2.666002 2.223661 3.646326 3.000747 3.777833 3.000747C3.825654 3.000747 3.88543 2.976837 3.88543 2.905106Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g3-41" d='M3.371357-2.976837C3.371357-3.88543 3.251806-5.36787 2.582316-6.75467C1.876961-8.18929 .896638-8.966376 .765131-8.966376C.71731-8.966376 .657534-8.942466 .657534-8.870735C.657534-8.834869 .657534-8.810959 .860772-8.607721C2.056289-7.400249 2.725778-5.427646 2.725778-2.988792C2.725778-.669489 2.163885 1.327024 .777086 2.737733C.657534 2.84533 .657534 2.86924 .657534 2.905106C.657534 2.976837 .71731 3.000747 .765131 3.000747C.920548 3.000747 1.900872 2.139975 2.486675 .968369C3.096389-.251059 3.371357-1.542217 3.371357-2.976837Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g3-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g3-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g3-53" d='M1.530262-6.850311C2.044334-6.682939 2.462765-6.670984 2.594271-6.670984C3.945205-6.670984 4.805978-7.663263 4.805978-7.830635C4.805978-7.878456 4.782067-7.938232 4.710336-7.938232C4.686426-7.938232 4.662516-7.938232 4.554919-7.890411C3.88543-7.603487 3.311582-7.567621 3.000747-7.567621C2.211706-7.567621 1.649813-7.806725 1.422665-7.902366C1.338979-7.938232 1.315068-7.938232 1.303113-7.938232C1.207472-7.938232 1.207472-7.866501 1.207472-7.675218V-4.124533C1.207472-3.90934 1.207472-3.837609 1.350934-3.837609C1.41071-3.837609 1.422665-3.849564 1.542217-3.993026C1.876961-4.483188 2.438854-4.770112 3.036613-4.770112C3.670237-4.770112 3.981071-4.184309 4.076712-3.981071C4.27995-3.514819 4.291905-2.929016 4.291905-2.47472S4.291905-1.338979 3.957161-.800996C3.694147-.37061 3.227895-.071731 2.701868-.071731C1.912827-.071731 1.135741-.609714 .920548-1.482441C.980324-1.458531 1.052055-1.446575 1.111831-1.446575C1.315068-1.446575 1.637858-1.566127 1.637858-1.972603C1.637858-2.307347 1.41071-2.49863 1.111831-2.49863C.896638-2.49863 .585803-2.391034 .585803-1.924782C.585803-.908593 1.398755 .251059 2.725778 .251059C4.076712 .251059 5.260274-.884682 5.260274-2.402989C5.260274-3.825654 4.303861-5.009215 3.048568-5.009215C2.367123-5.009215 1.841096-4.710336 1.530262-4.375592V-6.850311Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g0-0" d='M7.878456-2.749689C8.081694-2.749689 8.296887-2.749689 8.296887-2.988792S8.081694-3.227895 7.878456-3.227895H1.41071C1.207472-3.227895 .992279-3.227895 .992279-2.988792S1.207472-2.749689 1.41071-2.749689H7.878456Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g2-58" d='M2.199751-.573848C2.199751-.920548 1.912827-1.159651 1.625903-1.159651C1.279203-1.159651 1.0401-.872727 1.0401-.585803C1.0401-.239103 1.327024 0 1.613948 0C1.960648 0 2.199751-.286924 2.199751-.573848Z'/>
+<path id="inline-7-c077f9e2bb61b075a95d-g1-77" d='M7.738979-4.798007C7.81868-5.108842 7.83462-5.180573 8.392528-5.180573C8.575841-5.180573 8.671482-5.180573 8.671482-5.332005C8.671482-5.443587 8.56787-5.443587 8.424408-5.443587H7.396264C7.181071-5.443587 7.157161-5.443587 7.053549-5.284184L4.048817-.73325L3.339477-5.228394C3.307597-5.427646 3.299626-5.443587 3.060523-5.443587H1.984558C1.841096-5.443587 1.737484-5.443587 1.737484-5.292154C1.737484-5.180573 1.841096-5.180573 1.968618-5.180573C2.231631-5.180573 2.462765-5.180573 2.462765-5.053051C2.462765-5.021171 2.454795-5.0132 2.430884-4.909589L1.41868-.852802C1.323039-.454296 1.115816-.278954 .581818-.263014C.533998-.263014 .438356-.255044 .438356-.111582C.438356-.063761 .478207 0 .557908 0C.589788 0 .773101-.02391 1.346949-.02391C1.976588-.02391 2.096139 0 2.16787 0C2.199751 0 2.319303 0 2.319303-.151432C2.319303-.247073 2.231631-.263014 2.175841-.263014C1.888917-.270984 1.649813-.318804 1.649813-.597758C1.649813-.637609 1.673724-.749191 1.673724-.757161L2.757659-5.084932H2.765629L3.53873-.215193C3.56264-.087671 3.57061 0 3.682192 0S3.849564-.087671 3.897385-.159402L7.173101-5.148692L7.181071-5.140722L6.057285-.629639C5.985554-.326775 5.969614-.263014 5.379826-.263014C5.228394-.263014 5.132752-.263014 5.132752-.111582C5.132752-.079701 5.156663 0 5.260274 0S5.602989-.01594 5.71457-.02391H6.224658C6.965878-.02391 7.157161 0 7.212951 0C7.260772 0 7.372354 0 7.372354-.151432C7.372354-.263014 7.268742-.263014 7.13325-.263014C7.10934-.263014 6.965878-.263014 6.830386-.278954C6.663014-.294894 6.647073-.318804 6.647073-.390535C6.647073-.430386 6.663014-.478207 6.670984-.518057L7.738979-4.798007Z'/>
 </defs>
-<g id="inline-7-373adb6b2e6cc0c784b0-page1">
-<use x='0' y='0' xlink:href="#inline-7-373adb6b2e6cc0c784b0-g1-49"/>
-<use x='5.85299' y='0' xlink:href="#inline-7-373adb6b2e6cc0c784b0-g0-0"/>
+<g id="inline-7-c077f9e2bb61b075a95d-page1">
+<use x='0' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-49"/>
+<use x='8.509654' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g0-0"/>
+<use x='20.464814' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-40"/>
+<use x='25.01714' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-49"/>
+<use x='33.526794' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g0-0"/>
+<use x='45.481954' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-48"/>
+<use x='51.334945' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g2-58"/>
+<use x='54.586606' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-48"/>
+<use x='60.439596' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-53"/>
+<use x='66.292586' y='0' xlink:href="#inline-7-c077f9e2bb61b075a95d-g3-41"/>
+<use x='70.844912' y='-4.338437' xlink:href="#inline-7-c077f9e2bb61b075a95d-g1-77"/>
 </g>
-</svg>(1-0.05)^{M}$<code>เมื่อ tests independent. ที่</code>M=14<code>โอกาสได้ false positive อย่างน้อยหนึ่งตัวเกิน 50%, ที่</code>M=45$ เกิน 90%, และที่ 200 เป็น 99.9965%; การไม่เจออะไรเลยต่างหากที่แปลก.</figcaption></figure>
-<h4>Bonferroni: คุมทั้ง family โดยแบ่ง error budget</h4><figure class="formula"><svg style="height:2.8587em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='269.42697pt' height='34.304199pt' viewBox='59.205329 -35.420012 269.42697 34.304199'>
+</svg> เมื่อ tests independent. ที่ <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='39.110392pt' height='8.16538pt' viewBox='.585803 -8.16538 39.110392 8.16538'>
+<defs>
+<path id="inline-8-3263a331d38927c0e6dd-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
+<path id="inline-8-3263a331d38927c0e6dd-g1-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
+<path id="inline-8-3263a331d38927c0e6dd-g1-52" d='M4.315816-7.782814C4.315816-8.009963 4.315816-8.069738 4.148443-8.069738C4.052802-8.069738 4.016936-8.069738 3.921295-7.926276L.32279-2.343213V-1.996513H3.466999V-.908593C3.466999-.466252 3.443088-.3467 2.570361-.3467H2.331258V0C2.606227-.02391 3.550685-.02391 3.88543-.02391S5.176588-.02391 5.451557 0V-.3467H5.212453C4.351681-.3467 4.315816-.466252 4.315816-.908593V-1.996513H5.523288V-2.343213H4.315816V-7.782814ZM3.526775-6.850311V-2.343213H.621669L3.526775-6.850311Z'/>
+<path id="inline-8-3263a331d38927c0e6dd-g1-61" d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
+</defs>
+<g id="inline-8-3263a331d38927c0e6dd-page1">
+<use x='0' y='0' xlink:href="#inline-8-3263a331d38927c0e6dd-g0-77"/>
+<use x='15.894436' y='0' xlink:href="#inline-8-3263a331d38927c0e6dd-g1-61"/>
+<use x='28.319917' y='0' xlink:href="#inline-8-3263a331d38927c0e6dd-g1-49"/>
+<use x='34.172908' y='0' xlink:href="#inline-8-3263a331d38927c0e6dd-g1-52"/>
+</g>
+</svg> โอกาสได้ false positive อย่างน้อยหนึ่งตัวเกิน 50%, ที่ <svg style="height:0.7014em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='38.847378pt' height='8.416438pt' viewBox='.585803 -8.16538 38.847378 8.416438'>
+<defs>
+<path id="inline-9-8a3a908287f6070fb766-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
+<path id="inline-9-8a3a908287f6070fb766-g1-52" d='M4.315816-7.782814C4.315816-8.009963 4.315816-8.069738 4.148443-8.069738C4.052802-8.069738 4.016936-8.069738 3.921295-7.926276L.32279-2.343213V-1.996513H3.466999V-.908593C3.466999-.466252 3.443088-.3467 2.570361-.3467H2.331258V0C2.606227-.02391 3.550685-.02391 3.88543-.02391S5.176588-.02391 5.451557 0V-.3467H5.212453C4.351681-.3467 4.315816-.466252 4.315816-.908593V-1.996513H5.523288V-2.343213H4.315816V-7.782814ZM3.526775-6.850311V-2.343213H.621669L3.526775-6.850311Z'/>
+<path id="inline-9-8a3a908287f6070fb766-g1-53" d='M1.530262-6.850311C2.044334-6.682939 2.462765-6.670984 2.594271-6.670984C3.945205-6.670984 4.805978-7.663263 4.805978-7.830635C4.805978-7.878456 4.782067-7.938232 4.710336-7.938232C4.686426-7.938232 4.662516-7.938232 4.554919-7.890411C3.88543-7.603487 3.311582-7.567621 3.000747-7.567621C2.211706-7.567621 1.649813-7.806725 1.422665-7.902366C1.338979-7.938232 1.315068-7.938232 1.303113-7.938232C1.207472-7.938232 1.207472-7.866501 1.207472-7.675218V-4.124533C1.207472-3.90934 1.207472-3.837609 1.350934-3.837609C1.41071-3.837609 1.422665-3.849564 1.542217-3.993026C1.876961-4.483188 2.438854-4.770112 3.036613-4.770112C3.670237-4.770112 3.981071-4.184309 4.076712-3.981071C4.27995-3.514819 4.291905-2.929016 4.291905-2.47472S4.291905-1.338979 3.957161-.800996C3.694147-.37061 3.227895-.071731 2.701868-.071731C1.912827-.071731 1.135741-.609714 .920548-1.482441C.980324-1.458531 1.052055-1.446575 1.111831-1.446575C1.315068-1.446575 1.637858-1.566127 1.637858-1.972603C1.637858-2.307347 1.41071-2.49863 1.111831-2.49863C.896638-2.49863 .585803-2.391034 .585803-1.924782C.585803-.908593 1.398755 .251059 2.725778 .251059C4.076712 .251059 5.260274-.884682 5.260274-2.402989C5.260274-3.825654 4.303861-5.009215 3.048568-5.009215C2.367123-5.009215 1.841096-4.710336 1.530262-4.375592V-6.850311Z'/>
+<path id="inline-9-8a3a908287f6070fb766-g1-61" d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
+</defs>
+<g id="inline-9-8a3a908287f6070fb766-page1">
+<use x='0' y='0' xlink:href="#inline-9-8a3a908287f6070fb766-g0-77"/>
+<use x='15.894436' y='0' xlink:href="#inline-9-8a3a908287f6070fb766-g1-61"/>
+<use x='28.319917' y='0' xlink:href="#inline-9-8a3a908287f6070fb766-g1-52"/>
+<use x='34.172908' y='0' xlink:href="#inline-9-8a3a908287f6070fb766-g1-53"/>
+</g>
+</svg> เกิน 90%, และที่ 200 เป็น 99.9965%; การไม่เจออะไรเลยต่างหากที่แปลก.</figcaption></figure>
+<div class="formula-block formula-role-input formula-step"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><div class="step-heading"><span class="step-number" aria-label="ขั้นที่ 2">2</span><h4>Bonferroni: คุมทั้ง family โดยแบ่ง error budget</h4></div><figure class="formula formula-role-input"><svg style="height:2.8587em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='269.42697pt' height='34.304199pt' viewBox='59.205329 -35.420012 269.42697 34.304199'>
 <defs>
 <path id="formula-14-6-5-d861a5a826d1839f625c-g5-49" d='M2.502615-5.076961C2.502615-5.292154 2.486675-5.300125 2.271482-5.300125C1.944707-4.98132 1.522291-4.790037 .765131-4.790037V-4.527024C.980324-4.527024 1.41071-4.527024 1.872976-4.742217V-.653549C1.872976-.358655 1.849066-.263014 1.091905-.263014H.812951V0C1.139726-.02391 1.825156-.02391 2.183811-.02391S3.235866-.02391 3.56264 0V-.263014H3.283686C2.526526-.263014 2.502615-.358655 2.502615-.653549V-5.076961Z'/>
 <path id="formula-14-6-5-d861a5a826d1839f625c-g5-61" d='M5.826152-2.654047C5.945704-2.654047 6.105106-2.654047 6.105106-2.83736S5.913823-3.020672 5.794271-3.020672H.781071C.661519-3.020672 .470237-3.020672 .470237-2.83736S.629639-2.654047 .749191-2.654047H5.826152ZM5.794271-.964384C5.913823-.964384 6.105106-.964384 6.105106-1.147696S5.945704-1.331009 5.826152-1.331009H.749191C.629639-1.331009 .470237-1.331009 .470237-1.147696S.661519-.964384 .781071-.964384H5.794271Z'/>
@@ -1566,9 +1608,10 @@ z
 <rect x='316.058692' y='-18.26029' height='.478187' width='12.573607'/>
 <use x='316.058692' y='-6.831742' xlink:href="#formula-14-6-5-d861a5a826d1839f625c-g4-77"/>
 </g>
-</svg><div class="reading">union bound ด้านซ้ายใช้ได้แม้ tests เกี่ยวข้องกัน; มัน conservative เพราะนับส่วนทับซ้อนซ้ำ แต่ทิศทางของความเข้มเป็น risk control ที่ตรวจสอบง่าย</div></figure>
-<div class="box example"><h4>ตัวอย่างคำนวณ — 200 strategies, 5 ปี, และเกณฑ์ใหม่</h4><p>ภายใต้ null ทั้ง 200 tests, false positives ที่คาดหวังคือ 10 ตัว และถ้า tests independent โอกาสเจออย่างน้อยหนึ่งตัวคือ 99.9965%. Bonferroni ให้ per-test threshold 0.00025. สำหรับ two-sided normal test critical value คือ 3.6623; เมื่อใช้ Sharpe inference กับข้อมูลอิสระ 5 ปี จึงต้องมี Sharpe ขั้นต่ำประมาณ 1.638 จึงผ่าน threshold นี้</p>
-<p>นอกจากนี้ extremum baseline ของ 200 independent Gaussian nulls มีค่าโดยประมาณ 1.456. ดังนั้น best in-sample Sharpe ที่ 1.40 อาจต่ำกว่ารางวัลที่ noise แจกให้โดยไม่ต้องมี signal. ให้ถือผลนี้เป็น candidate สำหรับ paper trade และ out-of-sample confirmation ไม่ใช่ deployable alpha</p></div>
+</svg><div class="reading"><p>union bound ด้านซ้ายใช้ได้แม้ tests เกี่ยวข้องกัน; มัน conservative เพราะนับส่วนทับซ้อนซ้ำ แต่ทิศทางของความเข้มเป็น risk control ที่ตรวจสอบง่าย</p></div></figure></div>
+<div class="box example answer"><div class="box-kicker">คำตอบและวิธีเช็ก</div><h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4><p class="example-answer-line"><span class="teaching-label">คำตอบ</span>ภายใต้ null ทั้ง 200 tests, false positives ที่คาดหวังคือ 10 ตัว และถ้า tests independent โอกาสเจออย่างน้อยหนึ่งตัวคือ 99.9965%. Bonferroni ให้ per-test threshold 0.00025. สำหรับ two-sided normal test critical value คือ 3.6623; เมื่อใช้ Sharpe inference กับข้อมูลอิสระ 5 ปี จึงต้องมี Sharpe ขั้นต่ำประมาณ 1.638 จึงผ่าน threshold นี้</p>
+<p>นอกจากนี้ extremum baseline ของ 200 independent Gaussian nulls มีค่าโดยประมาณ 1.456. ดังนั้น best in-sample Sharpe ที่ 1.40 อาจต่ำกว่ารางวัลที่ noise แจกให้โดยไม่ต้องมี signal. ให้ถือผลนี้เป็น candidate สำหรับ paper trade และ out-of-sample confirmation ไม่ใช่ deployable alpha</p>
+<p class="example-self-check"><span class="teaching-label">ตรวจเองใน 10 วินาที</span>กด <code>200*0.05</code> ต้องได้ false positives คาดหมาย 10 ตัว และ <code>0.05/200</code> ต้องได้ Bonferroni threshold 0.00025. ใช้เกณฑ์นี้คัด candidate ก่อนเปิด holdout หรือ paper trade.</p></div>
 <h4>ภาพ 14.6b — threshold Sharpe ต้องสูงขึ้นเมื่อ search กว้าง</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.587159pt" height="209.52pt" viewBox="0 0 433.587159 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -1594,7 +1637,7 @@ L 433.587159 209.52
 L 433.587159 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-14-6-7-axes_1">
    <g id="figure-14-6-7-patch_2">
@@ -1603,28 +1646,28 @@ L 427.827159 164.71
 L 427.827159 5.76 
 L 48.18625 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-14-6-7-matplotlib.axis_1">
     <g id="figure-14-6-7-xtick_1">
      <g id="figure-14-6-7-line2d_1">
       <path d="M 64.751015 164.71 
 L 64.751015 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_2">
       <defs>
        <path id="figure-14-6-7-m9439d23029" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="64.751015" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="64.751015" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(62.351015 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(62.351015 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -1666,16 +1709,16 @@ z
      <g id="figure-14-6-7-line2d_3">
       <path d="M 133.914963 164.71 
 L 133.914963 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_4">
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="133.914963" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="133.914963" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_2">
       <!-- 200 -->
-      <g style="fill: #6b7280" transform="translate(126.714963 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(126.714963 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -1719,16 +1762,16 @@ z
      <g id="figure-14-6-7-line2d_5">
       <path d="M 203.078911 164.71 
 L 203.078911 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_6">
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="203.078911" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="203.078911" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_3">
       <!-- 400 -->
-      <g style="fill: #6b7280" transform="translate(195.878911 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(195.878911 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -1761,16 +1804,16 @@ z
      <g id="figure-14-6-7-line2d_7">
       <path d="M 272.242859 164.71 
 L 272.242859 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_8">
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="272.242859" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="272.242859" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_4">
       <!-- 600 -->
-      <g style="fill: #6b7280" transform="translate(265.042859 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(265.042859 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -1822,16 +1865,16 @@ z
      <g id="figure-14-6-7-line2d_9">
       <path d="M 341.406806 164.71 
 L 341.406806 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_10">
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="341.406806" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="341.406806" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_5">
       <!-- 800 -->
-      <g style="fill: #6b7280" transform="translate(334.206806 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(334.206806 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -1893,16 +1936,16 @@ z
      <g id="figure-14-6-7-line2d_11">
       <path d="M 410.570754 164.71 
 L 410.570754 5.76 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_12">
       <g>
-       <use xlink:href="#figure-14-6-7-m9439d23029" x="410.570754" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m9439d23029" x="410.570754" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_6">
       <!-- 1000 -->
-      <g style="fill: #6b7280" transform="translate(400.970754 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(400.970754 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -1929,7 +1972,7 @@ z
     </g>
     <g id="figure-14-6-7-text_7">
      <!-- Test count M -->
-     <g style="fill: #111418" transform="translate(212.289908 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(212.289908 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-7-IBMPlexSansThai-Regular-34" d="M 2099 3994 
 L 2099 0 
@@ -2180,21 +2223,21 @@ z
      <g id="figure-14-6-7-line2d_13">
       <path d="M 48.18625 164.71 
 L 427.827159 164.71 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_14">
       <defs>
        <path id="figure-14-6-7-m34f41f895c" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_8">
       <!-- 0.00 -->
-      <g style="fill: #6b7280" transform="translate(24.61 169.174) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 169.174) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-4e" d="M 870 -77 
 Q 666 -77 573 25 
@@ -2221,16 +2264,16 @@ z
      <g id="figure-14-6-7-line2d_15">
       <path d="M 48.18625 146.6475 
 L 427.827159 146.6475 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_16">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="146.6475" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="146.6475" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_9">
       <!-- 0.25 -->
-      <g style="fill: #6b7280" transform="translate(24.61 151.1115) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 151.1115) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -2280,16 +2323,16 @@ z
      <g id="figure-14-6-7-line2d_17">
       <path d="M 48.18625 128.585 
 L 427.827159 128.585 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_18">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="128.585" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="128.585" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_10">
       <!-- 0.50 -->
-      <g style="fill: #6b7280" transform="translate(24.61 133.049) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 133.049) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -2301,16 +2344,16 @@ L 427.827159 128.585
      <g id="figure-14-6-7-line2d_19">
       <path d="M 48.18625 110.5225 
 L 427.827159 110.5225 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_20">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="110.5225" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="110.5225" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_11">
       <!-- 0.75 -->
-      <g style="fill: #6b7280" transform="translate(24.61 114.9865) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 114.9865) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-7-IBMPlexSansThai-Regular-44" d="M 1120 0 
 L 2829 4006 
@@ -2336,16 +2379,16 @@ z
      <g id="figure-14-6-7-line2d_21">
       <path d="M 48.18625 92.46 
 L 427.827159 92.46 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_22">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="92.46" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="92.46" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_12">
       <!-- 1.00 -->
-      <g style="fill: #6b7280" transform="translate(24.61 96.924) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 96.924) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -2357,16 +2400,16 @@ L 427.827159 92.46
      <g id="figure-14-6-7-line2d_23">
       <path d="M 48.18625 74.3975 
 L 427.827159 74.3975 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_24">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="74.3975" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="74.3975" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_13">
       <!-- 1.25 -->
-      <g style="fill: #6b7280" transform="translate(24.61 78.8615) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 78.8615) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3f" transform="translate(87.203125 0)"/>
@@ -2378,16 +2421,16 @@ L 427.827159 74.3975
      <g id="figure-14-6-7-line2d_25">
       <path d="M 48.18625 56.335 
 L 427.827159 56.335 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_26">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="56.335" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="56.335" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_14">
       <!-- 1.50 -->
-      <g style="fill: #6b7280" transform="translate(24.61 60.799) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 60.799) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -2399,16 +2442,16 @@ L 427.827159 56.335
      <g id="figure-14-6-7-line2d_27">
       <path d="M 48.18625 38.2725 
 L 427.827159 38.2725 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_28">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="38.2725" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="38.2725" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_15">
       <!-- 1.75 -->
-      <g style="fill: #6b7280" transform="translate(24.61 42.7365) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 42.7365) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-44" transform="translate(87.203125 0)"/>
@@ -2420,16 +2463,16 @@ L 427.827159 38.2725
      <g id="figure-14-6-7-line2d_29">
       <path d="M 48.18625 20.21 
 L 427.827159 20.21 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-7-line2d_30">
       <g>
-       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="20.21" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-7-m34f41f895c" x="48.18625" y="20.21" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-7-text_16">
       <!-- 2.00 -->
-      <g style="fill: #6b7280" transform="translate(24.61 24.674) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 24.674) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-7-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -2439,7 +2482,7 @@ L 427.827159 20.21
     </g>
     <g id="figure-14-6-7-text_17">
      <!-- Sharpe ratio -->
-     <g style="fill: #111418" transform="translate(15.804 109.863359) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 109.863359) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-7-IBMPlexSansThai-Regular-33" d="M 1850 -77 
 Q 1306 -77 922 131 
@@ -2660,7 +2703,7 @@ L 348.669021 35.165069
 L 398.812883 33.929357 
 L 410.570754 33.667897 
 L 410.570754 33.667897 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-bad); stroke-width: 2; stroke-linecap: round"/>
    </g>
    <g id="figure-14-6-7-line2d_32">
     <path d="M 65.442655 126.66649 
@@ -2700,34 +2743,34 @@ L 355.239596 46.137189
 L 402.27108 44.823212 
 L 410.570754 44.61185 
 L 410.570754 44.61185 
-" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: #1d4ed8; stroke-width: 2; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-7-p507e9d3aa4)" style="fill: none; stroke: var(--plot-accent); stroke-width: 2; stroke-linecap: round"/>
    </g>
    <g id="figure-14-6-7-patch_3">
     <path d="M 48.18625 164.71 
 L 48.18625 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-7-patch_4">
     <path d="M 427.827159 164.71 
 L 427.827159 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-7-patch_5">
     <path d="M 48.18625 164.71 
 L 427.827159 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-7-patch_6">
     <path d="M 48.18625 5.76 
 L 427.827159 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-7-legend_1">
     <g id="figure-14-6-7-line2d_33">
      <path d="M 54.48625 17.422 
 L 61.48625 17.422 
 L 68.48625 17.422 
-" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-bad); stroke-width: 2; stroke-linecap: round"/>
     </g>
     <g id="figure-14-6-7-text_18">
      <!-- Bonferroni SR threshold -->
@@ -2896,7 +2939,7 @@ z
      <path d="M 54.48625 32.472 
 L 61.48625 32.472 
 L 68.48625 32.472 
-" style="fill: none; stroke: #1d4ed8; stroke-width: 2; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-accent); stroke-width: 2; stroke-linecap: round"/>
     </g>
     <g id="figure-14-6-7-text_19">
      <!-- null maximum proxy -->
@@ -3007,7 +3050,7 @@ z
   </clipPath>
  </defs>
 </svg>
-<figcaption>เส้นแดงคือ Bonferroni two-sided threshold ที่ <svg style="height:0.6964em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='29.206496pt' height='8.356663pt' viewBox='.286924 -8.105604 29.206496 8.356663'>
+<figcaption>เส้นแดงคือ Bonferroni two-sided threshold ที่ <svg style="height:0.6964em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='29.206496pt' height='8.356663pt' viewBox='.286924 -8.105604 29.206496 8.356663'>
 <defs>
 <path id="inline-10-5ec8e0d45416fbe83158-g0-84" d='M4.985305-7.292653C5.057036-7.579577 5.080946-7.687173 5.260274-7.734994C5.355915-7.758904 5.750436-7.758904 6.001494-7.758904C7.197011-7.758904 7.758904-7.711083 7.758904-6.77858C7.758904-6.599253 7.711083-6.144956 7.639352-5.702615L7.627397-5.559153C7.627397-5.511333 7.675218-5.439601 7.746949-5.439601C7.866501-5.439601 7.866501-5.499377 7.902366-5.69066L8.249066-7.806725C8.272976-7.914321 8.272976-7.938232 8.272976-7.974097C8.272976-8.105604 8.201245-8.105604 7.962142-8.105604H1.422665C1.147696-8.105604 1.135741-8.093649 1.06401-7.878456L.334745-5.726526C.32279-5.702615 .286924-5.571108 .286924-5.559153C.286924-5.499377 .334745-5.439601 .406476-5.439601C.502117-5.439601 .526027-5.487422 .573848-5.642839C1.075965-7.089415 1.327024-7.758904 2.917061-7.758904H3.718057C4.004981-7.758904 4.124533-7.758904 4.124533-7.627397C4.124533-7.591532 4.124533-7.567621 4.064757-7.352428L2.462765-.932503C2.343213-.466252 2.319303-.3467 1.052055-.3467C.753176-.3467 .669489-.3467 .669489-.119552C.669489 0 .800996 0 .860772 0C1.159651 0 1.470486-.02391 1.769365-.02391H3.634371C3.93325-.02391 4.25604 0 4.554919 0C4.686426 0 4.805978 0 4.805978-.227148C4.805978-.3467 4.722291-.3467 4.411457-.3467C3.335492-.3467 3.335492-.454296 3.335492-.633624C3.335492-.645579 3.335492-.729265 3.383313-.920548L4.985305-7.292653Z'/>
 <path id="inline-10-5ec8e0d45416fbe83158-g1-53" d='M1.530262-6.850311C2.044334-6.682939 2.462765-6.670984 2.594271-6.670984C3.945205-6.670984 4.805978-7.663263 4.805978-7.830635C4.805978-7.878456 4.782067-7.938232 4.710336-7.938232C4.686426-7.938232 4.662516-7.938232 4.554919-7.890411C3.88543-7.603487 3.311582-7.567621 3.000747-7.567621C2.211706-7.567621 1.649813-7.806725 1.422665-7.902366C1.338979-7.938232 1.315068-7.938232 1.303113-7.938232C1.207472-7.938232 1.207472-7.866501 1.207472-7.675218V-4.124533C1.207472-3.90934 1.207472-3.837609 1.350934-3.837609C1.41071-3.837609 1.422665-3.849564 1.542217-3.993026C1.876961-4.483188 2.438854-4.770112 3.036613-4.770112C3.670237-4.770112 3.981071-4.184309 4.076712-3.981071C4.27995-3.514819 4.291905-2.929016 4.291905-2.47472S4.291905-1.338979 3.957161-.800996C3.694147-.37061 3.227895-.071731 2.701868-.071731C1.912827-.071731 1.135741-.609714 .920548-1.482441C.980324-1.458531 1.052055-1.446575 1.111831-1.446575C1.315068-1.446575 1.637858-1.566127 1.637858-1.972603C1.637858-2.307347 1.41071-2.49863 1.111831-2.49863C.896638-2.49863 .585803-2.391034 .585803-1.924782C.585803-.908593 1.398755 .251059 2.725778 .251059C4.076712 .251059 5.260274-.884682 5.260274-2.402989C5.260274-3.825654 4.303861-5.009215 3.048568-5.009215C2.367123-5.009215 1.841096-4.710336 1.530262-4.375592V-6.850311Z'/>
@@ -3018,7 +3061,7 @@ z
 <use x='11.807665' y='0' xlink:href="#inline-10-5ec8e0d45416fbe83158-g1-61"/>
 <use x='24.233146' y='0' xlink:href="#inline-10-5ec8e0d45416fbe83158-g1-53"/>
 </g>
-</svg> ปี และเส้นน้ำเงินคือ expected-maximum proxy <svg style="height:1.1955em;vertical-align:-0.3039em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='69.623927pt' height='14.346202pt' viewBox='1.315068 -10.699946 69.623927 14.346202'>
+</svg> ปี และเส้นน้ำเงินคือ expected-maximum proxy <svg style="height:1.1955em;vertical-align:-0.3039em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='69.623927pt' height='14.346202pt' viewBox='1.315068 -10.699946 69.623927 14.346202'>
 <defs>
 <path id="inline-11-3241bdd610cb1ec9c54d-g0-112" d='M5.068991 13.867995C5.439601 13.867995 5.451557 13.85604 5.571108 13.628892L12.110585-.02391C12.194271-.179328 12.194271-.203238 12.194271-.239103C12.194271-.37061 12.09863-.478207 11.955168-.478207C11.799751-.478207 11.75193-.37061 11.692154-.239103L5.523288 12.624658L2.976837 6.694894L1.315068 7.974097L1.494396 8.16538L2.343213 7.519801L5.068991 13.867995Z'/>
 <path id="inline-11-3241bdd610cb1ec9c54d-g1-61" d='M5.128767-8.524035C5.128767-8.53599 5.200498-8.715318 5.200498-8.739228C5.200498-8.88269 5.080946-8.966376 4.985305-8.966376C4.925529-8.966376 4.817933-8.966376 4.722291-8.703362L.71731 2.546451C.71731 2.558406 .645579 2.737733 .645579 2.761644C.645579 2.905106 .765131 2.988792 .860772 2.988792C.932503 2.988792 1.0401 2.976837 1.123786 2.725778L5.128767-8.524035Z'/>
@@ -3044,7 +3087,7 @@ z
 <use x='56.59917' y='0' xlink:href="#inline-11-3241bdd610cb1ec9c54d-g1-61"/>
 <use x='62.45216' y='0' xlink:href="#inline-11-3241bdd610cb1ec9c54d-g1-84"/>
 </g>
-</svg>. ทั้งคู่โตช้ากว่า <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='11.584558pt' height='8.16538pt' viewBox='.585803 -8.16538 11.584558 8.16538'>
+</svg>. ทั้งคู่โตช้ากว่า <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='11.584558pt' height='8.16538pt' viewBox='.585803 -8.16538 11.584558 8.16538'>
 <defs>
 <path id="inline-12-0a86b4646c5e32740ec1-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
 </defs>
@@ -3052,7 +3095,7 @@ z
 <use x='0' y='0' xlink:href="#inline-12-0a86b4646c5e32740ec1-g0-77"/>
 </g>
 </svg> มาก แต่ไม่เป็นศูนย์: ไม่จดจำนวน tests คือการตั้งมาตรฐานให้ต่ำแบบมองไม่เห็น.</figcaption></figure>
-<h4>คัดหลาย candidate แบบยอมรับงบ discovery</h4><figure class="formula"><svg style="height:2.3900em;vertical-align:0.0010em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='244.849144pt' height='28.680448pt' viewBox='70.872573 -28.6927 244.849144 28.680448'>
+<div class="formula-block formula-role-input formula-step"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><div class="step-heading"><span class="step-number" aria-label="ขั้นที่ 3">3</span><h4>คัดหลาย candidate แบบยอมรับงบ discovery</h4></div><figure class="formula formula-role-input"><svg style="height:2.3900em;vertical-align:0.0010em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='244.849144pt' height='28.680448pt' viewBox='70.872573 -28.6927 244.849144 28.680448'>
 <defs>
 <path id="formula-14-6-8-e533d73f5cc8ac857fbe-g2-1" d='M2.295392-2.988792C2.295392-3.335492 2.008468-3.622416 1.661768-3.622416S1.028144-3.335492 1.028144-2.988792S1.315068-2.355168 1.661768-2.355168S2.295392-2.642092 2.295392-2.988792Z'/>
 <path id="formula-14-6-8-e533d73f5cc8ac857fbe-g2-20" d='M8.069738-7.10137C8.201245-7.161146 8.296887-7.220922 8.296887-7.364384C8.296887-7.49589 8.201245-7.603487 8.057783-7.603487C7.998007-7.603487 7.890411-7.555666 7.84259-7.531756L1.231382-4.411457C1.028144-4.315816 .992279-4.23213 .992279-4.136488C.992279-4.028892 1.06401-3.945205 1.231382-3.873474L7.84259-.765131C7.998007-.681445 8.021918-.681445 8.057783-.681445C8.18929-.681445 8.296887-.789041 8.296887-.920548C8.296887-1.028144 8.249066-1.099875 8.045828-1.195517L1.793275-4.136488L8.069738-7.10137ZM7.878456 1.637858C8.081694 1.637858 8.296887 1.637858 8.296887 1.398755S8.045828 1.159651 7.866501 1.159651H1.422665C1.243337 1.159651 .992279 1.159651 .992279 1.398755S1.207472 1.637858 1.41071 1.637858H7.878456Z'/>
@@ -3110,14 +3153,14 @@ z
 <use x='302.714267' y='-11.357556' xlink:href="#formula-14-6-8-e533d73f5cc8ac857fbe-g4-113"/>
 <use x='308.333423' y='-28.214493' xlink:href="#formula-14-6-8-e533d73f5cc8ac857fbe-g0-27"/>
 </g>
-</svg><div class="reading">Benjamini-Hochberg เก็บ candidates ลำดับ <svg style="height:0.6625em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='3.813699pt' height='7.950187pt' viewBox='1.08792 -7.950187 3.813699 7.950187'>
+</svg><div class="reading"><p>Benjamini-Hochberg เก็บ candidates ลำดับ <svg style="height:0.6625em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='3.813699pt' height='7.950187pt' viewBox='1.08792 -7.950187 3.813699 7.950187'>
 <defs>
 <path id="inline-13-942f93d8412f3f7ba18d-g0-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
 </defs>
 <g id="inline-13-942f93d8412f3f7ba18d-page1">
 <use x='0' y='0' xlink:href="#inline-13-942f93d8412f3f7ba18d-g0-49"/>
 </g>
-</svg> ถึง <svg style="height:0.6803em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='7.336894pt' height='8.16409pt' viewBox='.32279 -8.044539 7.336894 8.16409'>
+</svg> ถึง <svg style="height:0.6803em;vertical-align:-0.0100em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='7.336894pt' height='8.16409pt' viewBox='.32279 -8.044539 7.336894 8.16409'>
 <defs>
 <path id="inline-14-3515673da7eb19084241-g1-105" d='M3.383313-1.709589C3.383313-1.769365 3.335492-1.817186 3.263761-1.817186C3.156164-1.817186 3.144209-1.78132 3.084433-1.578082C2.773599-.490162 2.283437-.119552 1.888917-.119552C1.745455-.119552 1.578082-.155417 1.578082-.514072C1.578082-.836862 1.721544-1.195517 1.853051-1.554172L2.689913-3.777833C2.725778-3.873474 2.809465-4.088667 2.809465-4.315816C2.809465-4.817933 2.450809-5.272229 1.865006-5.272229C.765131-5.272229 .32279-3.53873 .32279-3.443088C.32279-3.395268 .37061-3.335492 .454296-3.335492C.561893-3.335492 .573848-3.383313 .621669-3.550685C.908593-4.554919 1.362889-5.033126 1.829141-5.033126C1.936737-5.033126 2.139975-5.021171 2.139975-4.638605C2.139975-4.327771 1.984558-3.93325 1.888917-3.670237L1.052055-1.446575C.980324-1.255293 .908593-1.06401 .908593-.848817C.908593-.310834 1.279203 .119552 1.853051 .119552C2.952927 .119552 3.383313-1.625903 3.383313-1.709589ZM3.287671-7.460025C3.287671-7.639352 3.144209-7.854545 2.881196-7.854545C2.606227-7.854545 2.295392-7.591532 2.295392-7.280697C2.295392-6.981818 2.546451-6.886177 2.689913-6.886177C3.012702-6.886177 3.287671-7.197011 3.287671-7.460025Z'/>
 <path id="inline-14-3515673da7eb19084241-g0-3" d='M3.291656-1.052055C3.363387-1.004234 3.387298-1.004234 3.427148-1.004234C3.55467-1.004234 3.666252-1.107846 3.666252-1.251308C3.666252-1.40274 3.58655-1.43462 3.466999-1.490411C2.933001-1.737484 2.741719-1.825156 2.351183-1.984558L3.283686-2.406974C3.347447-2.430884 3.498879-2.502615 3.56264-2.526526C3.642341-2.574346 3.666252-2.654047 3.666252-2.725778C3.666252-2.82142 3.618431-2.972852 3.379328-2.972852L2.231631-2.191781L2.343213-3.371357C2.359153-3.506849 2.343213-3.706102 2.11208-3.706102C1.968618-3.706102 1.857036-3.58655 1.880946-3.474969V-3.379328L1.992528-2.191781L.932503-2.925031C.860772-2.972852 .836862-2.972852 .797011-2.972852C.669489-2.972852 .557908-2.86924 .557908-2.725778C.557908-2.574346 .637609-2.542466 .757161-2.486675C1.291158-2.239601 1.482441-2.15193 1.872976-1.992528L.940473-1.570112C.876712-1.546202 .72528-1.474471 .661519-1.45056C.581818-1.40274 .557908-1.323039 .557908-1.251308C.557908-1.107846 .669489-1.004234 .797011-1.004234C.860772-1.004234 .876712-1.004234 1.075965-1.147696L1.992528-1.785305L1.872976-.502117C1.872976-.342715 2.008468-.270984 2.11208-.270984S2.351183-.342715 2.351183-.502117C2.351183-.581818 2.319303-.836862 2.311333-.932503C2.279452-1.203487 2.255542-1.506351 2.231631-1.785305L3.291656-1.052055Z'/>
@@ -3126,14 +3169,14 @@ z
 <use x='0' y='0' xlink:href="#inline-14-3515673da7eb19084241-g1-105"/>
 <use x='3.993432' y='-4.338437' xlink:href="#inline-14-3515673da7eb19084241-g0-3"/>
 </g>
-</svg>; target <svg style="height:0.6326em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='4.805978pt' height='7.591532pt' viewBox='.466252 -5.272229 4.805978 7.591532'>
+</svg>; target <svg style="height:0.6326em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='4.805978pt' height='7.591532pt' viewBox='.466252 -5.272229 4.805978 7.591532'>
 <defs>
 <path id="inline-15-f17268b6555d85fdfc36-g0-113" d='M5.272229-5.152677C5.272229-5.212453 5.224408-5.260274 5.164633-5.260274C5.068991-5.260274 4.60274-4.829888 4.375592-4.411457C4.160399-4.94944 3.789788-5.272229 3.275716-5.272229C1.924782-5.272229 .466252-3.526775 .466252-1.75741C.466252-.573848 1.159651 .119552 1.972603 .119552C2.606227 .119552 3.132254-.358655 3.383313-.633624L3.395268-.621669L2.940971 1.171606L2.833375 1.601993C2.725778 1.960648 2.546451 1.960648 1.984558 1.972603C1.853051 1.972603 1.733499 1.972603 1.733499 2.199751C1.733499 2.283437 1.80523 2.319303 1.888917 2.319303C2.056289 2.319303 2.271482 2.295392 2.438854 2.295392H3.658281C3.837609 2.295392 4.040847 2.319303 4.220174 2.319303C4.291905 2.319303 4.435367 2.319303 4.435367 2.092154C4.435367 1.972603 4.339726 1.972603 4.160399 1.972603C3.598506 1.972603 3.56264 1.888917 3.56264 1.793275C3.56264 1.733499 3.574595 1.721544 3.610461 1.566127L5.272229-5.152677ZM3.58655-1.422665C3.526775-1.219427 3.526775-1.195517 3.359402-.968369C3.096389-.633624 2.570361-.119552 2.008468-.119552C1.518306-.119552 1.243337-.561893 1.243337-1.267248C1.243337-1.924782 1.613948-3.263761 1.841096-3.765878C2.247572-4.60274 2.809465-5.033126 3.275716-5.033126C4.064757-5.033126 4.220174-4.052802 4.220174-3.957161C4.220174-3.945205 4.184309-3.789788 4.172354-3.765878L3.58655-1.422665Z'/>
 </defs>
 <g id="inline-15-f17268b6555d85fdfc36-page1">
 <use x='0' y='0' xlink:href="#inline-15-f17268b6555d85fdfc36-g0-113"/>
 </g>
-</svg> คุม expected fraction ของ false discoveries ในกลุ่มที่เก็บ ภายใต้ assumptions ของ procedure ไม่ใช่รับประกันว่า candidate ทุกตัวเป็นจริง</div></figure>
+</svg> คุม expected fraction ของ false discoveries ในกลุ่มที่เก็บ ภายใต้ assumptions ของ procedure ไม่ใช่รับประกันว่า candidate ทุกตัวเป็นจริง</p></div></figure></div>
 <h4>ภาพ 14.6c — Benjamini-Hochberg เก็บได้เท่าที่เส้นอนุญาต</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.805341pt" height="209.52pt" viewBox="0 0 433.805341 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -3159,7 +3202,7 @@ L 433.805341 209.52
 L 433.805341 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-14-6-9-axes_1">
    <g id="figure-14-6-9-patch_2">
@@ -3168,28 +3211,28 @@ L 428.045341 164.71
 L 428.045341 10.224 
 L 52.98625 10.224 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-14-6-9-matplotlib.axis_1">
     <g id="figure-14-6-9-xtick_1">
      <g id="figure-14-6-9-line2d_1">
       <path d="M 109.245114 164.71 
 L 109.245114 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_2">
       <defs>
        <path id="figure-14-6-9-m20f7f3b1e1" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="109.245114" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="109.245114" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_1">
       <!-- 2 -->
-      <g style="fill: #6b7280" transform="translate(106.845114 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(106.845114 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -3231,16 +3274,16 @@ z
      <g id="figure-14-6-9-line2d_3">
       <path d="M 184.256932 164.71 
 L 184.256932 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_4">
       <g>
-       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="184.256932" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="184.256932" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_2">
       <!-- 4 -->
-      <g style="fill: #6b7280" transform="translate(181.856932 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(181.856932 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -3271,16 +3314,16 @@ z
      <g id="figure-14-6-9-line2d_5">
       <path d="M 259.26875 164.71 
 L 259.26875 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_6">
       <g>
-       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="259.26875" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="259.26875" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_3">
       <!-- 6 -->
-      <g style="fill: #6b7280" transform="translate(256.86875 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(256.86875 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -3330,16 +3373,16 @@ z
      <g id="figure-14-6-9-line2d_7">
       <path d="M 334.280568 164.71 
 L 334.280568 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_8">
       <g>
-       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="334.280568" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="334.280568" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_4">
       <!-- 8 -->
-      <g style="fill: #6b7280" transform="translate(331.880568 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(331.880568 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -3399,16 +3442,16 @@ z
      <g id="figure-14-6-9-line2d_9">
       <path d="M 409.292386 164.71 
 L 409.292386 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_10">
       <g>
-       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="409.292386" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m20f7f3b1e1" x="409.292386" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_5">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(404.492386 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(404.492386 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -3464,7 +3507,7 @@ z
     </g>
     <g id="figure-14-6-9-text_6">
      <!-- Rank i -->
-     <g style="fill: #111418" transform="translate(228.163295 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(228.163295 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-9-IBMPlexSansThai-Regular-32" d="M 1133 0 
 L 595 0 
@@ -3604,21 +3647,21 @@ z
      <g id="figure-14-6-9-line2d_11">
       <path d="M 52.98625 164.71 
 L 428.045341 164.71 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_12">
       <defs>
        <path id="figure-14-6-9-m21342968a1" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_7">
       <!-- 0.000 -->
-      <g style="fill: #6b7280" transform="translate(24.61 169.174) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 169.174) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-4e" d="M 870 -77 
 Q 666 -77 573 25 
@@ -3646,16 +3689,16 @@ z
      <g id="figure-14-6-9-line2d_13">
       <path d="M 52.98625 145.39925 
 L 428.045341 145.39925 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_14">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="145.39925" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="145.39925" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_8">
       <!-- 0.001 -->
-      <g style="fill: #6b7280" transform="translate(24.61 149.86325) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 149.86325) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3668,16 +3711,16 @@ L 428.045341 145.39925
      <g id="figure-14-6-9-line2d_15">
       <path d="M 52.98625 126.0885 
 L 428.045341 126.0885 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_16">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="126.0885" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="126.0885" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_9">
       <!-- 0.002 -->
-      <g style="fill: #6b7280" transform="translate(24.61 130.5525) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 130.5525) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3690,16 +3733,16 @@ L 428.045341 126.0885
      <g id="figure-14-6-9-line2d_17">
       <path d="M 52.98625 106.77775 
 L 428.045341 106.77775 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_18">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="106.77775" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="106.77775" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_10">
       <!-- 0.003 -->
-      <g style="fill: #6b7280" transform="translate(24.61 111.24175) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 111.24175) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-40" d="M 1670 2573 
 Q 2125 2573 2352 2781 
@@ -3763,16 +3806,16 @@ z
      <g id="figure-14-6-9-line2d_19">
       <path d="M 52.98625 87.467 
 L 428.045341 87.467 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_20">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="87.467" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="87.467" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_11">
       <!-- 0.004 -->
-      <g style="fill: #6b7280" transform="translate(24.61 91.931) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 91.931) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3785,16 +3828,16 @@ L 428.045341 87.467
      <g id="figure-14-6-9-line2d_21">
       <path d="M 52.98625 68.15625 
 L 428.045341 68.15625 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_22">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="68.15625" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="68.15625" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_12">
       <!-- 0.005 -->
-      <g style="fill: #6b7280" transform="translate(24.61 72.62025) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 72.62025) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -3845,16 +3888,16 @@ z
      <g id="figure-14-6-9-line2d_23">
       <path d="M 52.98625 48.8455 
 L 428.045341 48.8455 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_24">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="48.8455" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="48.8455" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_13">
       <!-- 0.006 -->
-      <g style="fill: #6b7280" transform="translate(24.61 53.3095) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 53.3095) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3867,16 +3910,16 @@ L 428.045341 48.8455
      <g id="figure-14-6-9-line2d_25">
       <path d="M 52.98625 29.53475 
 L 428.045341 29.53475 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_26">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="29.53475" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="29.53475" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_14">
       <!-- 0.007 -->
-      <g style="fill: #6b7280" transform="translate(24.61 33.99875) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 33.99875) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-9-IBMPlexSansThai-Regular-44" d="M 1120 0 
 L 2829 4006 
@@ -3903,16 +3946,16 @@ z
      <g id="figure-14-6-9-line2d_27">
       <path d="M 52.98625 10.224 
 L 428.045341 10.224 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-9-line2d_28">
       <g>
-       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="10.224" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-9-m21342968a1" x="52.98625" y="10.224" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-9-text_15">
       <!-- 0.008 -->
-      <g style="fill: #6b7280" transform="translate(24.61 14.688) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 14.688) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-9-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3923,7 +3966,7 @@ L 428.045341 10.224
     </g>
     <g id="figure-14-6-9-text_16">
      <!-- p-value -->
-     <g style="fill: #111418" transform="translate(15.804 102.700203) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 102.700203) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-9-IBMPlexSansThai-Regular-16" d="M 544 3302 
 L 1056 3302 
@@ -4076,27 +4119,27 @@ L 296.774659 97.122375
 L 334.280568 87.467 
 L 371.786477 77.811625 
 L 409.292386 68.15625 
-" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-9-peb16033be1)" style="fill: none; stroke: var(--plot-bad); stroke-width: 2; stroke-linecap: round"/>
    </g>
    <g id="figure-14-6-9-patch_3">
     <path d="M 52.98625 164.71 
 L 52.98625 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-9-patch_4">
     <path d="M 428.045341 164.71 
 L 428.045341 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-9-patch_5">
     <path d="M 52.98625 164.71 
 L 428.045341 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-9-patch_6">
     <path d="M 52.98625 10.224 
 L 428.045341 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-9-PathCollection_1">
     <defs>
@@ -4113,34 +4156,34 @@ z
 "/>
     </defs>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="71.739205" y="160.84785" style="fill: #059669; stroke: #059669"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="71.739205" y="160.84785" style="fill: var(--plot-good); stroke: var(--plot-good)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="109.245114" y="147.330325" style="fill: #059669; stroke: #059669"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="109.245114" y="147.330325" style="fill: var(--plot-good); stroke: var(--plot-good)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="146.751023" y="126.0885" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="146.751023" y="126.0885" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="184.256932" y="87.467" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="184.256932" y="87.467" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="221.762841" y="48.8455" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="221.762841" y="48.8455" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="259.26875" y="-9.08675" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="259.26875" y="-9.08675" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="296.774659" y="-86.32975" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="296.774659" y="-86.32975" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="334.280568" y="-221.505" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="334.280568" y="-221.505" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="371.786477" y="-414.6125" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="371.786477" y="-414.6125" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-9-peb16033be1)">
-     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="409.292386" y="-704.27375" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-9-C0_0_6a0653e344" x="409.292386" y="-704.27375" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
    </g>
    <g id="figure-14-6-9-legend_1">
@@ -4148,7 +4191,7 @@ z
      <path d="M 353.130028 21.886 
 L 360.130028 21.886 
 L 367.130028 21.886 
-" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-bad); stroke-width: 2; stroke-linecap: round"/>
     </g>
     <g id="figure-14-6-9-text_17">
      <!-- i q / M -->
@@ -4239,7 +4282,7 @@ C 357.76305 36.173821 357.484277 36.846839 357.484277 37.5485
 C 357.484277 38.250161 357.76305 38.923179 358.2592 39.419329 
 C 358.755349 39.915478 359.428367 40.194251 360.130028 40.194251 
 z
-" style="fill: #059669; stroke: #059669"/>
+" style="fill: var(--plot-good); stroke: var(--plot-good)"/>
     </g>
     <g id="figure-14-6-9-text_18">
      <!-- sorted p-values -->
@@ -4412,7 +4455,7 @@ z
   </clipPath>
  </defs>
 </svg>
-<figcaption>เมื่อ <svg style="height:0.7014em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='44.79601pt' height='8.416438pt' viewBox='.585803 -8.16538 44.79601 8.416438'>
+<figcaption>เมื่อ <svg style="height:0.7014em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='44.79601pt' height='8.416438pt' viewBox='.585803 -8.16538 44.79601 8.416438'>
 <defs>
 <path id="inline-16-5913eaf2a5437e4039f2-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
 <path id="inline-16-5913eaf2a5437e4039f2-g1-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
@@ -4426,7 +4469,7 @@ z
 <use x='34.172908' y='0' xlink:href="#inline-16-5913eaf2a5437e4039f2-g1-48"/>
 <use x='40.025898' y='0' xlink:href="#inline-16-5913eaf2a5437e4039f2-g1-48"/>
 </g>
-</svg> และ <svg style="height:0.9405em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.703079pt' height='11.285679pt' viewBox='.466252 -8.966376 41.703079 11.285679'>
+</svg> และ <svg style="height:0.9405em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.703079pt' height='11.285679pt' viewBox='.466252 -8.966376 41.703079 11.285679'>
 <defs>
 <path id="inline-17-cac07de00f8ca387c09c-g1-37" d='M9.097883-1.733499C9.097883-3.108344 8.416438-4.148443 7.567621-4.148443C6.694894-4.148443 5.846077-3.156164 5.846077-1.745455C5.846077-.286924 6.706849 .669489 7.567621 .669489S9.097883-.406476 9.097883-1.733499ZM7.579577 .430386C7.412204 .430386 6.539477 .3467 6.539477-1.733499C6.539477-3.837609 7.400249-3.90934 7.579577-3.90934C8.237111-3.90934 8.834869-2.976837 8.834869-1.745455C8.834869-.478207 8.225156 .430386 7.579577 .430386ZM8.021918-8.53599C8.093649-8.643587 8.117559-8.679452 8.117559-8.739228C8.117559-8.894645 7.998007-8.966376 7.902366-8.966376C7.782814-8.966376 7.746949-8.9066 7.651308-8.787049C6.886177-7.758904 5.869988-7.663263 5.415691-7.663263C5.188543-7.663263 4.160399-7.663263 3.19203-8.595766C2.940971-8.846824 2.677958-8.966376 2.367123-8.966376C1.494396-8.966376 .645579-7.974097 .645579-6.563387C.645579-5.104857 1.506351-4.148443 2.367123-4.148443S3.897385-5.224408 3.897385-6.551432C3.897385-6.898132 3.873474-7.340473 3.634371-7.938232C4.411457-7.483935 5.080946-7.424159 5.427646-7.424159C5.750436-7.424159 6.40797-7.483935 7.041594-7.878456L7.053549-7.866501L1.721544 .239103C1.649813 .3467 1.625903 .382565 1.625903 .442341C1.625903 .573848 1.733499 .669489 1.853051 .669489C1.960648 .669489 2.020423 .585803 2.080199 .502117L8.021918-8.53599ZM2.379078-4.387547C2.211706-4.387547 1.338979-4.471233 1.338979-6.551432C1.338979-8.655542 2.199751-8.727273 2.379078-8.727273C3.036613-8.727273 3.634371-7.79477 3.634371-6.563387C3.634371-5.296139 3.024658-4.387547 2.379078-4.387547Z'/>
 <path id="inline-17-cac07de00f8ca387c09c-g1-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
@@ -4441,7 +4484,7 @@ z
 <use x='27.218457' y='0' xlink:href="#inline-17-cac07de00f8ca387c09c-g1-48"/>
 <use x='33.071447' y='0' xlink:href="#inline-17-cac07de00f8ca387c09c-g1-37"/>
 </g>
-</svg>, p-values สี่ตัวแรกคือ 0.0002, 0.0009, 0.0020, 0.0040. สองตัวแรกอยู่ใต้เส้น <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='26.662818pt' height='11.955168pt' viewBox='.32279 -8.966376 26.662818 11.955168'>
+</svg>, p-values สี่ตัวแรกคือ 0.0002, 0.0009, 0.0020, 0.0040. สองตัวแรกอยู่ใต้เส้น <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='26.662818pt' height='11.955168pt' viewBox='.32279 -8.966376 26.662818 11.955168'>
 <defs>
 <path id="inline-18-e05c5a60cb218ed58e5e-g0-61" d='M5.128767-8.524035C5.128767-8.53599 5.200498-8.715318 5.200498-8.739228C5.200498-8.88269 5.080946-8.966376 4.985305-8.966376C4.925529-8.966376 4.817933-8.966376 4.722291-8.703362L.71731 2.546451C.71731 2.558406 .645579 2.737733 .645579 2.761644C.645579 2.905106 .765131 2.988792 .860772 2.988792C.932503 2.988792 1.0401 2.976837 1.123786 2.725778L5.128767-8.524035Z'/>
 <path id="inline-18-e05c5a60cb218ed58e5e-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
@@ -4480,7 +4523,7 @@ L 433.368977 209.52
 L 433.368977 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-14-6-10-axes_1">
    <g id="figure-14-6-10-patch_2">
@@ -4489,28 +4532,28 @@ L 427.608977 164.71
 L 427.608977 5.76 
 L 43.38625 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-14-6-10-matplotlib.axis_1">
     <g id="figure-14-6-10-xtick_1">
      <g id="figure-14-6-10-line2d_1">
       <path d="M 46.297028 164.71 
 L 46.297028 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_2">
       <defs>
        <path id="figure-14-6-10-m7c347bc9ba" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="46.297028" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="46.297028" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(43.897028 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(43.897028 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -4552,16 +4595,16 @@ z
      <g id="figure-14-6-10-line2d_3">
       <path d="M 119.066484 164.71 
 L 119.066484 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_4">
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="119.066484" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="119.066484" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_2">
       <!-- 5 -->
-      <g style="fill: #6b7280" transform="translate(116.666484 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(116.666484 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -4608,16 +4651,16 @@ z
      <g id="figure-14-6-10-line2d_5">
       <path d="M 191.83594 164.71 
 L 191.83594 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_6">
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="191.83594" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="191.83594" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_3">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(187.03594 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(187.03594 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -4644,16 +4687,16 @@ z
      <g id="figure-14-6-10-line2d_7">
       <path d="M 264.605396 164.71 
 L 264.605396 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_8">
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="264.605396" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="264.605396" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_4">
       <!-- 15 -->
-      <g style="fill: #6b7280" transform="translate(259.805396 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(259.805396 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -4663,16 +4706,16 @@ L 264.605396 5.76
      <g id="figure-14-6-10-line2d_9">
       <path d="M 337.374852 164.71 
 L 337.374852 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_10">
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="337.374852" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="337.374852" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_5">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(332.574852 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(332.574852 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -4715,16 +4758,16 @@ z
      <g id="figure-14-6-10-line2d_11">
       <path d="M 410.144308 164.71 
 L 410.144308 5.76 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_12">
       <g>
-       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="410.144308" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m7c347bc9ba" x="410.144308" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_6">
       <!-- 25 -->
-      <g style="fill: #6b7280" transform="translate(405.344308 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(405.344308 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -4732,7 +4775,7 @@ L 410.144308 5.76
     </g>
     <g id="figure-14-6-10-text_7">
      <!-- Independent years T -->
-     <g style="fill: #111418" transform="translate(193.57027 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(193.57027 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-10-IBMPlexSansThai-Regular-29" d="M 384 0 
 L 384 448 
@@ -5054,21 +5097,21 @@ z
      <g id="figure-14-6-10-line2d_13">
       <path d="M 43.38625 164.71 
 L 427.608977 164.71 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_14">
       <defs>
        <path id="figure-14-6-10-m97a60f0062" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_8">
       <!-- 0.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 169.174) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 169.174) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-4e" d="M 870 -77 
 Q 666 -77 573 25 
@@ -5094,16 +5137,16 @@ z
      <g id="figure-14-6-10-line2d_15">
       <path d="M 43.38625 141.335 
 L 427.608977 141.335 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_16">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="141.335" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="141.335" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_9">
       <!-- 0.5 -->
-      <g style="fill: #6b7280" transform="translate(24.61 145.799) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 145.799) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5114,16 +5157,16 @@ L 427.608977 141.335
      <g id="figure-14-6-10-line2d_17">
       <path d="M 43.38625 117.96 
 L 427.608977 117.96 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_18">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="117.96" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="117.96" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_10">
       <!-- 1.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 122.424) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 122.424) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -5134,16 +5177,16 @@ L 427.608977 117.96
      <g id="figure-14-6-10-line2d_19">
       <path d="M 43.38625 94.585 
 L 427.608977 94.585 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_20">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="94.585" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="94.585" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_11">
       <!-- 1.5 -->
-      <g style="fill: #6b7280" transform="translate(24.61 99.049) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 99.049) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5154,16 +5197,16 @@ L 427.608977 94.585
      <g id="figure-14-6-10-line2d_21">
       <path d="M 43.38625 71.21 
 L 427.608977 71.21 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_22">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="71.21" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="71.21" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_12">
       <!-- 2.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 75.674) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 75.674) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -5174,16 +5217,16 @@ L 427.608977 71.21
      <g id="figure-14-6-10-line2d_23">
       <path d="M 43.38625 47.835 
 L 427.608977 47.835 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_24">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="47.835" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="47.835" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_13">
       <!-- 2.5 -->
-      <g style="fill: #6b7280" transform="translate(24.61 52.299) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 52.299) scale(0.08 -0.08)">
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-14-6-10-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -5194,16 +5237,16 @@ L 427.608977 47.835
      <g id="figure-14-6-10-line2d_25">
       <path d="M 43.38625 24.46 
 L 427.608977 24.46 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #e5e7eb; stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-line); stroke-opacity: 0.25; stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-14-6-10-line2d_26">
       <g>
-       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="24.46" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-14-6-10-m97a60f0062" x="43.38625" y="24.46" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-14-6-10-text_14">
       <!-- 3.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 28.924) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 28.924) scale(0.08 -0.08)">
        <defs>
         <path id="figure-14-6-10-IBMPlexSansThai-Regular-40" d="M 1670 2573 
 Q 2125 2573 2352 2781 
@@ -5263,7 +5306,7 @@ z
     </g>
     <g id="figure-14-6-10-text_15">
      <!-- Null maximum Sharpe proxy -->
-     <g style="fill: #111418" transform="translate(15.804 142.2725) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 142.2725) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-14-6-10-IBMPlexSansThai-Regular-2e" d="M 1677 2726 
 L 1139 3718 
@@ -5550,27 +5593,27 @@ L 372.761738 132.578053
 L 405.471487 134.07609 
 L 410.144308 134.273438 
 L 410.144308 134.273438 
-" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: #059669; stroke-width: 2; stroke-linecap: round"/>
+" clip-path="url(#figure-14-6-10-p3b0a91ccc5)" style="fill: none; stroke: var(--plot-good); stroke-width: 2; stroke-linecap: round"/>
    </g>
    <g id="figure-14-6-10-patch_3">
     <path d="M 43.38625 164.71 
 L 43.38625 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-10-patch_4">
     <path d="M 427.608977 164.71 
 L 427.608977 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-10-patch_5">
     <path d="M 43.38625 164.71 
 L 427.608977 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-10-patch_6">
     <path d="M 43.38625 5.76 
 L 427.608977 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-14-6-10-PathCollection_1">
     <defs>
@@ -5587,10 +5630,10 @@ z
 "/>
     </defs>
     <g clip-path="url(#figure-14-6-10-p3b0a91ccc5)">
-     <use xlink:href="#figure-14-6-10-C0_0_81f8870ba3" x="119.066484" y="96.651779" style="fill: #d97706; stroke: #d97706"/>
+     <use xlink:href="#figure-14-6-10-C0_0_81f8870ba3" x="119.066484" y="96.651779" style="fill: var(--plot-warm); stroke: var(--plot-warm)"/>
     </g>
     <g clip-path="url(#figure-14-6-10-p3b0a91ccc5)">
-     <use xlink:href="#figure-14-6-10-C0_0_81f8870ba3" x="337.374852" y="130.680889" style="fill: #059669; stroke: #059669"/>
+     <use xlink:href="#figure-14-6-10-C0_0_81f8870ba3" x="337.374852" y="130.680889" style="fill: var(--plot-good); stroke: var(--plot-good)"/>
     </g>
    </g>
   </g>
@@ -5601,7 +5644,7 @@ z
   </clipPath>
  </defs>
 </svg>
-<figcaption>สำหรับ <svg style="height:0.7014em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='44.79601pt' height='8.416438pt' viewBox='.585803 -8.16538 44.79601 8.416438'>
+<figcaption>สำหรับ <svg style="height:0.7014em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='44.79601pt' height='8.416438pt' viewBox='.585803 -8.16538 44.79601 8.416438'>
 <defs>
 <path id="inline-19-5913eaf2a5437e4039f2-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
 <path id="inline-19-5913eaf2a5437e4039f2-g1-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
@@ -5615,7 +5658,7 @@ z
 <use x='34.172908' y='0' xlink:href="#inline-19-5913eaf2a5437e4039f2-g1-48"/>
 <use x='40.025898' y='0' xlink:href="#inline-19-5913eaf2a5437e4039f2-g1-48"/>
 </g>
-</svg>, maximum-Sharpe proxy ลดตาม <svg style="height:1.1324em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='29.067567pt' height='13.58903pt' viewBox='1.08792 -10.600238 29.067567 13.58903'>
+</svg>, maximum-Sharpe proxy ลดตาม <svg style="height:1.1324em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='29.067567pt' height='13.58903pt' viewBox='1.08792 -10.600238 29.067567 13.58903'>
 <defs>
 <path id="inline-20-23473299572cb30a3c99-g2-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
 <path id="inline-20-23473299572cb30a3c99-g1-61" d='M5.128767-8.524035C5.128767-8.53599 5.200498-8.715318 5.200498-8.739228C5.200498-8.88269 5.080946-8.966376 4.985305-8.966376C4.925529-8.966376 4.817933-8.966376 4.722291-8.703362L.71731 2.546451C.71731 2.558406 .645579 2.737733 .645579 2.761644C.645579 2.905106 .765131 2.988792 .860772 2.988792C.932503 2.988792 1.0401 2.976837 1.123786 2.725778L5.128767-8.524035Z'/>
@@ -5630,14 +5673,14 @@ z
 <use x='21.668651' y='0' xlink:href="#inline-20-23473299572cb30a3c99-g1-84"/>
 </g>
 </svg>: จาก 1.456 ที่ห้าปีเป็น 0.728 ที่ยี่สิบปี. การลด search space มีประโยชน์ แต่การหาข้อมูลที่ยาวและ truly out-of-sample คือวิธีที่เปลี่ยน signal-to-noise ได้แรงกว่า.</figcaption></figure>
-<h4>research ledger ที่ต้องมาก่อน winner chart</h4><div class="table-wrap"><table><thead><tr><th>stage</th><th>ต้องบันทึก</th><th>control</th></tr></thead><tbody><tr><td>idea</td><td>economic mechanism และ pre-specified null</td><td>reject hindsight story</td></tr><tr><td>search</td><td>universes, transforms, parameters, reruns</td><td>count <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='11.584558pt' height='8.16538pt' viewBox='.585803 -8.16538 11.584558 8.16538'>
+<h4>research ledger ที่ต้องมาก่อน winner chart</h4><div class="table-wrap"><table><thead><tr><th>stage</th><th>ต้องบันทึก</th><th>control</th></tr></thead><tbody><tr><td>idea</td><td>economic mechanism และ pre-specified null</td><td>reject hindsight story</td></tr><tr><td>search</td><td>universes, transforms, parameters, reruns</td><td>count <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='11.584558pt' height='8.16538pt' viewBox='.585803 -8.16538 11.584558 8.16538'>
 <defs>
 <path id="inline-21-0a86b4646c5e32740ec1-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
 </defs>
 <g id="inline-21-0a86b4646c5e32740ec1-page1">
 <use x='0' y='0' xlink:href="#inline-21-0a86b4646c5e32740ec1-g0-77"/>
 </g>
-</svg> or hierarchy</td></tr><tr><td>selection</td><td>validation metric, costs, tie-break rule</td><td>freeze code and data version</td></tr><tr><td>confirmation</td><td>untouched holdout, paper trade, capacity</td><td>no retuning on holdout</td></tr><tr><td>deployment</td><td>FWER/FDR rule and risk limits</td><td>low initial size; kill criteria</td></tr></tbody></table></div><div class="reading">ถ้า log หาย อย่าตั้ง <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='32.635733pt' height='8.16538pt' viewBox='.585803 -8.16538 32.635733 8.16538'>
+</svg> or hierarchy</td></tr><tr><td>selection</td><td>validation metric, costs, tie-break rule</td><td>freeze code and data version</td></tr><tr><td>confirmation</td><td>untouched holdout, paper trade, capacity</td><td>no retuning on holdout</td></tr><tr><td>deployment</td><td>FWER/FDR rule and risk limits</td><td>low initial size; kill criteria</td></tr></tbody></table></div><div class="reading">ถ้า log หาย อย่าตั้ง <svg style="height:0.6804em;vertical-align:-0.0000em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='32.635733pt' height='8.16538pt' viewBox='.585803 -8.16538 32.635733 8.16538'>
 <defs>
 <path id="inline-22-5ceb5515543918c75a33-g0-77" d='M10.855293-7.292653C10.962889-7.699128 10.9868-7.81868 11.835616-7.81868C12.062765-7.81868 12.170361-7.81868 12.170361-8.045828C12.170361-8.16538 12.086675-8.16538 11.859527-8.16538H10.424907C10.126027-8.16538 10.114072-8.153425 9.982565-7.962142L5.618929-1.06401L4.722291-7.902366C4.686426-8.16538 4.674471-8.16538 4.363636-8.16538H2.881196C2.654047-8.16538 2.546451-8.16538 2.546451-7.938232C2.546451-7.81868 2.654047-7.81868 2.833375-7.81868C3.56264-7.81868 3.56264-7.723039 3.56264-7.591532C3.56264-7.567621 3.56264-7.49589 3.514819-7.316563L1.984558-1.219427C1.841096-.645579 1.566127-.382565 .765131-.3467C.729265-.3467 .585803-.334745 .585803-.131507C.585803 0 .6934 0 .74122 0C.980324 0 1.590037-.02391 1.829141-.02391H2.402989C2.570361-.02391 2.773599 0 2.940971 0C3.024658 0 3.156164 0 3.156164-.227148C3.156164-.334745 3.036613-.3467 2.988792-.3467C2.594271-.358655 2.211706-.430386 2.211706-.860772C2.211706-.980324 2.211706-.992279 2.259527-1.159651L3.90934-7.746949H3.921295L4.913574-.32279C4.94944-.035866 4.961395 0 5.068991 0C5.200498 0 5.260274-.095641 5.32005-.203238L10.126027-7.806725H10.137983L8.404483-.884682C8.296887-.466252 8.272976-.3467 7.436115-.3467C7.208966-.3467 7.089415-.3467 7.089415-.131507C7.089415 0 7.197011 0 7.268742 0C7.47198 0 7.711083-.02391 7.914321-.02391H9.325031C9.528269-.02391 9.779328 0 9.982565 0C10.078207 0 10.209714 0 10.209714-.227148C10.209714-.3467 10.102117-.3467 9.92279-.3467C9.193524-.3467 9.193524-.442341 9.193524-.561893C9.193524-.573848 9.193524-.657534 9.217435-.753176L10.855293-7.292653Z'/>
 <path id="inline-22-5ceb5515543918c75a33-g1-49" d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
@@ -5649,10 +5692,12 @@ z
 <use x='28.319917' y='0' xlink:href="#inline-22-5ceb5515543918c75a33-g1-49"/>
 </g>
 </svg> เพียงเพราะจำไม่ได้; ใช้ conservative proxy และขอ independent replication</div>
-<div class="box pitfall"><h4>กับดัก: p-value เล็กไม่ได้แปลว่าโอกาสที่กลยุทธ์จริงสูง</h4><p>p-value 0.03 แปลว่า ถ้า null จริง การเห็นผลสุดโต่งเท่านี้หรือมากกว่ามีโอกาส 3%; มันไม่บอกว่า null มีโอกาส 3%. เมื่อ prior probability ของไอเดียที่ดีต่ำและมีการลองมาก, positive predictive value อาจต่ำมากแม้ test เดี่ยวผ่าน 5%. ตัวอย่างเช่นจาก 1,000 ไอเดียที่จริง 2%, power 50% เจอของจริง 10 แต่ false positives จากอีก 980 ที่ 5% มี 49; ใน 59 ‘ผู้ผ่าน’ มีของจริงเพียงราว 17%</p>
-<p>Bonferroni ก็ไม่ใช่ยาวิเศษ: tests ที่สัมพันธ์กันทำให้ effective search space เล็กกว่า raw count ส่วน researcher discretion ทำให้ใหญ่กว่า code grid. ทางออกคือ versioned experiment ledger, locked holdout, nested/rolling validation, paper trading, capacity and drawdown limits — และวัฒนธรรมที่ให้รางวัลการฆ่า false discovery เร็วพอ ๆ กับการหา candidate ใหม่.</p></div>
+<div class="box pitfall"><div class="box-kicker">ระวังตรงนี้</div><h4>กับดัก: p-value เล็กไม่ได้แปลว่าโอกาสที่กลยุทธ์จริงสูง</h4><p>p-value 0.03 ตอบคำถามเดียว: ถ้า null จริง โอกาสเห็นผลสุดโต่งเท่านี้หรือมากกว่าคือ 3% มันไม่ได้บอกว่า null มีโอกาสจริง 3%</p>
+<p>ลองนับ 1,000 ไอเดีย สมมติมีของจริง 2% และ test มี power 50% เราจะเจอของจริง 10 ไอเดีย ส่วนอีก 980 ไอเดียให้ false positive ที่เกณฑ์ 5% ราว 49 ไอเดีย ดังนั้นผู้ผ่าน 59 ไอเดียมีของจริงเพียงราว 17% นี่คือเหตุผลที่ test เดี่ยวดูดีแต่รายชื่อผู้ชนะยังเต็มไปด้วย noise</p>
+<p>Bonferroni ก็ไม่ใช่ยาวิเศษ test ที่สัมพันธ์กันทำให้จำนวนการลองอิสระต่ำกว่า raw count แต่การตัดสินใจของนักวิจัยนอก code ทำให้จำนวนทางเลือกจริงสูงกว่า grid ที่บันทึกไว้</p>
+<p>ทางออกคือเก็บ experiment ledger แบบมี version ล็อก holdout ใช้ nested หรือ rolling validation แล้วค่อย paper trade พร้อม capacity และ drawdown limits ทีมที่ฆ่า false discovery ได้เร็วกำลังประหยัดเงิน ไม่ได้ทำวิจัยล้มเหลว</p></div>
 <h4>สะพานไปสู่การวิจัยที่อยู่รอดนอก sample</h4><p>ตอนนี้เรามีลำดับเหตุผลครบหนึ่งรอบ: LLN ให้ความหมายของ repetition, CLT ให้ sampling distribution, estimator บอก bias กับ standard error, interval และ test บอก uncertainty, multiple-testing correction บอกต้นทุนของการเลือกผู้ชนะ. บทต่อไปจะใช้วินัยนี้กับ regression, time series และ risk models ที่ต้องเดินหน้าโดยไม่แอบรับข้อมูลจากอนาคต.</p>
-<div class="box takeaway"><h4>สรุปที่ใช้ได้จริง</h4><ul><li>เมื่อทดสอบ 200 null strategies ที่ 5% จะคาด false positives 10 ตัว และโอกาสเจออย่างน้อยหนึ่งตัวเกือบ 100% ภายใต้ independence.</li><li>Bonferroni ใช้ <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24.416537pt' height='11.955168pt' viewBox='.478207 -8.966376 24.416537 11.955168'>
+<div class="box takeaway"><h4>สรุปที่ใช้ได้จริง</h4><ul><li>เมื่อทดสอบ 200 null strategies ที่ 5% จะคาด false positives 10 ตัว และโอกาสเจออย่างน้อยหนึ่งตัวเกือบ 100% ภายใต้ independence.</li><li>Bonferroni ใช้ <svg style="height:0.9963em;vertical-align:-0.2491em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24.416537pt' height='11.955168pt' viewBox='.478207 -8.966376 24.416537 11.955168'>
 <defs>
 <path id="inline-23-d577872a609999ba0278-g0-11" d='M5.535243-3.024658C5.535243-4.184309 4.877709-5.272229 3.610461-5.272229C2.044334-5.272229 .478207-3.56264 .478207-1.865006C.478207-.824907 1.123786 .119552 2.343213 .119552C3.084433 .119552 3.969116-.167372 4.817933-.884682C4.985305-.215193 5.355915 .119552 5.869988 .119552C6.515567 .119552 6.838356-.549938 6.838356-.705355C6.838356-.812951 6.75467-.812951 6.718804-.812951C6.623163-.812951 6.611208-.777086 6.575342-.681445C6.467746-.382565 6.192777-.119552 5.905853-.119552C5.535243-.119552 5.535243-.884682 5.535243-1.613948C6.75467-3.072478 7.041594-4.578829 7.041594-4.590785C7.041594-4.698381 6.945953-4.698381 6.910087-4.698381C6.802491-4.698381 6.790535-4.662516 6.742715-4.447323C6.587298-3.921295 6.276463-2.988792 5.535243-2.008468V-3.024658ZM4.782067-1.171606C3.730012-.227148 2.785554-.119552 2.367123-.119552C1.518306-.119552 1.279203-.872727 1.279203-1.43462C1.279203-1.948692 1.542217-3.16812 1.912827-3.825654C2.402989-4.662516 3.072478-5.033126 3.610461-5.033126C4.770112-5.033126 4.770112-3.514819 4.770112-2.510585C4.770112-2.211706 4.758157-1.900872 4.758157-1.601993C4.758157-1.362889 4.770112-1.303113 4.782067-1.171606Z'/>
 <path id="inline-23-d577872a609999ba0278-g0-61" d='M5.128767-8.524035C5.128767-8.53599 5.200498-8.715318 5.200498-8.739228C5.200498-8.88269 5.080946-8.966376 4.985305-8.966376C4.925529-8.966376 4.817933-8.966376 4.722291-8.703362L.71731 2.546451C.71731 2.558406 .645579 2.737733 .645579 2.761644C.645579 2.905106 .765131 2.988792 .860772 2.988792C.932503 2.988792 1.0401 2.976837 1.123786 2.725778L5.128767-8.524035Z'/>
@@ -5664,5 +5709,4 @@ z
 <use x='12.724382' y='0' xlink:href="#inline-23-d577872a609999ba0278-g0-77"/>
 </g>
 </svg> เพื่อคุม family-wise error ได้แม้ tests พึ่งกัน; ความ conservative เป็นราคาเพื่อกัน false deployment.</li><li>Benjamini-Hochberg เหมาะกับ screening เมื่อยอมให้มี false discoveries ในงบที่ประกาศแล้วและมีขั้นยืนยันต่อ.</li><li>counting search paths, locking holdout และ paper trading เป็น risk controls ไม่ใช่ paperwork.</li></ul></div>
-<div class="cites">อ้างอิง: <span class="cite">[FE3 M4 L11–L12]</span></div>
-</section><nav class="cites"><a href="14.5.html">14.5 Hypothesis Testing and Sharpe-Ratio Inference</a> <a href="15.1.html">15.1 Ordinary Least Squares (OLS) Regression</a></nav></div></body></html>
+</section><nav class="book-nav bottom-nav"><div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="14.5.html" aria-label="14.5 Hypothesis Testing and Sharpe-Ratio Inference">14.5 Hypothesis Testing and Sharpe-Ratio Inference</a></div><div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="15.1.html" aria-label="15.1 Ordinary Least Squares (OLS) Regression">15.1 Ordinary Least Squares (OLS) Regression</a></div></nav></div></body></html>

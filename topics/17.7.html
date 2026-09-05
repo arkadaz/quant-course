@@ -1,9 +1,11 @@
-<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>17.7 VaR Backtesting: Kupiec and Christoffersen</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="cites"><a href="../index.html">สารบัญ</a> · <a href="../chapters/17.html">บทที่ 17</a></nav><section class="topic" id="t17-7">
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>17.7 VaR Backtesting: Kupiec and Christoffersen</title><link rel="stylesheet" href="../book.css"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../chapters/17.html">บทที่ 17</a><span class="topic-progress">หัวข้อ 106/142</span></nav><section class="topic" id="t17-7">
 <h3><span class="tnum">17.7</span> VaR Backtesting: Kupiec and Christoffersen</h3>
 <p class="subtitle">นับครั้งที่พลาด แล้วตรวจว่าความผิดพลาดมาติดกันหรือไม่</p>
-<div class="hook"><p>หน่วยควบคุมความเสี่ยงของบัญชีหุ้นสหรัฐฯ 20 ล้าน USD เก็บคำพยากรณ์ขาดทุนหนึ่งวัน 250 ครั้งที่ระดับ 99% และพบขาดทุนเกินจุดตัด 5 ครั้ง แบบจำลองหนึ่งพลาดห่าง ๆ กัน อีกแบบพลาดห้าวันติดกัน จำนวนรวมเท่ากันแต่ความหมายต่อการเฝ้าระวังต่างกัน</p></div>
-<div class="box jargon"><h4>ศัพท์การเงินที่เพิ่งโผล่มา</h4><dl><dt>Value at Risk (VaR)</dt><dd>จุดตัดขาดทุนที่ระดับความเชื่อมั่นและช่วงเวลาที่ระบุ ใช้เปรียบเทียบคำพยากรณ์กับขาดทุนที่เกิดขึ้น</dd><dt>breach / exception</dt><dd>เหตุการณ์ที่ขาดทุนจริงมากกว่าจุดตัดที่พยากรณ์ไว้ ใช้สร้างลำดับศูนย์หนึ่งสำหรับทดสอบความแม่น</dd><dt>Proportion of Failures (POF)</dt><dd>สัดส่วนครั้งที่ขาดทุนเกินจุดตัดในชุดทดสอบ ใช้ตรวจว่าความถี่สอดคล้องกับระดับ VaR หรือไม่</dd><dt>likelihood ratio</dt><dd>อัตราส่วนความเป็นไปได้ของข้อมูลภายใต้สองสมมติฐาน ใช้เปรียบเทียบแบบจำลองที่ถูกบังคับกับแบบที่ยืดหยุ่นกว่า</dd><dt>independence</dt><dd>เงื่อนไขที่การเกิดเหตุการณ์หนึ่งไม่เปลี่ยนโอกาสของอีกเหตุการณ์ ใช้ตรวจว่าความผิดพลาดมีการเกาะกลุ่มตามเวลาหรือไม่</dd><dt>Markov</dt><dd>สมมติฐานที่สถานะล่าสุดสรุปข้อมูลอดีตที่ใช้พยากรณ์สถานะถัดไป ใช้สร้างทางเลือกที่โอกาสพลาดขึ้นกับวันก่อน</dd><dt>p-value</dt><dd>ความน่าจะเป็นภายใต้สมมติฐานศูนย์ที่จะเห็นสถิติรุนแรงอย่างน้อยเท่าที่พบ ใช้ตัดสินการปฏิเสธตามระดับที่กำหนดล่วงหน้า</dd></dl></div>
-<h4>สัญลักษณ์ที่ใช้ในหัวข้อนี้</h4><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='38.626903pt' height='10.472727pt' viewBox='.549938 -8.16538 38.626903 10.472727'>
+<div class="hook"><p>ระบบพยากรณ์พลาดจำนวนเท่ากันสองชุด แต่ชุดหนึ่งพลาดติดกันหลายวัน; คุณเดาว่าคุณภาพเท่ากันหรือไม่?</p>
+<p>คำตอบคือ: Kupiec ตรวจความถี่ ส่วน Christoffersen ตรวจว่าความพลาดเกาะกลุ่มหรือเปล่า.</p>
+<p>มุกของ backtest คือการนับหลุมบนถนนไม่พอ ต้องดูด้วยว่าหลุมเรียงเป็นร่องเดียวจนรถตกหรือไม่</p></div>
+<details class="box jargon reference-panel"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">ศัพท์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">7 คำ</span></summary><div class="reference-body"><dl><dt>Value at Risk (VaR)</dt><dd>จุดตัดขาดทุนที่ระดับความเชื่อมั่นและช่วงเวลาที่ระบุ ใช้เปรียบเทียบคำพยากรณ์กับขาดทุนที่เกิดขึ้น</dd><dt>breach / exception</dt><dd>เหตุการณ์ที่ขาดทุนจริงมากกว่าจุดตัดที่พยากรณ์ไว้ ใช้สร้างลำดับศูนย์หนึ่งสำหรับทดสอบความแม่น</dd><dt>Proportion of Failures (POF)</dt><dd>สัดส่วนครั้งที่ขาดทุนเกินจุดตัดในชุดทดสอบ ใช้ตรวจว่าความถี่สอดคล้องกับระดับ VaR หรือไม่</dd><dt>likelihood ratio</dt><dd>อัตราส่วนความเป็นไปได้ของข้อมูลภายใต้สองสมมติฐาน ใช้เปรียบเทียบแบบจำลองที่ถูกบังคับกับแบบที่ยืดหยุ่นกว่า</dd><dt>independence</dt><dd>เงื่อนไขที่การเกิดเหตุการณ์หนึ่งไม่เปลี่ยนโอกาสของอีกเหตุการณ์ ใช้ตรวจว่าความผิดพลาดมีการเกาะกลุ่มตามเวลาหรือไม่</dd><dt>Markov</dt><dd>สมมติฐานที่สถานะล่าสุดสรุปข้อมูลอดีตที่ใช้พยากรณ์สถานะถัดไป ใช้สร้างทางเลือกที่โอกาสพลาดขึ้นกับวันก่อน</dd><dt>p-value</dt><dd>ความน่าจะเป็นภายใต้สมมติฐานศูนย์ที่จะเห็นสถิติรุนแรงอย่างน้อยเท่าที่พบ ใช้ตัดสินการปฏิเสธตามระดับที่กำหนดล่วงหน้า</dd></dl></div></details>
+<details class="reference-panel symbols-box"><summary><span class="reference-chevron" aria-hidden="true">›</span><span class="reference-label">สัญลักษณ์ที่ใช้ในหัวข้อนี้</span><span class="reference-count">4 รายการ</span></summary><div class="reference-body"><div class="table-wrap"><table class="symbols"><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='38.626903pt' height='10.472727pt' viewBox='.549938 -8.16538 38.626903 10.472727'>
 <defs>
 <path id="inline-0-ca70cef8903d030dc79d-g0-116" d='M1.761395-3.172105H2.542466C2.693898-3.172105 2.789539-3.172105 2.789539-3.323537C2.789539-3.435118 2.685928-3.435118 2.550436-3.435118H1.825156L2.11208-4.566874C2.14396-4.686426 2.14396-4.726276 2.14396-4.734247C2.14396-4.901619 2.016438-4.98132 1.880946-4.98132C1.609963-4.98132 1.554172-4.766127 1.466501-4.407472L1.219427-3.435118H.454296C.302864-3.435118 .199253-3.435118 .199253-3.283686C.199253-3.172105 .302864-3.172105 .438356-3.172105H1.155666L.67746-1.259278C.629639-1.060025 .557908-.781071 .557908-.669489C.557908-.191283 .948443 .079701 1.370859 .079701C2.223661 .079701 2.709838-1.044085 2.709838-1.139726C2.709838-1.227397 2.638107-1.243337 2.590286-1.243337C2.502615-1.243337 2.494645-1.211457 2.438854-1.091905C2.279452-.70934 1.880946-.143462 1.39477-.143462C1.227397-.143462 1.131756-.255044 1.131756-.518057C1.131756-.669489 1.155666-.757161 1.179577-.860772L1.761395-3.172105Z'/>
 <path id="inline-0-ca70cef8903d030dc79d-g1-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
@@ -21,7 +23,7 @@
 <use x='31.2244' y='0' xlink:href="#inline-0-ca70cef8903d030dc79d-g1-73"/>
 <use x='36.387302' y='1.793263' xlink:href="#inline-0-ca70cef8903d030dc79d-g0-116"/>
 </g>
-</svg></td><td>ขาดทุนจริง จุดตัดพยากรณ์ก่อนวัน t และตัวชี้การเกิน</td><td class='unit'>USD, USD, ศูนย์หรือหนึ่ง</td></tr><tr><td class='sym'><svg style="height:0.8847em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.523857pt' height='10.616189pt' viewBox='.286924 -8.296887 41.523857 10.616189'>
+</svg></td><td>ขาดทุนจริง จุดตัดพยากรณ์ก่อนวัน t และตัวชี้การเกิน</td><td class='unit'>USD, USD, ศูนย์หรือหนึ่ง</td></tr><tr><td class='sym'><svg style="height:0.8847em;vertical-align:-0.1933em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.523857pt' height='10.616189pt' viewBox='.286924 -8.296887 41.523857 10.616189'>
 <defs>
 <path id="inline-1-ded29394d05c692fd2b0-g0-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="inline-1-ded29394d05c692fd2b0-g0-84" d='M4.985305-7.292653C5.057036-7.579577 5.080946-7.687173 5.260274-7.734994C5.355915-7.758904 5.750436-7.758904 6.001494-7.758904C7.197011-7.758904 7.758904-7.711083 7.758904-6.77858C7.758904-6.599253 7.711083-6.144956 7.639352-5.702615L7.627397-5.559153C7.627397-5.511333 7.675218-5.439601 7.746949-5.439601C7.866501-5.439601 7.866501-5.499377 7.902366-5.69066L8.249066-7.806725C8.272976-7.914321 8.272976-7.938232 8.272976-7.974097C8.272976-8.105604 8.201245-8.105604 7.962142-8.105604H1.422665C1.147696-8.105604 1.135741-8.093649 1.06401-7.878456L.334745-5.726526C.32279-5.702615 .286924-5.571108 .286924-5.559153C.286924-5.499377 .334745-5.439601 .406476-5.439601C.502117-5.439601 .526027-5.487422 .573848-5.642839C1.075965-7.089415 1.327024-7.758904 2.917061-7.758904H3.718057C4.004981-7.758904 4.124533-7.758904 4.124533-7.627397C4.124533-7.591532 4.124533-7.567621 4.064757-7.352428L2.462765-.932503C2.343213-.466252 2.319303-.3467 1.052055-.3467C.753176-.3467 .669489-.3467 .669489-.119552C.669489 0 .800996 0 .860772 0C1.159651 0 1.470486-.02391 1.769365-.02391H3.634371C3.93325-.02391 4.25604 0 4.554919 0C4.686426 0 4.805978 0 4.805978-.227148C4.805978-.3467 4.722291-.3467 4.411457-.3467C3.335492-.3467 3.335492-.454296 3.335492-.633624C3.335492-.645579 3.335492-.729265 3.383313-.920548L4.985305-7.292653Z'/>
@@ -39,7 +41,7 @@
 <use x='37.082791' y='0' xlink:href="#inline-1-ded29394d05c692fd2b0-g1-94"/>
 <use x='36.09621' y='0' xlink:href="#inline-1-ded29394d05c692fd2b0-g0-112"/>
 </g>
-</svg></td><td>จำนวนพยากรณ์ จำนวนครั้งเกิน โอกาสเกินตามแบบ และสัดส่วนที่พบ</td><td class='unit'>จำนวน, จำนวน, สัดส่วน, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.9763em;vertical-align:-0.2849em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.051231pt' height='11.716053pt' viewBox='.32279 -8.296887 41.051231 11.716053'>
+</svg></td><td>จำนวนพยากรณ์ จำนวนครั้งเกิน โอกาสเกินตามแบบ และสัดส่วนที่พบ</td><td class='unit'>จำนวน, จำนวน, สัดส่วน, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.9763em;vertical-align:-0.2849em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='41.051231pt' height='11.716053pt' viewBox='.32279 -8.296887 41.051231 11.716053'>
 <defs>
 <path id="inline-2-2dc38b19210df47d3a2e-g2-94" d='M2.929016-8.296887L1.362889-6.670984L1.554172-6.491656L2.917061-7.723039L4.291905-6.491656L4.483188-6.670984L2.929016-8.296887Z'/>
 <path id="inline-2-2dc38b19210df47d3a2e-g1-25" d='M3.096389-4.507098H4.447323C4.124533-3.16812 3.921295-2.295392 3.921295-1.338979C3.921295-1.171606 3.921295 .119552 4.411457 .119552C4.662516 .119552 4.877709-.107597 4.877709-.310834C4.877709-.37061 4.877709-.394521 4.794022-.573848C4.471233-1.398755 4.471233-2.426899 4.471233-2.510585C4.471233-2.582316 4.471233-3.431133 4.722291-4.507098H6.06127C6.216687-4.507098 6.611208-4.507098 6.611208-4.889664C6.611208-5.152677 6.38406-5.152677 6.168867-5.152677H2.235616C1.960648-5.152677 1.554172-5.152677 1.004234-4.566874C.6934-4.220174 .310834-3.58655 .310834-3.514819S.37061-3.419178 .442341-3.419178C.526027-3.419178 .537983-3.455044 .597758-3.526775C1.219427-4.507098 1.841096-4.507098 2.139975-4.507098H2.82142C2.558406-3.610461 2.259527-2.570361 1.279203-.478207C1.183562-.286924 1.183562-.263014 1.183562-.191283C1.183562 .059776 1.398755 .119552 1.506351 .119552C1.853051 .119552 1.948692-.191283 2.092154-.6934C2.283437-1.303113 2.283437-1.327024 2.402989-1.80523L3.096389-4.507098Z'/>
@@ -59,7 +61,7 @@
 <use x='35.37096' y='0' xlink:href="#inline-2-2dc38b19210df47d3a2e-g2-94"/>
 <use x='34.762813' y='0' xlink:href="#inline-2-2dc38b19210df47d3a2e-g1-25"/>
 </g>
-</svg></td><td>จำนวนเปลี่ยนจาก i ไป j โอกาสเกินเมื่อวันก่อนเป็น i และโอกาสรวม</td><td class='unit'>จำนวน, สัดส่วน, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='87.072846pt' height='10.472727pt' viewBox='.490162 -8.16538 87.072846 10.472727'>
+</svg></td><td>จำนวนเปลี่ยนจาก i ไป j โอกาสเกินเมื่อวันก่อนเป็น i และโอกาสรวม</td><td class='unit'>จำนวน, สัดส่วน, สัดส่วน</td></tr><tr><td class='sym'><svg style="height:0.8727em;vertical-align:-0.1923em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='87.072846pt' height='10.472727pt' viewBox='.490162 -8.16538 87.072846 10.472727'>
 <defs>
 <path id="inline-3-eea1b667bd8dc08a63e2-g2-76" d='M6.814446-3.060523H6.551432C6.43188-1.865006 6.276463-.3467 4.184309-.3467H3.144209C2.618182-.3467 2.594271-.430386 2.594271-.824907V-7.244832C2.594271-7.675218 2.618182-7.81868 3.658281-7.81868H4.016936V-8.16538C3.670237-8.141469 2.618182-8.141469 2.199751-8.141469C1.841096-8.141469 .777086-8.141469 .490162-8.16538V-7.81868H.729265C1.590037-7.81868 1.625903-7.699128 1.625903-7.256787V-.908593C1.625903-.466252 1.590037-.3467 .729265-.3467H.490162V0H6.503611L6.814446-3.060523Z'/>
 <path id="inline-3-eea1b667bd8dc08a63e2-g2-82" d='M5.045081-4.064757C6.228643-4.339726 7.149191-5.092902 7.149191-6.01345C7.149191-7.173101 5.798257-8.16538 4.076712-8.16538H.502117V-7.81868H.74122C1.601993-7.81868 1.637858-7.699128 1.637858-7.256787V-.908593C1.637858-.466252 1.601993-.3467 .74122-.3467H.502117V0C.777086-.02391 1.75741-.02391 2.10411-.02391S3.443088-.02391 3.718057 0V-.3467H3.478954C2.618182-.3467 2.582316-.466252 2.582316-.908593V-3.969116H3.969116C4.435367-3.969116 4.877709-3.837609 5.200498-3.502864C5.606974-3.048568 5.606974-2.797509 5.606974-1.972603C5.606974-1.028144 5.606974-.71731 6.133001-.203238C6.312329-.02391 6.814446 .251059 7.483935 .251059C8.416438 .251059 8.571856-.789041 8.571856-1.0401C8.571856-1.111831 8.571856-1.219427 8.440349-1.219427C8.320797-1.219427 8.320797-1.147696 8.308842-1.028144C8.249066-.310834 7.902366 .011955 7.519801 .011955C6.969863 .011955 6.850311-.549938 6.75467-1.183562C6.742715-1.267248 6.670984-1.78132 6.635118-2.080199C6.551432-2.677958 6.503611-3.060523 6.144956-3.431133C6.01345-3.56264 5.702615-3.88543 5.045081-4.064757ZM3.921295-4.208219H2.582316V-7.340473C2.582316-7.615442 2.582316-7.758904 2.833375-7.806725C2.940971-7.81868 3.299626-7.81868 3.53873-7.81868C4.507098-7.81868 6.03736-7.81868 6.03736-6.01345C6.03736-4.97335 5.475467-4.208219 3.921295-4.208219Z'/>
@@ -87,9 +89,10 @@
 <use x='80.221007' y='1.793263' xlink:href="#inline-3-eea1b667bd8dc08a63e2-g0-99"/>
 <use x='83.888786' y='1.793263' xlink:href="#inline-3-eea1b667bd8dc08a63e2-g0-99"/>
 </g>
-</svg></td><td>สถิติความถี่ ความเป็นอิสระ และการตรวจร่วม</td><td class='unit'>ไม่มีหน่วย</td></tr></tbody></table></div>
-<h4>ล็อกข้อมูลก่อนดูผล</h4><p>ทุกจุดตัดต้องบันทึกก่อนวันรับผล ไม่ใช้ขาดทุนวันเดียวกันย้อนปรับคำพยากรณ์ กำหนดว่าขาดทุนเท่าจุดตัดยังไม่เป็น breach ใช้กำไรขาดทุนของสถานะที่สอดคล้องกับแบบจำลอง และไม่ปนการซื้อขายระหว่างวันโดยไม่อธิบาย <span class="cite">[FE3 M4 L5–L6]</span> เป็นเส้นทางอ่านเรื่อง VaR; การทดสอบทางสถิติด้านล่างเป็นส่วนขยายตามงาน Kupiec และ Christoffersen</p>
-<h4>จากขาดทุน USD เป็นข้อมูลสำหรับทดสอบ</h4><figure class="formula"><svg style="height:2.8467em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='452.326749pt' height='34.16004pt' viewBox='.490162 -35.275853 452.326749 34.16004'>
+</svg></td><td>สถิติความถี่, independence และการตรวจร่วม</td><td class='unit'>ไม่มีหน่วย</td></tr></tbody></table></div></div></details>
+<div class="worked-intro"><div class="box-kicker">เริ่มจากโจทย์</div><h4>ของที่โจทย์ให้ — Worked Example — พลาด 5 วันเหมือนกัน แต่เรียงคนละแบบ</h4><p>เรามี VaR forecast ระดับ 99% ที่ล็อกไว้ล่วงหน้า 250 วัน และพบ breach 5 วัน ชุดแรกพลาดแยกกัน ส่วนชุดที่สองพลาดติดกัน 5 วัน คำถามคือจำนวนเท่ากันแปลว่า model ดีเท่ากันหรือไม่</p>
+<p>กำหนดว่าขาดทุนต้องมากกว่าจุดตัดจึงนับเป็น breach และใช้ P&amp;L ที่ตรงกับ position ของ model ห้ามเห็นผลวันนี้แล้วแก้ forecast ย้อนหลัง เพราะนั่นคือเปลี่ยนข้อสอบหลังรู้เฉลย</p></div>
+<div class="formula-block formula-role-risk formula-step"><div class="formula-role-key"><span aria-hidden="true"></span>ความเสี่ยง / ขอบเขต</div><div class="step-heading"><span class="step-number" aria-label="ขั้นที่ 1">1</span><h4>จากขาดทุน USD เป็นข้อมูลสำหรับทดสอบ</h4></div><figure class="formula formula-role-risk"><svg style="height:2.8467em;vertical-align:0.0930em;width:auto;max-width:100%" class="mathsvg math-role-risk" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='452.326749pt' height='34.16004pt' viewBox='.490162 -35.275853 452.326749 34.16004'>
 <defs>
 <path id="formula-17-7-3-84a916a7ab4aed2faa28-g4-58" d='M2.199751-.573848C2.199751-.920548 1.912827-1.159651 1.625903-1.159651C1.279203-1.159651 1.0401-.872727 1.0401-.585803C1.0401-.239103 1.327024 0 1.613948 0C1.960648 0 2.199751-.286924 2.199751-.573848Z'/>
 <path id="formula-17-7-3-84a916a7ab4aed2faa28-g4-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
@@ -183,8 +186,8 @@
 <use x='441.703646' y='-14.944036' xlink:href="#formula-17-7-3-84a916a7ab4aed2faa28-g6-48"/>
 <use x='447.556637' y='-14.944036' xlink:href="#formula-17-7-3-84a916a7ab4aed2faa28-g6-50"/>
 </g>
-</svg><div class="reading">จำนวนคาดหมาย 2.5 ไม่ได้บังคับให้ข้อมูล 250 วันต้องพลาดสองหรือสามครั้งเสมอ ภายใต้สมมติฐานความเป็นอิสระ จำนวนพลาดมีการกระจายทวินาม</div></figure>
-<h4>Kupiec เปรียบเทียบโอกาสคงที่กับโอกาสที่ข้อมูลเลือก</h4><figure class="formula"><svg style="height:0.9973em;vertical-align:-0.0010em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='307.699594pt' height='11.967123pt' viewBox='39.800115 -11.955168 307.699594 11.967123'>
+</svg><div class="reading"><p>จำนวนคาดหมาย 2.5 ไม่ได้บังคับให้ข้อมูล 250 วันต้องพลาดสองหรือสามครั้งเสมอ ภายใต้สมมติฐาน independence จำนวนพลาดมี binomial distribution</p></div></figure></div>
+<div class="formula-block formula-role-input"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><h4>Kupiec เปรียบเทียบโอกาสคงที่กับโอกาสที่ข้อมูลเลือก</h4><figure class="formula formula-role-input"><svg style="height:0.9973em;vertical-align:-0.0010em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='307.699594pt' height='11.967123pt' viewBox='39.800115 -11.955168 307.699594 11.967123'>
 <defs>
 <path id="formula-17-7-4-89c9ba38c7ad3a54ef9f-g2-59" d='M2.331258 .047821C2.331258-.645579 2.10411-1.159651 1.613948-1.159651C1.231382-1.159651 1.0401-.848817 1.0401-.585803S1.219427 0 1.625903 0C1.78132 0 1.912827-.047821 2.020423-.155417C2.044334-.179328 2.056289-.179328 2.068244-.179328C2.092154-.179328 2.092154-.011955 2.092154 .047821C2.092154 .442341 2.020423 1.219427 1.327024 1.996513C1.195517 2.139975 1.195517 2.163885 1.195517 2.187796C1.195517 2.247572 1.255293 2.307347 1.315068 2.307347C1.41071 2.307347 2.331258 1.422665 2.331258 .047821Z'/>
 <path id="formula-17-7-4-89c9ba38c7ad3a54ef9f-g2-84" d='M4.985305-7.292653C5.057036-7.579577 5.080946-7.687173 5.260274-7.734994C5.355915-7.758904 5.750436-7.758904 6.001494-7.758904C7.197011-7.758904 7.758904-7.711083 7.758904-6.77858C7.758904-6.599253 7.711083-6.144956 7.639352-5.702615L7.627397-5.559153C7.627397-5.511333 7.675218-5.439601 7.746949-5.439601C7.866501-5.439601 7.866501-5.499377 7.902366-5.69066L8.249066-7.806725C8.272976-7.914321 8.272976-7.938232 8.272976-7.974097C8.272976-8.105604 8.201245-8.105604 7.962142-8.105604H1.422665C1.147696-8.105604 1.135741-8.093649 1.06401-7.878456L.334745-5.726526C.32279-5.702615 .286924-5.571108 .286924-5.559153C.286924-5.499377 .334745-5.439601 .406476-5.439601C.502117-5.439601 .526027-5.487422 .573848-5.642839C1.075965-7.089415 1.327024-7.758904 2.917061-7.758904H3.718057C4.004981-7.758904 4.124533-7.758904 4.124533-7.627397C4.124533-7.591532 4.124533-7.567621 4.064757-7.352428L2.462765-.932503C2.343213-.466252 2.319303-.3467 1.052055-.3467C.753176-.3467 .669489-.3467 .669489-.119552C.669489 0 .800996 0 .860772 0C1.159651 0 1.470486-.02391 1.769365-.02391H3.634371C3.93325-.02391 4.25604 0 4.554919 0C4.686426 0 4.805978 0 4.805978-.227148C4.805978-.3467 4.722291-.3467 4.411457-.3467C3.335492-.3467 3.335492-.454296 3.335492-.633624C3.335492-.645579 3.335492-.729265 3.383313-.920548L4.985305-7.292653Z'/>
@@ -254,8 +257,9 @@
 <use x='341.094332' y='-2.988792' xlink:href="#formula-17-7-4-89c9ba38c7ad3a54ef9f-g3-41"/>
 <use x='345.646658' y='-2.988792' xlink:href="#formula-17-7-4-89c9ba38c7ad3a54ef9f-g3-93"/>
 </g>
-</svg><div class="reading">สัมประสิทธิ์จำนวนวิธีเลือกวันหักล้างกันในอัตราส่วน และค่าที่ทำให้ likelihood สูงสุดคือสัดส่วนพลาดจริง จึงวัดว่าการบังคับ 1% เสียความสามารถอธิบายข้อมูลมากเพียงใด</div></figure>
-<h4>แทนค่าอย่างเปิดเผย</h4><figure class="formula"><svg style="height:2.3900em;vertical-align:0.0010em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='356.78477pt' height='28.680448pt' viewBox='15.827833 -28.6927 356.78477 28.680448'>
+</svg><div class="reading"><p>binomial coefficient ซึ่งนับจำนวนวิธีเลือกวันหักล้างกันในอัตราส่วน และค่าที่ทำให้ likelihood สูงสุดคือสัดส่วนพลาดจริง</p>
+<p>จึงวัดว่าการบังคับ 1% เสียความสามารถอธิบายข้อมูลมากเพียงใด</p></div></figure></div>
+<div class="formula-block formula-role-result"><div class="formula-role-key"><span aria-hidden="true"></span>คำตอบ</div><h4>แทนค่าอย่างเปิดเผย</h4><figure class="formula formula-role-result"><svg style="height:2.3900em;vertical-align:0.0010em;width:auto;max-width:100%" class="mathsvg math-role-result" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='356.78477pt' height='28.680448pt' viewBox='15.827833 -28.6927 356.78477 28.680448'>
 <defs>
 <path id="formula-17-7-5-8ff40589ed3199c9aa86-g5-43" d='M4.770112-2.761644H8.069738C8.237111-2.761644 8.452304-2.761644 8.452304-2.976837C8.452304-3.203985 8.249066-3.203985 8.069738-3.203985H4.770112V-6.503611C4.770112-6.670984 4.770112-6.886177 4.554919-6.886177C4.327771-6.886177 4.327771-6.682939 4.327771-6.503611V-3.203985H1.028144C.860772-3.203985 .645579-3.203985 .645579-2.988792C.645579-2.761644 .848817-2.761644 1.028144-2.761644H4.327771V.537983C4.327771 .705355 4.327771 .920548 4.542964 .920548C4.770112 .920548 4.770112 .71731 4.770112 .537983V-2.761644Z'/>
 <path id="formula-17-7-5-8ff40589ed3199c9aa86-g5-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
@@ -350,7 +354,7 @@
 <use x='361.499339' y='-11.357556' xlink:href="#formula-17-7-5-8ff40589ed3199c9aa86-g5-53"/>
 <use x='367.352329' y='-11.357556' xlink:href="#formula-17-7-5-8ff40589ed3199c9aa86-g5-53"/>
 </g>
-</svg><div class="reading">ใช้การประมาณสำหรับตัวอย่างขนาดใหญ่ด้วยการกระจาย chi-square หนึ่งองศาอิสระ จึงยังไม่ปฏิเสธที่ระดับ 5% แต่ไม่ได้แปลว่าโอกาสแบบจำลองถูกต้องคือ 83.8%</div></figure>
+</svg><div class="reading"><p>ใช้การประมาณสำหรับตัวอย่างขนาดใหญ่ด้วยการกระจาย chi-square หนึ่งองศาอิสระ จึงยังไม่ปฏิเสธที่ระดับ 5% แต่ไม่ได้แปลว่าโอกาสแบบจำลองถูกต้องคือ 83.8%</p></div></figure></div>
 <h4>ภาพที่ 1 — จำนวนพลาดเท่ากันแต่รูปแบบต่างกัน</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="434.044886pt" height="209.52pt" viewBox="0 0 434.044886 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -376,7 +380,7 @@ L 434.044886 209.52
 L 434.044886 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-7-6-axes_1">
    <g id="figure-17-7-6-patch_2">
@@ -385,28 +389,28 @@ L 421.084886 164.71
 L 421.084886 22.92 
 L 49.69625 22.92 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-7-6-matplotlib.axis_1">
     <g id="figure-17-7-6-xtick_1">
      <g id="figure-17-7-6-line2d_1">
       <path d="M 122.780761 164.71 
 L 122.780761 22.92 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_2">
       <defs>
        <path id="figure-17-7-6-m338743e484" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-6-m338743e484" x="122.780761" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m338743e484" x="122.780761" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_1">
       <!-- 50 -->
-      <g style="fill: #6b7280" transform="translate(117.980761 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(117.980761 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-6-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -485,16 +489,16 @@ z
      <g id="figure-17-7-6-line2d_3">
       <path d="M 197.356792 164.71 
 L 197.356792 22.92 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_4">
       <g>
-       <use xlink:href="#figure-17-7-6-m338743e484" x="197.356792" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m338743e484" x="197.356792" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_2">
       <!-- 100 -->
-      <g style="fill: #6b7280" transform="translate(190.156792 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(190.156792 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-6-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -522,16 +526,16 @@ z
      <g id="figure-17-7-6-line2d_5">
       <path d="M 271.932824 164.71 
 L 271.932824 22.92 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_6">
       <g>
-       <use xlink:href="#figure-17-7-6-m338743e484" x="271.932824" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m338743e484" x="271.932824" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_3">
       <!-- 150 -->
-      <g style="fill: #6b7280" transform="translate(264.732824 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(264.732824 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-3b" transform="translate(120 0)"/>
@@ -542,16 +546,16 @@ L 271.932824 22.92
      <g id="figure-17-7-6-line2d_7">
       <path d="M 346.508855 164.71 
 L 346.508855 22.92 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_8">
       <g>
-       <use xlink:href="#figure-17-7-6-m338743e484" x="346.508855" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m338743e484" x="346.508855" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_4">
       <!-- 200 -->
-      <g style="fill: #6b7280" transform="translate(339.308855 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(339.308855 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-6-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -595,16 +599,16 @@ z
      <g id="figure-17-7-6-line2d_9">
       <path d="M 421.084886 164.71 
 L 421.084886 22.92 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_10">
       <g>
-       <use xlink:href="#figure-17-7-6-m338743e484" x="421.084886" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m338743e484" x="421.084886" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_5">
       <!-- 250 -->
-      <g style="fill: #6b7280" transform="translate(413.884886 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(413.884886 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-6-IBMPlexSansThai-Regular-3b" transform="translate(120 0)"/>
@@ -613,7 +617,7 @@ L 421.084886 22.92
     </g>
     <g id="figure-17-7-6-text_6">
      <!-- Forecast day -->
-     <g style="fill: #111418" transform="translate(209.663224 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(209.663224 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-6-IBMPlexSansThai-Regular-26" d="M 595 0 
 L 595 4467 
@@ -915,21 +919,21 @@ z
      <g id="figure-17-7-6-line2d_11">
       <path d="M 49.69625 123.110455 
 L 421.084886 123.110455 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_12">
       <defs>
        <path id="figure-17-7-6-m6a8cd3a085" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-6-m6a8cd3a085" x="49.69625" y="123.110455" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m6a8cd3a085" x="49.69625" y="123.110455" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_7">
       <!-- Clustered -->
-      <g style="fill: #6b7280" transform="translate(8.0725 127.574455) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(8.0725 127.574455) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-6-IBMPlexSansThai-Regular-23" d="M 2170 -77 
 Q 1318 -77 844 502 
@@ -1006,16 +1010,16 @@ z
      <g id="figure-17-7-6-line2d_13">
       <path d="M 49.69625 64.519545 
 L 421.084886 64.519545 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-6-line2d_14">
       <g>
-       <use xlink:href="#figure-17-7-6-m6a8cd3a085" x="49.69625" y="64.519545" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-6-m6a8cd3a085" x="49.69625" y="64.519545" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-6-text_8">
       <!-- Separated -->
-      <g style="fill: #6b7280" transform="translate(5.76 68.983545) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(5.76 68.983545) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-6-IBMPlexSansThai-Regular-33" d="M 1850 -77 
 Q 1306 -77 922 131 
@@ -1106,60 +1110,60 @@ z
    <g id="figure-17-7-6-EventCollection_1">
     <path d="M 79.526663 46.942273 
 L 79.526663 82.096818 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8"/>
     <path d="M 139.187488 46.942273 
 L 139.187488 82.096818 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8"/>
     <path d="M 198.848313 46.942273 
 L 198.848313 82.096818 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8"/>
     <path d="M 258.509138 46.942273 
 L 258.509138 82.096818 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8"/>
     <path d="M 318.169963 46.942273 
 L 318.169963 82.096818 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8"/>
    </g>
    <g id="figure-17-7-6-EventCollection_2">
     <path d="M 198.848313 105.533182 
 L 198.848313 140.687727 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #dc2626; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8"/>
     <path d="M 200.339833 105.533182 
 L 200.339833 140.687727 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #dc2626; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8"/>
     <path d="M 201.831354 105.533182 
 L 201.831354 140.687727 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #dc2626; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8"/>
     <path d="M 203.322875 105.533182 
 L 203.322875 140.687727 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #dc2626; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8"/>
     <path d="M 204.814395 105.533182 
 L 204.814395 140.687727 
-" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: #dc2626; stroke-width: 1.8"/>
+" clip-path="url(#figure-17-7-6-p93c3542f10)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8"/>
    </g>
    <g id="figure-17-7-6-patch_3">
     <path d="M 49.69625 164.71 
 L 49.69625 22.92 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-6-patch_4">
     <path d="M 421.084886 164.71 
 L 421.084886 22.92 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-6-patch_5">
     <path d="M 49.69625 164.71 
 L 421.084886 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-6-patch_6">
     <path d="M 49.69625 22.92 
 L 421.084886 22.92 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-6-text_9">
     <!-- Five exceptions in each sequence -->
-    <g style="fill: #111418" transform="translate(49.69625 16.92) scale(0.1 -0.1)">
+    <g style="fill: var(--plot-ink)" transform="translate(49.69625 16.92) scale(0.1 -0.1)">
      <defs>
       <path id="figure-17-7-6-IBMPlexSansThai-SemiBold-26" d="M 525 0 
 L 525 4467 
@@ -1582,7 +1586,7 @@ z
 </svg>
 <figcaption>ทั้งสองแถวมีห้าครั้งเหมือนกัน แถวล่างพลาดห้าวันติด จึงต้องใช้ข้อมูลลำดับที่การนับรวมของ Kupiec ทิ้งไป</figcaption></figure>
 <h4>นับการเปลี่ยนสถานะโดยไม่ทิ้งขอบเงียบ ๆ</h4><p>ตัวอย่างนี้กำหนดสถานะก่อนเริ่มทดสอบเป็นศูนย์ แล้วนับ 250 คู่จากสถานะก่อนหน้าสู่วันพยากรณ์ ดังนั้นวันแรกยังรวมอยู่ในทั้งการทดสอบความถี่และการทดสอบลำดับ หากไม่มีสถานะก่อนหน้าให้ใช้คู่ที่มีจริงและปรับการเปรียบเทียบ likelihood ให้ใช้ข้อมูลชุดเดียวกัน</p>
-<h4>โอกาสพลาดขึ้นกับวันก่อนหรือไม่</h4><figure class="formula"><svg style="height:2.0946em;vertical-align:-0.0139em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='255.599041pt' height='25.135233pt' viewBox='66.029629 -24.967861 255.599041 25.135233'>
+<div class="formula-block formula-role-input"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><h4>โอกาสพลาดขึ้นกับวันก่อนหรือไม่</h4><figure class="formula formula-role-input"><svg style="height:2.0946em;vertical-align:-0.0139em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='255.599041pt' height='25.135233pt' viewBox='66.029629 -24.967861 255.599041 25.135233'>
 <defs>
 <path id="formula-17-7-8-ba3c63b44b4275ec1392-g2-43" d='M4.770112-2.761644H8.069738C8.237111-2.761644 8.452304-2.761644 8.452304-2.976837C8.452304-3.203985 8.249066-3.203985 8.069738-3.203985H4.770112V-6.503611C4.770112-6.670984 4.770112-6.886177 4.554919-6.886177C4.327771-6.886177 4.327771-6.682939 4.327771-6.503611V-3.203985H1.028144C.860772-3.203985 .645579-3.203985 .645579-2.988792C.645579-2.761644 .848817-2.761644 1.028144-2.761644H4.327771V.537983C4.327771 .705355 4.327771 .920548 4.542964 .920548C4.770112 .920548 4.770112 .71731 4.770112 .537983V-2.761644Z'/>
 <path id="formula-17-7-8-ba3c63b44b4275ec1392-g2-61" d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
@@ -1640,8 +1644,8 @@ z
 <rect x='275.302485' y='-13.221811' height='.478187' width='46.326185'/>
 <use x='294.222167' y='-1.793263' xlink:href="#formula-17-7-8-ba3c63b44b4275ec1392-g0-84"/>
 </g>
-</svg><div class="reading">หากเป็นอิสระ โอกาสหลังวันที่ไม่พลาดกับหลังวันที่พลาดควรเท่ากัน ทางเลือกแบบ Markov อนุญาตให้สองค่านี้ต่างกัน</div></figure>
-<h4>สร้างสถิติ Christoffersen</h4><figure class="formula"><svg style="height:5.8174em;vertical-align:0.1111em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='251.598802pt' height='69.809001pt' viewBox='68.256971 -71.142039 251.598802 69.809001'>
+</svg><div class="reading"><p>หากเป็นอิสระ โอกาสหลังวันที่ไม่พลาดกับหลังวันที่พลาดควรเท่ากัน ทางเลือกแบบ Markov อนุญาตให้สองค่านี้ต่างกัน</p></div></figure></div>
+<div class="formula-block formula-role-input"><div class="formula-role-key"><span aria-hidden="true"></span>ของที่ใส่เข้าไป</div><h4>สร้างสถิติ Christoffersen</h4><figure class="formula formula-role-input"><svg style="height:5.8174em;vertical-align:0.1111em;width:auto;max-width:100%" class="mathsvg math-role-input" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='251.598802pt' height='69.809001pt' viewBox='68.256971 -71.142039 251.598802 69.809001'>
 <defs>
 <path id="formula-17-7-9-5f6c190a22814452be97-g4-48" d='M3.897385-2.542466C3.897385-3.395268 3.809714-3.913325 3.5467-4.423412C3.196015-5.124782 2.550436-5.300125 2.11208-5.300125C1.107846-5.300125 .74122-4.550934 .629639-4.327771C.342715-3.745953 .326775-2.956912 .326775-2.542466C.326775-2.016438 .350685-1.211457 .73325-.573848C1.099875 .01594 1.689664 .167372 2.11208 .167372C2.494645 .167372 3.180075 .047821 3.57858-.74122C3.873474-1.315068 3.897385-2.024408 3.897385-2.542466ZM2.11208-.055791C1.841096-.055791 1.291158-.183313 1.123786-1.020174C1.036115-1.474471 1.036115-2.223661 1.036115-2.638107C1.036115-3.188045 1.036115-3.745953 1.123786-4.184309C1.291158-4.99726 1.912827-5.076961 2.11208-5.076961C2.383064-5.076961 2.933001-4.941469 3.092403-4.216189C3.188045-3.777833 3.188045-3.180075 3.188045-2.638107C3.188045-2.16787 3.188045-1.45056 3.092403-1.004234C2.925031-.167372 2.375093-.055791 2.11208-.055791Z'/>
 <path id="formula-17-7-9-5f6c190a22814452be97-g4-49" d='M2.502615-5.076961C2.502615-5.292154 2.486675-5.300125 2.271482-5.300125C1.944707-4.98132 1.522291-4.790037 .765131-4.790037V-4.527024C.980324-4.527024 1.41071-4.527024 1.872976-4.742217V-.653549C1.872976-.358655 1.849066-.263014 1.091905-.263014H.812951V0C1.139726-.02391 1.825156-.02391 2.183811-.02391S3.235866-.02391 3.56264 0V-.263014H3.283686C2.526526-.263014 2.502615-.358655 2.502615-.653549V-5.076961Z'/>
@@ -1777,8 +1781,9 @@ z
 <use x='292.708564' y='-2.540522' xlink:href="#formula-17-7-9-5f6c190a22814452be97-g2-100"/>
 <use x='297.564013' y='-4.333785' xlink:href="#formula-17-7-9-5f6c190a22814452be97-g3-58"/>
 </g>
-</svg><div class="reading">ใช้ค่า 0 log 0 เป็นศูนย์ตามลิมิต สถิติความเป็นอิสระประมาณด้วย chi-square หนึ่งองศาอิสระ ส่วนสถิติร่วมสององศาอิสระเมื่อเงื่อนไขขนาดตัวอย่างและการระบุแบบจำลองเหมาะสม</div></figure>
-<h4>ลำดับห้าวันติดให้คำตอบต่างออกไป</h4><figure class="formula"><svg style="height:2.0508em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='390.596256pt' height='24.609218pt' viewBox='1.171606 -24.358159 390.596256 24.609218'>
+</svg><div class="reading"><p>ใช้ค่า 0 log 0 เป็นศูนย์ตาม limit สถิติ independence ประมาณด้วย chi-square หนึ่งองศาอิสระ</p>
+<p>ส่วนสถิติร่วมสององศาอิสระเมื่อเงื่อนไขขนาดตัวอย่างและการระบุแบบจำลองเหมาะสม</p></div></figure></div>
+<div class="formula-block formula-role-result"><div class="formula-role-key"><span aria-hidden="true"></span>คำตอบ</div><h4>ลำดับห้าวันติดให้คำตอบต่างออกไป</h4><figure class="formula formula-role-result"><svg style="height:2.0508em;vertical-align:-0.0209em;width:auto;max-width:100%" class="mathsvg math-role-result" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='390.596256pt' height='24.609218pt' viewBox='1.171606 -24.358159 390.596256 24.609218'>
 <defs>
 <path id="formula-17-7-10-b1474b64e955de12ca02-g3-40" d='M3.88543 2.905106C3.88543 2.86924 3.88543 2.84533 3.682192 2.642092C2.486675 1.43462 1.817186-.537983 1.817186-2.976837C1.817186-5.296139 2.379078-7.292653 3.765878-8.703362C3.88543-8.810959 3.88543-8.834869 3.88543-8.870735C3.88543-8.942466 3.825654-8.966376 3.777833-8.966376C3.622416-8.966376 2.642092-8.105604 2.056289-6.933998C1.446575-5.726526 1.171606-4.447323 1.171606-2.976837C1.171606-1.912827 1.338979-.490162 1.960648 .789041C2.666002 2.223661 3.646326 3.000747 3.777833 3.000747C3.825654 3.000747 3.88543 2.976837 3.88543 2.905106Z'/>
 <path id="formula-17-7-10-b1474b64e955de12ca02-g3-41" d='M3.371357-2.976837C3.371357-3.88543 3.251806-5.36787 2.582316-6.75467C1.876961-8.18929 .896638-8.966376 .765131-8.966376C.71731-8.966376 .657534-8.942466 .657534-8.870735C.657534-8.834869 .657534-8.810959 .860772-8.607721C2.056289-7.400249 2.725778-5.427646 2.725778-2.988792C2.725778-.669489 2.163885 1.327024 .777086 2.737733C.657534 2.84533 .657534 2.86924 .657534 2.905106C.657534 2.976837 .71731 3.000747 .765131 3.000747C.920548 3.000747 1.900872 2.139975 2.486675 .968369C3.096389-.251059 3.371357-1.542217 3.371357-2.976837Z'/>
@@ -1868,7 +1873,8 @@ z
 <use x='380.558957' y='-8.200662' xlink:href="#formula-17-7-10-b1474b64e955de12ca02-g3-48"/>
 <use x='386.411948' y='-8.200662' xlink:href="#formula-17-7-10-b1474b64e955de12ca02-g3-51"/>
 </g>
-</svg><div class="reading">ผลรวมจำนวนคู่เป็น 250 สถิติร่วมเป็น 32.973913 โดย p-value ประมาณ 0.0000000692 ต่ำกว่า 5% มาก การเกิดหลังวันที่พลาด 80% เป็นค่าประมาณจากฐานเพียงห้าวัน ไม่ใช่พารามิเตอร์ที่ทราบแน่นอน</div></figure>
+</svg><div class="reading"><p>ของที่ใส่เข้าไปคือ transition counts ซึ่งรวมได้ 250 คู่ สถิติร่วมคำนวณได้ 32.973913 และ p-value ประมาณ 0.0000000692</p>
+<p>คำตอบต่ำกว่า 5% มาก แต่โอกาส 80% หลังวันพลาดมาจากฐานเพียง 5 วัน จึงยังมี sampling uncertainty สูง</p></div></figure></div>
 <h4>ภาพที่ 2 — ตารางการเปลี่ยนสถานะเห็นการเกาะกลุ่ม</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="236.1925pt" height="209.52pt" viewBox="0 0 236.1925 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -1894,7 +1900,7 @@ L 236.1925 209.52
 L 236.1925 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-7-11-axes_1">
    <g id="figure-17-7-11-patch_2">
@@ -1903,7 +1909,7 @@ L 230.4325 183.56
 L 230.4325 5.76 
 L 52.6325 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g clip-path="url(#figure-17-7-11-pe94ba106c0)">
     <image xlink:href="data:image/png;base64,
@@ -1915,15 +1921,15 @@ iVBORw0KGgoAAAANSUhEUgAAARAAAAEPCAYAAACKiptbAAADb0lEQVR4nO3WsQ3CQBAAQZuIctwX7dAV
       <defs>
        <path id="figure-17-7-11-m4de7e03537" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-11-m4de7e03537" x="97.0825" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-11-m4de7e03537" x="97.0825" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-11-text_1">
       <!-- Next: 0 -->
-      <g style="fill: #6b7280" transform="translate(84.1625 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(84.1625 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-11-IBMPlexSansThai-Regular-2e" d="M 1677 2726 
 L 1139 3718 
@@ -2089,12 +2095,12 @@ z
     <g id="figure-17-7-11-xtick_2">
      <g id="figure-17-7-11-line2d_2">
       <g>
-       <use xlink:href="#figure-17-7-11-m4de7e03537" x="185.9825" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-11-m4de7e03537" x="185.9825" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-11-text_2">
       <!-- Next: 1 -->
-      <g style="fill: #6b7280" transform="translate(173.0625 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(173.0625 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-11-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -2129,15 +2135,15 @@ z
       <defs>
        <path id="figure-17-7-11-m3a2bf1a1df" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-11-m3a2bf1a1df" x="52.6325" y="50.21" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-11-m3a2bf1a1df" x="52.6325" y="50.21" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-11-text_3">
       <!-- Previous: 0 -->
-      <g style="fill: #6b7280" transform="translate(5.76 54.674) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(5.76 54.674) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-11-IBMPlexSansThai-Regular-30" d="M 595 0 
 L 595 4467 
@@ -2316,12 +2322,12 @@ z
     <g id="figure-17-7-11-ytick_2">
      <g id="figure-17-7-11-line2d_4">
       <g>
-       <use xlink:href="#figure-17-7-11-m3a2bf1a1df" x="52.6325" y="139.11" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-11-m3a2bf1a1df" x="52.6325" y="139.11" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-11-text_4">
       <!-- Previous: 1 -->
-      <g style="fill: #6b7280" transform="translate(5.76 143.574) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(5.76 143.574) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-30"/>
        <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-18" transform="translate(59.59375 0)"/>
        <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-9" transform="translate(95.796875 0)"/>
@@ -2340,22 +2346,22 @@ z
    <g id="figure-17-7-11-patch_3">
     <path d="M 52.6325 183.56 
 L 52.6325 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-11-patch_4">
     <path d="M 230.4325 183.56 
 L 230.4325 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-11-patch_5">
     <path d="M 52.6325 183.56 
 L 230.4325 183.56 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-11-patch_6">
     <path d="M 52.6325 5.76 
 L 230.4325 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-11-text_5">
     <!-- 244 -->
@@ -2420,19 +2426,19 @@ z
    </g>
    <g id="figure-17-7-11-text_6">
     <!-- 1 -->
-    <g style="fill: #111418" transform="translate(181.7825 54.284) scale(0.14 -0.14)">
+    <g style="fill: var(--plot-ink)" transform="translate(181.7825 54.284) scale(0.14 -0.14)">
      <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-3e"/>
     </g>
    </g>
    <g id="figure-17-7-11-text_7">
     <!-- 1 -->
-    <g style="fill: #111418" transform="translate(92.8825 143.184) scale(0.14 -0.14)">
+    <g style="fill: var(--plot-ink)" transform="translate(92.8825 143.184) scale(0.14 -0.14)">
      <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-3e"/>
     </g>
    </g>
    <g id="figure-17-7-11-text_8">
     <!-- 4 -->
-    <g style="fill: #111418" transform="translate(181.7825 143.184) scale(0.14 -0.14)">
+    <g style="fill: var(--plot-ink)" transform="translate(181.7825 143.184) scale(0.14 -0.14)">
      <use xlink:href="#figure-17-7-11-IBMPlexSansThai-Regular-41"/>
     </g>
    </g>
@@ -2470,7 +2476,7 @@ L 433.368977 209.52
 L 433.368977 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-7-12-axes_1">
    <g id="figure-17-7-12-patch_2">
@@ -2479,28 +2485,28 @@ L 427.608977 164.71
 L 427.608977 5.76 
 L 43.38625 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-7-12-matplotlib.axis_1">
     <g id="figure-17-7-12-xtick_1">
      <g id="figure-17-7-12-line2d_1">
       <path d="M 59.799886 164.71 
 L 59.799886 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_2">
       <defs>
        <path id="figure-17-7-12-m7cf99ada7b" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="59.799886" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="59.799886" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(57.399886 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(57.399886 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -2542,16 +2548,16 @@ z
      <g id="figure-17-7-12-line2d_3">
       <path d="M 129.86877 164.71 
 L 129.86877 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_4">
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="129.86877" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="129.86877" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_2">
       <!-- 2 -->
-      <g style="fill: #6b7280" transform="translate(127.46877 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(127.46877 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -2593,16 +2599,16 @@ z
      <g id="figure-17-7-12-line2d_5">
       <path d="M 199.937655 164.71 
 L 199.937655 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_6">
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="199.937655" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="199.937655" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_3">
       <!-- 4 -->
-      <g style="fill: #6b7280" transform="translate(197.537655 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(197.537655 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -2633,16 +2639,16 @@ z
      <g id="figure-17-7-12-line2d_7">
       <path d="M 270.006539 164.71 
 L 270.006539 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_8">
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="270.006539" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="270.006539" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_4">
       <!-- 6 -->
-      <g style="fill: #6b7280" transform="translate(267.606539 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(267.606539 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -2692,16 +2698,16 @@ z
      <g id="figure-17-7-12-line2d_9">
       <path d="M 340.075424 164.71 
 L 340.075424 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_10">
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="340.075424" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="340.075424" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_5">
       <!-- 8 -->
-      <g style="fill: #6b7280" transform="translate(337.675424 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(337.675424 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -2761,16 +2767,16 @@ z
      <g id="figure-17-7-12-line2d_11">
       <path d="M 410.144308 164.71 
 L 410.144308 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_12">
       <g>
-       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="410.144308" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m7cf99ada7b" x="410.144308" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_6">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(405.344308 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(405.344308 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -2795,7 +2801,7 @@ z
     </g>
     <g id="figure-17-7-12-text_7">
      <!-- Likelihood-ratio statistic -->
-     <g style="fill: #111418" transform="translate(186.704957 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(186.704957 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-12-IBMPlexSansThai-Regular-2c" d="M 595 0 
 L 595 4467 
@@ -3162,21 +3168,21 @@ z
      <g id="figure-17-7-12-line2d_13">
       <path d="M 43.38625 157.485 
 L 427.608977 157.485 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_14">
       <defs>
        <path id="figure-17-7-12-m10dae0408a" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="157.485" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="157.485" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_8">
       <!-- 0.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 161.949) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 161.949) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-4e" d="M 870 -77 
 Q 666 -77 573 25 
@@ -3202,16 +3208,16 @@ z
      <g id="figure-17-7-12-line2d_15">
       <path d="M 43.38625 125.642817 
 L 427.608977 125.642817 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_16">
       <g>
-       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="125.642817" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="125.642817" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_9">
       <!-- 0.5 -->
-      <g style="fill: #6b7280" transform="translate(24.61 130.106817) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 130.106817) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-12-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -3260,16 +3266,16 @@ z
      <g id="figure-17-7-12-line2d_17">
       <path d="M 43.38625 93.800635 
 L 427.608977 93.800635 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_18">
       <g>
-       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="93.800635" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="93.800635" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_10">
       <!-- 1.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 98.264635) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 98.264635) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3280,16 +3286,16 @@ L 427.608977 93.800635
      <g id="figure-17-7-12-line2d_19">
       <path d="M 43.38625 61.958452 
 L 427.608977 61.958452 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_20">
       <g>
-       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="61.958452" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="61.958452" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_11">
       <!-- 1.5 -->
-      <g style="fill: #6b7280" transform="translate(24.61 66.422452) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 66.422452) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-42" transform="translate(87.203125 0)"/>
@@ -3300,16 +3306,16 @@ L 427.608977 61.958452
      <g id="figure-17-7-12-line2d_21">
       <path d="M 43.38625 30.116269 
 L 427.608977 30.116269 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-12-line2d_22">
       <g>
-       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="30.116269" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-12-m10dae0408a" x="43.38625" y="30.116269" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-12-text_12">
       <!-- 2.0 -->
-      <g style="fill: #6b7280" transform="translate(24.61 34.580269) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 34.580269) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-12-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -3318,7 +3324,7 @@ L 427.608977 30.116269
     </g>
     <g id="figure-17-7-12-text_13">
      <!-- Asymptotic density -->
-     <g style="fill: #111418" transform="translate(15.804 123.875938) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 123.875938) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-12-IBMPlexSansThai-Regular-21" d="M 3392 0 
 L 2944 1318 
@@ -4098,10 +4104,10 @@ L 195.948362 -53.88138
 L 195.248375 -53.904731 
 L 194.548389 -53.928402 
 z
-" style="stroke: #dc2626; stroke-opacity: 0.2"/>
+" style="stroke: var(--plot-bad); stroke-opacity: 0.2"/>
     </defs>
     <g clip-path="url(#figure-17-7-12-p92ce2cd9dd)">
-     <use xlink:href="#figure-17-7-12-m9f8aa8dc9b" x="0" y="209.52" style="fill: #dc2626; fill-opacity: 0.2; stroke: #dc2626; stroke-opacity: 0.2"/>
+     <use xlink:href="#figure-17-7-12-m9f8aa8dc9b" x="0" y="209.52" style="fill: var(--plot-bad); fill-opacity: 0.2; stroke: var(--plot-bad); stroke-opacity: 0.2"/>
     </g>
    </g>
    <g id="figure-17-7-12-line2d_23">
@@ -4146,44 +4152,44 @@ L 321.245991 157.262142
 L 394.744599 157.416027 
 L 410.144308 157.430866 
 L 410.144308 157.430866 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #1f77b4; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-7-12-line2d_24">
     <path d="M 128.355626 164.71 
 L 128.355626 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-7-12-line2d_25">
     <path d="M 194.383253 164.71 
 L 194.383253 5.76 
-" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: #dc2626; stroke-width: 1.8; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-12-p92ce2cd9dd)" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="figure-17-7-12-patch_3">
     <path d="M 43.38625 164.71 
 L 43.38625 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-12-patch_4">
     <path d="M 427.608977 164.71 
 L 427.608977 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-12-patch_5">
     <path d="M 43.38625 164.71 
 L 427.608977 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-12-patch_6">
     <path d="M 43.38625 5.76 
 L 427.608977 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-12-legend_1">
     <g id="figure-17-7-12-line2d_26">
      <path d="M 339.681477 19.088 
 L 347.681477 19.088 
 L 355.681477 19.088 
-" style="fill: none; stroke: #1d4ed8; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-accent); stroke-width: 1.8; stroke-linecap: round"/>
     </g>
     <g id="figure-17-7-12-text_14">
      <!-- Observed 1.957 -->
@@ -4350,7 +4356,7 @@ z
      <path d="M 339.681477 36.288 
 L 347.681477 36.288 
 L 355.681477 36.288 
-" style="fill: none; stroke: #dc2626; stroke-width: 1.8; stroke-linecap: round"/>
+" style="fill: none; stroke: var(--plot-bad); stroke-width: 1.8; stroke-linecap: round"/>
     </g>
     <g id="figure-17-7-12-text_15">
      <!-- 5% cutoff 3.841 -->
@@ -4543,7 +4549,7 @@ L 433.587159 209.52
 L 433.587159 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-7-13-axes_1">
    <g id="figure-17-7-13-patch_2">
@@ -4552,28 +4558,28 @@ L 427.827159 164.71
 L 427.827159 5.76 
 L 48.18625 5.76 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-7-13-matplotlib.axis_1">
     <g id="figure-17-7-13-xtick_1">
      <g id="figure-17-7-13-line2d_1">
       <path d="M 76.227908 164.71 
 L 76.227908 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_2">
       <defs>
        <path id="figure-17-7-13-m5e88b6a16d" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="76.227908" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="76.227908" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_1">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(73.827908 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(73.827908 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -4615,16 +4621,16 @@ z
      <g id="figure-17-7-13-line2d_3">
       <path d="M 103.191041 164.71 
 L 103.191041 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_4">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="103.191041" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="103.191041" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_2">
       <!-- 1 -->
-      <g style="fill: #6b7280" transform="translate(100.791041 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(100.791041 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -4650,16 +4656,16 @@ z
      <g id="figure-17-7-13-line2d_5">
       <path d="M 130.154174 164.71 
 L 130.154174 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_6">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="130.154174" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="130.154174" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_3">
       <!-- 2 -->
-      <g style="fill: #6b7280" transform="translate(127.754174 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(127.754174 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -4701,16 +4707,16 @@ z
      <g id="figure-17-7-13-line2d_7">
       <path d="M 157.117306 164.71 
 L 157.117306 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_8">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="157.117306" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="157.117306" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_4">
       <!-- 3 -->
-      <g style="fill: #6b7280" transform="translate(154.717306 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(154.717306 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-40" d="M 1670 2573 
 Q 2125 2573 2352 2781 
@@ -4770,16 +4776,16 @@ z
      <g id="figure-17-7-13-line2d_9">
       <path d="M 184.080439 164.71 
 L 184.080439 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_10">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="184.080439" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="184.080439" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_5">
       <!-- 4 -->
-      <g style="fill: #6b7280" transform="translate(181.680439 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(181.680439 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-41" d="M 2400 0 
 L 2400 877 
@@ -4810,16 +4816,16 @@ z
      <g id="figure-17-7-13-line2d_11">
       <path d="M 211.043572 164.71 
 L 211.043572 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_12">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="211.043572" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="211.043572" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_6">
       <!-- 5 -->
-      <g style="fill: #6b7280" transform="translate(208.643572 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(208.643572 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -4866,16 +4872,16 @@ z
      <g id="figure-17-7-13-line2d_13">
       <path d="M 238.006705 164.71 
 L 238.006705 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_14">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="238.006705" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="238.006705" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_7">
       <!-- 6 -->
-      <g style="fill: #6b7280" transform="translate(235.606705 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(235.606705 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-43" d="M 1926 -77 
 Q 1581 -77 1302 41 
@@ -4925,16 +4931,16 @@ z
      <g id="figure-17-7-13-line2d_15">
       <path d="M 264.969837 164.71 
 L 264.969837 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_16">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="264.969837" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="264.969837" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_8">
       <!-- 7 -->
-      <g style="fill: #6b7280" transform="translate(262.569837 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(262.569837 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-44" d="M 1120 0 
 L 2829 4006 
@@ -4957,16 +4963,16 @@ z
      <g id="figure-17-7-13-line2d_17">
       <path d="M 291.93297 164.71 
 L 291.93297 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_18">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="291.93297" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="291.93297" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_9">
       <!-- 8 -->
-      <g style="fill: #6b7280" transform="translate(289.53297 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(289.53297 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-45" d="M 1920 -77 
 Q 1536 -77 1248 22 
@@ -5026,16 +5032,16 @@ z
      <g id="figure-17-7-13-line2d_19">
       <path d="M 318.896103 164.71 
 L 318.896103 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_20">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="318.896103" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="318.896103" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_10">
       <!-- 9 -->
-      <g style="fill: #6b7280" transform="translate(316.496103 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(316.496103 180.638) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-46" d="M 3411 2829 
 Q 3411 2330 3264 1891 
@@ -5085,16 +5091,16 @@ z
      <g id="figure-17-7-13-line2d_21">
       <path d="M 345.859236 164.71 
 L 345.859236 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_22">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="345.859236" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="345.859236" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_11">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(341.059236 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(341.059236 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b" transform="translate(60 0)"/>
       </g>
@@ -5104,16 +5110,16 @@ L 345.859236 5.76
      <g id="figure-17-7-13-line2d_23">
       <path d="M 372.822368 164.71 
 L 372.822368 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_24">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="372.822368" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="372.822368" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_12">
       <!-- 11 -->
-      <g style="fill: #6b7280" transform="translate(368.022368 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(368.022368 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e" transform="translate(60 0)"/>
       </g>
@@ -5123,16 +5129,16 @@ L 372.822368 5.76
      <g id="figure-17-7-13-line2d_25">
       <path d="M 399.785501 164.71 
 L 399.785501 5.76 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_26">
       <g>
-       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="399.785501" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-m5e88b6a16d" x="399.785501" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_13">
       <!-- 12 -->
-      <g style="fill: #6b7280" transform="translate(394.985501 180.638) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(394.985501 180.638) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3f" transform="translate(60 0)"/>
       </g>
@@ -5140,7 +5146,7 @@ L 399.785501 5.76
     </g>
     <g id="figure-17-7-13-text_14">
      <!-- Exceptions in 250 forecasts -->
-     <g style="fill: #111418" transform="translate(182.269986 198.954) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(182.269986 198.954) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-13-IBMPlexSansThai-Regular-25" d="M 595 0 
 L 595 4467 
@@ -5515,21 +5521,21 @@ z
      <g id="figure-17-7-13-line2d_27">
       <path d="M 48.18625 164.71 
 L 427.827159 164.71 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_28">
       <defs>
        <path id="figure-17-7-13-mba29d91f99" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="164.71" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="164.71" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_15">
       <!-- 0.00 -->
-      <g style="fill: #6b7280" transform="translate(24.61 169.174) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 169.174) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-13-IBMPlexSansThai-Regular-4e" d="M 870 -77 
 Q 666 -77 573 25 
@@ -5556,16 +5562,16 @@ z
      <g id="figure-17-7-13-line2d_29">
       <path d="M 48.18625 135.306189 
 L 427.827159 135.306189 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_30">
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="135.306189" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="135.306189" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_16">
       <!-- 0.05 -->
-      <g style="fill: #6b7280" transform="translate(24.61 139.770189) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 139.770189) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b" transform="translate(87.203125 0)"/>
@@ -5577,16 +5583,16 @@ L 427.827159 135.306189
      <g id="figure-17-7-13-line2d_31">
       <path d="M 48.18625 105.902379 
 L 427.827159 105.902379 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_32">
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="105.902379" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="105.902379" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_17">
       <!-- 0.10 -->
-      <g style="fill: #6b7280" transform="translate(24.61 110.366379) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 110.366379) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e" transform="translate(87.203125 0)"/>
@@ -5598,16 +5604,16 @@ L 427.827159 105.902379
      <g id="figure-17-7-13-line2d_33">
       <path d="M 48.18625 76.498568 
 L 427.827159 76.498568 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_34">
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="76.498568" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="76.498568" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_18">
       <!-- 0.15 -->
-      <g style="fill: #6b7280" transform="translate(24.61 80.962568) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 80.962568) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3e" transform="translate(87.203125 0)"/>
@@ -5619,16 +5625,16 @@ L 427.827159 76.498568
      <g id="figure-17-7-13-line2d_35">
       <path d="M 48.18625 47.094757 
 L 427.827159 47.094757 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_36">
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="47.094757" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="47.094757" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_19">
       <!-- 0.20 -->
-      <g style="fill: #6b7280" transform="translate(24.61 51.558757) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 51.558757) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3f" transform="translate(87.203125 0)"/>
@@ -5640,16 +5646,16 @@ L 427.827159 47.094757
      <g id="figure-17-7-13-line2d_37">
       <path d="M 48.18625 17.690947 
 L 427.827159 17.690947 
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-13-line2d_38">
       <g>
-       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="17.690947" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-13-mba29d91f99" x="48.18625" y="17.690947" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-13-text_20">
       <!-- 0.25 -->
-      <g style="fill: #6b7280" transform="translate(24.61 22.154947) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 22.154947) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3b"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-4e" transform="translate(60 0)"/>
        <use xlink:href="#figure-17-7-13-IBMPlexSansThai-Regular-3f" transform="translate(87.203125 0)"/>
@@ -5659,7 +5665,7 @@ L 427.827159 17.690947
     </g>
     <g id="figure-17-7-13-text_21">
      <!-- Null probability -->
-     <g style="fill: #111418" transform="translate(15.804 116.141563) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 116.141563) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-13-IBMPlexSansThai-Regular-2e" d="M 1677 2726 
 L 1139 3718 
@@ -5795,7 +5801,7 @@ L 87.013161 164.71
 L 87.013161 117.041415 
 L 65.442655 117.041415 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_4">
     <path d="M 92.405788 164.71 
@@ -5803,7 +5809,7 @@ L 113.976294 164.71
 L 113.976294 44.334785 
 L 92.405788 44.334785 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_5">
     <path d="M 119.36892 164.71 
@@ -5811,7 +5817,7 @@ L 140.939427 164.71
 L 140.939427 13.329048 
 L 119.36892 13.329048 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_6">
     <path d="M 146.332053 164.71 
@@ -5819,7 +5825,7 @@ L 167.902559 164.71
 L 167.902559 38.304356 
 L 146.332053 38.304356 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_7">
     <path d="M 173.295186 164.71 
@@ -5827,7 +5833,7 @@ L 194.865692 164.71
 L 194.865692 85.866076 
 L 173.295186 85.866076 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_8">
     <path d="M 200.258319 164.71 
@@ -5835,7 +5841,7 @@ L 221.828825 164.71
 L 221.828825 125.526959 
 L 200.258319 125.526959 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #d97706"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-warm)"/>
    </g>
    <g id="figure-17-7-13-patch_9">
     <path d="M 227.221451 164.71 
@@ -5843,7 +5849,7 @@ L 248.791958 164.71
 L 248.791958 148.548645 
 L 227.221451 148.548645 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_10">
     <path d="M 254.184584 164.71 
@@ -5851,7 +5857,7 @@ L 275.75509 164.71
 L 275.75509 159.01971 
 L 254.184584 159.01971 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_11">
     <path d="M 281.147717 164.71 
@@ -5859,7 +5865,7 @@ L 302.718223 164.71
 L 302.718223 162.964116 
 L 281.147717 162.964116 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_12">
     <path d="M 308.11085 164.71 
@@ -5867,7 +5873,7 @@ L 329.681356 164.71
 L 329.681356 164.235809 
 L 308.11085 164.235809 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_13">
     <path d="M 335.073982 164.71 
@@ -5875,7 +5881,7 @@ L 356.644489 164.71
 L 356.644489 164.594566 
 L 335.073982 164.594566 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_14">
     <path d="M 362.037115 164.71 
@@ -5883,7 +5889,7 @@ L 383.607621 164.71
 L 383.607621 164.68456 
 L 362.037115 164.68456 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_15">
     <path d="M 389.000248 164.71 
@@ -5891,27 +5897,27 @@ L 410.570754 164.71
 L 410.570754 164.704882 
 L 389.000248 164.704882 
 z
-" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-13-pcae07ef74d)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-13-patch_16">
     <path d="M 48.18625 164.71 
 L 48.18625 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-13-patch_17">
     <path d="M 427.827159 164.71 
 L 427.827159 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-13-patch_18">
     <path d="M 48.18625 164.71 
 L 427.827159 164.71 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-13-patch_19">
     <path d="M 48.18625 5.76 
 L 427.827159 5.76 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
@@ -5921,7 +5927,7 @@ L 427.827159 5.76
   </clipPath>
  </defs>
 </svg>
-<figcaption>การกระจายจำนวน breach ภายใต้โอกาส 1% และความเป็นอิสระยอมให้หลายจำนวนเกิดขึ้นได้ การทดสอบจึงต้องเปรียบเทียบกับความไม่แน่นอนของจำนวน ไม่ใช่เทียบกับ 2.5 แบบตัดสินตรง ๆ</figcaption></figure>
+<figcaption>การกระจายจำนวน breach ภายใต้โอกาส 1% และ independence ยอมให้หลายจำนวนเกิดขึ้นได้ การทดสอบจึงต้องเปรียบเทียบกับความไม่แน่นอนของจำนวน ไม่ใช่เทียบกับ 2.5 แบบตัดสินตรง ๆ</figcaption></figure>
 <h4>ภาพที่ 5 — จำนวนเดียวกันให้หลักฐานสองแบบ</h4><figure class="plot"><svg class="figsvg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" width="433.156364pt" height="209.52pt" viewBox="0 0 433.156364 209.52" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -5947,7 +5953,7 @@ L 433.156364 209.52
 L 433.156364 0 
 L 0 0 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
   </g>
   <g id="figure-17-7-14-axes_1">
    <g id="figure-17-7-14-patch_2">
@@ -5956,28 +5962,28 @@ L 427.396364 183.56
 L 427.396364 10.224 
 L 41.21 10.224 
 z
-" style="fill: #ffffff"/>
+" style="fill: var(--plot-surface)"/>
    </g>
    <g id="figure-17-7-14-matplotlib.axis_1">
     <g id="figure-17-7-14-xtick_1">
      <g id="figure-17-7-14-line2d_1">
       <path d="M 136.781373 183.56 
 L 136.781373 10.224 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_2">
       <defs>
        <path id="figure-17-7-14-mbb657c090b" d="M 0 0 
 L 0 3.5 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-14-mbb657c090b" x="136.781373" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-mbb657c090b" x="136.781373" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_1">
       <!-- Separated -->
-      <g style="fill: #6b7280" transform="translate(118.313248 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(118.313248 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-33" d="M 1850 -77 
 Q 1306 -77 922 131 
@@ -6220,16 +6226,16 @@ z
      <g id="figure-17-7-14-line2d_3">
       <path d="M 331.824991 183.56 
 L 331.824991 10.224 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_4">
       <g>
-       <use xlink:href="#figure-17-7-14-mbb657c090b" x="331.824991" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-mbb657c090b" x="331.824991" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_2">
       <!-- Clustered -->
-      <g style="fill: #6b7280" transform="translate(314.513116 199.488) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(314.513116 199.488) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-23" d="M 2170 -77 
 Q 1318 -77 844 502 
@@ -6343,21 +6349,21 @@ z
      <g id="figure-17-7-14-line2d_5">
       <path d="M 41.21 183.56 
 L 427.396364 183.56 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_6">
       <defs>
        <path id="figure-17-7-14-m4c3a935d42" d="M 0 0 
 L -3.5 0 
-" style="stroke: #6b7280; stroke-width: 0.8"/>
+" style="stroke: var(--plot-muted); stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="183.56" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="183.56" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_3">
       <!-- 0 -->
-      <g style="fill: #6b7280" transform="translate(29.41 188.024) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 188.024) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-3b" d="M 1920 -77 
 Q 1120 -77 752 531 
@@ -6399,16 +6405,16 @@ z
      <g id="figure-17-7-14-line2d_7">
       <path d="M 41.21 158.797714 
 L 427.396364 158.797714 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_8">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="158.797714" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="158.797714" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_4">
       <!-- 5 -->
-      <g style="fill: #6b7280" transform="translate(29.41 163.261714) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(29.41 163.261714) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-42" d="M 3187 3994 
 L 1229 3994 
@@ -6455,16 +6461,16 @@ z
      <g id="figure-17-7-14-line2d_9">
       <path d="M 41.21 134.035429 
 L 427.396364 134.035429 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_10">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="134.035429" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="134.035429" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_5">
       <!-- 10 -->
-      <g style="fill: #6b7280" transform="translate(24.61 138.499429) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 138.499429) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-3e" d="M 563 0 
 L 563 474 
@@ -6491,16 +6497,16 @@ z
      <g id="figure-17-7-14-line2d_11">
       <path d="M 41.21 109.273143 
 L 427.396364 109.273143 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_12">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="109.273143" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="109.273143" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_6">
       <!-- 15 -->
-      <g style="fill: #6b7280" transform="translate(24.61 113.737143) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 113.737143) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-3e"/>
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -6510,16 +6516,16 @@ L 427.396364 109.273143
      <g id="figure-17-7-14-line2d_13">
       <path d="M 41.21 84.510857 
 L 427.396364 84.510857 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_14">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="84.510857" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="84.510857" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_7">
       <!-- 20 -->
-      <g style="fill: #6b7280" transform="translate(24.61 88.974857) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 88.974857) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-3f" d="M 3411 0 
 L 480 0 
@@ -6562,16 +6568,16 @@ z
      <g id="figure-17-7-14-line2d_15">
       <path d="M 41.21 59.748571 
 L 427.396364 59.748571 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_16">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="59.748571" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="59.748571" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_8">
       <!-- 25 -->
-      <g style="fill: #6b7280" transform="translate(24.61 64.212571) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 64.212571) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-3f"/>
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -6581,16 +6587,16 @@ L 427.396364 59.748571
      <g id="figure-17-7-14-line2d_17">
       <path d="M 41.21 34.986286 
 L 427.396364 34.986286 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_18">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="34.986286" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="34.986286" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_9">
       <!-- 30 -->
-      <g style="fill: #6b7280" transform="translate(24.61 39.450286) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 39.450286) scale(0.08 -0.08)">
        <defs>
         <path id="figure-17-7-14-IBMPlexSansThai-Regular-40" d="M 1670 2573 
 Q 2125 2573 2352 2781 
@@ -6651,16 +6657,16 @@ z
      <g id="figure-17-7-14-line2d_19">
       <path d="M 41.21 10.224 
 L 427.396364 10.224 
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: #e5e7eb; stroke-width: 0.6; stroke-linecap: round"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: none; stroke: var(--plot-line); stroke-width: 0.6; stroke-linecap: round"/>
      </g>
      <g id="figure-17-7-14-line2d_20">
       <g>
-       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="10.224" style="fill: #6b7280; stroke: #6b7280; stroke-width: 0.8"/>
+       <use xlink:href="#figure-17-7-14-m4c3a935d42" x="41.21" y="10.224" style="fill: var(--plot-muted); stroke: var(--plot-muted); stroke-width: 0.8"/>
       </g>
      </g>
      <g id="figure-17-7-14-text_10">
       <!-- 35 -->
-      <g style="fill: #6b7280" transform="translate(24.61 14.688) scale(0.08 -0.08)">
+      <g style="fill: var(--plot-muted)" transform="translate(24.61 14.688) scale(0.08 -0.08)">
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-40"/>
        <use xlink:href="#figure-17-7-14-IBMPlexSansThai-Regular-42" transform="translate(60 0)"/>
       </g>
@@ -6668,7 +6674,7 @@ L 427.396364 10.224
     </g>
     <g id="figure-17-7-14-text_11">
      <!-- Christoffersen independence statistic -->
-     <g style="fill: #111418" transform="translate(15.804 172.312) rotate(-90) scale(0.09 -0.09)">
+     <g style="fill: var(--plot-ink)" transform="translate(15.804 172.312) rotate(-90) scale(0.09 -0.09)">
       <defs>
        <path id="figure-17-7-14-IBMPlexSansThai-Regular-e" d="M 544 4736 
 L 1056 4736 
@@ -6856,7 +6862,7 @@ L 214.79882 183.56
 L 214.79882 182.549224 
 L 58.763926 182.549224 
 z
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: #1d4ed8"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: var(--plot-accent)"/>
    </g>
    <g id="figure-17-7-14-patch_4">
     <path d="M 253.807544 183.56 
@@ -6864,27 +6870,27 @@ L 409.842438 183.56
 L 409.842438 29.949126 
 L 253.807544 29.949126 
 z
-" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: #dc2626"/>
+" clip-path="url(#figure-17-7-14-p8334187e40)" style="fill: var(--plot-bad)"/>
    </g>
    <g id="figure-17-7-14-patch_5">
     <path d="M 41.21 183.56 
 L 41.21 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-14-patch_6">
     <path d="M 427.396364 183.56 
 L 427.396364 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-14-patch_7">
     <path d="M 41.21 183.56 
 L 427.396364 183.56 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="figure-17-7-14-patch_8">
     <path d="M 41.21 10.224 
 L 427.396364 10.224 
-" style="fill: none; stroke: #6b7280; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+" style="fill: none; stroke: var(--plot-muted); stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
   </g>
  </g>
@@ -6896,8 +6902,34 @@ L 427.396364 10.224
 </svg>
 <figcaption>จำนวน breach ห้าครั้งให้สถิติ Kupiec เดียวกันไม่ว่าจะเกิดวันใด แต่การเรียงติดกันเพิ่มสถิติ independence ของ Christoffersen ภาพนี้วางสองส่วนของการตรวจข้างกันเพื่อให้เห็นว่าการผ่าน POF ไม่ได้ลบสัญญาณการเกาะกลุ่ม</figcaption></figure>
 <h4>ผ่านการทดสอบไม่ได้บอกว่าข้อมูลนำเข้าดี</h4><p>Backtest ตรวจเฉพาะ forecast ที่ถูกล็อกไว้ และกำลังทดสอบในจำนวนวันที่จำกัด มันไม่พิสูจน์ว่า covariance ที่ป้อน optimizer เสถียรหรือว่าหางอนาคตเหมือนอดีต หลังตรวจ VaR แล้ว ขั้นถัดไปคือทำให้ covariance sample ที่มีเสียงรบกวนไม่ถูกอินเวอร์สขยายเป็นคำสั่งซื้อขาย ด้วย shrinkage ในหัวข้อถัดไป</p>
-<div class="box example"><h4>รายงานผลทั้งสองมิติ</h4><p>ชุดห้าวันติดไม่ถูกปฏิเสธโดย Kupiec ที่ระดับ 5% แต่ถูกปฏิเสธโดยการตรวจความเป็นอิสระอย่างชัดเจน ส่วนชุดพลาดแยกกันมีจำนวนคู่ 240, 5, 5, 0 ให้สถิติ independence ประมาณ 0.2041 และสถิติร่วม 2.1609 การยังไม่ปฏิเสธชุดหลังเป็นเพียงหลักฐานไม่พอจะจับข้อบกพร่องด้วยการทดสอบนี้</p></div>
-<div class="box pitfall"><h4>ข้อสอบผ่านไม่ได้แถมใบรับรองอนาคต</h4><p>แบบจำลองก็มีวันอ่านข้อสอบถูกเหมือนกัน โดยเฉพาะเมื่อหางมีข้อมูลน้อย ต้องตรวจความแรงของขาดทุนด้วย เพราะการทดสอบ VaR ไม่บอกค่าเฉลี่ยขาดทุนเกินจุดตัด หากไม่มีคู่หลัง breach เลย โอกาสแถวนั้นประมาณไม่ได้ อย่าหารศูนย์แล้วแสดง p-value สวย ๆ; ใช้การประเมินขนาดตัวอย่างหรือการจำลองภายใต้สมมติฐานที่ระบุ และแยกจากเกณฑ์กำกับดูแล</p></div>
+<div class="box example answer"><div class="box-kicker">คำตอบและวิธีเช็ก</div><h4>คำตอบ → ตรวจเอง → ใช้ตัดสินใจ</h4><p>ห้าวันที่พลาดติดกันยังไม่ถูก Kupiec ปฏิเสธที่ระดับ 5% เพราะจำนวนรวมไม่มากพอ แต่ Christoffersen จับการเกาะกลุ่มได้ชัด</p>
+<p>ชุดที่พลาดแยกกันมี transition counts เท่ากับ 240, 5, 5, 0 ให้ independence statistic ประมาณ 0.2041 และ joint statistic 2.1609 ตรวจเร็ว: <svg style="height:0.7492em;vertical-align:-0.0767em;width:auto;max-width:100%" class="mathsvg math-role-input math-inline" version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='110.59428pt' height='8.990286pt' viewBox='.585803 -8.069738 110.59428 8.990286'>
+<defs>
+<path id="inline-4-57fcded828caffdfe7eb-g0-43" d='M4.770112-2.761644H8.069738C8.237111-2.761644 8.452304-2.761644 8.452304-2.976837C8.452304-3.203985 8.249066-3.203985 8.069738-3.203985H4.770112V-6.503611C4.770112-6.670984 4.770112-6.886177 4.554919-6.886177C4.327771-6.886177 4.327771-6.682939 4.327771-6.503611V-3.203985H1.028144C.860772-3.203985 .645579-3.203985 .645579-2.988792C.645579-2.761644 .848817-2.761644 1.028144-2.761644H4.327771V.537983C4.327771 .705355 4.327771 .920548 4.542964 .920548C4.770112 .920548 4.770112 .71731 4.770112 .537983V-2.761644Z'/>
+<path id="inline-4-57fcded828caffdfe7eb-g0-48" d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
+<path id="inline-4-57fcded828caffdfe7eb-g0-50" d='M5.260274-2.008468H4.99726C4.961395-1.80523 4.865753-1.147696 4.746202-.956413C4.662516-.848817 3.981071-.848817 3.622416-.848817H1.41071C1.733499-1.123786 2.462765-1.888917 2.773599-2.175841C4.590785-3.849564 5.260274-4.471233 5.260274-5.654795C5.260274-7.029639 4.172354-7.950187 2.785554-7.950187S.585803-6.766625 .585803-5.738481C.585803-5.128767 1.111831-5.128767 1.147696-5.128767C1.398755-5.128767 1.709589-5.308095 1.709589-5.69066C1.709589-6.025405 1.482441-6.252553 1.147696-6.252553C1.0401-6.252553 1.016189-6.252553 .980324-6.240598C1.207472-7.053549 1.853051-7.603487 2.630137-7.603487C3.646326-7.603487 4.267995-6.75467 4.267995-5.654795C4.267995-4.638605 3.682192-3.753923 3.000747-2.988792L.585803-.286924V0H4.94944L5.260274-2.008468Z'/>
+<path id="inline-4-57fcded828caffdfe7eb-g0-52" d='M4.315816-7.782814C4.315816-8.009963 4.315816-8.069738 4.148443-8.069738C4.052802-8.069738 4.016936-8.069738 3.921295-7.926276L.32279-2.343213V-1.996513H3.466999V-.908593C3.466999-.466252 3.443088-.3467 2.570361-.3467H2.331258V0C2.606227-.02391 3.550685-.02391 3.88543-.02391S5.176588-.02391 5.451557 0V-.3467H5.212453C4.351681-.3467 4.315816-.466252 4.315816-.908593V-1.996513H5.523288V-2.343213H4.315816V-7.782814ZM3.526775-6.850311V-2.343213H.621669L3.526775-6.850311Z'/>
+<path id="inline-4-57fcded828caffdfe7eb-g0-53" d='M1.530262-6.850311C2.044334-6.682939 2.462765-6.670984 2.594271-6.670984C3.945205-6.670984 4.805978-7.663263 4.805978-7.830635C4.805978-7.878456 4.782067-7.938232 4.710336-7.938232C4.686426-7.938232 4.662516-7.938232 4.554919-7.890411C3.88543-7.603487 3.311582-7.567621 3.000747-7.567621C2.211706-7.567621 1.649813-7.806725 1.422665-7.902366C1.338979-7.938232 1.315068-7.938232 1.303113-7.938232C1.207472-7.938232 1.207472-7.866501 1.207472-7.675218V-4.124533C1.207472-3.90934 1.207472-3.837609 1.350934-3.837609C1.41071-3.837609 1.422665-3.849564 1.542217-3.993026C1.876961-4.483188 2.438854-4.770112 3.036613-4.770112C3.670237-4.770112 3.981071-4.184309 4.076712-3.981071C4.27995-3.514819 4.291905-2.929016 4.291905-2.47472S4.291905-1.338979 3.957161-.800996C3.694147-.37061 3.227895-.071731 2.701868-.071731C1.912827-.071731 1.135741-.609714 .920548-1.482441C.980324-1.458531 1.052055-1.446575 1.111831-1.446575C1.315068-1.446575 1.637858-1.566127 1.637858-1.972603C1.637858-2.307347 1.41071-2.49863 1.111831-2.49863C.896638-2.49863 .585803-2.391034 .585803-1.924782C.585803-.908593 1.398755 .251059 2.725778 .251059C4.076712 .251059 5.260274-.884682 5.260274-2.402989C5.260274-3.825654 4.303861-5.009215 3.048568-5.009215C2.367123-5.009215 1.841096-4.710336 1.530262-4.375592V-6.850311Z'/>
+<path id="inline-4-57fcded828caffdfe7eb-g0-61" d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
+</defs>
+<g id="inline-4-57fcded828caffdfe7eb-page1">
+<use x='0' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-50"/>
+<use x='5.85299' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-52"/>
+<use x='11.705981' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-48"/>
+<use x='20.215634' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-43"/>
+<use x='31.976949' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-53"/>
+<use x='40.486603' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-43"/>
+<use x='52.247918' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-53"/>
+<use x='60.757572' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-43"/>
+<use x='72.518887' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-48"/>
+<use x='81.692706' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-61"/>
+<use x='94.118187' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-50"/>
+<use x='99.971177' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-53"/>
+<use x='105.824168' y='0' xlink:href="#inline-4-57fcded828caffdfe7eb-g0-48"/>
+</g>
+</svg> คู่ครบตามวิธีนับของโจทย์</p>
+<p>คำว่า “ยังไม่ปฏิเสธ” แปลว่าหลักฐานยังไม่พอ ไม่ได้แปลว่า model ผ่านตลอดไป</p></div>
+<div class="box pitfall"><div class="box-kicker">ระวังตรงนี้</div><h4>ข้อสอบผ่านไม่ได้แถมใบรับรองอนาคต</h4><p>แบบจำลองก็มีวันอ่านข้อสอบถูกเหมือนกัน โดยเฉพาะเมื่อหางมีข้อมูลน้อย ต้องตรวจความแรงของขาดทุนด้วย เพราะการทดสอบ VaR ไม่บอกค่าเฉลี่ยขาดทุนเกินจุดตัด หากไม่มีคู่หลัง breach เลย โอกาสแถวนั้นประมาณไม่ได้ อย่าหารศูนย์แล้วแสดง p-value สวย ๆ; ใช้การประเมินขนาดตัวอย่างหรือการจำลองภายใต้สมมติฐานที่ระบุ และแยกจากเกณฑ์กำกับดูแล</p></div>
 <h4>คำนวณซ้ำได้</h4><pre class="code"><code>import numpy as np
 from scipy.stats import chi2
 from scipy.special import xlogy
@@ -6916,5 +6948,4 @@ assert abs(uc-1.956809788)&lt;1e-8 and abs(ind-31.01710318)&lt;1e-8
 print(&#x27;UC, IND, CC:&#x27;,uc,ind,uc+ind)
 print(&#x27;p-values:&#x27;,chi2.sf(uc,1),chi2.sf(ind,1),chi2.sf(uc+ind,2))</code></pre><div class="reading">โค้ดนี้ตรวจตัวเลขจากสมมติฐานในตัวอย่าง ใช้ Python ร่วมกับ NumPy และ SciPy</div>
 <div class="box takeaway"><h4>สรุปที่ใช้ได้จริง</h4><ul><li>ล็อก VaR ก่อนเห็นผลจริง และใช้ขาดทุนที่ตรงกับสถานะและช่วงพยากรณ์</li><li>Kupiec ตรวจจำนวน ส่วน Christoffersen ตรวจการพึ่งพาวันก่อน</li><li>ไม่ปฏิเสธไม่ได้แปลว่าถูกต้อง; ข้อมูลหางน้อยทำให้การประมาณ asymptotic ต้องระวัง</li></ul></div>
-<div class="cites">อ้างอิง: <span class="cite">[FE3 M4 L5–L6]</span> · Kupiec (1995), Techniques for Verifying the Accuracy of Risk Measurement Models. https://fedinprint.org/item/fedgfe/34596/original · Christoffersen (1998), Evaluating Interval Forecasts.</div>
-</section><nav class="cites"><a href="17.6.html">17.6 Drawdown, Calmar, and De-risking Rules</a> <a href="17.8.html">17.8 Covariance Shrinkage (Ledoit-Wolf)</a></nav></div></body></html>
+</section><nav class="book-nav bottom-nav"><div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="17.6.html" aria-label="17.6 Drawdown, Calmar, and De-risking Rules">17.6 Drawdown, Calmar, and De-risking Rules</a></div><div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="17.8.html" aria-label="17.8 Covariance Shrinkage (Ledoit-Wolf)">17.8 Covariance Shrinkage (Ledoit-Wolf)</a></div></nav></div></body></html>
