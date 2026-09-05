@@ -1,0 +1,87 @@
+
+@font-face{font-family:PlexThai;src:url('fonts/IBMPlexSansThai-Regular.ttf') format('truetype');font-weight:400;font-display:block}@font-face{font-family:PlexThai;src:url('fonts/IBMPlexSansThai-SemiBold.ttf') format('truetype');font-weight:600;font-display:block}@font-face{font-family:'IBM Plex Mono';src:url('fonts/IBMPlexMono-Regular.ttf') format('truetype');font-weight:400;font-display:block}
+:root{--ink:#111418;--muted:#5B6472;--line:#E3E7EC;--accent:#1D4ED8;--warm:#B45309;
+      --good:#047857;--bad:#B91C1C;--paper:#fff;}
+*{box-sizing:border-box}
+body{font-family:PlexThai,'IBM Plex Sans Thai',system-ui,sans-serif;color:var(--ink);
+     background:var(--paper);font-size:10.5pt;line-height:1.75;margin:0;
+     overflow-wrap:break-word;word-break:normal}
+.wrap{max-width:172mm;margin:0 auto;padding:0 6mm;width:100%}
+h1,h2,h3,h4{line-height:1.25;font-weight:600;overflow-wrap:break-word}
+h1{font-size:26pt;margin:0 0 6pt}
+h2{font-size:17pt;margin:26pt 0 8pt;padding-bottom:5pt;border-bottom:2px solid var(--ink);
+   page-break-before:always}
+h2:first-of-type{page-break-before:avoid}
+h3{font-size:13pt;margin:20pt 0 4pt}
+h4{font-size:10.5pt;margin:12pt 0 3pt;color:var(--muted);letter-spacing:.02em}
+p{margin:0 0 7pt;text-align:left;overflow-wrap:break-word}
+.tnum{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:.4em}
+.subtitle{color:var(--muted);margin:0 0 8pt;font-size:9.5pt;overflow-wrap:break-word}
+.hook{border-left:3px solid var(--accent);padding:2pt 0 2pt 10pt;margin:0 0 10pt;break-inside:auto;overflow-wrap:break-word}
+.box.jargon,.box.example,.box.pitfall{break-inside:auto;page-break-inside:auto}
+table.symbols{break-inside:auto;page-break-inside:auto}
+.topic h3{break-before:auto;page-break-before:auto}
+.hook p{margin:0 0 4pt}
+.topic{page-break-inside:auto}
+/* A figure taller than the space left on the page gets pushed whole to the
+   next page, leaving a band of white. Capping the rendered height means far
+   more figures fit where they were written, so the text stays next to its
+   picture instead of being separated by a gap. */
+figure{margin:10pt 0;break-inside:avoid;page-break-inside:avoid;text-align:center}
+/* Never cap a figure container: its caption/reading can legitimately extend
+   below the SVG. A container cap clips its layout height but not its visible
+   children, so the next block may be placed on top of that text. Keep size
+   limits on the SVGs themselves and let the figure participate in normal
+   document flow. */
+figure.plot{max-height:none}
+figure.plot svg{max-width:100%;height:auto}
+figure.formula{margin:9pt 0;max-height:none;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+figure.formula .mathsvg{vertical-align:middle !important;margin:0 auto;display:inline-block}
+.mathsvg{max-width:100%;max-height:32mm;height:auto;width:auto}
+.figsvg{max-width:100%;max-height:66mm;height:auto;width:auto}
+p,li{orphans:3;widows:3;overflow-wrap:break-word}
+h3,h4{break-after:avoid;page-break-after:avoid}
+figcaption,.reading{font-size:8.8pt;color:var(--muted);margin-top:6pt;margin-bottom:4pt;text-align:left;line-height:1.7;overflow-wrap:break-word}
+.table-wrap{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;margin:10pt 0}
+table{border-collapse:collapse;width:100%;margin:10pt 0;font-size:9pt;page-break-inside:avoid}
+.table-wrap>table{margin:0}
+th,td{border:1px solid var(--line);padding:4pt 6pt;text-align:left;vertical-align:top;overflow-wrap:break-word}
+th{background:#F6F8FA;font-weight:600}
+.box{border:1px solid var(--line);border-radius:4px;padding:8pt 10pt;margin:11pt 0;line-height:1.8;
+     page-break-inside:avoid;background:#FAFBFC;overflow-wrap:break-word;max-width:100%}
+.box h4{margin-top:0}
+.box.example{border-left:3px solid var(--accent)}
+.box.pitfall{border-left:3px solid var(--bad);background:#FEF6F6}
+.box.takeaway{border-left:3px solid var(--good);background:#F5FBF8}
+.box ul{margin:0;padding-left:16pt}
+.box li{margin:0 0 3pt}
+pre.code{background:#F6F8FA;border:1px solid var(--line);border-radius:4px;padding:8pt;
+     font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:8.4pt;line-height:1.45;
+     overflow-x:auto;page-break-inside:avoid;max-width:100%}
+code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.92em;
+     background:#F1F4F8;padding:.5pt 3pt;border-radius:3px;overflow-wrap:break-word}
+pre.code code{background:none;padding:0;overflow-wrap:normal;white-space:pre}
+.cite{color:var(--accent);font-size:.88em;white-space:nowrap}
+.cites{font-size:8.5pt;color:var(--muted);border-top:1px solid var(--line);
+       padding-top:5pt;margin-top:12pt;overflow-wrap:break-word}
+.figfail{border:1px dashed var(--bad);color:var(--bad);padding:6pt;font-size:8.5pt;text-align:left}
+.cover{text-align:center;padding:52mm 0 0}
+.cover h1{font-size:32pt}
+.cover .sub{color:var(--muted);font-size:12pt;margin-top:8pt}
+.cover .meta{color:var(--muted);font-size:9pt;margin-top:30mm;line-height:1.9}
+.toc{page-break-after:always}
+.toc h2{page-break-before:avoid}
+.toc ol{padding-left:18pt}
+.toc li{margin:2pt 0}
+.toc .n{color:var(--accent);font-variant-numeric:tabular-nums}
+
+table.symbols{font-size:9pt}
+table.symbols td.sym{font-family:'IBM Plex Mono',monospace;white-space:nowrap;width:22%}
+table.symbols td.unit{color:var(--muted);white-space:nowrap;width:20%}
+.box.jargon{border-left:3px solid var(--warm);background:#FFFBF3}
+.box.jargon dl{margin:0}
+.box.jargon dt{font-weight:600;margin-top:5pt;overflow-wrap:break-word}
+.box.jargon dt:first-child{margin-top:0}
+.box.jargon dd{margin:1pt 0 0;color:var(--ink);overflow-wrap:break-word}
+@page{size:A4;margin:20mm 16mm 18mm}
+@media print{.wrap{max-width:none;padding:0}}
