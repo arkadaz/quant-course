@@ -1,7 +1,7 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>20.3 Rate Lattices: Ho-Lee and Black-Derman-Toy</title><link rel="stylesheet" href="../book.css?v=736b2d00e843"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../index.html#part-8">Part 8</a><span aria-hidden="true">·</span><a href="../chapters/20.html">บทที่ 20</a><span class="topic-progress">หัวข้อ 124/142</span></nav><section class="topic" id="t20-3">
 <h3><span class="tnum">20.3</span> Rate Lattices: Ho-Lee and Black-Derman-Toy</h3>
 <p class="subtitle">เติมเส้นทางที่เป็นไปได้ให้ curve วันนี้ แล้วใช้ state prices ส่งมูลค่ากลับมาทีละ node</p>
-<div class="hook"><p>วันนี้คุณรู้ราคาบัตรรับเงินในอนาคต แต่ปีหน้าดอกเบี้ยอาจขึ้นหรือลง. ถ้ามีสิทธิ์เลือกซื้อบัตรนั้นปีหน้า ราคาเฉลี่ยเพียงตัวเดียวพอไหม?</p>
+<div class="hook" id="t20-3-intro"><p>วันนี้คุณรู้ราคาบัตรรับเงินในอนาคต แต่ปีหน้าดอกเบี้ยอาจขึ้นหรือลง. ถ้ามีสิทธิ์เลือกซื้อบัตรนั้นปีหน้า ราคาเฉลี่ยเพียงตัวเดียวพอไหม?</p>
 <p>ลองวาดสองทาง: ดอกเบี้ยสูงทำให้บัตรราคาต่ำ, ดอกเบี้ยต่ำทำให้บัตรราคาแพง. เราให้ทุกทางรวมกันยังให้ราคาเท่ากับตลาดวันนี้ แล้วค่อยคิดค่าของสิทธิ์ย้อนกลับ.</p>
 <p>เฉลย: ไม่พอ เพราะ option ได้ใช้ประโยชน์ไม่เท่ากันในแต่ละทาง. ภาพทางเลือกนี้เรียก rate lattice และการคิดจากปลายกลับมาต้นเรียก backward induction. ค่าเฉลี่ยบอกอุณหภูมิห้อง แต่ option สนใจว่าประตูไหนร้อนจัด.</p></div>
 <nav class="topic-tools" aria-label="ทางลัดในหัวข้อนี้"><span>13 สูตร · 5 รูป</span><a href="#t20-3-summary">ดูสรุปก่อน ↓</a></nav>

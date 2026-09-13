@@ -1,7 +1,7 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>11.4 Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</title><link rel="stylesheet" href="../book.css?v=736b2d00e843"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../index.html#part-4">Part 4</a><span aria-hidden="true">·</span><a href="../chapters/11.html">บทที่ 11</a><span class="topic-progress">หัวข้อ 66/142</span></nav><section class="topic" id="t11-4">
 <h3><span class="tnum">11.4</span> Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</h3>
 <p class="subtitle">แบบจำลองที่ค่าติดลบไม่ได้และโตแบบทบต้น</p>
-<div class="hook"><p>อุณหภูมิ 20 องศาลด 30 หน่วยได้ แต่ราคาของชิ้นหนึ่ง 20 USD ลด 30 USD แล้วติดลบฟังแปลก ควรให้ model เคารพขอบนี้อย่างไร?</p>
+<div class="hook" id="t11-4-intro"><p>อุณหภูมิ 20 องศาลด 30 หน่วยได้ แต่ราคาของชิ้นหนึ่ง 20 USD ลด 30 USD แล้วติดลบฟังแปลก ควรให้ model เคารพขอบนี้อย่างไร?</p>
 <p>เฉลย: การลด 50% จาก 20 USD เหลือ 10 USD แต่ไม่พาข้ามศูนย์ เพราะระดับใหม่เกิดจากการคูณค่าบวกเดิมด้วยตัวคูณบวก</p>
 <p>GBM ใช้ relative change จึงรักษา stock price ให้เป็นบวกและเป็น baseline ที่คำนวณกับ simulation ได้ มันมีรั้วศูนย์ติดพื้น วิ่งลงได้แต่ขุดทะลุไม่ได้; quant ใช้เปรียบเทียบก่อนเพิ่ม jump หรือ volatility ที่เปลี่ยนตามเวลา</p></div>
 <nav class="topic-tools" aria-label="ทางลัดในหัวข้อนี้"><span>4 สูตร · 6 รูป</span><a href="#t11-4-summary">ดูสรุปก่อน ↓</a></nav>

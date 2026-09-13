@@ -1,7 +1,7 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>21.2 Multivariate Optimizers for Calibration</title><link rel="stylesheet" href="../book.css?v=736b2d00e843"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../index.html#part-8">Part 8</a><span aria-hidden="true">·</span><a href="../chapters/21.html">บทที่ 21</a><span class="topic-progress">หัวข้อ 130/142</span></nav><section class="topic" id="t21-2">
 <h3><span class="tnum">21.2</span> Multivariate Optimizers for Calibration</h3>
 <p class="subtitle">เลือก parameter หลายตัวให้เข้าตลาดโดยวัด error, scale ก้าว และควบคุมการหยุด</p>
-<div class="hook"><p>มีปุ่มปรุงรส 3 ปุ่ม แต่ต้องทำซุป 6 ถ้วยให้ใกล้เป้าพร้อมกัน. หมุนปุ่มให้ถ้วยแรกดีขึ้น อาจทำให้ถ้วยสุดท้ายแย่ลง—จะวัดว่าดีขึ้นจริงอย่างไร?</p>
+<div class="hook" id="t21-2-intro"><p>มีปุ่มปรุงรส 3 ปุ่ม แต่ต้องทำซุป 6 ถ้วยให้ใกล้เป้าพร้อมกัน. หมุนปุ่มให้ถ้วยแรกดีขึ้น อาจทำให้ถ้วยสุดท้ายแย่ลง—จะวัดว่าดีขึ้นจริงอย่างไร?</p>
 <p>ถ้าพลาด 0.5, 1.0 และ 0.2 หน่วย ให้ยกกำลังสองแล้วรวม. ถ้วยที่พลาดมากจึงมีน้ำหนักมากโดยธรรมชาติ.</p>
 <p>เฉลย: ดูคะแนนรวมที่ลดลง ไม่ใช่เลือกชิมถ้วยเดียว. การหาค่าหลายปุ่มที่ลดความพลาดรวมเรียก multivariate optimization; เมื่อตั้งราคาเป็นเป้า งานนี้เรียก calibration. optimizer ไม่มีปุ่ม “อร่อยทุกถ้วย”; มันต้องมีตาชั่งและเบรก.</p></div>
 <nav class="topic-tools" aria-label="ทางลัดในหัวข้อนี้"><span>6 สูตร · 5 รูป</span><a href="#t21-2-summary">ดูสรุปก่อน ↓</a></nav>

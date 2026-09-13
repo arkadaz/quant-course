@@ -1,7 +1,7 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>5.4 Constructing the Dual — Lagrangian Relaxation</title><link rel="stylesheet" href="../book.css?v=736b2d00e843"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../index.html#part-2">Part 2</a><span aria-hidden="true">·</span><a href="../chapters/5.html">บทที่ 5</a><span class="topic-progress">หัวข้อ 30/142</span></nav><section class="topic" id="t5-4">
 <h3><span class="tnum">5.4</span> Constructing the Dual — Lagrangian Relaxation</h3>
 <p class="subtitle">สร้างโจทย์คู่ของ linear program (LP) ด้วยการผ่อนแรงบังคับของโจทย์เดิม</p>
-<div class="hook"><p>โรงงานใช้ไฟฟ้าได้ไม่เกิน 10 หน่วย แผนหนึ่งใช้ 12 หน่วย ได้ประโยชน์เพิ่ม 4 USD และถูกปรับหน่วยละ 3 USD; แผนนี้คุ้มหรือไม่?</p>
+<div class="hook" id="t5-4-intro"><p>โรงงานใช้ไฟฟ้าได้ไม่เกิน 10 หน่วย แผนหนึ่งใช้ 12 หน่วย ได้ประโยชน์เพิ่ม 4 USD และถูกปรับหน่วยละ 3 USD; แผนนี้คุ้มหรือไม่?</p>
 <p>เฉลย: แผนที่ใช้ไฟฟ้า 12 หน่วยได้ประโยชน์เพิ่ม 4 USD แต่ค่าปรับ 6 USD จึงไม่คุ้ม; การใส่ราคาให้การฝ่าฝืนทำให้เปรียบทุกแผนในสูตรเดียว</p>
 <p>Lagrangian relaxation ย้าย constraint เข้า objective ด้วย multiplier ซึ่งเป็นราคาของการละเมิด ใช้สร้าง dual และหา bound หรือ algorithm ที่แยกส่วนได้</p>
 <p>multiplier ทำงานเหมือนมิเตอร์จอดรถของ constraint: อยู่เกินได้ แต่ต้องจ่าย; quant ใช้มันแปล risk limit เป็น penalty ที่ optimizer รับรู้</p></div>

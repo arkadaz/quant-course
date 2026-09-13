@@ -1,7 +1,7 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>21.3 Fourier and FFT Pricing</title><link rel="stylesheet" href="../book.css?v=736b2d00e843"></head><body><div class="wrap"><nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a><span aria-hidden="true">·</span><a href="../index.html#part-8">Part 8</a><span aria-hidden="true">·</span><a href="../chapters/21.html">บทที่ 21</a><span class="topic-progress">หัวข้อ 131/142</span></nav><section class="topic" id="t21-3">
 <h3><span class="tnum">21.3</span> Fourier and FFT Pricing</h3>
 <p class="subtitle">ใช้ characteristic function และ Carr–Madan transform สร้างราคา option หลาย strike ในรอบเดียว</p>
-<div class="hook"><p>ฟังคอร์ดหนึ่งครั้งแล้วแยกได้ว่ามีเสียงต่ำและเสียงสูงอะไรบ้าง. ถ้าต้องตอบราคา 256 จุด เราต้องเริ่มคำนวณใหม่ 256 รอบจริงไหม?</p>
+<div class="hook" id="t21-3-intro"><p>ฟังคอร์ดหนึ่งครั้งแล้วแยกได้ว่ามีเสียงต่ำและเสียงสูงอะไรบ้าง. ถ้าต้องตอบราคา 256 จุด เราต้องเริ่มคำนวณใหม่ 256 รอบจริงไหม?</p>
 <p>สร้างข้อมูลในมุมความถี่หนึ่งชุด แล้วแปลงกลับเป็นราคาทั้งแถว. วิธีแปลงนี้เรียก Fourier transform; algorithm ที่ทำเร็วเรียก Fast Fourier Transform (FFT).</p>
 <p>เฉลย: ไม่ต้อง เพราะหลาย strike ใช้โครงสร้างความถี่ชุดเดียวกัน. FFT ไม่ได้คิดเลขเก่งกว่าแบบวิเศษ; มันแค่หยุดอุ่นไมโครเวฟ 256 รอบ.</p></div>
 <nav class="topic-tools" aria-label="ทางลัดในหัวข้อนี้"><span>9 สูตร · 5 รูป</span><a href="#t21-3-summary">ดูสรุปก่อน ↓</a></nav>
