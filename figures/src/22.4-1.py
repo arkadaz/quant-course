@@ -1,0 +1,1 @@
+l=np.linspace(0,.12,241);tl=np.minimum(np.maximum(l-.03,0),.04)/.04;ax.plot(100*l,100*tl,color=BAD,lw=2.5);ax.axvline(3,color=MUTED,ls='--');ax.axvline(7,color=MUTED,ls='--');ax.set_xlabel('Portfolio loss (%)');ax.set_ylabel('Tranche loss (%)');ax.set_title('3%–7% tranche loss allocation',loc='left');ax.grid(alpha=.25)

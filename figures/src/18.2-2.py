@@ -1,0 +1,2 @@
+dy=np.linspace(-.02,.02,201);exact=100/(1+dy)**7.2;dur=100*(1-7.2*dy);conv=100*(1-7.2*dy+.5*68*dy**2)
+ax.plot(10000*dy,exact,color=INK,lw=2,label='stylized price');ax.plot(10000*dy,dur,color=BAD,ls='--',label='duration');ax.plot(10000*dy,conv,color=GOOD,ls=':',lw=2,label='duration + convexity');ax.set_xlabel('Parallel shock (bp)');ax.set_ylabel('Price index');ax.legend(fontsize=7);ax.set_title('Second order matters away from zero',loc='left');ax.grid(alpha=.25)

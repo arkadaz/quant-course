@@ -1,0 +1,1 @@
+u=np.linspace(0,80,500);m=np.log(100)+(.05-.5*.2**2);phi=np.exp(1j*u*m-.5*.2**2*u*u);ax.plot(u,phi.real,label='Real part');ax.plot(u,phi.imag,label='Imaginary part');ax.axhline(0,color=GRID,lw=1);ax.set_xlabel('Frequency u');ax.set_ylabel('Characteristic function');ax.legend()

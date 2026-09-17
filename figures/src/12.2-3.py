@@ -1,0 +1,1 @@
+sig=np.linspace(.10,.50,200);g=.10-.5*sig**2;ax.plot(sig*100,g*100,color=WARM,lw=2);ax.axhline(0,color=INK,lw=.8);ax.scatter([30],[5.5],color=GOOD,s=40);ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Median log-growth exponent (%/year)');ax.set_title('Higher volatility widens the mean-median gap',loc='left')

@@ -1,0 +1,1 @@
+s=np.linspace(20,80,301);p=np.maximum(52-s,0);c=p+.15+.95*np.exp(-((s-52)/13)**2)-1.6*np.exp(-((s-30)/8)**2);ax.plot(s,p,label='Immediate payoff',color=BAD);ax.plot(s,c,label='Continuation value',color=ACCENT);ax.fill_between(s,p,c,where=p>c,color=BAD,alpha=.2,label='Exercise region');ax.set_xlabel('Stock price (USD)');ax.set_ylabel('Option value (USD)');ax.legend()

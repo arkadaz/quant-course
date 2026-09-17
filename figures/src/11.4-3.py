@@ -1,0 +1,1 @@
+x=np.linspace(-5,5,600);n=stats.norm.pdf(x);fat=stats.t.pdf(x,df=4);ax.plot(x,n,color=ACCENT,label='Normal benchmark');ax.plot(x,fat,color=BAD,label='fat-tail illustration');ax.fill_between(x,fat,n,where=np.abs(x)>2.5,color=BAD,alpha=.18);ax.set_xlabel('Standardized return');ax.set_ylabel('Density');ax.set_title('Tail events are the model-risk battlefield',loc='left');ax.legend()

@@ -1,0 +1,1 @@
+n=np.arange(2,101); ratio=(n-1)/n; ax.plot(n,100*ratio,color=BAD,lw=2,label=r'$\mathbb{E}[s_n^2]/\sigma^2$'); ax.axhline(100,color=GOOD,lw=1.3,ls='--',label='$n-1$ correction'); ax.scatter([20],[95],color=WARM,zorder=3); ax.set(xlabel='Sample size n',ylabel='Expected variance estimate (% of true)',ylim=(45,102)); ax.legend(fontsize=7); ax.grid(alpha=.25)

@@ -1,0 +1,16 @@
+xs = np.array([-1, 0, 2])
+ps = np.array([0.55, 0.15, 0.30])
+ev = float(np.sum(xs*ps))
+colors = [BAD, MUTED, GOOD]
+ax.bar(xs, ps, width=0.28, color=colors, zorder=2)
+for x, p in zip(xs, ps):
+    ax.annotate(f"{p:.2f}", xy=(x, p), xytext=(0, 4), textcoords="offset points", ha="center", fontsize=8, color=INK)
+ax.axhline(0, color=INK, lw=1.2)
+ax.plot(ev, -0.05, marker="^", ms=14, color=ACCENT, clip_on=False, zorder=3)
+ax.annotate(f"E[X] = {ev:.2f}R", xy=(ev, -0.05), xytext=(0, -18), textcoords="offset points", ha="center", fontsize=8.5, color=ACCENT, fontweight="bold")
+ax.set_xlim(-1.8, 2.8)
+ax.set_ylim(-0.15, 0.65)
+ax.set_xticks(xs, [f"{x:+g}R" for x in xs])
+ax.set_xlabel("Outcome x_i (R multiples)")
+ax.set_ylabel("p(x_i)")
+ax.set_title("E[X] = +0.05R is where the PMF balances, not the range midpoint (+0.5R)", loc="left")

@@ -1,0 +1,7 @@
+t=np.linspace(-0.003,0.003,200)
+M1=np.exp(50*t+0.5*220**2*t*t);M2=np.exp(25*t+0.5*180**2*t*t)
+ax.plot(t,M1,color=ACCENT,lw=2,label='M_X(t)')
+ax.plot(t,M2,color=WARM,lw=2,label='M_Y(t)')
+ax.plot(t,M1*M2,color=GOOD,lw=2,label='M_X(t)M_Y(t)')
+ax.set_xlabel('t (day/USD)');ax.set_ylabel('MGF value');ax.legend(loc='upper left')
+ax.set_title('Independent P&Ls combine by multiplying MGFs',fontsize=9,loc='left')

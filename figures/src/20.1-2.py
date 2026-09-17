@@ -1,0 +1,1 @@
+t=np.array([0,.5,1,1.5,2]); d=np.array([1,.9755,.9505,.931421875,.905916539634]); term_structure(ax,t,{'Discount factor':d},title='Bootstrapped USD discount curve',ylabel='USD today per USD at maturity')

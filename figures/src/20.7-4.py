@@ -1,0 +1,1 @@
+mkt=np.linspace(70,200,131);N=10e6;A=4.2448318563;contract=125;v=N*A*(mkt-contract)*1e-4/1e3;ax.plot(mkt,v,color=ACCENT);ax.axvline(contract,color=MUTED,ls='--');ax.axhline(0,color=INK,lw=1);ax.set_xlabel('Current par spread (basis points)');ax.set_ylabel('Protection-buyer value proxy (USD thousands)');ax.set_title('A long-protection position gains when credit widens')

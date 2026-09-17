@@ -1,0 +1,1 @@
+t=np.linspace(0,10,160);lam=.018;Q=np.exp(-lam*t);ax.plot(t,100*Q,label='Survival',color=GOOD);ax.plot(t,100*(1-Q),label='Cumulative default',color=BAD);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Probability (%)');ax.set_title('Constant hazard generates an exponential survival curve');ax.legend()

@@ -1,0 +1,1 @@
+prem=np.linspace(0,2,101);profit=50000*(prem-.35);ax.plot(prem,profit,color=ACCENT,lw=2);ax.axhline(0,color=INK,lw=.8);ax.axvline(.35,color=BAD,ls='--',label='Break-even cost');ax.set_xlabel('ETF premium to NAV (USD/share)');ax.set_ylabel('Net per creation unit (USD)');ax.set_title('Premium must clear cost before scaling',loc='left');ax.legend(fontsize=7);ax.grid(alpha=.25)

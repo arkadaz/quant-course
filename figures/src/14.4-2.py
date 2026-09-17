@@ -1,0 +1,1 @@
+df=np.arange(1,61); crit=stats.t.ppf(.975,df); ax.plot(df,crit,color=SERIES[1],lw=2,label='Student t 95%'); ax.axhline(1.96,color=BAD,lw=1.3,ls='--',label='Normal 95%'); ax.scatter([3],[stats.t.ppf(.975,3)],color=WARM,zorder=3); ax.set(xlabel='Degrees of freedom',ylabel='Critical value',ylim=(1.8,13)); ax.legend(fontsize=7); ax.grid(alpha=.25)

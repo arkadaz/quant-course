@@ -1,0 +1,1 @@
+r=np.linspace(0,.10,120);vas=np.full_like(r,.012);cir=.002887*np.sqrt(r);ax.plot(r*100,vas*100,label='Vasicek absolute diffusion',color=ACCENT);ax.plot(r*100,cir*100,label='CIR state-dependent diffusion',color=GOOD);ax.set_xlabel('Short rate (%)');ax.set_ylabel('Instantaneous diffusion scale');ax.set_title('CIR shocks shrink near zero');ax.legend()

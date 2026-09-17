@@ -1,0 +1,1 @@
+T=np.array([.5,1,2,5,10]);res=np.array([-.031362,-.025641,.011281,.037792,-.023878]);ax.bar(T,res,width=[.25,.35,.55,.9,1.2],color=[WARM,WARM,ACCENT,ACCENT,WARM]);ax.axhline(0,color=INK,lw=1);ax.set_xlabel('Maturity (years)');ax.set_ylabel('CIR minus market (basis points)');ax.set_title('Residuals reveal fit structure')

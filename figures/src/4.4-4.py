@@ -1,0 +1,8 @@
+s=np.linspace(0,1.4,141)
+slack=10-(4*s+2*(2*s))
+ax.plot(s,slack,color=GOOD,lw=2)
+ax.axhline(0,color=BAD,ls='--',lw=1.2,label='boundary: zero slack')
+ax.axvline(1.25,color=WARM,ls=':',lw=1.2,label='s = 1.25')
+ax.set_xlabel('scale s of chosen hedge path')
+ax.set_ylabel('budget slack (USD million)')
+ax.legend(loc='upper right');ax.set_title('Slack crosses zero exactly at the boundary',fontsize=9,loc='left')

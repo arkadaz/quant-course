@@ -1,0 +1,1 @@
+n=np.linspace(1,20000,300); sr=.005/2*np.sqrt(n); ax.plot(n,sr,color=SERIES[1],lw=2); ax.axhline(.25,color=GOOD,lw=1.2,ls='--'); ax.scatter([100,10000],[.005/2*np.sqrt(100),.25],color=[BAD,GOOD],zorder=3); ax.set(xlabel='Independent trades per day',ylabel='Daily Sharpe ratio',ylim=(0,.38)); ax.grid(alpha=.25)

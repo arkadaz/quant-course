@@ -1,0 +1,1 @@
+starts=np.arange(1,9);obj=np.array([.087,.086,.085,.086,.090,.085,.087,.42]);col=[GOOD,GOOD,GOOD,GOOD,GOOD,GOOD,GOOD,BAD];ax.bar(starts,obj,color=col);ax.axhline(.10,color=WARM,ls='--',label='Acceptance band');ax.set_xlabel('Initial set');ax.set_ylabel('Final objective');ax.legend();ax.set_ylim(0,.5)

@@ -1,0 +1,1 @@
+ax.bar(['Long NVDA','Short SPY hedge'],[1,-1.4],color=[ACCENT,BAD]);ax.axhline(0,color=INK,lw=1);ax.set_ylabel('notional (USD million)');ax.set_title('Illustrative beta hedge: $1.0M × 1.40',loc='left')

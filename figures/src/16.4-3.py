@@ -1,0 +1,1 @@
+vals=np.array([1.8e-6,.09*.04**2,.89*.01**2]);labs=['omega','alpha shock²','beta old variance'];ax.bar(labs,vals/vals.sum()*100,color=[GOOD,WARM,ACCENT]);ax.set_ylabel('share of today variance (%)');ax.set_title('A large shock can dominate one-step risk',loc='left');ax.tick_params(axis='x',rotation=15)

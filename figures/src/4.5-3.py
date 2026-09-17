@@ -1,0 +1,6 @@
+x=np.linspace(-3,3,100)
+ax.plot(x,x,color=BAD,lw=2,label='perfect correlation')
+ax.fill_between(x,x-0.03,x+0.03,color=BAD,alpha=0.25)
+ax.set_xlim(-3,3);ax.set_ylim(-3,3);ax.set_aspect('equal')
+ax.set_xlabel('return asset 1');ax.set_ylabel('return asset 2');ax.legend(loc='upper left')
+ax.set_title('Singular covariance has a collapsed risk ellipse',fontsize=9,loc='left')

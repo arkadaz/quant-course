@@ -1,0 +1,1 @@
+ag=np.linspace(.003,.010,120);cap=10*((ag-.001)/.0002)**2;ax.plot(100*ag,cap,color=ACCENT,lw=2);ax.axvline(.6,color=WARM,ls='--');ax.set_xlabel('Gross alpha per month (%)');ax.set_ylabel('Zero-net capacity (USD millions)');ax.set_title('Capacity is sensitive to the edge estimate',loc='left');ax.grid(alpha=.25)

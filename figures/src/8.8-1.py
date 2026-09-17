@@ -1,0 +1,2 @@
+labels=['SPY','AGG','QQQ'];cur=np.array([40,40,20]);cap=np.array([50,35,15]);tar=np.array([60,30,10]);x=np.arange(3);bw=.25
+ax.bar(x-bw,cur,bw,color=MUTED,label='current');ax.bar(x,cap,bw,color=GOOD,label='10% turnover cap');ax.bar(x+bw,tar,bw,color=ACCENT,label='frictionless target');ax.set_xticks(x,labels);ax.set_ylabel('Weight (%)');ax.legend(fontsize=8);ax.set_title('The trade budget reshapes the portfolio',loc='left')

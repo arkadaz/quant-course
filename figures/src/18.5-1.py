@@ -1,0 +1,1 @@
+p=np.array([99.96,99.98,100.00,100.04,100.06,100.08]);s=np.array([18,12,10,10,16,22]);c=[GOOD,GOOD,GOOD,BAD,BAD,BAD];ax.barh(p,s,color=c);ax.axhline(100.02,color=INK,ls='--',label='midpoint');ax.set_xlabel('Displayed size (thousand shares)');ax.set_ylabel('Price (USD/share)');ax.legend(fontsize=8);ax.set_title('Illustrative displayed depth',loc='left')

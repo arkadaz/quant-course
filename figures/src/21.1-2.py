@@ -1,0 +1,1 @@
+i=np.arange(1,81);safe=.0015*(.3**2*i*i+.05);bad=.02*(.3**2*i*i+.05);ax.plot(i,safe,label=r'$\Delta t=0.0015$ year');ax.plot(i,bad,label=r'$\Delta t=0.020$ year',color=BAD);ax.axhline(1,color='black',ls='--',label='stability limit');ax.set_xlabel(r'Grid index $i$ ($S=i \times \$5$)');ax.set_ylabel(r'$\Delta t (\sigma^2 i^2 + r)$');ax.set_ylim(0,2);ax.legend()

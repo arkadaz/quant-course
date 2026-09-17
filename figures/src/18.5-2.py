@@ -1,0 +1,1 @@
+q=np.linspace(0,.25,201);impact=.02*np.sqrt(q);ax.plot(100*q,10000*impact,color=ACCENT,lw=2);ax.set_xlabel('Participation Q/V (%)');ax.set_ylabel('Estimated impact (bp)');ax.set_title('Stylized square-root impact',loc='left');ax.grid(alpha=.25)

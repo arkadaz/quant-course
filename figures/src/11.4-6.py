@@ -1,0 +1,1 @@
+labels=['Constant vol','Normal tails','No jumps','No costs'];vals=[1,1,1,1];ax.barh(labels,vals,color=[WARM,BAD,BAD,WARM]);ax.set_xlim(0,1.35);ax.set_xticks([]);[ax.text(1.03,i,t,va='center',fontsize=8) for i,t in enumerate(['volatility stress','tail backtest','jump scenario','spread/impact reserve'])];ax.set_title('Every assumption needs an owner and a control',loc='left')

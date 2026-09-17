@@ -1,0 +1,1 @@
+parts=np.array([1000,10002]);ax.bar(['Half spread','Impact scenario'],parts,color=[WARM,BAD]);ax.set_ylabel('Cost (USD)');ax.set_title('Illustrative cost components',loc='left');[ax.text(i,v+250,f'USD {v:,.0f}',ha='center',fontsize=8) for i,v in enumerate(parts)]

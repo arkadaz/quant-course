@@ -1,0 +1,1 @@
+x=np.linspace(.03,10,500);ax.plot(x,stats.chi2.pdf(x,1));ax.axvline(1.956809788,color=ACCENT,label='Observed 1.957');q=stats.chi2.ppf(.95,1);ax.axvline(q,color=BAD,label='5% cutoff 3.841');ax.fill_between(x,0,stats.chi2.pdf(x,1),where=x>=q,color=BAD,alpha=.2);ax.set_xlabel('Likelihood-ratio statistic');ax.set_ylabel('Asymptotic density');ax.legend()

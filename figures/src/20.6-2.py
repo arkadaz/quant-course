@@ -1,0 +1,1 @@
+labels=['Survived coupons','Survived principal','Recovery at default'];vals=np.array([2077689.22,7297888.74,308812.72])/1e6;ax.bar(labels,vals,color=[ACCENT,GOOD,WARM]);ax.set_ylabel('Present value (USD millions)');ax.set_title('Defaultable bond value by contingent cash flow')

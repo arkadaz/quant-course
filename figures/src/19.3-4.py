@@ -1,0 +1,1 @@
+cashflow(ax, [0, 0.2, 0.5], [-528000, 0, 220000], labels=['Margin for 44 ES\n-$528,000', 'Daily MTM\nvariable', 'Illustrative payoff\n+$220,000'], title='Hedge notional and hedge liquidity are different')

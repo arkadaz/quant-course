@@ -1,0 +1,1 @@
+im=ax.imshow(np.array([[1,1,0,0],[0,1,1,0],[0,0,1,1],[1,0,0,1]]),cmap='Blues',vmin=0,vmax=1);ax.set_xticks(range(4));ax.set_xticklabels(['Observe','Stress','Limit','Action']);ax.set_yticks(range(4));ax.set_yticklabels(['Collateral','Tranche model','Funding','Governance']);ax.set_title('Controls must cover more than price',loc='left');ax.grid(False)

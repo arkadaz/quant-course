@@ -1,0 +1,1 @@
+b=np.array([1.10,1.40,1.70]);ax.errorbar([0],[1.40],yerr=[[.30],[.30]],fmt='o',color=ACCENT,capsize=7,label='beta estimate');ax.axhline(1.10,color=MUTED,ls='--');ax.axhline(1.70,color=MUTED,ls='--');ax.set_xlim(-.7,.7);ax.set_xticks([0],['$1.0M NVDA position']);ax.set_ylabel('SPY hedge notional (USD million)');ax.set_title('Estimation error becomes hedge-size risk',loc='left')

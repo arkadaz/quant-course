@@ -1,0 +1,1 @@
+prem=np.linspace(-1,2,301);net=prem-.35;ax.plot(prem,net,color=ACCENT,lw=2);ax.axhline(0,color=INK,lw=.8);ax.axvline(.35,color=BAD,ls='--');ax.set_xlabel('ETF premium to NAV (USD/share)');ax.set_ylabel('Net after cost (USD/share)');ax.set_title('Illustrative arbitrage threshold',loc='left');ax.grid(alpha=.25)

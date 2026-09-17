@@ -1,0 +1,6 @@
+rng=np.random.default_rng(0)
+S=np.array([[0.0004,0.00012],[0.00012,0.0006]])
+z=rng.multivariate_normal([0,0],S,700)
+ax.scatter(z[:,0]*100,z[:,1]*100,s=8,alpha=0.28,color=ACCENT)
+ax.set_xlabel('Technology return (%)');ax.set_ylabel('Financials return (%)')
+ax.set_title('Off-diagonal covariance tilts the return cloud',fontsize=9,loc='left')

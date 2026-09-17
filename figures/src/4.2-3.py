@@ -1,0 +1,8 @@
+A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
+x=np.arange(3)
+ax.bar(x-0.18,A[:,0],width=0.36,color=ACCENT,label='A market column')
+ax.bar(x+0.18,A.T[0],width=0.18,color=GOOD,label='Aᵀ market row')
+ax.set_xticks(x,['AAPL','MSFT','SPY'])
+ax.set_ylabel('unitless factor loading')
+ax.legend(loc='upper left')
+ax.set_title('Transpose changes orientation, not loading values',fontsize=9,loc='left')

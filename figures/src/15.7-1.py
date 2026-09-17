@@ -1,0 +1,1 @@
+t=np.arange(0,25);a=.006*np.exp(-.08*t)*100;ax.plot(t,a,color=ACCENT,lw=2);ax.axvline(np.log(2)/.08,color=MUTED,ls='--',label='alpha half-life');ax.set_xlabel('months since launch');ax.set_ylabel('forecast alpha (% per month)');ax.legend(fontsize=8);ax.set_title('Decay is a hypothesis to audit, not an excuse',loc='left')

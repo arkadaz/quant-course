@@ -1,0 +1,1 @@
+cashflow(ax, [0, 0.5, 0.5], [-250000, -256328.78, 260000], labels=['Borrow + buy basket\n-$250,000', 'Repay loan\n-$256,328.78', 'Short ES settlement\n+$260,000'], title='Cash-and-carry locks the terminal spread')

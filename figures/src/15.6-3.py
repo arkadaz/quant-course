@@ -1,0 +1,1 @@
+lab=['point-in-time\nuniverse','survivors-only\nuniverse'];v=[-.8,.4];ax.bar(lab,v,color=[ACCENT,BAD]);ax.axhline(0,color=INK,lw=1);ax.set_ylabel('illustrative next-month return (%)');ax.set_title('Removing delisted names changes the question',loc='left')

@@ -1,0 +1,1 @@
+s=np.linspace(80,360,400);k=200;g=s*s/k;ax.plot(s,g,color=ACCENT,lw=2,label='$S_T^2/K$');m=200*np.exp(.04);ax.scatter([m],[m*m/k],color=BAD,s=45,label='payoff at mean price');ax.set_xlabel('AAPL terminal price (USD/share)');ax.set_ylabel('Power-note payoff (USD)');ax.set_title('Convex payoff punishes plug-in averages',loc='left');ax.legend(fontsize=8)

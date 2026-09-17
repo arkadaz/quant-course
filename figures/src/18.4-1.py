@@ -1,0 +1,2 @@
+ds=np.linspace(-5,5,201);opt=.5*.02*ds**2+.5*ds;hedge=-.5*ds;net=opt+hedge
+ax.plot(ds,opt,color=ACCENT,label='option');ax.plot(ds,hedge,color=MUTED,ls='--',label='delta hedge');ax.plot(ds,net,color=GOOD,lw=2,label='hedged');ax.axhline(0,color=INK,lw=.8);ax.legend(fontsize=8);ax.set_xlabel('Underlying move (USD/share)');ax.set_ylabel('P&L per share (USD)');ax.set_title('Hedge removes the first-order slope',loc='left')

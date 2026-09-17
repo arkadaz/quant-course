@@ -1,0 +1,2 @@
+n=np.arange(1,10001); x=0.005+2*(0.72*np.sin(n*.017)+0.45*np.sin(n*.071)+0.18*np.cos(n*.003)); m=np.cumsum(x)/n; se=2/np.sqrt(n)
+ax.plot(n,m,color=SERIES[0],lw=1.5,label='running mean'); ax.axhline(.005,color=GOOD,lw=1.2,label='true edge'); ax.fill_between(n,.005-se,.005+se,color=MUTED,alpha=.22,label='+/- 1 SE'); ax.set(xlabel='Trades',ylabel='USD per trade',xlim=(1,10000)); ax.legend(fontsize=7,loc='upper right'); ax.grid(alpha=.25)

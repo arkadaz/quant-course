@@ -1,0 +1,1 @@
+a=np.linspace(1,10000,500);net=.006-.001-.0002*np.sqrt(a/10);d=a*net;ax.plot(a,d,color=GOOD,lw=2);ax.axhline(0,color=INK,lw=.8);ax.set_xlabel('AUM (USD millions)');ax.set_ylabel('Net alpha dollars/month (USD millions)');ax.set_title('Scale changes both rate and dollars',loc='left');ax.grid(alpha=.25)

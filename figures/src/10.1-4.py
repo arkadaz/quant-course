@@ -1,0 +1,5 @@
+t=np.array([0,.2,.4,.6,.8,1.0]);continuous=np.array([520,519.4,520.1,518.9,519.6,520.2]);jump=np.array([520,519.7,519.5,np.nan,514.2,514.8])
+ax.plot(t,continuous,color=ACCENT,lw=2,marker='o',ms=3,label='continuous model path')
+ax.plot(t,jump,color=BAD,lw=2,marker='o',ms=3,label='market path with gap')
+ax.plot([.4,.6],[519.5,514.2],color=BAD,lw=1.2,ls=':',label='untraded gap')
+ax.set_xlabel('Event time');ax.set_ylabel('SPY price (USD)');ax.set_title('Continuity is an assumption, not a market law',loc='left');ax.legend(loc='lower left',fontsize=7)

@@ -1,0 +1,1 @@
+k=np.array([90,100,110]);bid=np.array([12.5,6.3,2.4]);ask=np.array([12.9,6.5,2.6]);ax.vlines(k,bid,ask,color=ACCENT,lw=8,alpha=.35,label='Bid-ask');ax.scatter(k,[12.2,6.9,2.7],color=BAD,label='Initial model',zorder=3);ax.scatter(k,[12.66,6.43,2.48],color=GOOD,label='Final model',zorder=3);ax.set_xlabel('Strike (USD)');ax.set_ylabel('Option price (USD)');ax.legend()

@@ -1,0 +1,1 @@
+x=np.linspace(-.499,4,600);y=stats.chi2.pdf(2*x+1,df=1)*2;ax.plot(x,y,color=WARM,lw=2);ax.axvline(0,color=INK,ls='--',label='mean = 0');ax.set_xlim(-.55,3);ax.set_xlabel('$I_1=0.5(W_1^2-1)$');ax.set_ylabel('Density');ax.set_title('Fair does not mean symmetric',loc='left');ax.legend(fontsize=8)

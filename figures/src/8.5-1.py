@@ -1,0 +1,2 @@
+w=np.linspace(-.25,1.25,401);ret=.12*w+.06*(1-w);var=.04*w**2+.012*w*(1-w)+.01*(1-w)**2;vol=np.sqrt(var);wm=(.01-.006)/(.04+.01-.012);mask=w>=wm
+ax.plot(vol[~mask]*100,ret[~mask]*100,color=MUTED,lw=2,label='inefficient');ax.plot(vol[mask]*100,ret[mask]*100,color=ACCENT,lw=2,label='efficient');ax.scatter([np.sqrt(.0155)*100],[9],color=GOOD,s=48,label='50/50');ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Expected annual return (%)');ax.legend();ax.set_title('Only the upper branch survives dominance',loc='left')

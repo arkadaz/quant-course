@@ -1,0 +1,1 @@
+p=np.linspace(.1,.99,180);hl=np.log(.5)/np.log(p);ax.plot(p,hl,color=ACCENT,lw=2);ax.axvline(.95,color=BAD,ls='--');ax.set_xlabel('AR(1) coefficient, phi');ax.set_ylabel('half-life (trading days)');ax.set_title('Slow mean reversion consumes capital and financing time',loc='left')

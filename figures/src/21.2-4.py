@@ -1,0 +1,1 @@
+lam=np.logspace(-2,3,200);step=10/(100+lam);ax.semilogx(lam,step,color=ACCENT);ax.axvline(25,color=WARM,ls='--',label='Worked example');ax.set_xlabel('LM damping lambda');ax.set_ylabel('Step per unit residual');ax.legend();ax.grid(True,which='both',alpha=.25)

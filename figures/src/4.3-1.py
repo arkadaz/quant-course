@@ -1,0 +1,7 @@
+ax.text(0.08,0.62,'w\npositions\n3×1',ha='center',va='center',color=GOOD,weight='bold')
+ax.text(0.50,0.62,'A\nexposure map\n3×3',ha='center',va='center',color=ACCENT,weight='bold')
+ax.text(0.90,0.62,'y = Aw\nfactor exposures\n3×1',ha='center',va='center',color=WARM,weight='bold')
+ax.annotate('',xy=(0.38,0.62),xytext=(0.20,0.62),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.annotate('',xy=(0.78,0.62),xytext=(0.62,0.62),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.text(0.50,0.20,'USD million positions → USD million factor exposures',ha='center',color=INK)
+ax.set_xlim(0,1);ax.set_ylim(0,1);ax.axis('off');ax.set_title('A matrix is a typed mapping, not a calculator trick',fontsize=9,loc='left')

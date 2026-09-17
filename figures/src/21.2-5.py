@@ -1,0 +1,1 @@
+x=np.linspace(-1,1,180);y=np.linspace(-1,1,180);X,Y=np.meshgrid(x,y);Z=(X-Y)**2+.015*(X+Y-.25)**2;cs=ax.contourf(X,Y,Z,levels=18,cmap='Blues');ax.plot([-.8,.9],[-.8,.9],color=WARM,ls='--',label='Near-equivalent fits');ax.set_xlabel('Mean reversion transform');ax.set_ylabel('Vol-of-vol transform');ax.legend();plt.colorbar(cs,ax=ax,label='Objective')

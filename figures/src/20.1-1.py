@@ -1,0 +1,1 @@
+A=np.array([[100,0,0,0],[0,100,0,0],[2.4,2.4,102.4,0],[2.5,2.5,2.5,102.5]]); heatmap(ax,A,['6m zero','1y zero','18m note','2y note'],['0.5y','1.0y','1.5y','2.0y'],title='Cash-flow matrix: one new node per row',fmt='.1f')

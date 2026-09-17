@@ -1,0 +1,1 @@
+s=np.linspace(4.8,5.6,81)/100;N=50e6;A=4.309;K=.0525;v=N*(K-s)*A/1e6;ax.plot(s*100,v,color=ACCENT);ax.axvline(5.198422,color=MUTED,ls='--');ax.axhline(0,color=INK,lw=1);ax.set_xlabel('Market par swap rate (%)');ax.set_ylabel('Receive-fixed value (USD millions)');ax.set_title('Receive-fixed loses value when rates rise')

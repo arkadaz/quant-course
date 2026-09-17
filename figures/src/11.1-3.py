@@ -1,0 +1,1 @@
+x=np.arange(4);s=np.array([100,101.54,99.78,100.61]);ax.plot(x,s,marker='o',color=ACCENT);[ax.annotate(f'Z={v:+.2f}',(i,s[i]),xytext=(0,10),textcoords='offset points',ha='center',fontsize=8) for i,v in enumerate([0,.80,-.95,.42])];ax.set_xticks(x,['Start','Day 1','Day 2','Day 3']);ax.set_ylabel('Price (USD/share)');ax.set_title('A state update, not a history replay',loc='left')

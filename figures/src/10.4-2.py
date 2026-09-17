@@ -1,0 +1,2 @@
+fig=ax.figure;ax.remove();ax=fig.add_subplot(111,projection='3d');u,v=np.meshgrid(np.linspace(0,1,45),np.linspace(0,1,45));c=np.minimum(u,v)
+ax.plot_surface(u,v,c,cmap='viridis',linewidth=0,alpha=.9);ax.set_xlabel('$u$ (years)',labelpad=-2);ax.set_ylabel('$v$ (years)',labelpad=-2);ax.set_zlabel('Covariance',labelpad=0);ax.set_box_aspect((1,1,.65));ax.view_init(elev=25,azim=-52);ax.set_title('$Cov(W_u,W_v)=min(u,v)$',loc='left',pad=2)

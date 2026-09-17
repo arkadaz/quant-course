@@ -1,0 +1,1 @@
+rho=np.linspace(-1,1,300);mu=.08+.10+rho*.20*.25;ax.plot(rho,mu*100,color=ACCENT,lw=2);ax.axhline(18,color=MUTED,ls='--',label='sum of drifts');ax.scatter([.6],[21],color=GOOD,s=45,label='desk assumption');ax.set_xlabel('Instantaneous correlation');ax.set_ylabel('Product drift (%/year)');ax.set_title('Correlation enters the mean of a product',loc='left');ax.legend(fontsize=8)

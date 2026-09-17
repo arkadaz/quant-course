@@ -1,0 +1,7 @@
+ax.text(0.10,0.65,'r\nasset returns\nN×1',ha='center',va='center',color=ACCENT,weight='bold')
+ax.text(0.50,0.65,'wᵀ\nweights',ha='center',va='center',color=WARM,weight='bold')
+ax.text(0.88,0.65,'rp = wᵀr\nportfolio return\nscalar',ha='center',va='center',color=GOOD,weight='bold')
+ax.annotate('',xy=(0.38,0.65),xytext=(0.22,0.65),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.annotate('',xy=(0.76,0.65),xytext=(0.60,0.65),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.text(0.50,0.22,'weights preserve the return unit',ha='center',color=INK)
+ax.set_xlim(0,1);ax.set_ylim(0,1);ax.axis('off');ax.set_title('Portfolio return is a linear map of asset returns',fontsize=9,loc='left')

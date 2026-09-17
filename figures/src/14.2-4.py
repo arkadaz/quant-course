@@ -1,0 +1,1 @@
+n=np.linspace(1,60,300); se=.06/np.sqrt(n); infl=np.sqrt(3); ax.plot(n,100*se,color=SERIES[0],lw=2,label='iid SE'); ax.plot(n,100*infl*se,color=BAD,lw=2,label='AR(1) rho=0.5 proxy'); ax.set(xlabel='Years',ylabel='SE of mean (%)'); ax.legend(fontsize=7); ax.grid(alpha=.25)

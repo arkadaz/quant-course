@@ -1,0 +1,1 @@
+th=np.linspace(-3,3,500);rho=th/(1+th**2);ax.plot(th,rho,color=ACCENT,lw=2);ax.axhline(.5,color=GOOD,ls='--');ax.axhline(-.5,color=GOOD,ls='--');ax.scatter([-.4,-2.5],[-.3448,-.3448],color=BAD,zorder=3);ax.set_xlabel('theta (unitless)');ax.set_ylabel('rho1 (unitless)');ax.set_title('MA(1) cannot generate |rho1| above 0.5',loc='left');ax.grid(alpha=.2)

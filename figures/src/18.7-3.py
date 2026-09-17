@@ -1,0 +1,1 @@
+a=np.linspace(10,5000,300);imp=.0002*np.sqrt(a/10);ax.plot(a,100*imp,color=BAD,lw=2,label='impact drag');ax.axhline(.1,color=WARM,ls='--',label='fixed cost');ax.axhline(.6,color=GOOD,ls=':',label='gross alpha');ax.set_xlabel('AUM (USD millions)');ax.set_ylabel('Rate per month (%)');ax.legend(fontsize=8);ax.set_title('Scenario cost stack',loc='left');ax.grid(alpha=.25)

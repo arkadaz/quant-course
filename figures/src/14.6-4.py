@@ -1,0 +1,1 @@
+T=np.linspace(1,25,300); baseline=np.sqrt(2*np.log(200)/T); ax.plot(T,baseline,color=SERIES[2],lw=2); ax.scatter([5,20],[np.sqrt(2*np.log(200)/5),np.sqrt(2*np.log(200)/20)],color=[WARM,GOOD],zorder=3); ax.set(xlabel='Independent years T',ylabel='Null maximum Sharpe proxy',ylim=(0,3.4)); ax.grid(alpha=.25)

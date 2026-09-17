@@ -1,0 +1,1 @@
+lam=np.array([0,.25,.5,1.0,2.0]);frontload=np.array([.20,.28,.36,.50,.66]);ax.plot(lam,100*frontload,marker='o',color=ACCENT,lw=2);ax.set_xlabel('Relative risk-aversion weight');ax.set_ylabel('Shares sold in first interval (%)');ax.set_title('Risk aversion front-loads execution',loc='left');ax.grid(alpha=.25)

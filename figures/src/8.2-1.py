@@ -1,0 +1,2 @@
+x=np.linspace(-.1,1.1,18);y=np.linspace(-.1,1.1,18);X,Y=np.meshgrid(x,y);G1=.08*X+.012*Y;G2=.012*X+.02*Y;Z=.04*X**2+.012*X*Y+.01*Y**2
+ax.contour(X,Y,Z,levels=9,cmap='viridis',alpha=.75);n=np.sqrt(G1**2+G2**2)+1e-12;ax.quiver(X,Y,G1/n,G2/n,color=INK,alpha=.45,scale=28);ax.scatter([.6],[.4],color=BAD,s=48);ax.set_xlabel('SPY weight');ax.set_ylabel('AGG weight');ax.set_title('Gradient crosses equal-risk contours',loc='left')

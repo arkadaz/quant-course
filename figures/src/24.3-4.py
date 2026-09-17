@@ -1,0 +1,1 @@
+si=np.linspace(0,40,161); fee=.01+.0009*si**1.55; ax.plot(si,100*fee,color=BAD,lw=2); ax.axhline(100*.20,color=WARM,ls='--',lw=1,label='20% fee alert'); ax.set_xlabel('Short interest (% of float)'); ax.set_ylabel('Borrow fee (%/year)'); ax.set_title('Illustrative borrow scarcity curve',loc='left'); ax.legend(fontsize=7); ax.grid(alpha=.25)

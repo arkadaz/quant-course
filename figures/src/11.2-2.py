@@ -1,0 +1,1 @@
+v=np.linspace(0,.8,300);g=.12-.5*v*v;ax.plot(v*100,g*100,color=BAD);ax.axhline(12,color=MUTED,ls='--',label='price drift 12%');ax.scatter([30],[7.5],color=GOOD,zorder=3);ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Median log-growth (%/year)');ax.set_title('Volatility drag is a square-law cost',loc='left');ax.legend()

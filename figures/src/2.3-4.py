@@ -1,0 +1,8 @@
+n=np.arange(0,29)
+prob=stats.poisson.pmf(n,12)
+ax.bar(n,prob,color=ACCENT,width=0.85)
+ax.axvline(12,color=BAD,ls='--',lw=1.5,label='E[N] = 12')
+ax.set_xlabel('fills per day, N')
+ax.set_ylabel('probability')
+ax.legend(loc='upper right')
+ax.set_title('The outer random variable is a count, not a constant',fontsize=9,loc='left')

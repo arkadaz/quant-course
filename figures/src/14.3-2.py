@@ -1,0 +1,1 @@
+labels=['Mean, 1 year','Vol, 252 days','Vol, 98,280 min']; vals=[20,20/np.sqrt(504)*100,20/np.sqrt(196560)*100]; ax.bar(labels,vals,color=[BAD,SERIES[0],GOOD]); ax.set(ylabel='Standard error (percentage points)',ylim=(0,22)); ax.tick_params(axis='x',labelrotation=12,labelsize=7); ax.grid(axis='y',alpha=.25)

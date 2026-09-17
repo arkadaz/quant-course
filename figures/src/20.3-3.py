@@ -1,0 +1,1 @@
+r=np.linspace(2,8,121)/100;P=np.exp(-r*.5);pay=np.maximum(P-.975,0)*1e6;ax.plot(r*100,pay,color=ACCENT);ax.axvline(-np.log(.975)/.5*100,color=MUTED,ls='--');ax.set_xlabel('Short rate at exercise (%)');ax.set_ylabel('Option payoff (USD)');ax.set_title('Bond call benefits when rates fall')

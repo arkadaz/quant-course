@@ -1,0 +1,1 @@
+s=np.linspace(0,20,300);mean=100*np.exp(.12*s);med=100*np.exp((.12-.5*.30**2)*s);ax.plot(s,mean,color=ACCENT,label='expected price');ax.plot(s,med,color=WARM,label='median price');ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('The mean is pulled above the typical path',loc='left');ax.legend()

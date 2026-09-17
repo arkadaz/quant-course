@@ -1,0 +1,1 @@
+x=np.array([2.,-1.5,.5,3.,-1.]);y=np.array([3.4,-2.8,.2,5.1,-1.4]);b,a=np.polyfit(x,y,1);e=y-(a+b*x);ax.axhline(0,color=INK,lw=1);ax.plot(np.arange(1,6),e,marker='o',color=ACCENT);ax.set_xlabel('observation month');ax.set_ylabel('residual (percentage points/month)');ax.set_title('Inspect errors; do not hide them behind one R-squared',loc='left')

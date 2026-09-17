@@ -1,0 +1,1 @@
+w=np.linspace(-3,3,400);lam=.2;z=np.exp(-lam*w-.5*lam**2);ax.plot(w,z,color=ACCENT,lw=2);ax.axhline(1,color=MUTED,ls='--');ax.set_xlabel('Physical Brownian terminal value $W_1^P$');ax.set_ylabel('Path weight $dQ/dP$');ax.set_title('Measure change reweights; it does not redraw',loc='left')

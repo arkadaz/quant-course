@@ -1,0 +1,1 @@
+m=np.array([1,.92,1.08]);ax.plot(range(3),10*m,marker='o',color=ACCENT,label='$10 share');ax.plot(range(3),1000*m,marker='o',color=WARM,label='$1,000 share');ax.set_xticks(range(3),['Start','-8%','+8%']);ax.set_ylabel('Price (USD/share)');ax.set_title('The same return multiplier fits both price levels',loc='left');ax.legend()

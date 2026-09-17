@@ -1,0 +1,1 @@
+t=np.arange(1,6);d=np.array([.9512,.9048,.86,.817,.776]);bucket=50e6*1e-4*d/1000;ax.bar(t,bucket,color=[MUTED,MUTED,ACCENT,ACCENT,GOOD]);ax.set_xlabel('Payment year');ax.set_ylabel('Fixed-leg coupon DV01 proxy (USD thousands)');ax.set_title('Rate risk is distributed across the schedule')

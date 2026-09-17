@@ -1,0 +1,1 @@
+a=np.array([20,20,20,20,20]);b=np.array([50,20,15,10,5]);cost=lambda z:.00001*np.sum((z*1000)**2);ax.bar(['Equal','Front-loaded'],[cost(a),cost(b)],color=[GOOD,BAD]);ax.set_ylabel('Temporary cost (USD)');ax.set_title('Same total shares, different quadratic impact',loc='left')

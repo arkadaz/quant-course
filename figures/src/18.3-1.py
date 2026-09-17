@@ -1,0 +1,1 @@
+ax.plot([0,1],[100,120],color=GOOD,lw=2);ax.plot([0,1],[100,90],color=BAD,lw=2);ax.scatter([0,1,1],[100,120,90],color=ACCENT,s=45);ax.text(-.03,102,'S0=100');ax.text(1.03,121,'Su=120, Cu=20');ax.text(1.03,88,'Sd=90, Cd=0');ax.set_xlim(-.2,1.75);ax.set_ylim(75,135);ax.axis('off');ax.set_title('One-period binomial tree',loc='left')

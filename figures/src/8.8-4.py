@@ -1,0 +1,2 @@
+risk=np.linspace(6,18,120);gross=3.2+.42*risk-.008*(risk-11)**2;turn=np.linspace(.04,.28,120);net=gross-2*turn
+ax.plot(risk,gross,color=ACCENT,lw=2,label='before costs');ax.plot(risk,net,color=GOOD,lw=2,label='after costs');ax.fill_between(risk,net,gross,color=BAD,alpha=.15);ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Expected annual return (%)');ax.legend();ax.set_title('Trading costs lower the implementable frontier',loc='left')

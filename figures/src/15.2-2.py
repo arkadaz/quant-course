@@ -1,0 +1,1 @@
+v=[.30,1.12,.58];lab=['cash','beta × premium','above hurdle'];ax.bar(lab,v,color=[MUTED,ACCENT,GOOD]);[ax.text(i,x+.04,f'{x:.2f}%',ha='center',fontsize=8) for i,x in enumerate(v)];ax.set_ylim(0,2.35);ax.set_ylabel('percentage points per month');ax.set_title('An accounting decomposition, not proof of skill',loc='left')

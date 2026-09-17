@@ -1,0 +1,1 @@
+w=np.linspace(0,1,400); mse=400*w*w+64*(1-w)**2; ws=64/464; ax.plot(w,mse,color=SERIES[1],lw=2); ax.scatter([ws,1],[400*ws*ws+64*(1-ws)**2,400],color=[GOOD,BAD],zorder=3); ax.axvline(ws,color=GOOD,lw=1,ls='--'); ax.set(xlabel='Shrinkage weight w',ylabel='MSE (percentage-points squared)',ylim=(0,430)); ax.grid(alpha=.25)

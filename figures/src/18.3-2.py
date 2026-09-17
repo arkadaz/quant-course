@@ -1,0 +1,1 @@
+x=np.arange(2);call=np.array([20,0]);hedge=np.array([(2/3)*120-57.1429*1.05,(2/3)*90-57.1429*1.05]);ax.bar(x-.16,call,.32,color=ACCENT,label='call');ax.bar(x+.16,hedge,.32,color=GOOD,alpha=.7,label='replicating portfolio');ax.set_xticks(x,['Up','Down']);ax.set_ylabel('Payoff (USD/share)');ax.legend(fontsize=8);ax.set_title('Same payoff in every state',loc='left')

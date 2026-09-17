@@ -1,0 +1,1 @@
+m=np.array([1,1.04,.96,1.03]);a=100*np.cumprod(m);b=300*np.cumprod(m);ax.plot(range(4),a,marker='o',color=ACCENT,label='$100 start');ax.plot(range(4),b,marker='o',color=WARM,label='$300 start');ax.set_xticks(range(4),['t','1','2','3']);ax.set_ylabel('Price (USD/share)');ax.set_title('Same ratios, different dollar moves',loc='left');ax.legend()

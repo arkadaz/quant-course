@@ -1,0 +1,1 @@
+x=np.linspace(-5,5,400);sq=.5*x*x;c=1.5;hub=np.where(abs(x)<=c,.5*x*x,c*(abs(x)-.5*c));ax.plot(x,sq,label='Least squares',color=BAD);ax.plot(x,hub,label='Huber c=1.5',color=GOOD);ax.set_xlabel('Normalized residual (half-spreads)');ax.set_ylabel('Loss');ax.legend()

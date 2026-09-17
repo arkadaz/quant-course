@@ -1,0 +1,1 @@
+c=np.array([.15,.35,.75,1.10]);net=50000*(1.2-c);ax.bar([f'USD {x:.2f}' for x in c],net,color=[GOOD,ACCENT,WARM,BAD]);ax.axhline(0,color=INK,lw=.8);ax.set_xlabel('All-in cost/share');ax.set_ylabel('Net per creation unit (USD)');ax.set_title('Cost sensitivity at USD 1.20 premium',loc='left')

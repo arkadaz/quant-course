@@ -1,0 +1,23 @@
+ax.set_xticks([]); ax.set_yticks([])
+for s in ax.spines.values():
+    s.set_visible(False)
+ax.set_title("Three new tools -- one job each", loc="left", fontsize=9)
+positions = [(0.02, 0.06), (0.36, 0.06), (0.70, 0.06)]
+w, h = 0.28, 0.82
+sub1 = ax.inset_axes([positions[0][0], positions[0][1], w, h], transform=ax.transAxes)
+x = np.linspace(-4, 4, 200)
+sub1.plot(x, stats.norm.pdf(x), color=MUTED, lw=1.2, ls=(0, (3, 2)))
+sub1.plot(x, stats.t.pdf(x, 3), color=BAD, lw=1.8)
+sub1.set_xticks([]); sub1.set_yticks([])
+sub1.set_title("Student-t(3)\nfat tail vs Normal", fontsize=7.5, pad=3)
+sub2 = ax.inset_axes([positions[1][0], positions[1][1], w, h], transform=ax.transAxes)
+xe = np.linspace(0, 5, 200)
+sub2.plot(xe, stats.expon.pdf(xe), color=ACCENT, lw=1.8)
+sub2.fill_between(xe, stats.expon.pdf(xe), color=ACCENT, alpha=0.15)
+sub2.set_xticks([]); sub2.set_yticks([])
+sub2.set_title("Exponential\nwaiting time", fontsize=7.5, pad=3)
+sub3 = ax.inset_axes([positions[2][0], positions[2][1], w, h], transform=ax.transAxes)
+sub3.bar([0.5], [1.0], width=1.0, color=SERIES[4], alpha=0.6)
+sub3.set_xlim(0, 1); sub3.set_ylim(0, 1.3)
+sub3.set_xticks([]); sub3.set_yticks([])
+sub3.set_title("Uniform(0,1)\nMC raw material", fontsize=7.5, pad=3)

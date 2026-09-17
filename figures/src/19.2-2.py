@@ -1,0 +1,10 @@
+t = np.linspace(0, 1, 60)
+exact = 8*(1-t)
+proxy = 8*(1-t) + 1.8*np.sin(4*np.pi*t)*(1-t) + 0.6
+ax.plot(t, exact, color=GOOD, label='Exact underlying')
+ax.plot(t, proxy, color=BAD, label='Proxy hedge')
+ax.axhline(0, color=MUTED, lw=1)
+ax.set_xlabel('Time to expiry (years)')
+ax.set_ylabel('Basis (points)')
+ax.set_title('Basis convergence is exact only for a matching underlying', loc='left')
+ax.legend(loc='best')

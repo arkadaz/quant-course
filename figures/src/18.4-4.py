@@ -1,0 +1,1 @@
+t=np.arange(5);s=np.array([0,2,0,-1,0]);ax.plot(t,s,marker='o',color=ACCENT,lw=2);ax.axhline(0,color=MUTED,lw=1);ax.set_xlabel('Intraday hedge time');ax.set_ylabel('Underlying move (USD/share)');ax.set_title('Same close, different path',loc='left');ax.grid(alpha=.25)

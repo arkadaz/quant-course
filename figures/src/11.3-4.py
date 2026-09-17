@@ -1,0 +1,1 @@
+k=np.linspace(60,170,300);z=(np.log(k/100)-(.10-.5*.25**2))/.25;p=1-stats.norm.cdf(z);ax.plot(k,p*100,color=ACCENT);ax.scatter([130],[21.9],color=GOOD);ax.axvline(130,color=GOOD,ls='--');ax.set_xlabel('Threshold K (USD/share)');ax.set_ylabel('P(S₁ > K) (%)');ax.set_title('One-year exceedance probability under GBM',loc='left')

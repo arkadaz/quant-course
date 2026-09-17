@@ -1,0 +1,8 @@
+ax.axis('off')
+ax.text(.08,.72,'$z$\n5 non-negative\nvariables',ha='center',va='center',color=ACCENT,weight='bold')
+ax.text(.48,.72,'$A_{eq}$\n3 × 5\nconstraint map',ha='center',va='center',color=WARM,weight='bold')
+ax.text(.88,.72,'$d$\n3 labelled\ntargets',ha='center',va='center',color=GOOD,weight='bold')
+ax.annotate('',xy=(.36,.72),xytext=(.18,.72),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.annotate('',xy=(.78,.72),xytext=(.60,.72),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
+ax.text(.48,.22,r'$A_{eq}z=d$   with   $z\geq0$',ha='center',color=INK,fontsize=11)
+ax.set_xlim(0,1);ax.set_ylim(0,1);ax.set_title('Standard form is a labelled data contract',loc='left')

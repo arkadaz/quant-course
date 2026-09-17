@@ -1,0 +1,1 @@
+ax.bar(['normal market','stress market'],[3,15],color=[ACCENT,BAD]);ax.text(0,3.4,'10% of $100M ADV',ha='center',fontsize=8);ax.text(1,15.4,'5% of $40M ADV',ha='center',fontsize=8);ax.set_ylabel('days to liquidate $30M');ax.set_ylim(0,18);ax.set_title('Liquidity is a state, not a permanent asset label',loc='left')

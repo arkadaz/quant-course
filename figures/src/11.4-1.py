@@ -1,0 +1,1 @@
+m=np.exp(np.cumsum([0,.04,-.07,.03,.02]));ax.plot(range(5),20*m,marker='o',color=ACCENT,label='$20 start');ax.plot(range(5),200*m,marker='o',color=WARM,label='$200 start');ax.set_xticks(range(5),['0','1','2','3','4']);ax.set_ylabel('Price (USD/share)');ax.set_title('Multiplicative returns respect price scale',loc='left');ax.legend()

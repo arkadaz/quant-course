@@ -1,0 +1,7 @@
+x=np.linspace(0,6,301);boundary=10.8-1.2*x;mask=(boundary<=6)&(boundary>=0)
+ax.fill_between(x,np.maximum(boundary,0),6,where=mask,color=GOOD,alpha=.24,label='projected feasible set')
+ax.plot(x,boundary,color=ACCENT,lw=2,label='$s_B=0$')
+ax.axvline(6,color=WARM,ls='--',label='$s_Q=0$');ax.axhline(6,color=BAD,ls=':',label='$s_S=0$')
+ax.scatter([4],[6],color=INK,s=42,zorder=4,label='$z^*$ projects to (4, 6)')
+ax.set_xlim(0,6.4);ax.set_ylim(0,6.4);ax.set_xlabel('$x_Q$ (USD million)');ax.set_ylabel('$x_S$ (USD million)')
+ax.legend(loc='lower left',fontsize=7);ax.set_title('Equalities record distance from each boundary',loc='left')

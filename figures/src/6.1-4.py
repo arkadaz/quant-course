@@ -1,0 +1,10 @@
+x=np.linspace(-6,6,160);y=np.linspace(-6,6,160);X,Y=np.meshgrid(x,y)
+sx,sy,rho=2.5,3.0,0.6;cov=[[sx**2,rho*sx*sy],[rho*sx*sy,sy**2]]
+rv=stats.multivariate_normal(mean=[0,0],cov=cov);Z=rv.pdf(np.dstack((X,Y)));rng=np.random.default_rng(0)
+p=rv.cdf([1,2],lower_limit=[-2,-1],rng=rng)
+ax.contourf(X,Y,Z,levels=12,cmap='Blues')
+ax.fill_between([-2,1],-1,2,color=WARM,alpha=0.55)
+ax.plot([-2,1,1,-2,-2],[-1,-1,2,2,-1],color=WARM,lw=2)
+ax.text(-1.8,1.25,f'integrated probability\n= {p:.3f}',color=INK,fontsize=8)
+ax.set_xlabel('AAPL return (%)');ax.set_ylabel('MSFT return (%)')
+ax.set_title('Joint probability is area, not a point height',fontsize=9,loc='left')

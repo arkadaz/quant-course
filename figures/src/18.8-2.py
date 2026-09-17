@@ -1,0 +1,1 @@
+m=np.linspace(0,60000,301);fill=np.minimum(10000,np.maximum(0,m-40000))/10000;ax.plot(m/1000,100*fill,color=ACCENT,lw=2);ax.set_xlabel('Sell flow reaching bid (thousand shares)');ax.set_ylabel('Our fill (%)');ax.set_title('Mechanical queue model',loc='left');ax.grid(alpha=.25)

@@ -1,0 +1,11 @@
+A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
+w=np.array([2.0,-1.0,0.5])
+c=w[:,None]*A
+x=np.arange(3)
+ax.bar(x-0.18,c[:,0],width=0.36,color=ACCENT,label='Market contribution')
+ax.bar(x+0.18,c[:,1],width=0.36,color=WARM,label='Quality contribution')
+ax.axhline(0,color=MUTED,lw=0.8)
+ax.set_xticks(x,['AAPL','MSFT','JPM'])
+ax.set_ylabel('factor exposure contribution (USD million)')
+ax.legend(loc='upper right')
+ax.set_title('Asset contributions add to each factor exposure',fontsize=9,loc='left')

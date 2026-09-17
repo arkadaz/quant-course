@@ -1,0 +1,6 @@
+rng=np.random.default_rng(0)
+x=rng.normal(0,1,700);y=0.75*x+rng.normal(0,np.sqrt(1-0.75**2),700)
+ax.scatter(x,y,s=9,alpha=0.35,color=BAD)
+ax.axhline(0,color=MUTED,lw=0.7);ax.axvline(0,color=MUTED,lw=0.7)
+ax.set_xlabel('AAPL standardized return');ax.set_ylabel('XOM standardized return')
+ax.set_title('Dependent returns: one coordinate carries signal',fontsize=9,loc='left')

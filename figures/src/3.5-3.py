@@ -1,0 +1,7 @@
+ax.axhline(0,color=MUTED,lw=.8);ax.axvline(0,color=MUTED,lw=.8)
+ax.quiver(0,0,2.0,1.0,angles='xy',scale_units='xy',scale=1,color=ACCENT,width=.011,label='Long basket')
+ax.quiver(0,0,-1.7,-.5,angles='xy',scale_units='xy',scale=1,color=BAD,width=.011,label='Short QQQ hedge')
+ax.quiver(0,0,.3,.5,angles='xy',scale_units='xy',scale=1,color=WARM,width=.011,label='Non-collinear residual')
+ax.set_aspect('equal');ax.set_xlim(-2.2,2.4);ax.set_ylim(-1.5,1.5)
+ax.set_xlabel('Common risk direction');ax.set_ylabel('Secondary risk direction')
+ax.legend(loc='upper left',fontsize=7);ax.set_title('Hedge the common move; measure residual',loc='left')

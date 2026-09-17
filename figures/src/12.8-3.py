@@ -1,0 +1,1 @@
+n=np.logspace(2,7,250);sampling=.8/np.sqrt(n/100);bias=np.full_like(n,.08);ax.loglog(n,sampling,color=ACCENT,lw=2,label='sampling error');ax.loglog(n,bias,color=WARM,lw=2,label='fixed-grid bias');ax.set_xlabel('Monte Carlo paths');ax.set_ylabel('Illustrative error scale');ax.set_title('A billion paths cannot repair a coarse grid',loc='left');ax.legend(fontsize=8)

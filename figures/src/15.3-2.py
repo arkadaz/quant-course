@@ -1,0 +1,1 @@
+lab=['alpha','market','size','value','momentum'];v=np.array([.1,.6,.06,.12,.08]);ax.bar(lab,v,color=[GOOD,ACCENT,WARM,WARM,BAD]);ax.set_ylabel('percentage points per month');ax.set_title('Each loading × assumed premium has an auditable contribution',loc='left')

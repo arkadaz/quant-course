@@ -1,0 +1,1 @@
+w=np.array([1,1.1,.88,.968,1.0648,1.12]);ax.plot(w,marker='o',label='Wealth');ax.step(np.arange(6),np.maximum.accumulate(w),where='post',label='Running peak');ax.set_xlabel('Observed day');ax.set_ylabel('Wealth (USD million)');ax.legend()

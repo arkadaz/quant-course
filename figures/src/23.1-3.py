@@ -1,0 +1,1 @@
+labels=['ลงทุนวันนี้','สิทธิ์รอ'];vals=[1.0,2.6392];ax.bar(labels,vals,color=[MUTED,ACCENT],width=.55);ax.set_ylabel('Value (USD M)');ax.set_title('Immediate NPV versus option value',loc='left');ax.set_ylim(0,3.2);[ax.text(i,v+.08,f'${v:.4f}M',ha='center',fontsize=8) for i,v in enumerate(vals)];ax.grid(axis='y',alpha=.2)

@@ -1,0 +1,1 @@
+t=np.array([.5,1,1.5,2]); spot=np.array([4.9610,5.0767,4.7362,4.9404]); fwd=np.array([4.9610,5.1924,4.0552,5.5530]); par=np.array([4.96,5.01,4.80,5.00]); term_structure(ax,t,{'Spot':spot,'Forward':fwd,'Par':par},title='Three views of the same curve',ylabel='Rate (% per year)')

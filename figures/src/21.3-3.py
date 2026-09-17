@@ -1,0 +1,1 @@
+m=np.arange(1,401);quad=180*m;fft=np.full_like(m,180*np.log2(1024),dtype=float)+.5*m;ax.plot(m,quad,label='Separate quadrature',color=BAD);ax.plot(m,fft,label='One FFT batch',color=GOOD);ax.set_xlabel('Number of strikes');ax.set_ylabel('Illustrative function work');ax.set_yscale('log');ax.legend()

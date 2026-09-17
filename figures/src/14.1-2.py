@@ -1,0 +1,1 @@
+n=np.linspace(1,10000,300); mean=.005*n; sd=2*np.sqrt(n); ax.plot(n,mean,color=GOOD,lw=2,label='expected daily P&L'); ax.plot(n,sd,color=BAD,lw=1.6,label='one SD of P&L'); ax.set(xlabel='Trades in a day',ylabel='USD',ylim=(0,230)); ax.legend(fontsize=7); ax.grid(alpha=.25)

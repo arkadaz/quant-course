@@ -1,0 +1,1 @@
+rho=np.linspace(-.6,.75,300); fac=np.sqrt((1+rho)/(1-rho)); ax.plot(rho,fac,color=BAD,lw=2); ax.axhline(1,color=INK,lw=1,ls='--'); ax.scatter([-.3,.0,.5],[np.sqrt(.7/1.3),1,np.sqrt(3)],color=[GOOD,WARM,BAD],zorder=3); ax.set(xlabel='First-order autocorrelation',ylabel='Long-run SE multiplier',ylim=(0,3.2)); ax.grid(alpha=.25)

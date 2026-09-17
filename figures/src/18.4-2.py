@@ -1,0 +1,1 @@
+labs=['Gamma','Theta','Net'];v=[40,-18,22];ax.bar(labs,v,color=[GOOD,BAD,ACCENT]);ax.axhline(0,color=INK,lw=.8);ax.set_ylabel('Estimated P&L (USD)');ax.set_title('One-day delta-hedged decomposition',loc='left')

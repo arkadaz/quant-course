@@ -1,0 +1,1 @@
+r=np.linspace(2,9,141)/100;N=10e6;d=.5;K=.0525;payoff(ax,r*100,{'Caplet':N*d*np.maximum(r-K,0),'Floorlet':N*d*np.maximum(K-r,0)},strike=K*100,title='One-period rate-option payoffs',ylabel='Payoff at period end (USD)')

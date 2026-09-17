@@ -1,0 +1,1 @@
+T=np.linspace(.25,12,300); t=1.2*np.sqrt(T); ax.plot(T,t,color=SERIES[1],lw=2); ax.axhline(2,color=WARM,lw=1.2,ls='--'); ax.axhline(3,color=BAD,lw=1.2,ls='--'); ax.scatter([(2/1.2)**2,(3/1.2)**2],[2,3],color=[WARM,BAD],zorder=3); ax.set(xlabel='Independent years',ylabel='Expected t-statistic',ylim=(0,4.4)); ax.grid(alpha=.25)

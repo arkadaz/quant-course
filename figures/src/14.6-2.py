@@ -1,0 +1,1 @@
+M=np.arange(2,1001); a=.05/M; z=stats.norm.ppf(1-a/2); bon=z/np.sqrt(5); mx=np.sqrt(2*np.log(M)/5); ax.plot(M,bon,color=BAD,lw=2,label='Bonferroni SR threshold'); ax.plot(M,mx,color=SERIES[0],lw=2,label='null maximum proxy'); ax.set(xlabel='Test count M',ylabel='Sharpe ratio',ylim=(0,2.2)); ax.legend(fontsize=7); ax.grid(alpha=.25)

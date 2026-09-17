@@ -1,0 +1,3 @@
+pts=[np.array([[-.7,.2],[-.2,.7],[.1,-.5],[.6,.3]]),np.array([[1.5,.2],[2.0,.7],[2.3,-.5],[2.8,.3]]),np.array([[-.12,.05],[.03,.10],[.08,-.08],[-.06,-.04]]),np.array([[2.05,.02],[2.15,.08],[2.20,-.05],[2.10,-.03]])]; colors=[SERIES[0],BAD,GOOD,WARM]
+for p,c in zip(pts,colors): ax.scatter(p[:,0],p[:,1],s=28,color=c)
+ax.axvline(0,color=INK,lw=1,ls='--'); ax.axhline(0,color=INK,lw=1,ls='--'); ax.text(-.9,.95,'unbiased / noisy',fontsize=8); ax.text(1.35,.95,'biased / precise',fontsize=8); ax.set(xlim=(-1.1,3.1),ylim=(-1,1.2),xlabel='Estimator location',ylabel='Repeat-sample deviation'); ax.grid(alpha=.2)

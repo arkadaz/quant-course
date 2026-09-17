@@ -1,0 +1,1 @@
+k=np.linspace(70,130,121);cu=np.maximum(120-k,0);cd=np.maximum(90-k,0);c=(.5*cu+.5*cd)/1.05;ax.plot(k,c,color=ACCENT,lw=2);ax.set_xlabel('Strike (USD/share)');ax.set_ylabel('Call value (USD/share)');ax.set_title('One-period model, fixed u d R',loc='left');ax.grid(alpha=.25)

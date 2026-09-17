@@ -1,0 +1,1 @@
+h=np.linspace(0,1,250);ax.plot(h,8*h,color=ACCENT,label='drift: 8% × time');ax.plot(h,30*np.sqrt(h),color=WARM,label='noise s.d.: 30% × √time');ax.set_xlabel('Horizon (years)');ax.set_ylabel('Percent');ax.set_title('Drift and volatility use different clocks',loc='left');ax.legend()

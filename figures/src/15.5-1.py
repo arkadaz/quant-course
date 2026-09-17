@@ -1,0 +1,1 @@
+rng=np.random.default_rng(33);a=100+np.cumsum(rng.normal(0,1,220));b=80+np.cumsum(rng.normal(0,1,220));ax.plot(a,color=ACCENT,label='walk A');ax.plot(b,color=WARM,label='walk B');ax.set_xlabel('day');ax.set_ylabel('synthetic price (USD)');ax.legend(fontsize=8);ax.set_title('Visual co-trending is insufficient evidence',loc='left')

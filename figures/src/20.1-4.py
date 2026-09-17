@@ -1,0 +1,1 @@
+left=np.array([0,.5,1,1.5]); right=np.array([.5,1,1.5,2]); f=np.array([4.9610,5.1924,4.0552,5.5530]); ax.bar(np.arange(4),f,color=[ACCENT,ACCENT,WARM,ACCENT]);ax.set_xticks(np.arange(4),[f'{a:.1f}-{b:.1f}y' for a,b in zip(left,right)]);ax.set_ylabel('Forward rate (% per year)');ax.set_title('Piecewise forward rates expose local curve shape')

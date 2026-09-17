@@ -1,0 +1,2 @@
+labels=['Base','SPY drift','QQQ drift','Cross term'];pieces=np.array([1,np.exp(.08)-1,np.exp(.18)-np.exp(.08),np.exp(.21)-np.exp(.18)])*1e6;ax.bar(labels,pieces/1e3,color=[MUTED,ACCENT,WARM,GOOD]);ax.set_ylabel('Contribution (USD thousand)');ax.set_title('USD expectation includes the covariance correction',loc='left');
+for i,v in enumerate(pieces/1e3):ax.text(i,v+8,f'{v:.0f}',ha='center',fontsize=8)

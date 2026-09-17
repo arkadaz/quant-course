@@ -1,0 +1,1 @@
+timeline(ax,[(0,'Trade: protection starts','up'),(.25,'Premium','down'),(.5,'Premium','down'),(.75,'Credit event\n+ accrued premium','up'),(1.0,'Later premiums stop','down')],title='CDS cash flows depend on survival and default timing')

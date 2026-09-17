@@ -1,0 +1,1 @@
+ax.barh(['Best bid queue'],[40],color=MUTED,label='ahead');ax.barh(['Best bid queue'],[10],left=[40],color=ACCENT,label='our order');ax.barh(['Sell flow'],[25],color=BAD,label='incoming flow');ax.set_xlabel('Shares (thousands)');ax.legend(fontsize=8);ax.set_title('Position matters at the same price',loc='left')

@@ -1,0 +1,1 @@
+p=np.linspace(0,300,200);pay=500*(p-75);ax.plot(p,pay/1000,color=ACCENT,lw=2.5);ax.axvline(75,color=MUTED,lw=1,ls=(0,(4,3)));ax.axhline(0,color=INK,lw=.8);ax.annotate('K = $75/MWh',xy=(75,0),xytext=(88,12),fontsize=8,color=INK);ax.set_xlabel('LMP P (USD/MWh)');ax.set_ylabel('Payoff (USD thousands)');ax.set_title('Fixed-for-floating power hedge',loc='left');ax.grid(alpha=.2)

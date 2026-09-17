@@ -1,0 +1,1 @@
+rho=np.linspace(0,.01,301); neff=10000/(1+9999*rho); ax.plot(rho,neff,color=BAD,lw=2); ax.scatter([0,.001,.01],[10000,10000/(1+9.999),10000/(1+99.99)],color=[GOOD,WARM,BAD],zorder=3); ax.set(xlabel='Common correlation rho',ylabel='Effective independent trades',ylim=(0,10500)); ax.grid(alpha=.25)

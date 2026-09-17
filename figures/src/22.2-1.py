@@ -1,0 +1,1 @@
+m=np.arange(1,61);p100=np.minimum(.002*m,.06);ax.plot(m,100*p100,label='100 PSA',color=ACCENT,lw=2);ax.plot(m,200*p100,label='200 PSA',color=BAD,lw=2);ax.axvline(30,color=MUTED,ls='--');ax.set_xlabel('Month since origination');ax.set_ylabel('CPR (%)');ax.set_title('PSA seasoning ramp',loc='left');ax.legend();ax.grid(alpha=.25)

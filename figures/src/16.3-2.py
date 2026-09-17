@@ -1,0 +1,2 @@
+k=np.arange(1,9);ma_acf=np.r_[-.3448,np.zeros(7)];ar_acf=-.3448**k;ma_pacf=-.3448**k;ar_pacf=np.r_[-.3448,np.zeros(7)];names=['MA(1) ACF','MA(1) PACF','AR(1) ACF','AR(1) PACF'];vals=[ma_acf,ma_pacf,ar_acf,ar_pacf];fig=plt.gcf();fig.subplots_adjust(hspace=.65);ax.remove();axs=fig.subplots(2,2).ravel();
+for a,v,nm in zip(axs,vals,names): a.bar(k,v,color=ACCENT if 'ACF' in nm else WARM);a.axhline(0,color=INK,lw=.6);a.set_title(nm,loc='left',fontsize=9);a.set_xlabel('lag');a.set_ylabel('corr');a.set_ylim(-.5,.25)

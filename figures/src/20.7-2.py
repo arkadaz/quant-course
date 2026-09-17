@@ -1,0 +1,1 @@
+labels=['Default leg received','Premium leg paid'];vals=[509378.7616,509378.7616];ax.bar(labels,vals,color=[GOOD,WARM]);ax.set_ylabel('Present value (USD)');ax.set_title('Par spread equates protection and premium legs')

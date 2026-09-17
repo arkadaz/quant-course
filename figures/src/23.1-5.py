@@ -1,0 +1,1 @@
+spread=np.linspace(.05,.55,11);vals=np.array([1.35,1.55,1.78,2.02,2.28,2.64,3.02,3.42,3.85,4.30,4.78]);ax.plot(spread,vals,color=GOOD,marker='o',lw=2);ax.set_xlabel('State spread (u − d), dimensionless');ax.set_ylabel('Option value (USD M)');ax.set_title('More uncertainty can be valuable when downside is limited',loc='left');ax.grid(alpha=.22)

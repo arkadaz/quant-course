@@ -1,0 +1,5 @@
+rng=np.random.default_rng(631);n=700;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))];cut=.58;k=np.searchsorted(t,cut)
+ax.plot(t[:k+1],w[:k+1],color=ACCENT,lw=2,label='observable path')
+ax.plot(t[k:],w[k:],color=MUTED,lw=1.4,alpha=.35,label='future path hidden')
+ax.axvspan(0,cut,color=ACCENT,alpha=.07);ax.axvline(cut,color=BAD,ls='--',lw=1.4,label='current time')
+ax.set_xlabel('Time');ax.set_ylabel('$W_t$');ax.set_title('The filtration stops at the decision timestamp',loc='left');ax.legend(loc='upper left')

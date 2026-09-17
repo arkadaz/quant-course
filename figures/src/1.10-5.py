@@ -1,0 +1,13 @@
+x = np.linspace(-60, 280, 500)
+normal = stats.norm.pdf(x, 120, 55)
+positive = x > 0
+ax.plot(x, normal, color=BAD, lw=2, label="Normal price fit")
+ax.fill_between(x[~positive], normal[~positive], color=BAD, alpha=0.25)
+y = np.linspace(1, 350, 500)
+logpdf = stats.lognorm.pdf(y, s=0.55, scale=np.exp(np.log(120)-0.55**2/2))
+ax.plot(y, logpdf, color=GOOD, lw=2, label="Lognormal price")
+ax.axvline(0, color=INK, lw=1, ls="--")
+ax.set_xlabel("Price S_T (USD)")
+ax.set_ylabel("Density")
+ax.set_title("Normal allows negative prices; Lognormal does not", fontsize=9, loc="left")
+ax.legend(fontsize=7)

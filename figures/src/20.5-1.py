@@ -1,0 +1,1 @@
+T=np.array([.5,1,2,5,10]);m=np.array([5.097160,5.013204,4.887677,4.697454,4.594414]);v=m.copy();c=m+np.array([-.003136,-.002564,.001128,.003779,-.002388]);term_structure(ax,T,{'Market target':m,'Vasicek':v,'CIR':c},title='Two models can fit the same USD curve',ylabel='Continuous zero yield (%)')

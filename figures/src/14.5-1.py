@@ -1,0 +1,1 @@
+x=np.linspace(-4,4,600); y=stats.norm.pdf(x); t=1.2*np.sqrt(3); ax.plot(x,y,color=SERIES[0],lw=2); mask=np.abs(x)>=t; ax.fill_between(x[mask],0,y[mask],color=BAD,alpha=.35); ax.axvline(t,color=INK,lw=1.2,ls='--'); ax.axvline(-t,color=INK,lw=1.2,ls='--'); ax.set(xlabel='Null standardized statistic',ylabel='Density',ylim=(0,.45)); ax.grid(alpha=.2)

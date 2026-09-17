@@ -1,0 +1,1 @@
+w=np.array([1,1.1,.88,.968,1.0648,1.12]);d=100*(w/np.maximum.accumulate(w)-1);ax.fill_between(np.arange(6),d,0,color=BAD,alpha=.25);ax.plot(d,color=BAD,marker='o');ax.set_xlabel('Observed day');ax.set_ylabel('Underwater return from peak (%)')

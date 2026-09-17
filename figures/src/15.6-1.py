@@ -1,0 +1,1 @@
+ax.broken_barh([(0,55),(55,10),(65,25)],(8,8),facecolors=[ACCENT,WARM,GOOD]);[ax.text(x,12,l,ha='center',va='center',fontsize=8,color='white' if l!='skip' else INK) for x,l in [(27,'lookback'),(60,'skip'),(77,'hold')]];ax.set_xlim(0,90);ax.set_ylim(4,18);ax.set_yticks([]);ax.set_xlabel('time');ax.set_title('Signal is known before the holding return begins',loc='left')

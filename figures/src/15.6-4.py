@@ -1,0 +1,1 @@
+tau=np.linspace(0,2,101);gross=.035;q=.0035;net=(gross-tau*q)*100;ax.plot(tau*100,net,color=ACCENT,lw=2);ax.scatter([60],[(gross-.6*q)*100],color=BAD,s=45);ax.axhline(0,color=INK,lw=1);ax.set_xlabel('one-way turnover (% of NAV)');ax.set_ylabel('net return (% per month)');ax.set_title('A signal is investable only after its trading bill',loc='left')

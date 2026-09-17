@@ -1,0 +1,1 @@
+rng=np.random.default_rng(731);n=1200;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))];s=100*np.exp(.04*t+.25*w);ax.plot(t,s,color=ACCENT);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('Continuous path, rough local movement',loc='left')

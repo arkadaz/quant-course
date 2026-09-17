@@ -1,0 +1,1 @@
+t=np.linspace(0,10,160);k=.65;th=.045;starts=[.02,.052,.08];curves={f'Start {x*100:.1f}%':100*(th+(x-th)*np.exp(-k*t)) for x in starts};term_structure(ax,t,curves,title='Conditional means return toward 4.5%',ylabel='Expected short rate (%)')

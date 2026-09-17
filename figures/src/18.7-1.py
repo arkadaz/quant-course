@@ -1,0 +1,1 @@
+a=np.linspace(1,8000,400);net=.006-.001-.0002*np.sqrt(a/10);ax.plot(a,100*net,color=ACCENT,lw=2);ax.axhline(0,color=INK,lw=.8);ax.axvline(6250,color=BAD,ls='--');ax.set_xlabel('AUM (USD millions)');ax.set_ylabel('Net alpha per month (%)');ax.set_title('Illustrative capacity curve',loc='left');ax.grid(alpha=.25)

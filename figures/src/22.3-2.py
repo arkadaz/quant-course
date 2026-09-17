@@ -1,0 +1,1 @@
+m=np.arange(1,37);a=np.where(m<=8,2.5,0);b=np.where((m>8)&(m<=20),1.25,0);c=np.where(m>20,.8,0);ax.step(m,a,label='A',color=ACCENT);ax.step(m,b,label='B',color=GOOD);ax.step(m,c,label='C',color=WARM);ax.set_xlabel('Month');ax.set_ylabel('Principal paid (USD M)');ax.set_title('Waterfall reshapes principal timing',loc='left');ax.legend();ax.grid(alpha=.25)

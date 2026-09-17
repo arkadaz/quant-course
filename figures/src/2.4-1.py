@@ -1,0 +1,10 @@
+parent_x=np.linspace(0.08,0.92,10)
+for x in parent_x:
+    ax.plot([x,x],[0.78,0.48],color=MUTED,lw=1.2)
+    ax.scatter(x,0.80,s=22,color=ACCENT,zorder=3)
+ax.text(0.50,0.96,'Parent Poisson stream: lambda = 20 orders/min',ha='center',color=INK,weight='bold')
+ax.annotate('',xy=(0.32,0.22),xytext=(0.50,0.45),arrowprops=dict(arrowstyle='->',color=GOOD,lw=1.4))
+ax.annotate('',xy=(0.68,0.22),xytext=(0.50,0.45),arrowprops=dict(arrowstyle='->',color=WARM,lw=1.4))
+ax.text(0.32,0.12,'A: marketable\np = 0.60, lambda_A = 12',ha='center',color=GOOD)
+ax.text(0.68,0.12,'B: passive\np = 0.40, lambda_B = 8',ha='center',color=WARM)
+ax.set_xlim(0,1); ax.set_ylim(0,1); ax.axis('off'); ax.set_title('Independent marks split one Poisson stream into two',fontsize=9,loc='left')

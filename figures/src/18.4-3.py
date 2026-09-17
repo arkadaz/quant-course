@@ -1,0 +1,1 @@
+m=np.linspace(0,5,101);g=1000*.5*.02*m*m;ax.plot(m,g,color=GOOD,lw=2);ax.axhline(18,color=BAD,ls='--',label='one-day theta cost');ax.set_xlabel('Absolute move (USD/share)');ax.set_ylabel('Gamma P&L (USD)');ax.legend(fontsize=8);ax.set_title('Curvature is quadratic in the move',loc='left');ax.grid(alpha=.25)

@@ -1,0 +1,1 @@
+x=np.linspace(-.65,.81,600); mu=.08; se=.20; ax.plot(x,stats.norm.pdf(x,mu,se),color=SERIES[0],lw=2); ax.axvline(mu,color=INK,lw=1.2,ls='--',label='estimate / true centre'); ax.axvspan(mu-1.96*se,mu+1.96*se,color=WARM,alpha=.22,label='95% half-width'); ax.set(xlabel='Annual expected return',ylabel='Density'); ax.legend(fontsize=7); ax.grid(alpha=.22)

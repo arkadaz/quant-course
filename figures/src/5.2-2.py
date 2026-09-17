@@ -1,0 +1,5 @@
+labels=['Beta requirement','QQQ cap','SPY cap'];used=np.array([1.0,4/6,1.0])
+ax.bar(labels,used*100,color=[ACCENT,WARM,BAD],width=.55)
+for i,v in enumerate(used):ax.text(i,v*100+3,f'{v*100:.1f}%',ha='center',fontsize=9)
+ax.set_ylim(0,112);ax.set_ylabel('Constraint utilisation (%)')
+ax.set_title('Zero surplus or slack identifies a binding row',loc='left')

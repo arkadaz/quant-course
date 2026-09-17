@@ -1,0 +1,5 @@
+labels=['Beta row','QQQ-cap row','SPY-cap row'];lhs=np.array([10.8,6,6]);rhs=np.array([10.8,6,6]);i=np.arange(3)
+ax.bar(i-.18,lhs,.36,color=ACCENT,label='$A_{eq}z^*$')
+ax.bar(i+.18,rhs,.36,color=GOOD,label='$d$')
+ax.set_xticks(i,labels);ax.set_ylabel("Value in each row's native unit");ax.legend(loc='upper right')
+ax.set_title('Compare each left-hand side only with its labelled target',loc='left')

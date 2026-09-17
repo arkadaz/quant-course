@@ -1,0 +1,1 @@
+names=['6m zero','1y zero','18m note','2y note'];res=np.array([0.0,0.0,0.00002,-0.00003]);ax.bar(names,res,color=[GOOD,GOOD,ACCENT,ACCENT]);ax.axhline(0,color=INK,lw=1);ax.set_ylabel('Model minus market (USD per par 100)');ax.set_title('Every input instrument must reprice')

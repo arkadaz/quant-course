@@ -1,0 +1,1 @@
+k=np.linspace(.75,1.25,200);iv=.19+.18*(1-k)+.10*(k-1)**2;ax.plot(k*100,iv*100,color=ACCENT,lw=2);ax.axhline(20,color=WARM,ls='--',label='flat GBM input');ax.set_xlabel('Strike / spot (%)');ax.set_ylabel('Implied volatility (%)');ax.set_title('A stylized equity volatility skew',loc='left');ax.legend()

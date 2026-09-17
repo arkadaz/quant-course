@@ -1,0 +1,8 @@
+mu=np.array([0.0004,0.0003])
+S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
+x=np.linspace(-0.08,0.08,180);y=np.linspace(-0.10,0.10,180);X,Y=np.meshgrid(x,y)
+pos=np.dstack((X,Y));Z=stats.multivariate_normal(mean=mu,cov=S).pdf(pos)
+ax.imshow(Z,extent=[x[0]*100,x[-1]*100,y[0]*100,y[-1]*100],origin='lower',aspect='auto',cmap='viridis')
+ax.scatter([mu[0]*100],[mu[1]*100],color=BAD,s=28,label='mean (0.04%, 0.03%)')
+ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)');ax.legend(loc='upper left',fontsize=7)
+ax.set_title('Exact bivariate Normal density from the stated parameters',fontsize=9,loc='left')

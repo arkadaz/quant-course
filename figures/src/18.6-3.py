@@ -1,0 +1,1 @@
+front=np.linspace(0,1,101);impact=20+55*front**2;risk=80*(1-front)**2+8;ax.plot(impact,risk,color=ACCENT,lw=2);ax.scatter([20,45,75],[88,28,8],color=[GOOD,WARM,BAD]);ax.set_xlabel('Expected temporary cost (USD thousands)');ax.set_ylabel('Inventory-risk proxy');ax.set_title('Illustrative execution trade-off',loc='left');ax.grid(alpha=.25)

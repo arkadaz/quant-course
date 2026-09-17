@@ -1,0 +1,1 @@
+n=np.array([10,20,40,80,160]);ax.loglog(n,.18/n,label='Implicit Euler');ax.loglog(n,1.8/n**2,label='Crank-Nicolson');ax.set_xlabel('Number of time steps');ax.set_ylabel('Illustrative absolute error (USD)');ax.legend();ax.grid(True,which='both',alpha=.3)

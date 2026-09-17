@@ -1,0 +1,1 @@
+a=np.array([21,61,101,141,181]);b=np.arange(101,106);ax.eventplot([a,b],lineoffsets=[1,0],linelengths=.6,colors=[ACCENT,BAD]);ax.set_yticks([0,1],['Clustered','Separated']);ax.set_xlim(1,250);ax.set_xlabel('Forecast day');ax.set_title('Five exceptions in each sequence',loc='left')

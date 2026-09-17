@@ -1,0 +1,2 @@
+h=np.linspace(0,.05,101);linear=.0528*h;actual=linear+.04*h**2
+ax.plot(h*100,actual,color=ACCENT,lw=2,label='exact');ax.plot(h*100,linear,color=WARM,ls='--',label='linear');ax.fill_between(h*100,linear,actual,color=BAD,alpha=.15);ax.set_xlabel('Added SPY weight (percentage points)');ax.set_ylabel('Change in annual variance');ax.legend();ax.set_title('First-order accuracy fades with trade size',loc='left')

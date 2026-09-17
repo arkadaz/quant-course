@@ -1,0 +1,1 @@
+K=np.array([80,90,100,110,120]);m=np.array([.31,.27,.23,.21,.20]);ini=np.array([.25,.24,.23,.225,.22]);fin=np.array([.305,.272,.231,.208,.202]);ax.scatter(K,m,color='black',label='Market');ax.plot(K,ini,color=BAD,label='Initial');ax.plot(K,fin,color=GOOD,label='Calibrated');ax.set_xlabel('Strike (USD)');ax.set_ylabel('Implied volatility (per sqrt year)');ax.legend()

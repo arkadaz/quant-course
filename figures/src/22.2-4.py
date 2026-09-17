@@ -1,0 +1,1 @@
+y=np.linspace(2,8,121);bullet=100*np.exp(-4*(y-5)/100);mbs=100+1.5*(5-y)-.22*(5-y)**2;ax.plot(y,bullet,label='Fixed-cash-flow bond',color=GOOD);ax.plot(y,mbs,label='Pass-through illustration',color=BAD,lw=2);ax.set_xlabel('Yield (%)');ax.set_ylabel('Price');ax.set_title('Prepayment caps the rally',loc='left');ax.legend();ax.grid(alpha=.25)

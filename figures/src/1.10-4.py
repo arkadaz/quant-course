@@ -1,0 +1,16 @@
+rng = np.random.default_rng(0)
+S0, mu, sigma, T = 120.0, 0.15, 0.55, 1.0
+m = (mu - 0.5*sigma**2)*T
+s = sigma*np.sqrt(T)
+Z = rng.standard_normal(20000)
+ST = S0*np.exp(m + s*Z)
+ax.hist(ST, bins=80, density=True, color=ACCENT, alpha=0.55, label="simulation of $S_0e^{m+sZ}$ (n=20,000)")
+xs = np.linspace(0.1, np.percentile(ST, 99.5), 1000)
+pdf = stats.lognorm.pdf(xs, s=s, scale=S0*np.exp(m))
+ax.plot(xs, pdf, color=BAD, lw=2, label="Lognormal density (closed form)")
+ax.axvline(S0, color=INK, lw=1, ls=(0, (4, 3)))
+ax.set_xlim(0, np.percentile(ST, 99.5))
+ax.set_xlabel(r"Terminal price $S_T$ ($)")
+ax.set_ylabel("Density")
+ax.legend(loc="best", fontsize=8)
+ax.set_title("Simulated terminal prices land on the lognormal density", loc="left")

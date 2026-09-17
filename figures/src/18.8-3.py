@@ -1,0 +1,1 @@
+vals=[-.002,.010,.008];ax.bar(['Maker rebate','Adverse markout','Net'],vals,color=[GOOD,BAD,WARM]);ax.axhline(0,color=INK,lw=.8);ax.set_ylabel('USD/share');ax.set_title('Illustrative maker economics',loc='left')

@@ -1,0 +1,1 @@
+rho=np.linspace(0,.99,100);infl=1/(1-rho**2);ax.plot(rho,infl,color=BAD,lw=2);ax.set_xlabel('correlation between two factors');ax.set_ylabel('variance-inflation multiplier');ax.set_title('Near-duplicate factors make individual loadings fragile',loc='left')

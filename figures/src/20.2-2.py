@@ -1,0 +1,1 @@
+vals=np.array([[11.2,11.2],[11.311125,11.2]]);x=np.arange(2);ax.bar(x-.18,vals[:,0],.36,label='Fixed leg',color=GOOD);ax.bar(x+.18,vals[:,1],.36,label='Floating leg',color=ACCENT);ax.set_xticks(x,['Par rate','Contract 5.25%']);ax.set_ylabel('Present value (USD millions)');ax.set_title('Swap value is the difference between legs');ax.legend()

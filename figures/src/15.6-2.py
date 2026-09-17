@@ -1,0 +1,1 @@
+t=np.arange(60);gross=100*np.cumprod(1+.006+.03*np.sin(t/7));net=100*np.cumprod(1+.004+.03*np.sin(t/7));ax.plot(t,gross,color=ACCENT,label='gross illustration');ax.plot(t,net,color=BAD,label='after cost illustration');ax.set_xlabel('month');ax.set_ylabel('NAV (USD, starting at 100)');ax.legend(fontsize=8);ax.set_title('Turnover changes the investable result',loc='left')

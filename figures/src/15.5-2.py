@@ -1,0 +1,1 @@
+rng=np.random.default_rng(34);v=rng.normal(0,.45,20);ax.bar(np.arange(1,21),v,color=ACCENT);j=np.argmax(v);ax.bar(j+1,v[j],color=BAD);ax.set_xlabel('candidate specification');ax.set_ylabel('in-sample Sharpe estimate');ax.set_title('The reported winner is selected noise under this null',loc='left')
