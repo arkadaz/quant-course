@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>หุ้นราคา 100 USD จะจ่ายเงินสด 1 USD ให้เจ้าของก่อนวันครบกำหนดของสัญญา ถ้าคุณซื้อหุ้นวันนี้กับซื้อสิทธิ์บนหุ้นนั้น ใครได้รับเงินก้อนนี้?</p>
-  <p>คำตอบคือ: หุ้นที่ถือจริงได้รับ dividend แต่สิทธิ์ซื้อหุ้นไม่ได้รับทันที จึงต้องหักมูลค่าปัจจุบันของเงินก้อนนี้จากต้นทุน forward และจากสูตร option ก่อนตัดสินใจ exercise.</p>
-  <p>จำภาพนี้ไว้: dividend คือซองเงินที่หล่นจากหุ้นก่อนถึงเส้นชัย; คนถือสิทธิ์อาจยังเก็บไม่ทัน.</p>
+  <p>หุ้นราคา 100 USD จะจ่ายปันผล 1 USD ในอีก 3 เดือน คุณล็อกซื้อหุ้นนี้ล่วงหน้า 6 เดือนด้วย forward ขณะที่ดอกเบี้ย 5% ต่อปี คนถือหุ้นได้ปันผล คนถือ forward ไม่ได้ ราคา forward ที่ยุติธรรมคือเท่าไร?</p>
+  <p>เฉลย: 101.52 USD ต่ำกว่า 102.53 USD ของหุ้นที่ไม่จ่ายปันผลอยู่ 1.0126 USD มากกว่าปันผล 1 USD เล็กน้อย เพราะคนถือหุ้นจริงเอาปันผลไปฝากกินดอกเบี้ยต่อได้อีก 3 เดือน</p>
 </div>
 
 <details class="jargon" open>
@@ -84,6 +83,10 @@
       <tr><td>$C_0,P_0$</td><td>ราคา call และ put ณ วันนี้</td><td>USD ต่อหุ้น</td></tr>
       <tr><td>$\sigma$</td><td>volatility ต่อปีใน Black-Scholes</td><td>ต่อปีแบบ annualized</td></tr>
       <tr><td>$c$</td><td>proportional dividend ต่องวดใน binomial model</td><td>สัดส่วนต่อราคาหุ้น</td></tr>
+      <tr><td>$u,\ d,\ R$</td><td>ตัวคูณราคาขาขึ้น ขาลง และตัวคูณเงินฝากต่องวด</td><td>unitless</td></tr>
+      <tr><td>$p$</td><td>risk-neutral probability ของขาขึ้น เมื่อมีปันผล</td><td>unitless</td></tr>
+      <tr><td>$x,\ y$</td><td>จำนวนหุ้นและเงินสดในพอร์ตเลียนแบบ</td><td>หุ้น และ USD</td></tr>
+      <tr><td>$n_0,\ n_T$</td><td>จำนวนหุ้นที่ถือวันนี้และวันส่งมอบ เมื่อเอาปันผลซื้อหุ้นเพิ่ม</td><td>หุ้น</td></tr>
       <tr><td>$t_D$</td><td>เวลาที่จ่ายเงินสดปันผล</td><td>ปี</td></tr>
       <tr><td>$F_0$</td><td>forward price ณ วันนี้สำหรับส่งมอบที่เวลา T</td><td>USD ต่อหุ้น</td></tr>
     </tbody>
@@ -109,22 +112,23 @@
 <section class="prose">
   <h4>เงินปันผลอยู่ฝั่งไหนของการถือหุ้น</h4>
   <p>ถ้าซื้อหุ้นวันนี้ ผู้ถือได้รับ dividend ก่อน expiry แต่คนที่ล็อกซื้อหุ้นผ่าน forward ไม่ได้รับเงินก้อนนั้นระหว่างทาง ต้นทุนของ forward จึงต้องหัก present value ของ dividend ออกก่อน ตัวอย่างนี้ใช้ cash dividend ที่รู้จำนวนและวันจ่ายเพื่อให้เห็นกลไกชัด; ถ้า dividend ไม่แน่นอน ต้องใช้ forecast และ model risk เพิ่ม</p>
+  <p>ในมุมมองของแบบจำลอง หุ้นที่มีการจ่ายเงินปันผลคือพอร์ตโฟลิโอที่ประกอบด้วยหุ้น ณ วันสิ้นสุด บวกกับสิทธิในการรับกระแสเงินสดปันผลระหว่างทาง มูลค่าหุ้น $S_0$ ในวันนี้จึงเท่ากับผลรวมของราคาคิดลดของหุ้นและมูลค่าปัจจุบันของเงินปันผลทั้งหมด</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — การสร้างพอร์ต Cash-and-Carry เมื่อมีเงินปันผลเป็นก้อน</h4>
-  <p>การคำนวณแปดบรรทัดนี้ลบล้างความเชื่อผิด ๆ ที่ว่าเงินปันผลเป็นผลพลอยได้ที่ให้เปล่า ในตลาด derivative เงินปันผลคือส่วนหนึ่งของมูลค่าหุ้นที่หลุดลอยออกมาระหว่างทาง</p>
+  <p>แต่ละแถวอ่านว่าเงินสดวันนี้ ลูกศร เงินสดวันส่งมอบ การคำนวณนี้ลบล้างความเชื่อผิด ๆ ที่ว่าเงินปันผลเป็นผลพลอยได้ที่ให้เปล่า ในตลาด derivative เงินปันผลคือส่วนหนึ่งของมูลค่าหุ้นที่หลุดลอยออกมาระหว่างทาง</p>
   <p>ผู้ซื้อสัญญา forward ไม่ได้รับเงินสดก้อนนี้ จึงไม่ควรต้องแบกรับภาระดอกเบี้ยของมูลค่าส่วนที่ตนเองไม่ได้ครอบครอง การหัก $D_0$ ออกจาก spot price ก่อนคิดดอกเบี้ยทบต้นจึงสะท้อนต้นทุนการถือครองสุทธิที่แท้จริง</p>
   <div class="math">\[
 \begin{aligned}
-t=0:\quad &\Pi_0 = +S_0 - S_0 + 0 = 0 \\[4pt]
-t=t_D:\quad &\text{dividend inflow} = +D \implies \text{terminal value} = +D e^{r(T-t_D)} \\[4pt]
-t=T:\quad &\Pi_T = +F_0 - S_0 e^{rT} + D e^{r(T-t_D)} \\[4pt]
-\text{no-arbitrage}:\quad &\Pi_T = 0 \\[4pt]
-F_0 - S_0 e^{rT} + D e^{r(T-t_D)} &= 0 \\[4pt]
-F_0 &= S_0 e^{rT} - D e^{r(T-t_D)} \\[4pt]
-&= \big(S_0 - D e^{-r t_D}\big) e^{rT} \\[4pt]
-D_0 \equiv D e^{-r t_D} \implies F_0 &= (S_0 - D_0) e^{rT}
+\text{borrow}&:\ +S_0\ \to\ -S_0e^{rT}\\
+\text{buy share}&:\ -S_0\ \to\ +S_T\\
+\text{dividend}&:\ D\ \text{at }t_D\ \to\ +De^{r(T-t_D)}\\
+\text{short forward}&:\ 0\ \to\ F_0-S_T\\[4pt]
+\text{net}&:\ 0\ \to\ F_0-S_0e^{rT}+De^{r(T-t_D)}\\[4pt]
+F_0&=S_0e^{rT}-De^{r(T-t_D)}\\
+&=\big(S_0-De^{-rt_D}\big)e^{rT}\\
+&=(S_0-D_0)\,e^{rT},\qquad D_0=De^{-rt_D}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -137,19 +141,23 @@ D_0 \equiv D e^{-r t_D} \implies F_0 &= (S_0 - D_0) e^{rT}
 
 <section class="formula">
   <h4>ขั้นที่ 2 — ถ้าใช้ dividend yield</h4>
-  <p>เมื่อรายได้อธิบายด้วยอัตราคงที่ต่อเนื่อง สูตรจะเขียนสั้นลง ห้าบรรทัดนี้แสดงว่ารูปสั้นนั้นไม่ใช่การประมาณ มันคือผลของกลไกซื้อหุ้นเพิ่มในบรรทัดที่สอง ซึ่งทำให้ของที่ต้องเตรียมวันนี้น้อยลงพอดีตามอัตราปันผล</p>
+  <p>เมื่อรายได้อธิบายด้วยอัตราคงที่ต่อเนื่อง สูตรจะเขียนสั้นลง ขั้นนี้แสดงว่ารูปสั้นนั้นไม่ใช่การประมาณ มันคือผลของกลไกซื้อหุ้นเพิ่มในบรรทัดที่สอง ซึ่งทำให้ของที่ต้องเตรียมวันนี้น้อยลงพอดีตามอัตราปันผล</p>
   <div class="math">\[
-\begin{aligned}\text{yield }q:\quad\text{hold }e^{-qT}&\ \text{shares today}\\
-\text{reinvest dividends}\;&\Longrightarrow\;\text{grows to }1\ \text{share at }T\\
-\text{cash needed today}&=S_0e^{-qT}\\
-\text{owe at }T&=S_0e^{-qT}e^{rT}\\
-F_0&=S_0e^{(r-q)T}\end{aligned}
+\begin{aligned}
+n_0&=e^{-qT}\\
+n_T&=e^{-qT}e^{qT}=1\\
+\text{cash today}&=S_0e^{-qT}\\
+\text{owed at }T&=S_0e^{-qT}e^{rT}\\
+F_0&=S_0e^{(r-q)T}\\[4pt]
+q=2\%&:\ F_0=100e^{(0.05-0.02)(0.5)}=101.51
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กลไกอยู่บรรทัดแรก แทนที่จะซื้อเต็มหนึ่งหุ้น ซื้อน้อยกว่านั้น แล้วปล่อยให้ปันผลทำงานแทน</p>
     <p>ปันผลที่ไหลเข้ามาถูกนำไปซื้อหุ้นเพิ่มเรื่อย ๆ จำนวนหุ้นจึงโตขึ้นตามเวลา และโตพอดีจนครบหนึ่งหุ้นในวันส่งมอบ นั่นคือเหตุผลที่เลือกตัวคูณตัวนี้ ไม่ใช่ตัวอื่น</p>
     <p>เงินที่ต้องใช้วันนี้จึงน้อยกว่าราคาหุ้นเต็ม แล้วทบต้นหนี้ก้อนนั้นไปวันส่งมอบตามขั้นที่ 1 ของหัวข้อ 19.1</p>
     <p>รวมเลขชี้กำลังสองก้อน อัตราสุทธิคือดอกเบี้ยลบอัตราปันผล เพราะการกู้ดันราคาขึ้น ส่วนปันผลดันลง และรูปนี้เป็นรูปเดียวกับที่หัวข้อ 13.4 ใช้</p>
+    <p>ปันผล 2% ต่อปีของหุ้น 100 USD ครึ่งปีคือราว 1 USD จึงได้ 101.51 ใกล้กับ 101.52 ของปันผลก้อน 1 USD ในขั้นที่ 4 ต่างกันแค่ว่าเงินออกเมื่อไร</p>
   </div>
 </section>
 
@@ -182,12 +190,12 @@ D_0 &= \$1.00 \times 0.987578 = \$0.9876
   <p>ตัวเลขเปรียบเทียบนี้ชี้ให้เห็นชัดเจน: ราคา forward ไม่ได้ลดลงเพียง 1.00 USD ตามมูลค่าหน้าตั๋วของเงินปันผล แต่ลดลงเท่ากับ 1.0126 USD ซึ่งรวมดอกเบี้ยที่ผู้ถือหุ้นจริงจะได้รับจากการนำเงินปันผลไปฝากต่ออีกสามเดือนด้วย</p>
   <div class="math">\[
 \begin{aligned}
-S_0 - D_0 &= 100 - 0.987578 = \$99.012422 \\[4pt]
-rT &= 0.05 \times 0.50 = 0.025 \implies e^{0.025} \approx 1.025315 \\[4pt]
-F_0 &= 99.012422 \times 1.025315 = \$101.5189 \\[6pt]
-F_{\text{no-div}} &= 100 \times 1.025315 = \$102.5315 \\[4pt]
-\Delta F &= F_{\text{no-div}} - F_0 = 102.5315 - 101.5189 = \$1.0126 \\[4pt]
-D e^{r(T - t_D)} &= 1.00 \times e^{0.05(0.25)} = \$1.0126
+S_0-D_0&=100-0.987578=99.012422\\
+e^{rT}&=e^{0.05(0.5)}=1.025315\\
+F_0&=99.012422(1.025315)=101.5189\\[4pt]
+F_{\text{no-div}}&=100(1.025315)=102.5315\\
+\Delta F&=102.5315-101.5189=1.0126\\
+De^{r(T-t_D)}&=1.00\,e^{0.05(0.25)}=1.0126
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -221,25 +229,33 @@ D e^{r(T - t_D)} &= 1.00 \times e^{0.05(0.25)} = \$1.0126
 
 <section class="formula">
   <h4>ขั้นที่ 5 — binomial model หนึ่งงวดพร้อมเงินปันผล: พอร์ตเลียนแบบและ risk-neutral probability</h4>
-  <p>เจ็ดบรรทัดนี้คือรากฐานของ binomial tree เมื่อมีเงินปันผลตามเอกสารของมหาวิทยาลัยโคลัมเบีย</p>
+  <p>ขั้นนี้คือรากฐานของ binomial tree เมื่อมีเงินปันผล ตัวเลขที่ใช้คือหุ้น 100 USD งวดหน้าขึ้นเป็น 110 หรือลงเป็น 90 จ่ายปันผล 1% ของราคาตั้งต้นตอนสิ้นงวด เงินฝากโต 2% และ call ที่ strike 100 จึงได้ C_u = 10 กับ C_d = 0</p>
   <p>การมีเงินปันผลไม่เปลี่ยนสูตร delta แต่เปลี่ยน risk-neutral probability โดยตรง เพราะหุ้นจ่ายเงินสดออกมาบางส่วน ทำให้การเติบโตของราคาหุ้นต้องชะลอลงเพื่อไม่ให้ผลตอบแทนรวมแซงหน้าอัตราดอกเบี้ยไร้ความเสี่ยง</p>
   <p>หาก $R$ หลุดออกนอกช่วง $d+c \lt R \lt u+c$ จะเกิด arbitrage ทันที เช่นถ้า $R \le d+c$ การกู้เงินมาซื้อหุ้นจะไม่มีวันขาดทุนในทุกกรณี</p>
   <div class="math">\[
 \begin{aligned}
-\text{replicate payoff:}\quad &(u + c) S_0 x + R y = C_u \\[4pt]
-&(d + c) S_0 x + R y = C_d \\[4pt]
-\text{subtract:}\quad &(u - d) S_0 x = C_u - C_d \implies x = \frac{C_u - C_d}{(u - d)S_0} \\[4pt]
-\text{substitute } x:\quad &amp;R y = C_u - (u + c) S_0 \frac{C_u - C_d}{(u - d)S_0} = \frac{-(d + c)C_u + (u + c)C_d}{u - d} \\[4pt]
-C_0 = x S_0 + y &= \frac{1}{R} \left[ \left(\frac{R - d - c}{u - d}\right) C_u + \left(\frac{u + c - R}{u - d}\right) C_d \right] \\[4pt]
-q \equiv \frac{R - d - c}{u - d} &\implies C_0 = \frac{1}{R} \big[ q C_u + (1 - q) C_d \big] \\[4pt]
-\text{no-arbitrage:}\quad &(0 \lt q \lt 1) \iff d + c \lt R \lt u + c
+C_u&=(u+c)S_0x+Ry\\
+C_d&=(d+c)S_0x+Ry\\
+x&=\frac{C_u-C_d}{(u-d)S_0}\\
+Ry&=\frac{(u+c)C_d-(d+c)C_u}{u-d}\\
+C_0&=xS_0+y\\
+&=\big[p\,C_u+(1-p)\,C_d\big]/R\\
+p&=\frac{R-d-c}{u-d}\\
+0\lt p&\lt1\qquad(d+c\lt R\lt u+c)\\[4pt]
+p&=\frac{1.02-0.90-0.01}{0.20}=0.55\\
+x&=10/20=0.5\\
+y&=-9.1/0.204=-44.608\\
+C_0&=50-44.608=5.392\\
+&=0.55(10)/1.02\\
+c=0&:\ C_0=0.60(10)/1.02=5.882
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>ตั้งสมการเลียนแบบผลตอบแทนสองสภาวะ โดยถือหุ้น $x$ หน่วยและกู้หรือฝากเงินสด $y$ หน่วย ดอกเบี้ยทบต้นต่องวดคือ $R$</p>
     <p>จับสองสมการลบกัน เงินปันผล $c$ หักล้างกันไปหมด เผยให้เห็นว่าสัดส่วนถือหุ้น $x$ หรือ delta ขึ้นกับส่วนต่างราคา ex-dividend เท่านั้น</p>
     <p>เมื่อแทนค่า $x$ กลับไปแก้หาเงินสด $y$ และรวมมูลค่าพอร์ตตั้งต้น จะได้รูปที่จัดกลุ่มตามผลตอบแทนปลายทางทั้งสองขา</p>
-    <p>ก้อนหน้าคือ risk-neutral probability $q$ ซึ่งถูกเงินปันผล $c$ ดึงให้ต่ำลง และเงื่อนไข no-arbitrage บังคับให้ผลตอบแทนดอกเบี้ย $R$ ต้องอยู่ระหว่างสองขานี้เสมอ</p>
+    <p>ก้อนหน้าคือ risk-neutral probability $p$ ซึ่งถูกเงินปันผล $c$ ดึงให้ต่ำลง และเงื่อนไข no-arbitrage บังคับให้ผลตอบแทนดอกเบี้ย $R$ ต้องอยู่ระหว่างสองขานี้เสมอ ใช้ตัว p เพื่อไม่ให้ชนกับ dividend yield q</p>
+    <p>แทนเลข p ลดจาก 0.60 เหลือ 0.55 call จึงถูกลงจาก 5.882 เหลือ 5.392 USD เพราะคนถือ call ไม่ได้ปันผล แต่ delta ยังเป็น 0.5 เท่าเดิม ตรงกับที่บอกว่า c หักล้างกันในบรรทัดที่สาม</p>
   </div>
 </section>
 
@@ -270,7 +286,7 @@ C_0 &= e^{-rT} \mathbb{E}_0^Q\big[\max(S_T - K,\, 0)\big] \\[4pt]
   <p>การมีเงินปันผล $q$ แทรกเข้ามาใน drift ทำให้จุดกึ่งกลางของ distribution ขยับไปทางซ้าย โอกาสที่ option จะจบลงแบบ in-the-money จึงลดลงเมื่อเทียบกับหุ้นที่ไม่จ่ายปันผล</p>
   <div class="math">\[
 \begin{aligned}
-S_T \ge K &\iff \ln\left(\frac{S_T}{S_0}\right) \ge \ln\left(\frac{K}{S_0}\right) \\[4pt]
+S_T \ge K &\implies \ln\left(\frac{S_T}{S_0}\right) \ge \ln\left(\frac{K}{S_0}\right) \\[4pt]
 \big(r - q - \tfrac{1}{2}\sigma^2\big)T + \sigma W_T^Q &\ge -\ln\left(\frac{S_0}{K}\right) \\[4pt]
 \frac{W_T^Q}{\sqrt{T}} &\ge -\frac{\ln(S_0/K) + (r - q - \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}} = -d_2 \\[4pt]
 \mathbb{Q}\big(S_T \ge K\big) &= \mathbb{Q}(Z \ge -d_2) = N(d_2) \\[4pt]
@@ -278,7 +294,7 @@ d_1 &= d_2 + \sigma\sqrt{T} = \frac{\ln(S_0/K) + (r - q + \tfrac{1}{2}\sigma^2)T
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>เปลี่ยนเงื่อนไขการใช้สิทธิ์ $S_T \ge K$ ให้อยู่ในรูป logarithmเพื่อดึงการเคลื่อนที่แบบบราวน์ออกมา</p>
+    <p>เปลี่ยนเงื่อนไขการใช้สิทธิ์ $S_T \ge K$ ให้อยู่ในรูป logarithm เพื่อดึงการเคลื่อนที่แบบบราวน์ออกมา</p>
     <p>จัดรูปให้ random variable ปกติมาตรฐาน $Z$ อยู่เดี่ยว ๆ ทางซ้ายมือ ค่าคงที่ทางขวามือคือนิยามของ $-d_2$</p>
     <p>ความสมมาตรของ normal distribution ทำให้พื้นที่ทางขวาของ $-d_2$ เท่ากับพื้นที่ทางซ้ายของ $+d_2$ หรือ $N(d_2)$ พอดี</p>
     <p>ส่วน $d_1$ ได้จากการเลื่อน density เมื่อนำราคาหุ้น $S_T$ เข้าไปถ่วงน้ำหนัก ทำให้มีพจน์ความผันผวนบวกเพิ่มเข้ามาอีกหนึ่งเท่าของระยะเวลา</p>
@@ -319,28 +335,26 @@ C_0-P_0&=S_0e^{-qT}-Ke^{-rT}\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 9 — การพิสูจน์เกณฑ์ Early Exercise ของ American Call ตาม Black (1975)</h4>
-  <p>สิบบรรทัดนี้ตอบคำถามที่เทรดเดอร์ทุกคนต้องเจอ: เมื่อไรควรใช้สิทธิ์ American call ก่อนวันครบกำหนด</p>
+  <p>ขั้นนี้ตอบคำถามที่เทรดเดอร์ทุกคนต้องเจอ: เมื่อไรควรใช้สิทธิ์ American call ก่อนวันครบกำหนด S คือราคาหุ้นก่อนขึ้นเครื่องหมาย ex-dividend และ C คือมูลค่าของ call ถ้าถือต่อ</p>
   <p>การใช้สิทธิ์ก่อนเวลาหมายถึงคุณยอมจ่ายเงิน strike $K$ เร็วกว่ากำหนด ทำให้สูญเสียดอกเบี้ยที่ควรจะได้จากการฝากเงินในธนาคาร</p>
-  <p>ดังนั้น คุณจะยอมแลกก็ต่อเมื่อเงินสดปันผล $D$ ที่จะได้รับ มีมูลค่ามากกว่าดอกเบี้ยที่ต้องเสียไป หาก $D \lt K(1 - e^{-r(T-t_D)})$ การถือสัญญาต่อไปย่อมคุ้มค่ากว่าเสมอ</p>
+  <p>เงื่อนไขที่ได้เป็นเงื่อนไขจำเป็น ไม่ใช่เงื่อนไขพอ ถ้าปันผลต่ำกว่าดอกเบี้ยของ strike การถือต่อดีกว่าเสมอ แต่ถ้าสูงกว่า ยังต้องเทียบกับมูลค่าเต็มของการถือต่อ ซึ่งรวม time value ที่ขั้นนี้ไม่ได้นับ</p>
   <div class="math">\[
 \begin{aligned}
-t = t_D^-:\quad &\Pi_{\text{exercise}} = S_{t_D^-} - K \\[4pt]
-t = t_D:\quad &amp;S_{t_D} = S_{t_D^-} - D \\[4pt]
-&amp;C_{\text{continue}} \ge S_{t_D} - K e^{-r(T - t_D)} = (S_{t_D^-} - D) - K e^{-r(T - t_D)} \\[4pt]
-\Pi_{\text{exercise}} > C_{\text{continue}} &\iff S_{t_D^-} - K > (S_{t_D^-} - D) - K e^{-r(T - t_D)} \\[4pt]
--K &> -D - K e^{-r(T - t_D)} \\[4pt]
-D &> K\big(1 - e^{-r(T - t_D)}\big) \\[6pt]
-\text{benchmark:}\quad &amp;K = \$100,\quad r = 0.05,\quad T - t_D = 0.25 \\[4pt]
-\text{hurdle} = 100\big(1 - e^{-0.0125}\big) &\approx 100(1 - 0.987578) = \$1.2422 \\[4pt]
-D = \$1.00 \lt \$1.2422 &\implies \text{status: continue} \\[4pt]
-D = \$2.00 > \$1.2422 &\implies \text{status: exercise}
+\text{exercise at }t_D^-&:\ S-K\\
+\text{continue}&:\ C\ge(S-D)-Ke^{-r(T-t_D)}\\[4pt]
+S-K&\ge(S-D)-Ke^{-r(T-t_D)}\\
+D&\ge K\big(1-e^{-r(T-t_D)}\big)\\[4pt]
+\text{hurdle}&=100\big(1-e^{-0.05(0.25)}\big)\\
+&=100(1-0.987578)=1.2422\\
+D=1.00&\lt1.2422\ \Longrightarrow\ \text{continue}\\
+D=2.00&\gt1.2422\ \Longrightarrow\ \text{compare with }C
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>เปรียบเทียบผลลัพธ์สองทาง ณ เสี้ยววินาทีก่อนขึ้นเครื่องหมาย ex-dividend ระหว่างการใช้สิทธิ์ทันทีเพื่อรับหุ้นกับเงินปันผล กับการถือสัญญาต่อไป</p>
     <p>ถ้าถือต่อ ราคาหุ้นจะลดลงทันทีเท่ากับเงินปันผล $D$ มูลค่าขั้นต่ำของสัญญาที่ถือต่อจึงลดลงตามราคาหุ้น ex-dividend</p>
-    <p>จับอสมการสองฝั่งมาเทียบกัน ราคาหุ้นหักล้างกันไปหมด เหลือเงื่อนไขที่เรียบง่ายอย่างน่าประหลาดใจ: เงินปันผล $D$ ต้องชนะดอกเบี้ยของราคา strike</p>
-    <p>ทดสอบด้วยตัวเลขจริง: หากดอกเบี้ยที่เสียไปคือ 1.2422 USD เงินปันผล 1.00 USD ไม่คุ้มที่จะใช้สิทธิ์ แต่ถ้าเงินปันผลเป็น 2.00 USD การใช้สิทธิ์ทันทีจะให้กำไรมากกว่า</p>
+    <p>ถ้าการใช้สิทธิ์คุ้มกว่า มันต้องชนะอย่างน้อยขอบล่างนี้ด้วย จับสองฝั่งมาเทียบกัน ราคาหุ้นหักล้างกันไปหมด เหลือเงื่อนไขที่เรียบง่าย: เงินปันผล $D$ ต้องชนะดอกเบี้ยของราคา strike</p>
+    <p>ทดสอบด้วยตัวเลขจริง: ดอกเบี้ยที่เสียไปคือ 1.2422 USD ปันผล 1.00 USD จึงไม่มีวันคุ้มที่จะใช้สิทธิ์ก่อน ถ้าปันผลเป็น 2.00 USD ผ่านเงื่อนไขจำเป็นแล้ว แต่จะใช้สิทธิ์จริงก็ต่อเมื่อ S − K สูงกว่ามูลค่าเต็มของ call ที่ถือต่อ ซึ่งมักเกิดกับ call ที่ in-the-money ลึก</p>
   </div>
 </section>
 
@@ -383,13 +397,22 @@ D = \$2.00 > \$1.2422 &\implies \text{status: exercise}
 <section class="formula">
   <h4>กาง input ของ European benchmark ก่อนอ่านราคา</h4>
   <div class="math">\[
-\begin{aligned}&amp;S_0=K=100,\quad r=0.05,\quad q=0.02,\quad\sigma=0.20,\quad T=0.5\\
-&\sigma\sqrt{T}=0.20\sqrt{0.5}=0.141421\\
-&amp;d_1=\frac{\ln(1)+(0.05-0.02+0.020)(0.5)}{0.141421}=0.176777\\
-&amp;d_2=0.176777-0.141421=0.035355\\
-&amp;N(d_1)\approx0.570158,\qquad N(d_2)\approx0.514102\\
-&amp;C_0=(99.004983)(0.570158)-(97.530991)(0.514102)\approx6.3076\\
-&amp;P_0=C_0-99.004983+97.530991\approx4.8336\end{aligned}
+\begin{aligned}
+S_0&=K=100,\qquad T=0.5\\
+r&=0.05,\quad q=0.02,\quad\sigma=0.20\\
+\sigma\sqrt T&=0.20\sqrt{0.5}=0.141421\\
+d_1&=\frac{0+(0.03+0.02)(0.5)}{0.141421}\\
+&=0.176777\\
+d_2&=0.176777-0.141421=0.035355\\
+N(d_1)&=0.570158\\
+N(d_2)&=0.514102\\
+S_0e^{-qT}&=99.004983\\
+Ke^{-rT}&=97.530991\\
+C_0&=99.004983(0.570158)\\
+&\quad-97.530991(0.514102)=6.3076\\
+P_0&=6.3076-99.004983+97.530991\\
+&=4.8336
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตรงนี้เริ่มตัวอย่าง option แยกจาก cash dividend 1 USD ด้านบน ใช้รายได้แบบต่อเนื่อง 2% ต่อปี อายุครึ่งปี และ volatility 20% ต่อปีตาม Black-Scholes เงินทุกก้อนเป็น USD ต่อหุ้น</p>
@@ -407,7 +430,10 @@ D = \$2.00 > \$1.2422 &\implies \text{status: exercise}
   <h4>ขั้นที่ 10 — ตรวจ parity ด้วยตัวเลข</h4>
   <p>นำราคาจาก benchmark ไปตรวจส่วนต่างกับ parity อีกครั้ง</p>
   <div class="math">\[
-C_0-P_0=6.3076-4.8336=1.4740,\qquad S_0e^{-qT}-Ke^{-rT}=100e^{-0.02(0.5)}-100e^{-0.05(0.5)}=1.4740
+\begin{aligned}
+C_0-P_0&=6.3076-4.8336=1.4740\\
+S_0e^{-qT}-Ke^{-rT}&=99.004983-97.530991=1.4740
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>call ลบ put เท่ากับ 1.4740 USD และฝั่ง spot หลัง discount dividend ลบ strike ที่ discount ด้วยอัตรา 5% ก็เท่ากับ 1.4740 USD;</p>
@@ -415,22 +441,91 @@ C_0-P_0=6.3076-4.8336=1.4740,\qquad S_0e^{-qT}-Ke^{-rT}=100e^{-0.02(0.5)}-100e^{
   </div>
 </section>
 
-<section class="prose">
-  <h4>ตอบ → เช็ก 10 วินาที → เอาไปใช้</h4>
-  <p>คำตอบ: หุ้นราคา 100 USD ที่จ่าย dividend 1.00 USD ใน 0.25 ปีมี fair forward 6 เดือนประมาณ 101.5189 USD ภายใต้สมมติฐานของตัวอย่าง</p>
-  <p>เช็กเร็ว: ถ้าไม่มี dividend สูตรจะทบต้น 100 USD เต็มก้อนและต้องให้ fair forward สูงกว่า 101.5189 การใส่ dividend แล้วราคาไม่ลด แปลว่าหักเงินผิดฝั่ง</p>
-  <p>บน desk ต้องใช้วัน ex-dividend, จำนวนเงิน และ tax treatment ที่ตรงกับสัญญา สำหรับ option นั้น dividend yield ทำให้ net carry เป็น $r-q$ และลด underlying leg ใน Black-Scholes กับ put-call parity</p>
+<section class="example">
+  <h4>คำตอบ — เงินปันผล 1 USD ลด forward เหลือเท่าไร</h4>
+  <p>คำถาม: หุ้นราคา 100 USD จ่าย cash dividend 1.00 USD ในอีก 0.25 ปี สัญญา forward อายุ 0.5 ปี ดอกเบี้ย 5% ต่อปีแบบต่อเนื่อง fair forward มีค่าเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1, 3 และ 4 กับ spot 100 USD เงินปันผล 1.00 USD ดอกเบี้ย 5% เวลาจ่ายปันผล 0.25 ปี และเวลาหมดอายุ 0.5 ปี</p>
+  <p>1. มูลค่าปัจจุบันของเงินปันผลคือ 1.00 × 0.987578 = 0.9876 USD</p>
+  <p>2. ต้นทุนสุทธิวันนี้คือ 100 − 0.9876 = 99.0124 USD</p>
+  <p>3. fair forward เท่ากับ 99.0124 × 1.025315 = 101.5189 USD ต่ำกว่ากรณีไม่มีปันผล 1.0126 USD</p>
+  <p>ตรวจเองใน 10 วินาที: คำนวณส่วนต่าง 102.5315 ลบ 101.5189 ได้ 1.0126 USD ซึ่งเท่ากับ 1.00 ทบต้นด้วยดอกเบี้ย 5% เป็นเวลาสามเดือนพอดี</p>
+  <p>แปลว่าอะไรบนโต๊ะเทรด: การคำนวณ forward และ option ต้องหักเงินปันผลด้วยมูลค่าปัจจุบัน ไม่ใช่หักมูลค่าดิบ และเงินปันผลก้อนโตเป็นสิ่งเดียวที่ทำให้การใช้สิทธิ์ American call ก่อนกำหนดคุ้มค่า</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจการคำนวณ forward, Black-Scholes Merton และ early exercise hurdle</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+
+# 1. Forward price with discrete cash dividend
+s0 = 100.0
+d_cash = 1.0
+t_d = 0.25
+t_exp = 0.5
+r = 0.05
+
+d0 = d_cash * np.exp(-r * t_d)
+f_div = (s0 - d0) * np.exp(r * t_exp)
+f_nodiv = s0 * np.exp(r * t_exp)
+delta_f = f_nodiv - f_div
+
+assert np.isclose(d0, 0.9875778)
+assert np.isclose(f_div, 101.51894)
+assert np.isclose(delta_f, 1.012578)
+
+# 2. Black-Scholes Merton benchmark
+k = 100.0
+q = 0.02
+sigma = 0.20
+t_bs = 0.5
+
+d1 = (np.log(s0 / k) + (r - q + 0.5 * sigma ** 2) * t_bs) / (sigma * np.sqrt(t_bs))
+d2 = d1 - sigma * np.sqrt(t_bs)
+call_merton = s0 * np.exp(-q * t_bs) * norm.cdf(d1) - k * np.exp(-r * t_bs) * norm.cdf(d2)
+put_merton = k * np.exp(-r * t_bs) * norm.cdf(-d2) - s0 * np.exp(-q * t_bs) * norm.cdf(-d1)
+
+assert np.isclose(d1, 0.17677669)
+assert np.isclose(d2, 0.03535534)
+assert np.isclose(call_merton, 6.30761)
+assert np.isclose(put_merton, 4.83362)
+assert np.isclose(call_merton - put_merton, s0 * np.exp(-q * t_bs) - k * np.exp(-r * t_bs))
+
+# 3. American call early exercise hurdle
+hurdle = k * (1.0 - np.exp(-r * (t_exp - t_d)))
+assert np.isclose(hurdle, 1.24222)
+assert d_cash &lt; hurdle  # 1.00 &lt; 1.2422 -> continue
+
+# 4. Continuous yield q = 2% gives almost the same forward as the 1 USD cash dividend
+f_yield = s0 * np.exp((r - q) * t_exp)
+assert np.isclose(f_yield, 101.5113, atol=1e-4) and abs(f_yield - f_div) &lt; 0.01
+
+# 5. One-period binomial with a 1% dividend: S0=100, u=1.10, d=0.90, R=1.02, call K=100
+u, dn, c, R = 1.10, 0.90, 0.01, 1.02
+cu, cd = max(u * s0 - k, 0), max(dn * s0 - k, 0)
+x = (cu - cd) / ((u - dn) * s0)
+y = (cu - (u + c) * s0 * x) / R
+p = (R - dn - c) / (u - dn)
+assert np.isclose(p, 0.55) and np.isclose(x, 0.5) and np.isclose(y, -44.6078, atol=1e-4)
+assert np.isclose(x * s0 + y, (p * cu + (1 - p) * cd) / R)
+assert np.isclose(x * s0 + y, 5.3922, atol=1e-4)
+assert np.isclose((R - dn) / (u - dn) * cu / R, 5.8824, atol=1e-4)   # no dividend
+print("All dividend derivative checks passed successfully!")</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์นี้ยืนยัน forward 101.5113 ของ yield 2% ราคา call 5.392 ใน binomial ที่มีปันผล และยืนยันว่า fair forward หลังหักปันผลเท่ากับ 101.5189 USD ราคา Black-Scholes Merton call ได้ 6.3076 USD และเกณฑ์ early exercise hurdle เท่ากับ 1.2422 USD</p>
+  </div>
 </section>
 
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>cash dividend ลด forward price: $F_0=(S_0-D_0)e^{rT}$; dividend yield แบบต่อเนื่องให้ $F_0=S_0e^{(r-q)T}$</li>
-    <li>ใน binomial model เงินปันผล $c$ ดึง risk-neutral probability ลงเป็น $q=\frac{R-d-c}{u-d}$ ภายใต้เงื่อนไข no-arbitrage $d+c \lt R \lt u+c$</li>
-    <li>Black-Scholes พร้อม dividend ใช้ $S_0e^{-qT}$ กับ underlying leg และ $Ke^{-rT}$ กับ strike leg</li>
+    <li>cash dividend ลด forward price: $F_0=(S_0-D_0)e^{rT}$ โดยเงินปันผล 1.00 USD ลดราคา forward ลง 1.0126 USD เหลือ 101.5189 USD</li>
+    <li>dividend yield แบบต่อเนื่องให้ $F_0=S_0e^{(r-q)T}$ ตามอัตราการถือครองสุทธิ</li>
+    <li>ใน binomial model เงินปันผล $c$ ดึง risk-neutral probability ลงเป็น $p=\frac{R-d-c}{u-d}$ ตัวอย่าง 0.60 เหลือ 0.55 และ call ลดจาก 5.882 เหลือ 5.392 USD</li>
+    <li>Black-Scholes Merton ปรับตัวลดทอน spot เป็น $S_0e^{-qT}$ ให้ call 6.3076 USD และ put 4.8336 USD ที่ spot และ strike 100 USD</li>
     <li>put-call parity ที่มี dividend คือ $C_0-P_0=S_0e^{-qT}-Ke^{-rT}$ สำหรับ continuous yield และ $S_0-D_0-Ke^{-rT}$ สำหรับ cash dividend</li>
-    <li>American call จะ early exercise ก่อน ex-dividend date ก็ต่อเมื่อเงินปันผลชนะดอกเบี้ยของ strike: $D > K(1 - e^{-r(T-t_D)})$</li>
-    <li>ตัวอย่าง European benchmark ใช้ spot และ strike 100 USD, rate 5%, dividend yield 2%, volatility 20% และอายุ 0.5 ปี ให้ call 6.3076 USD และ put 4.8336 USD</li>
+    <li>American call ควรคิดเรื่อง early exercise ก่อน ex-dividend date เฉพาะเมื่อเงินปันผลชนะดอกเบี้ยของ strike $K(1 - e^{-r(T-t_D)})$ ซึ่งในตัวอย่างคือ 1.2422 USD ถ้าผ่านแล้วยังต้องเทียบกับมูลค่าเต็มของการถือต่อ</li>
   </ul>
 </section>
 </article>

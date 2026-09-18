@@ -147,16 +147,20 @@ E[r_t]=\mu,\qquad Var(r_t)=\gamma_0,\qquad Cov(r_t,r_{t-k})=\gamma_k
   <p>ก่อนข้อมูลพันวัน ลองหกวัน ใช้ตัวเลขเดียวกันสองครั้ง: ครั้งแรกเก็บเครื่องหมาย ครั้งที่สองทิ้งเครื่องหมาย</p>
   <div class="math">\[
 \begin{aligned}r&=(2,\,3,\,-3,\,-2,\,1,\,-1)\%,\qquad\bar r=0\\
-\text{lag-1 products: }&3(2)+(-3)(3)+(-2)(-3)+1(-2)+(-1)(1)=6-9+6-2-1=0\\
-\text{denominator: }&4+9+9+4+1+1=28\qquad\Rightarrow\qquad\hat\rho_1(r)=0/28=0\\[4pt]
-x=|r|&=(2,\,3,\,3,\,2,\,1,\,1)\%,\qquad\bar x=2,\qquad x-\bar x=(0,\,1,\,1,\,0,\,-1,\,-1)\\
-\text{lag-1 products: }&1(0)+1(1)+0(1)+(-1)(0)+(-1)(-1)=2,\qquad\text{denominator}=0+1+1+0+1+1=4\\
+\text{top}&=3(2)+(-3)(3)+(-2)(-3)+1(-2)+(-1)(1)\\
+&=6-9+6-2-1=0\\
+\text{bottom}&=4+9+9+4+1+1=28\\
+\hat\rho_1(r)&=0/28=0\\[4pt]
+x=|r|&=(2,\,3,\,3,\,2,\,1,\,1)\%,\qquad\bar x=2\\
+x-\bar x&=(0,\,1,\,1,\,0,\,-1,\,-1)\\
+\text{top}&=1(0)+1(1)+0(1)+(-1)(0)+(-1)(-1)=2\\
+\text{bottom}&=0+1+1+0+1+1=4\\
 \hat\rho_1(x)&=2/4=0.5\end{aligned}
 \]</div>
   <div class="reading">
     <p>วันที่ 2 กับ 3 เป็นคู่ (+3, −3): ขึ้นแรงแล้วลงแรง ผลคูณติดลบ ส่วนวันที่ 3 กับ 4 (−3, −2) ลงแล้วลง ผลคูณบวก บวกลบหักกันพอดีเหลือศูนย์ ทิศทางเมื่อวานจึงบอกทิศทางวันนี้ไม่ได้เลย</p>
     <p>แต่พอตัดเครื่องหมายทิ้ง วันแรง (3, 3) อยู่ติดกัน วันเบา (1, 1) ก็อยู่ติดกัน ผลคูณของระยะห่างจากค่าเฉลี่ยจึงเป็นบวก ได้ 0.5 นี่คือ volatility clustering ในหกตัวเลข</p>
-    <p>สูตรในขั้นก่อนคือการนับแบบนี้กับข้อมูลพันวัน: ตัวเศษคือผลรวมของผลคูณคู่ที่ห่างกัน $k$ วัน ตัวส่วนคือผลรวมกำลังสองของทุกวัน หน่วยตัดกันหมดจึงเป็นตัวเลขระหว่าง −1 ถึง 1</p>
+    <p>สูตรในขั้นก่อนคือการนับแบบนี้กับข้อมูลพันวัน: ตัวเศษ (บรรทัด top) คือผลรวมของผลคูณคู่ที่ห่างกัน $k$ วัน ตัวส่วนคือผลรวมกำลังสองของทุกวัน หน่วยตัดกันหมดจึงเป็นตัวเลขระหว่าง −1 ถึง 1</p>
   </div>
 </section>
 
@@ -177,15 +181,16 @@ H_0:\rho_k=0,\qquad SE(\hat\rho_k)\approx\frac{1}{\sqrt n},\qquad -\frac{1.96}{\
   <p>สูตรนี้พิสูจน์ให้เห็นว่าทำไมแถบความเชื่อมั่นของ ACF จึงขึ้นกับ $1/\sqrt{n}$ เสมอ: ตัวแปรที่ไม่มี memory จะมี variance ของ sample correlation เท่ากับส่วนกลับของขนาด sample พอดี โดยไม่ขึ้นกับขนาด variance $\sigma^2$ ของข้อมูลดิบเลย</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb E[r_t r_{t-k}] &= \mathbb E[r_t]\,\mathbb E[r_{t-k}] = 0 \qquad (k \ge 1)\\
-\operatorname{Var}(r_t r_{t-k}) &= \mathbb E\big[(r_t r_{t-k})^2\big] = \mathbb E[r_t^2]\,\mathbb E[r_{t-k}^2] = \sigma^2\cdot\sigma^2 = \sigma^4\\
-\operatorname{Cov}(r_t r_{t-k},\, r_s r_{s-k}) &= 0 \qquad (t \ne s)\\
-\operatorname{Var}\big(\hat\gamma_k\big) &= \frac{1}{n^2}\sum_{t=k+1}^n \operatorname{Var}(r_t r_{t-k}) = \frac{n-k}{n^2}\sigma^4 \approx \frac{\sigma^4}{n}\\
-\hat\rho_k &= \frac{\hat\gamma_k}{\hat\gamma_0} \approx \frac{\hat\gamma_k}{\sigma^2}\\
-\operatorname{Var}(\hat\rho_k) &\approx \frac{\operatorname{Var}(\hat\gamma_k)}{\sigma^4} = \frac{\sigma^4 / n}{\sigma^4} = \frac{1}{n}\\
-\operatorname{SE}(\hat\rho_k) &= \sqrt{\operatorname{Var}(\hat\rho_k)} = \frac{1}{\sqrt n}\\[4pt]
-n=1{,}000:\quad \operatorname{SE} &= \frac{1}{\sqrt{1{,}000}} = \frac{1}{31.6228} \approx 0.03162\\
-\text{95\% threshold:\quad} & 1.96 \times 0.03162 = 0.06198 \approx 0.0620
+\mathbb E[r_tr_{t-k}]&=\mathbb E[r_t]\,\mathbb E[r_{t-k}]=0\qquad(k\ge1)\\
+\operatorname{Var}(r_tr_{t-k})&=\mathbb E[r_t^2]\,\mathbb E[r_{t-k}^2]=\sigma^4\\
+0&=\operatorname{Cov}(r_tr_{t-k},\,r_sr_{s-k}),\quad t\ne s\\
+\operatorname{Var}(\hat\gamma_k)&=\frac{1}{n^2}\sum_{t=k+1}^n\operatorname{Var}(r_tr_{t-k})\\
+&=\frac{n-k}{n^2}\,\sigma^4\approx\frac{\sigma^4}{n}\\
+\hat\rho_k&=\hat\gamma_k/\hat\gamma_0\approx\hat\gamma_k/\sigma^2\\
+\operatorname{Var}(\hat\rho_k)&\approx\frac{\sigma^4/n}{\sigma^4}=\frac1n\\
+\mathrm{SE}(\hat\rho_k)&=1/\sqrt n\\[4pt]
+\mathrm{SE}&=1/\sqrt{1{,}000}=1/31.6228=0.03162\\
+1.96\,\mathrm{SE}&=1.96(0.03162)=0.0620
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -229,22 +234,24 @@ Q(h)=n(n+2)\sum_{k=1}^{h}\frac{\hat\rho_k^2}{n-k}\;\sim\;\chi_h^2
   <p>การทดสอบ Ljung–Box ไม่ใช่สูตรที่คิดขึ้นลอย ๆ แต่คือการนำ score ที่ standardize ด้วย finite-sample variance มายกกำลังสองแล้วรวมกัน เมื่อ sample ใหญ่ขึ้น ตัวคูณ $n(n+2)/(n-k)$ จะลู่เข้าสู่ $n$ ตามแบบ Box–Pierce ดั้งเดิม</p>
   <div class="math">\[
 \begin{aligned}
-\text{Box–Pierce (1970):}\quad Q_{\mathrm{BP}} &= n\sum_{k=1}^h \hat\rho_k^2 \;\sim\; \chi_h^2\qquad\big(\sqrt n\hat\rho_k \sim \mathcal N(0,1)\big)\\
-\text{finite-sample variance:}\quad \operatorname{Var}(\hat\rho_k) &\approx \frac{n-k}{n(n+2)}\\
-\text{standardized score:}\quad Z_k &= \frac{\hat\rho_k}{\sqrt{\operatorname{Var}(\hat\rho_k)}} = \hat\rho_k \sqrt{\frac{n(n+2)}{n-k}}\\
-Q(h) &= \sum_{k=1}^h Z_k^2 = n(n+2)\sum_{k=1}^h \frac{\hat\rho_k^2}{n-k} \;\sim\; \chi_h^2\\[4pt]
-n=1{,}000,\ h=3:\quad n(n+2) &= 1{,}000 \times 1{,}002 = 1{,}002{,}000\\
-\frac{0.031^2}{999} + \frac{(-0.018)^2}{998} + \frac{0.009^2}{997} &= \frac{9.61\times10^{-4}}{999} + \frac{3.24\times10^{-4}}{998} + \frac{8.10\times10^{-5}}{997}\\
-&= 9.620\times10^{-7} + 3.246\times10^{-7} + 8.124\times10^{-8} = 1.368\times10^{-6}\\
-Q(3) &= 1{,}002{,}000 \times 1.368\times10^{-6} = 1.3706 \approx 1.37\\
-\chi^2_3(0.95) &= 7.815 \quad\Longrightarrow\quad 1.37 \lt 7.815\ \text{(fail to reject } H_0\text{)}
+Q_{\mathrm{BP}}&=n\sum_{k=1}^h\hat\rho_k^2\ \sim\ \chi_h^2\\
+\operatorname{Var}(\hat\rho_k)&\approx\frac{n-k}{n(n+2)}\\
+Z_k&=\frac{\hat\rho_k}{\sqrt{\operatorname{Var}(\hat\rho_k)}}=\hat\rho_k\sqrt{\frac{n(n+2)}{n-k}}\\
+Q(h)&=\sum_{k=1}^h Z_k^2\\
+&=n(n+2)\sum_{k=1}^h\frac{\hat\rho_k^2}{n-k}\ \sim\ \chi_h^2\\[4pt]
+n(n+2)&=1{,}000(1{,}002)=1{,}002{,}000\\
+0.031^2/999&=9.620\times10^{-7}\\
+(-0.018)^2/998&=3.246\times10^{-7}\\
+0.009^2/997&=0.812\times10^{-7}\\
+Q(3)&=1{,}002{,}000(13.678\times10^{-7})\\
+&=1.37\lt7.815=\chi^2_3(0.95)
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>แบบทดสอบ Box-Pierce รวมกำลังสองของ correlation แต่ละ lag เข้าด้วยกัน ซึ่งผลรวมของตัวแปร normal มาตรฐานยกกำลังสอง $h$ ตัว จะมีการกระจายแบบ chi-squared ที่มี $h$ degrees of freedom</p>
+    <p>แบบทดสอบ Box–Pierce (1970) ในบรรทัดแรกรวมกำลังสองของ correlation แต่ละ lag เข้าด้วยกัน ซึ่งผลรวมของตัวแปร normal มาตรฐานยกกำลังสอง $h$ ตัว จะมีการกระจายแบบ chi-squared ที่มี $h$ degrees of freedom</p>
     <p>แต่ใน sample ขนาดจำกัด ข้อมูลที่จับคู่กันที่ lag $k$ จะเหลือเพียง $n-k$ คู่ ทำให้ variance แท้จริงของ correlation มีค่าต่ำกว่า $1/n$ เล็กน้อย หากไม่ปรับแก้ ค่าสถิติจะต่ำเกินไปและทำให้เรามองข้าม memory ที่มีอยู่จริง</p>
     <p>Ljung และ Box จึงนำ variance ที่แท้จริงมาเป็นตัวหารเพื่อ standardize แต่ละ lag ให้กลับมาเป็น normal มาตรฐานที่มี variance เท่ากับ 1 แล้วจึงรวมกำลังสองอีกครั้ง ตัวคูณ $n(n+2)/(n-k)$ จึงเกิดขึ้นจากเหตุผลนี้</p>
-    <p>เมื่อแทนค่า $n=1{,}000$ และ correlation สาม lag แรก จะได้ $Q(3)$ ออกมาราว $1.37$ ซึ่งต่ำกว่าค่าวิกฤต $7.815$ ของ chi-squared มาก ยืนยันว่า return ของสินทรัพย์นี้ไม่มี linear autocorrelation หลงเหลืออยู่</p>
+    <p>เมื่อแทนค่า $n=1{,}000$ และ correlation สาม lag แรก จะได้ $Q(3)$ ออกมาราว $1.37$ ซึ่งต่ำกว่าค่าวิกฤต $7.815$ ของ chi-squared มาก จึงไม่ปฏิเสธ white noise ข้อมูลไม่มีหลักฐานของ linear autocorrelation ในทิศทาง ซึ่งไม่เหมือนกับการพิสูจน์ว่าไม่มี</p>
   </div>
 </section>
 
@@ -270,21 +277,22 @@ Q(3) &= 1{,}002{,}000 \times 1.368\times10^{-6} = 1.3706 \approx 1.37\\
   <p>คำนวณอัตราการสลายของ autocorrelation ขนาดความผันผวน เพื่อตรวจว่าความจำของตลาดสลายแบบใด</p>
   <div class="math">\[
 \begin{aligned}
-\text{geometric:}\quad \rho_k &= \rho_1 \phi^{k-1}\\
-\phi &= \frac{\rho_2}{\rho_1} = \frac{0.241}{0.284} \approx 0.8486\\[4pt]
-\text{lag 3:}\quad 0.284 \times 0.8486^2 &= 0.2045 \quad (\text{ของจริง } 0.213)\\
-\text{lag 10:}\quad 0.284 \times 0.8486^9 &= 0.0648 \quad (\text{ของจริง } 0.152\ \text{ต่ำไป 2.3 เท่า})\\
-\text{lag 20:}\quad 0.284 \times 0.8486^{19} &= 0.0125 \quad (\text{ของจริง } 0.118\ \text{ต่ำไป 9.4 เท่า})\\[6pt]
-\text{power law:}\quad \rho_k &= \rho_1 k^{-d}\\
-\frac{\rho_{20}}{\rho_1} = 20^{-d} &\implies \frac{0.118}{0.284} = 0.4155 = 20^{-d}\\
-d &= \frac{\ln(1/0.4155)}{\ln 20} = \frac{0.8784}{2.9957} \approx 0.293\\[4pt]
-\text{lag 3:}\quad 0.284 \times 3^{-0.293} &= 0.206 \quad (\text{ของจริง } 0.213)\\
-\text{lag 10:}\quad 0.284 \times 10^{-0.293} &= 0.145 \quad (\text{ของจริง } 0.152)\\
-\text{lag 20:}\quad 0.284 \times 20^{-0.293} &= 0.118 \quad (\text{ของจริง } 0.118)
+\rho_k&=\rho_1\phi^{k-1}\qquad(\text{geometric})\\
+\phi&=\rho_2/\rho_1=0.241/0.284=0.8486\\
+\rho_3^{g}&=0.284(0.8486^2)=0.2045\\
+\rho_{10}^{g}&=0.284(0.8486^9)=0.0648\\
+\rho_{20}^{g}&=0.284(0.8486^{19})=0.0125\\[6pt]
+\rho_k&=\rho_1k^{-d}\qquad(\text{power law})\\
+20^{-d}&=\rho_{20}/\rho_1=0.118/0.284=0.4155\\
+d&=\frac{\ln(1/0.4155)}{\ln20}=\frac{0.8784}{2.9957}=0.293\\
+\rho_3^{p}&=0.284(3^{-0.293})=0.206\\
+\rho_{10}^{p}&=0.284(10^{-0.293})=0.145\\
+\rho_{20}^{p}&=0.284(20^{-0.293})=0.118
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>การสลายแบบเรขาคณิตมี $\phi \approx 0.8486$ พอถึง lag 20 ค่าทำนายเหลือเพียง 0.0125 ต่ำกว่าของจริง 9.4 เท่า แสดงว่า model ความจำสั้นจะประเมินความเสี่ยงระยะไกลต่ำเกินไป</p>
+    <p>$\rho^{g}$ คือค่าที่เส้นเรขาคณิตทำนาย $\rho^{p}$ คือค่าที่ power law ทำนาย ส่วนของจริงที่วัดได้คือ 0.213, 0.152 และ 0.118 ที่ lag 3, 10 และ 20</p>
+    <p>การสลายแบบเรขาคณิตมี $\phi \approx 0.8486$ ที่ lag 10 ทำนาย 0.0648 ต่ำกว่าของจริง 2.3 เท่า พอถึง lag 20 เหลือเพียง 0.0125 ต่ำกว่าของจริง 9.4 เท่า แสดงว่า model ความจำสั้นจะประเมินความเสี่ยงระยะไกลต่ำเกินไป</p>
     <p>ขณะที่สูตร power law ให้ $d \approx 0.293$ ค่าทำนายตรงกับข้อมูลจริงเกือบทุกจุด ยืนยันว่าความผันผวนของตลาดการเงินมี long memory ซึ่ง model GARCH ต้องชดเชยด้วย persistence สูงลิ่ว</p>
   </div>
 </section>
