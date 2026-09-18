@@ -23,7 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>หุ้นหนึ่งชนะตลาดในเดือนดี; ชัยชนะนี้เป็น skill หรือแค่ผลจาก beta ที่สูงกว่าตลาด? เฉลย: ต้องหักส่วนที่ beta อธิบายได้ก่อน แล้วจึงเรียกส่วนที่เหลือว่า alpha. CAPM ช่วยไม่ให้เราเรียกเงาตัวเองว่าเพื่อนใหม่.</p>
+  <p>พอร์ตถือหุ้น NVDA มูลค่า \$1,000,000 มี beta 1.40 ถ้าเดือนนี้ cash ให้ 0.30% ตลาดคาดว่าจะให้ 1.10% และหุ้นทำได้จริง 2.00% ต้องทำผลงานขั้นต่ำ (hurdle) เท่าไร เกินคาดกี่ดอลลาร์ และต้อง short SPY กี่ดอลลาร์เพื่อ hedge ตลาด?</p>
+  <p>เฉลย: hurdle อยู่ที่ 1.42% ทำได้เกินคาด \$5,800 (จากส่วนต่าง 0.58%) และต้อง short SPY มูลค่า \$1,400,000 เพื่อตัดความเสี่ยงตลาดออกทั้งหมด.</p>
 </div>
 
 <details class="jargon" open>
@@ -73,6 +74,8 @@
       <tr><td>$V_i$</td><td>มูลค่า position หุ้น</td><td>USD</td></tr>
       <tr><td>$N_h$</td><td>notional ของ market hedge</td><td>USD</td></tr>
       <tr><td>$\sigma_m^2,\sigma_\epsilon^2$</td><td>variance ของตลาดและ residual</td><td>decimal-return-squared ต่อเดือน</td></tr>
+      <tr><td>$r^*, \sigma$</td><td>hurdle return บน CML และ volatility ของโครงการ</td><td>decimal return, volatility</td></tr>
+      <tr><td>$P, X$</td><td>ราคาซื้อของสินทรัพย์และกระแสเงินสดสุ่มใน 1 ปีข้างหน้า</td><td>USD</td></tr>
     </tbody>
   </table>
 </details>
@@ -183,12 +186,12 @@ R_{i,t}-R_{f,t}=\alpha_i+\beta_i(R_{m,t}-R_{f,t})+\epsilon_{i,t}
 
 <section class="formula">
   <h4>ขั้นที่ 6 — ผลตอบแทนเดือนหนึ่งต่างจากค่าเฉลี่ยตามแบบจำลองเท่าไร</h4>
-  <p>หาผลต่างของผลที่เกิดขึ้นจริงกับค่าเฉลี่ยที่แบบจำลองให้ ผลต่างนี้ยังไม่ใช่estimator regression alpha</p>
+  <p>หาผลต่างของผลที่เกิดขึ้นจริงกับค่าเฉลี่ยที่แบบจำลองให้ ผลต่างนี้ยังไม่ใช่ estimator regression alpha</p>
   <div class="math">\[
 R_{i,t}=0.020,\qquad R_{i,t}-\mathbb E_{\mathrm{CAPM}}[R_i]=0.020-0.0142=0.0058
 \]</div>
   <div class="reading">
-    <p>เดือนสมมตินี้สูงกว่าค่าเฉลี่ยตาม CAPM 0.58 จุดเปอร์เซ็นต์ ผลต่างอาจมาจากตลาดเดือนนั้นต่างจากexpected value หรือจากผลเฉพาะหุ้น การหา regression alpha ต้องใช้ผลตอบแทนตลาดที่เกิดขึ้นจริงในหลายงวด ไม่ใช่ลบ expected hurdle จากผลเดือนเดียวแล้วเรียกว่า alpha</p>
+    <p>เดือนสมมตินี้สูงกว่าค่าเฉลี่ยตาม CAPM 0.58 จุดเปอร์เซ็นต์ ผลต่างอาจมาจากตลาดเดือนนั้นต่างจาก expected value หรือจากผลเฉพาะหุ้น การหา regression alpha ต้องใช้ผลตอบแทนตลาดที่เกิดขึ้นจริงในหลายงวด ไม่ใช่ลบ expected hurdle จากผลเดือนเดียวแล้วเรียกว่า alpha</p>
   </div>
 </section>
 
@@ -196,7 +199,10 @@ R_{i,t}=0.020,\qquad R_{i,t}-\mathbb E_{\mathrm{CAPM}}[R_i]=0.020-0.0142=0.0058
   <h4>ขั้นที่ 7 — แยกความเสี่ยงและขนาด hedge</h4>
   <p>แปลงเป็นการกระทำจริง คือถ้าอยากได้เฉพาะฝีมือโดยไม่รับความเสี่ยงตลาด ต้องขายดัชนีเท่าไร</p>
   <div class="math">\[
-\operatorname{Var}(R_i)=\beta_i^2\operatorname{Var}(R_m)+\operatorname{Var}(\epsilon_i),\qquad N_h=\beta_iV_i=1.40(1{,}000{,}000)=1{,}400{,}000\ \mathrm{\mathrm{USD}}
+\begin{aligned}
+\operatorname{Var}(R_i)&=\beta_i^2\operatorname{Var}(R_m)+\operatorname{Var}(\epsilon_i)\\[4pt]
+N_h&=\beta_iV_i=1.40(1{,}000{,}000)=1{,}400{,}000\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>variance decomposition ต้องสมมติ residual ไม่สัมพันธ์กับตลาด; notional hedge มีหน่วย USD และเครื่องหมาย short อยู่ตรงข้ามกับ long stock position</p>
@@ -224,6 +230,145 @@ M=100:\quad \mathbb P(V)&=1-(1-0.0107)^{100}\approx 1-0.3411=0.6589
     <p>สำหรับผู้จัดการคนเดียว โอกาสชนะ 9 จาก 10 ปีคิดเป็น 11 ใน 1024 หรือประมาณ 1.07% ดูเหมือนปฏิเสธดวงได้</p>
     <p>แต่เมื่อมีผู้จัดการ $M=20$ คน โอกาสที่คนเก่งที่สุดจะชนะ 9 ปีด้วยความบังเอิญเพิ่มเป็น 19.42%</p>
     <p>และถ้าค้นหาจาก 100 คน โอกาสเจออัจฉริยะปลอมจะพุ่งเป็น 65.89% นี่คือ data snooping bias ที่ต้องระวังเมื่อวัด alpha</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — ประเมินโครงการด้วย Capital Market Line (CML)</h4>
+  <p>ใช้เส้น CML เป็นเกณฑ์ hurdle สำหรับโครงการที่รับความเสี่ยงรวม $\sigma = 40\%$ เช่น ท่อส่งน้ำมันที่ซื้อหุ้นละ \$875 และคาดว่าจะจ่าย \$1,000 ใน 1 ปี</p>
+  <div class="math">\[
+\begin{aligned}
+r_{\text{oil}}&=\frac{1000}{875}-1=0.1429=14.29\%\\[4pt]
+m_{\mathrm{CML}}&=\frac{\mu_m-r_f}{\sigma_m}=\frac{0.17-0.05}{0.12}=\frac{0.12}{0.12}=1.00\\[4pt]
+r^*&=r_f+m_{\mathrm{CML}}\,\sigma=0.05+1.00(0.40)=0.45=45\%\\[4pt]
+r_{\text{oil}}&=14.29\%\lt r^*=45\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>โครงการท่อส่งน้ำมันให้ผลตอบแทนคาดหวัง 14.29% แต่มีความผันผวนสูงถึง 40% ต่อปี</p>
+    <p>เส้น CML มีความชันเท่ากับ 1.00 แสดงว่าตลาดให้ผลตอบแทนส่วนเกิน 1% ต่อทุก 1% ของความเสี่ยงรวม</p>
+    <p>สำหรับความผันผวน 40% เกณฑ์ CML ต้องการผลตอบแทนถึง 45% แต่โครงการให้แค่ 14.29% จึงปฏิเสธการลงทุน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — หามูลค่ายุติธรรมของสินทรัพย์ด้วย CAPM</h4>
+  <p>คำนวณราคาซื้อที่ยุติธรรม $P$ ในวันนี้ สำหรับสินทรัพย์ที่จะจ่ายกระแสเงินสดสุ่ม $X$ ในอีก 1 ปีข้างหน้า</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{\mathbb E[X]-P}{P}&=r_f+\frac{\operatorname{Cov}(X/P, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+\mathbb E[X]-P&=P r_f+\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+P(1+r_f)&=\mathbb E[X]-\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+P&=\frac{\mathbb E[X]}{1+r_f}-\frac{\operatorname{Cov}(X, R_m)}{(1+r_f)\operatorname{Var}(R_m)}(\mu_m-r_f)\\[4pt]
+P&=\frac{1000}{1.05}-\frac{38.4}{(1.05)(0.0144)}(0.12)=952.38-304.76=647.62\ \text{USD}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ราคายุติธรรมคือมูลค่าปัจจุบันคิดลดด้วยอัตราปลอดความเสี่ยง หักออกด้วยส่วนลดความเสี่ยงตลาด</p>
+    <p>พจน์แรก 952.38 USD คือมูลค่าหากกระแสเงินสด 1,000 USD ปราศจากความเสี่ยง</p>
+    <p>พจน์หลัง 304.76 USD คือส่วนลดที่นักลงทุนเรียกร้องเพื่อชดเชย covariance กับตลาด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — ตัวอย่างจากต้นทาง: alpha ของหุ้นธนาคารจาก Security Market Line</h4>
+  <p>ใช้ห้าเดือนของหัวข้อ 15.1 ตลาดให้ +2.0, −1.5, +0.5, +3.0, −1.0% หุ้นธนาคารให้ +3.4, −2.8, +0.2, +5.1, −1.4% หัวข้อ 15.1 หา beta ได้ 1.7075 ตรงนี้อ่านมันในภาษา CAPM โดยให้ดอกเบี้ยปลอดความเสี่ยงเป็นศูนย์ก่อน</p>
+  <div class="math">\[
+\begin{aligned}
+\bar R_m&=3.0/5=0.60\%,\quad \bar R_i=4.5/5=0.90\%\\
+\beta&=\frac{25.10/4}{14.70/4}=\frac{6.275}{3.675}=1.7075\\[4pt]
+\text{SML}&=r_f+\beta(\bar R_m-r_f)=0+1.7075(0.60)\\
+&=1.0245\%\\
+\alpha&=0.90-1.0245=-0.1245\%\ \text{per month}\\
+12\alpha&=-1.49\%\ \text{per year}\\[4pt]
+r_f=0.15\%&:\ 0.15+1.7075(0.45)=0.9184\\
+\alpha&=0.90-0.9184=-0.0184\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>alpha คือได้จริงลบที่ควรได้ตามความเสี่ยงที่แบก ตลาดให้เฉลี่ย 0.60% ต่อเดือน หุ้นที่มี beta 1.7075 ควรได้ 1.0245% แต่ได้จริง 0.90% จึงต่ำกว่าเส้น 0.1245% ต่อเดือน หรือราว 1.49% ต่อปี</p>
+    <p>ถ้าดอกเบี้ยปลอดความเสี่ยงเป็น 0.15% ต่อเดือน ผลตอบแทนที่ควรได้ลดเหลือ 0.9184% alpha ขยับเข้าใกล้ศูนย์เหลือ −0.0184% เพราะ beta มากกว่า 1 พจน์ของดอกเบี้ยจึงลดสิ่งที่ควรได้ ใส่ดอกเบี้ยให้ถูกก่อนตัดสินว่าใครมีฝีมือ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — แยกความเสี่ยงเป็นส่วนของตลาดกับส่วนของหุ้นเอง</h4>
+  <p>variance ของหุ้นแยกเป็นสองก้อนตามบรรทัดที่สามของ CAPM ส่วนที่มาจากตลาด กับส่วนที่เป็นของหุ้นตัวนี้เอง</p>
+  <div class="math">\[
+\begin{aligned}
+\sigma_i^2&=43.36/4=10.84,\quad\sigma_i=3.292\%\\
+\beta^2\sigma_m^2&=(1.7075)^2(3.675)=10.7145\\
+\sigma_\varepsilon^2&=10.84-10.7145=0.1255\\[4pt]
+10.7145/10.84&=98.84\%\ \text{systematic}\\
+0.1255/10.84&=1.16\%\ \text{idiosyncratic}\\
+R^2&=\frac{25.10^2}{14.70(43.36)}=\frac{630.01}{637.39}=0.98842
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ความเสี่ยงของหุ้นธนาคารตัวนี้ 98.84% มาจากตลาด เหลือของตัวเองแค่ 1.16% ส่วนแรกเรียกว่า systematic risk กระจายทิ้งไม่ได้ ตลาดจึงจ่ายค่าตอบแทนให้ ส่วนหลังเรียกว่า idiosyncratic risk กระจายทิ้งได้ CAPM จึงไม่จ่ายอะไรให้เลย สัดส่วนของตลาดเท่ากับ R² ของหัวข้อ 15.1 พอดี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — alpha มีนัยสำคัญไหม และ beta แม่นแค่ไหน</h4>
+  <p>ใช้ residual ของหัวข้อ 15.1 ผลรวมกำลังสอง 0.5022 หาความคลาดเคลื่อนของ alpha และช่วงความไม่แน่นอนของ beta ที่ห้าเดือนมีอิสระเหลือแค่สาม</p>
+  <div class="math">\[
+\begin{aligned}
+\hat\sigma_\varepsilon&=\sqrt{0.5022/3}=0.4091\%\\
+\operatorname{SE}(\alpha)&=0.4091\sqrt{\tfrac15+\tfrac{0.36}{14.70}}\\
+&=0.4091(0.4738)=0.1939\\
+t_\alpha&=-0.1245/0.1939=-0.64\\[4pt]
+\operatorname{SE}(\beta)&=0.4091/\sqrt{14.70}=0.1067\\
+t_{0.975,\,3}&=3.182\\
+\beta&=1.7075\pm3.182(0.1067)\\
+&=1.7075\pm0.3396=[1.37,\ 2.05]
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>t ของ alpha คือ −0.64 ห่างจากศูนย์ไม่ถึงหนึ่งเท่าของความคลาดเคลื่อน สรุปไม่ได้เลยว่าหุ้นตัวนี้ทำผลงานต่ำกว่าเส้นจริง ส่วน beta มี t ถึง 16 แปลว่าต่างจากศูนย์แน่นอน แต่ไม่ได้แปลว่ารู้ค่าแม่น</p>
+    <p>ที่ห้าเดือน ค่าวิกฤตของ t ที่มีอิสระสามคือ 3.182 สูงกว่า 1.96 มาก ช่วง 95% ของ beta จึงกว้างจาก 1.37 ถึง 2.05 ตัวเลข R² สูงไม่ได้ช่วยให้ช่วงนี้แคบลง ต้องใช้ข้อมูลมากขึ้นเท่านั้น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — เอา beta ไปตั้งขนาด hedge และดูว่าเหลือความเสี่ยงเท่าไร</h4>
+  <p>ถือหุ้นธนาคาร 10,000,000 USD อยากตัดความเสี่ยงตลาดออก ขาย short กองทุนดัชนีที่ซื้อขายในตลาด หรือ exchange-traded fund (ETF) เท่าไร และหลัง hedge เหลือความแกว่งเท่าไร</p>
+  <div class="math">\[
+\begin{aligned}
+\text{short}&=\beta\times10{,}000{,}000=17{,}074{,}830\ \text{USD}\\[4pt]
+\sigma_\varepsilon&=\sqrt{0.5022/4}=0.354\%\\
+1-0.354/3.292&=89.2\%\ \text{less volatility}\\
+1-0.1255/10.84&=98.8\%\ \text{less variance}\\[4pt]
+\beta&=1.37\ \text{to}\ 2.05:\ 13.7\ \text{to}\ 20.5\ \text{million USD}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>short ETF ของดัชนี 17.07 ล้าน USD พอร์ตเหลือแค่ alpha กับส่วนที่หุ้นแกว่งเอง ความผันผวนรายเดือนลดจาก 3.292% เหลือ 0.354% หรือลดลง 89.2% ใช้ตัวหารเดียวกันทั้งก่อนและหลังจึงเทียบกันได้</p>
+    <p>แต่ช่วงของ beta ในขั้นที่ 13 บอกว่าขนาด hedge ที่ถูกอาจอยู่ได้ทั้ง 13.7 ถึง 20.5 ล้าน USD ต่างกันถึง 6.8 ล้าน เพราะห้าเดือนน้อยเกินไป R² 98.84% ที่ดูสวยมาจากข้อมูลห้าจุดที่เส้นตรงซึ่งมี parameter สองตัวฟิตได้ง่าย ไม่ใช่หลักฐานว่าแบบจำลองเก่ง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — ทำไมพอร์ตตลาดคือพอร์ต Sharpe ของทุกคน และ Jensen's alpha</h4>
+  <p>หุ้นสามตัวมีมูลค่าตลาด 600, 300 และ 100 พันล้าน USD นักลงทุนสองคนใช้ mean-variance เหมือนกัน A มีเงิน 1 ล้าน ใส่ส่วนเสี่ยง 70% B มีเงิน 3 ล้าน ใส่ส่วนเสี่ยง 40% ทั้งคู่ถือส่วนเสี่ยงเป็นพอร์ต Sharpe เดียวกัน s = (0.6, 0.3, 0.1)</p>
+  <div class="math">\[
+\begin{aligned}
+x^{(m)}_i&=\frac{C_i}{\sum_j C_j}=\frac{600,\ 300,\ 100}{1{,}000}=0.6,\ 0.3,\ 0.1\\[4pt]
+\text{A}&:\ 0.7(1)=0.7\ \text{million risky}\\
+\text{B}&:\ 0.4(3)=1.2\ \text{million risky}\\
+\text{stock 1}&:\ 0.6(0.7)+0.6(1.2)=1.14\\
+1.14/1.9&=0.6=s_1\\[4pt]
+\alpha_j&=(\bar\mu_j-r_f)-\beta_j(\bar\mu_m-r_f)\\
+\text{bank}&:\ \alpha=-0.1245\%,\ t=-0.64\\[4pt]
+s_j&=\frac{\mu_j-r_f}{\sigma_j}\ \text{vs}\ m_{\rm CML}=1.00\\
+\mu_j=12\%,\ \sigma_j=30\%&:\ s_j=0.07/0.30=0.23
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ถ้าทุกคนเป็น mean-variance และเชื่อตัวเลขชุดเดียวกัน ทุกคนถือส่วนเสี่ยงเป็นพอร์ต Sharpe เดียวกัน ต่างกันแค่สัดส่วนที่แบ่งไปถือเงินสด รวมเงินของทุกคนในหุ้นตัวที่ 1 ได้ 1.14 ล้าน จากส่วนเสี่ยงรวม 1.9 ล้าน คือ 60% พอดี พอร์ตตลาดที่ถ่วงด้วยมูลค่าตลาดจึงเท่ากับพอร์ต Sharpe</p>
+    <p>ทั้งหมดนี้ยืนบนสามสมมติฐาน คือทุกคนมีข้อมูลเหมือนกัน ทุกคนเป็น mean-variance และตลาดอยู่ในดุลยภาพ</p>
+    <p>Jensen's alpha คือระยะที่หุ้นอยู่เหนือหรือใต้ Security Market Line กฎคือซื้อเมื่อ alpha บวก ขายเมื่อติดลบ หุ้นธนาคารของขั้นที่ 11 มี alpha −0.1245% จึงเข้าข่ายขาย แต่ t แค่ −0.64 ตามขั้นที่ 13 ยังไม่ควรลงมือ</p>
+    <p>อีกกฎหนึ่งเทียบ Sharpe ratio ของหุ้นกับความชันของ CML 1.00 ในขั้นที่ 9 หุ้นที่ได้ 12% ความผันผวน 30% มี Sharpe แค่ 0.23 ต่ำกว่าเส้นมาก แต่หุ้นตัวเดียวแบกความเสี่ยงเฉพาะตัวที่กระจายทิ้งได้ Sharpe ของหุ้นรายตัวจึงต่ำกว่า CML เกือบเสมอ กฎนี้เหมาะกับพอร์ตทั้งก้อน ส่วนหุ้นรายตัวให้ดู alpha</p>
   </div>
 </section>
 
@@ -274,28 +419,65 @@ M=100:\quad \mathbb P(V)&=1-(1-0.0107)^{100}\approx 1-0.3411=0.6589
 
 <section class="example">
   <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: กำหนด horizon หนึ่งเดือน, cash proxy 0.30%, expected SPY return 1.10% และ beta ของ NVDA 1.40 จึงได้ market premium 0.80 percentage points และ CAPM hurdle 1.42%. หาก NVDA เกิดจริง 2.00% ส่วนเกินเหนือ hurdle คือ 0.58 percentage points หรือ 5,800 USD บน notional 1 ล้าน USD ก่อนต้นทุน แต่ observation เดียวไม่ใช่ alpha ระยะยาว สำหรับ market-neutral target ให้ short SPY notional 1.40 ล้าน USD; หาก beta จริงอยู่ที่ 1.10 หรือ 1.70 จะเหลือ under-hedge หรือ over-hedge 300,000 USD</p>
-  <p>ตรวจเองใน 10 วินาที: 1.10% ลบ 0.30% = 0.80%; 0.30% บวก 1.40 คูณ 0.80% = 1.42%.</p>
+  <p>คำถาม: พอร์ตถือหุ้น NVDA มูลค่า \$1,000,000 มี beta 1.40 ถ้าเดือนนี้ cash ให้ 0.30% ตลาดคาดว่าจะให้ 1.10% และหุ้นทำได้จริง 2.00% ต้องทำผลงานขั้นต่ำ (hurdle) เท่าไร เกินคาดกี่ดอลลาร์ และต้อง short SPY กี่ดอลลาร์เพื่อ hedge ตลาด</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 10): อัตราปลอดความเสี่ยง 0.30%, ผลตอบแทนตลาดคาดหวัง 1.10%, beta 1.40 และ NVDA ทำจริง 2.00%</p>
+  <p>คำตอบ: (1) hurdle CAPM เท่ากับ 1.42% (2) ทำได้เกินคาด 0.58% คิดเป็นเงิน \$5,800 บนพอร์ต \$1,000,000 (3) ต้อง short SPY มูลค่า \$1,400,000</p>
+  <p>ตรวจเองใน 10 วินาที: 0.30% บวก 1.40 คูณ (1.10% − 0.30%) = 1.42%; 2.00% − 1.42% = 0.58% คิดเป็น \$5,800 พอดี</p>
+  <p>แปลว่าอะไรบนโต๊ะเทรด: ผลตอบแทน 2.00% ไม่ใช่ฝีมือทั้งหมด แต่ 1.12% มาจากการเกาะตลาด เหลือฝีมือจริงเพียง 0.58% และโครงการใดที่ให้ผลตอบแทนต่ำกว่า hurdle หรือต่ำกว่า CML เช่น ท่อส่งน้ำมันที่ให้ 14.29% เทียบกับเกณฑ์ 45% ต้องถูกปฏิเสธ</p>
 </section>
 
 <section class="code">
   <details>
     <summary>โค้ดตรวจ hurdle, attribution และ hedge band</summary>
-    <pre><code>rf=.003
-market=.011
-beta=1.40
-value=1_000_000
-required=rf+beta*(market-rf)
-realized=.020
-above=realized-required
-hedge=beta*value
-assert abs(required-.0142)&lt;1e-12
-assert abs(above*value-5800)&lt;1e-9
-assert hedge==1_400_000
-assert (1.10*value,1.70*value)==(1_100_000,1_700_000)</code></pre>
+    <pre><code>rf = 0.003
+market = 0.011
+beta = 1.40
+value = 1_000_000
+required = rf + beta * (market - rf)
+realized = 0.020
+above = realized - required
+hedge = beta * value
+
+# CML pipeline check (Step 9)
+cml_hurdle = 0.05 + ((0.17 - 0.05) / 0.12) * 0.40
+r_oil = 1000 / 875 - 1
+
+# Asset pricing check (Step 10)
+p_fair = 1000 / 1.05 - (38.4 / (1.05 * 0.0144)) * 0.12
+
+assert abs(required - 0.0142) &lt; 1e-12
+assert abs(above * value - 5800) &lt; 1e-9
+assert hedge == 1_400_000
+assert abs(cml_hurdle - 0.45) &lt; 1e-12
+assert abs(r_oil - 0.142857142857) &lt; 1e-9
+assert abs(p_fair - 647.6190476) &lt; 1e-6
+
+import numpy as np                                      # steps 11-14: the source's bank stock
+from scipy import stats
+x = np.array([2.0, -1.5, 0.5, 3.0, -1.0])
+y = np.array([3.4, -2.8, 0.2, 5.1, -1.4])
+dx, dy = x - x.mean(), y - y.mean()
+b = (dx * dy).sum() / (dx * dx).sum()
+a = y.mean() - b * x.mean()
+assert abs(b - 1.7075) &lt; 1e-4 and abs(a + 0.1245) &lt; 1e-4
+assert abs(0.90 - (0.15 + b * (0.60 - 0.15)) + 0.0184) &lt; 1e-4        # r_f = 0.15%
+vi, vm = (dy * dy).sum() / 4, (dx * dx).sum() / 4
+assert abs(b * b * vm / vi - 0.98842) &lt; 1e-5
+e = y - a - b * x
+s = np.sqrt((e * e).sum() / 3)
+se_a = s * np.sqrt(1 / 5 + x.mean()**2 / (dx * dx).sum())
+se_b = s / np.sqrt((dx * dx).sum())
+assert abs(a / se_a + 0.64) &lt; 0.005 and abs(se_b - 0.1067) &lt; 1e-4
+tc = stats.t.ppf(0.975, 3)
+assert abs(tc - 3.182) &lt; 1e-3 and abs(b - tc * se_b - 1.37) &lt; 0.005 and abs(b + tc * se_b - 2.05) &lt; 0.005
+assert abs(1 - np.sqrt((e * e).sum() / 4) / np.sqrt(vi) - 0.892) &lt; 1e-3
+caps = np.array([600, 300, 100]); s = caps / caps.sum()          # step 15
+risky = np.array([0.7 * 1, 0.4 * 3])
+assert np.allclose((risky.sum() * s) / risky.sum(), [0.6, 0.3, 0.1]) and abs(0.6 * risky.sum() - 1.14) &lt; 1e-12
+assert abs((0.12 - 0.05) / 0.30 - 0.2333) &lt; 1e-4</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดใช้ decimal return ต่อเดือนและ USD ตาม symbol table จึงตรวจได้ทั้งผลตอบแทน 1.42%, attribution 5,800 USD และ hedge band โดยไม่สลับหน่วย</p>
+    <p>โค้ดตรวจ hurdle 1.42%, attribution 5,800 USD, hedge 1,400,000 USD, เกณฑ์ CML ท่อส่งน้ำมัน 45% ราคายุติธรรม 647.62 USD และตัวอย่างหุ้นธนาคาร: alpha −0.1245% t −0.64 สัดส่วนความเสี่ยงตลาด 98.84% ช่วง beta 1.37 ถึง 2.05 และความผันผวนที่ลดลง 89.2%</p>
   </div>
 </section>
 
@@ -329,7 +511,9 @@ assert (1.10*value,1.70*value)==(1_100_000,1_700_000)</code></pre>
   <ul>
     <li>CAPM ใช้ beta ตั้ง required return ภายใต้ assumptions ที่ระบุ</li>
     <li>Regression alpha คือ intercept ของความสัมพันธ์กับผลตอบแทน benchmark ต้องประมาณจากหลายงวด; ผลเดือนเดียวสูงกว่าค่าเฉลี่ยตาม CAPM ยังไม่ใช่หลักฐาน skill</li>
-    <li>ตัวอย่าง beta hedge ใช้ 1.40 ล้าน USD ต่อหุ้น 1 ล้าน USD เพื่อสอน notional ไม่ใช่แนะนำ order</li>
+    <li>ตัวอย่าง beta hedge ใช้ short SPY มูลค่า 1.40 ล้าน USD ต่อหุ้น NVDA 1 ล้าน USD ที่มี beta 1.40</li>
+    <li>เกณฑ์ CML ปฏิเสธโครงการท่อส่งน้ำมันที่ให้ return 14.29% เพราะต้องการ hurdle ถึง 45% ที่ความเสี่ยง 40%</li>
+    <li>สูตร pricing ของ CAPM คิดลดกระแสเงินสด 1,000 USD ที่มี covariance 38.4 ด้วยส่วนลดความเสี่ยงจนได้ราคายุติธรรม 647.62 USD</li>
     <li>horizon ของ $R_f$, market premium และ return ต้องตรงกัน</li>
   </ul>
 </section>

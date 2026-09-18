@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>พอร์ตหนึ่งชนะดัชนี แต่ถือหุ้นเล็กและหุ้น value มากกว่า; หลังหัก exposure เหล่านั้นแล้ว ยังเหลือ skill อยู่หรือไม่?</p>
-  <p>เฉลย: multi-factor model ให้หลายแรงผลักอธิบาย return ก่อนตัดสินส่วนที่เหลือ. factor เยอะไม่ได้ทำให้ model ฉลาดขึ้น; ทุกตัวต้องมีเหตุผลและผ่านข้อมูลนอกตัวอย่าง.</p>
+  <p>จัดพอร์ต Markowitz บนหุ้น 500 ตัวด้วยข้อมูลรายวัน 250 วัน ต้องประมาณ covariance กี่ตัวเลข ข้อมูลพอไหม และแบบจำลอง 5 ปัจจัยลดเหลือเท่าไร?</p>
+  <p>เฉลย: 125,250 ตัวเลขจากข้อมูล 125,000 จุด ไม่ถึง 1 จุดต่อตัว และ matrix ที่ได้ผกผันไม่ได้แน่นอน แบบจำลอง 5 ปัจจัยใช้ 3,015 ตัว ได้ 41.5 จุดต่อตัว ลดลง 97.6% และผกผันได้เสมอ</p>
 </div>
 
 <details class="jargon" open>
@@ -47,7 +47,7 @@
     <dt>covariance matrix</dt>
     <dd>ตาราง variance และ covariance ของ factor returns ใช้แปลง loading ของสินทรัพย์ให้เป็นความเสี่ยงร่วมของพอร์ต</dd>
     <dt>Arbitrage Pricing Theory (APT)</dt>
-    <dd>ทฤษฎีตั้งราคาตามเงื่อนไขไร้ arbitrage ที่สรุปว่า expected return ต้องเป็นfunctionเส้นตรงของ factor loadings ใช้กำหนด fair return โดยไม่ต้องพึ่งพอร์ตตลาด</dd>
+    <dd>ทฤษฎีตั้งราคาตามเงื่อนไขไร้ arbitrage ที่สรุปว่า expected return ต้องเป็น function เส้นตรงของ factor loadings ใช้กำหนด fair return โดยไม่ต้องพึ่งพอร์ตตลาด</dd>
     <dt>shrinkage estimator</dt>
     <dd>เทคนิคดึง sample covariance matrix เข้าหา target เชิงโครงสร้างเพื่อลด estimation error ใช้ป้องกันน้ำหนักพอร์ตผันผวนรุนแรงเมื่อข้อมูลมีจำกัด</dd>
   </dl>
@@ -120,23 +120,24 @@ r_{i,t}=a_i+b_{i,M}f_{M,t}+b_{i,S}f_{S,t}+b_{i,V}f_{V,t}+b_{i,Mo}f_{Mo,t}+u_{i,t
   <p>เมื่อเราจัดพอร์ตที่ไม่ใช้เงินต้น และลบล้างความเสี่ยงจากทุก factor จนหมด พอร์ตขนาดใหญ่ที่กระจายน้ำหนักจะไม่มีความเสี่ยงเหลืออยู่เลย ผลตอบแทนจึงต้องเป็นศูนย์</p>
   <div class="math">\[
 \begin{aligned}
-r_i&=\mathbb E[r_i]+\sum_{k=1}^K b_{i,k}f_k+u_i\\[4pt]
-w^{\mathsf T}\mathbf 1&=0,\qquad w^{\mathsf T}b_k=0\quad(k=1,\dots,K)\\[4pt]
-r_p&=w^{\mathsf T}r=w^{\mathsf T}\mathbb E[r]+\sum_{k=1}^K\big(w^{\mathsf T}b_k\big)f_k+w^{\mathsf T}u\\[4pt]
-r_p&=w^{\mathsf T}\mathbb E[r]+\sum_{i=1}^N w_i u_i\\[4pt]
-w_i&\sim O(1/N)\;\Longrightarrow\;\operatorname{Var}(r_p)=\sum_{i=1}^N w_i^2\sigma_{u_i}^2\to 0\quad(N\to\infty)\\[4pt]
-\text{No-arbitrage}&:\quad w^{\mathsf T}\mathbb E[r]=0\quad\forall w\in(\operatorname{span}\{\mathbf 1, b_1,\dots,b_K\})^\perp\\[4pt]
-\mathbb E[r]&\in\operatorname{span}\{\mathbf 1, b_1,\dots,b_K\}\\[4pt]
-\mathbb E[r_i]&=\lambda_0+\sum_{k=1}^K b_{i,k}\lambda_k\\[4pt]
-b_{i,k}=0&\;\Longrightarrow\;\lambda_0=R_f,\qquad \lambda_k=\mathbb E[f_k]\\[4pt]
-\mathbb E[r_i]-R_f&=\sum_{k=1}^K b_{i,k}\big(\mathbb E[f_k]-R_f\big)
+r_i&=\mathbb E[r_i]+\textstyle\sum_k b_{i,k}f_k+u_i\\[4pt]
+\textstyle\sum_i w_i&=0,\qquad \textstyle\sum_i w_ib_{i,k}=0\quad(k=1,\dots,K)\\[4pt]
+r_p&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_k\big(\sum_i w_ib_{i,k}\big)f_k+\sum_i w_iu_i\\
+&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_i w_iu_i\\[4pt]
+w_i\approx\pm\tfrac1N&\ \Rightarrow\ \operatorname{Var}(r_p)=\textstyle\sum_i w_i^2\sigma_{u_i}^2\to0\\[4pt]
+\textstyle\sum_i w_i\,\mathbb E[r_i]&=0\\[4pt]
+\mathbb E[r_i]&=\lambda_0+\textstyle\sum_k b_{i,k}\lambda_k\\
+b_{i,k}=0&\ \Rightarrow\ \lambda_0=R_f\\
+\mathbb E[r_i]-R_f&=\textstyle\sum_k b_{i,k}\lambda_k
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>สร้างพอร์ต arbitrage ที่ใช้เงินลงทุนสุทธิเป็นศูนย์ และมี exposure ต่อทุก factor เป็นศูนย์</p>
     <p>ผลตอบแทนของพอร์ตจะเหลือเพียง expected value และผลรวมของ residual เท่านั้น</p>
     <p>เมื่อจำนวนสินทรัพย์ $N$ มากขึ้น การกระจายน้ำหนักแบบ $1/N$ จะบีบให้ variance รวมของ residual ลู่เข้าสู่ศูนย์</p>
-    <p>ในตลาดที่ไม่มี arbitrage พอร์ตไร้ความเสี่ยงและไร้เงินต้นต้องให้ผลตอบแทนเป็นศูนย์ เงื่อนไขทางเรขาคณิตจึงบังคับว่า expected return ต้องอยู่ใน subspace ของ vector น้ำหนักและ loadings ส่งผลให้ความสัมพันธ์เป็นเส้นตรงพอดี</p>
+    <p>ในตลาดที่ไม่มี arbitrage พอร์ตที่ไม่ใช้เงินและไม่มีความเสี่ยงต้องให้ผลตอบแทนเป็นศูนย์ ทุกชุดน้ำหนักที่ผ่านสองเงื่อนไขบนจึงต้องให้ผลรวมถ่วงของผลตอบแทนคาดหวังเป็นศูนย์ </p>
+    <p>ถ้าผลตอบแทนคาดหวังมีส่วนที่ไม่ใช่เส้นตรงของ loadings จะมีชุดน้ำหนักหนึ่งที่จับส่วนนั้นได้กำไรฟรี ผลตอบแทนคาดหวังจึงต้องเป็นค่าคงที่บวกผลรวมของ loading คูณราคาของแต่ละ factor</p>
+    <p>สินทรัพย์ที่ไม่มี exposure กับ factor ใดเลยต้องได้ดอกเบี้ยปลอดความเสี่ยง ค่าคงที่จึงคือ $R_f$ ส่วน $\lambda_k$ คือค่าตอบแทนต่อหนึ่งหน่วยของ factor ที่ $k$ ถ้า factor เป็นผลตอบแทนของพอร์ตที่ซื้อขายได้ ค่านี้คือผลตอบแทนคาดหวังของมันลบ $R_f$</p>
   </div>
 </section>
 
@@ -203,7 +204,7 @@ r_t-\mathbb E[r_t]&=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
 \text{five-factor model: }&\underbrace{500\times5}_{\text{loadings}}+\underbrace{\tfrac{5(6)}{2}}_{\Sigma_f}+\underbrace{500}_{D}=2{,}500+15+500=3{,}015\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ตาราง covariance ของ 500 หุ้นมี 500 ช่องบนแนวทแยงและ 500×499/2 = 124,750 ช่องนอกแนวทแยง (ช่องซ้ำกันสองฝั่ง นับครั้งเดียว) รวม 125,250 ตัวเลข แต่ข้อมูลรายวันสิบปีมีแค่ 2,520 วัน ต่อหุ้น จึงประมาณไม่ไหว (หัวข้อ 8.x จะบอกว่า matrix แบบนี้ยัง ‘เกือบเอกฐาน’ ด้วย)</p>
+    <p>ตาราง covariance ของ 500 หุ้นมี 500 ช่องบนแนวทแยงและ 500×499/2 = 124,750 ช่องนอกแนวทแยง (ช่องซ้ำกันสองฝั่ง นับครั้งเดียว) รวม 125,250 ตัวเลข ขั้นที่ 9 จะนับว่าข้อมูล 250 วันมีให้แค่ 125,000 จุด</p>
     <p>factor model ต้องการแค่ 5 loadings ต่อหุ้น 15 ตัวเลขใน covariance ของ factor และ 1 residual variance ต่อหุ้น รวม 3,015 น้อยกว่า 41 เท่า นี่คือเหตุผลเชิงปฏิบัติที่ทั้งอุตสาหกรรมใช้แบบจำลองนี้ ไม่ใช่เพราะมันจริงกว่า</p>
     <p>ราคาที่จ่าย: ทุกการเคลื่อนไหวร่วมต้องผ่าน factor ทั้งห้า ถ้าหุ้นสองตัวในอุตสาหกรรมเดียวกันขยับด้วยกันด้วยเหตุผลที่ factor ไม่รู้จัก แบบจำลองจะบอกว่าไม่สัมพันธ์กัน</p>
   </div>
@@ -217,9 +218,9 @@ r_t-\mathbb E[r_t]&=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
   <div class="math">\[
 \begin{aligned}
 S&=\frac{1}{T-1}\sum_{t=1}^T (r_t-\bar{r})(r_t-\bar{r})^{\mathsf T}\\[4pt]
-T& \lt N\;\Longrightarrow\;\operatorname{rank}(S)\le T-1 \lt N\quad\text{(singular, non-invertible)}\\[4pt]
-F&=B\Sigma_f B^{\mathsf T}+D\quad\text{(factor structure, positive definite)}\\[4pt]
-\Sigma_{\mathrm{sh}}&=\delta F+(1-\delta)S,\qquad \delta\in[0,1]\\[4pt]
+T\lt N&\ \Rightarrow\ \operatorname{rank}(S)\le T-1\lt N\\[4pt]
+F&=B\Sigma_f B^{\mathsf T}+D\\[4pt]
+\Sigma_{\mathrm{sh}}&=\delta F+(1-\delta)S,\qquad 0\le\delta\le1\\[4pt]
 w^*&\propto \Sigma_{\mathrm{sh}}^{-1}\big(\mathbb E[r]-R_f\mathbf 1\big)
 \end{aligned}
 \]</div>
@@ -228,6 +229,47 @@ w^*&\propto \Sigma_{\mathrm{sh}}^{-1}\big(\mathbb E[r]-R_f\mathbf 1\big)
     <p>โครงสร้างแบบจำลองหลายปัจจัย $F$ บังคับให้ความสัมพันธ์นอกแนวทแยงถูกขับเคลื่อนด้วย factor เท่านั้น จึงรับประกันความเป็น positive definite</p>
     <p>การผสมแบบนูนระหว่าง $F$ กับ $S$ ด้วยค่าน้ำหนัก $\delta$ ช่วยลด variance ของ estimator ลงอย่างมหาศาล แลกกับ bias เล็กน้อย</p>
     <p>ผลลัพธ์คือ inverse ของ matrix มีความเสถียร ไม่เกิดน้ำหนักพอร์ตสุดโต่งเหมือนการใช้ sample covariance เดี่ยว ๆ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — ตัวอย่างจากต้นทาง: ข้อมูลพอไหม และ matrix ผกผันได้ไหม</h4>
+  <p>หุ้น 500 ตัว ข้อมูลรายวันย้อนหลัง 250 วัน Markowitz ต้องใช้ทั้งความเสี่ยงของพอร์ต และต้องผกผัน covariance matrix ได้ นับข้อมูลเทียบกับตัวเลขที่ต้องประมาณ</p>
+  <div class="math">\[
+\begin{aligned}
+\text{data}&=500\times250=125{,}000\\
+125{,}000/125{,}250&=0.998\ \text{per parameter}\\
+125{,}250\times30/500&=7{,}515\ \text{days}\approx30\ \text{years}\\[4pt]
+\operatorname{rank}(\hat\Sigma)&\le T-1=249\\
+500-249&=251\ \text{zero eigenvalues}\\[4pt]
+125{,}000/3{,}015&=41.5\ \text{per parameter}\\
+1-3{,}015/125{,}250&=97.6\%\\
+3{,}015\times30/500&=181\ \text{days}\approx9\ \text{months}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>วิธีตรงมีข้อมูลไม่ถึง 1 จุดต่อหนึ่งตัวเลขที่ต้องประมาณ ถ้าใช้กฎนิ้วโป้ง 30 จุดต่อตัวของหัวข้อ 15.5 ต้องใช้ข้อมูลราว 30 ปี ซึ่งหุ้นครึ่งหนึ่งในดัชนียังไม่จดทะเบียนด้วยซ้ำ</p>
+    <p>ปัญหาที่หนักกว่าการนับคือ matrix ตัวอย่างสร้างจากผลรวมของ 250 ก้อนที่แต่ละก้อนมี rank หนึ่ง และหักค่าเฉลี่ยไปแล้ว rank จึงไม่เกิน 249 มี eigenvalue เป็นศูนย์ 251 ตัว แปลว่ามีพอร์ต 251 ทิศทางที่ข้อมูลบอกว่าความเสี่ยงเป็นศูนย์ ทั้งที่โลกจริงไม่ใช่ optimizer จะทุ่มเงินลงทิศทางพวกนี้ทันที</p>
+    <p>แบบจำลองห้าปัจจัยใช้ 3,015 ตัว ได้ 41.5 จุดต่อตัว เกินกฎ 30 จุด ลดตัวเลขที่ต้องประมาณลง 97.6% และข้อมูลที่ต้องรอลดจากราว 30 ปีเหลือราว 9 เดือน ราคาที่จ่ายคือสมมติว่าหุ้นสัมพันธ์กันผ่านปัจจัยเท่านั้น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — ทำไม matrix ของแบบจำลองปัจจัยผกผันได้เสมอ</h4>
+  <p>ตรวจกับตัวอย่างสองหุ้นของขั้นที่ 6 ก่อน แล้วพิสูจน์ว่าใช้ได้กับทุกขนาด</p>
+  <div class="math">\[
+\begin{aligned}
+\det\Sigma&=3.69(4.64)-0.96^2\\
+&=17.1216-0.9216=16.20\gt0\\
+\lambda&=3.094,\ 5.236\\[4pt]
+w^{\mathsf T}\Sigma w&=w^{\mathsf T}B\Sigma_fB^{\mathsf T}w+w^{\mathsf T}Dw\\
+&=(B^{\mathsf T}w)^{\mathsf T}\Sigma_f(B^{\mathsf T}w)+\textstyle\sum_i w_i^2\sigma_{\varepsilon,i}^2\\
+&\gt0\quad\text{when}\ w\ne0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ก้อนแรกไม่ติดลบ เพราะ $\Sigma_f$ เป็น covariance matrix ของปัจจัย ก้อนหลังเป็นบวกแน่นอน เพราะหุ้นทุกตัวมีความเสี่ยงเฉพาะตัวมากกว่าศูนย์ และน้ำหนักไม่เป็นศูนย์ทั้งหมด ความเสี่ยงของทุกพอร์ตจึงเป็นบวก matrix เป็น positive definite และผกผันได้ทุกครั้ง</p>
+    <p>D คือตัวช่วยชีวิต มันเติมค่าบวกลงบนแนวทแยง ทำให้ eigenvalue ที่เคยเป็นศูนย์กลายเป็นบวกทุกตัว แนวคิดเดียวกับ Ridge regression และการบีบของ Ledoit–Wolf ในขั้นที่ 8</p>
   </div>
 </section>
 
@@ -277,9 +319,15 @@ w^*&\propto \Sigma_{\mathrm{sh}}^{-1}\big(\mathbb E[r]-R_f\mathbf 1\big)
 </section>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: กำหนด monthly premiums ของ market, size, value และ momentum เท่ากับ 0.60%, 0.20%, 0.30% และ 0.40%; loadings เท่ากับ 1.0, 0.3, 0.4 และ 0.2. Contributions จึงเป็น 0.60, 0.06, 0.12 และ 0.08 percentage points รวม factor contribution 0.86%. บวก intercept 0.10% ได้ expected excess return 0.96% หรือ 96,000 USD ต่อเดือนบน 10 ล้าน USD ก่อน costs; เปลี่ยน factor definitions แล้วเลขนี้เปลี่ยนได้</p>
-  <p>ตรวจเองใน 10 วินาที: 0.60+0.06+0.12+0.08 = 0.86 percentage points; บวก intercept 0.10% ต้องได้ 0.96%.</p>
+  <h4>คำตอบ — covariance ของหุ้น 500 ตัว และ attribution ของกองทุน</h4>
+  <p>คำถาม: จัดพอร์ต Markowitz บนหุ้น 500 ตัวด้วยข้อมูลรายวัน 250 วัน ต้องประมาณ covariance กี่ตัวเลข ข้อมูลพอไหม และแบบจำลอง 5 ปัจจัยลดเหลือเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 4 ถึง 10</p>
+  <p>1. วิธีตรง 500 × 501 ÷ 2 = 125,250 ตัวเลข จากข้อมูล 125,000 จุด ได้ 0.998 จุดต่อตัว และ rank ไม่เกิน 249 จึงผกผันไม่ได้</p>
+  <p>2. แบบจำลองห้าปัจจัย 2,500 + 15 + 500 = 3,015 ตัว ได้ 41.5 จุดต่อตัว ลดลง 97.6%</p>
+  <p>3. ตัวอย่างสองหุ้นได้ covariance 3.69, 0.96, 4.64 correlation 0.232 ที่ไม่มีใครวัดตรง ๆ determinant 16.20 เป็นบวก</p>
+  <p>4. กองทุนที่มี loadings 1.0, 0.3, 0.4, 0.2 ได้ contribution 0.60 + 0.06 + 0.12 + 0.08 = 0.86 percentage points บวก intercept 0.10% เป็น 0.96% ต่อเดือน หรือ 96,000 USD บน 10 ล้าน USD</p>
+  <p>ตรวจเองใน 10 วินาที: 500 × 501 ÷ 2 = 125,250 และ 500 × 5 + 15 + 500 = 3,015</p>
+  <p>แปลว่าอะไร: แบบจำลองปัจจัยไม่ได้จริงกว่า แต่ข้อมูลที่มีไม่พอประมาณทุกคู่ของหุ้น มันแลกความยืดหยุ่นกับ matrix ที่ใช้งานได้ และทำให้แยกฝีมือของผู้จัดการออกจาก exposure ที่ซื้อได้ถูก ๆ</p>
 </section>
 
 <section class="code">
@@ -297,7 +345,14 @@ Sigma=B@np.array([[1.]])@B.T+np.diag([2.25,4.])
 assert np.allclose(factor_contrib,[.006,.0006,.0012,.0008])
 assert abs(expected-.0096)&lt;1e-12
 assert abs(expected*value-96_000)&lt;1e-8
-assert np.allclose(Sigma,[[3.69,.96],[.96,4.64]])</code></pre>
+assert np.allclose(Sigma,[[3.69,.96],[.96,4.64]])
+assert abs(np.linalg.det(Sigma)-16.20) &lt; 1e-9 and np.allclose(np.linalg.eigvalsh(Sigma),[3.0939,5.2361],atol=1e-4)
+assert abs(.96/np.sqrt(3.69*4.64)-.232) &lt; 1e-3
+assert 500*501//2 == 125_250 and 500*5+5*6//2+500 == 3_015
+assert abs(125_000/125_250-.998) &lt; 1e-3 and abs(125_000/3_015-41.46) &lt; 0.01
+assert abs(1-3_015/125_250-.976) &lt; 1e-3 and 125_250*30//500 == 7_515
+R=np.random.default_rng(0).standard_normal((250,500))
+assert np.linalg.matrix_rank(np.cov(R,rowvar=False)) == 249             # 251 zero eigenvalues</code></pre>
   </details>
   <div class="note">
     <p>โค้ดตรวจ contributions ราย factor, expected excess return 0.96%, ผลเงิน 96,000 USD และ covariance matrix สองหุ้น; การตรวจแบบนี้กันทั้งการบวกรวมผิดและการใส่ residual variance นอก diagonal</p>

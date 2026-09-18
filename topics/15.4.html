@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ลูกโป่งสองใบลอยขึ้นพร้อมกันไม่ได้แปลว่าผูกกัน; ควรขายใบที่สูงกว่าและซื้อใบที่ต่ำกว่าทันทีไหม?</p>
-  <p>เฉลย: ยังไม่ควร จนกว่าจะมีหลักฐานว่า spread มี equilibrium ที่ดึงกลับ. cointegration เหมือนเชือกสองเส้น: correlation แค่เดินข้างกัน แต่เชือกจริงเท่านั้นที่ดึงเมื่อห่างเกินไป.</p>
+  <p>หุ้น A 42 USD หุ้น B 28 USD hedge ratio 1.15 spread เฉลี่ย −0.025 แกว่ง 0.032 ดึงกลับ 0.05 ต่อวัน วันนี้ควรเข้าเทรดไหม ซื้อขายกี่หุ้น และคาดกำไรเท่าไรในกี่วัน?</p>
+  <p>เฉลย: spread −0.0944 z −2.17 เกินเกณฑ์ 2 ซื้อ A 23,810 หุ้น short B 41,071 หุ้น ถ้ากลับถึงค่าเฉลี่ยได้ 69,366 USD ระยะห่างหดครึ่งใน 13.9 วัน ถึงเส้นออกราว 29 วัน</p>
 </div>
 
 <details class="jargon" open>
@@ -99,18 +99,19 @@
   <h4>ก่อนดูตัวอย่าง: stationarity และ ADF แบบย่อ</h4>
   <p>stationary ในบทนี้หมายถึง spread ที่มี mean และ variance ไม่ไหลตามเวลาอย่างเป็นระบบ จึงพอมีระดับปกติให้วัดระยะห่างได้. ถ้า spread มี unit root มันอาจเดินหนีไปเรื่อย ๆ และ z-score เก่าไม่ใช่จุดกลับตัว.</p>
   <p>Augmented Dickey–Fuller (ADF) test เริ่มจากสมมติฐานว่า spread มี unit root. เมื่อข้อมูลแรงพอให้ปฏิเสธสมมติฐานนี้ เราจึงพอมีเหตุผลใช้ mean reversion—แต่ยังไม่มีคำรับประกัน. บท 16 จะขยายเรื่อง stationarity และความจำตามเวลา.</p>
-  <p>โจทย์ให้อะไรมาบ้าง: ราคา A เท่ากับ 42 USD, ราคา B เท่ากับ 28 USD, hedge ratio 1.15, mean ของ spread -0.02500, standard deviation 0.03200 และ coefficient รายวัน 0.95. ถามว่า spread ห่างค่าปกติเกินสองเท่าหรือยัง แล้วควรตั้ง time stop กี่วัน.</p>
+  <p>โจทย์ให้อะไรมาบ้าง: ราคา A เท่ากับ 42 USD, ราคา B เท่ากับ 28 USD, hedge ratio 1.15, mean ของ spread -0.02500, standard deviation 0.03200 และความเร็วดึงกลับ 0.05 ต่อวัน ซึ่งเท่ากับ coefficient รายวัน 0.9512 ถามว่า spread ห่างค่าปกติเกินสองเท่าหรือยัง แล้วควรตั้ง time stop กี่วัน.</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — สร้าง spread จาก log prices</h4>
-  <p>การเทรดแบบจับคู่เทรดส่วนต่าง ไม่ใช่ราคา ห้าบรรทัดนี้อธิบายว่าทำไมต้องใช้ log และทำไมต้องมีตัวคูณ คำตอบคือรูปของความสัมพันธ์ที่เราสมมติในบรรทัดแรก ถ้าความสัมพันธ์จริงไม่ใช่รูปนั้น ส่วนต่างที่สร้างมาก็ไม่นิ่ง และกลยุทธ์ก็พัง</p>
+  <p>การเทรดแบบจับคู่เทรดส่วนต่าง ไม่ใช่ราคา สี่บรรทัดนี้อธิบายว่าทำไมต้องใช้ log และทำไมต้องมีตัวคูณ คำตอบคือรูปของความสัมพันธ์ที่เราสมมติในบรรทัดแรก ถ้าความสัมพันธ์จริงไม่ใช่รูปนั้น ส่วนต่างที่สร้างมาก็ไม่นิ่ง และกลยุทธ์ก็พัง</p>
   <div class="math">\[
-\begin{aligned}P_{A}&=c\,P_{B}^{\,h}\qquad\text{(proportional link)}\\
+\begin{aligned}
+P_{A}&=c\,P_{B}^{\,h}\\
 \log P_A&=\log c+h\log P_B\\
-p_A-h\,p_B&=\log c\qquad\text{(constant)}\\[4pt]
-s_t&:=p_{A,t}-h\,p_{B,t}\\
-h&=\text{slope of }p_A\ \text{on}\ p_B\qquad\text{(topic 15.1)}\end{aligned}
+p_A-h\,p_B&=\log c\\[4pt]
+s_t&:=p_{A,t}-h\,p_{B,t}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อสมมติเรื่องความสัมพันธ์อยู่บรรทัดแรก ราคาสองตัวผูกกันแบบสัดส่วน ไม่ใช่แบบบวก ใส่ log ทั้งสองข้าง ผลคูณกลายเป็นผลบวก และเลขชี้กำลังตกลงมาเป็นตัวคูณ</p>
@@ -129,28 +130,29 @@ h&=\text{slope of }p_A\ \text{on}\ p_B\qquad\text{(topic 15.1)}\end{aligned}
 \begin{aligned}
 p_{A,t}&=\alpha+h\,p_{B,t}+e_t\\[4pt]
 \Delta e_t&=(\phi-1)e_{t-1}+\sum_{j=1}^p\psi_j\Delta e_{t-j}+\xi_t\\[4pt]
-\gamma&\equiv\phi-1,\qquad\Delta e_t=\gamma e_{t-1}+\sum_{j=1}^p\psi_j\Delta e_{t-j}+\xi_t\\[4pt]
-H_0&:\ \gamma=0\quad(\phi=1,\ \text{unit root, no cointegration})\\[4pt]
-H_1&:\ \gamma \lt 0\quad(\phi \lt 1,\ \text{stationary, cointegrated})\\[4pt]
-t_{\gamma}&=\frac{\hat{\gamma}}{\operatorname{SE}(\hat{\gamma})},\qquad t_{\gamma} \lt t_{\mathrm{crit}}\approx -3.37\ \Longrightarrow\ \text{reject }H_0
+\gamma&\equiv\phi-1\\
+\Delta e_t&=\gamma e_{t-1}+\sum_{j=1}^p\psi_j\Delta e_{t-j}+\xi_t\\[4pt]
+H_0&:\ \gamma=0\quad(\phi=1)\\
+H_1&:\ \gamma\lt0\quad(\phi\lt1)\\[4pt]
+t_{\gamma}&=\frac{\hat{\gamma}}{\operatorname{SE}(\hat{\gamma})}\lt t_{\mathrm{crit}}\approx-3.37
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>สมการแรกหา residual จากความสัมพันธ์ของราคาหุ้นทั้งสองตัว</p>
+    <p>สมการแรกหา residual จากความสัมพันธ์ของราคาหุ้นทั้งสองตัว ความชัน h ของสมการนี้คือ hedge ratio ที่หัวข้อ 15.1 สอนวิธีหา</p>
     <p>สมการถัดมาจัดรูปการเปลี่ยนแปลงของ residual ในรูปผลต่าง โดยดึงพจน์ $e_{t-1}$ ออกมา เพื่อทดสอบค่า $\gamma=\phi-1$</p>
-    <p>ถ้า $\gamma=0$ แปลว่า $\phi=1$ มี unit root และ residual เป็น random walk ซึ่งไม่มีแรงดึงกลับและเทรดไม่ได้</p>
+    <p>สมมติฐานหลักคือ unit root ซึ่งแปลว่าไม่มี cointegration สมมติฐานแย้งคือ spread นิ่งและ cointegrated ถ้า $\gamma=0$ แปลว่า $\phi=1$ มี unit root และ residual เป็น random walk ซึ่งไม่มีแรงดึงกลับและเทรดไม่ได้</p>
     <p>หากค่า $t$-statistic ต่ำกว่าค่าวิกฤตของ Engle–Granger เราจึงปฏิเสธ unit root และยืนยันได้ว่า spread มีคุณสมบัติ mean reversion จริง</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — standardize entry signal</h4>
+  <h4>ขั้นที่ 3 — นิยามของสัญญาณเข้า: แปลง spread เป็น z-score</h4>
   <p>ส่วนต่างดิบเทียบข้ามคู่ไม่ได้ ต้องแปลงเป็นจำนวน standard deviation ก่อน จึงจะตั้งเกณฑ์เข้าไม้ที่ใช้กับทุกคู่ได้</p>
   <div class="math">\[
-z_t=\frac{s_t-\mu}{\sigma_s},\qquad z_t>2\Rightarrow\text{candidate short spread}
+z_t=\frac{s_t-\mu}{\sigma_s}
 \]</div>
   <div class="reading">
-    <p>$z_t$ วัด spread ห่าง equilibrium กี่ standard deviations; threshold 2 เป็น rule ที่ต้องเลือกก่อน test ไม่ใช่ universal law หรือ guarantee ของ mean reversion</p>
+    <p>$z_t$ วัด spread ห่าง equilibrium กี่ standard deviations ถ้าเกิน +2 เป็นสัญญาณให้ short spread ถ้าต่ำกว่า −2 ให้ long spread; threshold 2 เป็น rule ที่ต้องเลือกก่อน test ไม่ใช่ universal law หรือ guarantee ของ mean reversion</p>
   </div>
 </section>
 
@@ -164,12 +166,12 @@ d_t&:=s_t-\mu,\qquad\mathbb E[\eta_t]=0\\
 \phi^{t}&=\tfrac12\\
 t\log|\phi|&=\log(0.5)\\
 t_{1/2}&=\frac{\log(0.5)}{\log(|\phi|)}\\[4pt]
-\phi=0.95:\quad t_{1/2}&=\frac{-0.6931}{-0.0513}=13.5\ \text{days}\end{aligned}
+\phi=e^{-0.05}=0.9512:\quad t_{1/2}&=\frac{-0.6931}{-0.05}=13.86\ \text{days}\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกเป็น นิยาม ของแบบจำลองที่เลือกใช้ ระยะห่างจากค่ากลางวันนี้ เป็นสัดส่วนของเมื่อวาน บวกแรงสุ่มใหม่ ตั้งชื่อระยะห่างแล้วหาค่าเฉลี่ย แรงสุ่มหายไป เหลือการคูณด้วยตัวเดิมซ้ำ ๆ จึงเป็นเลขยกกำลัง</p>
     <p>คำถามที่มีประโยชน์จริง ๆ คือกี่วันจึงเหลือครึ่ง ใส่ log ทั้งสองข้างเพื่อดึงเลขชี้กำลังลงมา แล้วหารออกมา ทั้งเศษและส่วนติดลบ ผลจึงเป็นบวก</p>
-    <p>แทนเลขจริง หดวันละห้าเปอร์เซ็นต์ ใช้เวลาราวสิบสามวันครึ่งจึงเหลือครึ่ง</p>
+    <p>แทนเลขจริง หดวันละห้าเปอร์เซ็นต์ ใช้เวลาราวสิบสี่วันจึงเหลือครึ่ง</p>
     <p>ตัวเลขนี้คือสิ่งที่ใช้ตัดสินว่าจะถือนานแค่ไหนก่อนยอมแพ้ ถ้าถือสั้นกว่านี้มาก ก็ยังไม่ทันได้เห็นสิ่งที่เดิมพันไว้</p>
   </div>
 </section>
@@ -196,11 +198,11 @@ z_t&=\frac{-0.094366-(-0.02500)}{0.03200}=\frac{-0.069366}{0.03200}=-2.168\end{a
 \begin{aligned}V_A&=1{,}000{,}000\ \mathrm{USD},\qquad V_B=hV_A=1.15(1{,}000{,}000)=1{,}150{,}000\ \mathrm{USD}\\[4pt]
 \mu-s_t&=-0.025-(-0.094366)=0.069366\\
 \Pi_{\mu}&\approx V_A(\mu-s_t)=1{,}000{,}000(0.069366)=69{,}366\ \mathrm{USD}\\[4pt]
-t_{1/2}&=\frac{\log(0.5)}{\log(0.95)}=\frac{-0.693147}{-0.051293}=13.51\ \text{days}\end{aligned}
+t_{1/2}&=\frac{\ln2}{0.05}=\frac{0.693147}{0.05}=13.86\ \text{days}\end{aligned}
 \]</div>
   <div class="reading">
     <p>ขาที่สองใหญ่กว่าขาแรก 1.15 เท่า ตาม hedge ratio จึงไม่ใช่การลงเงินเท่ากันสองข้าง</p>
-    <p>ครึ่งชีวิต 13.51 วันคือเวลาที่ระยะห่างจะหดลงครึ่งหนึ่ง ไม่ใช่เวลาที่จะกลับถึงค่ากลางพอดี การถือไม้จึงต้องเผื่อนานกว่านั้น</p>
+    <p>ครึ่งชีวิต 13.86 วันคือเวลาที่ระยะห่างจะหดลงครึ่งหนึ่ง ไม่ใช่เวลาที่จะกลับถึงค่ากลางพอดี การถือไม้จึงต้องเผื่อนานกว่านั้น</p>
     <p>กำไรมาจากไหน: ขา A ทำเงิน $V_A\times\Delta p_A$ และขา B เสีย $V_B\times\Delta p_B=hV_A\Delta p_B$ (สำหรับ log return เล็ก) รวมเป็น $V_A(\Delta p_A-h\Delta p_B)=V_A\Delta s$ ขนาดขา B ที่เท่ากับ $h$ เท่าของ A จึงเป็นสิ่งที่ทำให้กำไรขึ้นกับ spread อย่างเดียว ไม่ขึ้นกับว่าตลาดไปทางไหน</p>
     <p>ตรวจด้วยราคาจริง: ถ้า B นิ่งที่ 28 และ spread กลับถึงค่ากลาง A ต้องขึ้นไป $42e^{0.069366}=45.02$ คือ +7.18% หรือ 71,830 USD บนขา A สูตรเส้นตรง 69,366 ต่ำกว่าเล็กน้อยเพราะ log return 6.94% กับ simple return 7.18% ต่างกัน (หัวข้อ 1.10) เทียบกับ gross exposure 2.15 ล้าน ได้ราว 3.2%</p>
   </div>
@@ -218,14 +220,72 @@ s_t-\theta&=e^{-\kappa\Delta t}(s_{t-1}-\theta)+\int_{t-1}^t\sigma e^{-\kappa(t-
 \phi&=e^{-\kappa\Delta t}\ \Longrightarrow\ \kappa=-\frac{\ln\phi}{\Delta t}\\[4pt]
 e^{-\kappa t_{1/2}}&=\tfrac12\ \Longrightarrow\ t_{1/2}=\frac{\ln 2}{\kappa}=\frac{\ln 2}{-\ln\phi}\\[4pt]
 \operatorname{Var}(s_{\infty})&=\int_0^\infty\sigma^2 e^{-2\kappa u}du=\frac{\sigma^2}{2\kappa}\\[4pt]
-\sigma_s&=\sqrt{\frac{\sigma^2}{2\kappa}}=\sqrt{\frac{0.0001}{2(0.05129)}}\approx 0.0312
+\sigma_s&=\sqrt{\frac{\sigma^2}{2\kappa}}=\sqrt{\frac{0.0001}{2(0.05)}}\approx 0.0316
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>สมการแรกคือ stochastic differential equation ของแบบจำลอง OU ที่มี drift ดึง spread กลับหาค่ากลาง $\theta$</p>
-    <p>เมื่อ integrate ในช่วงเวลาหนึ่งก้าว พจน์หน้า $s_{t-1}$ จะกลายเป็น $e^{-\kappa\Delta t}$ ซึ่งเทียบเท่ากับค่า $\phi$ ในmodel AR(1)</p>
+    <p>เมื่อ integrate ในช่วงเวลาหนึ่งก้าว พจน์หน้า $s_{t-1}$ จะกลายเป็น $e^{-\kappa\Delta t}$ ซึ่งเทียบเท่ากับค่า $\phi$ ใน model AR(1)</p>
     <p>ความเร็วในการดึงกลับ $\kappa$ จึงสัมพันธ์โดยตรงกับ $-\ln\phi$ และกำหนดเวลาครึ่งชีวิต $t_{1/2}=\ln 2/\kappa$</p>
-    <p>variance ระยะยาวที่จุดสมดุลเท่ากับ $\sigma^2/(2\kappa)$ เมื่อแทนตัวเลขความผันผวนรายวัน 1% จะได้ standard deviation ประมาณ 3.12% ซึ่งตรงกับสเกลที่ใช้คำนวณ z-score</p>
+    <p>variance ระยะยาวที่จุดสมดุลเท่ากับ $\sigma^2/(2\kappa)$ เมื่อแทนตัวเลขความผันผวนรายวัน 1% และความเร็วดึงกลับ 0.05 ต่อวัน จะได้ standard deviation ประมาณ 3.16% ซึ่งตรงกับสเกลที่ใช้คำนวณ z-score</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — เส้นเข้า เส้นออก และกฎนี้ยิงบ่อยแค่ไหน</h4>
+  <p>กฎมาตรฐานคือเข้าเมื่อ z เกิน 2 ในขนาด และออกเมื่อต่ำกว่า 0.5 แปลงเป็นระดับ spread จริง แล้วนับว่าปีหนึ่งมีสัญญาณกี่ครั้งถ้า spread เป็นระฆังคว่ำ</p>
+  <div class="math">\[
+\begin{aligned}
+\text{entry}\ (z=-2)&:\ -0.0250-2(0.032)=-0.0890\\
+\text{exit}\ (z=-0.5)&:\ -0.0250-0.5(0.032)=-0.0410\\
+s_{\text{today}}&=-0.0944\lt-0.0890\\[4pt]
+\mathbb P(|z|\gt2)&=2(0.02275)=4.55\%\\
+250(0.0455)&\approx11\ \text{signals per year}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>วันนี้ spread อยู่ที่ −0.0944 เลยเส้นเข้า −0.0890 ไปแล้ว จึงซื้อ A และ short B เพราะ spread ต่ำเกินไปและต้องการให้มันขึ้น ถ้านิยาม spread กลับด้านเป็น B เทียบ A เครื่องหมายจะกลับหมด อย่าท่องทิศ ให้ดูนิยามทุกครั้ง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — จำนวนหุ้นจริง เวลาถึงเส้นออก และกำไรไม่ว่าราคาไหนขยับ</h4>
+  <p>ปัดเป็นหุ้นเต็ม แล้วดูว่ากว่า spread จะถึงเส้นออกใช้กี่วัน และถ้ามันกลับผ่านขาเดียว ราคาต้องไปที่ไหน</p>
+  <div class="math">\[
+\begin{aligned}
+1{,}000{,}000/42&=23{,}809.5\to23{,}810\ \text{shares A}\\
+1{,}150{,}000/28&=41{,}071.4\to41{,}071\ \text{shares B}\\
+\text{gross}&=2{,}150{,}000,\quad\text{net}=-150{,}000\ \text{USD}\\[4pt]
+e^{-0.05t}&=0.5/2.1677=0.2307\\
+t&=1.4661/0.05=29.3\ \text{days}\\[4pt]
+P_A&=42e^{0.069366}=45.02\ (+7.2\%)\\
+P_B&=28e^{-0.069366/1.15}=26.36\ (-5.9\%)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ครึ่งชีวิต 13.9 วันคือเวลาที่ระยะห่างหดเหลือครึ่ง แต่กว่า z จะหดจาก 2.17 ถึงเส้นออก 0.5 ต้องหดเหลือ 23% ใช้ราว 29 วัน</p>
+    <p>ถ้า spread กลับผ่านขา A ล้วน A ต้องขึ้นไป 45.02 ถ้าผ่านขา B ล้วน B ต้องลงไป 26.36 ทั้งสองฉากได้กำไรราว 69,366 USD เท่ากัน เพราะขา B ใหญ่กว่า 1.15 เท่าพอดี กำไรจึงขึ้นกับ spread อย่างเดียว ไม่ขึ้นกับว่าราคาไหนเป็นตัวขยับ พอร์ตมี net short 150,000 USD เพราะขาสองขาไม่เท่ากัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — ตั้งจุดตัดขาดทุนก่อนเข้า ไม่ใช่หลังขาดทุน</h4>
+  <p>ฉากที่กลยุทธ์นี้ตายคือ spread กว้างขึ้นแทนที่จะแคบลง กำหนดทั้งจุดตัดราคาและจุดตัดเวลาไว้ก่อนส่งคำสั่ง</p>
+  <div class="math">\[
+\begin{aligned}
+z&:\ -2.17\to-4.00\\
+\Delta s&=(-4.00+2.17)(0.032)=-0.0586\\
+\text{loss}&=1{,}000{,}000(0.0586)=58{,}600\ \text{USD}\\
+58{,}600/69{,}366&=84\%\\[4pt]
+\text{time stop}&=40\ \text{days}\approx3\,t_{1/2}\\
+\text{size}&\le2\%\ \text{of NAV per pair}\\[4pt]
+\tfrac{250}{29.3}(3.23\%)&\approx27\%\ \text{per year}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ถ้า z วิ่งจาก −2.17 ไป −4 ขาดทุน 58,600 USD เท่ากับ 84% ของกำไรที่หวังไว้ ทั้งที่ยังไม่มีอะไรพัง</p>
+    <p>จุดตัดราคาจับข่าวร้ายที่ทำให้ความสัมพันธ์ขาด จุดตัดเวลาจับกรณีที่ spread ไม่ไปไหนแต่กินเงินค่ายืมหุ้นไปเรื่อย ๆ ขนาดต่อคู่ไม่เกิน 2% ของมูลค่ากองทุนสุทธิ หรือ net asset value (NAV) เพื่อให้คู่หนึ่งพังแล้วกองไม่ล้ม</p>
+    <p>กำไร 3.23% ต่อรอบ คูณราว 8.5 รอบต่อปีได้ราว 27% บน gross ซึ่งฟังดีเกินจริง ตัวเลขนี้ยังไม่หัก bid–ask ค่าธรรมเนียม ค่ายืมหุ้น และรอบที่ขาดทุน และ 0.032 เป็น standard deviation ของระดับ spread ไม่ใช่ของการเปลี่ยนรายวัน ความเสี่ยงรายวันจริงจึงเล็กกว่า 32,000 USD แต่วันที่ความสัมพันธ์ขาดจะใหญ่กว่ามาก</p>
   </div>
 </section>
 
@@ -275,11 +335,15 @@ e^{-\kappa t_{1/2}}&=\tfrac12\ \Longrightarrow\ t_{1/2}=\frac{\ln 2}{\kappa}=\fr
 </section>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: คำนวณได้ spread -0.09437 และ z-score -2.168 จึงผ่าน rule ที่ให้เข้าเมื่อ z ต่ำกว่า -2. คำสั่งคือซื้อ A notional 1 ล้าน USD และขาย B notional 1.15 ล้าน USD หรือ 23,809.52 กับ 41,071.43 หุ้นก่อน rounding.</p>
-  <p>ถ้า spread กลับถึง mean กำไรประมาณ 69,366 USD หรือ 3.23% ของ gross exposure 2.15 ล้าน USD ก่อนต้นทุน. ระยะห่างมากพอให้เข้า trade ตาม rule นี้ แต่ยังไม่รับรองว่าจะกลับจริง.</p>
-  <p>coefficient 0.95 ให้ half-life 13.51 วัน. ถ้าใช้สาม half-lives จึงตั้ง time stop ได้ราว 41 วัน.</p>
-  <p>ตรวจเองใน 10 วินาที: -0.09437 ลบ -0.02500 = -0.06937; หาร 0.03200 ได้ -2.168 ใกล้ rule เข้า trade.</p>
+  <h4>คำตอบ — เทรดคู่หุ้นจาก z-score ถึงจำนวนหุ้นที่ต้องเคาะ</h4>
+  <p>คำถาม: หุ้น A 42 USD หุ้น B 28 USD hedge ratio 1.15 spread เฉลี่ย −0.025 แกว่ง 0.032 ดึงกลับ 0.05 ต่อวัน ควรเข้าเทรดไหม ซื้อขายกี่หุ้น และคาดกำไรเท่าไรในกี่วัน?</p>
+  <p>ของที่มี: ขั้นที่ 4 ถึง 10</p>
+  <p>1. spread = 3.7377 − 1.15(3.3322) = −0.0944 และ z = −0.0694 ÷ 0.032 = −2.17 เกินเกณฑ์ 2 จึงซื้อ A และ short B</p>
+  <p>2. ซื้อ A 23,810 หุ้น มูลค่า 1.00 ล้าน USD และ short B 41,071 หุ้น มูลค่า 1.15 ล้าน USD</p>
+  <p>3. ครึ่งชีวิต ln 2 ÷ 0.05 = 13.9 วัน ถึงเส้นออกราว 29 วัน ถ้ากลับถึงค่าเฉลี่ยได้ 69,366 USD หรือ 3.23% ของ gross 2.15 ล้าน</p>
+  <p>4. ตัดขาดทุนที่ z = −4 เสีย 58,600 USD และตัดเวลาที่ 40 วัน</p>
+  <p>ตรวจเองใน 10 วินาที: −0.0944 − (−0.025) = −0.0694 และ −0.0694 ÷ 0.032 ≈ −2.17</p>
+  <p>แปลว่าอะไร: กลยุทธ์นี้กำไรเล็กบ่อย ๆ และขาดทุนก้อนใหญ่นาน ๆ ครั้ง ต้องพิสูจน์ cointegration ก่อน ตั้งจุดตัดทั้งราคาและเวลาก่อนเข้า และไม่เพิ่มขนาดเพราะ z-score ดูมั่นใจ</p>
 </section>
 
 <section class="code">
@@ -287,7 +351,8 @@ e^{-\kappa t_{1/2}}&=\tfrac12\ \Longrightarrow\ t_{1/2}=\frac{\ln 2}{\kappa}=\fr
     <summary>โค้ดตรวจ signal, sizing และ horizon</summary>
     <pre><code>import numpy as np
 pa,pb,h=42.,28.,1.15
-mu,sd,phi=-.025,.032,.95
+mu,sd,kappa=-.025,.032,.05
+phi=np.exp(-kappa)
 spread=np.log(pa)-h*np.log(pb)
 z=(spread-mu)/sd
 va=1_000_000
@@ -297,7 +362,15 @@ half=np.log(.5)/np.log(phi)
 assert abs(spread+0.0943655684)&lt;1e-9
 assert abs(z+2.1676740131)&lt;1e-9
 assert abs(profit-69_365.5684)&lt;1e-4
-assert abs(half-13.51340733)&lt;1e-8
+assert abs(half-13.86294361)&lt;1e-8 and abs(phi-.951229)&lt;1e-6
+assert round(va/pa) == 23_810 and int(vb/pb) == 41_071
+assert abs(mu-2*sd+.089)&lt;1e-12 and abs(mu-.5*sd+.041)&lt;1e-12
+from scipy.stats import norm
+assert abs(2*norm.cdf(-2)-.0455)&lt;1e-4
+assert abs(np.log(.5/abs(z))/-kappa-29.34)&lt;0.01
+assert abs(pa*np.exp(mu-spread)-45.02)&lt;0.005 and abs(pb*np.exp(-(mu-spread)/h)-26.36)&lt;0.005
+assert abs(va*(-4-z)*sd+58_634)&lt;1 and abs(profit/(va+vb)-.0323)&lt;1e-4
+assert abs(np.sqrt(.0001/(2*kappa))-.0316)&lt;1e-4
 assert abs(va/pa-23_809.5238)&lt;1e-4
 assert abs(vb/pb-41_071.4286)&lt;1e-4</code></pre>
   </details>

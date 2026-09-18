@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>นักวิเคราะห์สองคนเสนอเส้นทำนายยอดขายให้ผู้จัดการเลือกใช้กับงบลงทุนจริง: เส้นหนึ่งดูสวยกว่า แต่อีกเส้นพลาดข้อมูลแต่ละจุดน้อยกว่า; ถ้าเงินของคุณอยู่ในพอร์ตนี้ จะเลือกเส้นไหน?</p>
-  <p>เฉลย: เลือกเส้นที่ผลรวมกำลังสองของ residual ต่ำสุด ไม่ใช่เส้นที่ดูสวยที่สุด. Ordinary Least Squares (OLS) วัดระยะพลาดของทุกจุดแล้วคิดบัญชีจริง.</p>
+  <p>พอร์ตถือ AAPL \$1,000,000 มีผลตอบแทน 5 เดือนคู่กับ SPY: (2, 3.4), (−1.5, −2.8), (0.5, 0.2), (3, 5.1), (−1, −1.4)% อยาก hedge ความเสี่ยงตลาด ต้อง short SPY กี่ดอลลาร์ และเส้นนี้อธิบายความผันผวนได้กี่เปอร์เซ็นต์?</p>
+  <p>เฉลย: short SPY มูลค่า \$1,707,483 (จาก slope $\hat b = 1.7075$) และเส้นนี้มี $R^2 = 98.84\%$ อธิบายความแกว่งของ AAPL ได้เกือบทั้งหมด.</p>
 </div>
 
 <details class="jargon" open>
@@ -42,6 +42,8 @@
     <dd>การเปลี่ยนของ outcome ต่อ input เพิ่มหนึ่งหน่วย ใช้สรุป sensitivity ของเส้นที่ประมาณ</dd>
     <dt>coefficient of determination</dt>
     <dd>สัดส่วน variance ใน sample ที่ fitted values อธิบายได้ ใช้บรรยาย fit ใน sample แต่ไม่รับรองการทำนายนอก sample</dd>
+    <dt>adjusted R-squared</dt>
+    <dd>สัดส่วน variance ที่ปรับลดทอนด้วยจำนวนตัวแปร ใช้เปรียบเทียบ model ที่มีจำนวนตัวแปรต่างกันเพื่อป้องกันการใส่ตัวแปรเกิน</dd>
     <dt>sum of squared errors (SSE)</dt>
     <dd>ผลรวมกำลังสองของ residual ทุกจุด ใช้เป็น objective ที่ OLS ทำให้ต่ำที่สุดและใช้สร้างตัววัดความคลาดเคลื่อน</dd>
     <dt>covariance</dt>
@@ -76,7 +78,9 @@
       <tr><td>$n$</td><td>จำนวน observations</td><td>เดือน</td></tr>
       <tr><td>$\bar x,\bar y$</td><td>sample means ของ returns สองชุด</td><td>percentage points ต่อเดือน</td></tr>
       <tr><td>$R^2$</td><td>coefficient of determination ใน sample</td><td>unitless</td></tr>
+      <tr><td>$\bar R^2$</td><td>adjusted coefficient of determination</td><td>unitless</td></tr>
       <tr><td>$\widehat{\mathrm{SE}}(\hat b)$</td><td>standard error ของ slope estimate</td><td>unitless</td></tr>
+      <tr><td>$X, \mathbf{y}$</td><td>design matrix ขนาด $n\times 2$ และ vector ผลตอบแทน</td><td>matrix/vector</td></tr>
     </tbody>
   </table>
 </details>
@@ -127,7 +131,7 @@
 \min_{c}\ \mathbb{E}\left|Y-c\right|&\ \Rightarrow\ c=\operatorname{median}(Y)\\[4pt]
 \text{(iii)}\quad\varepsilon_i\sim\mathcal{N}\left(0,\sigma^{2}\right):\quad L&=\prod_i\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{\left(y_i-a-bx_i\right)^{2}}{2\sigma^{2}}}\\
 \ln L&=\text{const}-\frac{1}{2\sigma^{2}}\sum_i\left(y_i-a-bx_i\right)^{2}\\[4pt]
-\max\ \ln L&\iff\min\ \sum_i\left(y_i-a-bx_i\right)^{2}\end{aligned}
+\max\ \ln L&\ \Rightarrow\ \min\ \sum_i\left(y_i-a-bx_i\right)^{2}\end{aligned}
 \]</div>
   <div class="reading">
     <p>เหตุผลข้อแรกเป็นเรื่องเครื่องมือล้วน ๆ กำลังสองหา derivative ได้ทุกจุด พอตั้งให้เท่าศูนย์จะได้สมการเชิงเส้นที่แก้ได้ตรง ๆ มีคำตอบเดียว ส่วนขนาดของความคลาดเคลื่อนมีมุมแหลมตรงศูนย์ ตรงนั้นหาความชันไม่ได้</p>
@@ -146,12 +150,12 @@
 \frac{\partial\operatorname{SSE}}{\partial b}&=-2\sum_t x_t\big(y_t-a-bx_t\big)=0\\
 \text{substitute }a=\bar y-b\bar x:\quad\sum_t x_t\big[(y_t-\bar y)-b(x_t-\bar x)\big]&=0\\
 \sum_t(x_t-\bar x)(y_t-\bar y)&=b\sum_t(x_t-\bar x)^{2}\\
-\hat b&=\frac{\sum_t(x_t-\bar x)(y_t-\bar y)}{\sum_t(x_t-\bar x)^{2}}\end{aligned}
+\hat b&=\frac{\sum_t(x_t-\bar x)(y_t-\bar y)}{\sum_t(x_t-\bar x)^{2}}=\frac{\operatorname{Cov}(x,y)}{\operatorname{Var}(x)}=\rho_{xy}\frac{\sigma_y}{\sigma_x}\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความพลาดรวมเป็นชามโค้งขึ้น จุดต่ำสุดจึงอยู่ที่พื้นราบ หา derivative เทียบระดับของเส้นแล้วตั้งเป็นศูนย์ สิ่งที่ได้อ่านความหมายได้ทันที ผลรวมของความพลาดต้องเป็นศูนย์ แปลว่าเส้นต้องผ่านจุดค่าเฉลี่ยพอดี</p>
     <p>ทำอย่างเดียวกันกับความชัน แล้วแทนผลข้างบนลงไป ทุกอย่างจึงอยู่ในรูประยะห่างจากค่าเฉลี่ย ซึ่งเป็นรูปที่อ่านง่ายที่สุด ย้ายพจน์ที่มีความชันไปฝั่งเดียวแล้วหาร</p>
-    <p>อ่านผลสุดท้าย ตัวเศษคือการเคลื่อนไหวร่วมของสองชุด ตัวส่วนคือการเคลื่อนไหวของตัวที่ใช้ทำนาย ความชันจึงตอบคำถามเดียวว่า เวลาตัวทำนายขยับหนึ่งหน่วย อีกตัวขยับตามเท่าไร</p>
+    <p>อ่านผลสุดท้าย ตัวเศษคือ covariance และตัวส่วนคือ variance ของตัวทำนาย จึงเขียนเป็น correlation คูณอัตราส่วนความผันผวนได้ ตรงกับสูตร conditional expectation ในหัวข้อ 7.4 เป๊ะ ๆ</p>
   </div>
 </section>
 
@@ -237,12 +241,20 @@ S_{yy}&=6.25+13.69+0.49+17.64+5.29=43.36\end{aligned}
   <h4>ขั้นที่ 9 — ตรวจ SSE ด้วยการคำนวณ residual ทีละเดือน</h4>
   <p>ทางลัด SST − SSR ให้ SSE แต่วิธีตรง ๆ คือคำนวณค่าทำนายทั้งห้าเดือน ลบของจริง ยกกำลังสอง แล้วบวก ทำเองสักครั้งจะได้เห็นว่าเดือนไหนพลาดมาก</p>
   <div class="math">\[
-\begin{aligned}\hat y_1&=-0.1245+1.7075(2.0)=3.2905,\quad e_1=3.4-(3.2905)=0.1095,\quad e_1^2=0.0120\\
-\hat y_2&=-0.1245+1.7075(-1.5)=-2.6857,\quad e_2=-2.8-(-2.6857)=-0.1143,\quad e_2^2=0.0131\\
-\hat y_3&=-0.1245+1.7075(0.5)=0.7293,\quad e_3=0.2-(0.7293)=-0.5293,\quad e_3^2=0.2801\\
-\hat y_4&=-0.1245+1.7075(3.0)=4.9980,\quad e_4=5.1-(4.9980)=0.1020,\quad e_4^2=0.0104\\
-\hat y_5&=-0.1245+1.7075(-1.0)=-1.8320,\quad e_5=-1.4-(-1.8320)=0.4320,\quad e_5^2=0.1866\\
-\sum e_t&=0.0000,\quad \sum e_t^2=0.0120+0.0131+0.2801+0.0104+0.1866=0.5022\end{aligned}
+\begin{aligned}
+\hat y_1&=-0.1245+1.7075(2.0)=3.2905\\
+e_1&=3.4-3.2905=0.1095,\quad e_1^2=0.0120\\[3pt]
+\hat y_2&=-0.1245+1.7075(-1.5)=-2.6857\\
+e_2&=-2.8-(-2.6857)=-0.1143,\quad e_2^2=0.0131\\[3pt]
+\hat y_3&=-0.1245+1.7075(0.5)=0.7293\\
+e_3&=0.2-0.7293=-0.5293,\quad e_3^2=0.2801\\[3pt]
+\hat y_4&=-0.1245+1.7075(3.0)=4.9980\\
+e_4&=5.1-4.9980=0.1020,\quad e_4^2=0.0104\\[3pt]
+\hat y_5&=-0.1245+1.7075(-1.0)=-1.8320\\
+e_5&=-1.4-(-1.8320)=0.4320,\quad e_5^2=0.1866\\[3pt]
+\sum e_t&=0.0000\\
+\mathrm{SSE}&=\sum e_t^2=0.5022
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าทำนายแต่ละเดือนคือ intercept บวก slope คูณ SPY ของเดือนนั้น residual คือของจริงลบค่าทำนาย ยกกำลังสองแล้วบวก ได้ 0.5022 ตรงกับทางลัดในขั้นก่อน</p>
@@ -255,12 +267,53 @@ S_{yy}&=6.25+13.69+0.49+17.64+5.29=43.36\end{aligned}
   <h4>ขั้นที่ 10 — แปลง SSE เป็นความไม่แน่นอนของ slope</h4>
   <p>หาร SSE ด้วย degrees of freedom ก่อน แล้วถอดราก จึงได้ขนาดความผิดพลาดต่อเดือน จากนั้นจึงเทียบกับความกว้างของ $x$</p>
   <div class="math">\[
-\hat\sigma_e=\sqrt{\frac{0.5022}{5-2}}=\sqrt{0.1674}=0.4091,\qquad \widehat{\mathrm{SE}}(\hat b)=\frac{0.4091}{\sqrt{14.70}}=\frac{0.4091}{3.8341}=0.1067,\qquad R^2=1-\frac{0.5022}{43.36}=0.9884
+\begin{aligned}
+s_e&=\sqrt{\frac{\mathrm{SSE}}{n-2}}=\sqrt{\frac{0.5022}{5-2}}=\sqrt{0.1674}=0.4091\\
+\widehat{\mathrm{SE}}(\hat b)&=\frac{s_e}{\sqrt{S_{xx}}}=\frac{0.4091}{\sqrt{14.70}}=\frac{0.4091}{3.8341}=0.1067\\
+t_{\hat b}&=\frac{\hat b}{\widehat{\mathrm{SE}}(\hat b)}=\frac{1.7075}{0.1067}=16.00
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>degrees of freedom คือ 5 จุดลบ 2 ตัวที่เราประมาณ เหลือ 3 ยิ่ง $x$ กระจายกว้าง ตัวส่วนยิ่งใหญ่ และ standard error ของ slope ยิ่งเล็ก ตัวอย่างนี้เล็กมาก จึงใช้ฝึกคำนวณ ไม่ใช่ยืนยัน model</p>
-    <p>มาจากไหน: $\hat b=\sum(x_t-\bar x)y_t/S_{xx}$ คือผลบวกถ่วงน้ำหนักของ $y$ แต่ละตัว น้ำหนักคือ $(x_t-\bar x)/S_{xx}$ ถ้าแต่ละ $y$ แกว่ง $\sigma_e$ อย่างอิสระ variance ของผลบวกคือ $\sigma_e^2\sum(x_t-\bar x)^2/S_{xx}^2=\sigma_e^2/S_{xx}$ (หัวข้อ 6.5) ถอดรากได้สูตร</p>
-    <p>ใช้ทำอะไร: $1.7075/0.1067=16.0$ คือ slope ห่างจากศูนย์ 16 standard errors (ห่างจาก 1 อยู่ 6.6) กับ 3 degrees of freedom ตาราง Student t ของหัวข้อ 14.4 ให้เกณฑ์ 3.18 จึงถือว่าห่างมาก แต่ตัวเลขนี้ยังมาจากห้าจุดเท่านั้น</p>
+    <p>degrees of freedom คือ 5 จุดลบ 2 ตัวที่เราประมาณ เหลือ 3 ได้ค่าความผิดพลาดต่อเดือน $s_e = 0.4091$ percentage points ต่อเดือน</p>
+    <p>standard error ของ slope ได้ 0.1067 มาจาก variance ของ residual เทียบกับความกว้าง $S_{xx}$</p>
+    <p>t-statistic เท่ากับ 16.00 แปลว่า slope ห่างจากศูนย์ถึง 16 standard errors ชี้ว่าความชันมีนัยสำคัญสูงมากใน sample 5 จุดนี้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — สัดส่วน variance ที่อธิบายได้และ Adjusted R²</h4>
+  <p>คำนวณ $R^2$ จากสัดส่วน variance พร้อมทั้งลงโทษการเพิ่มตัวแปรด้วย adjusted $R^2$</p>
+  <div class="math">\[
+\begin{aligned}
+R^2&=1-\frac{\mathrm{SSE}}{\mathrm{SST}}=1-\frac{0.5022}{43.36}=0.9884\\
+\rho_{xy}^2&=\left(\frac{25.10}{\sqrt{14.70\times 43.36}}\right)^2=0.9884\\
+\bar R^2&=1-(1-R^2)\frac{n-1}{n-k-1}\\
+&=1-(1-0.9884)\frac{5-1}{5-1-1}=0.9846
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$R^2$ เท่ากับ 0.9884 แปลว่าเส้น OLS อธิบาย variance ของ AAPL ได้ถึง 98.84% ในกลุ่มตัวอย่าง</p>
+    <p>ในกรณีตัวแปรเดี่ยว $R^2$ มีค่าเท่ากับ correlation ยกกำลังสอง $\rho_{xy}^2$ เสมอ</p>
+    <p>adjusted $R^2$ คำนวณได้ 0.9846 โดยปรับลดลงเล็กน้อยตามสัดส่วน degrees of freedom ที่เหลือ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — แก้ normal equations ในรูป matrix</h4>
+  <p>เขียนสมการ OLS ในรูป vector และ matrix เพื่อรองรับกรณีที่มีตัวแปรอธิบายหลายตัว</p>
+  <div class="math">\[
+\begin{aligned}
+\hat{\boldsymbol\beta}&=(X^\top X)^{-1}X^\top\mathbf{y}\\
+X^\top X&=\begin{pmatrix} 5 & 3.0 \\ 3.0 & 16.5 \end{pmatrix}\\
+(X^\top X)^{-1}&=\frac{1}{73.5}\begin{pmatrix} 16.5 & -3.0 \\ -3.0 & 5.0 \end{pmatrix}\\
+X^\top\mathbf{y}&=\begin{pmatrix} 4.5 \\ 27.8 \end{pmatrix}\\
+\hat{\boldsymbol\beta}&=\begin{pmatrix} -0.1245 \\ 1.7075 \end{pmatrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>matrix $X$ มีคอลัมน์แรกเป็น 1 สำหรับ intercept และคอลัมน์สองเป็นผลตอบแทน SPY</p>
+    <p>matrix $X^\top X$ ขนาด 2×2 มี determinant เท่ากับ 73.5 จึงหา inverse ได้แน่นอน</p>
+    <p>ผลลัพธ์ vector $\hat{\boldsymbol\beta}$ ให้ intercept −0.1245 และ slope 1.7075 เท่ากับสูตร scalar ทุกประการ</p>
   </div>
 </section>
 
@@ -311,27 +364,37 @@ S_{yy}&=6.25+13.69+0.49+17.64+5.29=43.36\end{aligned}
 
 <section class="example">
   <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: ข้อมูล SPY และ AAPL ห้าเดือนให้ $\hat b=1.7075$ และ $\hat a=-0.1245$ percentage points ต่อเดือน ค่า fitted เดือนแรกคือ 3.2905 percentage points และ residual คือ 0.1095 percentage points. ทำครบห้าเดือนได้ SSE 0.5022 และ $R^2=0.9884$ หากนำ point estimate ไปใช้ชั่วคราว AAPL position 1 ล้าน USD จะชี้ไปยัง SPY hedge 1,707,483 USD แต่เหลือ degrees of freedom เพียงสาม จึงยังไม่ควรส่ง order จริง; ต้องเพิ่ม history, ตรวจ residual, corporate actions และ timestamp alignment ก่อน</p>
-  <p>ตรวจเองใน 10 วินาที: USD 1,707,483 หาร USD 1,000,000 ต้องได้ beta 1.707483 ใกล้ 1.7075; ถ้าทิศ hedge ไม่เป็น short SPY แปลว่า sign ผิด.</p>
+  <p>คำถาม: พอร์ตถือ AAPL \$1,000,000 อยาก hedge ความเสี่ยงตลาดด้วย SPY ต้อง short กี่ดอลลาร์ และเส้น OLS อธิบายความผันผวนได้กี่เปอร์เซ็นต์</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 12): ผลตอบแทน 5 เดือนคู่กัน ได้ slope 1.7075, intercept −0.1245 percentage points ต่อเดือน, R² เท่ากับ 0.9884 และ adjusted R² เท่ากับ 0.9846</p>
+  <p>คำตอบ: (1) short SPY มูลค่า \$1,707,483 เพื่อชดเชย market risk (2) เส้น OLS อธิบายความผันผวนของ AAPL ได้ 98.84% (หรือ 98.46% เมื่อปรับลดทอนด้วย degrees of freedom)</p>
+  <p>ตรวจเองใน 10 วินาที: \$1,707,483 หาร \$1,000,000 ได้ 1.7075 เท่ากับ slope พอดี; และ correlation กำลังสองเท่ากับ 0.9884 ตรงกับ R²</p>
+  <p>แปลว่าอะไรบนโต๊ะเทรด: แม้ R² จะสูงถึง 98.84% แต่ข้อมูลมีเพียง 5 เดือน (n = 5) ซึ่งเหลือ degrees of freedom แค่ 3 จุด ตัวเลขนี้จึงใช้ฝึกคำนวณเท่านั้น ในการเทรดจริงต้องใช้ข้อมูลอย่างน้อย 1-2 ปี ตรวจสอบ residual และระวัง regime shift</p>
 </section>
 
 <section class="code">
   <details>
     <summary>โค้ดตรวจเลขและ invariant</summary>
     <pre><code>import numpy as np
-x=np.array([2.0,-1.5,0.5,3.0,-1.0])
-y=np.array([3.4,-2.8,0.2,5.1,-1.4])
-b=((x-x.mean())*(y-y.mean())).sum()/((x-x.mean())**2).sum()
-a=y.mean()-b*x.mean()
-e=y-(a+b*x)
-r2=1-(e@e)/((y-y.mean())@(y-y.mean()))
-assert abs(b-1.7074829932)&lt;1e-9
-assert abs(a+0.1244897959)&lt;1e-9
-assert abs((e@e)-0.5021768707)&lt;1e-9
-assert abs(r2-0.9884184301)&lt;1e-9</code></pre>
+x = np.array([2.0, -1.5, 0.5, 3.0, -1.0])
+y = np.array([3.4, -2.8, 0.2, 5.1, -1.4])
+b = ((x - x.mean()) * (y - y.mean())).sum() / ((x - x.mean())**2).sum()
+a = y.mean() - b * x.mean()
+e = y - (a + b * x)
+sse = e @ e
+sst = ((y - y.mean()) @ (y - y.mean()))
+r2 = 1 - sse / sst
+adj_r2 = 1 - (1 - r2) * (len(x) - 1) / (len(x) - 1 - 1)
+X = np.column_stack([np.ones(len(x)), x])
+beta = np.linalg.inv(X.T @ X) @ X.T @ y
+assert abs(b - 1.7074829932) &lt; 1e-9
+assert abs(a + 0.1244897959) &lt; 1e-9
+assert abs(sse - 0.5021768707) &lt; 1e-9
+assert abs(r2 - 0.9884184301) &lt; 1e-9
+assert abs(adj_r2 - 0.9845579068) &lt; 1e-9
+assert np.allclose(beta, [a, b])</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดนี้ตรวจ slope, intercept, SSE และ $R^2$ จากข้อมูลชุดเดียวกับสมการ รวมทั้งบังคับให้เส้นผ่านจุดค่าเฉลี่ย; ในงานจริงต้องเก็บ adjustment policy และวันที่ข้อมูลพร้อมใช้ร่วมกับผลลัพธ์</p>
+    <p>โค้ดนี้ตรวจ slope, intercept, SSE, $R^2$, adjusted $R^2$ และ matrix form ยืนยันว่าทุกค่าตรงกับสมการ</p>
   </div>
 </section>
 
