@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>พัสดุหนึ่งกล่องต้องผ่านคนรับของ ศูนย์คัดแยก และรถส่ง. ปลายทางเดิม แต่เวลาและทางที่ผ่านเปลี่ยนผลลัพธ์ได้. คำสั่งซื้อขายก็เหมือนกัน. ถ้าซื้อ 50,000 หน่วย เส้นทางจะมีผลต่อราคาไหม?</p>
-  <p>เฉลย: มี—fill แพงขึ้น 0.0248 USD ต่อหน่วยทำให้ต้นทุนเพิ่ม 1,240 USD. market structure คือกติกาและผู้เล่นที่พา order ไปสู่การซื้อขาย. broker รับและส่งคำสั่ง; exchange จับคู่ตามกติกา. order ไม่ได้เปลี่ยนหน้าเมื่อผ่านหลายระบบ แต่มันทิ้งรอยนิ้วมือไว้ทุกจุด.</p>
+  <p>ซื้อ MSFT 50,000 หุ้นที่ราคาตัดสินใจ 410.00 USD ได้ที่ exchange A 30,000 หุ้นราคา 410.03 fee 0.002 และ dealer B 20,000 หุ้นราคา 410.01 fee 0.004 ต้นทุนการส่งคำสั่งเท่าไร?</p>
+  <p>เฉลย: 960 + 280 = 1,240 USD หรือ 0.0248 USD ต่อหุ้น alpha ที่คาดไว้ 16,400 USD จึงเหลือ 15,160 USD ทางที่ fee ต่ำกว่ากลับแพงกว่า เพราะราคาที่ได้แย่กว่า</p>
 </div>
 
 <details class="jargon" open>
@@ -98,7 +98,7 @@
 
 <section class="prose">
   <h4>หนึ่ง order มีหลายชั้นของ market design</h4>
-  <p>พัสดุหนึ่งกล่องมีคนรับของ ศูนย์คัดแยก และรถส่ง. order ก็มีเส้นทางเช่นกัน: ผลลัพธ์ไม่ได้ขึ้นกับราคาที่เห็นอย่างเดียว แต่ขึ้นกับว่าไปถึงใคร เมื่อไร และถูกจับคู่ตรงไหน.</p>
+  <p>order มีเส้นทาง: ผลลัพธ์ไม่ได้ขึ้นกับราคาที่เห็นอย่างเดียว แต่ขึ้นกับว่าไปถึงใคร เมื่อไร และถูกจับคู่ตรงไหน.</p>
   <p>exchange ตั้งกติกาและลำดับจับคู่. broker รับคำสั่งลูกค้าแล้วส่งต่อ. dealer หรือ market maker อาจรับเป็นคู่สัญญาเอง; alternative trading system (ATS) คือ venue เพิ่มอีกแห่ง.</p>
   <p>National Best Bid and Offer (NBBO) คือภาพ bid และ ask ที่ดีที่สุดจากหลาย venue ไม่ใช่สัญญาว่าคุณจะได้ fill ราคานั้น. quote อาจถูกคนอื่นรับไปก่อน หรือคิวของคุณอยู่ด้านหลัง.</p>
   <p>เก็บเวลาเริ่มตัดสินใจ, เวลาส่ง, fill, cancel และ fee ให้ตามรอยได้. latency กับ queue position เป็นส่วนของผลลัพธ์จริง ไม่ใช่ footnote.</p>
@@ -173,12 +173,54 @@ V_{\mathrm{actual}}&=\sum_{k=1}^m q_k(P_T-P_{f,k})-\sum_{k=1}^m q_k c_v\\
 </section>
 
 <section class="example">
-  <h4>worked example — broker routing และ TCA</h4>
-  <p>ของที่มี: ซื้อ MSFT 50,000 shares ที่ arrival 410.00 USD/share; Exchange A fill 30,000 ที่ 410.03 fee 0.002, dealer B fill 20,000 ที่ 410.01 fee 0.004 USD/share.</p>
-  <p>ถามว่า routing นี้กิน alpha เท่าไร?</p>
-  <p>คำตอบ: implementation shortfall 1,240 USD หรือ 0.0248 USD/share; gross alpha 16,400 USD เหลือ net 15,160 USD.</p>
-  <p>ตรวจเองใน 10 วินาที: 960+280 ต้องเท่ากับ 1,240.</p>
-  <p>เอาไปใช้จริง: TCA เปรียบเทียบ fill, fee, latency และ adverse move ต่อ venue แทนเลือกทางที่ fee ป้ายต่ำสุด.</p>
+  <h4>คำตอบ — ส่งคำสั่ง MSFT สองทาง แล้ววัด implementation shortfall</h4>
+  <p>คำถาม: ซื้อ MSFT 50,000 หุ้นที่ราคาตัดสินใจ 410.00 USD ได้ที่ A 30,000 หุ้นราคา 410.03 fee 0.002 และที่ B 20,000 หุ้นราคา 410.01 fee 0.004 ต้นทุนการส่งคำสั่งเท่าไร และกิน alpha 8 bp ไปเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 และส่วนคำนวณแต่ละ venue</p>
+  <p>1. A: 30,000 × (0.03 + 0.002) = 960 USD หรือ 0.032 USD ต่อหุ้น</p>
+  <p>2. B: 20,000 × (0.01 + 0.004) = 280 USD หรือ 0.014 USD ต่อหุ้น</p>
+  <p>3. รวม 1,240 USD หรือ 0.0248 USD ต่อหุ้น alpha 50,000 × 410 × 0.0008 = 16,400 USD เหลือ 15,160 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 960 + 280 = 1,240 และ 1,240 ÷ 50,000 = 0.0248</p>
+  <p>แปลว่าอะไร: เลือก venue จาก fee ที่ติดป้ายไม่ได้ A มี fee ต่ำกว่าแต่ต้นทุนรวมต่อหุ้นสูงกว่าเกินสองเท่า transaction-cost analysis ต้องเทียบราคาที่ได้ fee latency และราคาที่วิ่งสวนหลัง fill ทุก venue</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ shortfall, ETF creation, IPO allocation, short sale และ option เทียบหุ้น</summary>
+    <pre><code>import numpy as np
+isA = 30_000 * (410.03 - 410.00 + 0.002)
+isB = 20_000 * (410.01 - 410.00 + 0.004)
+assert abs(isA - 960) &lt; 1e-6 and abs(isB - 280) &lt; 1e-6
+assert abs((isA + isB) / 50_000 - 0.0248) &lt; 1e-9
+alpha = 50_000 * 410 * 0.0008
+assert abs(alpha - 16_400) &lt; 1e-6 and abs(alpha - isA - isB - 15_160) &lt; 1e-6
+
+N = 10_000                                                 # ETF creation arbitrage
+assert abs(N * (101.20 - 100.00) - 12_000) &lt; 1e-6 and abs(N * (0.20 + 0.35) - 5_500) &lt; 1e-6
+assert abs(N * (100.90 - 100.00) - N * 0.55 - 3_500) &lt; 1e-6
+
+assert abs(1_000 * (23 - 20 - 0.10) - 100 - 2_800) &lt; 1e-9            # IPO
+assert abs(0.2 * 2_800 + 0.8 * (-100) - 480) &lt; 1e-9
+assert abs(1_000 * (0.5 * 0.10 * 6 + 0.5 * 1.0 * (-4)) - 100 + 1_800) &lt; 1e-9
+
+gross = 20_000 * (30 - 27)                                  # short sale with a hard borrow
+fee = 20_000 * 30 * 0.36 * 30 / 365
+assert gross == 60_000 and abs(fee - 17_753.42) &lt; 0.01
+assert abs(gross - fee - 1_600 - 40_646.58) &lt; 0.01
+assert abs(-20_000 * 2 - fee - 1_600 + 59_353.42) &lt; 0.01
+
+S0, u, R, K = 100.0, 1.05, 1.02, 100.0                      # option vs stock, one period
+Su, Sd = S0 * u, S0 / u
+x = (max(Su - K, 0) - max(Sd - K, 0)) / (Su - Sd)
+y = -x * Sd / R
+C0 = S0 * x + y
+assert abs(x - 0.5122) &lt; 1e-4 and abs(y + 47.824) &lt; 1e-3 and abs(C0 - 3.3955) &lt; 1e-4
+assert abs(S0 * x - 93.3706816) &gt; 40                         # the source's y cannot give 3.3955
+for stock_T, call_T in ((Su, 5.0), (Sd, 0.0)):
+    assert abs((call_T - C0 * R) - x * (stock_T - S0 * R)) &lt; 1e-9</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจ shortfall 1,240 USD ของสอง venue กำไร creation arbitrage 6,500 และ 3,500 USD expected value ของ IPO 480 และ −1,800 USD บัญชี short ที่ค่ายืม 36% ต่อปี และตัวอย่าง option เทียบหุ้นที่ได้กำไรสุทธิเท่ากันทุกทาง</p>
+  </div>
 </section>
 
 <section class="prose">
@@ -393,6 +435,36 @@ p_{\mathrm{alloc}}(B)&=\min\left(1,\frac{S}{D_{\mathrm{uninformed}}}\right)=1\\
 <section class="example">
   <h4>worked example — short sale ที่ดูดีแต่ fee กิน edge</h4>
   <p>กองทุน short 20,000 shares ของ GME ที่ 30.00 USD/share และตั้งใจซื้อคืนที่ 27.00 ภายใน 30/365 ปี. Gross trading profit คือ 60,000 USD. Borrow fee 36% ต่อปีบนมูลค่า short 600,000 USD เป็น 17,753.42 USD และ round-trip trading cost 1,600 USD. ถ้า recall บังคับ buy-in ที่ 32.00 USD trading loss เป็น 40,000 USD; รวม fee และ cost ขาดทุน 59,353.42 USD. แม้ base case เหลือกำไร 40,646.58 USD แต่ต้องมี locate status, borrow utilisation และ squeeze stress</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ทำไมซื้อ option แทนหุ้น ทั้งที่หุ้นดูได้มากกว่า</h4>
+  <p>หุ้นราคา 100 USD พรุ่งนี้เป็น 105 หรือ 95.238 ดอกเบี้ยช่วงนี้ 2% call strike 100 ราคายุติธรรม 3.3955 USD ถ้าหุ้นขึ้น ถือหุ้นได้ 5 แต่ถือ call ได้แค่ 5 − 3.3955 = 1.6045 แล้วจะซื้อ option ทำไม?</p>
+  <div class="math">\[
+\begin{aligned}
+\text{up}&:\ 105x+1.02y=5\\
+\text{down}&:\ 95.238x+1.02y=0\\
+x&=\frac{5}{9.762}=0.5122\\
+1.02y&=-95.238(0.5122)\\
+y&=-47.824\\
+C_0&=100x+y=3.3955\\[4pt]
+C_0R&=3.3955(1.02)=3.4634\\
+S_0R&=100(1.02)=102\\[4pt]
+\text{call up}&=5-3.4634=1.5366\\
+\text{call down}&=0-3.4634=-3.4634\\
+\text{stock up}&=0.5122(105-102)\\
+&=1.5366\\
+\text{stock down}&=0.5122(95.238-102)\\
+&=-3.4634
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เทียบให้ถูกต้องเทียบของที่เสี่ยงเท่ากัน call หนึ่งตัวเท่ากับถือหุ้น 0.5122 หุ้นแล้วกู้ 47.824 USD ตามหัวข้อ 13.1 เงินที่จ่ายวันนี้ถ้าฝากไว้จะโตเป็น $C_0R$ หรือ $S_0R$ จึงต้องหักออกก่อน stock ในสี่บรรทัดท้ายคือหุ้น 0.5122 หุ้น กำไรสุทธิจึงเท่ากันทุกทาง ขาขึ้นได้ 1.5366 ขาลงเสีย 3.4634 ทั้งสองแบบ</p>
+    <p>แบบจำลองนี้จึงไม่ได้บอกว่าหุ้นหรือ option ดีกว่า ส่วน 5 กับ 1.6045 เอาของที่เสี่ยงไม่เท่ากันมาเทียบ และลืมดอกเบี้ย</p>
+    <p>เอกสารต้นทางพิมพ์เงินสดของพอร์ตทำซ้ำเป็น −93.37 ซึ่งแทนแล้วไม่ได้ 3.3955 ค่าที่แก้สมการสองบรรทัดได้คือ −47.824</p>
+    <p>เหตุผลที่คนเลือก option จึงไม่ใช่กำไรที่มากกว่า แต่เป็นสามเรื่อง ใช้เก็งกำไรได้เหมือนหุ้น ซื้อ put แทนการ short ซึ่งรายย่อยทำได้ยากและต้องปิดเร็ว และใช้เงินน้อย หุ้นต้องจ่าย 100 USD แต่ call จ่ายแค่ 3.40 USD ซึ่งก็คืออัตราทดนั่นเอง</p>
+    <p>สังเกตว่าไม่มีบรรทัดไหนใช้โอกาสที่หุ้นจะขึ้น คนที่คิดว่าขึ้นแน่กับคนที่คิดว่าลงแน่ได้ราคา 3.3955 เท่ากัน ส่วนหุ้นยังนิยมกว่า เพราะเข้าใจง่ายเหมือนซื้อของหนึ่งชิ้น option ต้องเข้าใจ strike วันหมดอายุ และการตั้งราคา</p>
+  </div>
 </section>
 
 <section class="pitfall">

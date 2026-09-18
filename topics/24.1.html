@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>เห็นคูปองลดราคา 10 USD แล้วรีบไปซื้อ แต่ค่าเดินทาง 12 USD. คูปองยังเป็นกำไรอยู่ไหม?</p>
-  <p>เฉลย: ไม่ใช่—เหลือ -2 USD. เห็นข้อมูลถูกต้องยังไม่พอ ต้องซื้อขายได้ทันและถูกพอ.</p>
-  <p>market efficiency คือแนวคิดว่าราคาดูดข้อมูลที่ใช้ได้เร็ว. limits to arbitrage คือรั้วจากต้นทุน ความเสี่ยง และเงินทุนที่ทำให้คนแก้ราคาผิดได้ไม่ทัน. edge หลังรั้วค่าใช้จ่ายไม่ใช่ edge แต่เป็นแมวที่มองเห็นแต่จับไม่ได้.</p>
+  <p>หุ้นคู่หนึ่งซื้อได้ 50.00 และ short ได้ 50.80 USD จำนวน 10,000 หุ้น ส่วนต่างบนจอ 8,000 USD หลังหักค่าเข้าออก ค่ายืมหุ้น 10 วัน และขาดทุนจากช่องว่างราคา เหลือจริงเท่าไร?</p>
+  <p>เฉลย: 8,000 − 1,200 − 2,000 − 3,500 = 1,300 USD หรือ 1.3% ของทุนที่เสี่ยง ส่วนต่างที่เห็นไม่ใช่กำไร ราคาที่ผิดจึงอยู่ได้นาน เพราะการแก้มันมีต้นทุนและความเสี่ยง</p>
 </div>
 
 <details class="jargon" open>
@@ -97,11 +96,15 @@
   <h4>ขั้นที่ 1 — นิยาม return และข้อมูลที่อนุญาต</h4>
   <p>ขั้นแรกต้องกำหนด horizon เช่น 5 นาทีหรือ 1 วัน ไม่ควรผสมกัน เพราะ spread และ volatility มีหน่วยเวลาไม่เหมือนกัน</p>
   <div class="math">\[
-R_{t+1}=\frac{P_{t+1}-P_t}{P_t},\qquad R^{adj}_{t+1}=R_{t+1}-R^{benchmark}_{t+1}-c_{t+1},\quad\mathbb{E}[R^{adj}_{t+1}\mid I_t]=0\ \text{under the null}
+\begin{aligned}
+R_{t+1}&=\frac{P_{t+1}-P_t}{P_t}\\
+R^{adj}_{t+1}&=R_{t+1}-R^{bench}_{t+1}-c_{t+1}\\
+H_0&:\ \mathbb{E}[R^{adj}_{t+1}\mid I_t]=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$P_t$ และ $P_{t+1}$ คือ USD/share ก่อนและหลัง horizon เดียวกัน ส่วน $R_{t+1}$ เป็น fraction ไม่ใช่ USD; $I_t$ คือข้อมูลที่ใช้ได้ ณ เวลา trade</p>
-    <p>ส่วน adjusted return หัก benchmark ที่เหมาะกับ risk และต้นทุน c ใน horizon เดียวกัน; เงื่อนไขค่าเฉลี่ยศูนย์เป็น null ที่บอกว่า signal จาก $I_t$ ไม่ทำนาย return ส่วนเกินหลังปรับ risk กับ cost ได้</p>
+    <p>ส่วน adjusted return หัก benchmark ที่เหมาะกับ risk และต้นทุน c ใน horizon เดียวกัน; เงื่อนไขค่าเฉลี่ยศูนย์ใน $H_0$ เป็น null ที่บอกว่า signal จาก $I_t$ ไม่ทำนาย return ส่วนเกินหลังปรับ risk กับ cost ได้</p>
   </div>
 </section>
 
@@ -123,7 +126,10 @@ R_{t+1}=\frac{P_{t+1}-P_t}{P_t},\qquad R^{adj}_{t+1}=R_{t+1}-R^{benchmark}_{t+1}
   <h4>ขั้นที่ 2 — แยก expected return, risk premium และ alpha</h4>
   <p>ถ้า strategy long NVDA ทุกครั้งที่ตลาดขึ้น มันอาจได้ผลตอบแทนดีเพราะ beta สูง ไม่ใช่เพราะมี alpha ดังนั้น control ต้อง regress หรือ neutralize exposure ก่อน</p>
   <div class="math">\[
-R_{t+1}=\beta R^M_{t+1}+\alpha_{t+1}+\varepsilon_{t+1},\qquad \mathbb{E}[\alpha_{t+1}\mid I_t]=0\ \text{under EMH}
+\begin{aligned}
+R_{t+1}&=\beta R^M_{t+1}+\alpha_{t+1}+\varepsilon_{t+1}\\
+H_0\ (\text{EMH})&:\ \mathbb{E}[\alpha_{t+1}\mid I_t]=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใส่ return ของ market benchmark $R^M$ และน้ำหนักที่ strategy ขยับตามตลาด $\beta$ เข้าไปก่อน. ส่วนนี้คือผลตอบแทนที่มาจากการถือ market exposure ธรรมดา</p>
@@ -138,9 +144,7 @@ R_{t+1}=\beta R^M_{t+1}+\alpha_{t+1}+\varepsilon_{t+1},\qquad \mathbb{E}[\alpha_
   <div class="math">\[
 \begin{aligned}r_t&=\mathbb{E}_{t-1}^{M}\left[r_t\right]+\alpha+\varepsilon_t\\[4pt]
 \hat{\alpha}&=\bar{r}-\mathbb{E}^{M}\left[r\right]\\[4pt]
-H_0&:\ \alpha=0\ \text{under model }M\\[4pt]
-\text{reject }H_0\ \Longrightarrow\ &\left(\text{market inefficient}\right)\ \text{or}\ \left(M\ \text{wrong}\right)\\[4pt]
-&\text{the data cannot separate them}\end{aligned}
+H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
 \]</div>
   <div class="reading">
     <p>ดูบรรทัดที่สอง ค่าที่วัดได้จริงมีแค่ผลตอบแทนที่เกิดขึ้น ส่วนผลตอบแทนที่ควรจะเป็น ไม่มีใครเห็น มันมาจากแบบจำลองที่เราเลือกใส่เข้าไปเอง</p>
@@ -184,12 +188,14 @@ H_0&:\ \alpha=0\ \text{under model }M\\[4pt]
 </section>
 
 <section class="example">
-  <h4>worked example — pair trade ในหุ้นสหรัฐฯ</h4>
-  <p>ของที่มี: buy 50.00, short 50.80 USD/share, $Q=10,000$, spread/fee 0.12 USD/share, borrow plus funding 0.020 USD/share/day นาน 10 วัน และ gap loss 3,500 USD.</p>
-  <p>ถามว่า trade นี้เหลือเงินจริงเท่าไร?</p>
-  <p>คำตอบ: gross discrepancy 8,000 USD หัก execution 1,200, carrying 2,000 และ gap 3,500 เหลือกำไร 1,300 USD หรือ 1.30% ของ capital-at-risk 100,000 USD.</p>
-  <p>ตรวจเองใน 10 วินาที: 8,000-1,200-2,000-3,500=1,300.</p>
-  <p>เอาไปใช้จริง: quant ต้องมี borrow check และ stop-out ก่อนเปิด position เพราะ headline spread ไม่ใช่ P&amp;L.</p>
+  <h4>คำตอบ — pair trade ที่ส่วนต่างบนจอไม่ใช่กำไร</h4>
+  <p>คำถาม: ซื้อหุ้นได้ 50.00 short ได้ 50.80 USD จำนวน 10,000 หุ้น ค่าเข้าออกรวม 0.12 USD ต่อหุ้น ค่ายืมหุ้นและเงินทุน 0.020 USD ต่อหุ้นต่อวัน นาน 10 วัน และขาดทุนจากช่องว่างราคา 3,500 USD เหลือจริงเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 3</p>
+  <p>1. ส่วนต่างบนจอ 10,000 × 0.80 = 8,000 USD</p>
+  <p>2. ค่าเข้าออก 10,000 × 0.12 = 1,200 USD และค่าถือ 10,000 × 0.020 × 10 = 2,000 USD</p>
+  <p>3. เหลือ 8,000 − 1,200 − 2,000 − 3,500 = 1,300 USD หรือ 1.30% ของทุนที่เสี่ยง 100,000 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 8,000 − 1,200 − 2,000 − 3,500 = 1,300</p>
+  <p>แปลว่าอะไร: ก่อนเปิดสถานะต้องตรวจว่ายืมหุ้นได้ และตั้งจุดตัดขาดทุนไว้ก่อน เพราะส่วนต่างที่เห็นบนจอคือรายได้ก่อนหักต้นทุน ถ้าราคาถ่างออกต่อ margin call มาก่อนที่ความคิดจะถูก</p>
 </section>
 
 <figure class="plot">
@@ -226,7 +232,7 @@ v(x)=\begin{cases}x^\eta,&amp;x\ge0\\
 -\lambda(-x)^\eta,&amp;x \lt 0\end{cases},\qquad \lambda>1
 \]</div>
   <div class="reading">
-    <p>$x$ คือกำไรหรือขาดทุน USD/share เทียบกับ reference point, $\eta\in(0,1]$ ทำให้ความไวต่อผลลัพธ์ลดลงเมื่อขนาดใหญ่ขึ้น และ $\lambda$ dimensionless มากกว่า 1 ทำให้ loss มีน้ำหนักมากกว่า gain; สมการนี้เป็น behavioral model ไม่ใช่กฎราคาที่ทุกคนต้องทำตาม</p>
+    <p>$x$ คือกำไรหรือขาดทุน USD/share เทียบกับ reference point, $0\lt\eta\le1$ ทำให้ความไวต่อผลลัพธ์ลดลงเมื่อขนาดใหญ่ขึ้น และ $\lambda$ dimensionless มากกว่า 1 ทำให้ loss มีน้ำหนักมากกว่า gain; สมการนี้เป็น behavioral model ไม่ใช่กฎราคาที่ทุกคนต้องทำตาม</p>
   </div>
 </section>
 
@@ -247,7 +253,10 @@ v(x)=\begin{cases}x^\eta,&amp;x\ge0\\
   <h4>ขั้นที่ 5 — นิยามของ alpha สุทธิที่ต้องรายงาน</h4>
   <p>สองก้อนนี้เป็น นิยาม ของบัญชี ไม่ใช่ผลที่พิสูจน์ บรรทัดแรกหักสองอย่างออกจากผลตอบแทนที่ทำได้: ส่วนที่มาจากการเกาะตลาด ตามหัวข้อ 15.2 และต้นทุนซื้อขายทั้งหมดส่วนด้วยขนาดเงิน เพื่อให้เป็นหน่วยเดียวกัน บรรทัดที่สองกางต้นทุนออกเป็นสี่ก้อนที่ต้องนับให้ครบ จุดสำคัญคือต้องหักทั้งสองอย่าง การหักแค่ต้นทุนแต่ไม่หักส่วนที่มาจากตลาด คือวิธีที่ทำให้กลยุทธ์ที่แค่ซื้อตลาดแล้วใช้เงินกู้ ดูเหมือนมีฝีมือ</p>
   <div class="math">\[
-\widehat{\alpha}_{net}=\overline{R}_{strategy}-\hat{\beta}\,\overline{R}^{M}-\frac{C_{all-in}}{A},\qquad C_{all-in}=Q(c_{spread}+c_{fee}+c_{impact}+c_{borrow})
+\begin{aligned}
+\widehat{\alpha}_{net}&=\overline{R}_{strategy}-\hat{\beta}\,\overline{R}^{M}-\frac{C_{all-in}}{A}\\[4pt]
+C_{all-in}&=Q\,(c_{spread}+c_{fee}+c_{impact}+c_{borrow})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใส่ average return ของ strategy แล้วลบ market return ที่คูณ $\hat{\beta}$. ส่วนที่เหลือคือ alpha ก่อนหักต้นทุน</p>
@@ -260,10 +269,12 @@ v(x)=\begin{cases}x^\eta,&amp;x\ge0\\
   <p>มีสามประตู เงินรางวัลอยู่หลังประตูเดียว คุณเลือกหนึ่งบาน แล้วพิธีกรเปิดอีกบานหนึ่ง ซึ่งมีแพะอยู่ข้างหลังเสมอ จากนั้นถามว่าจะเปลี่ยนใจหรือไม่</p>
   <p>คำตอบที่คนส่วนใหญ่ตอบคือห้าสิบห้าสิบ เพราะเหลือสองบานเท่ากัน คำตอบนั้นผิด และเหตุผลที่ผิดคือสิ่งที่หัวข้อนี้ต้องการให้เห็น</p>
   <div class="math">\[
-\begin{aligned}P(\text{stay})&=\tfrac13,\qquad P(\text{first pick wrong})=\tfrac23\\[6pt]
-(\text{switch wins})&\iff(\text{first pick wrong})\\[4pt]
-P(\text{switch})&=1-\tfrac13=\tfrac23\\[6pt]
-\text{revealed goat}&:\text{forced, not chosen}\end{aligned}
+\begin{aligned}
+P(\text{stay})&=\tfrac13\\
+P(\text{first pick wrong})&=\tfrac23\\[4pt]
+P(\text{switch})&=P(\text{first pick wrong})\\
+&=1-\tfrac13=\tfrac23
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แยกเป็นสองกรณีที่ครอบคลุมทั้งหมด กรณีแรกคือเลือกถูกตั้งแต่แรก มีโอกาสหนึ่งในสาม กรณีนี้เปลี่ยนใจแล้วแพ้ เพราะรางวัลอยู่ที่เดิม</p>
@@ -278,9 +289,11 @@ P(\text{switch})&=1-\tfrac13=\tfrac23\\[6pt]
   <p>เพื่อพิสูจน์ว่าข้อบังคับคือตัวที่มีค่า ไม่ใช่ตัวเลข ลองเปลี่ยนกระบวนการอย่างเดียว โดยให้คนเปิดบานไม่รู้ว่ารางวัลอยู่ที่ไหน แล้วเปิดบานหนึ่งอย่างสุ่ม</p>
   <p>ถ้าบานที่เปิดโชว์แพะโดยบังเอิญ คราวนี้เปลี่ยนใจหรือไม่เปลี่ยนก็ได้ผลเท่ากัน เพราะการเปิดบานไม่ได้บอกอะไรเพิ่มเลย</p>
   <div class="math">\[
-\begin{aligned}\text{random reveal}&\Rightarrow P(\text{stay})=\tfrac12,\quad P(\text{switch})=\tfrac12\\[6pt]
-\text{simulated }400{,}000&:\ 0.3339\ \text{and}\ 0.6661\quad\text{(constrained)}\\[4pt]
-\text{conditioned }266{,}416&:\ 0.4997\ \text{and}\ 0.5003\quad\text{(unconstrained)}\end{aligned}
+\begin{aligned}
+\text{random reveal}&:\ P(\text{stay})=P(\text{switch})=\tfrac12\\[4pt]
+400{,}000\ \text{forced}&:\ 0.3339,\ 0.6661\\
+266{,}416\ \text{random, goat shown}&:\ 0.4997,\ 0.5003
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กรณีใหม่: คนเปิดบานไม่ได้รู้ตำแหน่งรางวัล จึงไม่มีข้อบังคับให้เลี่ยงบานที่มีรางวัล ผลคือบางครั้งเขาก็เปิดเจอรางวัลเอง ซึ่งทำให้เกมจบไปเลย</p>
@@ -297,9 +310,43 @@ P(\text{switch})&=1-\tfrac13=\tfrac23\\[6pt]
 
 <section class="example">
   <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: เปลี่ยนใจดีกว่า เพราะชนะสองในสาม ขณะที่อยู่เฉยชนะเพียงหนึ่งในสาม และถ้าคนเปิดบานไม่ถูกบังคับให้เลี่ยงรางวัล ทั้งสองทางจะได้ครึ่งต่อครึ่ง</p>
+  <p>คำตอบ: เปลี่ยนใจดีกว่า เพราะชนะสองในสาม ขณะที่อยู่เฉยชนะเพียงหนึ่งในสาม และถ้าคนเปิดบานไม่ถูกบังคับให้เลี่ยงรางวัล ทั้งสองทางจะได้ครึ่งต่อครึ่ง หัวข้อ 15.6 ใช้เหตุผลเดียวกันกับกองทุนที่ถูกเลือกมาเสนอขายเพราะผลออกมาดี</p>
   <p>ตรวจเองใน 10 วินาที: ถามว่ากรณีที่เลือกผิดตั้งแต่แรกเกิดบ่อยแค่ไหน คำตอบคือสองในสาม และนั่นคือโอกาสชนะของการเปลี่ยนใจ</p>
   <p>ใช้ตัดสินใจ: เวลาเห็นผลลัพธ์ที่ดี ให้ถามว่ามันผ่านกระบวนการที่ถูกบังคับให้ดูดีหรือไม่ ก่อนจะถือว่าเป็นข้อมูล เพราะตัวเลขเดียวกันมาจากกระบวนการต่างกันได้คนละความหมาย</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ pair trade, alpha หลังต้นทุน, prospect theory, Monty Hall และ TCA</summary>
+    <pre><code>import numpy as np
+Q = 10_000
+gross = Q * (50.80 - 50.00)
+net = gross - Q * 0.12 - Q * 0.020 * 10 - 3_500
+assert abs(gross - 8_000) &lt; 1e-6 and abs(net - 1_300) &lt; 1e-6 and abs(net / 100_000 - 0.013) &lt; 1e-9
+
+excess = 0.012 - 1.10 * 0.010                              # beta-adjusted, then cost
+assert abs(excess - 0.001) &lt; 1e-12 and abs(excess - 0.001) &lt; 1e-12  # net 0 after a 0.1% cost
+
+v = lambda x, eta=0.5, lam=2.0: x**eta if x &gt;= 0 else -lam * (-x)**eta
+assert v(-100) == -20 and abs(0.5 * v(0) + 0.5 * v(-200) + 14.1421) &lt; 1e-4
+assert v(100) == 10 and abs(0.5 * v(0) + 0.5 * v(200) - 7.0711) &lt; 1e-4
+
+rng = np.random.default_rng(0)                             # Monty Hall, host must show a goat
+prize = rng.integers(0, 3, 400_000)
+assert abs(np.mean(prize == 0) - 1 / 3) &lt; 0.005 and abs(np.mean(prize != 0) - 2 / 3) &lt; 0.005
+host = rng.integers(1, 3, 400_000)                          # host opens door 1 or 2 at random
+shown_goat = prize != host
+stay_win = (prize == 0)[shown_goat].mean()
+assert abs(shown_goat.mean() - 2 / 3) &lt; 0.005 and abs(stay_win - 0.5) &lt; 0.005
+
+gross_alpha = 0.0018 * 100_000 * 190.00                    # implementation check
+costs = 0.095 * 100_000
+assert abs(gross_alpha - 34_200) &lt; 1e-6 and abs(gross_alpha - costs - 24_700) &lt; 1e-6
+assert abs((190.12 - 190.00) * 100_000 - 12_000) &lt; 1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจบัญชี pair trade 1,300 USD ผลตอบแทนส่วนเกินหลัง beta ค่า value ของ prospect theory ทั้งฝั่งขาดทุนและกำไร Monty Hall ทั้งแบบพิธีกรถูกบังคับและแบบเปิดสุ่ม และ waterfall ของ alpha 34,200 USD ที่เหลือ 24,700 USD</p>
+  </div>
 </section>
 
 <section class="pitfall">

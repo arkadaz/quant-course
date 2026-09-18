@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ต่อหอคอยจากเงินตัวเอง 1 USD แล้ววางของที่ซื้อด้วยเงินกู้ 9 USD ข้างบน. ถ้าของทั้งหมดลดราคา 1 USD ฐานเหลืออะไร?</p>
-  <p>เฉลย: สินทรัพย์ 10 USD ลด 10% ทำให้เงินตัวเอง 1 USD เหลือศูนย์. การขยับเล็กของราคาจึงกลายเป็นเรื่องใหญ่เมื่อ leverage สูง.</p>
-  <p>leverage คือการใช้หนี้เพิ่มขนาดสินทรัพย์เทียบกับเงินตัวเอง. feedback loop เกิดเมื่อราคาลด บังคับขาย และการขายกดราคาต่อ. หอคอยไม่ได้ล้มเพราะฐานอ่อนแอทางอารมณ์; มันรับน้ำหนักเกินจริง.</p>
+  <p>กองทุนถือ mortgage pool 10 ล้าน USD ใช้เงินตัวเอง 1 ล้าน กู้ 9 ล้าน ราคาร่วง 8% เจ้าหนี้ขอหลักประกัน 5% equity เหลือเท่าไร ขาดเท่าไร และถ้าไม่มีเงินเติมต้องขายเท่าไร?</p>
+  <p>เฉลย: สินทรัพย์เหลือ 9.2 ล้าน equity เหลือ 200,000 USD ขาดหลักประกัน 260,000 USD ถ้าไม่มีเงินเติมต้องขายสินทรัพย์ 5.2 ล้าน USD เกินครึ่งพอร์ต การขายแบบนี้พร้อมกันหลายกองคือ fire sale</p>
 </div>
 
 <details class="jargon" open>
@@ -126,13 +125,15 @@ R_E&=\ell R_A-(\ell-1)r_L\\[4pt]
   <p>เมื่อมีหนี้คงที่ ขาดทุนของสินทรัพย์ทั้งหมดจะตกเป็นของ equity โดยตรง การลดลงของมูลค่าเพียงเล็กน้อยจึงกระตุ้น margin call เร็วกว่าที่สัญชาตญาณคาดการณ์ไว้มาก</p>
   <p>หากผู้ลงทุนกู้ยืม $90\%$ (leverage สิบเท่า) และ lender กำหนด maintenance margin ที่ $5\%$ การที่สินทรัพย์ลดลงเพียง $5.26\%$ ก็เพียงพอที่จะบีบให้ต้องหาเงินสดมาเติมทันที</p>
   <div class="math">\[
-\begin{aligned}A_t&=A_0(1+R_A),\qquad L_t=L=A_0\left(1-\frac{1}{\ell_0}\right)\\
-E_t&=A_t-L=A_0(1+R_A)-A_0\left(1-\frac{1}{\ell_0}\right)=A_0\left(R_A+\frac{1}{\ell_0}\right)\\
-\frac{E_t}{A_t}&=\frac{A_0(R_A+1/\ell_0)}{A_0(1+R_A)}=\frac{R_A+1/\ell_0}{1+R_A}\\
-\frac{E_t}{A_t}& \lt m \iff R_A+\frac{1}{\ell_0} \lt m(1+R_A)=m+m R_A\\
-R_A(1-m)& \lt m-\frac{1}{\ell_0}\\
-R_A& \lt -\frac{1/\ell_0-m}{1-m}\\[4pt]
-\ell_0=10,\ m=0.05:\quad R_A& \lt -\frac{0.10-0.05}{1-0.05}=-\frac{0.05}{0.95}\approx -0.05263=-5.26\%\end{aligned}
+\begin{aligned}
+A_t&=A_0(1+R_A),\qquad L=A_0\Big(1-\frac{1}{\ell_0}\Big)\\
+E_t&=A_t-L=A_0\Big(R_A+\frac{1}{\ell_0}\Big)\\
+\frac{E_t}{A_t}&=\frac{R_A+1/\ell_0}{1+R_A}\\[4pt]
+\frac{E_t}{A_t}\lt m&:\ R_A+\frac{1}{\ell_0}\lt m+mR_A\\
+R_A(1-m)&\lt m-\frac{1}{\ell_0}\\
+R_A&\lt-\frac{1/\ell_0-m}{1-m}\\[4pt]
+\ell_0=10,\ m=0.05&:\ R_A\lt-\frac{0.05}{0.95}=-5.26\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จุดที่คนมักเข้าใจผิดคือ คิดว่าเมื่อเริ่มต้นด้วยทุน $10\%$ และเกณฑ์เตือนอยู่ที่ $5\%$ ราคาจะต้องร่วงถึง $5\%$ เต็มจึงจะถูกเรียกหลักประกัน</p>
@@ -205,13 +206,41 @@ x&=\frac{260{,}000}{0.05}=20\times 260{,}000=5{,}200{,}000\end{aligned}
 </section>
 
 <section class="example">
-  <h4>worked example — mortgage pool shock แบบตรวจได้</h4>
-  <p>ของที่มี: mortgage pool มูลค่า 10,000,000 USD ใช้เงินทุนของตัวเอง (equity) 1,000,000 USD และกู้มา 9,000,000 USD จากนั้นราคาสินทรัพย์ร่วง 8% โดยเจ้าหนี้กำหนด maintenance margin ไว้ที่ 5%</p>
-  <p>ถามว่า equity เหลือเท่าไร และ margin call ขาดเงินเท่าไร?</p>
-  <p>คำตอบ: asset เหลือ 9,200,000 USD, equity เหลือ 200,000 USD และขาด margin 260,000 USD.</p>
-  <p>ตรวจเองใน 10 วินาที: 9,200,000-9,000,000=200,000 และ 5% ของ 9,200,000 คือ 460,000.</p>
-  <p>เอาไปใช้จริง: risk team stress ทั้งราคาและ funding requirement เพื่อเห็น forced-sale risk ก่อนมันเริ่ม feedback loop.</p>
-  <p>maintenance margin 5% ในโจทย์นี้เป็นเงื่อนไข funding สมมติของ pool ไม่ใช่อัตราขั้นต่ำตามกฎบัญชีซื้อหุ้นทั่วไป</p>
+  <h4>คำตอบ — mortgage pool ที่ร่วง 8% กับการขายบังคับ</h4>
+  <p>คำถาม: mortgage pool 10 ล้าน USD ใช้เงินตัวเอง 1 ล้าน กู้ 9 ล้าน ราคาร่วง 8% maintenance margin 5% equity เหลือเท่าไร ขาดหลักประกันเท่าไร และถ้าไม่มีเงินเติมต้องขายเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 3 และส่วนแยกเงินเติมจากเงินขายลดหนี้</p>
+  <p>1. สินทรัพย์ 10,000,000 × 0.92 = 9,200,000 USD equity 9,200,000 − 9,000,000 = 200,000 USD</p>
+  <p>2. ต้องมี 5% ของ 9,200,000 = 460,000 USD จึงขาด 260,000 USD</p>
+  <p>3. ไม่มีเงินเติมต้องขาย 260,000 ÷ 0.05 = 5,200,000 USD เกินครึ่งของพอร์ต</p>
+  <p>4. ที่อัตราทด 10 เท่า ราคาร่วงแค่ 5.26% ก็แตะเกณฑ์ 5% แล้ว</p>
+  <p>ตรวจเองใน 10 วินาที: 9,200,000 − 9,000,000 = 200,000 และ 5% ของ 9,200,000 คือ 460,000</p>
+  <p>แปลว่าอะไร: risk team ต้อง stress ทั้งราคาและเงินที่ต้องหาเพิ่ม ขาดทุน 260,000 USD กลายเป็นการขาย 5.2 ล้าน เมื่อหลายกองทุนขายพร้อมกัน ราคาร่วงต่อ วงจรนี้คือสิ่งที่กฎหลังปี 2008 พยายามตัด maintenance margin 5% ในโจทย์นี้เป็นเงื่อนไขของ pool ไม่ใช่อัตราขั้นต่ำของบัญชีซื้อหุ้นทั่วไป</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจอัตราทด จุด margin call haircut การขายบังคับ expected loss และ 25-sigma</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+R_E = lambda lev, ra, rl: lev * ra - (lev - 1) * rl
+assert abs(R_E(4, 0.05, 0.02) - 0.14) &lt; 1e-12 and abs(R_E(4, -0.05, 0.02) + 0.26) &lt; 1e-12
+lev0, m = 10, 0.05
+trigger = -(1 / lev0 - m) / (1 - m)
+assert abs(trigger + 0.05263) &lt; 1e-5
+for h, lev in ((0.25, 4), (0.40, 2.5)):
+    assert abs(1 / h - lev) &lt; 1e-12
+A = 10_000_000 * (1 - 0.08); E = A - 9_000_000
+short = m * A - E
+assert abs(A - 9_200_000) &lt; 1e-6 and abs(E - 200_000) &lt; 1e-6 and abs(short - 260_000) &lt; 1e-6
+x = short / m
+assert abs(x - 5_200_000) &lt; 1e-6 and abs(E / (A - x) - m) &lt; 1e-12       # after the sale
+assert abs(0.02 * 0.40 * 10_000_000 - 80_000) &lt; 1e-6 and abs(0.15 * 0.70 * 10_000_000 - 1_050_000) &lt; 1e-6
+bound = np.exp(-25**2 / 2) / (np.sqrt(2 * np.pi) * 25)
+assert abs(np.log10(bound) + 137.514) &lt; 1e-3 and abs(norm.sf(25) / 1e-138 - 3.057) &lt; 1e-3</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจผลตอบแทนของเจ้าของที่อัตราทด 4 เท่า จุด margin call −5.26% อัตราทดจาก haircut mortgage pool ที่ขาด 260,000 USD และต้องขาย 5.2 ล้าน expected loss 80,000 เทียบ stress 1,050,000 และหางของระฆังที่ 25 เท่าของ standard deviation</p>
+  </div>
 </section>
 
 <figure class="plot">
@@ -234,15 +263,16 @@ x&=\frac{260{,}000}{0.05}=20\times 260{,}000=5{,}200{,}000\end{aligned}
   <p>แต่การรอดชีวิตในวิกฤติไม่ได้ขึ้นกับค่าเฉลี่ย ในยามที่เศรษฐกิจตกต่ำ โอกาสผิดนัดและความรุนแรงของความเสียหายจะพุ่งขึ้นพร้อมกัน</p>
   <p>Stress loss จึงไม่ได้ทดสอบว่าโดยเฉลี่ยเสียเท่าไร แต่ทดสอบว่า balance sheet จะพังทลายหรือไม่เมื่อเผชิญกับสถานการณ์เลวร้ายที่สุดในระบบ</p>
   <div class="math">\[
-\begin{aligned}L&=D\times\mathrm{LGD}\times\mathrm{EAD},\qquad D\in\{0,1\},\quad \mathbb{P}(D=1)=\mathrm{PD}\\
-\mathbb{E}[L]&=\mathbb{E}[D\times\mathrm{LGD}\times\mathrm{EAD}]=\mathbb{E}[D]\,\mathbb{E}[\mathrm{LGD}]\,\mathrm{EAD}\\
-&=\mathrm{PD}\times\mathrm{LGD}\times\mathrm{EAD}\\[4pt]
-\mathbb{E}[L]&=0.02\times 0.40\times 10{,}000{,}000=80{,}000\\[4pt]
-\mathrm{StressLoss}&=\max_{s\in\mathcal{S}}L(s)\\
-L(s_{\text{crisis}})&=0.15\times 0.70\times 10{,}000{,}000=1{,}050{,}000\end{aligned}
+\begin{aligned}
+L&=D\times\mathrm{LGD}\times\mathrm{EAD},\qquad D=0\ \text{or}\ 1,\quad \mathbb{P}(D=1)=\mathrm{PD}\\
+\mathbb{E}[L]&=\mathbb{E}[D]\,\mathbb{E}[\mathrm{LGD}]\,\mathrm{EAD}=\mathrm{PD}\times\mathrm{LGD}\times\mathrm{EAD}\\[4pt]
+\mathbb{E}[L]&=0.02\times0.40\times10{,}000{,}000=80{,}000\\[4pt]
+\mathrm{StressLoss}&=\max_{s}L(s)\\
+L(s_{\text{crisis}})&=0.15\times0.70\times10{,}000{,}000=1{,}050{,}000
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>การสร้าง expected loss เริ่มจากนิยามของผลขาดทุนที่เป็น random variable $L$ ซึ่งขึ้นกับ indicator ของการผิดนัดชำระหนี้ $D$</p>
+    <p>StressLoss คือขาดทุนที่มากที่สุดเมื่อไล่ดูทุก scenario $s$ ที่กำหนดไว้ การสร้าง expected loss เริ่มจากนิยามของผลขาดทุนที่เป็น random variable $L$ ซึ่งขึ้นกับ indicator ของการผิดนัดชำระหนี้ $D$</p>
     <p>เมื่อหา expected value ภายใต้สมมติฐานว่าการ default และความเสียหายมี independence ต่อกัน ก้อนผลคูณจะแยกตัวประกอบออกมาเป็นสามส่วน</p>
     <p>แทนค่าในสภาวะปกติ โอกาสผิดนัด $2\%$ และเสียหาย $40\%$ จากยอดหนี้ 10 ล้าน USD คาดว่าจะขาดทุนเพียง 80,000 USD ซึ่งสถาบันกันสำรองเป็นต้นทุนปกติ</p>
     <p>แต่ในวิกฤติ การผิดนัดพุ่งขึ้นพร้อมกับมูลค่าหลักประกันที่ทรุดลง scenario ที่เลวร้ายที่สุดดึงให้ผลขาดทุนกระโดดขึ้นไปเป็น 1,050,000 USD สูงกว่าค่าเฉลี่ยกว่าสิบสามเท่า</p>
@@ -278,7 +308,7 @@ z = 25:\quad \frac{z^2}{2} &= \frac{25^2}{2} = 312.5 \\
 &\approx -0.9189 - 3.2189 - 312.5 = -316.6378 \\
 \log_{10} \mathbb{P}(Z \ge 25) &= \frac{-316.6378}{\ln 10} \approx \frac{-316.6378}{2.302585} \approx -137.51 \\
 \mathbb{P}(Z \ge 25) &\approx 3.06 \times 10^{-138} \\[4pt]
-\mathbb{P}(\text{2 days in a row}) &= (3.06 \times 10^{-138})^2 \approx 9.36 \times 10^{-276}\end{aligned}
+P_{2\ \text{days}} &= (3.06 \times 10^{-138})^2 \approx 9.36 \times 10^{-276}\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากขอบเขตบนของหาง Gaussian distribution ซึ่งหาได้จากการ integrate ทีละส่วนของ density function</p>
