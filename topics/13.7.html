@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ถ้าความแกว่งของราคาวิ่งขึ้นลงเอง volatility คงที่เส้นเดียวจะอธิบายราคาสิทธิ์ทุก strike ได้หรือไม่?</p>
-  <p>เฉลย: volatility คงที่เส้นเดียวอธิบายราคาสิทธิ์ทุก strike ไม่ได้ เพราะ downside options ที่แพงกว่าบอกว่าความเสี่ยงกับราคากำลังเคลื่อนร่วมกัน</p>
-  <p>Heston stochastic volatility model ให้ volatility ขยับเอง จึงทำให้ smile มีที่มาใน model</p>
+  <p>หุ้น 100 USD call strike 100 อายุ 1 ปี ความผันผวนวันนี้ 30% ถูกดึงกลับหา 20% ด้วยความเร็ว 2 ต่อปี ตามแบบจำลอง Heston ความผันผวนเฉลี่ยตลอดปีเท่าไร และ call ราคาเท่าไร?</p>
+  <p>เฉลย: variance เฉลี่ยตลอดปี 0.0616 หรือความผันผวน 24.8% ไม่ใช่ 20% หรือ 30% ราคา Heston 10.43 USD ต่ำกว่า Black–Scholes ที่ 24.8% ซึ่งให้ 10.69 เพราะความผันผวนเองก็สุ่ม ราคานี้เท่ากับ implied volatility 24.15%</p>
 </div>
 
 <details class="jargon" open>
@@ -162,7 +161,7 @@
   <h4>ขั้นที่ 2 — สร้างแรงสัมพันธ์จากแรงอิสระ</h4>
   <p>สองสมการนั้นต้องเคลื่อนไหวสัมพันธ์กัน ไม่ใช่ต่างคนต่างสุ่ม ห้าบรรทัดนี้สร้างแรงที่เกาะกันขึ้นมาจากแรงอิสระสองก้อน แล้วตรวจสองอย่าง คือขนาดยังถูก และความเกาะกันได้ตามที่สั่ง เป็นวิธีเดียวกับ Cholesky ในหัวข้อ 7.6 เขียนออกมาสำหรับสองมิติ</p>
   <div class="math">\[
-\begin{aligned}dW_t^{\perp}&\perp\!\!\!\perp dW_t^{S}\qquad\text{(independent)}\\
+\begin{aligned}\operatorname{Cov}\big(dW_t^{\perp},\,dW_t^{S}\big)&=0\\
 dW_t^{v}&:=\rho\,dW_t^{S}+\sqrt{1-\rho^{2}}\,dW_t^{\perp}\\[4pt]
 \operatorname{Var}(dW_t^{v})&=\rho^{2}\,dt+\big(1-\rho^{2}\big)dt=dt\ \checkmark\\
 dW_t^{S}dW_t^{v}&=\rho\,(dW_t^{S})^{2}+\sqrt{1-\rho^{2}}\,dW_t^{S}dW_t^{\perp}\\
@@ -185,10 +184,14 @@ dW_t^{S}dW_t^{v}&=\rho\,(dW_t^{S})^{2}+\sqrt{1-\rho^{2}}\,dW_t^{S}dW_t^{\perp}\\
   <h4>ขั้นที่ 3 — ลองด้วยมือ: แรงดึงกลับทีละไตรมาส โดยปิดเสียงสุ่มไว้ก่อน</h4>
   <p>ก่อน derivative ลองเดินสมการ variance ด้วยมือทีละไตรมาส เอาแรงสุ่มออกก่อนเพื่อดูแรงดึงกลับล้วน ๆ</p>
   <div class="math">\[
-\begin{aligned}v_0=0.09,\ \theta=0.04,\ \kappa=2,\ h=0.25:&\quad v_{t+h}\approx v_t+\kappa(\theta-v_t)h\\
-v_{0.25}&=0.09+2(0.04-0.09)(0.25)=0.09-0.025=0.065\\
-v_{0.50}&=0.065+2(0.04-0.065)(0.25)=0.065-0.0125=0.0525\\
-v_{0.75}&=0.0525-0.00625=0.04625,\qquad v_{1.00}=0.04625-0.003125=0.043125\end{aligned}
+\begin{aligned}
+v_0&=0.09,\quad\theta=0.04,\quad\kappa=2,\quad h=0.25\\
+v_{t+h}&\approx v_t+\kappa(\theta-v_t)h\\[4pt]
+v_{0.25}&=0.09+2(0.04-0.09)(0.25)=0.065\\
+v_{0.50}&=0.065+2(0.04-0.065)(0.25)=0.0525\\
+v_{0.75}&=0.0525-0.00625=0.04625\\
+v_{1.00}&=0.04625-0.003125=0.043125
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัดพจน์สุ่มทิ้งชั่วคราว เหลือแค่ ‘ดึงกลับหา 0.04 ด้วยความเร็ว 2 ต่อปี’ ทุกไตรมาสระยะห่างจาก 0.04 หดลงครึ่งหนึ่ง (0.05 → 0.025 → 0.0125 → 0.00625 → 0.003125) เพราะ $\kappa h=0.5$</p>
@@ -532,9 +535,61 @@ S_{j+1}=S_je^{(r-q-\tfrac12\widetilde v_j^+)h+\sqrt{\widetilde v_j^+h}\,Z_1}
 </section>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: parameter set ให้ expected variance ปลายปี 0.04676676, expected average variance 0.06161662 และ call strike 100 ราคา 10.43477605 USD ราคานี้สะท้อนทั้ง stochastic variance กับ negative correlation หาก desk ต้อง hedge exotic ที่ไวต่อ path หรือ forward skew ควรเทียบ Heston กับ local-vol, jump และ richer multi-factor models ไม่ควรเลือกเพียงเพราะ fit vanilla snapshot ดี</p>
-  <p>ตรวจเองใน 10 วินาที: ลบ expected terminal variance 0.04676676 ออกจาก expected average variance 0.06161662 ต้องได้ 0.01484986. ใช้ช่องว่างนี้กันการเอาค่าปลายปีไปแทน integrated variance ตอนตั้งราคา option.</p>
+  <h4>คำตอบ — ความผันผวนเฉลี่ยและราคา call ภายใต้ Heston</h4>
+  <p>คำถาม: หุ้น 100 USD call strike 100 อายุ 1 ปี ดอกเบี้ย 3% ปันผล 1% variance วันนี้ 0.09 ระยะยาว 0.04 ดึงกลับด้วยความเร็ว 2 ความผันผวนของ variance 0.30 ความสัมพันธ์ −0.7 ความผันผวนเฉลี่ยตลอดปีเท่าไร และ call ราคาเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 3 ถึง 7 และ 12 ถึง 13</p>
+  <p>1. variance ที่คาดตอนสิ้นปี 0.04 + 0.05(0.135335) = 0.04676676</p>
+  <p>2. variance เฉลี่ยตลอดปี 0.04 + 0.05(0.432332) = 0.06161662 หรือความผันผวน 24.82% สูงกว่าค่าสิ้นปีเพราะช่วงต้นปีความผันผวนยังสูง</p>
+  <p>3. เงื่อนไข Feller 2(2)(0.04) = 0.16 ไม่น้อยกว่า 0.30² = 0.09 variance จึงไม่แตะศูนย์</p>
+  <p>4. น้ำหนักสองขา 0.63071 และ 0.53592 ราคา call 10.4348 USD เทียบ Black–Scholes ที่ 24.82% ได้ 10.6938 ราคา Heston เท่ากับ implied volatility 24.15%</p>
+  <p>ตรวจเองใน 10 วินาที: ค่าเฉลี่ยของ variance ต้องอยู่ระหว่างค่าวันนี้ 0.09 กับค่าระยะยาว 0.04 และใกล้ 0.09 มากกว่าค่าสิ้นปี 0.0468</p>
+  <p>แปลว่าอะไร: option อายุสั้นอ่าน variance วันนี้ option อายุยาวอ่านค่าระยะยาว และเมื่อความผันผวนเองก็สุ่ม option ที่ strike เท่ากับราคาหุ้นจะถูกกว่า Black–Scholes ที่ใช้ความผันผวนเฉลี่ยเล็กน้อย ถ้าจะ hedge exotic ต้องเทียบ Heston กับแบบจำลองอื่นด้วย ไม่ใช่เลือกเพราะ fit ราคาวันนี้ได้ดี</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ variance เฉลี่ย เงื่อนไข Feller และราคา Heston 10.4348 USD</summary>
+    <pre><code>import numpy as np
+from scipy.integrate import quad
+from scipy.stats import norm
+from scipy.optimize import brentq
+
+S, K, T, r, q = 100.0, 100.0, 1.0, 0.03, 0.01
+v0, th, ka, xi, rho = 0.09, 0.04, 2.0, 0.30, -0.7
+
+v = v0                                              # step 3: quarter steps, no noise
+for _ in range(4):
+    v = v + ka * (th - v) * 0.25
+assert abs(v - 0.043125) &lt; 1e-12
+assert abs(th + (v0 - th) * np.exp(-ka * T) - 0.04676676) &lt; 1e-8
+vbar = th + (v0 - th) * (1 - np.exp(-ka * T)) / (ka * T)
+assert abs(vbar - 0.06161662) &lt; 1e-8
+assert 2 * ka * th &gt;= xi**2                         # Feller: 0.16 vs 0.09
+
+def cf(u):                                          # E[exp(iu log S_T)], stable branch
+    d = np.sqrt((rho * xi * 1j * u - ka)**2 + xi**2 * (1j * u + u * u))
+    g = (ka - rho * xi * 1j * u - d) / (ka - rho * xi * 1j * u + d)
+    A = 1j * u * (r - q) * T + ka * th / xi**2 * ((ka - rho * xi * 1j * u - d) * T
+        - 2 * np.log((1 - g * np.exp(-d * T)) / (1 - g)))
+    B = (ka - rho * xi * 1j * u - d) / xi**2 * (1 - np.exp(-d * T)) / (1 - g * np.exp(-d * T))
+    return np.exp(A + B * v0 + 1j * u * np.log(S))
+
+lk = np.log(K)
+P2 = 0.5 + quad(lambda u: (np.exp(-1j * u * lk) * cf(u) / (1j * u)).real, 1e-8, 150, limit=500)[0] / np.pi
+P1 = 0.5 + quad(lambda u: (np.exp(-1j * u * lk) * cf(u - 1j) / (1j * u * cf(-1j))).real, 1e-8, 150, limit=500)[0] / np.pi
+C = S * np.exp(-q * T) * P1 - K * np.exp(-r * T) * P2
+assert abs(P1 - 0.63070639) &lt; 1e-7 and abs(P2 - 0.53592188) &lt; 1e-7
+assert abs(C - 10.434776) &lt; 1e-5
+
+def bs(s):
+    d1 = (np.log(S / K) + (r - q + s * s / 2) * T) / (s * np.sqrt(T))
+    return S * np.exp(-q * T) * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d1 - s * np.sqrt(T))
+assert abs(bs(np.sqrt(vbar)) - 10.6938) &lt; 1e-4
+assert abs(brentq(lambda s: bs(s) - C, 0.01, 1.0) - 0.2415) &lt; 1e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดเดินแรงดึงกลับทีละไตรมาส คำนวณ variance ที่คาดตอนสิ้นปีและเฉลี่ยตลอดปี ตรวจเงื่อนไข Feller แล้วตั้งราคา call ด้วย characteristic function ของ Heston ได้ 10.4348 USD เทียบ Black–Scholes ที่ความผันผวนเฉลี่ย 10.6938 USD และ implied volatility 24.15%</p>
+  </div>
 </section>
 
 <section class="pitfall">
@@ -562,6 +617,7 @@ S_{j+1}=S_je^{(r-q-\tfrac12\widetilde v_j^+)h+\sqrt{\widetilde v_j^+h}\,Z_1}
   <ul>
     <li>Heston เพิ่ม stochastic variance, mean reversion, vol-of-vol และ price–variance correlation เพื่อสร้าง skew กับ dynamics</li>
     <li>expected terminal variance ต่างจาก expected average variance ซึ่งเกี่ยวกับ exposure ตลอดอายุ</li>
+    <li>ตัวอย่าง: variance วันนี้ 0.09 ระยะยาว 0.04 ได้เฉลี่ยตลอดปี 0.0616 หรือ 24.82% call ที่ strike เท่ากับราคาหุ้น หรือ at-the-money (ATM) ราคา 10.4348 USD ต่ำกว่า Black–Scholes ที่ 24.82% ซึ่งให้ 10.6938</li>
     <li>Feller condition เป็น sufficient boundary diagnostic ไม่ใช่ตราประทับว่าชุดที่ไม่ผ่านผิดเสมอ</li>
     <li>affine characteristic function ให้ราคา vanilla เร็ว แต่ branch, integration และ numerical checks เป็นส่วนของ model</li>
     <li>calibration fit ไม่รับประกัน identifiability หรือ hedge quality; ต้องตรวจ stability และ model risk</li>

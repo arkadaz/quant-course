@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>บัตรสิทธิ์ซื้อหุ้นจ่ายเงินเมื่อราคาปลายทางสูงกว่าราคาที่ตกลง; ก่อนเห็นอนาคต ควรคิดมูลค่าจาก paths จริงหรือ paths ที่ปรับน้ำหนักแล้ว?</p>
-  <p>เฉลย: Black–Scholes แยก payoff เป็นส่วนหุ้นกับ strike แล้วคำนวณจาก expectation ของ paths ที่ปรับน้ำหนักแล้ว</p>
-  <p>Black–Scholes formula เปิดกล่อง payoff เป็นสองชิ้นและนับสิ่งที่ hedge ได้ ไม่ได้ทายราคาหุ้น</p>
+  <p>European call บนหุ้นราคา spot 100 USD มี strike 105 USD อายุ 0.25 ปี ดอกเบี้ยปลอดความเสี่ยง 4% ต่อปี ความผันผวน 20% ควรมีราคาเท่าไร และโอกาสทางทฤษฎีที่จะได้ใช้สิทธิ์เป็นกี่เปอร์เซ็นต์?</p>
+  <p>เฉลย: ราคา call คือ 2.39 USD (put คือ 6.35 USD) โอกาสใช้สิทธิ์ตามแบบจำลองคือ 33.07% (จาก $d_2 = -0.4379$) ส่วนจำนวนหุ้นทำซ้ำหรือ Delta คือ 0.3677 (จาก $d_1 = -0.3379$)</p>
 </div>
 
 <details class="jargon" open>
@@ -136,10 +135,18 @@
   <h4>ขั้นที่ 1 — ลองด้วยมือ: ราคาปลายทางสามค่า แยก payoff เป็นสองบัญชี</h4>
   <p>ก่อนใช้ระฆังคว่ำ ลองโลกที่ราคาปลายทางมีได้แค่สามค่า จะเห็นกลไก ‘แยก payoff เป็นบัญชีหุ้นกับบัญชี strike’ ที่ทั้งหัวข้อพึ่งพา</p>
   <div class="math">\[
-\begin{aligned}S_T\in\{90,100,120\}\ \text{with }\mathbb Q\text{ weights }0.3,\,0.4,\,0.3,&\qquad K=105\\
-\text{payoff }(S_T-105)^+=0,\ 0,\ 15&\ \Rightarrow\ \mathbb E^{\mathbb Q}[(S_T-K)^+]=0.3(15)=4.5\\
-\text{stock account: }\mathbb E^{\mathbb Q}[S_T\mathbf 1_{\{S_T>K\}}]=0.3(120)=36,&\qquad\text{strike account: }K\,\mathbb Q(S_T>K)=105(0.3)=31.5\\
-36-31.5&=4.5\ \checkmark\end{aligned}
+\begin{aligned}
+K&=105\\
+S_T&=90,\ 100,\ 120\\
+\mathbb Q&=0.3,\ 0.4,\ 0.3\\
+(S_T-K)^+&=0,\ 0,\ 15\\
+\mathbb E^{\mathbb Q}[(S_T-K)^+]&=0.3(15)=4.5\\[4pt]
+\text{stock}&=\mathbb E^{\mathbb Q}[S_T\mathbf 1(S_T>K)]\\
+&=0.3(120)=36\\
+\text{strike}&=K\,\mathbb Q(S_T>K)\\
+&=105(0.3)=31.5\\
+36-31.5&=4.5
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>call จ่ายเฉพาะทางที่หุ้นจบเหนือ 105 คือทางเดียว (120) น้ำหนัก 0.3 ค่าเฉลี่ยจึงเป็น 4.5 แยกเป็นสองบัญชี: ‘ได้หุ้น’ เฉพาะทางนั้น (36) กับ ‘จ่าย strike’ เฉพาะทางนั้น (31.5) ลบกันได้เท่าเดิม</p>
@@ -170,10 +177,10 @@ S_T&=S_0e^{(r-\frac12\sigma^{2})T+\sigma\sqrt{T}\,Z}\end{aligned}
   <div class="math">\[
 \begin{aligned}(S_T-K)^{+}&=\begin{cases}S_T-K,&amp;S_T>K\\
 0,&amp;S_T\le K\end{cases}\\
-&=\big(S_T-K\big)\mathbf 1_{\{S_T>K\}}\\
-&=S_T\mathbf 1_{\{S_T>K\}}-K\mathbf 1_{\{S_T>K\}}\\
-\mathbb E^{\mathbb Q}\big[\mathbf 1_{\{S_T>K\}}\big]&=\mathbb Q(S_T>K)\\
-C&=e^{-rT}\Big(\mathbb E^{\mathbb Q}\big[S_T\mathbf 1_{\{S_T>K\}}\big]-K\,\mathbb Q(S_T>K)\Big)\end{aligned}
+&=\big(S_T-K\big)\mathbf 1(S_T>K)\\
+&=S_T\mathbf 1(S_T>K)-K\mathbf 1(S_T>K)\\
+\mathbb E^{\mathbb Q}\big[\mathbf 1(S_T>K)\big]&=\mathbb Q(S_T>K)\\
+C&=e^{-rT}\Big(\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]-K\,\mathbb Q(S_T>K)\Big)\end{aligned}
 \]</div>
   <div class="reading">
     <p>payoff ของ call มีสองกรณี ใช้สิทธิ์เมื่อราคาสูงกว่า strike ไม่ใช้เมื่อต่ำกว่า วิธีจัดการคือรวบสองกรณีเป็นบรรทัดเดียวด้วยตัวบ่งชี้ ซึ่งเป็นหนึ่งเมื่อเงื่อนไขจริงและศูนย์เมื่อไม่จริง</p>
@@ -187,11 +194,11 @@ C&=e^{-rT}\Big(\mathbb E^{\mathbb Q}\big[S_T\mathbf 1_{\{S_T>K\}}\big]-K\,\mathb
   <h4>ขั้นที่ 4 — เปลี่ยนเงื่อนไขใช้สิทธิ์เป็นเกณฑ์ของ Z</h4>
   <p>เงื่อนไขว่าราคาสูงกว่า strike แปลงเป็นเงื่อนไขบนตัวสุ่มมาตรฐานได้ ห้าบรรทัดนี้คือที่มาของ $d_2$ ทุกตัวอักษร มันไม่ใช่สัญลักษณ์ลึกลับ มันคือระยะจากเกณฑ์ใช้สิทธิ์ วัดเป็นจำนวนเท่าของความกว้าง เหมือน z-score ในหัวข้อ 1.9</p>
   <div class="math">\[
-\begin{aligned}S_T>K\;&\Longleftrightarrow\;\log S_0+\big(r-\tfrac12\sigma^{2}\big)T+\sigma\sqrt T\,Z>\log K\\
-&\Longleftrightarrow\;\sigma\sqrt T\,Z>\log\frac{K}{S_0}-\big(r-\tfrac12\sigma^{2}\big)T\\
-&\Longleftrightarrow\;Z>\frac{\log(K/S_0)-\big(r-\tfrac12\sigma^{2}\big)T}{\sigma\sqrt T}\\
+\begin{aligned}S_T>K\;&\Rightarrow\;\log S_0+\big(r-\tfrac12\sigma^{2}\big)T+\sigma\sqrt T\,Z>\log K\\
+&\Rightarrow\;\sigma\sqrt T\,Z>\log\frac{K}{S_0}-\big(r-\tfrac12\sigma^{2}\big)T\\
+&\Rightarrow\;Z>\frac{\log(K/S_0)-\big(r-\tfrac12\sigma^{2}\big)T}{\sigma\sqrt T}\\
 d_2&:=\frac{\log(S_0/K)+\big(r-\tfrac12\sigma^{2}\big)T}{\sigma\sqrt T}\\
-\{S_T>K\}&=\{Z>-d_2\}\end{aligned}
+S_T>K&\quad\text{when}\quad Z>-d_2\end{aligned}
 \]</div>
   <div class="reading">
     <p>เงื่อนไขใช้สิทธิ์เขียนอยู่ในภาษาของราคา แต่ distribution ที่เรารู้อยู่ในภาษาของก้อนสุ่มมาตรฐาน จึงต้องขนอสมการข้ามไป ใส่ log ทั้งสองข้างได้โดยไม่พลิกเครื่องหมาย เพราะ log เพิ่มขึ้นเสมอและราคาเป็นบวกเสมอ</p>
@@ -225,7 +232,7 @@ d_1&:=d_2+\sigma\sqrt T\end{aligned}
   <p>เมื่อทั้งสองก้อนกลายเป็น integral ของ density มาตรฐานแล้ว ก็อ่านค่าออกมาเป็น $\Phi$ ได้ทันที หกบรรทัดนี้คือจุดที่ทุกอย่างมาบรรจบ และเครื่องมือที่ใช้มีแค่สองอย่าง คือการจัดกำลังสองสมบูรณ์ กับการเปลี่ยนตัวแปรใน integral</p>
   <div class="math">\[
 \begin{aligned}\mathbb Q(S_T>K)&=\mathbb Q(Z>-d_2)=\mathbb Q(Z \lt d_2)=\Phi(d_2)\\[4pt]
-\mathbb E^{\mathbb Q}\big[S_T\mathbf 1_{\{S_T>K\}}\big]&=\int_{-d_2}^{\infty}S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma\sqrt T\,z}\phi(z)\,dz\\
+\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]&=\int_{-d_2}^{\infty}S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma\sqrt T\,z}\phi(z)\,dz\\
 &=S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma^{2}T/2}\int_{-d_2}^{\infty}\phi\big(z-\sigma\sqrt T\big)\,dz\\
 &=S_0e^{rT}\int_{-d_2-\sigma\sqrt T}^{\infty}\phi(u)\,du\\
 &=S_0e^{rT}\,\Phi\big(d_2+\sigma\sqrt T\big)\\
@@ -373,7 +380,12 @@ d_1=\frac{-0.048790164+0.015}{0.10}=-0.337901642,\qquad d_2=-0.437901642
   <h4>ขั้นที่ 11 — ประกอบราคาเป็น USD</h4>
   <p>เอาทุกชิ้นที่เตรียมไว้มาประกอบเป็นราคาเดียว</p>
   <div class="math">\[
-C=100(0.367718655)-105(0.990049834)(0.330728793)=36.77186552-34.38098856=2.39087696\ {\rm \mathrm{USD}}
+\begin{aligned}
+C&=100(0.367718655)\\
+&\quad-105(0.990049834)(0.330728793)\\
+&=36.77186552-34.38098856\\
+&=2.39087696\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ขาหุ้นมีมูลค่า 36.7719 USD และขา strike มีมูลค่า 34.3810 USD ผลต่างคือ call 2.39087696 USD ต่อหุ้น</p>
@@ -397,23 +409,141 @@ P=C-S_0+Ke^{-rT}=6.34610950,\qquad \max(S_0-Ke^{-rT},0)\le C\le S_0
   <p>แบบจำลอง Black–Scholes ดั้งเดิมตั้งสมมติฐานว่าหุ้นไม่มีการจ่ายเงินปันผล แต่ในตลาดจริง หุ้นส่วนใหญ่และดัชนีหลักเช่น S&amp;P 500 จ่ายเงินปันผลสม่ำเสมอ Robert C. Merton (1973) จึงขยายสูตรด้วยการสมมติให้อัตราเงินปันผลจ่ายออกต่อเนื่องด้วยอัตรา $c$</p>
   <p>การจ่ายเงินปันผลทำให้ราคาหุ้นหลังวันขึ้นเครื่องหมายลดลง ผู้ถือ call เสียเปรียบเพราะไม่ได้เงินปันผลนี้ ขณะที่ผู้ถือ put ได้ประโยชน์เพราะราคาหุ้นลดลงเข้าใกล้ strike สูตรของ Merton จึงเป็นหัวใจสำคัญของการตั้งราคา index options และ currency options ในเวลาต่อมา</p>
   <div class="math">\[
-\begin{aligned}dS_t&=(r-c)S_t\,dt+\sigma S_t\,dW_t^{\mathbb Q}\\[4pt]
+\begin{aligned}
+dS_t&=(r-c)S_t\,dt+\sigma S_t\,dW_t^{\mathbb Q}\\
 S_T&=S_0e^{(r-c-\frac12\sigma^{2})T+\sigma\sqrt T\,Z}\\[4pt]
-\text{stock leg:}\quad e^{-rT}\mathbb E^{\mathbb Q}\big[S_T\mathbf 1_{\{S_T>K\}}\big]&=e^{-rT}S_0e^{(r-c)T}\Phi(d_1)=S_0e^{-cT}\Phi(d_1)\\[4pt]
-\text{strike leg:}\quad e^{-rT}K\,\mathbb Q(S_T>K)&=Ke^{-rT}\Phi(d_2)\\[4pt]
-d_1&=\frac{\log(S_0/K)+(r-c+\frac12\sigma^2)T}{\sigma\sqrt T},\quad d_2=d_1-\sigma\sqrt T\\[4pt]
-C&=S_0e^{-cT}\Phi(d_1)-Ke^{-rT}\Phi(d_2)\\[4pt]
-P&=C-S_0e^{-cT}+Ke^{-rT}=Ke^{-rT}\Phi(-d_2)-S_0e^{-cT}\Phi(-d_1)\\[4pt]
-\text{numbers:}\quad c&=0.02\ \Rightarrow\ d_1=-0.387901642,\quad d_2=-0.487901642\\[4pt]
+\text{stock}&=e^{-rT}\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]\\
+&=e^{-rT}S_0e^{(r-c)T}\Phi(d_1)\\
+&=S_0e^{-cT}\Phi(d_1)\\
+\text{strike}&=Ke^{-rT}\Phi(d_2)\\[4pt]
+d_1&=\frac{\log(S_0/K)+(r-c+\frac12\sigma^2)T}{\sigma\sqrt T}\\
+d_2&=d_1-\sigma\sqrt T\\[4pt]
+C&=S_0e^{-cT}\Phi(d_1)-Ke^{-rT}\Phi(d_2)\\
+P&=C-S_0e^{-cT}+Ke^{-rT}\\
+&=Ke^{-rT}\Phi(-d_2)-S_0e^{-cT}\Phi(-d_1)\\[4pt]
+c&=0.02\\
+d_1&=-0.387901642,\quad d_2=-0.487901642\\
 \Phi(d_1)&=0.349044412,\quad \Phi(d_2)=0.312809756\\[4pt]
-C&=100(0.995012479)(0.349044412)-105(0.990049834)(0.312809756)\\[4pt]
-&=34.73035453-32.51821091=2.21214362\ \mathrm{USD}\\[4pt]
-P&=2.21214362-99.50124785+103.95523254=6.66612831\ \mathrm{USD}\end{aligned}
+C&=100(0.995012479)(0.349044412)\\
+&\quad-105(0.990049834)(0.312809756)\\
+&=34.73035453-32.51821091\\
+&=2.21214362\ \text{USD}\\
+P&=2.21214362-99.50124785+103.95523254\\
+&=6.66612831\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อหุ้นจ่ายเงินปันผลอย่างต่อเนื่องด้วยอัตรา $c$ เงินสดจะไหลออกจากหุ้นเข้ากระเป๋าผู้ถือหุ้น ทำให้ราคาหุ้นเติบโตช้าลงภายใต้ $\mathbb Q$ ด้วย drift ที่ลดเหลือ $r - c$ การถือหุ้น 1 หน่วยต้องซื้อล่วงหน้าเพียง $e^{-cT}$ หุ้นเพราะเงินปันผลที่นำไปซื้อหุ้นเพิ่มจะสะสมจนครบ 1 หุ้นพอดีที่เวลา $T$</p>
     <p>ผลลัพธ์คือขาหุ้นจะถูกลดทอนด้วยตัวคูณ $e^{-cT}$ กลายเป็น $S_0e^{-cT}\Phi(d_1)$ ขณะที่ขา strike ยังคิดลดด้วยดอกเบี้ย $e^{-rT}$ เท่าเดิม ค่า $d_1$ และ $d_2$ จึงถูกลบด้วย $cT$ ในตัวเศษ</p>
     <p>เมื่อใส่ตัวเลขเดิม $S_0=100, K=105, r=0.04, \sigma=0.20, T=0.25$ แต่เพิ่มเงินปันผล $c=0.02$ ราคา call ลดลงจาก 2.39 เหลือ 2.21 USD เพราะผู้ถือ call เสียประโยชน์จากปันผล ส่วน put เพิ่มขึ้นจาก 6.35 เป็น 6.67 USD สอดคล้องกับ put–call parity พอดี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — ตัวอย่างจากต้นทาง: call อายุ 3 เดือน บนหุ้น 35 USD กับชิ้นแรกของตัวเศษ</h4>
+  <p>ต้นทางใช้อีกชุดตัวเลข หุ้นราคา 35 USD call แบบยุโรป strike 36 USD อายุ 3 เดือน ดอกเบี้ย 2% ต่อปี ความผันผวน 24% ต่อปี เดินสูตรเดิมทีละชิ้นอีกรอบ หัวข้อ 13.3 จะใช้ call ตัวนี้ต่อ</p>
+  <div class="math">\[
+\begin{aligned}
+S_0&=35,\quad K=36,\quad T=0.25\\
+r&=0.02,\quad \sigma=0.24\\[4pt]
+S_0/K&=35/36=0.972222\\
+\log(S_0/K)&=-0.028171\\
+S_0/K-1&=-0.027778\\[4pt]
+\sigma^2&=0.24\times0.24=0.0576\\
+\tfrac12\sigma^2&=0.0288\\
+(r+\tfrac12\sigma^2)T&=0.0488(0.25)=0.012200\\[4pt]
+\text{numerator}&=-0.028171+0.012200\\
+&=-0.015971
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตรวจเงื่อนไขก่อนใช้สูตร call ใช้สิทธิ์ได้วันหมดอายุเท่านั้น ราคาเดินแบบหัวข้อ 11.1 ด้วยความผันผวนคงที่ ไม่มีเงินปันผลระหว่างทาง กู้และฝากที่อัตราเดียวกัน ซื้อขายได้ต่อเนื่องไม่มีค่าธรรมเนียม</p>
+    <p>ห้าตัวเลขที่ใส่คือราคาหุ้น strike เวลา ดอกเบี้ย และความผันผวน ไม่มีผลตอบแทนคาดหวังของหุ้นเลย ตามเหตุผลของหัวข้อ 13.1</p>
+    <p>ชิ้นแรกวัดว่าหุ้นอยู่ห่าง strike แค่ไหนในหน่วย log ราคาต้องขึ้น 2.82% ใน log ถึงจะแตะ 36 พอดี ใกล้กับ 2.78% แบบเปอร์เซ็นต์ธรรมดาเพราะระยะสั้น ที่ต้องใช้ log เพราะสิ่งที่เป็นระฆังคว่ำคือ log ของราคาปลายทาง ไม่ใช่ตัวราคา</p>
+    <p>ชิ้นที่สองคือ drift สะสมของขาหุ้นตลอดอายุ 0.0122 บวกกันได้ตัวเศษ −0.015971 ครึ่งหนึ่งของ variance เป็นบวกตรงนี้ เพราะ $d_1$ คือตัวที่ถูกเลื่อนไปแล้วตามขั้นที่ 5</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — ตัวส่วน แล้วได้ $d_1$ กับ $d_2$ พร้อมทางตรวจ</h4>
+  <p>หารด้วยความกว้างของแรงสุ่มตลอดสามเดือน แล้วตรวจ $d_2$ อีกทางด้วย drift ของ log ภายใต้ risk-neutral measure</p>
+  <div class="math">\[
+\begin{aligned}
+\sqrt T&=\sqrt{0.25}=0.5\\
+\sigma\sqrt T&=0.24(0.5)=0.12\\[4pt]
+d_1&=-0.015971/0.12=-0.133091\\
+d_2&=-0.133091-0.12=-0.253091\\[4pt]
+(r-\tfrac12\sigma^2)T&=(0.02-0.0288)(0.25)=-0.0022\\
+d_2&=\frac{-0.028171-0.0022}{0.12}\\
+&=\frac{-0.030371}{0.12}=-0.253091
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตลอดสามเดือน log ของราคาแกว่งด้วย standard deviation (SD) 12% ไม่ใช่ 24% เพราะความกว้างโตตามรากของเวลา $d_1$ กับ $d_2$ จึงเป็นระยะวัดเป็นจำนวนเท่าของ 12% เหมือน z-score ของหัวข้อ 1.9</p>
+    <p>ทางตรวจใช้สูตรของ $d_2$ ตรง ๆ ที่มีครึ่ง variance เป็นลบ ได้ −0.253091 ตรงกัน $d_2$ อยู่ในโลกของความน่าจะเป็น ส่วน $d_1$ ถูกเลื่อนขึ้นไปอีก 0.12 ตอนคิดขาหุ้น strike อยู่เหนือจุดกลางของ log ราคาปลายทาง 0.253 เท่าของ SD โอกาสไปถึงจึงต่ำกว่าครึ่งเล็กน้อย</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — เปิดตาราง คิดลด strike แล้วคูณทีละก้อน</h4>
+  <p>สองค่าในตารางกับตัวคิดลดหนึ่งตัว แล้วคูณก้อนซ้ายกับก้อนขวาแยกกันก่อนลบ</p>
+  <div class="math">\[
+\begin{aligned}
+\Phi(d_1)&=\Phi(-0.133091)=0.44706\\
+\Phi(d_2)&=\Phi(-0.253091)=0.40010\\[4pt]
+rT&=0.02(0.25)=0.005\\
+e^{-0.005}&=0.9950125\\
+Ke^{-rT}&=36(0.9950125)=35.82045\\[4pt]
+35(0.44706)&=15.64710\\
+35.82045(0.40010)&=14.33176\\
+C&=15.64710-14.33176=1.3153\\
+C_{\text{exact}}&=1.31540\ \text{USD}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ค่า z ติดลบนิดเดียว พื้นที่ทางซ้ายจึงต้องต่ำกว่าครึ่งนิดเดียว 0.447 กับ 0.400 ผ่านการตรวจด้วยตา หมุดที่ควรจำคือ Φ(0) = 0.5 Φ(−0.25) ราว 0.40 และ Φ(−0.5) ราว 0.31</p>
+    <p>คิดลดเฉพาะ strike เพราะ 36 USD คือเงินที่จ่ายอีกสามเดือน ส่วน 35 USD เป็นราคาวันนี้อยู่แล้ว ส่วนลด 0.1796 USD คือดอกเบี้ยที่ยังไม่ต้องจ่าย ถ้าดอกเบี้ย 8% อายุ 5 ปี ส่วนลดจะเป็น 11.87 USD ใหญ่กว่าตัว option เสียอีก</p>
+    <p>คูณด้วยมือได้ 1.3153 ใช้ค่า Φ ไม่ปัดได้ 1.31540 USD ต่างกันแค่ 0.00006 ห้ามใช้ $\Phi(d_2)$ ทั้งสองก้อน เพราะจะได้ (35 − 35.8204)(0.40010) = −0.328 USD ราคาติดลบซึ่งไม่มีความหมาย</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 17 — ตรวจด้วยขอบเขตที่ไม่ต้องใช้แบบจำลอง</h4>
+  <p>ราคาต้องอยู่ในกรอบที่ no-arbitrage บังคับเสมอ และต้องขยับไปทางที่ถูกเมื่อความผันผวนวิ่งไปสุดทาง</p>
+  <div class="math">\[
+\begin{aligned}
+\text{lower}&=\max(35-35.8204,\ 0)=0\\
+\text{upper}&=S_0=35\\
+0&\le1.3154\le35\\[4pt]
+\text{intrinsic}&=\max(35-36,\ 0)=0\\
+\text{time value}&=1.3154-0=1.3154\\[4pt]
+\sigma\to0&:\ C\to0\\
+\sigma=0.24&:\ C=1.3154\\
+\sigma\to\infty&:\ C\to35
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สิทธิ์ซื้อหุ้นต้องถูกกว่าตัวหุ้นเอง และไม่ต่ำกว่าส่วนต่างของหุ้นกับ strike ที่คิดลดแล้ว ซึ่งที่นี่ติดลบจึงเป็นศูนย์ ราคา 1.3154 อยู่ต้นกรอบ 0 ถึง 35 สมกับ call ที่ยังไม่มีกำไรและอายุสั้น</p>
+    <p>ราคาทั้งก้อนเป็นค่าเวลาล้วน เพราะวันนี้หุ้นต่ำกว่า strike 1 USD แต่หนึ่ง SD ของสามเดือนคือ 12% ของ 35 หรือ 4.2 USD ระยะ 1 USD จึงแค่ 0.24 เท่าของ SD วิ่งข้ามได้สบาย ถ้าหุ้นไม่ขยับ ค่าเวลานี้ละลายหมดในสามเดือน หัวข้อ 13.3 จะวัดเป็นเงินต่อวัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 18 — อ่าน $\Phi(d_1)$ กับ $\Phi(d_2)$ ให้ถูกความหมาย</h4>
+  <p>สองตัวเลขจากตารางตอบคนละคำถาม และช่องว่างระหว่างมันมีที่มา</p>
+  <div class="math">\[
+\begin{aligned}
+\Delta&=\Phi(d_1)=0.4471\\
+10{,}000(0.4471)&=4{,}471\ \text{shares}\\[4pt]
+\mathbb Q(S_T>36)&=\Phi(d_2)=0.4001\\[4pt]
+d_1-d_2&=\sigma\sqrt T=0.12\\
+\Phi(d_1)-\Phi(d_2)&=0.0470
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>หุ้นขึ้น 1 USD call ขึ้นราว 0.447 USD ถ้าขาย call 100 สัญญา สัญญาละ 100 หุ้น รวม 10,000 หุ้น ต้องซื้อหุ้นไว้ 4,471 หุ้นเพื่อ hedge ส่วนโอกาสที่หุ้นจะจบเหนือ 36 USD ภายใต้ risk-neutral measure คือ 40.0%</p>
+    <p>$\Phi(d_2)$ นับว่าได้ใช้สิทธิ์บ่อยแค่ไหน $\Phi(d_1)$ ถ่วงแต่ละกรณีด้วยขนาดของหุ้นที่ได้ กรณีที่หุ้นขึ้นแรงจึงมีน้ำหนักมากกว่า ตัวแรกจึงสูงกว่าเสมอ ช่องว่าง 4.70 จุดกว้างขึ้นเมื่อความผันผวนสูงหรืออายุยาว เพราะทั้งคู่ทำให้ $\sigma\sqrt T$ ใหญ่ขึ้น</p>
+    <p>กับดักที่พบบ่อย ใส่อายุเป็น 3 แทน 0.25 ปี ราคาพุ่งเป็น 6.24 USD แพงเกินจริง 4.7 เท่า ใส่ความผันผวนเป็น 24 แทน 0.24 ราคาจะวิ่งไปชนเพดาน 35 USD ทันที</p>
   </div>
 </section>
 
@@ -458,9 +588,79 @@ P&=2.21214362-99.50124785+103.95523254=6.66612831\ \mathrm{USD}\end{aligned}
 </figure>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: ราคาแบบจำลองคือ 2.39087696 USD ต่อหุ้น หรือ 239.087696 USD ต่อสัญญาที่แทน 100 หุ้น ก่อนเสนอจริง desk ยังต้องใส่ dividend, borrow, funding, discrete tick, bid–ask และ volatility ที่สังเกตจากตลาด ไม่ควรปัด $d_1$ หรือ $d_2$ ระหว่างทางเพราะผลต่างสุดท้ายเกิดจากการลบตัวเลขสองขาที่ใหญ่กว่าราคาสุทธิมาก</p>
-  <p>ตรวจเองใน 10 วินาที: ขาหุ้น 36.7719 ลบขา strike 34.3810 ต้องได้ 2.3909 USD ต่อหุ้น; ราคาเดียวกันต้องอยู่ระหว่าง 0 กับ spot 100 USD และผ่าน put–call parity</p>
+  <h4>คำตอบ — ราคา Call และ Put ตามสูตร Black–Scholes</h4>
+  <p>คำถาม: European call และ put บนหุ้น spot 100 USD strike 105 USD อายุ 0.25 ปี ดอกเบี้ย 4% ต่อปี ความผันผวน 20% ควรมีราคาเท่าไร และหากมีเงินปันผลต่อเนื่อง 2% ราคาเปลี่ยนเป็นเท่าไร?</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 13): Spot 100 USD, Strike 105 USD, อายุ 0.25 ปี, ดอกเบี้ย 4% ต่อปี, Volatility 20%, ตัวคิดลดมีค่า 0.99005</p>
+  <p>1. กรณีไม่มีปันผล: ได้ d₁ เท่ากับ −0.337902 และ d₂ เท่ากับ −0.437902 ได้ราคา call เท่ากับ 2.39087696 USD ต่อหุ้น (239.09 USD ต่อสัญญา 100 หุ้น) และราคา put เท่ากับ 6.34610950 USD ต่อหุ้น (634.61 USD ต่อสัญญา)</p>
+  <p>2. สัดส่วนและโอกาส: โอกาสทางทฤษฎีที่จะได้ใช้สิทธิ์อยู่ที่ 33.07% (คำนวณจาก Φ ของ d₂) ส่วนสัดส่วนถือหุ้นเพื่อทำซ้ำอยู่ที่ 36.77% (คำนวณจาก Φ ของ d₁)</p>
+  <p>3. กรณีมีเงินปันผลต่อเนื่อง c เท่ากับ 0.02: ได้ d₁ เท่ากับ −0.387902 และ d₂ เท่ากับ −0.487902 ราคา call ลดเหลือ 2.21214362 USD และราคา put เพิ่มขึ้นเป็น 6.66612831 USD</p>
+  <p>ตรวจเองใน 10 วินาที: ขาหุ้น 100 × 0.367719 คือ 36.7719 ลบขา strike 105 × 0.99005 × 0.330729 คือ 34.3810 ได้ 2.3909 USD พอดี และตรวจ put ด้วย parity ได้ 6.3461 USD</p>
+  <p>แปลว่าอะไรบนโต๊ะเทรด: Black–Scholes แยกมูลค่า option ออกเป็นสองก้อนที่ซื้อขายได้จริง คือการซื้อหุ้นล่วงหน้าและการกู้ยืมเงินด้วยมูลค่าปัจจุบันของ strike สูตรนี้ไม่ได้พยายามเดาว่าหุ้นจะวิ่งไปทางไหน แต่บอกต้นทุนเป๊ะ ๆ ของการสังเคราะห์สิทธิ์นี้ในตลาด</p>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — call 35 / 36 USD จากต้นทาง</h4>
+  <p>คำถาม: หุ้น 35 USD call แบบยุโรป strike 36 USD อายุ 3 เดือน ดอกเบี้ย 2% ความผันผวน 24% ได้ $d_1$ $d_2$ ราคา และจำนวนหุ้นที่ต้องถือเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 14 ถึง 18</p>
+  <p>1. d₁ = −0.13309 และ d₂ = −0.25309 จากตัวเศษ −0.015971 ส่วนด้วย 0.12</p>
+  <p>2. ราคา call 1.3154 USD เท่ากับ 35 × 0.44706 − 35.8204 × 0.40010 เป็นค่าเวลาล้วน</p>
+  <p>3. delta 0.4471 ขาย 100 สัญญาต้องถือหุ้น 4,471 หุ้น ส่วนโอกาสใช้สิทธิ์ภายใต้ risk-neutral measure คือ 40.0% ต่างกัน 4.70 จุด ห้ามใช้แทนกัน</p>
+  <p>ตรวจเองใน 10 วินาที: ln(35/36) ≈ −0.0282 บวก 0.0122 ได้ −0.016 หาร 0.12 ได้ −0.133 และราคาต้องอยู่ระหว่าง 0 กับ 35</p>
+  <p>แปลว่าอะไร: บนโต๊ะไม่มีใครใช้สูตรนี้หาราคา เพราะราคาอยู่บนจออยู่แล้ว ที่ทำจริงคือเดินย้อน ใส่ราคาตลาดแล้วแก้หาความผันผวนที่ทำให้สูตรตรงกับราคานั้น ได้ implied volatility ของหัวข้อ 13.4</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจคำตอบสูตร Black–Scholes</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+
+S, K, T, r, sigma = 100.0, 105.0, 0.25, 0.04, 0.20
+d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+d2 = d1 - sigma * np.sqrt(T)
+
+c_price = S * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
+p_price = K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1)
+
+assert np.isclose(d1, -0.337901642, atol=1e-6)
+assert np.isclose(d2, -0.437901642, atol=1e-6)
+assert np.isclose(c_price, 2.39087696, atol=1e-6)
+assert np.isclose(p_price, 6.34610950, atol=1e-6)
+assert np.isclose(c_price - p_price, S - K * np.exp(-r * T), atol=1e-7)
+
+c_div = 0.02
+d1_div = (np.log(S / K) + (r - c_div + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+d2_div = d1_div - sigma * np.sqrt(T)
+c_div_price = S * np.exp(-c_div * T) * norm.cdf(d1_div) - K * np.exp(-r * T) * norm.cdf(d2_div)
+p_div_price = K * np.exp(-r * T) * norm.cdf(-d2_div) - S * np.exp(-c_div * T) * norm.cdf(-d1_div)
+
+assert np.isclose(c_div_price, 2.21214362, atol=1e-6)
+assert np.isclose(p_div_price, 6.66612831, atol=1e-6)
+assert np.isclose(c_div_price - p_div_price, S * np.exp(-c_div * T) - K * np.exp(-r * T), atol=1e-7)
+S2, K2, T2, r2, s2 = 35.0, 36.0, 0.25, 0.02, 0.24      # the source's call
+num = np.log(S2 / K2) + (r2 + s2**2 / 2) * T2
+assert abs(np.log(S2 / K2) + 0.028171) &lt; 1e-6 and abs(num + 0.015971) &lt; 1e-6
+a1 = num / (s2 * np.sqrt(T2)); a2 = a1 - s2 * np.sqrt(T2)
+assert abs(a1 + 0.133091) &lt; 1e-6 and abs(a2 + 0.253091) &lt; 1e-6
+assert abs((np.log(S2 / K2) + (r2 - s2**2 / 2) * T2) / 0.12 - a2) &lt; 1e-12
+KD = K2 * np.exp(-r2 * T2)
+assert abs(KD - 35.82045) &lt; 1e-5
+c2 = S2 * norm.cdf(a1) - KD * norm.cdf(a2)
+assert abs(c2 - 1.31540) &lt; 1e-5 and 0 &lt;= c2 &lt;= S2
+assert abs(norm.cdf(a1) - 0.44706) &lt; 1e-5 and abs(norm.cdf(a2) - 0.40010) &lt; 1e-5
+assert round(10_000 * norm.cdf(a1)) == 4471
+assert abs((S2 - KD) * norm.cdf(a2) + 0.328) &lt; 1e-3        # both legs with Phi(d2): negative
+def bs(S, K, T, r, s):
+    x1 = (np.log(S / K) + (r + s * s / 2) * T) / (s * np.sqrt(T))
+    return S * norm.cdf(x1) - K * np.exp(-r * T) * norm.cdf(x1 - s * np.sqrt(T))
+assert abs(bs(S2, K2, 3.0, r2, s2) - 6.2371) &lt; 1e-4     # T typed as 3 months -> 3 years
+assert bs(S2, K2, T2, r2, 1e-6) &lt; 1e-9 and abs(bs(S2, K2, T2, r2, 50.0) - S2) &lt; 1e-6
+print("Assertions verified.")
+</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์นี้ตรวจสอบค่า d1, d2, ราคา call, ราคา put ทั้งกรณีไม่มีปันผลและมีปันผล พร้อมทดสอบ put–call parity ทั้งสองสภาวะ</p>
+  </div>
 </section>
 
 <section class="pitfall">
@@ -486,11 +686,12 @@ P&=2.21214362-99.50124785+103.95523254=6.66612831\ \mathrm{USD}\end{aligned}
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
+    <li>ตัวเลขหลัก: หุ้น 100 USD strike 105 USD อายุ 3 เดือน ดอกเบี้ย 4% ความผันผวน 20% ได้ call 2.39 USD และ put 6.35 USD (ปันผล 2% ปรับเป็น 2.21 และ 6.67 USD) และตัวอย่างต้นทาง หุ้น 35 strike 36 ดอกเบี้ย 2% ความผันผวน 24% ได้ 1.3154 USD delta 0.4471</li>
     <li>ราคาคือ discounted risk-neutral expectation ของ payoff ภายใต้สมมติฐาน Black–Scholes</li>
     <li>$\Phi(d_2)$ เป็น exercise probability ภายใต้ $\mathbb Q$ ส่วน $\Phi(d_1)$ เป็น share-weighted quantity และเท่ากับ delta ในกรณีนี้</li>
     <li>call แยกเป็นขาหุ้นลบขา strike จึงตรวจหน่วยและการ discount ได้ทีละส่วน</li>
     <li>put–call parity และ no-arbitrage bounds เป็น checks อิสระที่ควรทำก่อนนำราคาไปใช้</li>
-    <li>สูตรรายงานราคาต่อหุ้น; contract multiplier และ market frictions ต้องใส่ภายหลังอย่างชัดเจน</li>
+    <li>สูตรรายงานราคาต่อหุ้น; contract multiplier และ market frictions ต้องคูณปรับเพิ่มเมื่อนำไปใช้จริง</li>
   </ul>
 </section>
 </article>

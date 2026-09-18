@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คุณอยากแลกเงินตามความแกว่งของดัชนีเดือนหน้า แต่หน้าจอมีเพียงสิทธิ์ซื้อและสิทธิ์ขายหลาย strike; ต้องมีสัญญา variance โดยตรงก่อนหรือไม่?</p>
-  <p>เฉลย: ไม่ต้องมีสัญญา variance โดยตรง เพราะ put ต่ำกับ call สูงรวมกันสร้าง payoff ได้</p>
-  <p>variance swap ประกอบเครื่องวัดความแกว่งจากอะไหล่ option; อย่าสลับ variance กับ volatility เพราะต่างกันด้วยกำลังสอง</p>
+  <p>variance swap บน SPX อายุ 30 วัน notional 1,000,000 USD ต่อ variance หนึ่งหน่วย option 81 strike ให้ fair strike เท่าไร และถ้าวัด 10 วันได้ผลตอบแทน ±1.2%, −2.2% ฯลฯ ผู้ซื้อได้เท่าไร?</p>
+  <p>เฉลย: fair strike 0.04020 หรือความผันผวน 20.05% realized variance จาก 10 วันคือ 0.04788 หรือ 21.88% ผู้ซื้อได้ 1,000,000 × 0.00768 = 7,677.23 USD</p>
 </div>
 
 <details class="jargon" open>
@@ -566,9 +565,52 @@ w_{30}&=0.00304986+\frac{30-23}{37-23}\bigl(0.00365945-0.00304986\bigr)\\
 </section>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: บนชุด midquotes สังเคราะห์ fair variance strike แบบกริดคือ 0.04020277 ต่อปี หรือ 20.0506% ต่อรากปี ผู้ซื้อ variance notional 1,000,000 USD ที่เจอ path ตัวอย่าง 10 observations จ่ายรับ 7,677.23 USD ส่วนค่าที่สร้าง constant 30 วันจากสอง expiry เป็นขั้นเพิ่มของดัชนี VIX ไม่ใช่การอ้างว่า variance swap กับสัญญาที่อ้างอิง VIX เป็นรายการเดียวกัน</p>
-  <p>ตรวจเองใน 10 วินาที: กด <code>(0.047880-0.04020277)*1000000</code> ต้องได้ 7,677.23 USD. ใช้ check นี้ยืนยัน settlement ของ variance swap และกันการคูณ SPX option multiplier ซ้ำ.</p>
+  <h4>คำตอบ — fair strike จาก option ทั้งแถว และเงินชำระของ variance swap</h4>
+  <p>คำถาม: forward ของ SPX 5,000 จุด ดอกเบี้ย 4% option อายุ 30 วันที่ strike 3,000 ถึง 7,000 ทุก 50 จุด ความผันผวน 20% fair variance strike เท่าไร และ path 10 วันตัวอย่างจ่ายผู้ซื้อ notional 1,000,000 USD เท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 2 ถึง 4 และ 10 ถึง 15</p>
+  <p>1. ผลรวมกำลังสองของ log return 10 วันคือ 0.001900 คูณ 252 ส่วน 10 ได้ realized variance 0.047880 หรือ 21.88%</p>
+  <p>2. ราคา option ทั้ง 81 strike คูณความกว้าง 50 จุดแล้วส่วนด้วยกำลังสองของ strike รวมได้ 0.0016467458 คูณตัวแปลงหน่วย 24.4135 ได้ fair strike 0.04020277 หรือ 20.05%</p>
+  <p>3. เงินชำระ 1,000,000 × (0.047880 − 0.04020277) = 7,677.23 USD ผู้ซื้อได้เพราะความผันผวนที่เกิดจริงสูงกว่าที่ตกลงไว้</p>
+  <p>4. ค่าคงที่ 30 วันจาก 23 วันที่ 22% กับ 37 วันที่ 19% เชื่อมบน total variance ได้ 20.20% ไม่ใช่ 20.5% ที่ได้จากการเฉลี่ยความผันผวนตรง ๆ</p>
+  <p>ตรวจเองใน 10 วินาที: (0.047880 − 0.040203) × 1,000,000 ≈ 7,677 USD และรากของ 0.0402 ใกล้ 0.20 ตรงกับความผันผวนที่ใช้สร้างราคา</p>
+  <p>แปลว่าอะไร: variance swap ซื้อความผันผวนตรง ๆ โดยไม่ต้อง hedge delta ทุกวัน ราคายุติธรรมอ่านได้จาก option ทั้งแถวที่ถ่วงด้วยหนึ่งส่วน K² ฝั่ง put ต่ำจึงมีน้ำหนักมาก และสัญญาจ่ายเป็นเส้นตรงใน variance ไม่ใช่ในความผันผวน</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ realized variance, fair strike 81 strike, เงินชำระ และการเชื่อม 30 วัน</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+
+r_obs = 0.01 * np.array([1.2, -1.0, 0.7, -2.2, 1.8, -1.5, 0.4, -0.9, 2.1, -0.6])
+assert abs((r_obs**2).sum() - 0.001900) &lt; 1e-12
+RV = 252 / 10 * (r_obs**2).sum()
+assert abs(RV - 0.047880) &lt; 1e-12 and abs(np.sqrt(RV) - 0.218814) &lt; 1e-6
+
+F, r, T, s = 5000.0, 0.04, 30 / 365, 0.20
+D = np.exp(-r * T)
+def black(K, kind):
+    d1 = (np.log(F / K) + s * s / 2 * T) / (s * np.sqrt(T))
+    d2 = d1 - s * np.sqrt(T)
+    return D * (F * norm.cdf(d1) - K * norm.cdf(d2)) if kind == "c" else D * (K * norm.cdf(-d2) - F * norm.cdf(-d1))
+K = np.arange(3000, 7001, 50.0)
+Q = np.where(K &lt; F, black(K, "p"), np.where(K &gt; F, black(K, "c"), (black(K, "c") + black(K, "p")) / 2))
+assert len(K) == 81 and abs(Q[K == 4500][0] - 3.518020) &lt; 1e-6
+total = (50 * Q / K**2).sum()
+factor = 2 * np.exp(r * T) / T
+assert abs(total - 0.001646745831) &lt; 1e-12 and abs(factor - 24.41346498) &lt; 1e-8
+Kvar = factor * total
+assert abs(Kvar - 0.04020277169) &lt; 1e-11 and abs(np.sqrt(Kvar) - 0.20050629) &lt; 1e-8
+assert abs(1_000_000 * (RV - Kvar) - 7677.23) &lt; 0.01
+
+w23, w37 = 0.22**2 * 23 / 365, 0.19**2 * 37 / 365
+w30 = w23 + (30 - 23) / (37 - 23) * (w37 - w23)
+assert abs(w30 - 0.00335466) &lt; 1e-8 and abs(np.sqrt(w30 / (30 / 365)) - 0.202027) &lt; 1e-6
+assert abs((0.22 + 0.19) / 2 - 0.205) &lt; 1e-12            # the wrong, linear-in-vol answer</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดวัด realized variance จาก 10 ผลตอบแทน สร้างราคา option 81 strike จากความผันผวน 20% หา fair strike 0.04020277 คำนวณเงินชำระ 7,677.23 USD และเชื่อม 23 วันกับ 37 วันเป็น 20.20%</p>
+  </div>
 </section>
 
 <section class="pitfall">

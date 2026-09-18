@@ -1,4 +1,14 @@
-
-k=np.linspace(-.30,.25,260);iv=.20-.11*k+.16*k*k
-ax.plot(k,100*iv,color=ACCENT);ax.axvline(0,color=MUTED,ls='--',label='At-forward')
-ax.set_xlabel('Log-moneyness log(K/F)');ax.set_ylabel('Implied volatility (%)');ax.legend()
+K = np.array([800, 900, 1000, 1100, 1200])
+iv = np.array([28.5, 23.1, 19.8, 18.2, 18.9])
+ax.plot(K, iv, marker='o', color=ACCENT, lw=2, label='market implied volatility')
+ax.axhline(19.8, color=WARM, ls='--', label='flat 19.8% (Black-Scholes)')
+for k, v in zip(K, iv):
+    off = (0, 8) if v > 19.8 else (0, -14)
+    ax.annotate(f'{v:.1f}%', (k, v), xytext=off, textcoords='offset points', ha='center', fontsize=8)
+ax.text(805, 16.6, 'put K=800: 2.9424 vs 0.3189 at flat vol (9.2x)', fontsize=8)
+ax.set_ylim(16, 31)
+ax.set_xticks(K)
+ax.set_xlabel('Strike (index points, spot 1,000)')
+ax.set_ylabel('Implied volatility (%)')
+ax.set_title('3-month index options: the left wing is expensive', loc='left')
+ax.legend(loc='upper right', fontsize=8)
