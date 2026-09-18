@@ -1,1 +1,15 @@
-x=np.linspace(-5,5,600);n=stats.norm.pdf(x);fat=stats.t.pdf(x,df=4);ax.plot(x,n,color=ACCENT,label='Normal benchmark');ax.plot(x,fat,color=BAD,label='fat-tail illustration');ax.fill_between(x,fat,n,where=np.abs(x)>2.5,color=BAD,alpha=.18);ax.set_xlabel('Standardized return');ax.set_ylabel('Density');ax.set_title('Tail events are the model-risk battlefield',loc='left');ax.legend()
+mu = 0.08 / 252
+s = 0.20 / np.sqrt(252)
+x = np.linspace(-0.08, 0.08, 801)
+f_norm = stats.norm.pdf(x, mu, s)
+sc = s / np.sqrt(3)
+f_t = stats.t.pdf((x - mu) / sc, 3) / sc
+ax.semilogy(x * 100, f_norm, color=ACCENT, lw=2, label='GBM normal, SD 1.26%')
+ax.semilogy(x * 100, f_t, color=BAD, lw=2, ls='--', label='fat tail (t, 3 df), same SD')
+ax.axvline(-5, color=MUTED, lw=1)
+ax.text(-4.7, 4e-3, '-5% day\nnormal: 1 in 122 years\nfat tail: 0.78 per year', fontsize=8, va='top')
+ax.set_ylim(1e-4, 60)
+ax.set_xlabel('Daily return (%)')
+ax.set_ylabel('Density (log scale)')
+ax.set_title('Same SD, very different tails', loc='left')
+ax.legend(loc='upper right', fontsize=8)

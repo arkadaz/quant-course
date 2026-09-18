@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>อุณหภูมิ 20 องศาลด 30 หน่วยได้ แต่ราคาของชิ้นหนึ่ง 20 USD ลด 30 USD แล้วติดลบฟังแปลก ควรให้ model เคารพขอบนี้อย่างไร?</p>
-  <p>เฉลย: การลด 50% จาก 20 USD เหลือ 10 USD แต่ไม่พาข้ามศูนย์ เพราะระดับใหม่เกิดจากการคูณค่าบวกเดิมด้วยตัวคูณบวก</p>
-  <p>GBM ใช้ relative change จึงรักษา stock price ให้เป็นบวกและเป็น baseline ที่คำนวณกับ simulation ได้ มันมีรั้วศูนย์ติดพื้น วิ่งลงได้แต่ขุดทะลุไม่ได้; quant ใช้เปรียบเทียบก่อนเพิ่ม jump หรือ volatility ที่เปลี่ยนตามเวลา</p>
+  <p>ถ้า SPY เดินตาม GBM ที่ drift 10% ความผันผวน 20% ต่อปี วันที่ร่วง 5% ขึ้นไปควรเกิดบ่อยแค่ไหน และในเมื่อตลาดจริงมีวันแบบนั้นหลายวันในปี 2008 กับ 2020 ทำไมโต๊ะยังใช้ GBM?</p>
+  <p>เฉลย: GBM บอกว่า z = −3.99 โอกาสวันละ 0.0033% หรือราวครั้งเดียวใน 122 ปี ของจริงถี่กว่ามาก GBM จึงผิดที่หาง แต่ยังใช้เป็นภาษากลาง เพราะราคาติดลบไม่ได้ ผลตอบแทนไม่ขึ้นกับระดับราคา มีสูตรปิด และความผิดของมันวัดได้และซ่อมได้ทีละข้อ</p>
 </div>
 
 <details class="jargon" open>
@@ -63,6 +62,8 @@
     <dd>ความสามารถซื้อขายขนาดที่ต้องการโดยไม่ขยับราคามาก ใช้กำหนด hedge horizon และ impact stress</dd>
     <dt>Generalized Autoregressive Conditional Heteroskedasticity (GARCH)</dt>
     <dd>model ที่ให้ variance วันนี้เรียนรู้จาก shock และ variance ก่อนหน้า ใช้จับ volatility clustering ที่ GBM แบบ volatility คงที่มองไม่เห็น</dd>
+    <dt>standard deviation (SD)</dt>
+    <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าวันร่วงแรงอยู่ห่างจุดกลางกี่ช่วง</dd>
   </dl>
 </details>
 
@@ -103,9 +104,12 @@
 
 <section class="formula">
   <h4>ขั้นที่ 1 — positivity และ scale invariance</h4>
-  <p>เหตุผลข้อแรกที่เลือก model นี้คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยน ไม่ว่าหุ้นจะราคาสิบบาทหรือหมื่นบาท</p>
+  <p>เหตุผลข้อแรกที่เลือก model นี้คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยน ไม่ว่าหุ้นจะราคา 10 USD หรือ 10,000 USD</p>
   <div class="math">\[
-S_t=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}>0,\qquad \frac{S_{t+s}}{S_t}=e^{(\mu-\sigma^2/2)s+\sigma(W_{t+s}-W_t)}
+\begin{aligned}
+S_t&=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}\gt0\\
+\frac{S_{t+s}}{S_t}&=e^{(\mu-\sigma^2/2)s+\sigma(W_{t+s}-W_t)}\qquad(\text{no }S_t\text{ inside})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>exponential รับประกันราคาบวก และ future gross return ratio ไม่ขึ้นกับระดับ $S_t$; สอง property นี้ตอบข้อจำกัดพื้นฐานของ equity price model</p>
@@ -114,16 +118,17 @@ S_t=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}>0,\qquad \frac{S_{t+s}}{S_t}=e^{(\mu-\si
 
 <section class="formula">
   <h4>ขั้นที่ 2 — ที่มาของ GBM: จากการคูณผลตอบแทนย่อย สู่เลขชี้กำลังด้วย Taylor Series</h4>
-  <p>การพิสูจน์หกบรรทัดนี้เชื่อมโยงโลก discrete เข้ากับโลก continuous อย่างสมบูรณ์ ทำให้เห็นว่าพจน์ลบครึ่ง variance ไม่ใช่ของแปลกประหลาดที่โผล่มาจากฟ้า แต่เป็นผลพวงโดยตรงจากพจน์อันดับสองของ Taylor series ที่สะสมผ่านการทบต้น</p>
+  <p>การพิสูจน์นี้เชื่อมโยงโลก discrete เข้ากับโลก continuous อย่างสมบูรณ์ ทำให้เห็นว่าพจน์ลบครึ่ง variance ไม่ใช่ของแปลกประหลาดที่โผล่มาจากฟ้า แต่เป็นผลพวงโดยตรงจากพจน์อันดับสองของ Taylor series ที่สะสมผ่านการทบต้น</p>
   <p>ลองตรวจด้วยตัวเลขจริงของการเทรด 252 วันในหนึ่งปี ($T=1$): ถ้าหุ้นมี drift 10% และความผันผวน $\sigma=0.20$ ต่อปี ในแต่ละวันการแกว่งตัวจะสร้างแรงฉุดขนาดเล็ก เมื่อสะสมครบ 252 วัน ผลรวมของแรงฉุดจะเท่ากับ $-0.5 \times (0.20)^2 = -0.02$ หรือลดลง 2% ต่อปีเต็มพอดี</p>
   <div class="math">\[
 \begin{aligned}
-\frac{S_T}{S_0} &= \prod_{k=1}^n \left(1 + R_k\right),\qquad R_k \approx \mu\,\Delta t + \sigma\sqrt{\Delta t}\,Z_k\\
-\log\!\left(\frac{S_T}{S_0}\right) &= \sum_{k=1}^n \log(1 + R_k)\\
-\log(1 + u) &= u - \tfrac{1}{2}u^2 + \mathcal O(u^3)\qquad\text{(Taylor series)}\\
-\sum_{k=1}^n \log(1 + R_k) &\approx \sum_{k=1}^n \left(\mu\,\Delta t + \sigma\sqrt{\Delta t}\,Z_k - \tfrac{1}{2}\sigma^2\Delta t\,Z_k^2\right)\\
-n\Delta t = T:\quad \log\!\left(\frac{S_T}{S_0}\right) &\approx \mu T - \tfrac{1}{2}\sigma^2 T + \sigma\sqrt{T}\,Z,\qquad Z\sim\mathcal N(0,1)\\
-\Longrightarrow\ S_T &= S_0\exp\!\left(\left(\mu-\tfrac{1}{2}\sigma^2\right)T + \sigma W_T\right)
+\frac{S_T}{S_0}&=\prod_{k=1}^n(1+R_k),\qquad R_k\approx\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
+\log\frac{S_T}{S_0}&=\sum_{k=1}^n\log(1+R_k)\\
+\log(1+u)&=u-\tfrac12u^2+\cdots\qquad(\text{Taylor})\\
+\log\frac{S_T}{S_0}&\approx\sum_{k=1}^n\Big(\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k-\tfrac12\sigma^2\Delta t\,Z_k^2\Big)\\
+&\approx\mu T-\tfrac12\sigma^2T+\sigma\sqrt T\,Z\qquad(n\Delta t=T)\\
+S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
+\mu=10\%,\ \sigma=20\%&:\ -\tfrac12(0.20)^2=-0.02\ \text{per year}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -142,10 +147,10 @@ n\Delta t = T:\quad \log\!\left(\frac{S_T}{S_0}\right) &\approx \mu T - \tfrac{1
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4a — GBM gets positivity and proportional moves right</h4>
-  <img src="../figures/11.4-1.svg" alt="Figure 11.4a — GBM gets positivity and proportional moves right" loading="lazy">
+  <h4>Figure 11.4a — หุ้น 20 กับ 500 USD ใช้ตัวคูณชุดเดียวกัน</h4>
+  <img src="../figures/11.4-1.svg" alt="หุ้น 20 USD แกนซ้ายกับหุ้น 500 USD แกนขวา จุดทับกันทุกวัน" loading="lazy">
   <figcaption>
-    <p>ราคาเริ่มต่างกันมากยังรับ return path เดียวกันเป็นเปอร์เซ็นต์เท่ากัน; นี่เป็นเหตุผลที่ GBM เป็น baseline สะอาดสำหรับ สินทรัพย์ scenarios</p>
+    <p>แกนซ้ายคือหุ้น 20 USD แกนขวาคือหุ้น 500 USD สเกลห่างกัน 25 เท่า ใส่ตัวคูณรายวันชุดเดียวกัน จุดทุกจุดทับกันพอดี วันที่ 1 หุ้นถูกขึ้น 0.82 USD หุ้นแพงขึ้น 20.40 USD เป็นเปอร์เซ็นต์เท่ากันคือ 4.08% ตัวคูณของ GBM ไม่มีราคาอยู่ข้างใน กฎเดียวจึงใช้กับหุ้นทุกระดับราคา</p>
   </figcaption>
 </figure>
 
@@ -155,33 +160,41 @@ n\Delta t = T:\quad \log\!\left(\frac{S_T}{S_0}\right) &\approx \mu T - \tfrac{1
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4b — volatility clusters rather than staying constant</h4>
-  <img src="../figures/11.4-2.svg" alt="Figure 11.4b — volatility clusters rather than staying constant" loading="lazy">
+  <h4>Figure 11.4b — ความผันผวนมาเป็นช่วง ไม่คงที่</h4>
+  <img src="../figures/11.4-2.svg" alt="ความผันผวนย้อนหลัง 15 วันของข้อมูลจำลองสามช่วง เทียบค่าคงที่ 21.9%" loading="lazy">
   <figcaption>
-    <p>GBM ให้ daily variance คงที่ แต่ data มักมีช่วงเงียบสลับช่วงดัง; rolling volatility ที่ยกตัวเป็นกลุ่มทำให้ constant-$\sigma$ VaR และ hedge band ต่ำกว่าความเสี่ยงใน regime ร้อน</p>
+    <p>จำลอง 250 วันที่มีสามช่วง ความผันผวนรายปี 12.7%, 44.4% และ 17.5% เส้นน้ำเงินคือความผันผวนย้อนหลัง 15 วัน เส้นประคือค่าคงที่ตัวเดียว 21.9% แบบที่ GBM ใช้ ในช่วงร้อนตัวเลขคงที่ต่ำกว่าของจริงเกินสองเท่า ขนาด hedge และวงเงินความเสี่ยงที่คิดจากตัวเลขเดียวจึงเล็กเกินไปตอนที่อันตรายที่สุด</p>
   </figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 3 — normal tail benchmark versus stressed tail</h4>
-  <p>แต่ต้องซื่อสัตย์ด้วยว่าแบบจำลองนี้ผิดตรงไหน สามบรรทัดนี้ให้ตัวเลขที่แบบจำลองทำนาย เพื่อเอาไปเทียบกับความถี่ที่เกิดขึ้นจริง การเทียบนั้นคือเนื้อหาของหัวข้อ 17.7 และมักจบด้วยการที่แบบจำลองแพ้</p>
+  <p>แต่ต้องซื่อสัตย์ด้วยว่าแบบจำลองนี้ผิดตรงไหน ขั้นนี้ให้ตัวเลขที่แบบจำลองทำนาย เพื่อเอาไปเทียบกับความถี่ที่เกิดขึ้นจริง การเทียบนั้นคือเนื้อหาของหัวข้อ 17.7 และมักจบด้วยการที่แบบจำลองแพ้</p>
   <div class="math">\[
-\begin{aligned}r_{t,\Delta t}&:=\log\!\left(\frac{S_{t+\Delta t}}{S_t}\right)\sim\mathcal N\!\left(\left(\mu-\tfrac12\sigma^{2}\right)\Delta t,\ \sigma^{2}\Delta t\right)\\
-r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/2)\Delta t}{\sigma\sqrt{\Delta t}}\le\frac{-x-(\mu-\sigma^{2}/2)\Delta t}{\sigma\sqrt{\Delta t}}\\
-\mathbb P\big(r_{t,\Delta t}\le-x\big)&=\Phi\!\left(\frac{-x-(\mu-\sigma^{2}/2)\Delta t}{\sigma\sqrt{\Delta t}}\right)\end{aligned}
+\begin{aligned}
+r&=\log\frac{S_{t+\Delta t}}{S_t}\sim\mathcal N\Big(\big(\mu-\tfrac12\sigma^2\big)\Delta t,\ \sigma^2\Delta t\Big)\\
+\mathbb P(r\le-x)&=\Phi\Big(\frac{-x-(\mu-\sigma^2/2)\Delta t}{\sigma\sqrt{\Delta t}}\Big)\\[4pt]
+(\mu-\sigma^2/2)\Delta t&=0.08/252=0.000317\\
+\sigma\sqrt{\Delta t}&=0.20/15.8745=0.012599\\
+x=5\%&:\ z=\frac{-0.05-0.000317}{0.012599}=-3.994\\
+\mathbb P(r\le-5\%)&=\Phi(-3.994)=0.0000325\\
+1/0.0000325&=30{,}762\ \text{days}=122\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ยกผลของหัวข้อ 11.2 มาต่อ log return ในช่วงสั้น ๆ ก็ยังเป็นระฆัง จากนั้นทำอย่างเดียวกับขั้นก่อน คือลบจุดกลางและหารความกว้างทั้งสองข้างของอสมการ ตัวหารเป็นบวกเสมอ เครื่องหมายจึงไม่พลิก แล้วอ่านพื้นที่หางซ้ายจาก $\Phi$ ตรง ๆ</p>
     <p>แต่ตัวเลขที่ได้ต้องใช้ให้ถูกวิธี มันคือเส้นเทียบ ไม่ใช่คำตอบสุดท้าย เพราะแบบจำลองนี้ไม่มีการกระโดด และสมมติว่าความเหวี่ยงคงที่ตลอด ทั้งสองข้อผิดในวันที่สำคัญที่สุด</p>
     <p>ข้อมูลจริงจึงทะลุเกณฑ์บ่อยกว่าที่สูตรนี้บอกเสมอ วิธีใช้ที่ถูกคือดูว่าของจริงเกินเส้นนี้กี่เท่า ตัวเลขนั้นบอกขนาดของสิ่งที่แบบจำลองมองไม่เห็น</p>
+    <p>แทนเลข SPY วันที่ร่วง 5% อยู่ห่างจุดกลาง 3.99 SD ของวัน GBM จึงบอกว่าเกิดครั้งเดียวในราว 30,762 วันทำการหรือ 122 ปี แต่ในปี 2008 และ 2020 ปีเดียวก็มีวันแบบนี้หลายวัน ผลตอบแทนรายวันจริงมี kurtosis ราว 5 ถึง 10 ไม่ใช่ 3 ของระฆัง หางจึงหนากว่าหลายสิบเท่า</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4c — fat tails exceed a normal benchmark</h4>
-  <img src="../figures/11.4-3.svg" alt="Figure 11.4c — fat tails exceed a normal benchmark" loading="lazy">
+  <h4>Figure 11.4c — SD เท่ากัน แต่หางต่างกันมาก</h4>
+  <img src="../figures/11.4-3.svg" alt="density ของผลตอบแทนรายวัน GBM เทียบหางอ้วนที่ SD เท่ากัน บนแกน log" loading="lazy">
   <figcaption>
-    <p>เส้น fat-tailed distribution สูงกว่า Normal ที่บริเวณ moves ใหญ่ทั้งสองด้าน; tail risk control ต้อง replace or overlay the Gaussian assumption rather than polishing its decimals</p>
+    <p>เส้นทึบคือผลตอบแทนรายวันแบบ GBM ที่ SD 1.26% เส้นประคือ t distribution ที่มี 3 degrees of freedom ปรับให้ SD เท่ากันพอดี ใช้เป็นตัวอย่างหางอ้วน ไม่ใช่ข้อมูลจริง แกนตั้งเป็น log เพื่อให้เห็นหาง ตรงกลางสองเส้นแทบเหมือนกัน ความต่างทั้งหมดอยู่ที่หาง</p>
+    <p>ที่เส้น −5% ความสูงของ density สองเส้นต่างกันราว 16 เท่า ส่วนโอกาสสะสมตั้งแต่ −5% ลงไปต่างกัน 95 เท่า คือ 0.0033% กับ 0.31% ต่อวัน หรือครั้งเดียวใน 122 ปีตามขั้นที่ 3 กับ 0.78 ครั้งต่อปี SD ตัวเดียวมองไม่เห็นความต่างนี้</p>
   </figcaption>
 </figure>
 
@@ -191,10 +204,10 @@ r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4d — a gap leaves discrete hedge error</h4>
-  <img src="../figures/11.4-4.svg" alt="Figure 11.4d — a gap leaves discrete hedge error" loading="lazy">
+  <h4>Figure 11.4d — ราคากระโดดข้ามคืน hedge ปรับไม่ทัน</h4>
+  <img src="../figures/11.4-4.svg" alt="ราคาปิด 98 USD เปิด 78 USD ร่วง 20.4% ในคืนเดียว" loading="lazy">
   <figcaption>
-    <p>ราคา gap ผ่านระดับ hedge rebalancing หลายระดับในครั้งเดียว; line ของ continuous model ไม่มีเวลาให้ desk trade ระหว่างจุดเปิดและจุดปิดของ gap</p>
+    <p>ปิด 98 USD เปิด 78 USD ร่วง 20.4% ในคืนเดียว ใต้ GBM ที่ความผันผวนรายวัน 1.26% นี่คือราว −18 SD ซึ่งแทบเป็นไปไม่ได้ แต่ของจริงเกิดจากข่าวงบหรือคดี ระหว่างปิดกับเปิดไม่มีการซื้อขาย hedge ที่ตั้งใจปรับทีละนิดจึงไม่มีโอกาสปรับเลย ขาดทุนทั้งก้อนตรงช่วงแรเงา</p>
   </figcaption>
 </figure>
 
@@ -202,20 +215,23 @@ r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/
   <h4>ขั้นที่ 4 — นิยามของการตรวจด้วยราคาตลาด: ถ้าแบบจำลองถูก ต้องเห็นอะไร</h4>
   <p>บรรทัดนี้ไม่ใช่ผลที่พิสูจน์ มันเป็น เงื่อนไขที่กำหนดขึ้น เพื่อใช้ตรวจ ตรรกะมีข้อเดียว: ถ้าแบบจำลองที่มีความเหวี่ยงค่าเดียวอธิบายตลาดได้จริง ค่าความเหวี่ยงที่ย้อนกลับมาจากราคา option ทุกตัวต้องเท่ากันหมด ของจริงไม่เท่า และรูปที่ไม่เท่านั้นมีชื่อว่า smile ซึ่งเป็นหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
   <div class="math">\[
-\sigma_{\mathrm{imp}}(K,T)=\sigma\qquad\forall\,K,\ \forall\,T
+\begin{aligned}
+\sigma_{\mathrm{imp}}(K,T)&=\sigma\qquad(\text{every strike }K\text{ and maturity }T)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้า model มี volatility เดียวและอธิบายตลาดได้ implied volatility ที่ย้อนจากทุก option ต้องเท่ากัน; smile หรือ skew คือ observable model discrepancy</p>
-    <p>อ่านว่า: ความเหวี่ยงที่ย้อนกลับมาจากราคา option ต้องเท่ากันทุก strike และทุกอายุ สัญลักษณ์ $\forall$ คือสำหรับทุกค่า</p>
+    <p>อ่านว่า: ความเหวี่ยงที่ย้อนกลับมาจากราคา option ต้องเท่ากันทุก strike และทุกอายุ ของจริง option ที่ strike ห่างจากราคาปัจจุบันมาก มี implied volatility สูงกว่าเสมอ ตลาดกำลังบอกว่ามันไม่เชื่อ GBM</p>
+    <p>แต่ตลาดก็ยังพูดด้วยภาษาของ GBM แทนที่จะบอกว่า option ราคา 4.72 USD คนบอกว่า implied volatility 23% ซึ่งเทียบข้ามหุ้นและข้ามอายุได้ทันที GBM จึงเป็นระบบพิกัด ไม่ใช่ความเชื่อ</p>
     <p>นี่คือสิ่งที่ต้องเห็นถ้าแบบจำลองความเหวี่ยงคงที่อธิบายตลาดได้จริง ของจริงไม่เท่ากัน และรูปที่ไม่เท่านั้นคือหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4e — implied-vol skew is market evidence</h4>
-  <img src="../figures/11.4-5.svg" alt="Figure 11.4e — implied-vol skew is market evidence" loading="lazy">
+  <h4>Figure 11.4e — ตลาดตั้งราคา option ด้วยความผันผวนไม่เท่ากันทุก strike</h4>
+  <img src="../figures/11.4-5.svg" alt="implied volatility ลดจากราว 24% ที่ strike 75% ลงไปราว 15% ที่ strike 125% เทียบ GBM 20%" loading="lazy">
   <figcaption>
-    <p>ตัวอย่าง stylized skew แสดงว่าหางซ้ายของ distribution ถูกตั้งราคาแพงกว่า at-the-money; ตลาดจึงให้ราคากับ downside tail มากกว่าค่า $\sigma$ เดียว ใช้ surface ใน pricing control ไม่ใช่ใช้ flat input เพราะสะดวก</p>
+    <p>ตัวอย่างรูปร่างทั่วไปของ implied volatility หุ้น ไม่ใช่ข้อมูลจริงวันใดวันหนึ่ง strike ที่ 75% ของราคาปัจจุบันใช้ราว 24% ที่ราคาปัจจุบันราว 19% ที่ 125% ราว 15% ส่วน GBM ใช้ 20% ตัวเดียวทุก strike ตลาดจ่ายแพงกว่าสำหรับประกันขาลง แปลว่าตลาดเชื่อว่าหางซ้ายอ้วนกว่าที่ GBM บอก</p>
   </figcaption>
 </figure>
 
@@ -242,31 +258,72 @@ r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/
   <p>แบบจำลองนี้บังคับผลที่คนส่วนใหญ่ไม่ได้คาดไว้: ราคาที่คาดหวังกับราคาที่พบได้บ่อยที่สุด เป็นคนละตัวเลข และต่างกันไม่น้อย</p>
   <p>สาเหตุคือ drift ที่ทบต้นจริง ๆ ไม่ใช่ $\mu$ แต่เป็น $\mu$ ลบครึ่งหนึ่งของ variance ดังนั้นการอ้างค่าเฉลี่ยเป็นสิ่งที่ควรคาดหวังจึงทำให้คาดหวังสูงเกินไป</p>
   <div class="math">\[
-\begin{aligned}\text{mean}&=S_0\,e^{\mu T}\\[4pt]
-\text{median}&=S_0\,e^{(\mu-\sigma^{2}/2)T}\\[6pt]
-\mu=0.10,\ \sigma=0.20,\ T=10&:\ \text{mean}=100e^{1.0}=271.83\\[4pt]
-&\quad\text{median}=100e^{0.8}=222.55\\[4pt]
-\frac{271.83}{222.55}&=1.2214\\[6pt]
-\text{geometric drift}&=\mu-\frac{\sigma^{2}}{2}=0.10-0.02=0.08\end{aligned}
+\begin{aligned}
+\text{mean}&=S_0\,e^{\mu T}\\
+\text{median}&=S_0\,e^{(\mu-\sigma^{2}/2)T}\\[4pt]
+\mu=0.10,\ \sigma=0.20&:\ \mu-\sigma^2/2=0.10-0.02=0.08\\
+T=10&:\ \text{mean}=100e^{1.0}=271.83\\
+&\quad\text{median}=100e^{0.8}=222.55\\
+271.83/222.55&=e^{0.2}=1.2214
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ราคาที่คาดหวังคำนวณจากการยกกำลังของ drift เต็ม เพราะค่าเฉลี่ยของ lognormal ใช้parameterนั้น ส่วนราคาที่มีโอกาสเกิดเท่ากันด้านบนและด้านล่าง หรือค่ากึ่งกลาง ใช้ drift ที่หักครึ่ง variance ออกแล้ว</p>
+    <p>ราคาที่คาดหวังคำนวณจากการยกกำลังของ drift เต็ม เพราะค่าเฉลี่ยของ lognormal ใช้ parameter นั้น ส่วนราคาที่มีโอกาสเกิดเท่ากันด้านบนและด้านล่าง หรือค่ากึ่งกลาง ใช้ drift ที่หักครึ่ง variance ออกแล้ว</p>
     <p>แทนตัวเลขสิบปี: ค่าเฉลี่ยได้ 271.83 ขณะที่ค่ากึ่งกลางได้ 222.55 ต่างกันราว 22% ตัวเลขทั้งสองถูกต้องพร้อมกัน ไม่ใช่การคำนวณผิด</p>
-    <p>ความต่างนี้มาจากskewnessขวาของdistribution ราคาสูงมากดึงค่าเฉลี่ยขึ้น แต่ไม่ดึงค่ากึ่งกลาง เพราะค่ากึ่งกลางสนใจแค่ว่ามีกี่เส้นทางที่สูงกว่า ไม่ได้สนใจว่าสูงเท่าไร</p>
+    <p>ความต่างนี้มาจาก skewness ขวาของ distribution ราคาสูงมากดึงค่าเฉลี่ยขึ้น แต่ไม่ดึงค่ากึ่งกลาง เพราะค่ากึ่งกลางสนใจแค่ว่ามีกี่เส้นทางที่สูงกว่า ไม่ได้สนใจว่าสูงเท่าไร</p>
     <p>แปลว่าอะไร: ถ้าต้องรายงานสิ่งที่คาดหวัง ให้ใช้ค่าเฉลี่ยและระบุว่ามันสูงกว่าค่าปกติ แต่ถ้าต้องวางแผนกำลังคนหรือกำลังซื้อ ให้ใช้ค่ากึ่งกลาง เพราะนั่นคือสิ่งที่เกิดขึ้นบ่อยกว่า</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4f — controls map to known limitations</h4>
-  <img src="../figures/11.4-6.svg" alt="Figure 11.4f — controls map to known limitations" loading="lazy">
+  <h4>Figure 11.4f — SPY สิบปี: ค่าเฉลี่ย 271.83 กับ median 222.55</h4>
+  <img src="../figures/11.4-6.svg" alt="ค่าเฉลี่ยกับ median ของราคา SPY สิบปี และแถบ 25% ถึง 75%" loading="lazy">
   <figcaption>
-    <p>baseline GBM ไม่ถูกโยนทิ้ง แต่ถูกล้อมด้วย controls: volatility stress, jump scenario, surface calibration และ execution reserve ทำให้ limitation กลายเป็นรายการงานที่ตรวจได้</p>
+    <p>เริ่ม 100 drift 10% ความผันผวน 20% เส้นเขียวคือค่าเฉลี่ย เส้นส้มคือ median ห่างกันมากขึ้นทุกปี ครบสิบปีต่างกัน 22% ตามขั้นที่ 6 แถบคือช่วง 25% ถึง 75% จาก 145 ถึง 341 เส้นค่าเฉลี่ยอยู่เหนือ median ตลอด เพราะหางขวาลากขึ้น แต่ครึ่งหนึ่งของเส้นทางจบต่ำกว่า 222.55</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>worked example — ขออนุมัติรับ event risk ของหุ้นสมมติ</h4>
+  <h4>คำตอบ — GBM ผิดตรงไหน และทำไมยังใช้</h4>
+  <p>คำถาม: SPY ที่ drift 10% ความผันผวน 20% วันที่ร่วง 5% ควรเกิดบ่อยแค่ไหนตาม GBM และทำไมโต๊ะยังใช้แบบจำลองนี้?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 4 และ 6</p>
+  <p>1. ความผันผวนรายวัน 0.20/15.8745 = 1.26% จุดกลางรายวัน 0.08/252 = 0.03%</p>
+  <p>2. วันร่วง 5% อยู่ที่ z = −3.994 โอกาส 0.0033% ต่อวัน หรือราวครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</p>
+  <p>3. GBM ยังผ่านสองเกณฑ์ที่แบบจำลองบวกเงินตรง ๆ ทำไม่ได้ ราคาติดลบไม่ได้ และตัวคูณในอนาคตไม่มี S_t อยู่ข้างใน หุ้น 20 USD กับ 500 USD จึงใช้กฎเดียวกัน</p>
+  <p>4. ค่าเฉลี่ยกับค่ากลางสิบปีคือ 271.83 กับ 222.55 ต่างกัน 22% ซึ่งแบบจำลองบอกไว้ล่วงหน้า</p>
+  <p>ตรวจเองใน 10 วินาที: 5% ÷ 1.26% ≈ 4 SD และหางที่ 4 SD ของระฆังคือราวสามในแสน</p>
+  <p>แปลว่าอะไร: ใช้ GBM เป็นระบบพิกัดตั้งต้น แล้วซ่อมตามอาการ ความผันผวนเกาะกลุ่มใช้ GARCH ราคากระโดดใช้ jump model หางอ้วนใช้ stress test และ implied volatility surface เพิ่มความซับซ้อนเฉพาะเมื่อมันเปลี่ยนการตัดสินใจจริง อย่าใช้ความผันผวนรายวันของ GBM ปลอบใจว่า hedge จะรอดวันข่าว</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจหางของ GBM, Taylor drag และค่าเฉลี่ยกับค่ากลาง</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+mu, sigma, dt = 0.10, 0.20, 1 / 252
+m, sd = (mu - sigma**2 / 2) * dt, sigma * np.sqrt(dt)
+assert abs(m - 0.000317) &lt; 1e-6 and abs(sd - 0.012599) &lt; 1e-6
+z = (-0.05 - m) / sd
+p = norm.cdf(z)
+assert abs(z + 3.994) &lt; 1e-3 and abs(p - 3.25e-5) &lt; 1e-7
+assert abs(1 / p / 252 - 122) &lt; 1                       # once in about 122 years
+
+rng = np.random.default_rng(114)                        # compounding 252 daily simple returns
+R = mu * dt + sd * rng.standard_normal((20_000, 252))
+logS = np.log1p(R).sum(axis=1)
+assert abs(logS.mean() - (mu - sigma**2 / 2)) &lt; 0.004   # the -sigma^2/2 = -0.02 drag appears
+
+assert abs(100 * np.exp(1.0) - 271.83) &lt; 0.01 and abs(100 * np.exp(0.8) - 222.55) &lt; 0.01
+assert abs(np.exp(0.2) - 1.2214) &lt; 1e-4
+assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk example</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจว่า GBM ให้วันร่วง 5% ที่ z = −3.994 และครั้งเดียวในราว 122 ปี จำลองการทบต้นผลตอบแทนรายวัน 252 วันว่าได้แรงฉุด −0.02 ตามขั้นที่ 2 และตรวจค่าเฉลี่ยกับค่ากลางสิบปี</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างเสริม — ขออนุมัติรับ event risk ของหุ้นสมมติ</h4>
   <p>สมมติ desk ถือ short exposure ของหุ้นสมมติเทียบเท่า delta 100,000 shares และใช้ spot \$500. Overnight gap 5% คือราคาเปลี่ยน \$25 ต่อ share ดังนั้นผลกระทบอันดับแรกจาก delta อย่างเดียวอยู่ที่ราว \$2.5M ก่อน gamma, vega, spread และ impact. ค่า daily sigma จาก GBM ช่วยกำหนดกรอบวันปกติได้ แต่การอนุมัติข้าม event ต้องทำ gap stress และตีราคา volatility surface ใหม่ มิฉะนั้น hedge จะผ่านเฉพาะวันที่อากาศดี.</p>
   <p>คำถาม: overnight gap 5% ของ spot USD 500 กระทบ delta-equivalent 100,000 shares กี่ USD ก่อน gamma?</p>
   <p>ของที่มี: spot USD 500, move 5%, delta-equivalent 100,000 shares. นี่ยังเป็น first-order approximation.</p>
@@ -279,7 +336,7 @@ r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/
 </section>
 
 <section class="example">
-  <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
+  <h4>ตัวอย่างเสริม — ค่าเฉลี่ยกับค่ากลางสิบปี</h4>
   <p>คำตอบ: ด้วย drift 10% volatility 20% และเวลาสิบปี ราคาที่คาดหวังคือ 271.83 ขณะที่ค่ากึ่งกลางคือ 222.55 ต่างกันราว 22%</p>
   <p>ตรวจเองใน 10 วินาที: หักครึ่ง variance ออกจาก drift ก่อนแล้วค่อยยกกำลัง ถ้าใช้ drift เต็มกับค่ากึ่งกลางจะได้ตัวเลขที่สูงเกินไป</p>
   <p>ใช้ตัดสินใจ: เวลาตั้งเป้าราคาปลายทาง ให้ระบุให้ชัดว่าเป้านั้นเป็นค่าเฉลี่ยหรือค่ากึ่งกลาง เพราะสองตัวเลขนี้ต่างกันหนึ่งในห้า และการสลับกันทำให้แผนผิดตั้งแต่ต้น</p>
@@ -310,7 +367,7 @@ r_{t,\Delta t}\le-x\;&\Longleftrightarrow\;\frac{r_{t,\Delta t}-(\mu-\sigma^{2}/
   <ul>
     <li>GBM มีเหตุผลสำหรับ positive equity prices และ proportional returns</li>
     <li>ความผันผวนคงที่ หางบางแบบ normal เส้นราคาต่อเนื่องไม่กระโดด ผลตอบแทนแต่ละช่วงไม่เกี่ยวกัน และเทรดได้โดยไม่มีต้นทุน ทั้งห้าข้อนี้เป็นข้อสมมติที่เราเลือกใส่เอง ไม่ใช่ข้อเท็จจริงของตลาด</li>
-    <li>smile, clusters และ gaps เป็น diagnostics ที่ market เปิดเผยให้เห็น</li>
+    <li>smile, clusters และ gaps เป็น diagnostics ที่ market เปิดเผยให้เห็น GBM ที่ 20% ต่อปีบอกว่าวันร่วง 5% เกิดครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</li>
     <li>ใช้ GBM เป็น baseline แล้ว overlay stress, calibration และ execution controls ตาม decision</li>
     <li>ภายใต้ GBM ราคาที่คาดหวังกับค่ากึ่งกลางเป็นคนละตัวเลข: drift ที่ทบต้นคือ μ−σ²/2 ดังนั้นค่ากึ่งกลางจึงต่ำกว่าค่าเฉลี่ย และต่างกันราว 22% ในตัวอย่างสิบปี</li>
   </ul>

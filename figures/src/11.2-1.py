@@ -1,1 +1,12 @@
-s=np.linspace(0,20,300);mean=100*np.exp(.12*s);med=100*np.exp((.12-.5*.30**2)*s);ax.plot(s,mean,color=ACCENT,label='expected price');ax.plot(s,med,color=WARM,label='median price');ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('The mean is pulled above the typical path',loc='left');ax.legend()
+s = np.linspace(0, 20, 300)
+mu, sig = 0.14, 0.32
+mean = 100 * np.exp(mu * s)
+med = 100 * np.exp((mu - sig**2 / 2) * s)
+ax.plot(s, mean, color=ACCENT, lw=2, label='mean: 100 e^(0.14 t)')
+ax.plot(s, med, color=WARM, lw=2, label='median: 100 e^(0.0888 t)')
+ax.annotate(f'{mean[-1]:,.2f}', (20, mean[-1]), xytext=(-8, -4), textcoords='offset points', ha='right', fontsize=8)
+ax.annotate(f'{med[-1]:,.2f}', (20, med[-1]), xytext=(-8, 6), textcoords='offset points', ha='right', fontsize=8)
+ax.set_xlabel('Horizon (years)')
+ax.set_ylabel('Value of 100 USD')
+ax.set_title('Fund at 14% drift, 32% volatility', loc='left')
+ax.legend(loc='upper left', fontsize=8)
