@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ผลลัพธ์เมื่อวานเป็นลบ; นั่นบังคับให้วันพรุ่งนี้ลบตามหรือเพียงบอกว่าการแกว่งอาจแรงขึ้น?</p>
-  <p>เฉลย: ไม่ได้บังคับให้ลบตาม—sign มักไม่มี memory ที่ใช้ได้ แต่ขนาดการแกว่งอาจมี. ทายว่าเหรียญจะออกหัวมักแพ้ แต่ทายว่ามันกำลังถูกโยนแรงอาจชนะ; จากนั้นจึงตั้งชื่อ stationarity และ autocorrelation function (ACF) ให้สิ่งที่เราตรวจ.</p>
+  <p>ผลตอบแทน SPY จำนวน 1,000 วันทำการ มี autocorrelation ของทิศทาง lag 1 เพียง +0.031 (t = 0.98) แต่ขนาดการแกว่ง $|r_t|$ สูงถึง +0.284 สัญญาณนี้ทำกำไรทิศทางได้หรือไม่ และ Ljung–Box Q(3) ได้เท่าใด?</p>
+  <p>เฉลย: ทำกำไรทิศทางไม่ได้เพราะ R² = 0.096% ไม่พอกินค่าคอมมิชชัน และ Q(3) ได้ 1.37 ยังต่ำกว่าเกณฑ์ 7.815 แต่ขนาดการแกว่งได้ Q(3) สูงถึง 184.8 ปฏิเสธขาดลอย บอกว่าความเสี่ยงพยากรณ์ได้จริง</p>
 </div>
 
 <details class="jargon" open>
@@ -48,8 +48,8 @@
     <dd>แบบจำลองที่ใช้ค่าก่อนหน้าของอนุกรมมาช่วยอธิบายค่าปัจจุบัน ใช้วัดว่าความจำของระดับหรือผลตอบแทนสลายเร็วเพียงใด</dd>
     <dt>generalized autoregressive conditional heteroskedasticity (GARCH)</dt>
     <dd>variance model ที่ให้ความผันผวนวันนี้ขึ้นกับ shock และความผันผวนในอดีต ใช้จับ volatility clustering</dd>
-    <dt>HAC</dt>
-    <dd>heteroskedasticity and autocorrelation consistent (HAC) standard error ใช้ปรับ uncertainty เมื่อ residual มี variance ไม่คงที่หรือพึ่งพากันตามเวลา</dd>
+    <dt>Heteroskedasticity and Autocorrelation Consistent (HAC)</dt>
+    <dd>standard error ที่ปรับ variance ไม่คงที่และ autocorrelation ใช้ปรับ uncertainty เมื่อ residual มี variance ไม่คงที่หรือพึ่งพากันตามเวลา</dd>
   </dl>
 </details>
 
@@ -123,19 +123,34 @@ E[r_t]=\mu,\qquad Var(r_t)=\gamma_0,\qquad Cov(r_t,r_{t-k})=\gamma_k
   <h4>Figure 16.1a — ราคาเดิน แต่ return แกว่งรอบศูนย์</h4>
   <img src="../figures/16.1-1.svg" alt="Figure 16.1a — ราคาเดิน แต่ return แกว่งรอบศูนย์" loading="lazy">
   <figcaption>
-    <p>ข้อมูลสังเคราะห์ 120 วันของ SPY ใช้เพื่อแยกระดับราคาออกจาก return อย่างชัดเจน เส้นราคาเป็น random-walk-like path ที่ไม่ควรตีความว่า stationary ส่วน return มี scale เดียวกันโดยประมาณและเป็น input ของ ACF</p>
+    <p>ข้อมูลสังเคราะห์ 120 วันของ SPY ใช้แยกราคาออกจาก return เส้นราคาเป็น random-walk-like path ที่ไม่ควรตีความว่า stationary ส่วน return มี scale เดียวกันโดยประมาณและเป็น input ของ ACF</p>
   </figcaption>
 </figure>
+
+<section class="table">
+  <h4>เปรียบเทียบความคงที่: ระดับราคาเทียบกับผลตอบแทน</h4>
+  <table>
+    <thead><tr><th>เงื่อนไข Stationarity</th><th>ระดับราคา P_t</th><th>ผลตอบแทน r_t</th></tr></thead>
+    <tbody>
+      <tr><td>1. ค่าเฉลี่ยคงที่ E[X_t] = &mu;</td><td>ไม่ผ่าน (ราคาปี 2018 ไม่เท่าปี 2024)</td><td>ผ่าน (แกว่งรอบ 0.03% ต่อวัน)</td></tr>
+      <tr><td>2. Variance คงที่ Var(X_t) = &sigma;&sup2;</td><td>ไม่ผ่าน (โตตามเวลา t&sigma;&sup2; แบบ random walk)</td><td>ผ่าน (คงที่ราว 1% ยกกำลังสอง)</td></tr>
+      <tr><td>3. Covariance ขึ้นกับ lag k เท่านั้น</td><td>ไม่ผ่าน (ขึ้นกับจุดเวลา t ด้วย)</td><td>ผ่าน (ขึ้นกับระยะห่าง k เท่านั้น)</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>ถ้านำระดับราคาไปหา ACF จะได้ rho_1 ใกล้เคียง 0.999 และลดลงช้ามาก ซึ่งไม่ใช่ความจำที่ทำกำไรได้ แต่เป็นภาพลวงตาที่ทำให้เกิด spurious regression</p>
+  </div>
+</section>
 
 <section class="formula">
   <h4>ขั้นที่ 3 — หกวันนับด้วยมือ: ทิศทางไม่จำ แต่ขนาดจำ</h4>
   <p>ก่อนข้อมูลพันวัน ลองหกวัน ใช้ตัวเลขเดียวกันสองครั้ง: ครั้งแรกเก็บเครื่องหมาย ครั้งที่สองทิ้งเครื่องหมาย</p>
   <div class="math">\[
 \begin{aligned}r&=(2,\,3,\,-3,\,-2,\,1,\,-1)\%,\qquad\bar r=0\\
-\text{lag-1 products: }&amp;3(2)+(-3)(3)+(-2)(-3)+1(-2)+(-1)(1)=6-9+6-2-1=0\\
-\text{denominator: }&amp;4+9+9+4+1+1=28\qquad\Rightarrow\qquad\hat\rho_1(r)=0/28=0\\[4pt]
+\text{lag-1 products: }&3(2)+(-3)(3)+(-2)(-3)+1(-2)+(-1)(1)=6-9+6-2-1=0\\
+\text{denominator: }&4+9+9+4+1+1=28\qquad\Rightarrow\qquad\hat\rho_1(r)=0/28=0\\[4pt]
 x=|r|&=(2,\,3,\,3,\,2,\,1,\,1)\%,\qquad\bar x=2,\qquad x-\bar x=(0,\,1,\,1,\,0,\,-1,\,-1)\\
-\text{lag-1 products: }&amp;1(0)+1(1)+0(1)+(-1)(0)+(-1)(-1)=2,\qquad\text{denominator}=0+1+1+0+1+1=4\\
+\text{lag-1 products: }&1(0)+1(1)+0(1)+(-1)(0)+(-1)(-1)=2,\qquad\text{denominator}=0+1+1+0+1+1=4\\
 \hat\rho_1(x)&=2/4=0.5\end{aligned}
 \]</div>
   <div class="reading">
@@ -149,7 +164,7 @@ x=|r|&=(2,\,3,\,3,\,2,\,1,\,1)\%,\qquad\bar x=2,\qquad x-\bar x=(0,\,1,\,1,\,0,\
   <h4>ขั้นที่ 4 — ขอบเขตคร่าว ๆ ใต้ white-noise null</h4>
   <p>ตัวเลขที่ไม่เป็นศูนย์ไม่ได้แปลว่ามีอะไรจริง ต้องมีเส้นเทียบว่าแค่ไหนถึงเรียกว่าเกินบังเอิญ</p>
   <div class="math">\[
-H_0:\rho_k=0,\qquad SE(\hat\rho_k)\approx\frac{1}{\sqrt n},\qquad \hat\rho_k\in\left[-\frac{1.96}{\sqrt n},\frac{1.96}{\sqrt n}\right]_{95\%}
+H_0:\rho_k=0,\qquad SE(\hat\rho_k)\approx\frac{1}{\sqrt n},\qquad -\frac{1.96}{\sqrt n} \le \hat\rho_k \le \frac{1.96}{\sqrt n} \quad (\text{ช่วงความเชื่อมั่น } 95\%)
 \]</div>
   <div class="reading">
     <p>ภายใต้ null และเงื่อนไข sample ที่พอเหมาะ ค่า ACF จะกระจายรอบศูนย์; เส้นนี้ไม่ใช่ confidence band ที่ถูกต้องเมื่อมี heteroskedasticity หรือ dependence จริง</p>
@@ -183,7 +198,9 @@ n=1{,}000:\quad \operatorname{SE} &= \frac{1}{\sqrt{1{,}000}} = \frac{1}{31.6228
 
 <section class="example">
   <h4>ตัวเลขโต๊ะ: 1,000 วันและ economic significance</h4>
-  <p>เมื่อ $n=1{,}000$ วัน เส้น 95% คร่าว ๆ คือ $\pm1.96/\sqrt{1000}=\pm0.062$. สมมติ ACF ของ signed SPY return ที่ lag 1 เท่ากับ 0.031: ค่า <code>R-squared</code> เชิงเส้นมีเพียง $0.031^2=0.000961=0.0961\%$ ของ variance ก่อนหัก bid–ask spread และค่าคอมมิชชัน จึงอาจมีนัยสำคัญเชิงสถิติแต่ไม่มี edge เชิง USD สำหรับสถานะ <code>1,000,000 USD</code></p>
+  <p>เมื่อ n = 1,000 วัน ขอบเขต 95% คร่าว ๆ คือ ±1.96/√1000 = ±0.062</p>
+  <p>ที่ lag 1 ค่า autocorrelation ของทิศทางได้ +0.031 (t = 0.98) คิดเป็น R² เพียง 0.096% ของ variance ก่อนหักค่าคอมมิชชัน จึงไม่มี edge เชิง USD สำหรับพอร์ต 1,000,000 USD</p>
+  <p>แต่ขนาดการแกว่งที่ lag 1 ได้ +0.284 (t = 8.98) คิดเป็น R² ถึง 8.1% สูงกว่าทิศทาง 84 เท่า และที่ lag 20 ขนาดยังคงมี autocorrelation +0.118 (t = 3.73) สูงกว่าขอบเขตอย่างต่อเนื่อง แสดงว่าความเสี่ยงมีความจำยาว</p>
 </section>
 
 <figure class="plot">
@@ -203,7 +220,7 @@ Q(h)=n(n+2)\sum_{k=1}^{h}\frac{\hat\rho_k^2}{n-k}\;\sim\;\chi_h^2
   <div class="reading">
     <p>ตัวหาร $n-k$ ชดเชยจำนวนคู่ที่ลดลงเมื่อ lag สูง และเทียบ $Q(h)$ กับ chi-squared ที่ h degrees of freedom; ใช้ joint test ไม่ใช่เลือกแท่งที่สวยที่สุด</p>
     <p>คิดด้วยมือ (signed): $0.031^2/999=9.62\times10^{-7}$, $0.018^2/998=3.25\times10^{-7}$, $0.009^2/997=0.81\times10^{-7}$ รวม $13.68\times10^{-7}$ คูณ $n(n+2)=1{,}002{,}000$ ได้ 1.37</p>
-    <p>magnitude: $0.284^2/999=8.07\times10^{-5}$, $0.241^2/998=5.82\times10^{-5}$, $0.213^2/997=4.55\times10^{-5}$ รวม $18.44\times10^{-5}$ คูณ 1,002,000 ได้ 184.8 ทำไมเทียบกับ chi-squared 3 องศาอิสระ: เพราะแต่ละ $\sqrt n\,\hat\rho_k$ ใต้ null เป็นระฆังคว่ำมาตรฐานโดยประมาณ ผลรวมกำลังสองของสามตัวจึงเป็น chi-squared (หัวข้อ 8.x)</p>
+    <p>magnitude: $0.284^2/999=8.07\times10^{-5}$, $0.241^2/998=5.82\times10^{-5}$, $0.213^2/997=4.55\times10^{-5}$ รวม $18.44\times10^{-5}$ คูณ 1,002,000 ได้ 184.8 ทำไมเทียบกับ chi-squared 3 องศาอิสระ: เพราะแต่ละ $\sqrt n\,\hat\rho_k$ ใต้ null เป็นระฆังคว่ำมาตรฐานโดยประมาณ ผลรวมกำลังสองของสามตัวจึงเป็น chi-squared (หัวข้อ 7.1)</p>
   </div>
 </section>
 
@@ -232,9 +249,12 @@ Q(3) &= 1{,}002{,}000 \times 1.368\times10^{-6} = 1.3706 \approx 1.37\\
 </section>
 
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: สำหรับ n=1,000 และ signed ACF สาม lag แรก <code>(0.031,-0.018,0.009)</code> ได้ $Q(3)\approx1.37$ ขณะที่ magnitude ACF <code>(0.284,0.241,0.213)</code> ให้ $Q(3)\approx184.8$. ค่าวิกฤต $\chi^2_3$ ที่ 95% คือ 7.815: signed return ไม่ปฏิเสธ white-noise null แต่ magnitude ปฏิเสธอย่างแรง จึงสนับสนุน volatility forecasting มากกว่า directional forecasting</p>
-  <p>ตรวจเองใน 10 วินาที: 0.031 ยกกำลังสอง = 0.000961 หรือ 0.0961%; 1.37 ยังต่ำกว่าค่าวิกฤต 7.815 แต่ 184.8 สูงกว่ามาก.</p>
+  <h4>คำตอบ — ตรวจสอบความจำของทิศทางและขนาดความผันผวน</h4>
+  <p>คำถาม: ผลตอบแทน SPY จำนวน 1,000 วัน ทิศทางทำกำไรได้หรือไม่ และ Ljung–Box Q(3) ได้เท่าใด?</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 7): ข้อมูล n = 1,000 วัน, ขอบเขตวิกฤต 95% คือ ±1.96/√1000 = ±0.062, ค่าวิกฤต Chi-squared(3) ที่ 95% คือ 7.815</p>
+  <p>คำตอบ: (1) ทิศทางที่ lag 1 มี autocorrelation +0.031 อธิบาย variance ได้เพียง R² = 0.096% จึงไม่มี edge ทำกำไรหลังหักค่าธรรมเนียม (2) Ljung–Box ของทิศทางได้ Q(3) เท่ากับ 1.37 ไม่ปฏิเสธ white noise (3) ขณะที่ขนาดการแกว่งได้ Q(3) สูงถึง 184.8 มากกว่า 7.815 ชัดเจน ปฏิเสธขาดลอย</p>
+  <p>ตรวจเองใน 10 วินาที: คำนวณ 1.96/√1000 ได้ 0.062 และ 0.031² ได้ 0.00096 หรือ 0.096% ส่วน Q(3) ทิศทาง 1.37 ต่ำกว่า 7.815 ชัดเจน</p>
+  <p>แปลว่าอะไรบนโต๊ะเทรด: การเก็งทิศทางจาก autocorrelation ระดับวันไม่คุ้มค่าคอมมิชชัน แต่ autocorrelation ของขนาดการแกว่งที่สูงต่อเนื่องคือกุญแจสำคัญในการพยากรณ์ความเสี่ยงและตั้ง VaR</p>
 </section>
 
 <figure class="plot">
@@ -246,13 +266,26 @@ Q(3) &= 1{,}002{,}000 \times 1.368\times10^{-6} = 1.3706 \approx 1.37\\
 </figure>
 
 <section class="formula">
-  <h4>ขั้นที่ 8 — นิยามของสองรูปแบบการสลาย และความหมายของแต่ละแบบ</h4>
-  <p>สองก้อนนี้เป็น รูปแบบที่เราตั้งขึ้นเพื่อเทียบ ไม่ใช่ผลที่พิสูจน์ แบบแรกหดเป็นสัดส่วนคงที่ทุกก้าว ซึ่งเป็นรูปที่หัวข้อ 16.2 จะแสดงว่า AR ให้ออกมาเอง แบบที่สองหดช้ากว่ามาก เพราะเป็นกำลังของระยะ ไม่ใช่เลขยกกำลังของระยะ การแยกสองแบบนี้สำคัญ เพราะถ้าข้อมูลจริงหดแบบช้า แต่เราใช้แบบจำลองที่จำสั้น ความเสี่ยงที่ประมาณได้จะต่ำกว่าความจริงอย่างเป็นระบบ</p>
+  <h4>ขั้นที่ 8 — การสลายของความจำ: เรขาคณิตเทียบกับ Power Law</h4>
+  <p>คำนวณอัตราการสลายของ autocorrelation ขนาดความผันผวน เพื่อตรวจว่าความจำของตลาดสลายแบบใด</p>
   <div class="math">\[
-\rho_k\approx\rho_1\phi^{k-1}\quad\text{(geometric memory)},\qquad \rho_k\approx\rho_1 k^{-d}\quad\text{(long memory)}
+\begin{aligned}
+\text{geometric:}\quad \rho_k &= \rho_1 \phi^{k-1}\\
+\phi &= \frac{\rho_2}{\rho_1} = \frac{0.241}{0.284} \approx 0.8486\\[4pt]
+\text{lag 3:}\quad 0.284 \times 0.8486^2 &= 0.2045 \quad (\text{ของจริง } 0.213)\\
+\text{lag 10:}\quad 0.284 \times 0.8486^9 &= 0.0648 \quad (\text{ของจริง } 0.152\ \text{ต่ำไป 2.3 เท่า})\\
+\text{lag 20:}\quad 0.284 \times 0.8486^{19} &= 0.0125 \quad (\text{ของจริง } 0.118\ \text{ต่ำไป 9.4 เท่า})\\[6pt]
+\text{power law:}\quad \rho_k &= \rho_1 k^{-d}\\
+\frac{\rho_{20}}{\rho_1} = 20^{-d} &\implies \frac{0.118}{0.284} = 0.4155 = 20^{-d}\\
+d &= \frac{\ln(1/0.4155)}{\ln 20} = \frac{0.8784}{2.9957} \approx 0.293\\[4pt]
+\text{lag 3:}\quad 0.284 \times 3^{-0.293} &= 0.206 \quad (\text{ของจริง } 0.213)\\
+\text{lag 10:}\quad 0.284 \times 10^{-0.293} &= 0.145 \quad (\text{ของจริง } 0.152)\\
+\text{lag 20:}\quad 0.284 \times 20^{-0.293} &= 0.118 \quad (\text{ของจริง } 0.118)
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>การสลายแบบ geometric เร็วและเหมาะกับ AR(1) หรือ GARCH ธรรมดา; power-law ที่ช้ากว่าเตือนว่าหลาย lag อาจยังมี dependence และ model ที่จำอดีตสั้นจะ underestimate risk persistence</p>
+    <p>การสลายแบบเรขาคณิตมี $\phi \approx 0.8486$ พอถึง lag 20 ค่าทำนายเหลือเพียง 0.0125 ต่ำกว่าของจริง 9.4 เท่า แสดงว่า model ความจำสั้นจะประเมินความเสี่ยงระยะไกลต่ำเกินไป</p>
+    <p>ขณะที่สูตร power law ให้ $d \approx 0.293$ ค่าทำนายตรงกับข้อมูลจริงเกือบทุกจุด ยืนยันว่าความผันผวนของตลาดการเงินมี long memory ซึ่ง model GARCH ต้องชดเชยด้วย persistence สูงลิ่ว</p>
   </div>
 </section>
 
@@ -288,18 +321,37 @@ Q(3) &= 1{,}002{,}000 \times 1.368\times10^{-6} = 1.3706 \approx 1.37\\
   <details>
     <summary>โค้ดตรวจทุกเลขของตัวอย่าง</summary>
     <pre><code>import numpy as np
-r=np.array([2,3,-3,-2,1,-1.],dtype=float)
+
+r = np.array([2, 3, -3, -2, 1, -1.0], dtype=float)
 def acf1(x):
-    z=x-x.mean()
-    return z[1:]@z[:-1]/(z@z)
-assert abs(acf1(r)-0.0)&lt;1e-12
-assert abs(acf1(abs(r))-0.5)&lt;1e-12
-n=1000
-assert abs(1.96/np.sqrt(n)-0.0619806)&lt;1e-6
-assert abs(.031**2-.000961)&lt;1e-12</code></pre>
+    z = x - x.mean()
+    return float(z[1:] @ z[:-1] / (z @ z))
+
+assert abs(acf1(r) - 0.0) &lt; 1e-12
+assert abs(acf1(abs(r)) - 0.5) &lt; 1e-12
+
+n = 1000
+assert abs(1.96 / np.sqrt(n) - 0.0619806) &lt; 1e-6
+assert abs(0.031**2 - 0.000961) &lt; 1e-12
+
+# Ljung-Box Q(3)
+rho_r = np.array([0.031, -0.018, 0.009])
+rho_abs = np.array([0.284, 0.241, 0.213])
+k = np.array([1, 2, 3])
+q_r = n * (n + 2) * np.sum(rho_r**2 / (n - k))
+q_abs = n * (n + 2) * np.sum(rho_abs**2 / (n - k))
+assert abs(q_r - 1.3706) &lt; 1e-3
+assert abs(q_abs - 184.81) &lt; 0.1
+
+# Decay parameters
+phi = 0.241 / 0.284
+assert abs(phi - 0.8486) &lt; 1e-3
+d = np.log(0.284 / 0.118) / np.log(20)
+assert abs(d - 0.293) &lt; 1e-3
+</code></pre>
   </details>
   <div class="note">
-    <p>ใช้ NumPy ตรวจ toy ACF, null band และ R-squared; ใน production ต้องใช้ heteroskedasticity and autocorrelation consistent (HAC) หรือ bootstrap band เมื่อ residual ไม่ใช่ white noise</p>
+    <p>โค้ดทดสอบด้วย NumPy ยืนยันการคำนวณ ACF หกวัน แถบขอบเขต สถิติ Ljung–Box Q(3) และอัตราการสลายของความจำ</p>
   </div>
 </section>
 
@@ -311,10 +363,11 @@ assert abs(.031**2-.000961)&lt;1e-12</code></pre>
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>ตรวจ stationarity และเลือก return ก่อน fit model; ราคาไม่ใช่ default input ที่ปลอดภัย</li>
-    <li>ACF ของ signed return และ |return| ตอบคำถามคนละเรื่อง: ทิศทางอาจไม่มี memory แต่ volatility clustering อาจชัด</li>
-    <li>ใช้ Ljung–Box เพื่อตรวจหลาย lag พร้อมกัน และแยก statistical significance ออกจากกำไร USD</li>
-    <li>band แบบ ±1.96/√n เป็นเพียง null approximation; microstructure, regime change และ nonlinear dependence ทำให้ตีความตรง ๆ ไม่ได้</li>
+    <li>ตรวจ weak stationarity ทั้ง 3 เงื่อนไขก่อนใส่ model; ระดับราคามี variance โตตามเวลา จึงต้องใช้ return</li>
+    <li>ทิศทาง SPY 1,000 วัน มี $\hat\rho_1 = +0.031$ ($R^2 = 0.096\%$) ไม่สามารถทำกำไรทิศทางได้</li>
+    <li>ขนาดการแกว่งมี $\hat\rho_1 = +0.284$ และ $Q(3) = 184.8$ ปฏิเสธ white noise ขาดลอย ยืนยัน volatility clustering</li>
+    <li>ACF ของขนาดการแกว่งสลายแบบ power law ($d \approx 0.293$) ไม่ใช่ geometric ชี้ว่าตลาดมีความจำยาว</li>
+    <li>ระวังกับดัก stale price ที่สร้าง autocorrelation บวก และ bid–ask bounce ที่สร้างลบ ซึ่งอาจหักล้างกันจนหลอกตา</li>
   </ul>
 </section>
 </article>

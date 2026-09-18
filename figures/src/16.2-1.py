@@ -3,4 +3,4 @@ for phi,c in zip(phis,cols):
  x=np.zeros(90)
  for i in range(1,90): x[i]=phi*x[i-1]+e[i]
  ax.plot(t,x,label=f'phi={phi}',color=c)
-ax.set_xlabel('trading day');ax.set_ylabel('deviation (bp, normalized)');ax.set_title('Persistence is visible before it is estimated',loc='left');ax.legend(fontsize=7)
+ax.set_xlabel('month');ax.set_ylabel('distance from mean (shock units)');ax.set_title('Persistence is visible before it is estimated',loc='left');ax.legend(fontsize=7)

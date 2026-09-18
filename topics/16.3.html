@@ -23,9 +23,9 @@
 </header>
 
 <div class="hook">
-  <p>ตัววัดเด้งขึ้นลงสลับกันทุกนาที; นี่คือกฎทำนาย หรือเพียงหัววัดกระแทกขอบบนกับขอบล่าง? เฉลย: ความสัมพันธ์ตามเวลาอาจมาจากค่าก่อนหน้า shock ก่อนหน้า หรือ noise ของการวัด.</p>
-  <p>เราจะแยก moving-average process (MA), autoregressive moving-average (ARMA) และ autoregressive integrated moving-average (ARIMA) ตามชนิดของความจำที่แต่ละแบบเก็บ.</p>
-  <p>ภาพจำ: bid–ask bounce คือบอลเด้งระหว่างกำแพงสองด้าน ไม่ใช่นักพยากรณ์ที่เพิ่งตื่นมาฉลาด.</p>
+  <p>ผลตอบแทนรายนาทีของหุ้นราคา 42 ดอลลาร์ มี autocorrelation ที่ lag 1 เท่ากับ −0.345 และวัดความผันผวนได้ 0.10% ต่อนาที คูณรากของจำนวนนาทีต่อปีได้ 27.5% ต่อปี ตัวเลขนี้เชื่อได้ไหม และ bid-ask spread กว้างกี่เซนต์?</p>
+  <p>เฉลย: เชื่อไม่ได้ ความสัมพันธ์ติดลบคือร่องรอยของราคาที่เด้งระหว่าง bid กับ ask spread ที่ซ่อนอยู่คือ 0.1174% หรือ 4.93 เซนต์ต่อหุ้น หักส่วนเด้งออกแล้วราคาจริงแกว่งแค่ 0.0557% ต่อนาที หรือราว 15.3% ต่อปี ตัวเลข 27.5% สูงเกินจริงเกือบเท่าตัว ทั้งหมดอ่านได้จาก MA(1) ที่ θ = −0.4</p>
+  <p>หัวข้อนี้จะพาทำความเข้าใจ moving-average process (MA), autoregressive moving-average (ARMA) และ autoregressive integrated moving-average (ARIMA) ว่าแต่ละแบบเก็บความจำชนิดใด และแยกออกจากกันอย่างไร</p>
 </div>
 
 <details class="jargon" open>
@@ -47,7 +47,7 @@
     <dd>เงื่อนไขที่เลือก representation ของ MA ให้รากอยู่นอก unit circle หรือ |theta|&lt;1 ใน MA(1) ใช้ให้ parameter ระบุได้จากอดีตและ forecast ได้เสถียร</dd>
     <dt>microstructure noise</dt>
     <dd>ความผันผวนจากกลไก bid–ask และราคา trade ที่ไม่เท่ากับ efficient price ใช้เตือนว่าความถี่สูงอาจทำให้ volatility สูงเกินจริง</dd>
-    <dt>roll</dt>
+    <dt>Roll spread estimator</dt>
     <dd>Roll spread estimator ที่ใช้ lag-one autocovariance ติดลบประมาณ bid–ask spread ใช้เป็น diagnostic ของ transaction cost</dd>
     <dt>Akaike information criterion (AIC)</dt>
     <dd>เกณฑ์ที่ลงโทษความซับซ้อน ใช้เปรียบเทียบ order ของ model โดยสมดุล fit กับจำนวน parameter</dd>
@@ -73,8 +73,9 @@
       <tr><td>$p$</td><td>จำนวนค่าย้อนหลังของตัวข้อมูลเองที่ใส่เข้าไปในสมการ</td><td>lag</td></tr>
       <tr><td>$q$</td><td>จำนวนค่าย้อนหลังของความคลาดเคลื่อนที่ใส่เข้าไป</td><td>lag</td></tr>
       <tr><td>$d$</td><td>จำนวนครั้งที่ต้องหาผลต่างก่อน เพื่อให้ข้อมูลนิ่งพอจะใส่สมการได้</td><td>ครั้ง</td></tr>
-      <tr><td>\gamma_k,\rho_k</td><td>autocovariance และ autocorrelation</td><td>return² และ unitless</td></tr>
-      <tr><td>S</td><td>quoted bid–ask spread ต่อหุ้น</td><td>USD ต่อหุ้น</td></tr>
+      <tr><td>$\gamma_k,\ \rho_k$</td><td>autocovariance และ autocorrelation ที่ lag k</td><td>return² และ unitless</td></tr>
+      <tr><td>$S$</td><td>bid–ask spread เทียบกับราคา</td><td>decimal ของราคา</td></tr>
+      <tr><td>$\sigma_e$</td><td>ความผันผวนของราคาจริง (efficient price) หลังหักส่วนเด้ง</td><td>decimal return ต่อ minute</td></tr>
     </tbody>
   </table>
 </details>
@@ -96,19 +97,19 @@
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — ลองด้วยมือ: เหรียญเลือกว่า trade เกิดที่ bid หรือ ask</h4>
+  <h4>ขั้นที่ 1 — ลองด้วยมือ: ทิศทางคำสั่งซื้อขายกำหนดว่า trade เกิดที่ bid หรือ ask</h4>
   <p>ก่อนสูตร ลองสร้าง ‘ความจำหนึ่งก้าว’ จากกลไกที่ง่ายที่สุดในตลาด: ราคาที่เห็นคือมูลค่ากลางบวกหรือลบครึ่ง spread ตามว่าใครเป็นฝ่ายเคาะ</p>
   <div class="math">\[
-\begin{aligned}\text{mid }m=100,\ \text{spread }S=0.20:&\quad P_t=m+\tfrac S2q_t,\qquad q_t=\pm1\ \text{(coin, independent)}\\
-\Delta P_t&=\tfrac S2(q_t-q_{t-1})\in\{-0.20,\ 0,\ +0.20\}\\
+\begin{aligned}\text{mid }m=100,\ \text{spread }S=0.20:&\quad P_t=m+\tfrac S2q_t,\qquad q_t=\pm1\ \text{(คำสั่งซื้อหรือขายอิสระ)}\\
+\Delta P_t&=\tfrac S2(q_t-q_{t-1})\quad (\text{มีค่าเป็น }-0.20,\ 0,\ \text{หรือ }+0.20)\\
 \gamma_0&=\operatorname{Var}(\Delta P_t)=\big(\tfrac S2\big)^2\cdot2=0.01\times2=0.02\\
 \gamma_1&=\operatorname{Cov}(\Delta P_t,\Delta P_{t-1})=\big(\tfrac S2\big)^2\operatorname{Cov}(q_t-q_{t-1},\ q_{t-1}-q_{t-2})=0.01\times(-1)=-0.01\\
 \rho_1&=\frac{-0.01}{0.02}=-\tfrac12,\qquad S=2\sqrt{-\gamma_1}=2\sqrt{0.01}=0.20\ \checkmark\end{aligned}
 \]</div>
   <div class="reading">
-    <p>มูลค่ากลางไม่ขยับเลย แต่ทุก trade ถูกโยนเหรียญว่าจะเกิดที่ 99.90 หรือ 100.10 ราคาที่เห็นจึงเด้ง การเปลี่ยนราคา $\Delta P_t$ มีสามค่า: −0.20 (จาก ask ลง bid), 0 (ฝั่งเดิม), +0.20</p>
-    <p>ทำไม covariance เป็น −1 ต่อ $(S/2)^2$: กระจาย $(q_t-q_{t-1})(q_{t-1}-q_{t-2})$ ได้สี่พจน์ พจน์เดียวที่มีเหรียญตัวเดียวกันสองครั้งคือ $-q_{t-1}^2=-1$ ที่เหลือคือเหรียญคนละตัว เฉลี่ยเป็นศูนย์</p>
-    <p>ได้ $\rho_1=-1/2$ พอดี ซึ่งคือเพดานของ MA(1) ในขั้นที่ 5 การเด้งล้วน ๆ คือกรณีสุดโต่งของ MA(1) และการย้อนจาก $\gamma_1$ กลับไปหา $S$ คือ Roll estimator ของขั้นที่ 8 ทั้งหมดอยู่ในเหรียญอันเดียว</p>
+    <p>มูลค่ากลางไม่ขยับเลย แต่ทุก trade ถูกกำหนดโดยทิศทางคำสั่งว่าจะเกิดที่ 99.90 หรือ 100.10 ราคาที่เห็นจึงเด้ง การเปลี่ยนราคา $\Delta P_t$ มีสามค่า: −0.20 (จาก ask ลง bid), 0 (ฝั่งเดิม), +0.20</p>
+    <p>ทำไม covariance เป็น −1 ต่อ $(S/2)^2$: กระจาย $(q_t-q_{t-1})(q_{t-1}-q_{t-2})$ ได้สี่พจน์ พจน์เดียวที่มีตัวแปรทิศทางเวลาเดียวกันคือ $-q_{t-1}^2=-1$ ที่เหลือเป็นคำสั่งคนละเวลา จึงเฉลี่ยเป็นศูนย์</p>
+    <p>ได้ $\rho_1=-1/2$ พอดี ซึ่งคือเพดานของ MA(1) ในขั้นที่ 5 การเด้งล้วน ๆ คือกรณีสุดโต่งของ MA(1) และการย้อนจาก $\gamma_1$ กลับไปหา $S$ คือ Roll estimator ของขั้นที่ 8 ทั้งหมดแฝงอยู่ในทิศทางคำสั่งซื้อขายนี้</p>
   </div>
 </section>
 
@@ -116,7 +117,11 @@
   <h4>ขั้นที่ 2 — นิยามของทั้งตระกูลในสัญลักษณ์เดียว</h4>
   <p>สามก้อนนี้เป็น นิยาม ของแบบจำลองสามกลุ่ม ไม่ใช่ผลที่พิสูจน์ ตัวแรกจำเฉพาะแรงกระแทก และจำได้จำกัดจำนวนงวด ตัวที่สองจำทั้งค่าเดิมและแรงกระแทกเดิม ตัวที่สามทำผลต่างก่อนหนึ่งชั้นหรือมากกว่า สำหรับข้อมูลที่ยังไม่นิ่งตามหัวข้อ 16.1 สัญลักษณ์ตัวดำเนินการเป็นแค่วิธีเขียนย่อ ไม่ได้เพิ่มเนื้อหาอะไร มันแปลว่าเลื่อนดัชนีถอยหลังหนึ่งงวด</p>
   <div class="math">\[
-MA(q):\quad X_t=\mu+\epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t-q}\qquad ARMA(p,q):\quad \phi(B)X_t=c+\theta(B)\epsilon_t\qquad ARIMA(p,d,q):\quad \phi(B)(1-B)^{d} X_t=c+\theta(B)\epsilon_t
+\begin{aligned}
+MA(q)&:\quad X_t=\mu+\epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t-q}\\
+ARMA(p,q)&:\quad \phi(B)X_t=c+\theta(B)\epsilon_t\\
+ARIMA(p,d,q)&:\quad \phi(B)(1-B)^{d} X_t=c+\theta(B)\epsilon_t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>MA จำ shock จำกัด q งวด, ARMA จำทั้งค่าและ shock, และ ARIMA ทำผลต่างด้วย $(1-B)^d$ ก่อน; $B$ คือ backshift operator ที่ส่ง $X_t$ ไป $X_{t-1}$</p>
@@ -141,14 +146,14 @@ MA(q):\quad X_t=\mu+\epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t
 
 <section class="formula">
   <h4>ขั้นที่ 3 — MA(1): variance และ ACF</h4>
-  <p>เริ่มจากรากฐานที่สุด: กระจาย variance ตามนิยามของการยกกำลังสอง สังเกตว่าพจน์กลางที่เป็น covariance ระหว่าง shock สองวันติดกันตัดกันเป็นศูนย์ เพราะธรรมชาติของ white noise ไม่ส่งต่อข้อมูลข้ามเวลา</p>
+  <p>เริ่มจากรากฐานที่สุด: กระจาย variance ด้วยกำลังสองสมบูรณ์ สังเกตว่าพจน์กลางที่เป็น covariance ระหว่าง shock สองช่วงเวลาติดกันตัดกันเป็นศูนย์ เพราะธรรมชาติของ white noise ไม่ส่งต่อข้อมูลข้ามเวลา</p>
   <p>ผลลัพธ์บอกความจริงทางกายภาพ: การจำ shock เก่าเพิ่ม variance ที่สังเกตได้เสมอ ไม่ว่า $\theta$ จะเป็นบวกหรือลบ เพราะกำลังสองทำให้เครื่องหมายติดลบกลายเป็นบวกทั้งสิ้น</p>
   <div class="math">\[
 \begin{aligned}
 X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma^2)\\
 \mathbb E[X_t]&=\mu+\mathbb E[\epsilon_t]+\theta\mathbb E[\epsilon_{t-1}]=\mu+0+0=\mu\\
 \gamma_0&=\operatorname{Var}(X_t)=\mathbb E\big[(X_t-\mu)^2\big]=\mathbb E\big[(\epsilon_t+\theta\epsilon_{t-1})^2\big]\\
-&=\mathbb E\big[\epsilon_t^2\big]+2\theta\mathbb E\big[\epsilon_t\epsilon_{t-1}\big]+\theta^2\mathbb E\big[\epsilon_{t-1}^2\big]\\
+&=\mathbb E\big[\epsilon_t^2\big]+2\theta\mathbb E\big[\epsilon_t\epsilon_{t-1}\big]+\theta^2\mathbb E\big[(\epsilon_{t-1})^2\big]\\
 &=\sigma^2+2\theta(0)+\theta^2\sigma^2=\sigma^2(1+\theta^2)\\[4pt]
 \theta=-0.4,\ \sigma&=0.001:\quad \gamma_0=(0.001)^2\big(1+(-0.4)^2\big)=10^{-6}\times1.16=1.16\times10^{-6}
 \end{aligned}
@@ -156,13 +161,13 @@ X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma
   <div class="reading">
     <p>เริ่มต้นจากนิยามของ MA(1) ที่กำหนดให้ค่าสังเกตเท่ากับค่าเฉลี่ยบวก shock วันนี้และ shock เมื่อวานที่คูณด้วย $\theta$ ค่า expected value จึงเท่ากับ $\mu$ เพราะ shock มีค่าเฉลี่ยเป็นศูนย์เสมอ</p>
     <p>เมื่อกางกำลังสองเพื่อหา variance พจน์ไขว้หน้าหลังกลายเป็นศูนย์ เพราะ shock คนละเวลาเป็นอิสระต่อกัน จึงเหลือเพียงผลรวมของ variance สองก้อน ดึงตัวร่วม $\sigma^2$ ออกมาได้ $1+\theta^2$</p>
-    <p>แทนตัวเลขจริง $\theta=-0.4$ และ $\sigma=0.001$ ได้ variance $1.16\times10^{-6}$ สูงกว่า variance ของ shock ดิบ 16% แต่ volatility ซึ่งเป็นรากที่สองโตขึ้นเพียง 7.7% การจำ shock เก่าจึงขยายความผันผวนที่วัดได้เสมอ</p>
+    <p>แทนตัวเลขจริง $\theta=-0.4$ และ $\sigma=0.001$ ได้ variance $1.16\times10^{-6}$ สูงกว่า variance ของ shock 16% ความแกว่งรายงวดจึงใหญ่กว่าขนาด shock 7.7% ระวัง shock ของ MA ไม่ใช่ความผันผวนของราคาจริง ขั้นที่ 9 จะแยกสองอย่างนี้ออกจากกัน และได้ผลกลับทาง</p>
   </div>
 </section>
 
 <section class="example">
   <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ให้ $\theta=-0.4$ และ observed standard deviation 0.10% ต่อ minute. สูตรให้ $1+\theta^2=1.16,\;\rho_1=-0.3448,\;\rho(k\ge 2)=0$. variance ที่วัดได้สูงกว่า variance ของ innovation 16% แต่ volatility ซึ่งเป็นรากที่สองสูงเกินจริงเพียง 7.70%</p>
+  <p>โจทย์ให้อะไรมาบ้าง: พิจารณาผลตอบแทนรายนาทีของหุ้นสหรัฐฯ ราคา 42 ดอลลาร์ มีแบบจำลองเป็น MA(1) โดย $\theta=-0.4$ และวัด standard deviation ของผลตอบแทนได้ 0.10% ต่อนาที (คิดเป็น 1.732% ต่อวัน หรือ 27.50% ต่อปีเมื่อเทรด 300 นาทีต่อวัน และ 252 วันต่อปี) ให้คำนวณ: lag-1 autocorrelation, ขนาด shock $\sigma_\epsilon$ ของ MA(1), bid-ask spread $S$ ด้วย Roll estimator และความผันผวนของราคาจริงหลังหักส่วนเด้ง</p>
 </section>
 
 <figure class="plot">
@@ -175,7 +180,7 @@ X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma
 
 <section class="formula">
   <h4>ขั้นที่ 4 — ทำไม MA จึงมี ACF แค่ lag เดียว</h4>
-  <p>กระจายการคูณออกมาทั้งสี่พจน์เพื่อให้เห็นชัดเจนว่า ความจำของmodelนี้ไม่ได้ค่อย ๆ จางหายไปแบบเลขชี้กำลังเหมือน AR แต่ถูกตัดขาดลงทันทีที่ lag เกิน 1 เพราะไม่มีชิ้นส่วนของ shock ตัวใดเชื่อมโยงข้ามเวลาถึงกันได้อีก</p>
+  <p>กระจายการคูณออกมาทั้งสี่พจน์เพื่อให้เห็นชัดเจนว่า ความจำของ model นี้ไม่ได้ค่อย ๆ จางหายไปแบบเลขชี้กำลังเหมือน AR แต่ถูกตัดขาดลงทันทีที่ lag เกิน 1 เพราะไม่มีชิ้นส่วนของ shock ตัวใดเชื่อมโยงข้ามเวลาถึงกันได้อีก</p>
   <div class="math">\[
 \begin{aligned}
 \gamma_1&=\operatorname{Cov}(X_t,X_{t-1})=\mathbb E\big[(\epsilon_t+\theta\epsilon_{t-1})(\epsilon_{t-1}+\theta\epsilon_{t-2})\big]\\
@@ -221,13 +226,14 @@ X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma
 
 <section class="prose">
   <h4>อ่าน ACF/PACF เพื่อระบุ model</h4>
-  <p>โดย heuristic, AR(p) มี ACF ที่ decay และ PACF ตัดหลัง p; MA(q) มี ACF ตัดหลัง q และ PACF decay; ARMA มัก decay ทั้งคู่ จึงระบุ order ด้วย signature แล้วค่อยยืนยันด้วย residual diagnostics และ out-of-sample forecast. Signature ไม่ใช่ proof เมื่อ sample สั้นหรือมี structural break</p>
+  <p>การแยก MA(1) ออกจาก AR(1) ในทางปฏิบัติทำได้โดยดู signature ของ ACF ควบคู่กับ PACF: สำหรับ MA(1) ที่ $\theta=-0.4$ ค่า ACF จะตัดขาดเป็นศูนย์ทันทีหลัง lag 1 (ได้ $\rho_1 = -0.345$) แต่ PACF จะสลายตัวต่อเนื่อง โดยที่ lag 1 ถึง 3 มีค่าประมาณ -0.345, -0.135 และ -0.054 ซึ่งหดตัวลงรอบละราว 0.4 เท่า</p>
+  <p>ในทางกลับกัน หากเป็น AR(1) ที่ $\phi=-0.345$ ค่า ACF จะสลายตัวต่อเนื่องเป็น -0.345, +0.119, -0.041 แต่ PACF จะตัดขาดเหลือ 0 ทันทีหลัง lag 1 ภาพสะท้อนกลับด้านนี้ช่วยชี้ขาดโครงสร้างข้อมูลก่อนประมาณค่า parameter</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 6 — ARMA(1,1): รวมความจำของค่าเดิมและ shock ในอดีต</h4>
   <p>ในตลาดจริง ราคาไม่ได้มีแต่แนวโน้มระยะยาว และไม่ได้มีแต่การเด้งไปมาของค่าธรรมเนียมซื้อขายอย่างใดอย่างหนึ่ง แต่สองสิ่งนี้เกิดขึ้นพร้อมกัน ARMA(1,1) คือโครงสร้างที่เล็กที่สุดที่จับทั้งสองมิติได้พร้อมกัน</p>
-  <p>สังเกตว่าเมื่อกำหนด $\theta=0$ สูตรทั้งหมดจะยุบกลับไปเป็น AR(1) บริสุทธิ์ และเมื่อ $\phi=0$ จะยุบกลับไปเป็น MA(1) บริสุทธิ์ นี่คือสะพานเชื่อมที่ทำให้เห็นว่าทั้งสองmodelเป็นเพียงกรณีขอบของระบบเดียวกัน</p>
+  <p>สังเกตว่าเมื่อกำหนด $\theta=0$ สูตรทั้งหมดจะยุบกลับไปเป็น AR(1) บริสุทธิ์ และเมื่อ $\phi=0$ จะยุบกลับไปเป็น MA(1) บริสุทธิ์ นี่คือสะพานเชื่อมที่ทำให้เห็นว่าทั้งสอง model เป็นเพียงกรณีขอบของระบบเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
 X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\epsilon_t\\
@@ -239,7 +245,7 @@ X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\ep
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>model ARMA(1,1) รวมสองแรงขับเคลื่อน: แนวโน้มต่อเนื่องจากค่าเดิมผ่าน $\phi$ และแรงกระแทกเฉพาะหน้าผ่าน $\theta$ กระจายด้วยอนุกรมเรขาคณิตเป็น MA อนันต์ เพื่อแตกผลรวมของ shock ในอดีตทั้งหมด</p>
+    <p>แบบจำลอง ARMA(1,1) รวมสองแรงขับเคลื่อน: แนวโน้มต่อเนื่องจากค่าเดิมผ่าน $\phi$ และแรงกระแทกเฉพาะหน้าผ่าน $\theta$ กระจายด้วยอนุกรมเรขาคณิตเป็น MA อนันต์ เพื่อแตกผลรวมของ shock ในอดีตทั้งหมด</p>
     <p>คำนวณ variance ได้ก้อนเศษ $1+2\phi\theta+\theta^2$ และตัวส่วน $1-\phi^2$ แสดงชัดว่าทั้งสองกลไกช่วยกันกำหนดความกว้าง ส่วน $\gamma_1$ เกิดจากความสัมพันธ์ของค่าเดิมบวกกับ shock เมื่อวานที่เพิ่งกระทบ</p>
     <p>จุดชี้ขาดคือหลัง lag 1: correlation เริ่มต้นที่ $\rho_1=0.360$ ถูกกดลงจาก $0.70$ ด้วยแรงกระแทกติดลบ แต่หลังจากนั้นจะสลายตัวด้วยอัตรา $\phi=0.70$ คงที่เหมือน AR(1) ทุกประการ</p>
   </div>
@@ -251,7 +257,7 @@ X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\ep
   <p>ผลลัพธ์นี้เชื่อมโยงทฤษฎี time series เข้ากับเครื่องมือภาคปฏิบัติอย่าง exponentially weighted moving average (EWMA) โดยน้ำหนักการลืม $\lambda$ ถูกผูกติดกับ parameter $\theta$ ของ MA โดยตรง</p>
   <div class="math">\[
 \begin{aligned}
-(1-B)X_t&=(1+\theta B)\epsilon_t\quad\Longleftrightarrow\quad \Delta X_t=\epsilon_t+\theta\epsilon_{t-1}\\[4pt]
+(1-B)X_t&=(1+\theta B)\epsilon_t,\qquad \Delta X_t=\epsilon_t+\theta\epsilon_{t-1}\\[4pt]
 \epsilon_t&=\frac{1-B}{1+\theta B}X_t=(1-B)\sum_{j=0}^\infty(-\theta)^j B^j X_t\\[4pt]
 \hat{X}_{t+1|t}&=\mathbb E[X_{t+1}\mid X_t,\dots]=X_{t+1}-\epsilon_{t+1}=(1+\theta)\sum_{j=0}^\infty(-\theta)^j X_{t-j}\\[4pt]
 \lambda&=-\theta:\quad \hat{X}_{t+1|t}=(1-\lambda)X_t+\lambda\hat{X}_{t|t-1}\quad\text{(Exponential Smoothing)}
@@ -262,12 +268,6 @@ X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\ep
     <p>เมื่อย้ายข้างเพื่อหาค่าพยากรณ์ล่วงหน้าหนึ่งก้าว จะพบว่าสมการจัดรูปได้เป็นผลบวกถ่วงน้ำหนักเรขาคณิตของราคาในอดีต ซึ่งลดรูปลงเหลือสมการแบบวนซ้ำของ Exponential Smoothing พอดี</p>
     <p>นี่คือข้อพิสูจน์คลาสสิกของ Box และ Jenkins ว่าวิธี Exponential Smoothing ที่นักวิเคราะห์ใช้กันมานาน แท้จริงแล้วคือตัวพยากรณ์ที่ดีที่สุดตามหลักคณิตศาสตร์สำหรับกระบวนการ ARIMA(0,1,1)</p>
   </div>
-</section>
-
-<section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: จาก $\gamma_0=(0.10\%)^{2}=10^{-6},\;\sigma^{2}=8.6207\times10^{-7},\;\gamma_1=-3.4483\times10^{-7}$. Roll estimator ให้ $S=2\sqrt{-\gamma_1}=0.001174$ หรือ 0.1174% ของราคา. ถ้าหุ้นสหรัฐฯ ราคา 42 USD ต่อหุ้น spread โดยนัยคือ 0.0493 USD หรือประมาณ 5 cents ต่อหุ้น.</p>
-  <p>ตรวจเองใน 10 วินาที: 0.0493 USD บนหุ้น USD 42 คือประมาณ 0.1174%; และ 5 cents ต่อหุ้นต้องเล็กกว่าราคา USD 42 มาก.</p>
 </section>
 
 <section class="formula">
@@ -289,6 +289,41 @@ S&=2(5.872\times10^{-4})=0.001174=0.1174\%\end{aligned}
   </div>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 9 — หักส่วนเด้งออก: ความผันผวนของราคาจริง</h4>
+  <p>ใส่ราคาจริงที่ขยับได้เข้าไปในกลไกของขั้นที่ 1 ผลตอบแทนที่วัดได้คือการขยับของราคาจริงบวกส่วนเด้ง แล้วดูว่า variance กับ covariance ที่วัดได้แยกสองส่วนนี้อย่างไร</p>
+  <div class="math">\[
+\begin{aligned}
+X_t&=e_t+\tfrac S2(q_t-q_{t-1}),\qquad \operatorname{Var}(e_t)=\sigma_e^2\\
+\gamma_0&=\sigma_e^2+\tfrac{S^2}{2},\qquad \gamma_1=-\tfrac{S^2}{4}\\
+\sigma_e^2&=\gamma_0+2\gamma_1\\
+&=10^{-6}+2(-3.448\times10^{-7})=3.103\times10^{-7}\\
+\sigma_e&=0.0557\%\ \text{per minute}\\[4pt]
+\text{day}&:\ 0.0557\%\sqrt{300}=0.965\%\\
+\text{year}&:\ 0.0557\%\sqrt{300\times252}=15.3\%\\
+\text{naive}&:\ 0.10\%\sqrt{300\times252}=27.5\%\\[4pt]
+\sigma_\epsilon&=\sqrt{\gamma_0/(1+\theta^2)}=0.0928\%\\
+\sigma_\epsilon(1+\theta)&=0.0928\%(0.6)=0.0557\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>การเด้งเพิ่ม variance ของทุกนาที S²/2 แต่ covariance ติดลบ −S²/4 หักมันคืนเมื่อบวกหลายนาทีเข้าด้วยกัน γ₀ + 2γ₁ จึงเหลือเฉพาะการขยับของราคาจริง ได้ 0.0557% ต่อนาที ต่ำกว่าที่วัดได้ 0.10% เกือบครึ่ง</p>
+    <p>ผลตอบแทนทั้งวันคือผลรวม 300 นาที ส่วนเด้งหักล้างกันเกือบหมด เหลือแค่ต้นกับปลายวัน ความผันผวนรายวันจริงจึงเป็น 0.965% และรายปี 15.3% การคูณ 0.10% ด้วยรากของจำนวนนาทีได้ 27.5% ซึ่งสูงเกินจริง 1.8 เท่า</p>
+    <p>บรรทัดท้ายเชื่อมกับ MA(1) σ_ε = 0.0928% คือขนาด shock ของ MA ไม่ใช่ความผันผวนของราคา ผลรวมระยะยาวของ MA(1) แกว่งด้วย σ_ε(1 + θ) ซึ่งได้ 0.0557% ตรงกันพอดี</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — 27.5% ต่อปีเชื่อไม่ได้ ราคาจริงแกว่ง 15.3%</h4>
+  <p>คำถาม: ความผันผวนรายนาที 0.10% ที่ autocorrelation −0.345 เชื่อได้ไหม และ spread กว้างกี่เซนต์?</p>
+  <p>ของที่มี: ขั้นที่ 1 และ 3 ถึง 9</p>
+  <p>1. ρ₁ = −0.4/1.16 = −0.3448 และ γ₁ = −3.448 × 10⁻⁷</p>
+  <p>2. Roll spread S = 2√(3.448 × 10⁻⁷) = 0.1174% ของราคา หรือ 4.93 เซนต์บนหุ้น 42 ดอลลาร์</p>
+  <p>3. ราคาจริงแกว่ง 0.0557% ต่อนาที 0.965% ต่อวัน 15.3% ต่อปี ส่วน 27.5% จากการคูณตรง ๆ สูงเกินจริง 1.8 เท่า และ σ_ε = 0.0928% เป็นแค่ขนาด shock ของ MA(1)</p>
+  <p>ตรวจเองใน 10 วินาที: 0.0928% × 0.6 = 0.0557% และ 0.1174% × 42 = 0.0493 ดอลลาร์</p>
+  <p>แปลว่าอะไร: เทรดเดอร์ความถี่สูงที่เห็น autocorrelation ติดลบต้องรู้ว่ามันเกิดจาก bid-ask bounce ไม่ใช่ mean reversion ที่ทำกำไรได้ ส่งคำสั่งข้าม spread เสีย 5 เซนต์ต่อหุ้นทันที และระบบความเสี่ยงที่คำนวณความผันผวนจากราคา trade รายนาทีจะได้ VaR สูงเกินจริงเกือบเท่าตัว ต้องใช้ mid price หรือข้อมูลห่าง 5 ถึง 15 นาที หรือหักส่วนเด้งแบบขั้นที่ 9</p>
+</section>
+
 <figure class="plot">
   <h4>Figure 16.3d — sampling frequency: signal โตด้วย sqrt(time)</h4>
   <img src="../figures/16.3-4.svg" alt="Figure 16.3d — sampling frequency: signal โตด้วย sqrt(time)" loading="lazy">
@@ -298,8 +333,13 @@ S&=2(5.872\times10^{-4})=0.001174=0.1174\%\end{aligned}
 </figure>
 
 <section class="pitfall">
+  <h4>กับดัก: เรียกขนาด shock ของ MA ว่าความผันผวนจริง</h4>
+  <p>บางตำราหาร 0.10% ด้วย √1.16 = 1.077 ได้ 0.0928% แล้วเรียกว่าความผันผวนจริง สรุปว่าวัดเกินแค่ 7.7% หรือรายปี 25.53% เทียบกับ 27.50% ข้อสรุปนั้นผิดทิศ 0.0928% คือขนาด shock ของ MA(1) ซึ่งรวมส่วนเด้งไว้ด้วย ราคาจริงแกว่ง σ_ε(1 + θ) = 0.0557% ต่อนาที หรือ 15.3% ต่อปี ตามขั้นที่ 9 ส่วนที่วัดเกินจึงเกือบเท่าตัว ไม่ใช่ 7.7%</p>
+</section>
+
+<section class="pitfall">
   <h4>negative autocorrelation ไม่ใช่ free alpha</h4>
-  <p>ถ้าใช้ trade price เห็น $\rho_1=-0.345$ แล้วรีบเรียกว่า mean reversion จะโดน spread กินทุกครั้งที่ cross. คำนวณใหม่บน mid price, ใช้ 5–15 minute sampling, หรือใช้ noise-robust estimator และ re-estimate theta ตาม liquidity ของแต่ละวัน การปรับ volatility ด้วย $\sqrt{1+\theta^2}$ ต้องใช้ theta ที่ stable; ถ้าป้อน percent แทน decimal variance จะเพี้ยน 10,000 เท่า</p>
+  <p>ถ้าใช้ trade price เห็น $\rho_1=-0.345$ แล้วรีบเรียกว่า mean reversion จะโดน spread กินทุกครั้งที่ cross. คำนวณใหม่บน mid price, ใช้ 5–15 minute sampling, หรือใช้ noise-robust estimator และ re-estimate theta ตาม liquidity ของแต่ละวัน การหักส่วนเด้งด้วย $\gamma_0+2\gamma_1$ หรือ $\sigma_\epsilon(1+\theta)$ ต้องใช้ theta ที่ stable; ถ้าป้อน percent แทน decimal variance จะเพี้ยน 10,000 เท่า</p>
 </section>
 
 <section class="table">
@@ -327,10 +367,14 @@ assert abs(rho1+0.3448275862)&lt;1e-10
 gamma0=sigx**2;gamma1=theta*gamma0/(1+theta**2)
 S=2*np.sqrt(-gamma1)
 assert abs(S-.00117444)&lt;1e-5
-assert abs(np.sqrt(1+theta**2)-np.sqrt(1.16))&lt;1e-12</code></pre>
+assert abs(np.sqrt(1+theta**2)-np.sqrt(1.16))&lt;1e-12
+se=np.sqrt(gamma0+2*gamma1)
+assert abs(se-0.000557)&lt;1e-6 and abs(np.sqrt(gamma0/(1+theta**2))*(1+theta)-se)&lt;1e-12
+assert abs(se*np.sqrt(300*252)-0.1532)&lt;1e-3 and abs(sigx*np.sqrt(300*252)-0.2750)&lt;1e-3
+assert abs(S*42-0.0493)&lt;1e-4</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดใช้หน่วย decimal return ต่อ minute และตรวจ invariant ว่า ACF ไม่ขึ้นกับขนาด innovation; ก่อนใช้จริงต้องตรวจ mid/trade definition และหัก spread cost ใน backtest</p>
+    <p>โค้ดใช้หน่วย decimal return ต่อ minute ตรวจ ρ₁ spread 0.1174% ความผันผวนราคาจริง 0.0557% ต่อนาที หรือ 15.3% เทียบกับ 27.5% ต่อปี และตรวจ invariant ว่า ACF ไม่ขึ้นกับขนาด innovation; ก่อนใช้จริงต้องตรวจ mid/trade definition และหัก spread cost ใน backtest</p>
   </div>
 </section>
 
