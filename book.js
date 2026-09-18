@@ -185,7 +185,7 @@
       // but then breaks lines as if they were unenlarged, so wide formulas
       // never wrapped on a desktop.  A fixed scale keeps the two in step.
       matchFontHeight: false,
-      scale: 1.15
+      scale: (window.innerWidth || 1000) < 600 ? 1.0 : 1.15
     },
     loader: {
       paths: { mathjax: BASE + 'mathjax', fonts: BASE + 'mathjax/fonts' }
