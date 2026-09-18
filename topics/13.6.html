@@ -175,9 +175,13 @@ P&=C-S_0+K=3.987761\\
   <h4>ขั้นที่ 2 — ทำไม call กับ put ราคาเท่ากันพอดี</h4>
   <p>ข้อสรุปนี้ใช้ได้เฉพาะเมื่อ $r = 0$ และ $S_0 = K$ ถ้าดอกเบี้ยไม่เป็นศูนย์ call จะแพงกว่า put เล็กน้อยเสมอ เพราะ spot discounted มากกว่า strike discounted</p>
   <div class="math">\[
-\begin{aligned}\text{put–call parity (topic 13.4)}:&\quad P + S_0 e^{-qT} = C + K e^{-rT}\\
-r = 0,\ q = 0,\ S_0 = K:&\quad P + K = C + K\\
-&\quad P = C\end{aligned}
+\begin{aligned}
+&\text{put–call parity (topic 13.4)}:\\
+&\quad P + S_0 e^{-qT} = C + K e^{-rT}\\
+&r = 0,\ q = 0,\ S_0 = K:\\
+&\quad P + K = C + K\\
+&\quad P = C
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>put–call parity ให้ผลรวมของ put กับ spot discounted เท่ากับ call กับ strike discounted</p>
@@ -202,10 +206,15 @@ H_{\rm straddle}=|S_T-100|,\qquad H_{\rm strangle}=(90-S_T)^++(S_T-110)^+
   <p>สิ่งที่ straddle กำลังซื้อจริง ๆ คือ ขนาดของการเคลื่อน ไม่ใช่ทิศทาง ยิ่ง spot วิ่งไกลจาก strike ยิ่งจ่ายมาก ทั้งขึ้นและลง นี่คือเหตุผลที่เทรดเดอร์ volatility ชอบ straddle</p>
   <p>ตรวจด้วยตัวเลข: ถ้า strike คือ 100 และ spot จบที่ 118 สองขารวมกันจ่าย 18 ดอลลาร์ ถ้าจบที่ 82 ก็จ่าย 18 ดอลลาร์เท่ากัน ผู้ถือจึงไม่ได้เดิมพันว่าราคาจะขึ้นหรือลง แต่เดิมพันว่ามันจะเคลื่อนแรงแค่ไหน และนั่นคือคำว่า volatility trade</p>
   <div class="math">\[
-\begin{aligned}(S_T - K)^+ + (K - S_T)^+ &= \max(S_T - K,\, 0) + \max(K - S_T,\, 0)\\
-\text{case } S_T \ge K:&\quad (S_T - K) + 0 = |S_T - K|\\
-\text{case } S_T \lt K:&\quad 0 + (K - S_T) = |S_T - K|\\
-H_{\rm straddle} &= |S_T - K|\end{aligned}
+\begin{aligned}
+&(S_T - K)^+ + (K - S_T)^+\\
+&= \max(S_T - K,\, 0) + \max(K - S_T,\, 0)\\
+&\text{case } S_T \ge K:\\
+&\quad (S_T - K) + 0 = |S_T - K|\\
+&\text{case } S_T \lt K:\\
+&\quad 0 + (K - S_T) = |S_T - K|\\
+&H_{\rm straddle} = |S_T - K|
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คำถามแรกที่ต้องถามคือ ทำไม payoff ของ straddle ถึงเขียนเป็นค่าสัมบูรณ์ได้</p>
@@ -229,13 +238,19 @@ H_{\rm risk\ reversal}=(S_T-110)^+-(90-S_T)^+,\quad H_{\rm butterfly}=(S_T-90)^+
   <h4>ขั้นที่ 6 — butterfly สร้างจาก bull spread ลบ bear spread</h4>
   <p>butterfly บอกว่า 'ราคาจะไม่ไปไหนไกล' กำไรสูงสุดอยู่ตรง strike กลาง และ payoff จำกัดทั้งขึ้นทั้งลง ต่างจาก straddle ที่บอกว่า 'ราคาจะวิ่งแรง'</p>
   <div class="math">\[
-\begin{aligned}\text{bull spread}:&\quad (S_T - 90)^+ - (S_T - 100)^+\\
-\text{bear spread}:&\quad (S_T - 100)^+ - (S_T - 110)^+\\
-\text{butterfly}:&\quad \text{bull} - \text{bear}\\
-&= (S_T - 90)^+ - 2(S_T - 100)^+ + (S_T - 110)^+\\
-\text{check } S_T = 100:&\quad (100 - 90) - 2(0) + 0 = 10\\
-\text{check } S_T = 90:&\quad 0 - 0 + 0 = 0\\
-\text{check } S_T = 110:&\quad 20 - 20 + 0 = 0\end{aligned}
+\begin{aligned}
+&\text{bull spread}:\\
+&\quad (S_T - 90)^+ - (S_T - 100)^+\\
+&\text{bear spread}:\\
+&\quad (S_T - 100)^+ - (S_T - 110)^+\\
+&\text{butterfly}:\quad \text{bull} - \text{bear}\\
+&= (S_T - 90)^+ - 2(S_T - 100)^+\\
+&\quad + (S_T - 110)^+\\
+&\text{check } S_T = 100:\\
+&\quad (100 - 90) - 2(0) + 0 = 10\\
+&\text{check } S_T = 90:\quad 0 - 0 + 0 = 0\\
+&\text{check } S_T = 110:\quad 20 - 20 + 0 = 0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>butterfly ไม่ต้องจำเป็นสูตร สร้างได้จากสอง spread ที่รู้แล้ว</p>
@@ -259,11 +274,16 @@ H_{\rm risk\ reversal}=(S_T-110)^+-(90-S_T)^+,\quad H_{\rm butterfly}=(S_T-90)^+
   <h4>ขั้นที่ 8 — ตัวอย่าง: straddle payoff กับ P&amp;L ต่างกันเท่าไร</h4>
   <p>ตัวเลข −2,975.52 กับ +7,024.48 มาจาก 1,000 สัญญา เทรดเดอร์มือใหม่ที่ลืมหัก premium จะนับกำไรเกินจริงและนับขาดทุนน้อยเกินจริง</p>
   <div class="math">\[
-\begin{aligned}S_T = 105:&\quad H = |105 - 100| = 5\\
-\text{P\&amp;L per unit} &= 5 - 7.975522 = -2.975522\\
-\text{P\&amp;L total} &= 1{,}000(-2.975522) = -2{,}975.52\ \mathrm{USD}\\
-S_T = 115:&\quad H = |115 - 100| = 15\\
-\text{P\&amp;L total} &= 1{,}000(15 - 7.975522) = 7{,}024.48\ \mathrm{USD}\end{aligned}
+\begin{aligned}
+&S_T = 105:\quad H = |105 - 100| = 5\\
+&\text{P\&amp;L per unit}\\
+&= 5 - 7.975522 = -2.975522\\
+&\text{P\&amp;L total}\\
+&= 1{,}000(-2.975522) = -2{,}975.52\ \mathrm{USD}\\
+&S_T = 115:\quad H = |115 - 100| = 15\\
+&\text{P\&amp;L total}\\
+&= 1{,}000(15 - 7.975522) = 7{,}024.48\ \mathrm{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผู้เริ่มต้นมักคิดว่า straddle กำไรเมื่อราคาขยับ แต่ที่จริงต้องขยับ 'มากพอ' จ่ายค่า premium คืนก่อน</p>
@@ -287,10 +307,16 @@ S_T=100\pm7.97552234:\qquad S_{\rm lower}=92.02447766,\quad S_{\rm upper}=107.97
   <h4>ขั้นที่ 10 — derive จุดคุ้มทุนจากสมการ payoff = premium</h4>
   <p>width ของ break-even zone = $2V_0$ คือตัวเลขเดียวที่สรุปว่า straddle แพงแค่ไหน ยิ่ง vol สูง ยิ่ง premium แพง ยิ่งต้องเคลื่อนมาก</p>
   <div class="math">\[
-\begin{aligned}|S_T - K| &= V_0\\
-\text{case 1: } S_T \ge K:&\quad S_T - K = V_0 \implies S_T = K + V_0 = 107.975522\\
-\text{case 2: } S_T \lt K:&\quad K - S_T = V_0 \implies S_T = K - V_0 = 92.024478\\
-\text{width} &= 2V_0 = 2(7.975522) = 15.951044\end{aligned}
+\begin{aligned}
+|S_T - K| &= V_0\\
+&\text{case 1: } S_T \ge K:\\
+&\quad S_T - K = V_0 \implies S_T = K + V_0\\
+&\quad= 107.975522\\
+&\text{case 2: } S_T \lt K:\\
+&\quad K - S_T = V_0 \implies S_T = K - V_0\\
+&\quad= 92.024478\\
+\text{width} &= 2V_0 = 2(7.975522) = 15.951044
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จุดคุ้มทุนคือจุดที่ payoff เท่ากับ premium พอดี ค่าสัมบูรณ์ให้สมการสองกรณี ซึ่งตรงกับแก้สมการเส้นตรงข้างละตัว</p>
@@ -395,11 +421,17 @@ V_{T_1}^{\rm calendar}=C(S_{T_1},100,T_2-T_1)-(S_{T_1}-100)^+,\qquad T_2-T_1=0.2
 
 <section class="formula">
   <h4>ขั้นที่ 12 — รวม Greeks ตาม signed legs</h4>
-  <p>Greeks ของโครงสร้างคือผลรวมของแต่ละขา โดยขาที่ขายต้องติดเครื่องหมายลบ สามบรรทัดนี้แสดงว่าเหตุผลมีข้อเดียว คือ derivative กระจายเข้าไปในผลบวกได้ ไม่ใช่กฎพิเศษของ option</p>
+  <p>Greeks ของโครงสร้างคือผลรวมของแต่ละขา โดยขาที่ขายต้องติดเครื่องหมายลบ สูตรข้างล่างแสดงว่าเหตุผลมีข้อเดียว คือ derivative กระจายเข้าไปในผลบวกได้ ไม่ใช่กฎพิเศษของ option</p>
   <div class="math">\[
-\begin{aligned}V_{\rm set}&=\sum_i n_iV_i\qquad(n_i \lt 0\ \text{for a sold leg})\\
-\frac{\partial}{\partial S}V_{\rm set}&=\sum_i n_i\frac{\partial V_i}{\partial S}\;\Longrightarrow\;\Delta_{\rm set}=\sum_i n_i\Delta_i\\
-\text{same for }\frac{\partial^{2}}{\partial S^{2}},\ \frac{\partial}{\partial\sigma},\ \frac{\partial}{\partial t}:&\quad\Gamma_{\rm set}=\sum_i n_i\Gamma_i,\quad\nu_{\rm set}=\sum_i n_i\nu_i,\quad\Theta_{\rm set}=\sum_i n_i\Theta_i\end{aligned}
+\begin{aligned}
+V_{\rm set}&=\sum_i n_iV_i\\
+&\quad(n_i \lt 0\ \text{for a sold leg})\\
+&\frac{\partial}{\partial S}V_{\rm set}=\sum_i n_i\frac{\partial V_i}{\partial S}\\
+&\;\Longrightarrow\;\Delta_{\rm set}=\sum_i n_i\Delta_i\\
+&\text{same for }\frac{\partial^{2}}{\partial S^{2}},\ \frac{\partial}{\partial\sigma},\ \frac{\partial}{\partial t}:\\
+&\quad\Gamma_{\rm set}=\sum_i n_i\Gamma_i,\quad\nu_{\rm set}=\sum_i n_i\nu_i\\
+&\quad\Theta_{\rm set}=\sum_i n_i\Theta_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>มูลค่าของโครงสร้างคือผลรวมถ่วงน้ำหนักของแต่ละขา ขาที่ขายมีจำนวนติดลบ ซึ่งเป็นการเลือกเครื่องหมายให้สะดวก ไม่ใช่กฎคณิตศาสตร์</p>
@@ -412,11 +444,18 @@ V_{T_1}^{\rm calendar}=C(S_{T_1},100,T_2-T_1)-(S_{T_1}-100)^+,\qquad T_2-T_1=0.2
   <h4>ขั้นที่ 13 — derive: delta ของ ATM straddle ใกล้ศูนย์</h4>
   <p>ATM straddle มี delta ใกล้ศูนย์แต่ gamma สูงมาก นี่คือเหตุผลที่เทรดเดอร์ volatility ชอบใช้ เพราะไม่ต้องเดาทิศทาง แต่ได้กำไรจากการเคลื่อนไม่ว่าทิศไหน</p>
   <div class="math">\[
-\begin{aligned}\Delta_{\rm straddle} &= \Delta_{\rm call} + \Delta_{\rm put}\\
+\begin{aligned}
+&\Delta_{\rm straddle}\\
+&= \Delta_{\rm call} + \Delta_{\rm put}\\
 &= e^{-qT}\Phi(d_1) + \big(e^{-qT}\Phi(d_1) - e^{-qT}\big)\\
 &= e^{-qT}\big(2\Phi(d_1) - 1\big)\\
-q = 0,\ d_1 = 0.05:&\quad 2\Phi(0.05) - 1 = 2(0.519939) - 1 = 0.039878\\
-\Gamma_{\rm straddle} &= 2\Gamma_{\rm call} = \frac{2\phi(d_1)}{S\sigma\sqrt{T}} = \frac{2(0.39844)}{100(0.20)(0.5)} = 0.079689\end{aligned}
+&q = 0,\ d_1 = 0.05:\\
+&\quad 2\Phi(0.05) - 1 = 2(0.519939) - 1\\
+&\quad= 0.039878\\
+&\Gamma_{\rm straddle}\\
+&= 2\Gamma_{\rm call} = \frac{2\phi(d_1)}{S\sigma\sqrt{T}}\\
+&= \frac{2(0.39844)}{100(0.20)(0.5)} = 0.079689
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>delta ของ call คือ $\Phi(d_1)$ delta ของ put คือ $\Phi(d_1) - 1$ รวมสองขาได้ $2\Phi(d_1) - 1$</p>
@@ -487,11 +526,20 @@ q = 0,\ d_1 = 0.05:&\quad 2\Phi(0.05) - 1 = 2(0.519939) - 1 = 0.039878\\
   <h4>ขั้นที่ 16 — ตรวจทีละก้อน: own terms กับ cross term</h4>
   <p>หลักง่าย ๆ: ยิ่ง correlation ต่ำ cross term ยิ่งเล็ก index vol ยิ่งต่ำกว่า single-stock vol มาก dispersion profit มาจากส่วนต่างนี้</p>
   <div class="math">\[
-\begin{aligned}\text{stock 1 own:}&\quad w_1^2\sigma_1^2 = (0.5)^2(0.20)^2 = 0.25(0.04) = 0.0100\\
-\text{stock 2 own:}&\quad w_2^2\sigma_2^2 = (0.5)^2(0.30)^2 = 0.25(0.09) = 0.0225\\
-\text{own total:}&\quad 0.0100 + 0.0225 = 0.0325\\
-\text{cross:}&\quad 2(0.5)(0.5)(0.20)(0.30)(0.4) = 0.5(0.06)(0.4) = 0.0120\\
-\sigma_I^2 &= 0.0325 + 0.0120 = 0.0445,\quad \sigma_I = \sqrt{0.0445} = 21.10\%\end{aligned}
+\begin{aligned}
+&\text{stock 1 own:}\\
+&\quad w_1^2\sigma_1^2 = (0.5)^2(0.20)^2 = 0.25(0.04)\\
+&\quad= 0.0100\\
+&\text{stock 2 own:}\\
+&\quad w_2^2\sigma_2^2 = (0.5)^2(0.30)^2 = 0.25(0.09)\\
+&\quad= 0.0225\\
+&\text{own total:}\quad 0.0100 + 0.0225 = 0.0325\\
+&\text{cross:}\\
+&\quad 2(0.5)(0.5)(0.20)(0.30)(0.4)\\
+&\quad= 0.5(0.06)(0.4) = 0.0120\\
+\sigma_I^2 &= 0.0325 + 0.0120 = 0.0445\\
+\sigma_I &= \sqrt{0.0445} = 21.10\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แยกทีละชิ้นเพื่อตรวจ: ส่วนเดี่ยวของหุ้น 1 คือ 0.01 ของหุ้น 2 คือ 0.0225 รวม 0.0325 ถ้า correlation เป็นศูนย์ index variance จะเป็น 0.0325 ซึ่งน้อยกว่าค่าเฉลี่ยถ่วง (0.0650) เกือบครึ่ง</p>
@@ -501,21 +549,26 @@ q = 0,\ d_1 = 0.05:&\quad 2\Phi(0.05) - 1 = 2(0.519939) - 1 = 0.039878\\
 
 <section class="formula">
   <h4>ขั้นที่ 17 — Scenario correlation ลดลง</h4>
-  <p>ทดสอบว่าถ้าความเกาะกันลดลงจริงตามที่เราคาด กำไรขาดทุนจะออกมาเป็นอย่างไร เจ็ดบรรทัดนี้เป็นการแทนตัวเลขลงในสูตรของขั้นที่ 14 สองครั้งแล้วลบกัน และผลที่ได้มาจากพจน์ไขว้อย่างเดียว ซึ่งเป็นสิ่งที่การเทรดแบบนี้ตั้งใจเดิมพัน</p>
+  <p>ทดสอบว่าถ้าความเกาะกันลดลงจริงตามที่เราคาด กำไรขาดทุนจะออกมาเป็นอย่างไร สูตรข้างล่างเป็นการแทนตัวเลขลงในสูตรของขั้นที่ 14 สองครั้งแล้วลบกัน และผลที่ได้มาจากพจน์ไขว้อย่างเดียว ซึ่งเป็นสิ่งที่การเทรดแบบนี้ตั้งใจเดิมพัน</p>
   <div class="math">\[
-\begin{aligned}\text{own terms}&=\sum_i w_i^{2}\sigma_i^{2}=0.0325\ \text{(unchanged)}\\
-\text{cross at }\rho=0.4:&\quad 2w_1w_2\sigma_1\sigma_2(0.4)=0.03(0.4)=0.0120\\
+\begin{aligned}
+&\text{own terms}=\sum_i w_i^{2}\sigma_i^{2}\\
+&=0.0325\ \text{(unchanged)}\\
+&\text{cross at }\rho=0.4:\\
+&\quad 2w_1w_2\sigma_1\sigma_2(0.4)=0.03(0.4)=0.0120\\
 \sigma_I^{2}&=0.0325+0.0120=0.0445\\[4pt]
-\text{cross at }\rho=0.2:&\quad 0.03(0.2)=0.0060\\
+&\text{cross at }\rho=0.2:\quad 0.03(0.2)=0.0060\\
 \sigma_I^{2}&=0.0325+0.0060=0.0385\\[4pt]
 \Delta\sigma_I^{2}&=0.0445-0.0385=0.0060\\
-N_{\rm var}\,\Delta\sigma_I^{2}&=1{,}000{,}000(0.0060)=6{,}000\ \mathrm{USD}\end{aligned}
+&N_{\rm var}\,\Delta\sigma_I^{2}\\
+&=1{,}000{,}000(0.0060)=6{,}000\ \mathrm{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตรวจข้อสรุปของขั้นที่ 14 ด้วยเลขจริง กองที่มาจากความแกว่งของแต่ละตัวไม่เปลี่ยน เพราะสมมติว่าหุ้นแต่ละตัวยังเหวี่ยงเท่าเดิม เปลี่ยนแค่ความเกาะกันอย่างเดียว</p>
     <p>คำนวณกองที่สองที่ความเกาะกันเดิม โดยก้อน $2w_1w_2\sigma_1\sigma_2$ รวมกันได้ 0.03 บวกสองกองได้ค่าที่ใช้ล็อก strike ไว้ตั้งแต่ต้น แล้วทำซ้ำที่ความเกาะกันใหม่ กองแรกเท่าเดิม กองที่สองลดลงครึ่งหนึ่ง</p>
     <p>ผลต่างจึงมาจากกองที่สองล้วน ๆ ตรงตามที่ขั้นที่ 14 ทำนายไว้ คูณ notional แล้วได้เงินจริง</p>
-    <p>สังเกตว่าทุกตัวเลขในบรรทัดสุดท้าย คำนวณมาจากบรรทัดบนทั้งหมด ไม่มีเลขใหม่โผล่เข้ามาแม้แต่ตัวเดียว</p>
+    <p>สังเกตว่าทุกตัวเลขในสองบรรทัดสุดท้าย คำนวณมาจากบรรทัดบนทั้งหมด ไม่มีเลขใหม่โผล่เข้ามาแม้แต่ตัวเดียว</p>
   </div>
 </section>
 

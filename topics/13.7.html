@@ -159,16 +159,20 @@
 
 <section class="formula">
   <h4>ขั้นที่ 2 — สร้างแรงสัมพันธ์จากแรงอิสระ</h4>
-  <p>สองสมการนั้นต้องเคลื่อนไหวสัมพันธ์กัน ไม่ใช่ต่างคนต่างสุ่ม ห้าบรรทัดนี้สร้างแรงที่เกาะกันขึ้นมาจากแรงอิสระสองก้อน แล้วตรวจสองอย่าง คือขนาดยังถูก และความเกาะกันได้ตามที่สั่ง เป็นวิธีเดียวกับ Cholesky ในหัวข้อ 7.6 เขียนออกมาสำหรับสองมิติ</p>
+  <p>สองสมการนั้นต้องเคลื่อนไหวสัมพันธ์กัน ไม่ใช่ต่างคนต่างสุ่ม สูตรข้างล่างสร้างแรงที่เกาะกันขึ้นมาจากแรงอิสระสองก้อน แล้วตรวจสองอย่าง คือขนาดยังถูก และความเกาะกันได้ตามที่สั่ง เป็นวิธีเดียวกับ Cholesky ในหัวข้อ 7.6 เขียนออกมาสำหรับสองมิติ</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Cov}\big(dW_t^{\perp},\,dW_t^{S}\big)&=0\\
+\begin{aligned}
+&\operatorname{Cov}\big(dW_t^{\perp},\,dW_t^{S}\big)=0\\
 dW_t^{v}&:=\rho\,dW_t^{S}+\sqrt{1-\rho^{2}}\,dW_t^{\perp}\\[4pt]
-\operatorname{Var}(dW_t^{v})&=\rho^{2}\,dt+\big(1-\rho^{2}\big)dt=dt\ \checkmark\\
-dW_t^{S}dW_t^{v}&=\rho\,(dW_t^{S})^{2}+\sqrt{1-\rho^{2}}\,dW_t^{S}dW_t^{\perp}\\
-&=\rho\,dt+0=\rho\,dt\ \checkmark\end{aligned}
+&\operatorname{Var}(dW_t^{v})\\
+&=\rho^{2}\,dt+\big(1-\rho^{2}\big)dt=dt\ \checkmark\\
+&dW_t^{S}dW_t^{v}\\
+&=\rho\,(dW_t^{S})^{2}+\sqrt{1-\rho^{2}}\,dW_t^{S}dW_t^{\perp}\\
+&=\rho\,dt+0=\rho\,dt\ \checkmark
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ต้องการแรงสุ่มสองก้อนที่เกาะกันตามที่กำหนด แต่ของที่สร้างง่ายคือแรงสุ่มที่ไม่เกี่ยวกันเลย วิธีคือเริ่มจากของที่สร้างง่าย แล้วผสมด้วยน้ำหนักที่เลือกไว้ บรรทัดสองคือสิ่งที่เรานิยาม ส่วนที่เหลือคือการตรวจ</p>
+    <p>ต้องการแรงสุ่มสองก้อนที่เกาะกันตามที่กำหนด แต่ของที่สร้างง่ายคือแรงสุ่มที่ไม่เกี่ยวกันเลย วิธีคือเริ่มจากของที่สร้างง่าย แล้วผสมด้วยน้ำหนักที่เลือกไว้ บรรทัดที่สองคือสิ่งที่เรานิยาม ส่วนที่เหลือคือการตรวจ</p>
     <p>ตรวจขนาดก่อน variance ของผลรวมถ่วงน้ำหนักคือน้ำหนักกำลังสองคูณ variance บวกกัน ตามหัวข้อ 6.5 และไม่มีพจน์ไขว้เพราะสองก้อนอิสระ ผลรวมได้ $dt$ พอดี แปลว่าการผสมไม่ได้ทำให้ขนาดเพี้ยน</p>
     <p>ตรวจความเกาะกันต่อ กำลังสองของก้อนแรกให้ $dt$ ส่วนผลคูณของสองก้อนอิสระให้ศูนย์ จึงเหลือ $\rho\,dt$ ตรงตามที่ต้องการ</p>
     <p>น้ำหนัก $\sqrt{1-\rho^{2}}$ จึงไม่ได้เดามา มันคือตัวเดียวที่ทำให้สองการตรวจนี้ผ่านพร้อมกัน</p>
@@ -240,11 +244,16 @@ y_t&=y_0e^{-\kappa t},\qquad y_0=v_0-\theta\\
   <h4>ขั้นที่ 6 — แทนค่า horizon หนึ่งปี</h4>
   <p>แทนตัวเลขของโจทย์ลงในสองสูตรจากขั้นก่อนหน้า โดยเริ่มจากส่วนต่างระหว่าง variance วันนี้ กับ variance ระยะยาว ซึ่งเป็นตัวเดียวที่ทั้งสองสูตรใช้ร่วมกัน</p>
   <div class="math">\[
-\begin{aligned}v_0-\theta&=0.09-0.04=0.05,\qquad \kappa T=2(1)=2,\qquad e^{-2}=0.135335\\[4pt]
-\mathbb E[v_1]&=\theta+(v_0-\theta)e^{-\kappa T}=0.04+0.05(0.135335)\\
+\begin{aligned}
+v_0-\theta&=0.09-0.04=0.05\\
+\kappa T&=2(1)=2,\qquad e^{-2}=0.135335\\[4pt]
+\mathbb E[v_1]&=\theta+(v_0-\theta)e^{-\kappa T}\\
+&=0.04+0.05(0.135335)\\
 &=0.04+0.006767=0.04676676\\[4pt]
-\mathbb E[\bar v_1]&=\theta+(v_0-\theta)\frac{1-e^{-\kappa T}}{\kappa T}=0.04+0.05\left(\frac{1-0.135335}{2}\right)\\
-&=0.04+0.05(0.432332)=0.06161662\end{aligned}
+\mathbb E[\bar v_1]&=\theta+(v_0-\theta)\frac{1-e^{-\kappa T}}{\kappa T}\\
+&=0.04+0.05\left(\frac{1-0.135335}{2}\right)\\
+&=0.04+0.05(0.432332)=0.06161662
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$0.05$ ไม่ใช่ค่าใหม่ แต่คือระยะที่ variance วันนี้อยู่เหนือค่าระยะยาว ตัวคูณ $e^{-2}=0.135$ บอกว่าเหลือระยะนั้นเพียง 13.5% เมื่อครบหนึ่งปี</p>
@@ -410,13 +419,24 @@ y_t&=y_0e^{-\kappa t},\qquad y_0=v_0-\theta\\
   <h4>ขั้นที่ 10 — derive Riccati equations จากการแทน ansatz ลงในสมการตั้งราคา</h4>
   <p>จุดเชื่อมต่อที่สำคัญที่สุดของแบบจำลอง Heston คือการเปลี่ยน partial differential equation สองมิติที่แก้ตรง ๆ ไม่ไหว ให้กลายเป็นระบบ ordinary differential equation สองตัว ด้วยการเลือกรูป ansatz ที่สอดคล้องกับโครงสร้างเชิงเส้นของ drift และ variance ของแบบจำลอง ขั้นตอนนี้กางการแทนค่าและแยก coefficient ทีละบรรทัดให้เห็นว่าสมการ Riccati ในขั้นถัดไปไม่ได้ถูกเดาขึ้นมาลอย ๆ</p>
   <div class="math">\[
-\begin{aligned}\varphi(x,v,\tau)&=\exp\big(iux+A(\tau)+B(\tau)v\big),\qquad \tau=T-t\\[4pt]
-\frac{\partial_\tau\varphi}{\varphi}&=A'+B'v,\qquad \frac{\partial_x\varphi}{\varphi}=iu,\qquad \frac{\partial_{xx}\varphi}{\varphi}=-u^2\\[4pt]
-\frac{\partial_v\varphi}{\varphi}&=B,\qquad \frac{\partial_{vv}\varphi}{\varphi}=B^2,\qquad \frac{\partial_{xv}\varphi}{\varphi}=iuB\\[4pt]
-\frac{\partial_\tau\varphi}{\varphi}&=\left(r-q-\tfrac12v\right)(iu)+\kappa(\theta-v)B-\tfrac12vu^2+\rho\xi v(iuB)+\tfrac12\xi^2vB^2\\[4pt]
-A'+B'v&=\big[iu(r-q)+\kappa\theta B\big]+v\left[-\tfrac12(u^2+iu)+(iu\rho\xi-\kappa)B+\tfrac12\xi^2B^2\right]\\[4pt]
-v^0\text{ matching}:&\quad A'=iu(r-q)+\kappa\theta B,\qquad A(0)=0\\[4pt]
-v^1\text{ matching}:&\quad B'=-\tfrac12(u^2+iu)+(iu\rho\xi-\kappa)B+\tfrac12\xi^2B^2,\qquad B(0)=0\end{aligned}
+\begin{aligned}
+\varphi(x,v,\tau)&=\exp\big(iux+A(\tau)+B(\tau)v\big)\\
+\tau&=T-t\\[4pt]
+\frac{\partial_\tau\varphi}{\varphi}&=A'+B'v,\qquad \frac{\partial_x\varphi}{\varphi}=iu\\
+\frac{\partial_{xx}\varphi}{\varphi}&=-u^2\\[4pt]
+\frac{\partial_v\varphi}{\varphi}&=B,\qquad \frac{\partial_{vv}\varphi}{\varphi}=B^2\\
+\frac{\partial_{xv}\varphi}{\varphi}&=iuB\\[4pt]
+\frac{\partial_\tau\varphi}{\varphi}&=\left(r-q-\tfrac12v\right)(iu)+\kappa(\theta-v)B\\
+&\quad-\tfrac12vu^2+\rho\xi v(iuB)+\tfrac12\xi^2vB^2\\[4pt]
+A'+B'v&=\big[iu(r-q)+\kappa\theta B\big]\\
+&\quad+v\big[-\tfrac12(u^2+iu)+(iu\rho\xi-\kappa)B\\
+&\qquad+\tfrac12\xi^2B^2\big]\\[4pt]
+&v^0\text{ matching}:\\
+&\quad A'=iu(r-q)+\kappa\theta B,\qquad A(0)=0\\[4pt]
+&v^1\text{ matching}:\\
+&\quad B'=-\tfrac12(u^2+iu)+(iu\rho\xi-\kappa)B\\
+&\qquad+\tfrac12\xi^2B^2,\qquad B(0)=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แทน ansatz แบบ exponential-affine ลงใน partial differential equation ของ conditional expectation สำหรับ $x = \log S$ และนับเวลาถอยหลัง $\tau = T - t$ เมื่อหารทั้งสองข้างด้วย $\varphi$ พจน์ derivative ของ $x$ จะกลายเป็นค่าคงที่ $iu$ และ $-u^2$ ส่วน derivative ของ $v$ จะดึง $B$ และ $B^2$ ออกมา</p>

@@ -173,14 +173,17 @@ S_T&=S_0e^{(r-\frac12\sigma^{2})T+\sigma\sqrt{T}\,Z}\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 3 — แยก payoff เป็นสองบัญชี</h4>
-  <p>payoff ของ call แยกได้เป็นสองก้อน คือได้หุ้นมาก้อนหนึ่ง กับจ่ายเงินสดออกไปอีกก้อนหนึ่ง หกบรรทัดนี้อธิบายว่าทำไมสูตร Black–Scholes ถึงมีสองพจน์ และทำไมสองพจน์นั้น ถึงมีหน้าตาไม่เหมือนกัน คือก้อนหนึ่งถ่วงด้วยราคาหุ้น อีกก้อนไม่ถ่วง</p>
+  <p>payoff ของ call แยกได้เป็นสองก้อน คือได้หุ้นมาก้อนหนึ่ง กับจ่ายเงินสดออกไปอีกก้อนหนึ่ง สูตรข้างล่างอธิบายว่าทำไมสูตร Black–Scholes ถึงมีสองพจน์ และทำไมสองพจน์นั้น ถึงมีหน้าตาไม่เหมือนกัน คือก้อนหนึ่งถ่วงด้วยราคาหุ้น อีกก้อนไม่ถ่วง</p>
   <div class="math">\[
-\begin{aligned}(S_T-K)^{+}&=\begin{cases}S_T-K,&amp;S_T>K\\
+\begin{aligned}
+(S_T-K)^{+}&=\begin{cases}S_T-K,&amp;S_T>K\\
 0,&amp;S_T\le K\end{cases}\\
 &=\big(S_T-K\big)\mathbf 1(S_T>K)\\
 &=S_T\mathbf 1(S_T>K)-K\mathbf 1(S_T>K)\\
-\mathbb E^{\mathbb Q}\big[\mathbf 1(S_T>K)\big]&=\mathbb Q(S_T>K)\\
-C&=e^{-rT}\Big(\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]-K\,\mathbb Q(S_T>K)\Big)\end{aligned}
+&\mathbb E^{\mathbb Q}\big[\mathbf 1(S_T>K)\big]=\mathbb Q(S_T>K)\\
+C&=e^{-rT}\Big(\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]\\
+&\qquad-K\,\mathbb Q(S_T>K)\Big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>payoff ของ call มีสองกรณี ใช้สิทธิ์เมื่อราคาสูงกว่า strike ไม่ใช้เมื่อต่ำกว่า วิธีจัดการคือรวบสองกรณีเป็นบรรทัดเดียวด้วยตัวบ่งชี้ ซึ่งเป็นหนึ่งเมื่อเงื่อนไขจริงและศูนย์เมื่อไม่จริง</p>
@@ -229,14 +232,19 @@ d_1&:=d_2+\sigma\sqrt T\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 6 — ประเมิน integral สองส่วน</h4>
-  <p>เมื่อทั้งสองก้อนกลายเป็น integral ของ density มาตรฐานแล้ว ก็อ่านค่าออกมาเป็น $\Phi$ ได้ทันที หกบรรทัดนี้คือจุดที่ทุกอย่างมาบรรจบ และเครื่องมือที่ใช้มีแค่สองอย่าง คือการจัดกำลังสองสมบูรณ์ กับการเปลี่ยนตัวแปรใน integral</p>
+  <p>เมื่อทั้งสองก้อนกลายเป็น integral ของ density มาตรฐานแล้ว ก็อ่านค่าออกมาเป็น $\Phi$ ได้ทันที สูตรข้างล่างคือจุดที่ทุกอย่างมาบรรจบ และเครื่องมือที่ใช้มีแค่สองอย่าง คือการจัดกำลังสองสมบูรณ์ กับการเปลี่ยนตัวแปรใน integral</p>
   <div class="math">\[
-\begin{aligned}\mathbb Q(S_T>K)&=\mathbb Q(Z>-d_2)=\mathbb Q(Z \lt d_2)=\Phi(d_2)\\[4pt]
-\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]&=\int_{-d_2}^{\infty}S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma\sqrt T\,z}\phi(z)\,dz\\
-&=S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma^{2}T/2}\int_{-d_2}^{\infty}\phi\big(z-\sigma\sqrt T\big)\,dz\\
+\begin{aligned}
+&\mathbb Q(S_T>K)=\mathbb Q(Z>-d_2)\\
+&=\mathbb Q(Z \lt d_2)=\Phi(d_2)\\[4pt]
+&\mathbb E^{\mathbb Q}\big[S_T\mathbf 1(S_T>K)\big]\\
+&=\int_{-d_2}^{\infty}S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma\sqrt T\,z}\phi(z)\,dz\\
+&=S_0e^{(r-\frac12\sigma^{2})T}e^{\sigma^{2}T/2}\\
+&\qquad\int_{-d_2}^{\infty}\phi\big(z-\sigma\sqrt T\big)\,dz\\
 &=S_0e^{rT}\int_{-d_2-\sigma\sqrt T}^{\infty}\phi(u)\,du\\
 &=S_0e^{rT}\,\Phi\big(d_2+\sigma\sqrt T\big)\\
-&=S_0e^{rT}\,\Phi(d_1)\end{aligned}
+&=S_0e^{rT}\,\Phi(d_1)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ก้อนเงินสดง่ายที่สุด ใช้ความสมมาตรของระฆัง พื้นที่ทางขวาของค่าลบเท่ากับพื้นที่ทางซ้ายของค่าบวก จึงอ่านเป็น $\Phi(d_2)$ ได้ทันที</p>
@@ -248,15 +256,20 @@ d_1&:=d_2+\sigma\sqrt T\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 7 — ได้สูตร call และ put</h4>
-  <p>ประกอบสองก้อนกลับเข้าด้วยกันเป็นสูตร call แล้วใช้ความสัมพันธ์ระหว่างสองสัญญาได้สูตร put เจ็ดบรรทัดนี้ปิดงานทั้งหัวข้อ และจุดที่ควรจำคือฝั่ง put ไม่ได้ต้องทำงานใหม่เลย มันเป็นแค่พีชคณิตบนสูตรที่มีอยู่แล้ว</p>
+  <p>ประกอบสองก้อนกลับเข้าด้วยกันเป็นสูตร call แล้วใช้ความสัมพันธ์ระหว่างสองสัญญาได้สูตร put สูตรข้างล่างปิดงานทั้งหัวข้อ และจุดที่ควรจำคือฝั่ง put ไม่ได้ต้องทำงานใหม่เลย มันเป็นแค่พีชคณิตบนสูตรที่มีอยู่แล้ว</p>
   <div class="math">\[
-\begin{aligned}C&=e^{-rT}\Big(S_0e^{rT}\Phi(d_1)-K\Phi(d_2)\Big)\\
+\begin{aligned}
+C&=e^{-rT}\Big(S_0e^{rT}\Phi(d_1)-K\Phi(d_2)\Big)\\
 &=S_0\Phi(d_1)-Ke^{-rT}\Phi(d_2)\\[4pt]
-\text{parity}:\quad C-P&=S_0-Ke^{-rT}\\
+&\text{parity}:\\
+C-P&=S_0-Ke^{-rT}\\
 P&=C-S_0+Ke^{-rT}\\
-&=S_0\Phi(d_1)-Ke^{-rT}\Phi(d_2)-S_0+Ke^{-rT}\\
-&=Ke^{-rT}\big(1-\Phi(d_2)\big)-S_0\big(1-\Phi(d_1)\big)\\
-&=Ke^{-rT}\Phi(-d_2)-S_0\Phi(-d_1)\end{aligned}
+&=S_0\Phi(d_1)-Ke^{-rT}\Phi(d_2)\\
+&\quad-S_0+Ke^{-rT}\\
+&=Ke^{-rT}\big(1-\Phi(d_2)\big)\\
+&\quad-S_0\big(1-\Phi(d_1)\big)\\
+&=Ke^{-rT}\Phi(-d_2)-S_0\Phi(-d_1)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แทนสองผลของขั้นที่ 6 ลงในรูปที่แยกไว้ในขั้นที่ 3 แล้วคูณตัวคิดลดเข้าไป พจน์แรกหักกันหมดเหลือราคาหุ้นวันนี้เปล่า ๆ ได้สูตร call ครบ</p>
@@ -494,8 +507,8 @@ d_2&=\frac{-0.028171-0.0022}{0.12}\\
 rT&=0.02(0.25)=0.005\\
 e^{-0.005}&=0.9950125\\
 Ke^{-rT}&=36(0.9950125)=35.82045\\[4pt]
-35(0.44706)&=15.64710\\
-35.82045(0.40010)&=14.33176\\
+&35(0.44706)=15.64710\\
+&35.82045(0.40010)=14.33176\\
 C&=15.64710-14.33176=1.3153\\
 C_{\text{exact}}&=1.31540\ \text{USD}
 \end{aligned}

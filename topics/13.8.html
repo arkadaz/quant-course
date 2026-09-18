@@ -197,14 +197,21 @@ r_i=\log\!\left(\frac{S_{t_i}}{S_{t_{i-1}}}\right),\qquad {\rm RV}=\frac{A}{n}\s
   <h4>ขั้นที่ 3 — กาง observation ทั้ง 10 ค่า</h4>
   <p>ยกกำลังสองทีละวันก่อนแล้วค่อยบวก เพราะเครื่องหมายบวกลบต้องหายไปก่อน ไม่อย่างนั้นวันขึ้นกับวันลงจะหักล้างกันจนเหลือเกือบศูนย์</p>
   <div class="math">\[
-\begin{aligned}(r_1,\ldots,r_5)&=0.01(1.2,-1.0,0.7,-2.2,1.8)\\
-(r_6,\ldots,r_{10})&=0.01(-1.5,0.4,-0.9,2.1,-0.6)\\
-\sum_{i=1}^{5}r_i^2&=10^{-4}(1.44+1.00+0.49+4.84+3.24)\\
+\begin{aligned}
+&(r_1,\ldots,r_5)\\
+&=0.01(1.2,-1.0,0.7,-2.2,1.8)\\
+&(r_6,\ldots,r_{10})\\
+&=0.01(-1.5,0.4,-0.9,2.1,-0.6)\\
+&\sum_{i=1}^{5}r_i^2\\
+&=10^{-4}(1.44+1.00+0.49+4.84+3.24)\\
 &=10^{-4}(11.01)\\
-\sum_{i=6}^{10}r_i^2&=10^{-4}(2.25+0.16+0.81+4.41+0.36)\\
+&\sum_{i=6}^{10}r_i^2\\
+&=10^{-4}(2.25+0.16+0.81+4.41+0.36)\\
 &=10^{-4}(7.99)\\
-\sum_{i=1}^{10}r_i^2&=10^{-4}(11.01+7.99)\\
-&=0.001900\end{aligned}
+&\sum_{i=1}^{10}r_i^2\\
+&=10^{-4}(11.01+7.99)\\
+&=0.001900
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>รายการในวงเล็บคือ log return หน่วย percentage point จึงคูณ 0.01 ก่อนยกกำลังสอง ซึ่งเท่ากับคูณ $10^{-4}$ หลังยกกำลังสอง</p>
@@ -338,13 +345,17 @@ r_i=\log\!\left(\frac{S_{t_i}}{S_{t_{i-1}}}\right),\qquad {\rm RV}=\frac{A}{n}\s
 
 <section class="formula">
   <h4>ขั้นที่ 5 — Itô แยก log return ออกจาก quadratic variation</h4>
-  <p>นี่คือหัวใจของทั้งหัวข้อ ใช้กฎของหัวข้อ 12.2 กับ log ราคา ห้าบรรทัดนี้แสดงว่าสิ่งที่สัญญาจ่ายตาม โผล่ออกมาเองจากการหา derivative ไม่ได้ถูกใส่เข้าไปด้วยมือ และนั่นคือเหตุผลที่สัญญาชนิดนี้ hedge ได้จริง</p>
+  <p>นี่คือหัวใจของทั้งหัวข้อ ใช้กฎของหัวข้อ 12.2 กับ log ราคา สูตรข้างล่างแสดงว่าสิ่งที่สัญญาจ่ายตาม โผล่ออกมาเองจากการหา derivative ไม่ได้ถูกใส่เข้าไปด้วยมือ และนั่นคือเหตุผลที่สัญญาชนิดนี้ hedge ได้จริง</p>
   <div class="math">\[
-\begin{aligned}\frac{dS_t}{S_t}&=(r-q)\,dt+\sigma_t\,dW_t\\
-f(S)=\log S:\quad f'(S)&=\frac1S,\qquad f''(S)=-\frac{1}{S^{2}}\\
-d\log S_t&=\frac{dS_t}{S_t}-\frac12\frac{(dS_t)^{2}}{S_t^{2}}\qquad\text{(topic 12.2)}\\
+\begin{aligned}
+\frac{dS_t}{S_t}&=(r-q)\,dt+\sigma_t\,dW_t\\
+&f(S)=\log S:\\
+f'(S)&=\frac1S,\qquad f''(S)=-\frac{1}{S^{2}}\\
+d\log S_t&=\frac{dS_t}{S_t}-\frac12\frac{(dS_t)^{2}}{S_t^{2}}\\
+&\quad\text{(topic 12.2)}\\
 (dS_t)^{2}&=\sigma_t^{2}S_t^{2}\,dt\\
-d\log S_t&=\left(r-q-\tfrac12\sigma_t^{2}\right)dt+\sigma_t\,dW_t\end{aligned}
+d\log S_t&=\left(r-q-\tfrac12\sigma_t^{2}\right)dt+\sigma_t\,dW_t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คราวนี้ยอมให้ความเหวี่ยงเปลี่ยนตามเวลาได้ ต่างจากบทก่อนที่ตรึงไว้เป็นค่าคงที่ คำถามคือ log ของราคาขยับอย่างไร</p>
@@ -356,14 +367,21 @@ d\log S_t&=\left(r-q-\tfrac12\sigma_t^{2}\right)dt+\sigma_t\,dW_t\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 6 — รวมเวลาแล้วหา expected variance</h4>
-  <p>รวมตลอดอายุสัญญา แล้วหาค่าเฉลี่ย หกบรรทัดนี้เปลี่ยนคำถามจาก ความเหวี่ยงในอนาคตจะเป็นเท่าไร ซึ่งตอบไม่ได้ ไปเป็นราคาของสัญญาที่จ่ายตาม log ซึ่งอ่านจากตลาดได้ และนั่นคือทั้งหมดที่ทำให้สัญญานี้ตั้งราคาได้</p>
+  <p>รวมตลอดอายุสัญญา แล้วหาค่าเฉลี่ย สูตรข้างล่างเปลี่ยนคำถามจาก ความเหวี่ยงในอนาคตจะเป็นเท่าไร ซึ่งตอบไม่ได้ ไปเป็นราคาของสัญญาที่จ่ายตาม log ซึ่งอ่านจากตลาดได้ และนั่นคือทั้งหมดที่ทำให้สัญญานี้ตั้งราคาได้</p>
   <div class="math">\[
-\begin{aligned}\sigma_t^{2}\,dt&=2\frac{dS_t}{S_t}-2\,d\log S_t\qquad\text{(step 5)}\\
-\int_0^{T}\sigma_t^{2}\,dt&=2\int_0^{T}\frac{dS_t}{S_t}-2\log\!\left(\frac{S_T}{S_0}\right)\\[4pt]
-\mathbb E^{\mathbb Q}\!\left[\int_0^{T}\frac{dS_t}{S_t}\right]&=(r-q)T\\
-\log\!\left(\frac{S_T}{S_0}\right)&=\log\!\left(\frac{S_T}{F}\right)+(r-q)T,\qquad F=S_0e^{(r-q)T}\\
-\mathbb E^{\mathbb Q}\!\left[\int_0^{T}\sigma_t^{2}dt\right]&=2(r-q)T-2\,\mathbb E^{\mathbb Q}\!\left[\log\frac{S_T}{F}\right]-2(r-q)T\\
-&=-2\,\mathbb E^{\mathbb Q}\!\left[\log\frac{S_T}{F}\right]\end{aligned}
+\begin{aligned}
+\sigma_t^{2}\,dt&=2\frac{dS_t}{S_t}-2\,d\log S_t\\
+&\quad\text{(step 5)}\\
+&\int_0^{T}\sigma_t^{2}\,dt\\
+&=2\int_0^{T}\frac{dS_t}{S_t}-2\log\!\left(\frac{S_T}{S_0}\right)\\[4pt]
+&\mathbb E^{\mathbb Q}\!\left[\int_0^{T}\frac{dS_t}{S_t}\right]=(r-q)T\\
+&\log\!\left(\frac{S_T}{S_0}\right)=\log\!\left(\frac{S_T}{F}\right)+(r-q)T\\
+&\quad F=S_0e^{(r-q)T}\\
+&\mathbb E^{\mathbb Q}\!\left[\int_0^{T}\sigma_t^{2}dt\right]\\
+&=2(r-q)T-2\,\mathbb E^{\mathbb Q}\!\left[\log\frac{S_T}{F}\right]\\
+&\quad-2(r-q)T\\
+&=-2\,\mathbb E^{\mathbb Q}\!\left[\log\frac{S_T}{F}\right]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ย้ายข้างสมการของขั้นที่ 5 เพื่อให้สิ่งที่สัญญาจ่ายตามอยู่ฝั่งเดียว แล้วอินทิเกรตตลอดอายุ ก้อนที่สองยุบเป็นผลต่างของ log ที่ปลายกับที่ต้น ซึ่งเป็นตัวเลขที่อ่านจากตลาดได้</p>
@@ -377,16 +395,29 @@ d\log S_t&=\left(r-q-\tfrac12\sigma_t^{2}\right)dt+\sigma_t\,dW_t\end{aligned}
   <h4>ขั้นที่ 7 — derive เอกลักษณ์การทำซ้ำ payoff ทั่วไปของ Carr–Madan ด้วย integration by parts</h4>
   <p>ก่อนจะนำสูตรไปใช้กับ log contract ในขั้นถัดไป จุดนี้คือรากฐานทางคณิตศาสตร์ที่สำคัญที่สุดของทฤษฎีการทำซ้ำ: payoff ที่มีส่วนโค้งใด ๆ สามารถแยกเป็นเส้นสัมผัสบวกกับผลรวมถ่วงน้ำหนักของ out-of-the-money option ทุก strike ได้เสมอ ขั้นตอนนี้พิสูจน์ที่มาของอัตลักษณ์ดังกล่าวด้วย integration by parts โดยตรง</p>
   <div class="math">\[
-\begin{aligned}S_T\ge F:&\quad g(S_T)-g(F)=\int_F^{S_T}g'(K)\,dK\\[4pt]
-u=g'(K),&\ dv=dK\ \Longrightarrow\ v=-(S_T-K):\\[4pt]
-\int_F^{S_T}g'(K)\,dK&=\big[-(S_T-K)g'(K)\big]_F^{S_T}+\int_F^{S_T}(S_T-K)g''(K)\,dK\\[4pt]
+\begin{aligned}
+&S_T\ge F:\\
+&\quad g(S_T)-g(F)=\int_F^{S_T}g'(K)\,dK\\[4pt]
+&u=g'(K),\ dv=dK\\
+&\Longrightarrow\ v=-(S_T-K):\\[4pt]
+&\int_F^{S_T}g'(K)\,dK\\
+&=\big[-(S_T-K)g'(K)\big]_F^{S_T}\\
+&\quad+\int_F^{S_T}(S_T-K)g''(K)\,dK\\[4pt]
 &=g'(F)(S_T-F)+\int_F^\infty g''(K)(S_T-K)^{+}dK\\[6pt]
-S_T \lt F:&\quad g(F)-g(S_T)=\int_{S_T}^{F} g'(K)\,dK\\[4pt]
-u=g'(K),&\ dv=dK\ \Longrightarrow\ v=K-S_T:\\[4pt]
-\int_{S_T}^{F} g'(K)\,dK&=\big[(K-S_T)g'(K)\big]_{S_T}^F-\int_{S_T}^{F}(K-S_T)g''(K)\,dK\\[4pt]
-g(S_T)-g(F)&=g'(F)(S_T-F)+\int_0^F g''(K)(K-S_T)^{+}dK\\[6pt]
-\text{Carr–Madan identity}:&\quad g(S_T)=g(F)+g'(F)(S_T-F)\\
-&\qquad+\int_0^F g''(K)(K-S_T)^{+}dK+\int_F^\infty g''(K)(S_T-K)^{+}dK\end{aligned}
+&S_T \lt F:\\
+&\quad g(F)-g(S_T)=\int_{S_T}^{F} g'(K)\,dK\\[4pt]
+&u=g'(K),\ dv=dK\\
+&\Longrightarrow\ v=K-S_T:\\[4pt]
+&\int_{S_T}^{F} g'(K)\,dK\\
+&=\big[(K-S_T)g'(K)\big]_{S_T}^F\\
+&\quad-\int_{S_T}^{F}(K-S_T)g''(K)\,dK\\[4pt]
+&g(S_T)-g(F)\\
+&=g'(F)(S_T-F)+\int_0^F g''(K)(K-S_T)^{+}dK\\[6pt]
+&\text{Carr–Madan identity}:\\
+&\quad g(S_T)=g(F)+g'(F)(S_T-F)\\
+&\qquad+\int_0^F g''(K)(K-S_T)^{+}dK\\
+&\qquad+\int_F^\infty g''(K)(S_T-K)^{+}dK
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากทฤษฎีบทมูลฐานของ calculus สำหรับ function กำไรขาดทุน $g(S)$ ใด ๆ ที่หา derivative ได้สองชั้นรอบจุดอ้างอิง $F$ เมื่อราคาปลายงวด $S_T \ge F$ เราเขียนผลต่างเป็น integral ของ derivative ชั้นแรก แล้วทำ integration by parts โดยเลือกให้ตัวคูณ $v = -(S_T - K)$ ซึ่งเป็นศูนย์ที่ขอบบน</p>
@@ -397,13 +428,19 @@ g(S_T)-g(F)&=g'(F)(S_T-F)+\int_0^F g''(K)(K-S_T)^{+}dK\\[6pt]
 
 <section class="formula">
   <h4>ขั้นที่ 8 — ทำซ้ำ log contract ด้วยปีก option</h4>
-  <p>log ราคาไม่มีขายในตลาด แต่สร้างขึ้นมาได้จาก option ทั้งแถว ห้าบรรทัดนี้บอกว่าต้องถือแต่ละ strike หนักเท่าไร และที่สำคัญคือมันบอกว่าทำไม คำตอบคือความหนักของแต่ละ strike เท่ากับความโค้งของ function ที่ strike นั้นพอดี</p>
+  <p>log ราคาไม่มีขายในตลาด แต่สร้างขึ้นมาได้จาก option ทั้งแถว สูตรข้างล่างบอกว่าต้องถือแต่ละ strike หนักเท่าไร และที่สำคัญคือมันบอกว่าทำไม คำตอบคือความหนักของแต่ละ strike เท่ากับความโค้งของ function ที่ strike นั้นพอดี</p>
   <div class="math">\[
-\begin{aligned}g(S)&=-\log\frac{S}{F}\;\Longrightarrow\;g'(F)=-\frac1F,\qquad g''(K)=\frac{1}{K^{2}}\\[4pt]
+\begin{aligned}
+g(S)&=-\log\frac{S}{F}\\
+&\;\Longrightarrow\;g'(F)=-\frac1F,\qquad g''(K)=\frac{1}{K^{2}}\\[4pt]
 g(S_T)&=g(F)+g'(F)(S_T-F)\\
-&\quad+\int_0^{F}g''(K)(K-S_T)^{+}dK+\int_F^{\infty}g''(K)(S_T-K)^{+}dK\\[4pt]
+&\quad+\int_0^{F}g''(K)(K-S_T)^{+}dK\\
+&\quad+\int_F^{\infty}g''(K)(S_T-K)^{+}dK\\[4pt]
 g(F)&=0\\
--\log\frac{S_T}{F}&=-\frac{S_T-F}{F}+\int_0^{F}\frac{(K-S_T)^{+}}{K^{2}}dK+\int_F^{\infty}\frac{(S_T-K)^{+}}{K^{2}}dK\end{aligned}
+&-\log\frac{S_T}{F}\\
+&=-\frac{S_T-F}{F}+\int_0^{F}\frac{(K-S_T)^{+}}{K^{2}}dK\\
+&\quad+\int_F^{\infty}\frac{(S_T-K)^{+}}{K^{2}}dK
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สัญญาที่ขั้นที่ 6 ต้องการไม่มีขายในตลาด แต่สร้างขึ้นจากของที่มีขายได้ หา derivative สองชั้นของ function ที่ต้องสร้าง ชั้นที่สองออกมาเป็นหนึ่งส่วนกำลังสอง ซึ่งจะกลายเป็นน้ำหนักของแต่ละ strike</p>
@@ -532,13 +569,18 @@ K_{\rm vol}^{\rm grid}&=\sqrt{0.04020277169}=20.050629\%\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 14 — constant 30 วันต้องเชื่อม total variance</h4>
-  <p>ดัชนีที่อ้างอิงสามสิบวันคงที่ต้องเชื่อมจากสองอายุที่มีจริง ห้าบรรทัดนี้ชี้ว่าเชื่อมบนแกนไหนจึงจะถูก และเหตุผลย้อนกลับไปถึงหัวข้อ 10.1 ที่ variance ของช่วงที่ไม่ทับกันบวกกันได้ ส่วนรากของมันบวกไม่ได้</p>
+  <p>ดัชนีที่อ้างอิงสามสิบวันคงที่ต้องเชื่อมจากสองอายุที่มีจริง สูตรข้างล่างชี้ว่าเชื่อมบนแกนไหนจึงจะถูก และเหตุผลย้อนกลับไปถึงหัวข้อ 10.1 ที่ variance ของช่วงที่ไม่ทับกันบวกกันได้ ส่วนรากของมันบวกไม่ได้</p>
   <div class="math">\[
-\begin{aligned}T_1K_1&=\text{total variance to }T_1,\qquad T_2K_2=\text{total variance to }T_2\\
-\text{interpolate on }T_iK_i:\quad w_{30}&=T_1K_1\cdot\frac{T_2-T_{30}}{T_2-T_1}+T_2K_2\cdot\frac{T_{30}-T_1}{T_2-T_1}\\
+\begin{aligned}
+T_1K_1&=\text{total variance to }T_1\\
+T_2K_2&=\text{total variance to }T_2\\
+&\text{interpolate on }T_iK_i:\\
+w_{30}&=T_1K_1\cdot\frac{T_2-T_{30}}{T_2-T_1}+T_2K_2\cdot\frac{T_{30}-T_1}{T_2-T_1}\\
 &=\frac{T_1K_1(T_2-T_{30})+T_2K_2(T_{30}-T_1)}{T_2-T_1}\\[4pt]
-\text{back to an annual rate}:\quad\frac{w_{30}}{T_{30}}&=\text{variance per year}\\
-\mathrm{VIX}&=100\sqrt{\frac{w_{30}}{T_{30}}}\end{aligned}
+&\text{back to an annual rate}:\\
+&\frac{w_{30}}{T_{30}}=\text{variance per year}\\
+\mathrm{VIX}&=100\sqrt{\frac{w_{30}}{T_{30}}}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความเหวี่ยงต่อปีคูณอายุ คือความเหวี่ยงสะสมทั้งช่วง ซึ่งเป็นปริมาณที่บวกกันได้ตามหัวข้อ 10.1 ต่างจากความเหวี่ยงต่อปีที่บวกกันไม่ได้ การเชื่อมจึงต้องทำบนแกนที่บวกกันได้เท่านั้น</p>

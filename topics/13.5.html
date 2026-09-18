@@ -371,17 +371,27 @@ f^{\mathbb Q}(K)&=e^{rT}\lim_{\Delta K\to0}\frac{B_0}{(\Delta K)^2}\\
   <p>ในทางปฏิบัติ ผู้ค้า derivative ไม่ได้ใช้สูตร Black–Scholes เดี่ยว ๆ เพื่อตั้งราคา exotic แต่ใช้โครงสร้างของ volatility surface เพื่อสะท้อนความเสี่ยงที่แท้จริง ตัวอย่างที่ชัดเจนที่สุดคือการตั้งราคา digital option หรือสัญญาที่จ่ายผลตอบแทนคงที่หนึ่งหน่วยเมื่อราคาปิดสูงกว่า strike</p>
   <p>ความลาดเอียงเชิงลบของ skew สะท้อนว่าตลาดให้ค่าน้ำหนักกับความเสี่ยงขาลงมากกว่าปกติ ส่งผลให้โอกาสที่หุ้นจะจบต่ำกว่า strike สูงขึ้น หรืออีกนัยหนึ่งคือความน่าจะเป็นที่หุ้นจะปิดเหนือ strike ต้องถูกปรับแต่งด้วยพจน์ vega คูณ skew เสมอ</p>
   <div class="math">\[
-\begin{aligned}D(K,T)&=-\frac{\partial C_{\rm mkt}}{\partial K}\\[4pt]
-C_{\rm mkt}(K,T)&=C_{\rm BS}\big(K,T,\sigma_{\rm imp}(K,T)\big)\\[4pt]
+\begin{aligned}
+D(K,T)&=-\frac{\partial C_{\rm mkt}}{\partial K}\\[4pt]
+&C_{\rm mkt}(K,T)\\
+&=C_{\rm BS}\big(K,T,\sigma_{\rm imp}(K,T)\big)\\[4pt]
 D(K,T)&=-\frac{\partial C_{\rm BS}}{\partial K}-\frac{\partial C_{\rm BS}}{\partial \sigma}\frac{\partial \sigma_{\rm imp}}{\partial K}\\[4pt]
 &=e^{-rT}\Phi(d_2)-{\rm vega}\cdot\frac{\partial \sigma_{\rm imp}}{\partial K}\\[4pt]
-\text{parameters:}\quad S_0&=100,\ K=100,\ T=1,\ r=0,\ q=0,\ \sigma_{\rm atm}=0.25\\[4pt]
-\text{skew:}\quad \frac{\partial \sigma_{\rm imp}}{\partial K}&=\frac{-0.025}{0.10\,S_0}=-0.0025\\[4pt]
-d_1&=\frac{(0.25^2/2)(1)}{0.25}=0.125,\quad d_2=-0.125\\[4pt]
+&\text{parameters:}\\
+&\quad S_0=100,\ K=100,\ T=1,\ r=0\\
+&\quad q=0,\ \sigma_{\rm atm}=0.25\\[4pt]
+&\text{skew:}\\
+&\quad \frac{\partial \sigma_{\rm imp}}{\partial K}=\frac{-0.025}{0.10\,S_0}=-0.0025\\[4pt]
+d_1&=\frac{(0.25^2/2)(1)}{0.25}=0.125\\
+d_2&=-0.125\\[4pt]
 \Phi(d_2)&=\Phi(-0.125)=0.45026\\[4pt]
-{\rm vega}&=S_0\sqrt T\,\phi(d_1)=100(1)(0.39579)=39.579\\[4pt]
--{\rm vega}\cdot\text{skew}&=-39.579(-0.0025)=+0.09895\\[4pt]
-D(100,1)&=0.45026+0.09895=0.54921\approx 55\%\text{ of notional}\end{aligned}
+{\rm vega}&=S_0\sqrt T\,\phi(d_1)\\
+&=100(1)(0.39579)=39.579\\[4pt]
+&-{\rm vega}\cdot\text{skew}\\
+&=-39.579(-0.0025)=+0.09895\\[4pt]
+D(100,1)&=0.45026+0.09895\\
+&=0.54921\approx 55\%\text{ of notional}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สัญญา digital option จ่าย 1 หน่วยเมื่อหุ้นจบเหนือ $K$ มูลค่าของมันคือผลต่างราคา call สองสัญญาที่ strike ห่างกันเล็กน้อย ซึ่งเทียบเท่ากับ derivative ย่อยของราคาตลาดเทียบกับ strike แบบติดลบ</p>
@@ -433,10 +443,11 @@ w(1/12)&=0.0075\ \lt\ w(3/12)=0.0144\\[4pt]
 \begin{aligned}
 V&=D+E\\
 E_T&=\max(V_T-D,\ 0)\\[4pt]
-\frac{\Delta V}{V}&=\frac{E}{V}\frac{\Delta E}{E}+\frac{D}{V}\frac{\Delta D}{D},\quad \Delta D\approx0\\
+\frac{\Delta V}{V}&=\frac{E}{V}\frac{\Delta E}{E}+\frac{D}{V}\frac{\Delta D}{D}\\
+&\quad\Delta D\approx0\\
 \sigma_E&\approx\frac{V}{E}\,\sigma_V=\Big(1+\frac{D}{E}\Big)\sigma_V\\[4pt]
-V=100,\ D=50&:\ \sigma_E=\tfrac{100}{50}(20\%)=40\%\\
-V=90,\ D=50&:\ \sigma_E=\tfrac{90}{40}(20\%)=45\%
+&V=100,\ D=50:\ \sigma_E=\tfrac{100}{50}(20\%)=40\%\\
+&V=90,\ D=50:\ \sigma_E=\tfrac{90}{40}(20\%)=45\%
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -451,11 +462,15 @@ V=90,\ D=50&:\ \sigma_E=\tfrac{90}{40}(20\%)=45\%
   <p>สัญญา 3 เดือนบน S&amp;P 500 จ่ายเป็นสัดส่วนของวันที่ดัชนีอยู่ระหว่าง 1,500 ถึง 1,550 notional 10 ล้าน USD ถ้าดัชนีอยู่ในช่วง 70% ของวัน จ่าย 7 ล้าน USD ผิวความผันผวนตั้งราคามันได้ทั้งตัว</p>
   <div class="math">\[
 \begin{aligned}
-\text{payoff}&=N\times\frac{1}{n}\sum_{i=1}^{n}\mathbf 1\big(1{,}500\le S_{t_i}\le1{,}550\big)\\
-\mathbf 1(1{,}500\le S_t\le1{,}550)&=D_{1{,}500}(t)-D_{1{,}550}(t)\\[4pt]
-\text{price}&=N\times\frac{1}{n}\sum_{i=1}^{n}e^{-rt_i}\,\mathbb Q\big(1{,}500\le S_{t_i}\le1{,}550\big)\\[4pt]
-S_0=1{,}525,\ \sigma=20\%&,\ r=0,\ n=63\\
-\mathbb Q(\text{day }1)&=0.807,\quad\mathbb Q(\text{day }63)=0.130\\
+\text{payoff}&=N\times\frac{1}{n}\sum_{i=1}^{n}\\
+&\qquad\mathbf 1\big(1{,}500\le S_{t_i}\le1{,}550\big)\\
+&\mathbf 1(1{,}500\le S_t\le1{,}550)\\
+&=D_{1{,}500}(t)-D_{1{,}550}(t)\\[4pt]
+\text{price}&=N\times\frac{1}{n}\sum_{i=1}^{n}e^{-rt_i}\\
+&\qquad\mathbb Q\big(1{,}500\le S_{t_i}\le1{,}550\big)\\[4pt]
+&S_0=1{,}525,\ \sigma=20\%,\ r=0,\ n=63\\
+&\mathbb Q(\text{day }1)=0.807\\
+&\mathbb Q(\text{day }63)=0.130\\
 \text{average}&=0.2289\\
 \text{price}&=10{,}000{,}000(0.2289)\\
 &=2{,}288{,}678\ \text{USD}
@@ -474,10 +489,11 @@ S_0=1{,}525,\ \sigma=20\%&,\ r=0,\ n=63\\
 \begin{aligned}
 S_{T_1}&=e^{-\sigma^2T_1/2+\sigma\sqrt{T_1}Z_1}\\
 S_{T_2}&=e^{-\sigma^2T_2/2+\sigma\sqrt{T_2}\,(\rho Z_1+\sqrt{1-\rho^2}Z_2)}\\
-\rho Z_1+\sqrt{1-\rho^2}Z_2&\sim\mathcal N(0,1)\\[4pt]
-\text{payoff}&=\max(1-S_{T_2},\ 0)\,\mathbf 1(S_{T_1}\ge1.2)\\
-T_1=0.5,\ T_2=1&,\ \sigma=0.30\\[4pt]
-\text{European put}&=0.1192\ \text{for every}\ \rho\\
+&\rho Z_1+\sqrt{1-\rho^2}Z_2\sim\mathcal N(0,1)\\[4pt]
+\text{payoff}&=\max(1-S_{T_2},\ 0)\\
+&\quad\mathbf 1(S_{T_1}\ge1.2)\\
+&T_1=0.5,\ T_2=1,\ \sigma=0.30\\[4pt]
+&\text{European put}=0.1192\ \text{for every}\ \rho\\
 \rho=-0.5&:\ 0.0390\\
 \rho=0&:\ 0.0199\\
 \rho=+0.5&:\ 0.0059

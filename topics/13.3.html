@@ -211,14 +211,21 @@ S\phi(d_1)&=Ke^{-r\tau}\phi(d_2)\qquad\text{(step 2)}\\
 
 <section class="formula">
   <h4>ขั้นที่ 4 — derive gamma กับ vega และเชื่อมหน่วย</h4>
-  <p>ทำต่ออีกชั้นได้ความโค้ง และหาเทียบกับความผันผวนได้ความไวต่อความเหวี่ยง หกบรรทัดนี้แสดงว่าสองตัวนี้ไม่ใช่ของแยกกัน มันคือ $\phi(d_1)$ ตัวเดียวกัน ที่ถูกคูณด้วยตัวปรับหน่วยคนละแบบ ซึ่งเป็นเหตุผลที่บรรทัดสุดท้ายเชื่อมสองอย่างเข้าด้วยกันได้</p>
+  <p>ทำต่ออีกชั้นได้ความโค้ง และหาเทียบกับความผันผวนได้ความไวต่อความเหวี่ยง สูตรข้างล่างแสดงว่าสองตัวนี้ไม่ใช่ของแยกกัน มันคือ $\phi(d_1)$ ตัวเดียวกัน ที่ถูกคูณด้วยตัวปรับหน่วยคนละแบบ ซึ่งเป็นเหตุผลที่บรรทัดสุดท้ายเชื่อมสองอย่างเข้าด้วยกันได้</p>
   <div class="math">\[
-\begin{aligned}d_1&=\frac{\log(S/K)+(r+\tfrac12\sigma^{2})\tau}{\sigma\sqrt\tau}\;\Longrightarrow\;d_{1,S}=\frac{1}{S\sigma\sqrt\tau}\\
-\Gamma&=\frac{\partial\Delta}{\partial S}=\frac{\partial}{\partial S}\Phi(d_1)=\phi(d_1)\,d_{1,S}=\frac{\phi(d_1)}{S\sigma\sqrt\tau}\\[4pt]
-\nu&=\frac{\partial C}{\partial\sigma}=S\phi(d_1)d_{1,\sigma}-Ke^{-r\tau}\phi(d_2)d_{2,\sigma}\\
-&=S\phi(d_1)\big(d_{1,\sigma}-d_{2,\sigma}\big)\qquad\text{(step 2 identity)}\\
-d_1-d_2&=\sigma\sqrt\tau\;\Longrightarrow\;d_{1,\sigma}-d_{2,\sigma}=\sqrt\tau\\
-\nu&=S\phi(d_1)\sqrt\tau=\Gamma\,S^{2}\sigma\tau\end{aligned}
+\begin{aligned}
+d_1&=\frac{\log(S/K)+(r+\tfrac12\sigma^{2})\tau}{\sigma\sqrt\tau}\\
+&\;\Longrightarrow\;d_{1,S}=\frac{1}{S\sigma\sqrt\tau}\\
+\Gamma&=\frac{\partial\Delta}{\partial S}=\frac{\partial}{\partial S}\Phi(d_1)\\
+&=\phi(d_1)\,d_{1,S}=\frac{\phi(d_1)}{S\sigma\sqrt\tau}\\[4pt]
+\nu&=\frac{\partial C}{\partial\sigma}\\
+&=S\phi(d_1)d_{1,\sigma}-Ke^{-r\tau}\phi(d_2)d_{2,\sigma}\\
+&=S\phi(d_1)\big(d_{1,\sigma}-d_{2,\sigma}\big)\\
+&\quad\text{(step 2 identity)}\\
+&d_1-d_2=\sigma\sqrt\tau\\
+&\;\Longrightarrow\;d_{1,\sigma}-d_{2,\sigma}=\sqrt\tau\\
+\nu&=S\phi(d_1)\sqrt\tau=\Gamma\,S^{2}\sigma\tau
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทีนี้ทำซ้ำอีกสองรอบ แต่คราวนี้มีทางลัดที่ขั้นที่ 3 เตรียมไว้ให้แล้ว หาความชันของ $d_1$ เทียบราคาหุ้นก่อน ในตัวเศษมีแค่ $\log S$ ที่ขึ้นกับราคา derivative ของมันคือหนึ่งส่วน $S$ แล้วหารตัวส่วนที่เหลือ</p>
@@ -230,14 +237,19 @@ d_1-d_2&=\sigma\sqrt\tau\;\Longrightarrow\;d_{1,\sigma}-d_{2,\sigma}=\sqrt\tau\\
 
 <section class="formula">
   <h4>ขั้นที่ 5 — derive theta และ rho</h4>
-  <p>สองตัวที่เหลือคือเทียบกับเวลาและอัตราดอกเบี้ย theta ยาวที่สุดเพราะเวลากระทบสองทาง คือทั้งผ่านตัวคิดลด และผ่านความกว้างของ distribution หกบรรทัดนี้แยกสองทางนั้นออกจากกันให้เห็นเป็นสองพจน์</p>
+  <p>สองตัวที่เหลือคือเทียบกับเวลาและอัตราดอกเบี้ย theta ยาวที่สุดเพราะเวลากระทบสองทาง คือทั้งผ่านตัวคิดลด และผ่านความกว้างของ distribution สูตรข้างล่างแยกสองทางนั้นออกจากกันให้เห็นเป็นสองพจน์</p>
   <div class="math">\[
-\begin{aligned}\Theta&=-\frac{\partial C}{\partial\tau}\\
-\frac{\partial}{\partial\tau}\Big(-Ke^{-r\tau}\Phi(d_2)\Big)&=rKe^{-r\tau}\Phi(d_2)-Ke^{-r\tau}\phi(d_2)d_{2,\tau}\\
-S\phi(d_1)d_{1,\tau}-Ke^{-r\tau}\phi(d_2)d_{2,\tau}&=S\phi(d_1)\big(d_{1,\tau}-d_{2,\tau}\big)\\
-d_1-d_2=\sigma\sqrt\tau\;&\Longrightarrow\;d_{1,\tau}-d_{2,\tau}=\frac{\sigma}{2\sqrt\tau}\\
+\begin{aligned}
+\Theta&=-\frac{\partial C}{\partial\tau}\\
+&\frac{\partial}{\partial\tau}\Big(-Ke^{-r\tau}\Phi(d_2)\Big)\\
+&=rKe^{-r\tau}\Phi(d_2)-Ke^{-r\tau}\phi(d_2)d_{2,\tau}\\
+&S\phi(d_1)d_{1,\tau}-Ke^{-r\tau}\phi(d_2)d_{2,\tau}\\
+&=S\phi(d_1)\big(d_{1,\tau}-d_{2,\tau}\big)\\
+&d_1-d_2=\sigma\sqrt\tau\\
+&\;\Longrightarrow\;d_{1,\tau}-d_{2,\tau}=\frac{\sigma}{2\sqrt\tau}\\
 \Theta&=-\frac{S\phi(d_1)\sigma}{2\sqrt\tau}-rKe^{-r\tau}\Phi(d_2)\\[4pt]
-\rho&=\frac{\partial C}{\partial r}=K\tau e^{-r\tau}\Phi(d_2)\end{aligned}
+\rho&=\frac{\partial C}{\partial r}=K\tau e^{-r\tau}\Phi(d_2)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>theta นิยามด้วยเครื่องหมายลบ เพราะเวลาที่เหลือลดลงเมื่อวันผ่านไป หา derivative ของขาเงินสดได้สองพจน์ คือพจน์จากตัวคิดลด และพจน์จากกฎลูกโซ่</p>
@@ -251,9 +263,13 @@ d_1-d_2=\sigma\sqrt\tau\;&\Longrightarrow\;d_{1,\tau}-d_{2,\tau}=\frac{\sigma}{2
   <h4>ขั้นที่ 6 — แทนค่า delta และ gamma</h4>
   <p>delta อ่านตรงจาก $\Phi(d_1)$ ที่คำนวณไว้แล้วในหัวข้อก่อน ส่วน gamma ต้องใช้ $\phi$ ตัวเล็ก ซึ่งคือความสูงของ bell curve ไม่ใช่พื้นที่ใต้กราฟ</p>
   <div class="math">\[
-\begin{aligned}\phi(d_1)&=\frac{e^{-(-0.337901642)^2/2}}{\sqrt{2\pi}}=0.376805065\\
+\begin{aligned}
+\phi(d_1)&=\frac{e^{-(-0.337901642)^2/2}}{\sqrt{2\pi}}\\
+&=0.376805065\\
 \Delta&=\Phi(d_1)=0.367718655\\
-\Gamma&=\frac{\phi(d_1)}{S\sigma\sqrt T}=\frac{0.376805065}{100(0.20)(0.50)}=\frac{0.376805065}{10}=0.037680507\ {\rm \mathrm{USD}}^{-1}\end{aligned}
+\Gamma&=\frac{\phi(d_1)}{S\sigma\sqrt T}=\frac{0.376805065}{100(0.20)(0.50)}\\
+&=\frac{0.376805065}{10}=0.037680507\ {\rm \mathrm{USD}}^{-1}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทีละชิ้น: กำลังสองของ −0.337901642 คือ 0.114177520 ครึ่งหนึ่งคือ 0.057088760 แล้ว $e^{-0.057088760}=0.944510231$ เอา $\sqrt{2\pi}=2.506628$ มาหารได้ 0.376805065</p>
@@ -431,10 +447,11 @@ e^{-0.008857}&=0.991182\\
 \begin{aligned}
 \Delta&=\Phi(d_1)=0.447061\\[4pt]
 C(36)&=1.809367\\
-C(36)-C(35)&=1.809367-1.315401=0.493966\\
-0.493966-0.447061&=0.046905\\[4pt]
+&C(36)-C(35)\\
+&=1.809367-1.315401=0.493966\\
+&0.493966-0.447061=0.046905\\[4pt]
 N\Delta&=-10{,}000(0.447061)=-4{,}471\\
-4{,}471(35)&=156{,}485\ \text{USD}
+&4{,}471(35)=156{,}485\ \text{USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -451,11 +468,13 @@ N\Delta&=-10{,}000(0.447061)=-4{,}471\\
 \begin{aligned}
 S\sigma\sqrt T&=35(0.24)(0.5)=4.2\\
 \Gamma&=0.395425/4.2=0.094149\\[4pt]
-\Delta+\Gamma&=0.447061+0.094149=0.541210\\
+\Delta+\Gamma&=0.447061+0.094149\\
+&=0.541210\\
 \Delta(36)&=0.540489\\[4pt]
-\Delta h+\tfrac12\Gamma h^2&=0.447061+\tfrac12(0.094149)\\
+&\Delta h+\tfrac12\Gamma h^2\\
+&=0.447061+\tfrac12(0.094149)\\
 &=0.494135\\
-0.494135-0.493966&=0.000169\\[4pt]
+&0.494135-0.493966=0.000169\\[4pt]
 10{,}000\,\Gamma&=941
 \end{aligned}
 \]</div>
@@ -473,17 +492,19 @@ S\sigma\sqrt T&=35(0.24)(0.5)=4.2\\
 \nu&=S\phi(d_1)\sqrt T=35(0.395425)(0.5)\\
 &=13.839875(0.5)=6.919938\\
 \nu_{\rm point}&=0.01(6.919938)=0.0692\\[4pt]
-C(\sigma=0.25)-C(\sigma=0.24)&=0.069246\\[4pt]
-10{,}000\,\nu_{\rm point}&=692\ \text{USD}\\
-24\%\to30\%&:\ 6(692)=4{,}152\ \text{USD}\\
-\text{full reprice}&:\ 4{,}165\ \text{USD}\\[4pt]
-\Gamma S^2\sigma T&=0.094149(1{,}225)(0.24)(0.25)=6.9199
+&C(\sigma=0.25)-C(\sigma=0.24)\\
+&=0.069246\\[4pt]
+&10{,}000\,\nu_{\rm point}=692\ \text{USD}\\
+&24\%\to30\%:\ 6(692)=4{,}152\ \text{USD}\\
+&\text{full reprice}:\ 4{,}165\ \text{USD}\\[4pt]
+&\Gamma S^2\sigma T\\
+&=0.094149(1{,}225)(0.24)(0.25)=6.9199
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>6.9199 คือต่อความผันผวนที่ขยับ 1.00 เต็ม คือจาก 24% เป็น 124% ใหญ่เกินใช้ ตลาดพูดต่อ1 จุด 0.0692 USD ราคาใหม่ที่ 25% ขยับจริง 0.069246 ตรงถึงหลักที่สี่</p>
     <p>ทั้งพอร์ต 692 USD ต่อจุด ถ้า implied volatility ของตลาดกระโดดจาก 24% เป็น 30% คนขาย call เสียราว 4,152 USD ราคาใหม่ทั้งสูตรให้ 4,165 USD มากกว่าเล็กน้อยเพราะ vega เองก็เปลี่ยนตามความผันผวน</p>
-    <p>บรรทัดสุดท้ายบอกว่า vega กับ gamma มาจาก $\phi(d_1)$ ก้อนเดียวกัน option ตัวเดียวที่ถือ gamma บวกก็ถือ vega บวกเสมอ จะแยกสองอย่างออกจากกันต้องผสม option หลายอายุ</p>
+    <p>สองบรรทัดสุดท้ายบอกว่า vega กับ gamma มาจาก $\phi(d_1)$ ก้อนเดียวกัน option ตัวเดียวที่ถือ gamma บวกก็ถือ vega บวกเสมอ จะแยกสองอย่างออกจากกันต้องผสม option หลายอายุ</p>
   </div>
 </section>
 
@@ -492,14 +513,19 @@ C(\sigma=0.25)-C(\sigma=0.24)&=0.069246\\[4pt]
   <p>theta มีสองก้อน ก้อนแรกคือค่าความแกว่งที่ละลาย ก้อนที่สองคือดอกเบี้ยของเงินที่ยังไม่ต้องจ่าย</p>
   <div class="math">\[
 \begin{aligned}
-\text{part 1}&=-\frac{35(0.395425)(0.24)}{2(0.5)}=-3.321570\\
-\text{part 2}&=-0.02(35.8204)(0.400099)=-0.286635\\
-\Theta&=-3.321570-0.286635=-3.608205\\[4pt]
+&\text{part 1}\\
+&=-\frac{35(0.395425)(0.24)}{2(0.5)}=-3.321570\\
+&\text{part 2}\\
+&=-0.02(35.8204)(0.400099)=-0.286635\\
+\Theta&=-3.321570-0.286635\\
+&=-3.608205\\[4pt]
 \Theta_{\rm day}&=-3.608205/365=-0.009885\\
-C(T-\tfrac1{365})-C(T)&=1.305492-1.315401=-0.009909\\[4pt]
-10{,}000(0.009885)&=98.85\ \text{USD per day}\\
-91(98.85)&\approx8{,}996\ \text{USD}\\
-10{,}000(1.3154)&=13{,}154\ \text{USD}
+&C(T-\tfrac1{365})-C(T)\\
+&=1.305492-1.315401=-0.009909\\[4pt]
+&10{,}000(0.009885)\\
+&=98.85\ \text{USD per day}\\
+&91(98.85)\approx8{,}996\ \text{USD}\\
+&10{,}000(1.3154)=13{,}154\ \text{USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -535,12 +561,15 @@ KTe^{-rT}&=9.0(0.9950125)=8.955113\\
 \begin{aligned}
 \Theta&=-3.608205\\
 rS\Delta&=0.02(35)(0.447061)=0.312943\\
-\tfrac12\sigma^2S^2\Gamma&=0.0288(1{,}225)(0.094149)=3.321567\\
-\text{sum}&=-3.608205+0.312943+3.321567\\
+&\tfrac12\sigma^2S^2\Gamma\\
+&=0.0288(1{,}225)(0.094149)=3.321567\\
+\text{sum}&=-3.608205+0.312943\\
+&\quad+3.321567\\
 &=0.026305\\
 rC&=0.02(1.315401)=0.026308\\[4pt]
-\tfrac12\sigma^2S^2\Gamma&=\frac{S\phi(d_1)\sigma}{2\sqrt T}=3.321567\\
-rS\Delta-rKe^{-rT}\Phi(d_2)&=0.312943-0.286635\\
+&\tfrac12\sigma^2S^2\Gamma=\frac{S\phi(d_1)\sigma}{2\sqrt T}=3.321567\\
+&rS\Delta-rKe^{-rT}\Phi(d_2)\\
+&=0.312943-0.286635\\
 &=0.026308=rC
 \end{aligned}
 \]</div>
@@ -559,9 +588,11 @@ rS\Delta-rKe^{-rT}\Phi(d_2)&=0.312943-0.286635\\
 \tfrac12\Gamma&=0.047074\\[4pt]
 h^2&=0.009885/0.047074=0.209989\\
 h&=0.4583\ \text{USD}\\[4pt]
-|\text{part 1}|/365&=3.321570/365=0.009100\\
+&|\text{part 1}|/365\\
+&=3.321570/365=0.009100\\
 h&=\sqrt{0.009100/0.047074}=0.4397\ \text{USD}\\
-\sigma S\sqrt{1/365}&=0.24(35)(0.052342)=0.4397\ \text{USD}
+&\sigma S\sqrt{1/365}\\
+&=0.24(35)(0.052342)=0.4397\ \text{USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -576,14 +607,20 @@ h&=\sqrt{0.009100/0.047074}=0.4397\ \text{USD}\\
   <p>ระบบความเสี่ยงชอบถามเป็นเปอร์เซ็นต์ว่าหุ้นขยับ 2% พอร์ตได้เสียเท่าไร จึงเขียนสูตรของขั้นที่ 10 ใหม่ด้วยผลตอบแทนแทนการขยับเป็น USD ใช้พอร์ตขาย call 10,000 หุ้นเทียบเท่าที่ยังไม่ hedge</p>
   <div class="math">\[
 \begin{aligned}
-h&=S\cdot\frac{h}{S}\ \Rightarrow\ \delta C\approx(S\Delta)\frac{h}{S}+\big(\tfrac12S^2\Gamma\big)\Big(\frac{h}{S}\Big)^2+\nu\,\delta\sigma\\[4pt]
-\text{ESP}&=N\,S\Delta=-10{,}000(35)(0.447061)\\
+h&=S\cdot\frac{h}{S}\\
+&\Rightarrow\ \delta C\approx(S\Delta)\frac{h}{S}+\big(\tfrac12S^2\Gamma\big)\Big(\frac{h}{S}\Big)^2\\
+&\qquad+\nu\,\delta\sigma\\[4pt]
+\text{ESP}&=N\,S\Delta\\
+&=-10{,}000(35)(0.447061)\\
 &=-156{,}471\ \text{USD}\\
-\$\Gamma&=N\,\tfrac12S^2\Gamma=-10{,}000(612.5)(0.094149)\\
+\$\Gamma&=N\,\tfrac12S^2\Gamma\\
+&=-10{,}000(612.5)(0.094149)\\
 &=-576{,}661\ \text{USD}\\[4pt]
-+2\%&:\ -156{,}471(0.02)-576{,}661(0.0004)=-3{,}360\\
--2\%&:\ +3{,}129-231=+2{,}899\\
-\text{full reprice}&:\ -3{,}360\ \text{and}\ +2{,}899
+&+2\%:\\
+&\quad-156{,}471(0.02)-576{,}661(0.0004)\\
+&\quad=-3{,}360\\
+&-2\%:\ +3{,}129-231=+2{,}899\\
+&\text{full reprice}:\ -3{,}360\ \text{and}\ +2{,}899
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -622,11 +659,14 @@ h&=S\cdot\frac{h}{S}\ \Rightarrow\ \delta C\approx(S\Delta)\frac{h}{S}+\big(\tfr
   <p>การหักกันนี้ไม่ใช่เรื่องบังเอิญ มันเป็นผลของการที่สูตรมาจากพอร์ตเลียนแบบตั้งแต่ต้น จำนวนหุ้นในพอร์ตนั้นคือ $N(d_1)$ พอดี ดังนั้น delta จึงต้องเท่ากับจำนวนหุ้นที่ถืออยู่ ถ้าคำนวณแล้วไม่หักกัน แปลว่าสูตรราคาผิดตั้งแต่แรก</p>
   <div class="math">\[
 \begin{aligned}
-\frac{\partial C}{\partial S}&=\Phi(d_1)+S\phi(d_1)d_{1,S}-Ke^{-rT}\phi(d_2)d_{2,S}\\
-d_{1,S}&=d_{2,S}=\frac{1}{S\sigma\sqrt T}\\[4pt]
+&\frac{\partial C}{\partial S}\\
+&=\Phi(d_1)+S\phi(d_1)d_{1,S}\\
+&\quad-Ke^{-rT}\phi(d_2)d_{2,S}\\
+&d_{1,S}=d_{2,S}=\frac{1}{S\sigma\sqrt T}\\[4pt]
 S\phi(d_1)&=35(0.395425)=13.8399\\
 \phi(d_2)&=\phi(-0.253091)=0.386368\\
-Ke^{-rT}\phi(d_2)&=35.8204(0.386368)=13.8399\\[4pt]
+&Ke^{-rT}\phi(d_2)\\
+&=35.8204(0.386368)=13.8399\\[4pt]
 \Delta&=\Phi(d_1)=0.447061
 \end{aligned}
 \]</div>
