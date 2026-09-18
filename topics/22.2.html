@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ถ้าคุณให้เพื่อนยืมเงินแลกดอกเบี้ยรายเดือน แล้วเขาเอาเงินต้นมาคืนพรุ่งนี้ คุณดีใจหรือเสียใจ? คำตอบคือได้ทั้งสองอย่าง: เงินกลับเร็ว แต่ดอกเบี้ยเดือนต่อ ๆ ไปหายไป.</p>
-  <p>ใน mortgage เหตุการณ์นี้เกิดจริงเมื่อ borrower refinance หรือขายบ้าน. เงินต้นที่กลับเร็วกว่าคาดเรียก prepayment. mortgage-backed security (MBS) คือหลักทรัพย์ที่เอาเงินผ่อนบ้านหลายหลังมารวมส่งให้ investor; คนถือ MBS จึงไม่ได้โบนัสฟรี เพราะต้องเอาเงินก้อนนั้นไปลงทุนใหม่ในตอนที่อัตราดอกเบี้ยอาจต่ำกว่าเดิม.</p>
-  <p>Public Securities Association (PSA) benchmark คือปุ่มจำลองความเร็วการคืนหนี้ เพื่อให้ทุกคนลอง scenario เดียวกันได้. มันเป็นนาฬิกาจำลอง ไม่ใช่คำทำนายว่าผู้กู้คนไหนจะทำอะไรพรุ่งนี้.</p>
+  <p>pool สินเชื่อบ้านใหม่ \$100 ล้าน ดอกเบี้ย 6% ผ่อน 30 ปี คืนก่อนกำหนดตามมาตรฐาน Public Securities Association (PSA) ถึงเดือนที่ 30 ยอดหนี้ต้นเดือนเหลือ \$89.99 ล้าน เดือนนี้คืนก่อนกำหนดกี่ดอลลาร์?</p>
+  <p>เฉลย: \$462,283 ค่างวดที่คิดใหม่จากยอดหนี้ที่เหลือคือ \$556,803 เป็นดอกเบี้ย \$449,962 เงินต้นตามตาราง \$106,840 ยอดที่เหลือคูณอัตรารายเดือน 0.5143% ได้เงินคืนก่อนกำหนด ซึ่งมากกว่าเงินต้นตามตาราง 4.33 เท่า</p>
 </div>
 
 <details class="jargon" open>
@@ -51,6 +50,8 @@
     <dd>มูลค่ากระแสเงินสดในวันนี้หลัง discount ตาม curve ใช้เปรียบเทียบ PO และ IO บนหน่วย USD เดียวกัน</dd>
     <dt>option-adjusted spread (OAS)</dt>
     <dd>spread ที่ทำให้ present value ของ cash flow หลาย rate paths เท่ากับราคา ใช้เทียบ mortgage-backed security (MBS) ที่มี prepayment option โดยไม่สมมติ cash flow คงที่</dd>
+    <dt>bond-equivalent yield (BEY)</dt>
+    <dd>อัตราผลตอบแทนต่อปีแบบทบต้นทุกครึ่งปี ใช้เปรียบเทียบผลตอบแทนของ MBS กับพันธบัตรทั่วไปในตลาด</dd>
   </dl>
 </details>
 
@@ -66,34 +67,44 @@
       <tr><td>$y$</td><td>อัตราที่ใช้คิดลดกระแสเงินกลับมาเป็นมูลค่าวันนี้ จะใช้ค่าเดียวทั้งเส้น หรืออ่านจาก curve ให้สอดคล้องกับ scenario ก็ได้</td><td>ต่อปี</td></tr>
       <tr><td>$PV_{PO},PV_{IO}$</td><td>present value (PV): มูลค่าปัจจุบันของ principal-only และ interest-only strips</td><td>USD</td></tr>
       <tr><td>$m$</td><td>months since origination</td><td>เดือน</td></tr>
+      <tr><td>$r,\ r_f$</td><td>ดอกเบี้ยเงินกู้ต่อเดือน และดอกเบี้ยที่ใช้คิดลดต่อเดือน</td><td>ต่อเดือน</td></tr>
+      <tr><td>$A,\ P_k,\ I_k$</td><td>ค่างวด เงินต้นตามตาราง และดอกเบี้ยของงวดที่ $k$</td><td>USD</td></tr>
+      <tr><td>$V_0,\ W_0,\ F_0$</td><td>มูลค่าวันนี้ของ PO, IO และเงินกู้ทั้งก้อนเมื่อไม่มี prepayment</td><td>USD</td></tr>
+      <tr><td>$D_P,\ D_I$</td><td>duration ของ PO และ IO</td><td>ปี</td></tr>
+      <tr><td>$f^{\rm inc},\ f^{\rm age},\ f^{\rm mon},\ f^{\rm burn}$</td><td>สี่ตัวคูณของ Richard and Roll: แรงจูงใจรีไฟแนนซ์ อายุ pool ฤดูกาล และ burnout</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$r_k(10),\ M_k$</td><td>ดอกเบี้ย 10 ปี ณ เดือน $k$ และยอดหนี้ของ pool หลังเดือน $k$</td><td>ต่อปี และ USD</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
   <h4>ที่มาที่ไป: ตัวเลือกที่ผู้กู้มีอยู่ แต่ไม่ได้จ่ายเงินซื้อ</h4>
-  <p>สินเชื่อบ้านแบบมาตรฐานจำนวนมากในสหรัฐฯ ให้ชำระคืนก่อนกำหนดได้โดยไม่มีค่าปรับ แต่ต้องตรวจเงื่อนไขของสัญญา ซึ่งทำให้ผู้กู้มีทางเลือก refinance แต่ยังมีค่าธรรมเนียม ขั้นตอน และข้อจำกัดด้านเครดิต ต้นทุนของสิทธิ์ยังสะท้อนในเงื่อนไขเงินกู้</p>
-  <p>สำหรับผู้ลงทุนที่ถือตราสาร นั่นแปลว่าเมื่ออัตราดอกเบี้ยลด ผู้กู้จะรีไฟแนนซ์ แล้วเงินต้นจะถูกคืนมาพอดีตอนที่หาที่ลงทุนใหม่ได้ผลตอบแทนต่ำ</p>
-  <p>และเมื่ออัตราขึ้น ผู้กู้จะไม่รีไฟแนนซ์ ทำให้เงินติดอยู่กับผลตอบแทนต่ำนานกว่าที่คิด</p>
-  <p>พฤติกรรมนี้ทำให้ตราสารกลุ่มนี้มีความไวต่ออัตราดอกเบี้ยที่แปลกประหลาด คือบางช่วงราคาลดลงเมื่ออัตราลด ซึ่งตรงข้ามกับตราสารหนี้ปกติทั้งหมด ตลาดจึงต้องมีมาตรฐานกลางสำหรับสื่อสารความเร็วของการชำระคืนก่อนกำหนด</p>
+  <p>ในสัญญาเงินกู้ซื้อบ้านทั่วไป ผู้กู้มีสิทธิชำระคืนเงินต้นก่อนกำหนด (prepayment) ได้ตลอดเวลาโดยไม่มีค่าปรับ การชำระก่อนกำหนดนี้เกิดจาก 4 สาเหตุหลัก:</p>
+  <p>1. การขายบ้าน (home sale) ซึ่งบังคับให้ผู้กู้ต้องปิดบัญชีเงินกู้เดิมทันที</p>
+  <p>2. การรีไฟแนนซ์ (refinancing) เมื่ออัตราดอกเบี้ยในตลาดลดลง ผู้กู้จะกู้เงินก้อนใหม่ที่ดอกเบี้ยถูกกว่ามาปิดหนี้ก้อนเก่า</p>
+  <p>3. การผิดนัดชำระหนี้ (default) สำหรับเงินกู้ที่มีประกัน หน่วยงานค้ำประกันจะจ่ายเงินต้นคงค้างคืนเต็มจำนวน</p>
+  <p>4. ทรัพย์สินเสียหาย (destruction of property) เงินสินไหมจากประกันภัยจะถูกนำมาชำระหนี้คงค้างทั้งหมด</p>
 </section>
 
 <section class="prose">
   <h4>borrower option มาถึง investor อย่างไร</h4>
-  <p>เมื่อ mortgage coupon สูงกว่า current refinance rate borrower มี incentive ลด payment ของตนเอง. Investor ได้ principal กลับเร็ว จึงต้อง reinvest ในอัตราที่มักต่ำกว่า: contraction risk. เมื่อ rates สูง borrower ไม่ refinance, principal กลับช้า และ investor ถูกล็อกกับ coupon เก่า: extension risk.</p>
-  <p>จึงไม่ควรเรียก pass-through ว่า bond ที่มี maturity 30 ปีหรือ 5 ปีแบบตายตัว</p>
-  <p>Prepayment model ที่ดีแยก rate incentive, seasoning, turnover, burnout, geography และ servicing friction. PSA จงใจง่ายกว่าเพื่อให้ทุกฝ่ายบอกได้ว่าราคาเกิดใต้ scenario ใด; ความง่ายเป็นคุณสมบัติด้าน communication แต่เป็นข้อจำกัดด้าน forecast.</p>
+  <p>สิทธิการชำระคืนก่อนกำหนดทำให้ผู้ลงทุนเผชิญความเสี่ยงสองด้านที่ตรงข้ามกัน: เมื่ออัตราดอกเบี้ยลดลง ผู้กู้จะแห่รีไฟแนนซ์ ทำให้เงินต้นไหลกลับมาเร็วเกินไป ผู้ลงทุนต้องนำเงินก้อนนี้ไปลงทุนใหม่ในตลาดที่ผลตอบแทนต่ำลง เหตุการณ์นี้เรียกว่า contraction risk</p>
+  <p>ในทางกลับกัน เมื่ออัตราดอกเบี้ยพุ่งสูงขึ้น ผู้กู้จะหยุดรีไฟแนนซ์ เงินต้นที่ผู้ลงทุนควรได้รับกลับมาชะลอตัวลง เงินทุนจึงถูกล็อกไว้กับดอกเบี้ยต่ำในอดีต แทนที่จะได้เงินกลับมาลงทุนในสินทรัพย์ใหม่ที่ให้ผลตอบแทนสูง เหตุการณ์นี้เรียกว่า extension risk</p>
+  <p>พฤติกรรมนี้ทำให้ pass-through ไม่ใช่พันธบัตรธรรมดาที่มีอายุคงที่ และทำให้ราคาของมันมีพฤติกรรมแปลกประหลาด</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — แปลง CPR เป็น SMM</h4>
-  <p>อัตราที่ตลาดประกาศเป็นรายปี แต่การคำนวณเดินเป็นรายเดือน ต้องแปลงให้ถูกก่อน ห้าบรรทัดนี้แสดงว่าการแปลงเป็นเรื่องของผลคูณ ไม่ใช่ผลหาร ด้วยเหตุผลเดียวกับที่หัวข้อ 20.6 ใช้กับโอกาสรอดจากการเจ๊ง</p>
+  <p>อัตราที่ตลาดประกาศเป็นรายปี แต่การคำนวณเดินเป็นรายเดือน ต้องแปลงให้ถูกก่อน สูตรข้างล่างแสดงว่าการแปลงเป็นเรื่องของผลคูณ ไม่ใช่ผลหาร ด้วยเหตุผลเดียวกับที่หัวข้อ 20.6 ใช้กับโอกาสรอดจากการเจ๊ง</p>
   <div class="math">\[
-\begin{aligned}(1-\mathrm{SMM})^{12}&=1-\mathrm{CPR}\\
+\begin{aligned}
+(1-\mathrm{SMM})^{12}&=1-\mathrm{CPR}\\
 1-\mathrm{SMM}&=(1-\mathrm{CPR})^{1/12}\\
 \mathrm{SMM}&=1-(1-\mathrm{CPR})^{1/12}\\[4pt]
-\mathrm{CPR}=0.06:\quad\mathrm{SMM}&=1-(0.94)^{1/12}=1-0.99486=0.00514\\
-\frac{0.06}{12}&=0.005\ne0.00514\end{aligned}
+\mathrm{CPR}=0.06&:\ \mathrm{SMM}=1-(0.94)^{1/12}\\
+&\quad\ =1-0.99486=0.00514\\
+\frac{0.06}{12}&=0.005\ne0.00514
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เหตุผลทั้งหมดอยู่บรรทัดแรก การที่ยอดหนี้รอดจากการชำระคืนก่อนกำหนดตลอดปี คือการรอดผ่านสิบสองเดือนติดกัน จึงเป็นผลคูณของสิบสองก้อน ไม่ใช่ผลบวก</p>
@@ -102,7 +113,6 @@
     <p>ส่วนต่างดูเล็ก แต่มันสะสมข้ามงวดและข้ามสัญญา และการหารสิบสองคือความผิดพลาดที่พบบ่อยที่สุดในโค้ดเรื่องนี้ เพราะมันดูสมเหตุสมผลจนไม่มีใครตรวจ</p>
   </div>
 </section>
-
 <section class="formula">
   <h4>เช็กอัตรารายเดือนด้วยการทบกลับหนึ่งปี</h4>
   <div class="math">\[
@@ -131,6 +141,32 @@
   </div>
 </section>
 
+<section class="formula">
+  <h4>อายุเฉลี่ยของกระแสเงินต้น (Average Life)</h4>
+  <p>โจทย์ให้ถ่วงน้ำหนักเดือนที่ได้รับเงินต้นด้วยจำนวนเงินต้นที่คืนในแต่ละงวด แล้วแปลงเป็นหน่วยปี</p>
+  <div class="math">\[
+\text{Average Life}=\frac{1}{12 B_0}\sum_{k=1}^{T}k P_k
+\]</div>
+  <div class="reading">
+    <p>ตัวเศษคือผลรวมของเดือนที่ $k$ คูณกับเงินต้นรวม $P_k$ ซึ่งประกอบด้วยเงินต้นตามกำหนดบวกเงินต้นที่ชำระก่อนกำหนด</p>
+    <p>หารด้วยเงินต้นเริ่มต้น $B_0$ และหาร 12 เพื่อแปลงจากเดือนเป็นปี</p>
+    <p>เมื่อความเร็ว PSA สูงขึ้น เงินต้นจะไหลกลับมาเร็วขึ้น ทำให้ Average Life ลดลงอย่างต่อเนื่อง เช่น pool 30 ปีอาจมี Average Life เหลือเพียง 11.67 ปีที่ 100 PSA</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>อัตราผลตอบแทนเทียบเท่าพันธบัตร (BEY)</h4>
+  <p>โจทย์ให้แปลงผลตอบแทนรายเดือนทบต้นของ MBS เป็น bond-equivalent yield (BEY) ทบต้นทุกครึ่งปีตามมาตรฐานตลาด</p>
+  <div class="math">\[
+\text{BEY}=2\left[\left(1+y_m\right)^6 - 1\right]
+\]</div>
+  <div class="reading">
+    <p>กระแสเงินของ mortgage เข้าเป็นรายเดือน อัตราผลตอบแทนภายในรายเดือนคือ $y_m$</p>
+    <p>พันธบัตรทั่วไปในสหรัฐฯ จ่ายดอกเบี้ยทุก 6 เดือน จึงทบต้นรายเดือน 6 ครั้งให้เป็นครึ่งปี ลบหนึ่ง แล้วคูณ 2 เพื่อเทียบเป็น Bond-Equivalent Yield</p>
+    <p>เนื่องจากสมมติการชำระก่อนกำหนดคงที่ไม่ได้สะท้อนความเสี่ยงอัตราดอกเบี้ยจริง ตลาดจึงใช้ Option-Adjusted Spread หรือ OAS ในการวัดมูลค่าส่วนเพิ่มแทน</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
   <p>การจำลองพฤติกรรมการชำระก่อนกำหนด เป็นสิ่งที่ตัดสินราคาของตราสารกลุ่มนี้ทั้งหมด</p>
@@ -140,8 +176,8 @@
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.2a — PSA เป็น ramp ไม่ใช่เส้นคงที่</h4>
-  <img src="../figures/22.2-1.svg" alt="ภาพ 22.2a — PSA เป็น ramp ไม่ใช่เส้นคงที่" loading="lazy">
+  <h4>Figure 22.2a — PSA เป็น ramp ไม่ใช่เส้นคงที่</h4>
+  <img src="../figures/22.2-1.svg" alt="Figure 22.2a — PSA เป็น ramp ไม่ใช่เส้นคงที่" loading="lazy">
   <figcaption>
     <p>เส้นแสดง 100 และ 200 PSA: ทั้งคู่ ramp ช่วง 30 เดือนแรกแล้ว plateau. การใช้ CPR 6% ตั้งแต่เดือนแรกกับ pool ใหม่จึงไม่ใช่ 100 PSA และจะเร่ง principal อย่างผิดรูป</p>
   </figcaption>
@@ -165,14 +201,16 @@ B_t^{\ast}=B_{t-1}-P_t,\qquad PP_t=\mathrm{SMM}_tB_t^{\ast},\qquad B_t=B_t^{\ast
   <p>นี่คือเหตุผลที่ desk ที่ถือ MBS ต้องซื้อ option ไว้ป้องกันเสมอ การถือ MBS คือการขาย option ให้ผู้กู้ฟรี ๆ โดยไม่ได้เลือก ผลตอบแทนที่สูงกว่า Treasury ที่อายุเท่ากัน จึงไม่ใช่ของฟรี มันคือค่าพรีเมียมของ option ที่ถูกขายไปแล้วตั้งแต่วันที่ซื้อ</p>
   <p>และเพราะ convexity ติดลบ การ hedge ด้วย duration อย่างเดียวจะพังทุกครั้งที่ตลาดขยับแรง ยิ่งขยับแรง ยิ่งผิดมาก และผิดไปในทางที่ขาดทุนทั้งสองทิศ</p>
   <div class="math">\[
-\begin{aligned}P_0=100,\qquad P_{-}\left(-50\text{bp}\right)&=101.5,\qquad P_{+}\left(+50\text{bp}\right)=97.5\\[4pt]
-D_{\text{eff}}&=\frac{P_{-}-P_{+}}{2P_0\,\Delta y}\\
-&=\frac{101.5-97.5}{2\left(100\right)\left(0.005\right)}\\
-&=\frac{4.0}{1.0}=4.0\\[4pt]
-C_{\text{eff}}&=\frac{P_{+}+P_{-}-2P_0}{P_0\left(\Delta y\right)^{2}}\\
-&=\frac{97.5+101.5-200}{100\left(0.005\right)^{2}}\\
-&=\frac{-1.0}{0.0025}\\
-&=-400\end{aligned}
+\begin{aligned}
+P_0&=100\\
+P_-&=P(y-0.005)=101.5\\
+P_+&=P(y+0.005)=97.5\\[4pt]
+D_{\rm eff}&=\frac{P_--P_+}{2P_0\,\Delta y}\\
+&=\frac{101.5-97.5}{2(100)(0.005)}=4.0\\[4pt]
+C_{\rm eff}&=\frac{P_++P_--2P_0}{P_0(\Delta y)^2}\\
+&=\frac{97.5+101.5-200}{100(0.005)^2}\\
+&=\frac{-1.0}{0.0025}=-400
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>bond ธรรมดาจะได้กำไรตอนดอกเบี้ยลงมากกว่าที่ขาดทุนตอนดอกเบี้ยขึ้นเท่ากัน ความไม่สมมาตรที่เข้าข้างเจ้าของนี้คือ convexity บวก และเป็นของแถมที่ทุกคนชอบ</p>
@@ -181,22 +219,81 @@ C_{\text{eff}}&=\frac{P_{+}+P_{-}-2P_0}{P_0\left(\Delta y\right)^{2}}\\
     <p>ตรวจเองใน 20 วินาที กด <code>(97.5+101.5-200)/(100*0.005**2)</code> ต้องได้ $-400$ ถ้าเครื่องหมายออกมาเป็นบวก แปลว่าใส่ราคาผิดข้าง ไม่ใช่ตลาดแปลก</p>
   </div>
 </section>
-
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — เดือนที่ 30 ของ USD 100M pool</h4>
-  <p>คำถาม (ลองเดาก่อน): เดือนที่ 30 เงินต้นที่คืนเกินตารางจะมากกว่าเงินต้นตามตารางกี่เท่า?</p>
-  <p>ของที่มี: pool USD 100M, coupon 6%, อายุ 360 เดือน และ scenario 100 PSA ตั้งแต่เดือนแรก. เดือนที่ 30 CPR แตะ 6% แล้ว จึงแปลงได้ SMM 0.5143% ต่อเดือน. Balance ก่อนงวดคือ USD 89.588M.</p>
-  <p>1. หัก scheduled principal USD 151.608k ออกจาก balance ได้ USD 89.437M. เราหักก้อนปกติก่อนตาม convention ของตัวอย่าง.</p>
-  <p>2. คูณ USD 89.437M ด้วย SMM 0.5143% ได้ unscheduled prepayment USD 459.975k. นี่คือก้อนที่ borrower คืนเพิ่ม.</p>
-  <p>3. รวม USD 151.608k กับ USD 459.975k ได้ principal ที่ส่งออก USD 611.583k.</p>
-  <p>เฉลย: prepayment เป็นประมาณ 3.03 เท่าของ scheduled principal ส่วน principal รวมเป็นประมาณ 4.03 เท่า.</p>
-  <p>เช็ก 10 วินาที: USD 611.583k − USD 151.608k ต้องเหลือใกล้ USD 459.975k.</p>
-  <p>ในงานจริง เปลี่ยน 100 PSA เป็น 200 PSA แล้วต้องรัน schedule ใหม่ทั้งเส้น เพราะทุก dollar หลังจากนั้นย้ายวัน ไม่ใช่แค่เอาราคาเดิมคูณสอง. กับดักคือเรียก PSA ว่า forecast; มันเป็น scenario ที่มีไว้เทียบกันเท่านั้น.</p>
+  <h4>คำตอบ — การชำระเงินต้นและ prepayment เดือนที่ 30</h4>
+  <p>คำถาม: pool สินเชื่อบ้านใหม่ \$100 ล้าน ดอกเบี้ย 6% ผ่อน 30 ปี ที่ 100 PSA ถึงเดือนที่ 30 ยอดหนี้ต้นเดือน \$89,992,478 เดือนนี้เงินต้นกลับมาเท่าไร และคืนก่อนกำหนดมากกว่าเงินต้นตามตารางกี่เท่า?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 3</p>
+  <p>1. ค่างวดคิดใหม่จากยอดหนี้ที่เหลือ 331 งวดได้ 556,802.62 เป็นดอกเบี้ย 449,962.39 และเงินต้นตามตาราง 106,840.23 USD</p>
+  <p>2. ยอดชั่วคราว 89,885,637.31 คูณ SMM 0.5143013% ได้ prepayment 462,282.99 USD</p>
+  <p>3. เงินต้นกลับรวม 569,123.22 USD เป็น prepayment 81.23% และมากกว่าเงินต้นตามตาราง 4.33 เท่า</p>
+  <p>ตรวจเองใน 10 วินาที: 89.886 ล้าน × 0.00514 ≈ 0.462 ล้าน</p>
+  <p>แปลว่าอะไร: พ้นช่วง ramp แล้ว เงินต้นที่กลับมาส่วนใหญ่มาจากการคืนก่อนกำหนด ถ้าลืมคิดค่างวดใหม่แล้วใช้ค่างวดเดิม 599,550.53 เงินต้นตามตารางจะสูงเกินจริง 42,747.90 USD ต่อเดือน</p>
+</section>
+
+<section class="code">
+  <details open>
+    <summary>โค้ดตรวจการคำนวณ SMM, Prepayment และ Effective Convexity</summary>
+    <pre><code>import numpy as np
+B, r, n = 100e6, 0.06 / 12, 360
+for m in range(1, 31):
+    A = B * r / (1 - (1 + r) ** -(n - m + 1))    # payment recomputed on what is left
+    I = B * r
+    P = A - I
+    cpr = min(0.002 * m, 0.06)
+    smm = 1 - (1 - cpr) ** (1 / 12)
+    pp = (B - P) * smm
+    if m &lt; 30:
+        B = B - P - pp
+assert round(B) == 89992478 and round(P, 2) == 106840.23 and round(pp, 2) == 462282.99
+assert abs(smm - 0.005143013) &lt; 1e-9 and round(pp / P, 2) == 4.33
+assert round(100e6 * r / (1 - (1 + r) ** -n) - I - P, 2) == 42747.9
+p0, p_minus, p_plus, dy = 100.0, 101.5, 97.5, 0.005
+assert abs((p_minus - p_plus) / (2 * p0 * dy) - 4.0) &lt; 1e-9
+assert abs((p_plus + p_minus - 2 * p0) / (p0 * dy ** 2) + 400.0) &lt; 1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>loop เดินตั้งแต่เดือนที่ 1 ถึง 30 แบบเดียวกับไฟล์ของคอร์ส คิดค่างวดใหม่ทุกเดือนจากยอดหนี้ที่เหลือ แล้วตรวจเงินของเดือนที่ 30 และ convexity จากราคาสามจุด</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>pass-through ของไฟล์คอร์ส PO/IO และ Richard and Roll</summary>
+    <pre><code>import numpy as np, math
+B, r, season, flows = 400.0, 0.08125 / 12, 3, []
+for t in range(1, 358):
+    A = B * r / (1 - (1 + r) ** -(360 - season - t + 1))
+    I, P = B * r, B * r
+    P = A - I
+    smm = 1 - (1 - min(0.002 * (t + season), 0.06)) ** (1 / 12)
+    pp = (B - P) * smm
+    if t == 1:
+        assert [round(v, 4) for v in (A, I, B * 0.075 / 12, P, pp)] == [2.9759, 2.7083, 2.5, 0.2675, 0.2675]
+    flows.append(P + pp)
+    B -= P + pp
+flows = np.array(flows)
+assert round((np.arange(1, 358) * flows).sum() / (12 * flows.sum()), 2) == 11.67
+B0, n = 100000.0, 360
+A = B0 * r / (1 - (1 + r) ** -n)
+k = np.arange(1, n + 1)
+Pk = (A - r * B0) * (1 + r) ** (k - 1)
+Ik = A - Pk
+for rf, v0, w0 in ((r, 23391, 76609), (0.005, 32681, 91162)):
+    d = (1 + rf) ** -k
+    assert round((Pk * d).sum()) == v0 and round((Ik * d).sum()) == w0
+assert abs((k * Pk * (1 + r) ** -k).sum() / (12 * (Pk * (1 + r) ** -k).sum()) - 361 / 24) &lt; 1e-9
+RI = lambda gap: 0.28 + 0.14 * math.atan(-8.57 + 430 * gap)
+assert round(RI(0.0), 4) == 0.0764 and round(RI(0.02125), 4) == 0.3523
+assert round(RI(0.02125) * 0.5 * 1.0 * (0.3 + 0.7 * 0.95), 3) == 0.170</code></pre>
+  </details>
+  <div class="note">
+    <p>assert ชุดแรกตรงกับไฟล์ Excel ของคอร์สทุกช่องของเดือนแรก ชุดกลางคือขั้นที่ 7 และชุดท้ายคือขั้นที่ 8</p>
+  </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.2b — same pool, different principal clock</h4>
-  <img src="../figures/22.2-2.svg" alt="ภาพ 22.2b — same pool, different principal clock" loading="lazy">
+  <h4>Figure 22.2b — same pool, different principal clock</h4>
+  <img src="../figures/22.2-2.svg" alt="Figure 22.2b — same pool, different principal clock" loading="lazy">
   <figcaption>
     <p>แท่งเปรียบเทียบ principal ของ pool เดียวภายใต้ 0, 100 และ 200 PSA. PSA เร็วทำให้ principal front-load; price sensitivity จึงต้องอ่านพร้อม assumption ของ prepayment ไม่ใช่ yield curve อย่างเดียว</p>
   </figcaption>
@@ -206,12 +303,15 @@ C_{\text{eff}}&=\frac{P_{+}+P_{-}-2P_0}{P_0\left(\Delta y\right)^{2}}\\
   <h4>ขั้นที่ 4 — นิยามของสองชิ้นที่แยกกระแสเงินออกจากกัน</h4>
   <p>สองก้อนนี้เป็น นิยาม ของวิธีแบ่งกระแสเงิน ไม่ใช่ผลที่พิสูจน์ ชิ้นแรกได้เฉพาะเงินต้นทุกก้อน ทั้งที่ตามกำหนดและที่ชำระคืนก่อนกำหนด ชิ้นที่สองได้เฉพาะดอกเบี้ย ซึ่งคิดจากยอดค้างต้นเดือนตามหัวข้อ 22.1 ผลที่ตามมาคือสองชิ้นนี้ตอบสนองต่อการชำระคืนก่อนกำหนดในทิศตรงข้ามกันสุดขั้ว ชิ้นแรกได้เงินเร็วขึ้นจึงมีค่ามากขึ้น ส่วนชิ้นที่สองเสียฐานคิดดอกเบี้ยจึงมีค่าน้อยลง และเป็นเหตุผลที่ชิ้นที่สองมีความไวต่ออัตราดอกเบี้ยเป็นบวก ซึ่งแทบไม่มีในตราสารหนี้อื่น</p>
   <div class="math">\[
-PV_{PO}=\sum_{t=1}^{T}\frac{P_t+PP_t}{(1+y/12)^t},\qquad PV_{IO}=\sum_{t=1}^{T}\frac{c_{\mathrm{net}}B_{t-1}/12}{(1+y/12)^t}
+\begin{aligned}
+PV_{PO}&=\sum_{t=1}^{T}\frac{P_t+PP_t}{(1+y/12)^t}\\
+PV_{IO}&=\sum_{t=1}^{T}\frac{c_{\mathrm{net}}B_{t-1}/12}{(1+y/12)^t}
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>PO รับเฉพาะ principal $P_t+PP_t$ ส่วน IO รับเฉพาะ net interest จาก balance ก่อนงวด. ใส่ cash flow ของแต่ละเดือนและ yield รายปี $y$.</p>
-    <p>หาร $y$ ด้วย 12 เพื่อ discount เงินรายเดือน แล้วรวมทุกเดือน.</p>
-    <p>ผลลัพธ์คือ present value ของ PO และ IO จาก scenario เดียวกัน. เงินต้นกลับเร็วช่วย PO เพราะรอน้อยลง แต่ทำให้ IO เสียฐาน interest ในอนาคต.</p>
+    <p>PO รับเฉพาะ principal $P_t+PP_t$ ส่วน IO รับเฉพาะ net interest จาก balance ก่อนงวด ใส่ cash flow ของแต่ละเดือนและ yield รายปี $y$</p>
+    <p>กรณีไม่มี prepayment สองชิ้นนี้มีสูตรปิด ซึ่งคำนวณไว้ในขั้นที่ 7</p>
+    <p>เงินต้นกลับเร็วช่วย PO เพราะรอน้อยลง แต่ทำให้ IO เสียฐาน interest ในอนาคต จึงทำให้ IO มี duration ติดลบ</p>
   </div>
 </section>
 
@@ -224,8 +324,8 @@ PV_{PO}=\sum_{t=1}^{T}\frac{P_t+PP_t}{(1+y/12)^t},\qquad PV_{IO}=\sum_{t=1}^{T}\
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.2c — PO กับ IO รับ shock คนละทาง</h4>
-  <img src="../figures/22.2-3.svg" alt="ภาพ 22.2c — PO กับ IO รับ shock คนละทาง" loading="lazy">
+  <h4>Figure 22.2c — PO กับ IO รับ shock คนละทาง</h4>
+  <img src="../figures/22.2-3.svg" alt="Figure 22.2c — PO กับ IO รับ shock คนละทาง" loading="lazy">
   <figcaption>
     <p>เส้นตัวอย่างใช้ discount yield เปลี่ยนพร้อม CPR scenario ที่ตอบสนองต่อ rates. PO สูงขึ้นเมื่อ yield ลดและ cash กลับเร็ว ขณะที่ IO ลดลงเพราะ balance ถูกล้างเร็ว; รูปทรงเป็น intuition ไม่ใช่ market quote</p>
   </figcaption>
@@ -234,8 +334,12 @@ PV_{PO}=\sum_{t=1}^{T}\frac{P_t+PP_t}{(1+y/12)^t},\qquad PV_{IO}=\sum_{t=1}^{T}\
 <section class="formula">
   <h4>ลอง IO ที่เสียฐานดอกเบี้ย</h4>
   <div class="math">\[
-\begin{aligned}&\text{base: }B=100,\quad c_{net}=0.06\quad\Longrightarrow\quad I_{month}=100(0.06/12)=0.50\\
-&\text{prepay }40:\quad B_{next}=60\quad\Longrightarrow\quad I_{next}=60(0.06/12)=0.30\end{aligned}
+\begin{aligned}
+B&=100,\qquad c_{\rm net}=0.06\\
+I&=100(0.06/12)=0.50\\
+B_{\rm next}&=100-40=60\\
+I_{\rm next}&=60(0.06/12)=0.30
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัด scheduled amortisation ออกชั่วคราวเพื่อเห็น prepayment เพียงอย่างเดียว จากฐาน 100 USD ถ้า borrower คืนเงินต้น 40 USD คนถือ PO รับเงินนั้นเร็วขึ้น แต่คนถือ IO ไม่ได้รับเงินต้นส่วนนี้ และดอกเบี้ยเดือนต่อไปลดจาก 0.50 เหลือ 0.30</p>
@@ -261,19 +365,117 @@ D_{\rm eff}&:=-\frac{1}{PV(y)}\frac{dPV}{dy}\\
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.2d — negative convexity ของ pass-through</h4>
-  <img src="../figures/22.2-4.svg" alt="ภาพ 22.2d — negative convexity ของ pass-through" loading="lazy">
+  <h4>Figure 22.2d — negative convexity ของ pass-through</h4>
+  <img src="../figures/22.2-4.svg" alt="Figure 22.2d — negative convexity ของ pass-through" loading="lazy">
   <figcaption>
     <p>เส้น pass-through เป็นโค้งเว้าเมื่อ yield ลดเพราะ prepayment จำกัด price upside; bullet bond ที่ cash flow คงที่จะนูนกว่า. ความต่างนี้คือ hedge slippage ที่ desk ต้อง scenario-test</p>
   </figcaption>
 </figure>
+<details class="jargon" open>
+  <summary>ศัพท์ชุดที่สอง: ไฟล์ของคอร์สและ model ของ CPR</summary>
+  <dl>
+    <dt>seasoning</dt>
+    <dd>อายุของเงินกู้นับจากวันปล่อยกู้ ใช้เลือกตำแหน่งบน ramp ของ PSA เพราะ pool ที่ปล่อยมาแล้วสามเดือนเริ่มที่เดือนที่สี่</dd>
+    <dt>refinancing incentive</dt>
+    <dd>ส่วนต่างระหว่างดอกเบี้ยที่ผู้กู้จ่ายอยู่กับดอกเบี้ยใหม่ในตลาด ใช้ทำนายว่าคนจะรีไฟแนนซ์เร็วแค่ไหน</dd>
+    <dt>Monte Carlo simulation</dt>
+    <dd>การสุ่มเส้นทางของดอกเบี้ยหลายพันเส้นแล้วเฉลี่ยมูลค่า ใช้เมื่อเงินของแต่ละเดือนขึ้นกับเส้นทางที่ผ่านมาจนไม่มีสูตรปิด</dd>
+  </dl>
+</details>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — pass-through \$400 ล้านในไฟล์ Excel ของคอร์ส</h4>
+  <p>ไฟล์ของคอร์สใช้ pool \$400 ล้าน ผู้กู้จ่าย 8.125% ผู้ลงทุนได้ 7.50% เงินกู้ปล่อยมาแล้ว 3 เดือนจึงเหลือ 357 งวด และคืนก่อนกำหนดที่ 100 PSA ตัวเลขเป็นล้าน USD</p>
+  <div class="math">\[
+\begin{aligned}
+A_1&=400\,\frac{r}{1-(1+r)^{-357}}=2.9759\\
+I_1^{\rm gross}&=400\,\frac{0.08125}{12}=2.7083\\
+I_1^{\rm net}&=400\,\frac{0.075}{12}=2.5000\\
+P_1&=2.9759-2.7083=0.2675\\
+\mathrm{CPR}_1&=0.002(1+3)=0.8\%\\
+PP_1&=(400-0.2675)(0.000669)\\
+&=0.2675\\
+B_1&=400-0.2675-0.2675\\
+&=399.4650\\[4pt]
+\mathrm{AL}&=\frac{\sum_tt\,(P_t+PP_t)}{12\sum_t(P_t+PP_t)}\\
+&=11.67
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>อายุของ pool คือเดือนที่นับบวกสาม CPR จึงเป็น 0.002 คูณอายุ ค่างวดคิดใหม่ทุกเดือนจากยอดหนี้และงวดที่เหลือ เพราะ prepayment ทำให้ยอดหนี้ลดเร็วกว่าตาราง ส่วนต่างดอกเบี้ย 0.2083 ต่อเดือนเป็นค่า servicing 0.625%</p>
+    <p>เดือนแรกเงินต้นตามตารางกับ prepayment เท่ากันพอดี เดือนที่ 15 prepayment 1.1779 เป็น 80.42% ของเงินต้น 1.4647 และสิ้นปีแรกยอดหนี้เหลือ 389.1210 หรือ 97.28% อายุเฉลี่ยของเงินต้นจึงเหลือ 11.67 ปี จากสัญญา 30 ปี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — PO และ IO เมื่อไม่มี prepayment: ราคาและ duration</h4>
+  <p>ใช้เงินกู้ \$100,000 ดอกเบี้ย 8.125% ของหัวข้อ 22.1 เงินต้นแต่ละงวดโตด้วย $(1+r)$ จึงรวมเป็นสูตรปิดได้ แล้วเทียบการคิดลดสองอัตรา</p>
+  <div class="math">\[
+\begin{aligned}
+P_k&=(A-rB_0)(1+r)^{k-1}\\
+V_0&=\sum_{k=1}^{n}\frac{P_k}{(1+r_f)^k}\\
+&=\frac{rB_0}{(1+r)^n-1}\\
+&\quad\times\frac{(1+r_f)^n-(1+r)^n}{(r_f-r)(1+r_f)^n}\\
+V_0\big|_{r_f=r}&=\frac{n\,r\,B_0}{(1+r)\big[(1+r)^n-1\big]}\\
+W_0&=F_0-V_0\\[4pt]
+r_f=r&:\ V_0=23{,}391\\
+&\quad\ W_0=76{,}609\\
+r_f=0.5\%&:\ V_0=32{,}681\\
+&\quad\ W_0=91{,}162\\[4pt]
+D_P&=\frac{1}{12V_0}\sum_k\frac{k\,P_k}{(1+r_f)^k}\\
+D_I&=\frac{1}{12W_0}\sum_k\frac{k\,I_k}{(1+r_f)^k}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$A-rB_0$ คือเงินต้นงวดแรก 65.41 ถ้าคิดลดด้วยอัตราเดียวกับเงินกู้ เงินต้นทุกงวดที่คิดลดแล้วเท่ากันหมด PO จึงมีค่า 23,391 และ duration $(n+1)/24=15.04$ ปีพอดี ส่วน IO ได้เงินช่วงต้นมากกว่า duration จึงสั้นกว่าที่ 7.80 ปี ถ้า $n$ ยาวไม่สิ้นสุด PO มีค่าเข้าหาศูนย์</p>
+    <p>คิดลดด้วย 0.5% ต่อเดือนแทน PO ขึ้น 40% จาก 23,391 เป็น 32,681 แต่ IO ขึ้นเพียง 19% จาก 76,609 เป็น 91,162 duration เป็น 16.62 และ 8.68 ปี นี่คือกรณีไม่มี prepayment ถ้ามี prepayment IO จะเสียฐานดอกเบี้ยตอนดอกเบี้ยลด ตามส่วนก่อนหน้า</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — model ของ CPR ของ Richard and Roll</h4>
+  <p>PSA เป็นแค่ภาษากลาง ไม่รู้ว่าดอกเบี้ยลงแล้วคนจะรีไฟแนนซ์ model ที่ใช้เป็นมาตรฐานในอุตสาหกรรมคือ Richard and Roll (1989) ซึ่งคูณสี่ตัวเข้าด้วยกัน และใช้ weighted-average coupon (WAC) ของ pool</p>
+  <div class="math">\[
+\begin{aligned}
+\mathrm{CPR}_k&=f^{\rm inc}_k\,f^{\rm age}_k\,f^{\rm mon}_k\,f^{\rm burn}_k\\
+\Delta_k&=\mathrm{WAC}-r_k(10)\\
+f^{\rm inc}_k&=0.28\\
+&\quad+0.14\arctan(-8.57+430\Delta_k)\\
+f^{\rm age}_k&=\min(1,\ t/30)\\
+f^{\rm burn}_k&=0.3+0.7\,M_{k-1}/M_0\\[4pt]
+\Delta_k=0&:\ f^{\rm inc}_k=0.0764\\
+\Delta_k=2.125\%&:\ f^{\rm inc}_k=0.3523\\
+\mathrm{CPR}_{15}&=0.3523(0.5)(1)(0.965)\\
+&=17.0\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$f^{\rm inc}$ คือแรงจูงใจรีไฟแนนซ์ เป็นรูปตัว S เมื่อไม่มีส่วนต่างได้ 7.64% จากการขายบ้านอย่างเดียว พอดอกเบี้ย 10 ปีต่ำกว่า WAC ราว 2% คนแห่รีไฟแนนซ์ และตันที่ประมาณ 50% ส่วนด้านล่างตันที่ประมาณ 6% ตัวอย่างใช้ WAC 8.125% กับดอกเบี้ย 10 ปี 6%</p>
+    <p>$f^{\rm age}$ คือ ramp 30 เดือนแบบเดียวกับ PSA $f^{\rm mon}$ คือฤดูกาลย้ายบ้านซึ่งสไลด์ไม่ได้ให้ตัวเลข จึงใส่ 1 และ $f^{\rm burn}$ คือ burnout คนที่ไม่รีไฟแนนซ์ในรอบก่อนมีแนวโน้มไม่รีไฟแนนซ์รอบหน้า แถวสุดท้ายคือเดือนที่ 15 ของ pool ที่หดเหลือ 95% ตัวคูณ burnout จึงเป็น 0.965</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 22.2e — แรงจูงใจรีไฟแนนซ์เป็นรูปตัว S</h4>
+  <img src="../figures/22.2-5.svg" alt="Figure 22.2e — แรงจูงใจรีไฟแนนซ์เป็นรูปตัว S" loading="lazy">
+  <figcaption>
+    <p>ตัวคูณแรงจูงใจของ Richard and Roll ตามส่วนต่าง WAC ลบดอกเบี้ย 10 ปี ส่วนต่างศูนย์ได้ 7.6% ส่วนต่าง 2.125% ได้ 35.2% และทั้งสองปลายตันที่เส้นประราว 6% และ 50%</p>
+  </figcaption>
+</figure>
+
+<section class="prose">
+  <h4>ตั้งราคา MBS จริง: ต้องมี model ดอกเบี้ยและ Monte Carlo</h4>
+  <p>model ของ prepayment คือหัวใจของการตั้งราคา MBS แต่เข้าใจน้อยกว่า model ดอกเบี้ยมาก เพราะเป็นพฤติกรรมคนและข้อมูลสาธารณะมีน้อย ส่วน yield ที่ตลาด quote ทุกตัวขึ้นกับสมมติฐาน PSA ที่ใช้สร้างเงินแต่ละเดือน</p>
+  <p>model ดอกเบี้ยทำสองหน้าที่ คิดลดเงินใต้ Q และสร้างดอกเบี้ย 10 ปีในแต่ละเส้นทางเพื่อป้อนแรงจูงใจรีไฟแนนซ์ จึงต้องมีสูตรปิดของ $r_k(10)$ และต้อง calibrate กับทั้ง curve และ option เช่น swaption กับ cap</p>
+  <p>เงินแต่ละเดือนขึ้นกับเส้นทางที่ผ่านมา ทั้ง burnout และยอดหนี้ที่เหลือ ราคาจึงไม่มีสูตรปิด ต้องใช้ Monte Carlo สุ่มเส้นทางดอกเบี้ยแล้วเฉลี่ย และตลาดวัดส่วนชดเชยด้วย OAS แทน yield ธรรมดา</p>
+</section>
 
 <section class="pitfall">
   <h4>กับดัก: PSA คือ forecast และ IO คือ short bond</h4>
   <p>PSA เป็น benchmark scenario; มันไม่มี incentive, geography, credit, turnover หรือ burnout อยู่ข้างใน. อย่า price ทุก vintage ด้วย 100 PSA โดยไม่ทำ sensitivity grid.</p>
   <p>อีกกับดักคือ hedge IO ด้วย duration ตัวเดียว: IO exposure เปลี่ยน sign และ size เมื่อ rates, volatility และ model parameter เปลี่ยน.</p>
   <p>ขอบเขตของตัวอย่าง: ไม่มี default, buyout, delinquency, rate volatility หรือ curtailment; discount curve แบนและ yield shock parallel.</p>
-  <p>งานตั้งราคาจริงต้องจำลองเส้นทางดอกเบี้ยหลายแบบ ปรับ prepayment model กับข้อมูล และกันเงินเผื่อ model risk; option-adjusted spread (OAS) เป็นกรอบหนึ่งที่ใช้รวมงานเหล่านี้.</p>
+  <p>PSA ไม่มีแรงจูงใจรีไฟแนนซ์อยู่ข้างใน โต๊ะเทรดจึงใช้ model ของ CPR ที่ขึ้นกับดอกเบี้ย เช่น Richard and Roll ในขั้นที่ 8</p>
 </section>
 
 <section class="table">
@@ -299,10 +501,12 @@ D_{\rm eff}&:=-\frac{1}{PV(y)}\frac{dPV}{dy}\\
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>CPR แปลงเป็น SMM ก่อนนำไปสร้าง monthly prepayment cash flow; PSA เป็น standardized scenario ไม่ใช่ forecast.</li>
-    <li>PO มักได้ประโยชน์จาก principal ที่กลับเร็ว ส่วน IO มักเสีย interest base จึงมี rate/prepayment exposure กลับด้าน.</li>
-    <li>MBS duration ต้องเป็น effective duration จาก repricing ที่เปลี่ยนทั้ง discount rate และ prepayment assumption.</li>
-    <li>MBS มี convexity ติดลบ: จากราคาสามจุดได้ $C_{\text{eff}}=-400$ ดอกเบี้ยลงก็ไม่ค่อยขึ้นเพราะโดนรีไฟแนนซ์ ดอกเบี้ยขึ้นก็ตกแรงเพราะ cash flow ยืดออก ผู้ถือคือคนที่ขาย option ให้ผู้กู้โดยไม่ได้เลือก</li>
+    <li>Pool \$100 ล้าน ที่ 100 PSA เดือนที่ 30 CPR แตะ 6% แปลงได้ SMM 0.5143% เงินต้นตามตาราง \$106,840 และ prepayment \$462,283 ต้องคิดค่างวดใหม่ทุกเดือนจากยอดหนี้ที่เหลือ</li>
+    <li>Average Life ของเงินกู้ 30 ปีลดลงเหลือราว 11.67 ปีภายใต้ 100% PSA และหดสั้นลงอีกเมื่อความเร็ว prepayment เร่งขึ้น</li>
+    <li>PO มักได้ประโยชน์จาก principal ที่กลับเร็ว ส่วน IO มักเสีย interest base จึงมี rate/prepayment exposure กลับด้านและทำให้ IO มี effective duration ติดลบ</li>
+    <li>MBS มี convexity ติดลบ: จากราคาสามจุดได้ $C_{\text{eff}}=-400$ ดอกเบี้ยลงราคาไม่ค่อยขึ้นเพราะโดนรีไฟแนนซ์ ดอกเบี้ยขึ้นราคาตกแรงเพราะเงินยืดออก</li>
+    <li>ไฟล์ของคอร์ส: pool \$400 ล้าน 8.125% จ่ายผู้ลงทุน 7.50% อายุเฉลี่ย 11.67 ปี และ PO ของเงินกู้ \$100,000 มี duration 15.04 ปีเทียบ IO 7.80 ปีเมื่อไม่มี prepayment</li>
+    <li>Richard and Roll คูณแรงจูงใจรีไฟแนนซ์รูปตัว S กับ ramp อายุ ฤดูกาล และ burnout ราคา MBS จริงจึงต้องใช้ model ดอกเบี้ยกับ Monte Carlo</li>
   </ul>
 </section>
 </article>

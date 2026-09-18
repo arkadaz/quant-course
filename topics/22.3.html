@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คนสามคนรอรับเงินจากกระปุกเดียว. เดือนนี้มี 10 USD: จะแบ่งคนละส่วน หรือให้ A จนเต็มก่อนแล้วค่อย B กับ C?</p>
-  <p>เฉลย: ถ้ากติกาบอก A ก่อน เงิน 10 USD ทั้งหมดไป A. B และ C ได้ศูนย์ แม้เงินรวมในกระปุกไม่เปลี่ยน.</p>
-  <p>การจัด cash flow จาก mortgage pool เป็นชั้นเรียก collateralized mortgage obligation (CMO). แต่ละชั้นคือ tranche และกติกาเข้าคิวเรียก waterfall. waterfall ไม่ได้สร้างน้ำเพิ่ม มันแค่ติดป้าย “เข้าคิวนี้ก่อน”.</p>
+  <p>โครงสร้าง Collateralized Mortgage Obligation (CMO) ขนาด \$400 ล้าน แบ่ง 4 ชั้น งวดแรกสินเชื่อคืนต้นมา \$0.535 ล้าน หากคิวแรก A มีหนี้ \$194.5 ล้าน ชั้น A, B, C, D จะได้เงินต้นกี่ดอลลาร์?</p>
+  <p>เฉลย: tranche A รับเงินต้นไปคนเดียวทั้งหมด \$0.535 ล้าน (เหลือหนี้ \$193.965 ล้าน) ขณะที่ B, C และ D ถูกล็อกเอาต์ ได้รับเงินต้น \$0 แต่ทุก tranche ยังคงได้รับดอกเบี้ยตามยอดหนี้เดิมตามปกติ</p>
 </div>
 
 <details class="jargon" open>
@@ -52,7 +51,7 @@
     <dt>average life</dt>
     <dd>เวลาถัวเฉลี่ยของ principal return ใช้วัด timing ของ principal ไม่ใช่ maturity ตามเอกสาร</dd>
     <dt>accrual tranche</dt>
-    <dd>tranche ที่อาจไม่รับ current interest และเพิ่ม balance แทน ใช้สนับสนุน cash flow tranche อื่นตามเอกสาร deal</dd>
+    <dd>tranche ที่ไม่รับดอกเบี้ยเป็นเงินสดแต่ทบเข้าเงินต้น ใช้เร่งการคืนเงินต้นให้ tranche ก่อนหน้าเร็วขึ้น</dd>
     <dt>floater</dt>
     <dd>tranche ที่จ่ายดอกเบี้ยลอยตัวอิงดัชนีตลาด เช่น LIBOR บวก spread ใช้ป้องกันความเสี่ยงดอกเบี้ยขาขึ้น</dd>
     <dt>inverse floater</dt>
@@ -74,8 +73,11 @@
       <tr><td>$AL_k$</td><td>average life ของ tranche $k$</td><td>ปี</td></tr>
       <tr><td>$L,U$</td><td>lower และ upper PSA bounds ของ PAC</td><td>PSA</td></tr>
       <tr><td>$B_{\mathrm{fl}}, B_{\mathrm{inv}}$</td><td>ยอดเงินต้นของ floating-rate tranche และ inverse-floating-rate tranche</td><td>USD</td></tr>
-      <tr><td>$B_{\mathrm{fl}}, B_{\mathrm{inv}}$</td><td>อัตราคูปองของ floater และ inverse floater</td><td>ต่อปี</td></tr>
+      <tr><td>$c_{\mathrm{fl}}, c_{\mathrm{inv}}$</td><td>อัตราคูปองของ floater และ inverse floater</td><td>ต่อปี</td></tr>
       <tr><td>$K, g$</td><td>อัตราคูปองเพดาน (cap) และตัวคูณ leverage (gearing ratio) ของ inverse floater</td><td>ต่อปี, เท่า</td></tr>
+      <tr><td>$Q_t^{x}$</td><td>เงินต้นของ pool ในเดือน $t$ เมื่อคืนก่อนกำหนดที่ $x$ PSA</td><td>ล้าน USD ต่อเดือน</td></tr>
+      <tr><td>$S_t$</td><td>schedule ของ PAC ในเดือน $t$</td><td>ล้าน USD ต่อเดือน</td></tr>
+      <tr><td>$AL_{PAC}(x),\ AL_{SUP}(x)$</td><td>average life ของ PAC และ support เมื่อความเร็วจริงเป็น $x$ PSA</td><td>ปี</td></tr>
     </tbody>
   </table>
 </details>
@@ -92,7 +94,7 @@
   <h4>กำเนิด CMO ปี 1983: วิศวกรรมแก้ปัญหา duration mismatch ของ Wall Street</h4>
   <p>ในช่วงต้นทศวรรษ 1980 ตลาดสินเชื่อบ้านสหรัฐฯ กำลังเผชิญทางตัน ธนาคารและกองทุนบำเหน็จบำนาญปฏิเสธการซื้อตราสาร pass-through แบบเดิม เพราะไม่มีใครรู้ว่าตนเองจะได้รับเงินต้นคืนเมื่อไร หากดอกเบี้ยลดลง ลูกหนี้แห่ refinance เงินต้นจะไหลกลับมาเร็วเกินไป (contraction risk) แต่หากดอกเบี้ยสูงขึ้น ลูกหนี้จะหยุดคืนหนี้ เงินต้นจะจมยาว 30 ปี (extension risk)</p>
   <p>ในเดือนมิถุนายน 1983 Larry Fink แห่งวาณิชธนกิจ First Boston ร่วมกับทีมงานของ Freddie Mac คิดค้นโครงสร้างใหม่มูลค่า 1 พันล้านดอลลาร์ โดยนำกระแสเงินจาก mortgage pool กองเดียว มาจัดลำดับการจ่ายเงินต้นใหม่เป็นคิว เรียกว่า Collateralized Mortgage Obligation (CMO)</p>
-  <p>โครงสร้างแรกแบ่งเงินต้นออกเป็น tranche A, B, C และ Z-bond เงินต้นทั้งหมดจะจ่ายให้ A จนหมดก่อน แล้วจึงไหลไป B และ C ตามลำดับ ทำให้ tranche A มีอายุสั้นเหมาะกับธนาคารพาณิชย์ ส่วน tranche ท้าย ๆ เหมาะกับบริษัทประกันชีวิต นี่คือหมุดหมายแรกที่เปลี่ยนกระแสเงินกู้บ้านที่คาดเดาไม่ได้ ให้กลายเป็นผลิตภัณฑ์การเงินที่ตอบโจทย์เฉพาะทางของนักลงทุนแต่ละกลุ่ม</p>
+  <p>โครงสร้าง CMO ที่พัฒนาขึ้นแบ่งออกเป็น 4 ประเภทหลัก: Sequential-pay CMO (จ่ายเงินต้นเรียงชั้น A ถึง D), Accrual bond หรือ Z-bond (พักดอกเบี้ยทบต้นเพื่อนำเงินสดไปเร่งจ่ายชั้นหน้า), Floater และ Inverse floater (แบ่งคูปองตามทิศทางดอกเบี้ยตลาด) และ Planned Amortization Class (PAC: กำหนดตารางคืนเงินต้นแน่นอนโดยมี support tranche เป็นกันชน)</p>
 </section>
 
 <section class="prose">
@@ -102,43 +104,137 @@
   <p>อ่าน waterfall เหมือนอ่าน source code ที่แตะเงิน: ต้องมี priority, cap ที่ balance, treatment ของ interest shortfall, trigger และ cleanup call ชัดเจน.</p>
   <p>“senior” ใน CMO principal order ไม่ได้แปลว่า immune ต่อ credit loss หาก deal มี credit losses หรือ structure ต่างชนิด.</p>
 </section>
-
 <section class="formula">
   <h4>ขั้นที่ 1 — นิยามของลำดับการจ่ายเงินต้นแบบเรียงชั้น</h4>
-  <p>สามก้อนนี้เป็น นิยาม ของกติกาที่สัญญากำหนด ไม่ใช่ผลที่พิสูจน์ เงินต้นที่เก็บได้ในเดือนหนึ่งถูกจ่ายให้ชั้นบนสุดก่อนจนหมดยอด แล้วส่วนที่เหลือจึงไหลลงชั้นถัดไป ตัวเลือกค่าน้อยกว่าในแต่ละบรรทัดทำหน้าที่สองอย่าง คือกันไม่ให้จ่ายเกินยอดค้างของชั้นนั้น และกันไม่ให้จ่ายเกินเงินที่เก็บได้จริง ผลของกติกานี้คือชั้นบนได้เงินคืนเร็วและแน่นอนกว่า ส่วนชั้นล่างรับความไม่แน่นอนแทบทั้งหมด ซึ่งเป็นทั้งหมดของการแบ่งชั้น</p>
+  <p>สี่ก้อนนี้เป็น นิยาม ของกติกาที่สัญญากำหนด ไม่ใช่ผลที่พิสูจน์ เงินต้นที่เก็บได้ในเดือนหนึ่งถูกจ่ายให้ชั้นบนสุดก่อนจนหมดยอด แล้วส่วนที่เหลือจึงไหลลงชั้นถัดไป ตัวเลือกค่าน้อยกว่าในแต่ละบรรทัดทำหน้าที่สองอย่าง คือกันไม่ให้จ่ายเกินยอดค้างของชั้นนั้น และกันไม่ให้จ่ายเกินเงินที่เก็บได้จริง</p>
   <div class="math">\[
-A_t^A=\min(Q_t,B_{t-1}^A),\quad A_t^B=\min\left(Q_t-A_t^A,B_{t-1}^B\right),\quad A_t^C=Q_t-A_t^A-A_t^B
+\begin{aligned}
+A_t^A&=\min(Q_t,B_{t-1}^A)\\
+A_t^B&=\min(Q_t-A_t^A,B_{t-1}^B)\\
+A_t^C&=\min(Q_t-A_t^A-A_t^B,B_{t-1}^C)\\
+A_t^D&=Q_t-A_t^A-A_t^B-A_t^C\\[4pt]
+Q_1&=0.535\ \Rightarrow\ A_1^A=0.535\\
+A_1^B&=A_1^C=A_1^D=0
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใส่ principal ที่ collateral เก็บได้เดือนนี้ $Q_t$ และ balance ของแต่ละ tranche $B_{t-1}^k$.</p>
-    <p>waterfall เดินจาก tranche แรกไปท้ายแถว: จ่าย tranche $k$ ได้ไม่เกินทั้งเงินที่เหลือและ balance ของ tranche นั้น. คำสั่ง $\min$ คือรั้วกันจ่ายเกิน.</p>
-    <p>ผลลัพธ์ $A_t^k$ คือ principal ที่ tranche $k$ ได้เดือนนี้. เงินไม่ได้เพิ่มขึ้น; มันแค่ถูกส่งเข้าคิวตามกติกา.</p>
+    <p>ใส่ principal ที่ collateral เก็บได้เดือนนี้ $Q_t$ และ balance ของแต่ละ tranche $B_{t-1}^k$</p>
+    <p>waterfall เดินจาก tranche แรกไปท้ายแถว: จ่าย tranche $k$ ได้ไม่เกินทั้งเงินที่เหลือและ balance ของ tranche นั้น</p>
+    <p>ในงวดแรกเงินต้น \$0.535 ล้าน จึงไหลเข้า tranche A ทั้งหมด ส่วน B, C, D ไม่ได้รับเงินต้นเลย</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 2 — นิยามของการอัปเดตยอดค้างและดอกเบี้ยของแต่ละชั้น</h4>
-  <p>สองก้อนนี้เป็น นิยาม ตามกติกา ไม่ใช่ผลที่พิสูจน์ ยอดค้างของแต่ละชั้นลดลงตามเงินต้นที่ได้รับในเดือนนั้น ตามขั้นที่ 1 ส่วนดอกเบี้ยคิดจากยอดค้างต้นเดือนด้วยอัตราของชั้นนั้นเอง ซึ่งแต่ละชั้นไม่เท่ากัน จุดที่ต้องระวังคืออัตราเป็นรายปี จึงต้องหารสิบสองก่อนใช้กับเดือนเดียว และต้องใช้ยอดต้นเดือน ไม่ใช่ปลายเดือน ไม่งั้นดอกเบี้ยจะต่ำกว่าความจริงอย่างเป็นระบบ</p>
+  <p>สองก้อนนี้เป็น นิยาม ตามกติกา ไม่ใช่ผลที่พิสูจน์ ยอดค้างของแต่ละชั้นลดลงตามเงินต้นที่ได้รับในเดือนนั้น ตามขั้นที่ 1 ส่วนดอกเบี้ยคิดจากยอดค้างต้นเดือนด้วยอัตราของชั้นนั้นเอง ซึ่งแต่ละชั้นไม่เท่ากัน จุดที่ต้องระวังคืออัตราเป็นรายปี จึงต้องหารสิบสองก่อนใช้กับเดือนเดียว</p>
   <div class="math">\[
-B_t^k=B_{t-1}^k-A_t^k,\qquad I_t^k=\frac{c_k}{12}B_{t-1}^k
+\begin{aligned}
+B_t^k&=B_{t-1}^k-A_t^k,\qquad I_t^k=\frac{c_k}{12}B_{t-1}^k\\
+B_1^A&=194.5 - 0.535=\$193.965\text{M}\\
+I_1^A&=194.5\times\frac{0.075}{12}=\$1.2156\text{M}\\
+I_1^B&=36.0\times\frac{0.075}{12}=\$0.2250\text{M}
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>เอา balance เดิมของ tranche $B_{t-1}^k$ ลบ principal ที่จ่าย $A_t^k$ เพื่อได้ balance ใหม่ $B_t^k$.</p>
-    <p>interest ของงวดใช้ balance ก่อนจ่ายคูณ coupon รายเดือน. จึงต้องคำนวณมันบนยอดเดิม ไม่ใช่ยอดหลังจ่าย principal.</p>
-    <p>ผลลัพธ์คือยอดที่เหลือและ interest ของ tranche นั้น. Deal จริงอาจเพิ่ม day-count หรือ shortfall rule แต่ลำดับคิดยังเหมือนเดิม.</p>
+    <p>เอา balance เดิมของ tranche ลบ principal ที่จ่าย $A_t^k$ เพื่อได้ balance ใหม่ $B_t^k$</p>
+    <p>ดอกเบี้ยของงวดใช้ balance ก่อนจ่ายคูณ coupon รายเดือน จึงต้องคำนวณบนยอดเดิม ไม่ใช่ยอดหลังจ่ายเงินต้น</p>
+    <p>แม้ tranche B, C, D จะไม่ได้รับเงินต้นในงวดแรก แต่ยังคงได้รับดอกเบี้ยเต็มจำนวนตามยอดหนี้เดิมของตน</p>
   </div>
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — principal เดือนเดียว</h4>
-  <p>คำถาม (ลองเดาก่อน): ถ้า collateral ส่ง principal มา USD 12M วันนี้ tranche A/B/C จะได้คนละเท่าไร?</p>
-  <p>ของที่มี: balance A = USD 10M, B = USD 15M, C = USD 25M; กติกาคือ A ก่อน B ก่อน C. เงิน USD 12M นี้คือ principal เท่านั้น ยังไม่ต้องปน interest.</p>
-  <p>1. จ่าย A USD 10M เพื่อปิด A ก่อน เพราะ A อยู่หัวแถว. เงินคงเหลือ USD 2M.</p>
-  <p>2. จ่าย B USD 2M จากเงินที่เหลือ. B จึงเหลือ balance USD 13M.</p>
-  <p>3. C ได้ USD 0 เพราะเงินหมดก่อนถึงคิว. balance C ยัง USD 25M.</p>
-  <p>เฉลย: ending balance คือ A = USD 0, B = USD 13M, C = USD 25M.</p>
-  <p>เช็ก 10 วินาที: USD 10M + USD 2M + USD 0 ต้องเท่ากับ USD 12M และไม่มี balance ติดลบ.</p>
-  <p>interest เดือนแรกจาก coupon 4.5%/5.0%/5.5% คือ USD 37,500, USD 62,500 และ USD 114,583.33 ก่อน fee. ในงานจริง engine ต้อง assert สองเช็กนี้ทุกเดือน ไม่อย่างนั้น waterfall ที่หน้าตาดีอาจสร้างเงินจากอากาศได้.</p>
+  <h4>คำตอบ — การจัดสรรเงินต้นและดอกเบี้ยงวดแรกของ CMO</h4>
+  <p>คำถาม: โครงสร้าง sequential CMO ขนาด \$400 ล้าน แบ่งเป็น tranche A (\$194.5 ล้าน), B (\$36 ล้าน), C (\$96.5 ล้าน) และ D (\$73 ล้าน) ในงวดแรก collateral จ่ายเงินต้นมา \$0.535 ล้าน แต่ละ tranche จะได้รับเงินต้นกี่ดอลลาร์?</p>
+  <p>ของที่มี: เงินต้น collateral งวดแรก \$0.535 ล้าน คูปองทุก tranche เท่ากับ 7.50% ต่อปี ยอดหนี้ตั้งต้นของ A, B, C, D จากขั้นที่ 1 และ 2</p>
+  <p>1. เงินต้น tranche A: รับเงินต้นทั้งหมด \$0.535 ล้าน ยอดหนี้คงเหลือลดลงเหลือ \$193.965 ล้าน</p>
+  <p>2. เงินต้น tranche B, C, D: ถูกล็อกเอาต์ ได้รับเงินต้นคนละ \$0 ดอลลาร์ ยอดหนี้คงค้างยังคงเท่าเดิม</p>
+  <p>3. ดอกเบี้ยงวดแรก: ทุก tranche ได้รับดอกเบี้ยตามยอดหนี้เดิม คือ A ได้ \$1,215,625, B ได้ \$225,000, C ได้ \$603,125 และ D ได้ \$456,250 รวมเป็น \$2.50 ล้านพอดี</p>
+  <p>ตรวจเองใน 10 วินาที: เงินต้นที่แจกจ่าย \$0.535 ล้าน บวก \$0 บวก \$0 บวก \$0 เท่ากับ \$0.535 ล้าน และดอกเบี้ยรวม \$2.50 ล้าน เท่ากับดอกเบี้ยสุทธิของ pool พอดี</p>
+  <p>แปลว่าอะไร: กฎ sequential waterfall เปลี่ยนแปลงเฉพาะลำดับการคืนเงินต้นเท่านั้น ส่วนดอกเบี้ยยังคงจ่ายตามยอดหนี้คงค้างจริงในแต่ละงวดอย่างเคร่งครัด</p>
+</section>
+
+<section class="code">
+  <details open>
+    <summary>โค้ดตรวจการจัดสรรกระแสเงินและกฎการอนุรักษ์เวลาของ CMO</summary>
+    <pre><code>import numpy as np
+
+# Tranche par values and coupon
+b0 = np.array([194.5, 36.0, 96.5, 73.0])  # A, B, C, D in million USD
+total_b0 = np.sum(b0)
+assert abs(total_b0 - 400.0) &lt; 1e-6
+
+coupon = 0.075
+monthly_r = coupon / 12.0
+
+# Month 1 principal allocation
+q1 = 0.535005
+p_alloc = np.zeros(4)
+rem = q1
+for i in range(4):
+    p_alloc[i] = min(b0[i], rem)
+    rem -= p_alloc[i]
+
+assert abs(p_alloc[0] - 0.535005) &lt; 1e-6
+assert np.all(p_alloc[1:] == 0.0)
+
+# Month 1 interest
+interest = b0 * monthly_r
+assert abs(np.sum(interest) - 2.50) &lt; 1e-4
+
+# Average Life (WAL) conservation law
+wal_tranches = np.array([4.91827, 10.87673, 15.79828, 24.59868])
+pool_wal = np.sum((b0 / total_b0) * wal_tranches)
+assert abs(pool_wal - 11.67101) &lt; 1e-4
+print("All assertions passed.")</code></pre>
+  </details>
+  <div class="note">
+    <p>ทดสอบการจัดสรรเงินต้นของงวดแรก การคำนวณดอกเบี้ย และกฎการอนุรักษ์ average life ของโครงสร้าง CMO</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>engine ของ pool และ CMO ของไฟล์คอร์ส พร้อม PAC</summary>
+    <pre><code>import numpy as np
+def pool(psa=1.0, B=400.0, wac=0.08125, season=3, N=360):
+    r, out = wac / 12, []
+    for t in range(1, N - season + 1):
+        if B &lt;= 1e-12:
+            break
+        A = B * r / (1 - (1 + r) ** -(N - season - t + 1))
+        P = A - B * r
+        smm = 1 - (1 - min(psa * 0.002 * (t + season), psa * 0.06)) ** (1 / 12)
+        pp = (B - P) * smm
+        out.append(P + pp)
+        B -= P + pp
+    return np.array(out)
+def life(pay):
+    t = np.arange(1, len(pay) + 1)
+    return (t * pay).sum() / (12 * pay.sum())
+Q = pool()
+b, pay = [194.5, 36.0, 96.5, 73.0], np.zeros((len(Q), 4))
+for t, q in enumerate(Q):
+    for i in range(4):
+        x = min(q, b[i]); pay[t, i] = x; b[i] -= x; q -= x
+assert [round(life(pay[:, i]), 2) for i in range(4)] == [4.92, 10.88, 15.80, 24.60]
+assert round(life(Q), 2) == 11.67
+q100, q250 = pool(1.0), pool(2.5)
+S = np.minimum(q100, np.r_[q250, np.zeros(len(q100) - len(q250))])
+def pac(Qx):
+    bp, bs, pp, ps = S.sum(), 400 - S.sum(), [], []
+    for t, q in enumerate(Qx):
+        a = min(q, S[t] if t &lt; len(S) else 0, bp) if bs &gt; 1e-12 else min(q, bp)
+        bp -= a; q -= a; s = min(q, bs); bs -= s; q -= s
+        x = min(q, bp); a += x; bp -= x
+        pp.append(a); ps.append(s)
+    return round(life(np.array(pp)), 2), round(life(np.array(ps)), 2)
+assert round(S.sum(), 2) == 279.74
+assert pac(pool(1.0)) == (7.91, 20.43) and pac(pool(2.5)) == (7.91, 3.28)
+assert pac(pool(0.5))[0] == 13.26 and pac(pool(4.0))[0] == 5.59</code></pre>
+  </details>
+  <div class="note">
+    <p>average life ของสี่ชั้นออกมาตรงกับไฟล์ Excel ของคอร์ส แล้ว engine เดิมสร้าง PAC schedule และวัดความนิ่งของ PAC ใน band</p>
+  </div>
 </section>
 
 <section class="prose">
@@ -150,25 +246,27 @@ B_t^k=B_{t-1}^k-A_t^k,\qquad I_t^k=\frac{c_k}{12}B_{t-1}^k
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.3a — sequential waterfall ในหนึ่งเดือน</h4>
-  <img src="../figures/22.3-1.svg" alt="ภาพ 22.3a — sequential waterfall ในหนึ่งเดือน" loading="lazy">
+  <h4>Figure 22.3a — เงินต้นทั้งเดือนไปที่ชั้นเดียว</h4>
+  <img src="../figures/22.3-1.svg" alt="Figure 22.3a — เงินต้นทั้งเดือนไปที่ชั้นเดียว" loading="lazy">
   <figcaption>
-    <p>ลูกศรแสดง principal $12M$ ไหลเข้า A ก่อนจนปิด แล้วส่วนเกินจึงเข้าถึง B. C ยังไม่ได้ principal แม้ collateral จ่ายเงินแล้ว เพราะ priority เป็นข้อกำหนดของ structure</p>
+    <p>pool \$400 ล้านของไฟล์ Excel ที่ 100 PSA แบ่งตามกติกา sequential เงินต้นทั้งหมดไป A จนหมดในปีที่ 9.8 แล้ว B, C และ D ต่อคิว ความสูงของกราฟคือเงินต้นของ pool ทั้งเดือน ส่วนสีบอกว่าเดือนนั้นใครได้</p>
   </figcaption>
 </figure>
 
 <section class="formula">
   <h4>คิดดอกเบี้ยและเวลาเฉลี่ยแยกจากคิว principal</h4>
   <div class="math">\[
-\begin{aligned}&amp;I_A=10{,}000{,}000(0.045/12)=37{,}500\\
-&amp;I_B=15{,}000{,}000(0.05/12)=62{,}500\\
-&amp;I_C=25{,}000{,}000(0.055/12)=114{,}583.33\\
-&\text{toy principal: }6\text{M at year 1},\quad4\text{M at year 3}\\
-&amp;AL=\frac{1(6\text{M})+3(4\text{M})}{10\text{M}}=1.8\text{ years}\end{aligned}
+\begin{aligned}
+I_A&=194.5(0.075/12)=1.2156\\
+I_B&=36.0(0.075/12)=0.2250\\
+I_C&=96.5(0.075/12)=0.6031\\
+I_D&=73.0(0.075/12)=0.4563
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>interest เดือนแรกยังคิดจาก balance ก่อนจ่าย principal A จึงยังได้ดอกเบี้ย 37,500 USD แม้ principal ของมันถูกปิดในเดือนเดียวกัน เงินดอกเบี้ยนี้ต้องมาจาก collateral interest อีกก้อน ไม่ใช่นำ principal 12 ล้านมาจ่ายซ้ำ</p>
-    <p>สองบรรทัดสุดท้ายเป็น schedule ฝึกแยกต่างหาก เงินต้น 60% กลับในหนึ่งปี อีก 40% กลับในสามปี เวลาเฉลี่ยจึงเป็น 1.8 ปี แม้วันจ่ายสุดท้ายอยู่ปีสาม average life ถ่วงเฉพาะ principal และไม่คิดลด จึงต่างจาก duration</p>
+    <p>ดอกเบี้ยของงวดแรกคิดจากยอดหนี้ก่อนจ่ายเงินต้น ทุกชั้นจึงได้รับดอกเบี้ยพร้อมกันตามสัดส่วนของตน</p>
+    <p>ผลรวมดอกเบี้ยทุกชั้นรวมกันเท่ากับ \$2.50 ล้านพอดี ซึ่งเท่ากับดอกเบี้ยสุทธิที่เก็บได้จาก pool</p>
+    <p>เงินดอกเบี้ยนี้มาจาก collateral collections โดยตรง ไม่ใช่การนำเงินต้นมาจ่ายซ้ำ</p>
   </div>
 </section>
 
@@ -181,35 +279,36 @@ AL_k&=\sum_{t=1}^{T}\frac{t}{12}\,w_t\\
 &=\frac{\sum_{t=1}^{T}(t/12)\,A_t^{k}}{B_0^{k}}\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$w_t$ คือสัดส่วนของเงินต้นที่ได้คืนในเดือนนั้น เทียบกับยอดตั้งต้นของชั้น ผลรวมของมันเป็นหนึ่ง เพราะเงินต้นทั้งหมดต้องถูกคืนครบตลอดอายุ นั่นคือสิ่งที่ทำให้บรรทัดถัดไปเป็นค่าเฉลี่ยถ่วงน้ำหนักจริง ๆ ไม่ใช่ผลรวมลอย ๆ</p>
-    <p>ถ่วงเวลาด้วยสัดส่วนนั้นแล้วบวกทุกเดือน ซึ่งเป็นรูปของค่าเฉลี่ยตามนิยามในหัวข้อ 1.3 การหารสิบสองแปลงเดือนเป็นปี เพื่อให้คำตอบมีหน่วยเป็นปี แล้วดึงตัวหารที่เหมือนกันทุกพจน์ออกมาข้างนอก</p>
-    <p>ข้อควรระวังที่สำคัญกว่าสูตร ค่านี้ไม่ใช่อายุคงเหลือของชั้น และไม่ใช่ความไวต่ออัตราดอกเบี้ย มันเป็นแค่เวลาเฉลี่ยที่เงินต้นถูกคืน ซึ่งไม่ได้คิดเรื่องการคิดลดเลยสักนิด</p>
+    <p>$w_t$ คือสัดส่วนของเงินต้นที่ได้คืนในเดือนนั้น เทียบกับยอดตั้งต้นของชั้น ผลรวมของมันเป็นหนึ่ง เพราะเงินต้นทั้งหมดต้องถูกคืนครบตลอดอายุ นั่นคือสิ่งที่ทำให้บรรทัดถัดไปเป็นค่าเฉลี่ยถ่วงน้ำหนักจริง ๆ</p>
+    <p>ถ่วงเวลาด้วยสัดส่วนนั้นแล้วบวกทุกเดือน การหารสิบสองแปลงเดือนเป็นปี เพื่อให้คำตอบมีหน่วยเป็นปี แล้วดึงตัวหารที่เหมือนกันทุกพจน์ออกมาข้างนอก</p>
+    <p>ข้อควรระวังคือค่านี้ไม่ใช่อายุคงเหลือตามสัญญา และไม่ใช่ duration มันเป็นแค่เวลาเฉลี่ยที่เงินต้นถูกคืน ซึ่งไม่ได้คำนึงถึงการคิดลดมูลค่าเงินตามเวลา</p>
   </div>
 </section>
-
 <section class="formula">
   <h4>กฎการอนุรักษ์เวลา: average life รวมของ tranche ต้องเท่ากับ pool เสมอ</h4>
   <p>สมการนี้ยืนยันสัจธรรมของวิศวกรรมการเงิน: average life รวมของโครงสร้าง CMO ทั้งหมด ถูกตอกตรึงไว้ด้วย cash flow ของ collateral เสมอ วิศวกรการเงินไม่สามารถลดความเสี่ยงด้านเวลา (timing risk) ของพอร์ตโฟลิโอได้ แต่ทำได้เพียงโยกความเสี่ยงระหว่างผู้ลงทุนด้วยกัน</p>
   <p>ลองตรวจด้วยตัวเลขจริงจาก pool ขนาด USD 400M ที่อัตรา 100 PSA ซึ่งมี average life ของ pool เท่ากับ 11.67 ปี: ชั้น A มีขนาด USD 194.5M (average life 4.92 ปี), ชั้น B มี USD 36.0M (average life 10.88 ปี), ชั้น C มี USD 96.5M (average life 15.80 ปี), และชั้น D มี USD 73.0M (average life 24.60 ปี) เมื่อนำมาถ่วงน้ำหนักเฉลี่ยจะได้ 11.67 ปี เท่ากับ collateral ทุกประการ</p>
   <div class="math">\[
-\begin{aligned}\sum_{k} B_0^k \cdot AL_k &= \sum_{k} B_0^k \left[ \frac{\sum_{t=1}^{T} \frac{t}{12}\,A_t^k}{B_0^k} \right] \\
-&= \sum_{k} \sum_{t=1}^{T} \frac{t}{12}\,A_t^k \\
-&= \sum_{t=1}^{T} \frac{t}{12} \sum_{k} A_t^k = \sum_{t=1}^{T} \frac{t}{12}\,Q_t \\
-&= B_0 \cdot AL_{\mathrm{pool}} \\
-\sum_{k} \left(\frac{B_0^k}{B_0}\right) AL_k &= AL_{\mathrm{pool}}\end{aligned}
+\begin{aligned}
+\sum_kB_0^kAL_k&=\sum_kB_0^k\Big[\frac{\sum_t\frac{t}{12}A_t^k}{B_0^k}\Big]\\
+&=\sum_k\sum_{t=1}^{T}\frac{t}{12}A_t^k\\
+&=\sum_{t=1}^{T}\frac{t}{12}\sum_kA_t^k\\
+&=\sum_{t=1}^{T}\frac{t}{12}Q_t=B_0\,AL_{\rm pool}\\
+\sum_k\frac{B_0^k}{B_0}AL_k&=AL_{\rm pool}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อนำยอดเงินต้นตั้งต้นของแต่ละชั้นคูณด้วย average life ของชั้นนั้น ตัวส่วนที่เป็นเงินต้นของแต่ละชั้นจะตัดกันหมดพอดี เหลือเพียงผลบวกของเวลาถ่วงน้ำหนักด้วยเงินต้นที่จ่ายจริงในเดือนนั้น</p>
-    <p>สลับลำดับการบวกเพื่อรวมเงินต้นของทุกชั้นในแต่ละเดือนเข้าด้วยกัน กฎ waterfall รับประกันว่าเงินต้นที่แจกจ่ายให้ทุกชั้นรวมกัน ต้องเท่ากับเงินต้นที่ collateral ส่งมาพอดี จึงยุบผลรวมข้ามชั้นเป็น $Q_t$ ได้ทันที</p>
+    <p>สลับลำดับการบวกเพื่อรวมเงินต้นของทุกชั้นในแต่ละเดือนเข้าด้วยกัน กฎ waterfall บังคับให้เงินต้นที่แจกจ่ายให้ทุกชั้นรวมกัน ต้องเท่ากับเงินต้นที่ collateral ส่งมาพอดี จึงยุบผลรวมข้ามชั้นเป็น $Q_t$ ได้ทันที</p>
     <p>ส่วนด้วยเงินต้นรวม $B_0$ ทั้งสองข้างเพื่อแปลงเป็นสัดส่วน ผลลัพธ์นี้คือกฎการอนุรักษ์เวลา: การหั่นชั้นไม่ได้ช่วยเสกให้เงินต้นคืนเร็วขึ้นทั้งกระดาน แต่เป็นการดึงเวลาจากชั้นหลังมาโปะให้ชั้นหน้า เป็นเกมที่ผลรวมถ่วงน้ำหนักต้องคงที่เสมอ</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.3b — tranche หลังแถวมี average life ยาวกว่า</h4>
-  <img src="../figures/22.3-2.svg" alt="ภาพ 22.3b — tranche หลังแถวมี average life ยาวกว่า" loading="lazy">
+  <h4>Figure 22.3b — pool เดียวแต่ได้ชั้นอายุต่างกันสี่แบบ</h4>
+  <img src="../figures/22.3-2.svg" alt="Figure 22.3b — pool เดียวแต่ได้ชั้นอายุต่างกันสี่แบบ" loading="lazy">
   <figcaption>
-    <p>principal schedule สังเคราะห์ของ A, B และ C ทำให้ A รับเงินต้นต้น ๆ ส่วน C รอหลังสุด. Average life จึงเกิดจาก waterfall กับ prepayment ร่วมกัน ไม่ได้ถูกกำหนดจาก coupon อย่างเดียว</p>
+    <p>ยอดหนี้ของแต่ละชั้นตามเวลา เส้นประคือ average life 4.92, 10.88, 15.80 และ 24.60 ปี ตรงกับไฟล์ทุกหลัก ส่วน pool ทั้งก้อนมี 11.67 ปี</p>
   </figcaption>
 </figure>
 
@@ -227,19 +326,23 @@ A_t^{PAC}=\min(Q_t,S_t,B_{t-1}^{PAC}),\qquad A_t^{SUP}=\min\!\left(\max(Q_t-A_t^
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.3c — PAC band มี support เป็นกันชน</h4>
-  <img src="../figures/22.3-3.svg" alt="ภาพ 22.3c — PAC band มี support เป็นกันชน" loading="lazy">
+  <h4>Figure 22.3c — PAC schedule คือเงินที่ pool จ่ายได้ทั้งสองขอบของ band</h4>
+  <img src="../figures/22.3-3.svg" alt="Figure 22.3c — PAC schedule คือเงินที่ pool จ่ายได้ทั้งสองขอบของ band" loading="lazy">
   <figcaption>
-    <p>เส้น target คือเป้า 0.7 ล้าน USD ต่อเดือน เส้น collateral ช้าต่ำกว่าเป้าในช่วงต้นจึงจ่าย PAC ได้ไม่เต็ม ส่วนเส้นเร็วให้เงินเกินเป้าและส่งส่วนเกินไป support ภาพนี้เป็น scenario ของเงินจริงกับเป้า ไม่ใช่การรับประกันว่าจะได้เป้าทุกเดือน</p>
+    <p>เงินต้นต่อเดือนของ pool เดียวกันที่ 100 และ 250 PSA เส้นเขียวหนาคือค่าที่ต่ำกว่าในแต่ละเดือน ซึ่งเป็น schedule ของ PAC รวม 279.74 ล้าน ที่ 50 PSA pool จ่ายต่ำกว่า schedule ในช่วงต้น</p>
   </figcaption>
 </figure>
 
 <section class="formula">
   <h4>เงินไม่พอ: support รอได้ แต่เติมเงินจากอากาศไม่ได้</h4>
   <div class="math">\[
-\begin{aligned}&amp;S_t=1\text{M},\quad Q_t=1.4\text{M}:\quad A^{PAC}=1\text{M},\quad A^{SUP}=0.4\text{M}\\
-&amp;S_t=1\text{M},\quad Q_t=0.7\text{M}:\quad A^{PAC}=0.7\text{M},\quad A^{SUP}=0\\
-&\text{shortfall}=1\text{M}-0.7\text{M}=0.3\text{M}\end{aligned}
+\begin{aligned}
+S_t=1,\ Q_t=1.4&:\ A^{PAC}=1\\
+&\qquad A^{SUP}=0.4\\
+S_t=1,\ Q_t=0.7&:\ A^{PAC}=0.7\\
+&\qquad A^{SUP}=0\\
+S_t-A^{PAC}&=1-0.7=0.3
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมมติทั้งสอง tranche ยังมี balance มากพอ และไม่มี reserve หรือเงินสนับสนุนจากภายนอก ถ้าเก็บ principal ได้มากกว่าเป้า PAC ส่วนเกินไป support ถ้าเก็บได้น้อย support ยอมรอรับ principal แต่ไม่มีเงินสดมาชดเชย 0.3 ล้านที่ขาด</p>
@@ -248,18 +351,42 @@ A_t^{PAC}=\min(Q_t,S_t,B_{t-1}^{PAC}),\qquad A_t^{SUP}=\min\!\left(\max(Q_t-A_t^
 </section>
 
 <section class="formula">
+  <h4>PAC จาก pool ในไฟล์ของคอร์ส: band 100 ถึง 250 PSA</h4>
+  <p>ใช้ pool \$400 ล้านเดิม schedule ของ PAC คือเงินต้นที่ pool จ่ายได้แน่ ๆ ไม่ว่าความเร็วจะอยู่ที่ขอบล่างหรือขอบบนของ band จึงเอาค่าที่ต่ำกว่าของสองขอบในแต่ละเดือน</p>
+  <div class="math">\[
+\begin{aligned}
+S_t&=\min\big(Q_t^{100},\ Q_t^{250}\big)\\
+\sum_tS_t&=279.74\\
+400-279.74&=120.26\\[4pt]
+AL_{PAC}(100)&=7.91=AL_{PAC}(250)\\
+AL_{SUP}(100)&=20.43\\
+AL_{SUP}(250)&=3.28\\
+AL_{PAC}(50)&=13.26\\
+AL_{PAC}(400)&=5.59
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ช่วงต้นเงินที่ 100 PSA ต่ำกว่า ช่วงหลังเงินที่ 250 PSA ต่ำกว่า เพราะ pool ที่เร็วหมดเร็ว schedule จึงเป็นขอบล่างของทั้งสอง รวมได้ PAC 279.74 ล้าน ที่เหลือ 120.26 ล้านเป็น support</p>
+    <p>engine ใช้กติกาของขั้นที่ 4 และเมื่อ support หมดแล้ว เงินต้นทั้งหมดไป PAC ความเร็วใดก็ได้ใน band PAC ได้เงินตาม schedule เป๊ะ average life จึงเป็น 7.91 ปีทุกจุด ส่วน support ช้าไปถึง 20.43 ปีหรือเร็วเหลือ 3.28 ปี</p>
+    <p>ออกนอก band แล้ว PAC ก็ไม่รอด ที่ 50 PSA เงินไม่พอจ่าย schedule PAC ยืดไป 13.26 ปี ที่ 400 PSA support หมดเร็ว PAC หดเหลือ 5.59 ปี</p>
+  </div>
+</section>
+
+<section class="formula">
   <h4>ขั้นที่ 5 — การสร้างคูปองลอยตัวและลอยตัวผกผัน</h4>
   <p>การแยกตราสารอัตราคงที่เป็น floater และ inverse floater ช่วยดึงดูดทั้งนักลงทุนที่กลัวดอกเบี้ยขาขึ้น (ซื้อ floater) และนักลงทุนที่เก็งกำไรว่าดอกเบี้ยจะลดลง (ซื้อ inverse floater ที่มีตัวคูณ leverage $g$ เท่า) โดยที่ผู้ออกตราสารไม่ต้องรับความเสี่ยงด้านอัตราดอกเบี้ยเลยแม้แต่น้อย</p>
   <p>ลองตรวจด้วยตัวเลขจริง: collateral จ่ายดอกเบี้ยคงที่ $c = 7.5\%$ แบ่งเป็น floater 75% ($B_{\mathrm{fl}} = 75$) และ inverse floater 25% ($B_{\mathrm{inv}} = 25$) กำหนด $m = 0.5\%$ จะได้ gearing ratio $g = 75/25 = 3$ เท่า และเพดาน $K = (100 \times 7.5\% - 75 \times 0.5\%)/25 = 28.5\%$ ดังนั้น $c_{\mathrm{inv}} = 28.5\% - 3L$ และเพดานดอกเบี้ยตลาดคือ $L_{\mathrm{cap}} = 28.5\% / 3 = 9.5\%$</p>
   <div class="math">\[
-\begin{aligned}B_{\mathrm{fl}} + B_{\mathrm{inv}} &= B \\
-B_{\mathrm{fl}} c_{\mathrm{fl}} + B_{\mathrm{inv}} c_{\mathrm{inv}} &= B c \\
-c_{\mathrm{fl}} &= L + m \\
-B_{\mathrm{inv}} c_{\mathrm{inv}} &= B c - B_{\mathrm{fl}}(L + m) \\
-c_{\mathrm{inv}} &= \frac{B c - B_{\mathrm{fl}} m}{B_{\mathrm{inv}}} - \frac{B_{\mathrm{fl}}}{B_{\mathrm{inv}}}\,L \\
-K &:= \frac{B c - B_{\mathrm{fl}} m}{B_{\mathrm{inv}}},\quad g := \frac{B_{\mathrm{fl}}}{B_{\mathrm{inv}}} \\
-c_{\mathrm{inv}} &= \max(0,\, K - g L) \\
-c_{\mathrm{inv}} \ge 0 &\implies L \le \frac{K}{g} =: L_{\mathrm{cap}}\end{aligned}
+\begin{aligned}
+B_{\rm fl}+B_{\rm inv}&=B\\
+B_{\rm fl}c_{\rm fl}+B_{\rm inv}c_{\rm inv}&=Bc\\
+c_{\rm fl}&=L+m\\
+B_{\rm inv}c_{\rm inv}&=Bc-B_{\rm fl}(L+m)\\
+c_{\rm inv}&=K-gL\\
+K&:=\frac{Bc-B_{\rm fl}m}{B_{\rm inv}},\quad g:=\frac{B_{\rm fl}}{B_{\rm inv}}\\
+c_{\rm inv}&=\max(0,\ K-gL)\\
+c_{\rm inv}\ge0&\ \Rightarrow\ L\le\frac{K}{g}=:L_{\rm cap}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากสมดุลของกระแสเงินสด: ดอกเบี้ยที่จ่ายให้ floater และ inverse floater รวมกัน ต้องไม่เกินดอกเบี้ยคงที่ $c$ ที่ได้รับจาก collateral ห้ามมีเงินงอกหรือเงินรั่วออกจากโครงสร้าง</p>
@@ -277,10 +404,10 @@ c_{\mathrm{inv}} \ge 0 &\implies L \le \frac{K}{g} =: L_{\mathrm{cap}}\end{align
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.3d — support tranche รับทั้งเร็วและช้า</h4>
-  <img src="../figures/22.3-4.svg" alt="ภาพ 22.3d — support tranche รับทั้งเร็วและช้า" loading="lazy">
+  <h4>Figure 22.3d — ใน band PAC นิ่งที่ 7.91 ปี support รับส่วนที่เหลือ</h4>
+  <img src="../figures/22.3-4.svg" alt="Figure 22.3d — ใน band PAC นิ่งที่ 7.91 ปี support รับส่วนที่เหลือ" loading="lazy">
   <figcaption>
-    <p>เส้น illustrative average life แสดง support มี dispersion ใหญ่กว่า PAC เมื่อ PSA เปลี่ยน. PAC ดูนิ่งใน band แต่ tail scenario หลัง support exhaustion สามารถเปลี่ยน timing แบบ discontinuous</p>
+    <p>average life ของ PAC 279.74 ล้าน และ support 120.26 ล้าน ที่ความเร็วจริงต่าง ๆ ใน band 100 ถึง 250 PSA PAC อยู่ที่ 7.91 ปีทุกจุด ส่วน support แกว่งจาก 20.43 ถึง 3.28 ปี นอก band PAC ก็ขยับ</p>
   </figcaption>
 </figure>
 
@@ -315,9 +442,11 @@ c_{\mathrm{inv}} \ge 0 &\implies L \le \frac{K}{g} =: L_{\mathrm{cap}}\end{align
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>CMO waterfall จัดลำดับ principal cash flow โดยไม่เพิ่ม collateral cash flow; ทุก allocation ต้อง reconcile กับเงินที่เก็บได้จริง.</li>
-    <li>Sequential tranches trade contraction versus extension risk; average life เป็น output ของ scenario ไม่ใช่ maturity ที่ตายตัว.</li>
-    <li>PAC stability ขึ้นกับ PSA band และ support balance จึงต้อง report breakpoints และ tail scenarios.</li>
+    <li>CMO ไม่ได้เพิ่มกระแสเงินสดของ collateral แต่จัดสรรลำดับการรับเงินต้น: ใน pool \$400M ที่ 100 PSA ชั้น A มี average life 4.92 ปี, B มี 10.88 ปี, C มี 15.80 ปี และ D มี 24.60 ปี โดยเฉลี่ยถ่วงน้ำหนักเท่ากับ pool ที่ 11.67 ปีพอดี</li>
+    <li>โครงสร้าง floater และ inverse floater ช่วยกระจายความเสี่ยงดอกเบี้ย: หาก collateral จ่ายคงที่ 7.5% แบ่ง floater 75% และ inverse floater 25% จะสร้าง leverage $g=3$ เท่า และมีเพดานดอกเบี้ยตลาด $L_{\mathrm{cap}} = 9.5\%$</li>
+    <li>Planned Amortization Class (PAC) สร้างกระแสเงินต้นที่แน่นอนภายในกรอบ PSA band โดยส่งความผันผวนทั้งหมดไปให้ support tranche แบกรับแทน</li>
+    <li>Seniority ด้านเงินต้นไม่ได้แปลว่าปลอดความเสี่ยงด้านเครดิต หาก collateral ขาดชำระหรือผิดนัดชำระหนี้ ผู้ลงทุนทุกชั้นยังคงเผชิญความเสี่ยงขาดทุนหากไม่มี credit enhancement เพียงพอ</li>
+    <li>PAC ที่สร้างจาก pool ของไฟล์บน band 100 ถึง 250 PSA มีขนาด 279.74 ล้านและ average life 7.91 ปีทุกความเร็วใน band ส่วน support 120.26 ล้านแกว่งจาก 20.43 ถึง 3.28 ปี</li>
   </ul>
 </section>
 </article>

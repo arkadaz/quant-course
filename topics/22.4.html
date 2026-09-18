@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>มีกล่องรับความเสียหาย 10 USD: กล่องแรกยอมรับ 3 USD แรก กล่องถัดไปรับเฉพาะส่วน 3 ถึง 7 USD. ถ้าเสียหายรวม 5 USD กล่องหลังเสียเท่าไร?</p>
-  <p>คำตอบคือ 2 USD เพราะ 3 USD แรกถูกกล่องแรกดูดไปก่อน. เราเห็นการแบ่งช่วงจนจบก่อน แล้วค่อยถามคำถามยากกว่า: เหตุร้ายหลายรายจะเกิดพร้อมกันบ่อยแค่ไหน.</p>
-  <p>สัญญารับ loss เป็นช่วงเรียก collateralized debt obligation (CDO) tranche. Gaussian copula เป็น model เชื่อมเหตุผิดนัดหลายราย. tranche เหมือนร่มซ้อนกัน: ฝนปรอยชั้นหน้าเปียกก่อน แต่พายุพร้อมกันทะลุได้หลายชั้น.</p>
+  <p>พอร์ต Collateralized Debt Obligation (CDO) ขนาด USD 100M มีชั้น mezzanine รับขาดทุนช่วง 3%–7% (USD 4M) หากพอร์ตเสียหายรวม USD 5M ชั้นนี้จะขาดทุนกี่ดอลลาร์?</p>
+  <p>เฉลย: ขาดทุน USD 2M (คิดเป็น 50% ของชั้น) เพราะผลขาดทุน USD 3M แรกถูก equity tranche ด้านล่างดูดซับไปก่อน ส่วน senior tranche เหนือ 7% ไม่ได้รับความเสียหายเลย</p>
 </div>
 
 <details class="jargon" open>
@@ -39,10 +38,18 @@
     <dd>CDO ที่ถือ bonds หรือ loans จริง ใช้รับ coupon และ credit loss ของ collateral</dd>
     <dt>synthetic CDO</dt>
     <dd>CDO ที่อ้างอิง credit risk ผ่าน credit default swaps (CDS) ใช้สร้าง exposure โดยไม่ซื้อ bond จริง</dd>
+    <dt>credit default swap (CDS)</dt>
+    <dd>สัญญา derivative ที่ protection buyer จ่ายค่าพรีเมียมเพื่อแลกกับการชดเชยเมื่อลูกหนี้ผิดนัดชำระหนี้ ใช้สร้างความคุ้มครองความเสี่ยงเครดิต</dd>
     <dt>attachment point</dt>
     <dd>ระดับ portfolio loss ที่ tranche เริ่มรับ loss ใช้กำหนด subordination ด้านล่าง</dd>
     <dt>detachment point</dt>
     <dd>ระดับ portfolio loss ที่ tranche ถูก write down เต็ม ใช้กำหนดความหนาของ tranche</dd>
+    <dt>equity tranche</dt>
+    <dd>ชั้นที่รับผลขาดทุนก้อนแรกสุดของพอร์ตโฟลิโอตั้งแต่ 0% ถึงจุด attachment ใช้ปกป้องชั้นที่อยู่สูงกว่า</dd>
+    <dt>mezzanine tranche</dt>
+    <dd>ชั้นที่รับผลขาดทุนต่อจาก equity tranche ก่อนจะถึงชั้น senior ใช้ให้ผลตอบแทนปานกลางแลกกับการรับความเสี่ยงชั้นกลาง</dd>
+    <dt>senior tranche</dt>
+    <dd>ชั้นที่อยู่บนสุดของโครงสร้างซึ่งจะเริ่มเสียหายเมื่อผลขาดทุนทะลุ detachment ของชั้นล่างทั้งหมด ใช้ให้นักลงทุนที่เน้นความปลอดภัยสูงสุด</dd>
     <dt>premium leg</dt>
     <dd>กระแสเงินที่ protection buyer จ่ายตาม outstanding tranche notional ใช้เป็นรายได้ของ protection seller</dd>
     <dt>default leg</dt>
@@ -51,6 +58,8 @@
     <dd>model ที่เชื่อม marginal default probabilities ด้วย correlated Gaussian latent variables ใช้จำลอง joint defaults</dd>
     <dt>tail dependence</dt>
     <dd>แนวโน้มที่ extreme defaults เกิดร่วมกันมากกว่าที่ model อนุมานจาก correlation กลาง ๆ ใช้เป็นจุดตรวจ model risk</dd>
+    <dt>Credit Default Swap Index (CDX)</dt>
+    <dd>ดัชนีที่รวม CDS ของบริษัทหลายสิบรายเป็นสัญญาเดียว ใช้ซื้อขายความเสี่ยงเครดิตทั้งกลุ่มและใช้ hedge tranche</dd>
   </dl>
 </details>
 
@@ -61,12 +70,18 @@
     <tbody>
       <tr><td>$L_T$</td><td>cumulative portfolio loss fraction ณ horizon $T$</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$A,D$</td><td>attachment และ detachment fractions</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$N$</td><td>portfolio notional</td><td>USD</td></tr>
+      <tr><td>$N$</td><td>portfolio notional หรือจำนวนสัญญาในพอร์ตโฟลิโอ</td><td>USD หรือสัญญา</td></tr>
       <tr><td>$TL_T$</td><td>tranche loss fraction</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$p_i$</td><td>marginal default probability ของ name $i$ ถึง $T$</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$R_i$</td><td>recovery rate ของ name $i$</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$\rho$</td><td>ระดับที่มูลค่าสินทรัพย์ของลูกหนี้ทุกรายขยับตามปัจจัยร่วมตัวเดียวกัน คือ asset correlation ใน one-factor Gaussian copula</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$M$</td><td>ปัจจัยความเสี่ยงร่วมระดับมหภาค (systematic market factor)</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\epsilon_i$</td><td>ปัจจัยความเสี่ยงเฉพาะตัวของลูกหนี้แต่ละราย (idiosyncratic factor)</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$s$</td><td>annual premium spread ของ tranche</td><td>ต่อปี</td></tr>
+      <tr><td>$q$</td><td>โอกาสเจ๊งใน 1 ปีของ bond แต่ละตัวในตัวอย่าง 125 ตัว</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$L_{\rm eq},L_{\rm mz},L_{\rm sr},L_{\rm ss}$</td><td>ขาดทุนของ equity 0–3, mezzanine 3–6, senior 6–9 และ super senior 6–125 หน่วย</td><td>หน่วยของ bond</td></tr>
+      <tr><td>$\pi_i(k)$</td><td>โอกาสที่ใน $i$ รายแรกเจ๊งพอดี $k$ ราย</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$A_{\rm tr},\ u_0^*$</td><td>annuity ของ tranche และเงินล่วงหน้าที่ทำให้สัญญายุติธรรม</td><td>ปี และสัดส่วนของ notional</td></tr>
     </tbody>
   </table>
 </details>
@@ -76,7 +91,7 @@
   <p>ปัญหาที่ค้างอยู่ในการตั้งราคาตราสารที่อ้างอิงกลุ่มสินเชื่อคือ ต้องรู้ว่าลูกหนี้หลายรายจะเจ๊งพร้อมกันแค่ไหน ซึ่งข้อมูลในอดีตแทบไม่มีเลยเพราะเป็นเหตุการณ์หายาก</p>
   <p>David Li เสนอทางออกในปี 2000 โดยยืมเครื่องมือจากวิชาสถิติมาเชื่อมความเสี่ยงของลูกหนี้แต่ละรายเข้าด้วยกัน และปรับค่าให้ตรงกับราคาที่ตลาดซื้อขายแทนที่จะประมาณจากสถิติ</p>
   <p>ตลาดยอมรับอย่างรวดเร็วเพราะมันคำนวณเร็วและให้คำตอบเดียวที่ทุกคนใช้ร่วมกันได้</p>
-  <p>แต่เครื่องมือที่เลือกมีสมบัติข้อหนึ่งที่ไม่มีใครให้น้ำหนักพอ คือGaussian copula ที่ correlation ต่ำกว่าหนึ่งมี asymptotic tail dependence เป็นศูนย์ แต่ยังให้โอกาสผิดนัดพร้อมกันที่ threshold ใด ๆ ได้ ซึ่งเป็นข้อสมมติที่ปี 2008 พิสูจน์ว่าผิดอย่างที่แพงที่สุดในประวัติศาสตร์</p>
+  <p>แต่เครื่องมือที่เลือกมีสมบัติข้อหนึ่งที่ไม่มีใครให้น้ำหนักพอ คือ Gaussian copula ที่ correlation ต่ำกว่าหนึ่งมี asymptotic tail dependence เป็นศูนย์ แต่ยังให้โอกาสผิดนัดพร้อมกันที่ threshold ใด ๆ ได้ ซึ่งเป็นข้อสมมติที่ปี 2008 พิสูจน์ว่าผิดอย่างที่แพงที่สุดในประวัติศาสตร์</p>
 </section>
 
 <section class="prose">
@@ -100,7 +115,7 @@
   <h4>ขั้นที่ 1 — นิยามของขาดทุนรวมของกองสินเชื่อ</h4>
   <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เราจะติดตาม ไม่ใช่ผลที่พิสูจน์ อ่านทีละก้อน: ตัวบ่งชี้เป็นหนึ่งเฉพาะรายที่เจ๊งภายในเวลาที่สนใจ ส่วนที่คูณอยู่คือสัดส่วนที่หายไปจริงของรายนั้น คือหนึ่งลบสัดส่วนที่ได้คืน คูณด้วยขนาดของรายนั้นในกอง แล้วบวกทุกราย ส่วนด้วยขนาดกองเพื่อให้เป็นสัดส่วน จุดสำคัญคือค่านี้สุ่ม เพราะไม่รู้ว่าใครจะเจ๊งบ้าง และการกระจายของมันคือทั้งหมดที่หัวข้อนี้สนใจ</p>
   <div class="math">\[
-L_T=\frac{1}{N}\sum_{i=1}^{n}w_i(1-R_i)\mathbf{1}_{\{\tau_i\le T\}}
+L_T=\frac{1}{N}\sum_{i=1}^{n}w_i(1-R_i)\mathbf{1}(\tau_i\le T)
 \]</div>
   <div class="reading">
     <p>ดูบริษัทแต่ละราย $i$: ใส่ notional $w_i$, recovery $R_i$ และดูว่า default ก่อนเวลา $T$ หรือไม่.</p>
@@ -111,11 +126,11 @@ L_T=\frac{1}{N}\sum_{i=1}^{n}w_i(1-R_i)\mathbf{1}_{\{\tau_i\le T\}}
 
 <section class="formula">
   <h4>ขั้นที่ 2 — map portfolio loss เป็น tranche loss</h4>
-  <p>ขาดทุนของกองแปลงเป็นขาดทุนของชั้นด้วยกติกาที่ไล่ได้ทีละกรณี ห้าบรรทัดนี้แสดงว่าตัวเลือกสองชั้นที่ซ้อนกันในสูตร ไม่ใช่การเขียนให้ดูยาก มันคือสามกรณีที่รวบไว้ในบรรทัดเดียว</p>
+  <p>ขาดทุนของกองแปลงเป็นขาดทุนของชั้นด้วยกติกาที่ไล่ได้ทีละกรณี สมการนี้แสดงว่าตัวเลือกสองชั้นที่ซ้อนกันในสูตร ไม่ใช่การเขียนให้ดูยาก มันคือสามกรณีที่รวบไว้ในบรรทัดเดียว</p>
   <div class="math">\[
-\begin{aligned}\ell(L_T)&=\begin{cases}0,&amp;L_T\le A\\
-L_T-A,&amp;A \lt L_T \lt D\\
-D-A,&amp;L_T\ge D\end{cases}\\[4pt]
+\begin{aligned}\ell(L_T)&=\begin{cases}0,&L_T\le A\\
+L_T-A,&A \lt L_T \lt D\\
+D-A,&L_T\ge D\end{cases}\\[4pt]
 &=\min\!\big(\max(L_T-A,0),\,D-A\big)\\[4pt]
 TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
 \]</div>
@@ -129,16 +144,98 @@ TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — tranche 3%–7%</h4>
-  <p>คำถาม (ลองเดาก่อน): portfolio USD 100M เสีย USD 5M แล้ว tranche 3%–7% เสียกี่ USD?</p>
-  <p>ของที่มี: portfolio loss = 5% หรือ USD 5M; tranche เริ่มรับที่ 3% และเต็มที่ 7%. ดังนั้น tranche หนา 4% ของ portfolio หรือ USD 4M.</p>
-  <p>1. หัก 3% แรกออกจาก loss 5%. เพราะ equity tranche ด้านล่างรับ USD 3M แรกไปก่อน.</p>
-  <p>2. เหลือ 2% ของ portfolio หรือ USD 2M ที่ไหลเข้าช่วง 3%–7%.</p>
-  <p>3. เทียบ USD 2M กับขนาด tranche USD 4M ได้ loss 50% ของ tranche.</p>
-  <p>เฉลย: tranche นี้เสีย USD 2M หรือครึ่งหนึ่งของ notional; senior เหนือ 7% ยังไม่เสีย.</p>
-  <p>เช็ก 10 วินาที: USD 3M + USD 2M = USD 5M ต้องกลับไปเท่ากับ loss ทั้ง portfolio.</p>
-  <p>ใช้ตัดสินใจ: ถ้า loss scenario ยังไม่ทะลุ 3% tranche นี้ไม่เสีย; เมื่อ loss แตะ 5% ต้องตั้ง reserve ครึ่ง notional และเมื่อแตะ 7% ต้องถือว่าทั้ง tranche ถูกกินหมด.</p>
-  <p>ความสนุกที่ร้ายของ tranche คือ average loss เดียวไม่พอ: คนละโลกกันระหว่างเสีย USD 2M บ่อย ๆ กับเงียบเกือบตลอดแต่วันหนึ่งทะลุ USD 7M. ตัวอย่างนี้แค่แบ่ง loss หลังรู้ผล; งาน pricing ต้องหาโอกาสของทุกระดับ loss ล่วงหน้า.</p>
+  <h4>คำตอบ — การจัดสรรผลขาดทุนของ tranche 3%–7% เมื่อพอร์ตเสียหาย USD 5M</h4>
+  <p>คำถาม: พอร์ต USD 100M เสียหาย USD 5M หรือ 5% ชั้น mezzanine 3%–7% ขนาด USD 4M จะขาดทุนกี่ดอลลาร์ และชั้นอื่นเสียเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 2</p>
+  <p>1. equity 0%–3% รับ USD 3M แรกจนเต็มชั้น</p>
+  <p>2. ส่วนที่เกินคือ USD 5M − USD 3M = USD 2M ไหลเข้า mezzanine</p>
+  <p>3. mezzanine เสีย USD 2M หรือ 50% ของชั้น ส่วน senior เหนือ 7% ไม่เสียเลย</p>
+  <p>ตรวจเองใน 10 วินาที: 3 + 2 + 0 = 5 เท่ากับขาดทุนของทั้งพอร์ต</p>
+  <p>แปลว่าอะไร: ชั้นเดียวกันอาจไม่เจ็บเลยหรือหมดทั้งชั้น ขึ้นกับว่าขาดทุนรวมไปถึงระดับไหน ความเสี่ยงของ tranche จึงอยู่ที่หางของการกระจายตัว ไม่ใช่ค่าเฉลี่ย</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจสอบผลขาดทุนของ tranche และผลของความสัมพันธ์</summary>
+    <pre><code>import numpy as np
+
+def tranche_loss(portfolio_loss, attachment, detachment):
+    thick = detachment - attachment
+    dollar_loss = max(min(portfolio_loss - attachment, thick), 0.0)
+    fraction = dollar_loss / thick
+    return dollar_loss, fraction
+
+# 1. ตรวจสอบตัวอย่างคำตอบ: พอร์ต USD 100M ขาดทุน USD 5M
+loss = 5.0  # USD M
+att, det = 3.0, 7.0  # USD M (3% - 7%)
+t_loss, t_frac = tranche_loss(loss, att, det)
+
+assert np.isclose(t_loss, 2.0), f"Expected 2.0M, got {t_loss}"
+assert np.isclose(t_frac, 0.50), f"Expected 50%, got {t_frac}"
+
+# Equity tranche (0 - 3M)
+eq_loss, eq_frac = tranche_loss(loss, 0.0, 3.0)
+assert np.isclose(eq_loss, 3.0), f"Equity loss should be 3.0M, got {eq_loss}"
+assert np.isclose(eq_frac, 1.00), "Equity should be 100% wiped out"
+
+# Senior tranche (7 - 100M)
+sn_loss, sn_frac = tranche_loss(loss, 7.0, 100.0)
+assert np.isclose(sn_loss, 0.0), f"Senior loss should be 0.0, got {sn_loss}"
+
+# กฎการอนุรักษ์ผลขาดทุน: รวมทุก tranche ต้องเท่ากับพอร์ต
+assert np.isclose(eq_loss + t_loss + sn_loss, loss)
+
+# 2. ตัวอย่างลูกหนี้ 2 ราย (รายละ USD 50, p=10%, R=0, senior รับส่วนเกิน 50)
+# กรณีอิสระต่อกัน (Independent):
+p_ind = [0.81, 0.18, 0.01]  # L = 0, 50, 100
+exp_loss_ind = 0.18 * 50.0 + 0.01 * 100.0
+sn_exp_ind = 0.01 * 50.0
+
+# กรณีผูกกันสมบูรณ์ (Together):
+p_cor = [0.90, 0.0, 0.10]   # L = 0, 50, 100
+exp_loss_cor = 0.10 * 100.0
+sn_exp_cor = 0.10 * 50.0
+
+assert np.isclose(exp_loss_ind, 10.0)
+assert np.isclose(exp_loss_cor, 10.0)
+assert np.isclose(sn_exp_ind, 0.50)
+assert np.isclose(sn_exp_cor, 5.00)
+print("All structured credit assertions passed successfully!")
+</code></pre>
+  </details>
+</section>
+
+<section class="code">
+  <details>
+    <summary>ตัวอย่าง 125 bond และลูกหนี้ 20 รายของ PSet4</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm, binom
+N, lv = 125, np.arange(126)
+m = np.linspace(-9, 9, 6001); w = norm.pdf(m); w = w / w.sum()
+def dist(q, rho):
+    if rho == 0:
+        return binom.pmf(lv, N, q)
+    qm = np.clip(norm.cdf((norm.ppf(q) - np.sqrt(rho) * m) / np.sqrt(1 - rho)), 1e-15, 1 - 1e-15)
+    return (binom.pmf(lv[:, None], N, qm[None, :]) * w).sum(1)
+def el(p, a, b):
+    return (np.clip(lv - a, 0, b - a) * p).sum()
+p0, p5 = dist(0.02, 0.0), dist(0.02, 0.5)
+assert [round(el(p0, a, b), 3) for a, b in ((0, 3), (3, 6), (6, 9))] == [2.093, 0.388, 0.018]
+assert [round(el(p5, a, b), 3) for a, b in ((0, 3), (3, 6), (6, 125))] == [0.844, 0.42, 1.235]
+assert abs(el(p5, 0, 125) - 2.5) &lt; 1e-9 and round(p5[0], 3) == 0.618 and round(p5[9:].sum(), 4) == 0.0811
+pi = [0.20, 0.20, 0.06, 0.30, 0.40, 0.65, 0.30, 0.23, 0.02, 0.12,
+      0.134, 0.21, 0.08, 0.10, 0.10, 0.02, 0.30, 0.015, 0.20, 0.03]
+d = np.zeros(21); d[0] = 1.0
+for q in pi:
+    d[1:] = d[1:] * (1 - q) + d[:-1] * q
+    d[0] = d[0] * (1 - q)
+k = np.arange(21)
+assert round(sum(pi), 3) == 3.669 and abs((k * d).sum() - 3.669) &lt; 1e-12
+assert round(d[5:].sum(), 4) == 0.2876 and round((k**2 * d).sum() - 3.669**2, 3) == 2.535</code></pre>
+  </details>
+  <div class="note">
+    <p>ชุดแรกคือขั้นที่ 5 ชุดหลังคือขั้นที่ 6 ค่าเฉลี่ยของ recursion ต้องเท่ากับผลรวมของโอกาสเจ๊งพอดี</p>
+  </div>
 </section>
 
 <section class="prose">
@@ -150,8 +247,8 @@ TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche</h4>
-  <img src="../figures/22.4-1.svg" alt="ภาพ 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche" loading="lazy">
+  <h4>Figure 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche</h4>
+  <img src="../figures/22.4-1.svg" alt="Figure 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche" loading="lazy">
   <figcaption>
     <p>เส้นหักมุมของ tranche 3%–7% เริ่มเสียที่ 3% และเสียเต็มที่ที่ 7%. รูปนี้ควรอยู่ในทุก model review เพราะช่วยจับ error หน่วย percent versus fraction ได้เร็วมาก</p>
   </figcaption>
@@ -160,16 +257,17 @@ TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
 <section class="formula">
   <h4>ค่าเฉลี่ยเท่ากัน แต่ senior เสียต่างกัน</h4>
   <div class="math">\[
-\begin{aligned}&\text{two loans: }50\text{ USD each},\quad p=10\%,\quad R=0\\
-&\text{independent: }\Pr(L=0,50,100)=(0.81,0.18,0.01)\\
-&\text{together: }\Pr(L=0,100)=(0.90,0.10)\\
-&amp;E[L]_{ind}=0.18(50)+0.01(100)=10\\
-&amp;E[L]_{together}=0.10(100)=10\\
-&amp;E[\text{senior loss above }50]_{ind}=0.01(50)=0.50\\
-&amp;E[\text{senior loss above }50]_{together}=0.10(50)=5.00\end{aligned}
+\begin{aligned}
+p_{\rm ind}&=(0.81,\ 0.18,\ 0.01)\\
+p_{\rm tog}&=(0.90,\ 0,\ 0.10)\\[4pt]
+E_{\rm ind}[L]&=0.18(50)+0.01(100)=10\\
+E_{\rm tog}[L]&=0.10(100)=10\\[4pt]
+E_{\rm ind}[(L-50)^+]&=0.01(50)=0.50\\
+E_{\rm tog}[(L-50)^+]&=0.10(50)=5.00
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใช้ลูกหนี้สองราย รายละ 50 USD โอกาสผิดนัดรายละ 10% และไม่ได้เงินคืน หากเป็นอิสระ โอกาสผิดนัดพร้อมกันคือ 0.1 คูณ 0.1 เท่ากับ 1% หากผูกกันสมบูรณ์ เหตุของรายแรกคือเหตุของรายที่สองด้วย จึงผิดนัดพร้อมกัน 10%</p>
+    <p>$p_{\rm ind}$ และ $p_{\rm tog}$ คือโอกาสที่ขาดทุน 0, 50 และ 100 USD ใช้ลูกหนี้สองราย รายละ 50 USD โอกาสผิดนัดรายละ 10% และไม่ได้เงินคืน หากเป็นอิสระ โอกาสผิดนัดพร้อมกันคือ 0.1 คูณ 0.1 เท่ากับ 1% หากผูกกันสมบูรณ์ เหตุของรายแรกคือเหตุของรายที่สองด้วย จึงผิดนัดพร้อมกัน 10%</p>
     <p>ทั้งสองโลกมี expected portfolio loss 10 USD เท่ากัน แต่ tranche ที่รับเฉพาะ loss เกิน 50 USD มี expected loss 0.50 กับ 5 USD ต่างกันสิบเท่า เราจึงต้องรู้การเกิดร่วมกันเพื่อ pricing ไม่ใช่เพียง probability รายชื่อ</p>
   </div>
 </section>
@@ -178,7 +276,7 @@ TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
   <h4>ขั้นที่ 3 — นิยามของแบบจำลองที่ผูกการเจ๊งของทุกรายเข้าด้วยกัน</h4>
   <p>สองก้อนนี้เป็น นิยาม ของแบบจำลองที่เราเลือก ไม่ใช่ความจริงที่พิสูจน์ได้ บรรทัดแรกสร้างตัวแปรของแต่ละรายจากสองส่วน คือแรงร่วมที่ทุกรายแบ่งกัน กับแรงเฉพาะตัว น้ำหนักสองตัวถูกเลือกให้ผลรวมมี variance เป็นหนึ่ง ด้วยเหตุผลและวิธีตรวจเดียวกับหัวข้อ 13.7 บรรทัดที่สองผูกตัวแปรนั้นกับการเจ๊ง โดยตั้งเกณฑ์ให้โอกาสเจ๊งตรงกับที่ตลาดบอก ข้อจำกัดที่ต้องรู้: แบบจำลองนี้ให้ค่าการพังพร้อมกันที่ปลายหางเป็นศูนย์ ซึ่งหัวข้อ 6.6 เตือนไว้แล้ว และเป็นสาเหตุที่มันประเมินความเสี่ยงต่ำไปในปี 2008</p>
   <div class="math">\[
-X_i=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad \tau_i\le T\ \Longleftrightarrow\ X_i\le\Phi^{-1}(p_i)
+X_i=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad \Pr(\tau_i\le T)=\Pr(X_i\le\Phi^{-1}(p_i))=p_i
 \]</div>
   <div class="reading">
     <p>ให้ $M$ เป็นแรงร่วมของตลาด และ $\epsilon_i$ เป็นแรงเฉพาะบริษัท. $\rho$ บอกว่าน้ำหนักของแรงร่วมมีมากแค่ไหน.</p>
@@ -191,13 +289,17 @@ X_i=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad \tau_i\le T\ \Longleftrighta
   <h4>ที่มาของตัวคูณถ่วงน้ำหนักและจุดตัดการผิดนัด</h4>
   <p>เราเริ่มจากสมมติฐานที่เรียบง่ายที่สุด: กำหนดให้แรงขับเคลื่อนระดับตลาด $M$ และแรงเฉพาะตัว $\epsilon_i$ เป็น random variable ปกติมาตรฐานที่กระจายตัวแบบ i.i.d. โดยมี correlation ร่วมกันเป็น $\rho$ เมื่อสร้างคะแนนรวม $X_i$ เราต้องแน่ใจว่าตัวแปรใหม่ยังคงมี standard deviation เท่ากับหนึ่ง และจุดตัดการผิดนัดสอดคล้องกับ probability of default ของลูกหนี้แต่ละราย</p>
   <div class="math">\[
-\begin{aligned}X_i&=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad M,\epsilon_i\sim\mathcal{N}(0,1)\\
-\mathrm{E}[X_i]&=\sqrt{\rho}\,\mathrm{E}[M]+\sqrt{1-\rho}\,\mathrm{E}[\epsilon_i]=0\\
-\mathrm{Var}(X_i)&=(\sqrt{\rho})^2\,\mathrm{Var}(M)+(\sqrt{1-\rho})^2\,\mathrm{Var}(\epsilon_i)=\rho(1)+(1-\rho)(1)=1\\
-\mathrm{Cov}(X_i,X_j)&=\mathrm{E}\!\left[(\sqrt{\rho}M+\sqrt{1-\rho}\epsilon_i)(\sqrt{\rho}M+\sqrt{1-\rho}\epsilon_j)\right]\\
-&=\rho\,\mathrm{E}[M^2]+\sqrt{\rho(1-\rho)}\,\mathrm{E}[M\epsilon_j]+\sqrt{\rho(1-\rho)}\,\mathrm{E}[M\epsilon_i]+(1-\rho)\,\mathrm{E}[\epsilon_i\epsilon_j]\\
-&=\rho(1)+0+0+0=\rho\\
-\Pr(\tau_i\le T)&=\Pr(X_i\le c_i)=\Phi(c_i)=p_i\ \Longleftrightarrow\ c_i=\Phi^{-1}(p_i)\end{aligned}
+\begin{aligned}
+X_i&=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i\\
+\mathrm{E}[X_i]&=\sqrt\rho\,\mathrm{E}[M]\\
+&\quad+\sqrt{1-\rho}\,\mathrm{E}[\epsilon_i]=0\\
+\mathrm{Var}(X_i)&=\rho\,\mathrm{Var}(M)\\
+&\quad+(1-\rho)\,\mathrm{Var}(\epsilon_i)=1\\
+\mathrm{Cov}(X_i,X_j)&=\rho\,\mathrm{E}[M^2]\\
+&\quad+(1-\rho)\,\mathrm{E}[\epsilon_i\epsilon_j]=\rho\\
+\Pr(\tau_i\le T)&=\Phi(c_i)=p_i\\
+c_i&=\Phi^{-1}(p_i)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวคูณ $\sqrt{\rho}$ และ $\sqrt{1-\rho}$ ถูกออกแบบมาเพื่อให้ variance รวมของคะแนน $X_i$ รวมกันได้ 1 พอดี ผลบวกของกำลังสองของน้ำหนักทั้งสองตัดกันเหลือหนึ่ง ทำให้คะแนนรวมยังคงเป็น standard normal</p>
@@ -224,15 +326,21 @@ X_i=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad \tau_i\le T\ \Longleftrighta
   <h4>สร้าง distribution ของขาดทุนรวมด้วย integration บนแรงร่วม</h4>
   <p>เมื่อเรากำหนดค่าแรงร่วม $M=m$ ความเชื่อมโยงระหว่างลูกหนี้จะถูกตัดขาดทันที ทำให้การผิดนัดของลูกหนี้แต่ละรายกลายเป็นอิสระต่อกันภายใต้เงื่อนไขดังกล่าว การนับจำนวนผู้ผิดนัดจึงลดรูปเหลือเพียง Binomial distribution ธรรมดา จากนั้นเราจึงใช้ integration รวมทุกสภาวะของตลาดเพื่อได้ผลลัพธ์สุดท้าย</p>
   <div class="math">\[
-\begin{aligned}\Pr(L=l\mid M=m)&=\binom{N}{l}p(m)^l\big(1-p(m)\big)^{N-l}\\
-p(m)&=\Phi\!\left(\frac{\Phi^{-1}(p)-\sqrt{\rho}\,m}{\sqrt{1-\rho}}\right)\\
-\Pr(L=l)&=\int_{-\infty}^{\infty}\Pr(L=l\mid M=m)\,\phi(m)\,dm\\
-&=\int_{-\infty}^{\infty}\binom{N}{l}p(m)^l\big(1-p(m)\big)^{N-l}\frac{1}{\sqrt{2\pi}}e^{-m^2/2}\,dm\\
-\mathrm{E}[L]&=\sum_{l=0}^N l\,\Pr(L=l)=\int_{-\infty}^{\infty}N p(m)\,\phi(m)\,dm=N p\end{aligned}
+\begin{aligned}
+\Pr(L=l\mid m)&=\binom{N}{l}p(m)^l\\
+&\qquad\times\big(1-p(m)\big)^{N-l}\\
+p(m)&=\Phi\Big(\frac{\Phi^{-1}(p)-\sqrt\rho\,m}{\sqrt{1-\rho}}\Big)\\
+\Pr(L=l)&=\int\Pr(L=l\mid m)\\
+&\qquad\times\phi(m)\,dm\\
+\phi(m)&=e^{-m^2/2}/\sqrt{2\pi}\\
+\mathrm{E}[L]&=\sum_ll\,\Pr(L=l)\\
+&=\int N\,p(m)\,\phi(m)\,dm\\
+&=N\,p
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หัวใจของการคำนวณคือ conditional independence: เมื่อรู้ค่า $m$ แล้ว ลูกหนี้แต่ละรายจะตัดสินใจผิดนัดด้วยความน่าจะเป็น $p(m)$ โดยไม่ขึ้นต่อกัน ทำให้หาโอกาสที่เกิดผิดนัด $l$ รายได้จากสูตร binomial distribution</p>
-    <p>บรรทัดที่สามและสี่ปลดเงื่อนไขของตลาดออกด้วยกฎความน่าจะเป็นรวม โดย integrate ถ่วงน้ำหนักด้วย probability density $\phi(m)$ ของ standard normal ตลอดทุกค่า $m$ ที่เป็นไปได้</p>
+    <p>บรรทัดที่สามปลดเงื่อนไขของตลาดออกด้วยกฎความน่าจะเป็นรวม โดย integrate ถ่วงน้ำหนักด้วย probability density $\phi(m)$ ของ standard normal ตลอดทุกค่า $m$ ที่เป็นไปได้</p>
     <p>บรรทัดสุดท้ายยืนยันว่า expected value ของขาดทุนรวมทั้งพอร์ตเท่ากับ $Np$ เสมอ ไม่ขึ้นกับ $\rho$ แต่ $\rho$ ทำหน้าที่บิดรูป distribution โดยย้ายความน่าจะเป็นจากตรงกลางไปกองที่หางทั้งสองข้าง</p>
   </div>
 </section>
@@ -241,11 +349,15 @@ p(m)&=\Phi\!\left(\frac{\Phi^{-1}(p)-\sqrt{\rho}\,m}{\sqrt{1-\rho}}\right)\\
   <h4>คำนวณ expected loss ของ tranche ในพอร์ต 125 สัญญา</h4>
   <p>ลองดูพอร์ตมาตรฐาน เช่น ดัชนีตราสารหนี้ที่มี $N=125$ สัญญา มูลค่าสัญญาละ 1 หน่วย และ recovery rate เท่ากับศูนย์ (ตามตัวอย่างของ Donnelly และ Embrechts) การแบ่ง tranche ออกเป็น equity (0–3 สัญญา), mezzanine (3–6 สัญญา) และ senior (6–9 สัญญา) สามารถคำนวณ expected loss ของแต่ละชั้นได้โดยตรงจาก distribution ของจำนวนผิดนัด</p>
   <div class="math">\[
-\begin{aligned}N&=125,\quad R=0,\quad A=1\\
-\mathrm{E}^Q[\text{Loss}_{\text{equity}}]&=\sum_{l=0}^{125}\min(l,3)\Pr(L=l)=3\Pr(L\ge 3)+\sum_{k=1}^{2}k\Pr(L=k)\\
-\mathrm{E}^Q[\text{Loss}_{\text{mezz}}]&=\sum_{l=0}^{125}\min\!\big(\max(l-3,0),3\big)\Pr(L=l)=3\Pr(L\ge 6)+\sum_{k=1}^{2}k\Pr(L=3+k)\\
-\mathrm{E}^Q[\text{Loss}_{\text{senior}}]&=\sum_{l=0}^{125}\min\!\big(\max(l-6,0),3\big)\Pr(L=l)=3\Pr(L\ge 9)+\sum_{k=1}^{2}k\Pr(L=6+k)\\
-\sum_{\text{tranches}}\mathrm{E}^Q[\text{Loss}]&=\mathrm{E}^Q\!\left[\sum_{i=1}^{125}\mathbf{1}_{\{\tau_i\le T\}}\right]=125\,p\end{aligned}
+\begin{aligned}
+\mathrm{E}[L_{\rm eq}]&=3\Pr(L\ge3)\\
+&\quad+\sum_{k=1}^{2}k\Pr(L=k)\\
+\mathrm{E}[L_{\rm mz}]&=3\Pr(L\ge6)\\
+&\quad+\sum_{k=1}^{2}k\Pr(L=3+k)\\
+\mathrm{E}[L_{\rm sr}]&=3\Pr(L\ge9)\\
+&\quad+\sum_{k=1}^{2}k\Pr(L=6+k)\\
+\mathrm{E}[L_{\rm all}]&=125\,q
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สำหรับ equity tranche ถ้าผิดนัดตั้งแต่ 3 รายขึ้นไปจะสูญเสียเต็มเพดาน 3 หน่วย แต่ถ้าผิดนัด 1 หรือ 2 รายจะเสียตามจำนวนจริง พจน์สองก้อนจึงแยกคิดระหว่างกรณีที่ชนเพดานกับกรณีที่ยังไม่เต็มชั้น</p>
@@ -258,10 +370,14 @@ p(m)&=\Phi\!\left(\frac{\Phi^{-1}(p)-\sqrt{\rho}\,m}{\sqrt{1-\rho}}\right)\\
   <h4>ขั้นที่ 4 — นิยามของสองขา และเงื่อนไขที่กำหนดราคา</h4>
   <p>สามก้อนนี้เป็น นิยาม ของวิธีคำนวณ ตามโครงเดียวกับ CDS ในหัวข้อ 20.7 ขาแรกจ่ายเบี้ยบนส่วนของชั้นที่ยังไม่ถูกขาดทุนกิน จึงใช้หนึ่งลบสัดส่วนที่เสียไปแล้ว ขาที่สองจ่ายชดเชยเท่ากับส่วนที่เพิ่งเสียไปในงวดนั้น จึงใช้ผลต่างระหว่างสองงวด บรรทัดที่สามคือเงื่อนไขที่นิยามอัตราเบี้ยมาตรฐาน คือสองขาเท่ากันตอนเซ็น สิ่งที่ต้องคำนวณจากแบบจำลองมีอย่างเดียว คือค่าเฉลี่ยของสัดส่วนที่เสียไปในแต่ละงวด</p>
   <div class="math">\[
-PV_{prem}(s)=s\sum_t\Delta_t\,DF_t\,E[1-TL_t],\qquad PV_{def}=\sum_tDF_t\,E[TL_t-TL_{t-1}],\qquad PV_{prem}(s)=PV_{def}
+\begin{aligned}
+PV_{\rm prem}(s)&=s\sum_t\Delta_t\,DF_t\,\mathrm{E}[1-TL_{t-1}]\\
+PV_{\rm def}&=\sum_tDF_t\,\mathrm{E}[TL_t-TL_{t-1}]\\
+PV_{\rm prem}(s)&=PV_{\rm def}
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>premium leg เริ่มจาก spread $s$ คูณช่วงเวลา $\Delta_t$, discount factor $DF_t$ และ notional ที่ยังไม่ถูก loss กิน.</p>
+    <p>premium leg เริ่มจาก spread $s$ คูณช่วงเวลา $\Delta_t$, discount factor $DF_t$ และ notional ที่ยังไม่ถูก loss กินตอนต้นงวด คือ $1-TL_{t-1}$ ตามสไลด์ ต่างจาก CDS ชื่อเดียวที่จบทันทีเมื่อเจ๊ง tranche ยังจ่ายเบี้ยบนส่วนที่เหลือต่อ</p>
     <p>default leg รวม payment ที่เกิดเมื่อ tranche loss เพิ่มในแต่ละงวด แล้ว discount กลับมาวันนี้.</p>
     <p>ตั้งสอง present value ให้เท่ากันเพื่อหา fair spread. เมื่อ tranche เสียหาย notional ที่ยังเก็บ premium ได้ก็เล็กลง; อย่าเผลอคิด premium บน notional เต็มตลอดอายุ deal.</p>
   </div>
@@ -271,24 +387,105 @@ PV_{prem}(s)=s\sum_t\Delta_t\,DF_t\,E[1-TL_t],\qquad PV_{def}=\sum_tDF_t\,E[TL_t
   <h4>แก้สมการหา fair spread และ upfront fee ทีละบรรทัด</h4>
   <p>ในการทำสัญญา synthetic CDO ทั้งสองฝ่ายตกลงแลกเปลี่ยนกระแสเงินสดโดยไม่มีการจ่ายเงินก้อนเริ่มต้น ดังนั้นมูลค่าปัจจุบันของสัญญาในวันแรกจึงต้องเป็นศูนย์ การหาราคาของสัญญาจึงเทียบเท่ากับการแก้สมการพีชคณิตเพื่อหาค่าอัตราเบี้ยรายปี หรือหาเงินจ่ายล่วงหน้าเมื่อกำหนดอัตราเบี้ยคงที่ไว้ล่วงหน้า</p>
   <div class="math">\[
-\begin{aligned}PV_{\text{prem}}(s)&=PV_{\text{def}}\\
-s\sum_{t=1}^n \Delta_t\,DF_t\,\mathrm{E}^Q[1-TL_t]&=\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]\\[4pt]
-s^*&=\frac{\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]}{\sum_{t=1}^n \Delta_t\,DF_t\,\mathrm{E}^Q[1-TL_t]}\\[6pt]
-u_0+s_{\text{fixed}}\sum_{t=1}^n \Delta_t\,DF_t\,\mathrm{E}^Q[1-TL_t]&=\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]\\[4pt]
-u_0^*&=\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]-s_{\text{fixed}}\sum_{t=1}^n \Delta_t\,DF_t\,\mathrm{E}^Q[1-TL_t]\end{aligned}
+\begin{aligned}
+A_{\rm tr}&:=\sum_{t=1}^n\Delta_tDF_t\\
+&\quad\times\mathrm{E}^Q[1-TL_{t-1}]\\
+PV_{\rm def}&=\sum_{t=1}^nDF_t\\
+&\quad\times\mathrm{E}^Q[TL_t-TL_{t-1}]\\
+s\,A_{\rm tr}&=PV_{\rm def}\ \Rightarrow\ s^*=\frac{PV_{\rm def}}{A_{\rm tr}}\\[6pt]
+u_0^*+s_{\rm fixed}A_{\rm tr}&=PV_{\rm def}\\
+u_0^*&=PV_{\rm def}-s_{\rm fixed}A_{\rm tr}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากการตั้งสมการสมดุล: present value ของขาจ่ายเบี้ยต้องเท่ากับขาชดเชยความเสียหายพอดีในวันเริ่มต้นสัญญา ทำให้มูลค่าสุทธิของสถานะเป็นศูนย์เหมือนกับสัญญา swap ทั่วไป</p>
-    <p>หารด้วยก้อนผลรวมของเงินต้นคงเหลือที่คิดลดแล้ว จะได้ fair spread $s^*$ โดยตรง ตัวเศษคือความเสียหายส่วนเพิ่มในแต่ละงวด ตัวส่วนคือเงินต้นเฉลี่ยที่ยังเหลืออยู่สำหรับจ่ายเบี้ย</p>
+    <p>$A_{\rm tr}$ คือผลรวมของเงินต้นคงเหลือที่คิดลดแล้วของ tranche ใช้ก้อนนี้เป็นตัวหาร จะได้ fair spread $s^*$ โดยตรง ตัวเศษคือความเสียหายส่วนเพิ่มในแต่ละงวด ตัวส่วนคือเงินต้นเฉลี่ยที่ยังเหลืออยู่สำหรับจ่ายเบี้ย</p>
     <p>สำหรับ equity tranche ตลาดมักกำหนดเบี้ยคงที่ เช่น 500 bps แล้วให้ผู้ซื้อประกันจ่ายเงินล่วงหน้า $u_0^*$ สองบรรทัดล่างจึงย้ายข้างหักกลบเพื่อหาค่าเงินสดก้อนแรกที่ต้องชำระในวันเปิดสัญญา</p>
   </div>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 5 — ตัวเลขของตัวอย่าง 125 bond ที่ q = 2%</h4>
+  <p>สไลด์ของตัวอย่าง Donnelly และ Embrechts แสดงผลเป็นกราฟ ไม่ได้พิมพ์ตัวเลข หน้านี้คำนวณซ้ำด้วย integral ของขั้นที่แล้ว ทุกชั้นหนา 3 หน่วย และ super senior รับทุกอย่างตั้งแต่หน่วยที่ 7 ถึง 125</p>
+  <div class="math">\[
+\begin{aligned}
+\mathrm{E}[L_{[a,b]}]&=\sum_{l=0}^{125}\min\big((l-a)^+,\,b-a\big)\\
+&\qquad\times\Pr(L=l)\\
+\mathrm{E}[L_{\rm all}]&=125(0.02)=2.5\\[4pt]
+\Pr(L=0)&=8.0\%\ \to\ 61.8\%\\
+\Pr(L\ge9)&=0.10\%\ \to\ 8.11\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ลูกศรในสองแถวล่างคือการเปลี่ยน $\rho$ จาก 0 เป็น 0.5 ในตารางข้างล่าง equity กับ super senior รวมกับ mezzanine เท่ากับ 2.5 เสมอ คือ 125 คูณ 2% เพราะค่าเฉลี่ยของผลรวมคือผลรวมของค่าเฉลี่ย correlation จึงไม่เปลี่ยนขาดทุนรวม แค่ย้ายว่าใครรับ</p>
+    <p>equity ลดลงเรื่อย ๆ เมื่อ $\rho$ สูง เพราะโอกาสไม่เจ๊งเลยพุ่งจาก 8.0% เป็น 61.8% super senior เพิ่มขึ้นเรื่อย ๆ เพราะหางไกลหนาขึ้น ส่วน mezzanine ขึ้นแล้วลงและค่อนข้างเฉย สไลด์จึงเตือนว่าหา implied correlation จาก mezzanine ยาก</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>expected loss ของแต่ละชั้นในตัวอย่าง 125 bond ที่ q = 2%</h4>
+  <table>
+    <thead><tr><th>$\rho$</th><th>equity 0–3</th><th>mezzanine 3–6</th><th>senior 6–9</th><th>super senior 6–125</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>2.093</td><td>0.388</td><td>0.018</td><td>0.018</td></tr>
+      <tr><td>0.1</td><td>1.717</td><td>0.540</td><td>0.164</td><td>0.243</td></tr>
+      <tr><td>0.5</td><td>0.844</td><td>0.420</td><td>0.276</td><td>1.235</td></tr>
+      <tr><td>0.99</td><td>0.100</td><td>0.090</td><td>0.085</td><td>2.310</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>หน่วยคือจำนวน bond ที่เสีย (recovery ศูนย์) คอลัมน์ super senior รวม senior 6–9 อยู่แล้ว จึงบวกกับ equity และ mezzanine ได้ 2.5 ทุกแถว</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — ลูกหนี้ไม่เหมือนกัน: นับจำนวนเจ๊งแบบวนซ้ำ (PSet4)</h4>
+  <p>ถ้าแต่ละรายมีโอกาสเจ๊งต่างกัน จำนวนเจ๊งไม่ใช่ binomial แล้ว แบบฝึกหัดของคอร์สให้ลูกหนี้ 20 ราย โอกาสเจ๊งตั้งแต่ 1.5% ถึง 65% สมมติว่าเป็นอิสระกัน เพิ่มลูกหนี้ทีละรายแล้วอัปเดตตาราง</p>
+  <div class="math">\[
+\begin{aligned}
+\pi_i(k)&=\pi_{i-1}(k)(1-p_i)\\
+&\quad+\pi_{i-1}(k-1)\,p_i\\
+\pi_2&=(0.64,\ 0.32,\ 0.04)\\[4pt]
+\mathrm{E}[N_{\rm def}]&=\sum_ip_i=3.669\\
+\mathrm{Var}(N_{\rm def})&=\sum_ip_i(1-p_i)=2.535\\
+\pi_{20}(0..2)&=0.011,\ 0.065,\ 0.163\\
+\pi_{20}(3..5)&=0.240,\ 0.234,\ 0.162\\
+\Pr(N_{\rm def}\ge5)&=28.76\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>จะมีพอดี $k$ รายเจ๊งในลูกหนี้ $i$ รายแรก เกิดได้สองทาง: $i-1$ รายแรกเจ๊ง $k$ รายแล้วรายใหม่รอด หรือเจ๊ง $k-1$ รายแล้วรายใหม่เจ๊ง สองรายแรกที่ 20% ให้ 0.64, 0.32 และ 0.04</p>
+    <p>ทำครบ 20 รายได้การกระจายทั้งตาราง ค่าเฉลี่ย 3.669 คือผลรวมของโอกาสตามไฟล์ ถ้ามี Gaussian copula ก็ทำ recursion นี้ที่แต่ละค่าของ $M$ แล้ว integrate แบบขั้นที่แล้ว สไลด์เรียกการกระจายนี้ว่า Poisson-binomial</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>implied correlation, cash CDO และ synthetic CDO</h4>
+  <p>ตลาด quote spread ของ tranche แล้วแก้ย้อนหา $\rho$ ที่ทำให้สูตร fair spread ตรงราคา ผลคือแต่ละ tranche ได้ $\rho$ ไม่เท่ากัน เรียกว่า correlation skew และบางช่วงตลาดก็ไม่มี $\rho$ ตัวไหนให้ราคาตรงเลย</p>
+  <p>cash CDO ถือ bond จริงในงบดุลของธนาคาร ขาย tranche senior กับ mezzanine ให้นักลงทุน และเก็บ equity ไว้เอง ผลตอบแทนยังอยู่แต่เงินกองทุนที่ต้องกันลดลง ยุคแรกจึงเป็น regulatory arbitrage มากกว่าการลดความเสี่ยง</p>
+  <p>synthetic CDO เกิดเมื่อ CDS ซื้อขายคล่อง พอร์ตอ้างอิงเป็นแค่รายชื่อกับ notional hedge fund อยากได้ equity กับ mezzanine ที่ yield สูง บริษัทประกันกับกองทุนบำนาญอยากได้ senior ที่อันดับเครดิตสูงสุด</p>
+  <p>ต่างจาก cash CDO ธนาคารขาย protection บน tranche เดียวได้โดยไม่ต้องขายชั้นอื่น แต่เมื่อไม่ได้ถือ bond ก็เหลือความเสี่ยงเครดิตเปิด ต้อง hedge แบบ dynamic ด้วย CDS รายชื่อหรือดัชนี ซึ่งยากมากไม่ว่าจะมี model หรือไม่</p>
+</section>
+
+<section class="prose">
+  <h4>บริหารพอร์ต structured credit จริง: model บอกได้น้อยกว่าที่คิด</h4>
+  <p>พอร์ตจริงมีหลายพอร์ตอ้างอิง หลายอายุ หลายคู่สัญญา และหลายแบบการจ่าย ทั้ง running spread และ upfront บวก running เงินขึ้นกับเส้นทางและเหตุการณ์ของรายชื่อเดียว bid-offer กว้างจนปิด position แพง และตลาดนอกตลาดกลางไม่มีราคาให้ mark ชัด</p>
+  <p>กรณี London Whale ของ JPMorgan โผล่มาเพราะ position ใน Credit Default Swap Index (CDX) กลุ่ม investment grade ชุดที่ 9 ใหญ่จนราคาเพี้ยนจาก CDS รายชื่อและ tranche และ Financial Times Alphaville เขียนเป็นชุดบทความ Belly of the Whale</p>
+  <p>Greeks ของ tranche ขึ้นกับ model มาก พฤษภาคม 2005 Ford กับ General Motors ถูกลดอันดับเป็น junk โต๊ะ correlation ขาดทุนหนักเพราะ tranche เคลื่อนสวน delta hedge ของ model การ hedge ใหม่ของ dealer ยังทำให้ตลาดตึงลงอีก</p>
+  <p>ปัญหาที่ใหญ่กว่าคือการพึ่งอันดับเครดิต พึ่ง model และแรงจูงใจในองค์กรที่บิดเบี้ยว ซึ่งหัวข้อ 22.5 จะตามต่อ</p>
+</section>
+
+<section class="prose">
+  <h4>marginals กับ correlation ไม่ได้บอก joint distribution ครบ</h4>
+  <p>ความเข้าใจผิดที่พบบ่อยคือคิดว่ารู้การกระจายของแต่ละตัวกับ correlation matrix แล้วจะรู้การกระจายร่วม ไม่จริง correlation วัดแค่ความสัมพันธ์เชิงเส้น ไม่บอกว่าเหตุการณ์สุดขั้วมาพร้อมกันบ่อยแค่ไหน</p>
+  <p>สไลด์สุ่ม 5,000 จุดจาก bivariate normal และ meta-Gumbel ที่ marginal เป็น normal มาตรฐานและ correlation 0.7 เท่ากัน meta-Gumbel มี upper tail dependence จึงขยับแรงพร้อมกันบ่อยกว่า รูปข้างล่างทำซ้ำด้วยการสุ่มของเราเอง copula ทางเลือกหลายแบบถูกศึกษา แต่ไม่มีแบบไหนใช้ในงานจริงได้ดีพอ</p>
+</section>
+
 <figure class="plot">
-  <h4>ภาพ 22.4b — correlation ย้าย probability ไปที่ tails</h4>
-  <img src="../figures/22.4-2.svg" alt="ภาพ 22.4b — correlation ย้าย probability ไปที่ tails" loading="lazy">
+  <h4>Figure 22.4b — correlation ย้ายโอกาสไปที่ศูนย์และหางไกล</h4>
+  <img src="../figures/22.4-2.svg" alt="Figure 22.4b — correlation ย้ายโอกาสไปที่ศูนย์และหางไกล" loading="lazy">
   <figcaption>
-    <p>histogram สังเคราะห์แสดง portfolio loss distribution ที่ correlation สูงกระจาย mass ไปใกล้ศูนย์และ tail มากขึ้น. Senior tranche สนใจ tail มากกว่า mean; correlation sensitivity จึงไม่ควรถูก report เป็น decimal เดียวแล้วจบ</p>
+    <p>จำนวนเจ๊งใน 125 bond ที่ q = 2% ค่าเฉลี่ย 2.5 เท่ากัน ที่ $\rho=0$ ส่วนใหญ่อยู่ 1 ถึง 4 ราย ที่ $\rho=0.5$ โอกาสไม่เจ๊งเลยเป็น 61.8% แต่โอกาสเจ๊ง 9 รายขึ้นไปเพิ่มจาก 0.10% เป็น 8.11% เส้นประคือขอบของ equity, mezzanine และ senior</p>
   </figcaption>
 </figure>
 
@@ -301,18 +498,18 @@ u_0^*&=\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]-s_{\text{fixed}}\sum_{t=1}
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 22.4c — tranche value versus correlation ไม่เหมือนกันทุกชั้น</h4>
-  <img src="../figures/22.4-3.svg" alt="ภาพ 22.4c — tranche value versus correlation ไม่เหมือนกันทุกชั้น" loading="lazy">
+  <h4>Figure 22.4c — correlation ย้ายขาดทุนจาก equity ไป super senior</h4>
+  <img src="../figures/22.4-3.svg" alt="Figure 22.4c — correlation ย้ายขาดทุนจาก equity ไป super senior" loading="lazy">
   <figcaption>
-    <p>เส้น illustrative แสดง equity protection มักลดมูลค่าเมื่อ correlation สูง เพราะ loss กระจุกจนข้าม equity ไป; senior protection มักเพิ่มมูลค่าเพราะ tail ผ่าน attachment บ่อยขึ้น. Mezzanine อาจ hump-shaped จึงเป็นจุดที่ model risk เด่น</p>
+    <p>expected loss ของแต่ละชั้นในตัวอย่าง 125 bond ที่ q = 2% ตามขั้นที่ 5 equity ลดลง super senior เพิ่มขึ้น mezzanine ขึ้นแล้วลง ผลรวมทุกชั้นคงที่ 2.5 ตรงกับกราฟในสไลด์</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพ 22.4d — synthetic CDO has two legs and operational links</h4>
-  <img src="../figures/22.4-4.svg" alt="ภาพ 22.4d — synthetic CDO has two legs and operational links" loading="lazy">
+  <h4>Figure 22.4d — correlation 0.7 เท่ากัน แต่หางไม่เท่ากัน</h4>
+  <img src="../figures/22.4-4.svg" alt="Figure 22.4d — correlation 0.7 เท่ากัน แต่หางไม่เท่ากัน" loading="lazy">
   <figcaption>
-    <p>flow diagram แสดง protection buyer จ่าย premium while protection seller pays default loss; collateral and counterparty terms sit beside credit model. หาก counterparty default ตอน portfolio loss สูง กลไก pricing ที่ “ถูก” อาจยังไม่ได้เงิน</p>
+    <p>5,000 จุดจาก bivariate normal กับ meta-Gumbel ที่ marginal เป็น normal มาตรฐาน correlation ของตัวอย่างสุ่มคือ 0.70 กับ 0.71 แต่จำนวนจุดที่ทั้งสองตัวเกิน 2.5 พร้อมกันคือ 5 กับ 21</p>
   </figcaption>
 </figure>
 
@@ -347,9 +544,12 @@ u_0^*&=\sum_{t=1}^n DF_t\,\mathrm{E}^Q[TL_t-TL_{t-1}]-s_{\text{fixed}}\sum_{t=1}
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>Attachment และ detachment point คือตัวแปลง portfolio loss ให้เป็น tranche loss; ดู expected portfolio loss ค่าเดียวไม่พอสำหรับตั้งราคา tranche.</li>
-    <li>Fair spread ของ synthetic CDO มาจากการตั้งให้ present value ของ premium leg เท่ากับ default leg ที่คาดหวัง คำนวณบน tranche notional ส่วนที่ยังไม่ถูก loss กิน.</li>
-    <li>Gaussian copula ให้ภาษาที่คำนวณได้สำหรับ dependence ระหว่าง default แต่สมมติฐาน correlation คงที่และหางบางต้องมี stress test และเทียบกับ model ทางเลือกกำกับไว้เสมอ.</li>
+    <li>Attachment และ detachment เป็นตัวกำหนดการรับผลขาดทุน: ในพอร์ต USD 100M ที่เสียหาย USD 5M ชั้น mezzanine 3%–7% (USD 4M) จะสูญเสีย USD 2M (50% ของชั้น) ขณะที่ equity 0%–3% เสียหายเต็ม USD 3M (100%) และ senior เหนือ 7% ไม่เสียหายเลย</li>
+    <li>ความสัมพันธ์ของสินทรัพย์ย้ายความน่าจะเป็นไปสู่หางทั้งสองด้าน: ตัวอย่างลูกหนี้ 2 รายที่มีผลขาดทุนคาดหวังพอร์ตเท่ากับ USD 10 เท่ากัน หากเป็นอิสระต่อกัน senior เหนือ USD 50 มี expected loss เพียง USD 0.50 แต่หากผิดนัดพร้อมกัน ค่าจะพุ่งขึ้นสิบเท่าเป็น USD 5.00 ทันที</li>
+    <li>Fair spread $s^*$ ของ synthetic CDO คำนวณจากการปรับให้ present value ของขาเบี้ยประกัน เท่ากับขาชดเชยความเสียหาย โดยคิดบนยอดเงินต้นคงเหลือที่ยังไม่ถูกขาดทุนกินในแต่ละงวด</li>
+    <li>Gaussian copula สมมติให้ tail dependence เป็นศูนย์เมื่อ $\rho &lt; 1$ ทำให้ประเมินความเสี่ยงของการผิดนัดชำระหนี้พร้อมกันทั้งระบบต่ำเกินไปอย่างรุนแรงเมื่อเกิดวิกฤติเศรษฐกิจ</li>
+    <li>ตัวอย่าง 125 bond ที่ q = 2%: เมื่อ $\rho$ จาก 0 เป็น 0.5 equity เสียจาก 2.09 เหลือ 0.84 แต่ super senior เพิ่มจาก 0.02 เป็น 1.24 ขาดทุนรวมคงที่ 2.5</li>
+    <li>ลูกหนี้ที่โอกาสเจ๊งต่างกันใช้ recursion นับจำนวนเจ๊ง PSet4 ได้ค่าเฉลี่ย 3.669 และโอกาสเจ๊ง 5 รายขึ้นไป 28.76%</li>
   </ul>
 </section>
 </article>

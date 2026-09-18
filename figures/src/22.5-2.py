@@ -1,1 +1,7 @@
-ax.bar([0,1,2,3,4],[1,1,1,1,1],color=ACCENT,label='Dispersed scenario');ax.bar([7,8,9,10,11],[0,0,0,0,5],color=BAD,label='Clustered scenario');ax.axhline(3,color=MUTED,ls='--',label='Illustrative attachment threshold');ax.set_xticks([2,9]);ax.set_xticklabels(['Many small losses','One tail cluster']);ax.set_ylabel('Loss units by scenario bucket');ax.set_title('Same average can imply different tranche damage',loc='left');ax.legend(fontsize=8)
+ax.bar([0],[0.468],color='0.6',width=0.5,label='Mean PD x mean LGD')
+ax.bar([1],[0.135],color=ACCENT,width=0.5,label='Normal regime (90%): 0.9 x 1% x 15%')
+ax.bar([1],[0.900],bottom=[0.135],color=BAD,width=0.5,label='Crisis regime (10%): 0.1 x 15% x 60%')
+ax.text(0,0.49,'0.468%',ha='center',fontsize=8);ax.text(1,1.055,'1.035%',ha='center',fontsize=8)
+ax.set_xticks([0,1]);ax.set_xticklabels(['Naive: product of averages','Regimes: average of products'])
+ax.set_ylabel('Expected loss (% of exposure)');ax.set_ylim(0,1.3)
+ax.set_title('PD and LGD rise together, so expected loss more than doubles',loc='left');ax.legend(fontsize=7,loc='upper left');ax.grid(axis='y',alpha=.2)

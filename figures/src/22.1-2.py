@@ -1,1 +1,1 @@
-m=np.arange(0,361);B0=100e6;r=.06/12;A=B0*r/(1-(1+r)**-360);bal=B0*(1+r)**m-A*((1+r)**m-1)/r;ax.plot(m,bal/1e6,color=ACCENT,lw=2.4);ax.set_xlabel('Month');ax.set_ylabel('Outstanding principal (USD M)');ax.set_title('Scheduled collateral balance',loc='left');ax.grid(alpha=.25)
+m=np.arange(0,361);B0=400e6;r=.08125/12;A=B0*r/(1-(1+r)**-360);bal=B0*(1+r)**m-A*((1+r)**m-1)/r;ax.plot(m,bal/1e6,color=ACCENT,lw=2.4);ax.set_xlabel('Month');ax.set_ylabel('Outstanding principal (USD M)');ax.set_title('Scheduled collateral balance ($400M pool)',loc='left');ax.grid(alpha=.25)
