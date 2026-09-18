@@ -23,9 +23,9 @@
 </header>
 
 <div class="hook">
-  <p>เพื่อนสองคนให้คะแนนเพลง 1 ถึง 5 และมักชอบเพลงเดียวกัน แม้คนหนึ่งให้คะแนนสูงกว่า จะวัดว่าไปทางเดียวกันอย่างไร?</p>
-  <p>เฉลย: ถ้าคะแนนสองชุดเป็น 1,2 และ 2,4 ชุดหลังเป็นสองเท่าของชุดแรก จึงเอียงไปทางเดียวกันเต็มที่แม้ระดับไม่เท่ากัน</p>
-  <p>Inner product รวมผลคูณของ vector เพื่อบอกการหันเข้าหากัน ส่วน correlation บอกว่าข้อมูลขยับไปทางเดียวกันแค่ไหน มันฟังว่าทั้งคู่ร้องท่อนเดียวกัน ไม่ถามว่าใครดังกว่า; quant ใช้วัดว่าความเสี่ยงช่วยหรือซ้ำเติมกัน</p>
+  <p>หุ้น A กับ B มีผลตอบแทนห้าวันที่หักค่าเฉลี่ยแล้วเป็น 1.2, −0.8, 0.5, −1.5, 0.6 และ 0.9, −0.3, 1.1, −1.2, −0.5 (หน่วย %) มองแต่ละชุดเป็นลูกศรหนึ่งอัน ลูกศรสองอันทำมุมกันกี่องศา?</p>
+  <p>เฉลย: 38.9 องศา เพราะ cosine ของมุมคือ 3.37 ส่วน 2.2226 × 1.9494 ได้ 0.778 ซึ่งคือ correlation ของสองหุ้นพอดี พอร์ต 60/40 จึงแกว่ง 1.00% ต่อวัน แทนที่จะเป็น 0.77% ถ้าสองตัวตั้งฉากกัน</p>
+  <p>Inner product คูณทีละตำแหน่งแล้วบวก ได้ตัวเลขเดียวที่บอกว่าสอง vector ชี้ทางเดียวกันแค่ไหน เมื่อหักค่าเฉลี่ยออกก่อน cosine ของมุมคือ correlation พอดี quant ใช้วัดว่าความเสี่ยงสองก้อนช่วยกันหรือซ้ำเติมกัน</p>
 </div>
 
 <details class="jargon" open>
@@ -37,6 +37,10 @@
     <dd>มุมเชิงเรขาคณิตระหว่าง vectors ใช้แปล inner product ให้เห็นภาพ: มุมเล็กคือเคลื่อนไปทางเดียว มุมใกล้ 180 degrees คือหักล้างกัน</dd>
     <dt>correlation</dt>
     <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดการเคลื่อนไหวเชิงเส้นร่วมกันของ return สองชุด ใช้เลือก diversification candidate และประเมินว่า hedge จะช่วยในสภาวะปกติแค่ไหน</dd>
+    <dt>cosine similarity</dt>
+    <dd>cosine ของมุมระหว่างสอง vector คือ inner product ส่วนด้วยผลคูณความยาว ใช้วัดว่าชี้ทางเดียวกันแค่ไหนโดยไม่สนว่าลูกศรไหนยาวกว่า</dd>
+    <dt>orthogonal</dt>
+    <dd>สอง vector ที่ตั้งฉากกัน inner product เป็นศูนย์ ใช้เรียกสินทรัพย์ที่ไม่ขยับตามกันเชิงเส้น ซึ่งเพิ่มทิศความเสี่ยงใหม่ให้พอร์ตแทนที่จะซ้ำทิศเดิม</dd>
     <dt>hedge ratio</dt>
     <dd>ขนาดของ hedge instrument ต่อ position ที่ต้องการลดความเสี่ยง ใช้แปลงความคล้ายของ return เป็นจำนวน USD notional ที่ต้อง short หรือ long</dd>
     <dt>standard deviation</dt>
@@ -62,6 +66,9 @@
       <tr><td>$\|\mathbf{x}\|_2$</td><td>L2 norm หรือความยาวของ vector $\mathbf{x}$</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$\theta$</td><td>angle ระหว่าง vectors</td><td>degrees หรือ radians</td></tr>
       <tr><td>$\rho_{xy}$</td><td>correlation ของ return series $x$ และ $y$</td><td>-1 ถึง 1</td></tr>
+      <tr><td>$\mathbf{a},\mathbf{b}$</td><td>ผลตอบแทนห้าวันของหุ้น A และ B ที่หักค่าเฉลี่ยแล้ว ตำแหน่งที่ $i$ คือวันที่ $i$</td><td>%</td></tr>
+      <tr><td>$\mathbf{p}$</td><td>ผลตอบแทนรายวันของพอร์ต 60/40 ที่หักค่าเฉลี่ยแล้ว</td><td>%</td></tr>
+      <tr><td>$s_p$</td><td>sample standard deviation รายวันของพอร์ต</td><td>% ต่อวัน</td></tr>
       <tr><td>$h$</td><td>hedge ratio ที่คูณ notional ของ hedge instrument</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
@@ -183,7 +190,7 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
   <h4>ขั้นที่ 5 — ทำไม correlation ออกนอกช่วง $-1$ ถึง $1$ ไม่ได้</h4>
   <p>ขั้นที่ 4 บอกว่า correlation คือ cosine แต่ยังไม่ได้บอกว่าทำไม cosine ตัวนี้ถึงเกิน 1 ไม่ได้ ขั้นนี้ปิดช่องนั้น และผลของมันถูกใช้ต่อในหัวข้อ 4.6, 6.5 และ 12.5 ทุกครั้งที่อ้างว่า correlation อยู่ในช่วงจำกัด</p>
   <div class="math">\[
-\begin{aligned}\|\mathbf{a}-t\mathbf{b}\|^{2}&\ \ge\ 0\qquad(\forall\,t\in\mathbb{R})\\
+\begin{aligned}\|\mathbf{a}-t\mathbf{b}\|^{2}&\ \ge\ 0\qquad(\text{any number }t)\\
 \|\mathbf{a}\|^{2}-2t\,\langle\mathbf{a},\mathbf{b}\rangle+t^{2}\|\mathbf{b}\|^{2}&\ \ge\ 0\\[4pt]
 \big(2\langle\mathbf{a},\mathbf{b}\rangle\big)^{2}-4\|\mathbf{b}\|^{2}\|\mathbf{a}\|^{2}&\ \le\ 0\\
 \langle\mathbf{a},\mathbf{b}\rangle^{2}&\ \le\ \|\mathbf{a}\|^{2}\,\|\mathbf{b}\|^{2}\\
@@ -195,6 +202,85 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
     <p>กางวงเล็บออกจะได้สมการกำลังสองใน $t$ ที่ไม่ยอมลงต่ำกว่าศูนย์เลยสักจุด พาราโบลาที่เปิดขึ้นและไม่ตัดแกน แปลว่า discriminant ของมันต้องไม่เป็นบวก นั่นคือเงื่อนไขที่บีบทุกอย่าง</p>
     <p>ที่เหลือเป็นการจัดรูป ตัดเลข 4 ทิ้งแล้วถอดราก ได้ว่าขนาดของ inner product ไม่มีทางเกินผลคูณของความยาวสองตัว</p>
     <p>ส่วนด้วยความยาวทั้งสองก็ได้ผลที่ใช้ทั้งเล่ม correlation ติดอยู่ระหว่าง $-1$ กับ $1$ เสมอ ไม่ใช่เพราะนิยามบังคับไว้ แต่เพราะเรขาคณิตไม่ยอม และจะแตะขอบได้ก็ต่อเมื่อ $\mathbf{a}-t\mathbf{b}$ เป็นศูนย์พอดี คือสองตัวขนานกัน ซึ่งเป็นกรณี hedge ที่สมบูรณ์แบบ</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>กลับไปที่หุ้น A กับ B ในโจทย์เปิดเรื่อง</h4>
+  <p>ตัวอย่างสามวันใช้ตรวจสูตรด้วยมือ คราวนี้ใช้ข้อมูลห้าวันที่ตัวเลขไม่สวย แล้วเดินครบทางตั้งแต่ inner product ถึงความเสี่ยงของพอร์ต</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — ของที่โจทย์ให้: ห้าวันที่หักค่าเฉลี่ยแล้ว และตรวจว่าหักจริง</h4>
+  <p>ทุกอย่างต่อจากนี้ต้องใช้ vector ที่หักค่าเฉลี่ยแล้ว ตามขั้นที่ 4 จึงตรวจก่อน: ถ้าหักจริง ผลรวมต้องเป็นศูนย์พอดี</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbf{a}&=(1.2,\,-0.8,\,0.5,\,-1.5,\,0.6)\\
+\mathbf{b}&=(0.9,\,-0.3,\,1.1,\,-1.2,\,-0.5)\\[4pt]
+\sum_i a_i&=0.4+0.5-1.5+0.6=0.9-1.5+0.6=-0.6+0.6=0\\
+\sum_i b_i&=0.6+1.1-1.2-0.5=1.7-1.2-0.5=0.5-0.5=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตำแหน่งที่ i คือวันที่ i หน่วยเป็นเปอร์เซ็นต์ สองชุดต้องเรียงวันตรงกันเป๊ะ แกนของลูกศรจึงเป็นวัน ไม่ใช่หุ้น ห้าวันก็คือลูกศรในห้ามิติ</p>
+    <p>บรรทัดล่างบวกสะสมทีละวัน: 1.2 − 0.8 = 0.4 ไปจนจบที่ศูนย์ทั้งสองชุด จึงเป็นส่วนเบี่ยงจากค่าเฉลี่ยของตัวเองจริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — inner product และความยาวของลูกศรทั้งสอง</h4>
+  <p>คูณวันเดียวกันเป็นคู่แล้วบวก ได้ inner product ส่วนความยาวคือรากของ inner product ของลูกศรกับตัวเอง</p>
+  <div class="math">\[
+\begin{aligned}
+\langle\mathbf{a},\mathbf{b}\rangle&=1.2(0.9)+(-0.8)(-0.3)+0.5(1.1)+(-1.5)(-1.2)+0.6(-0.5)\\
+&=1.08+0.24+0.55+1.80-0.30=3.37\\[4pt]
+\|\mathbf{a}\|^2&=1.44+0.64+0.25+2.25+0.36=4.94,\qquad \|\mathbf{a}\|=\sqrt{4.94}=2.2226\\
+\|\mathbf{b}\|^2&=0.81+0.09+1.21+1.44+0.25=3.80,\qquad \|\mathbf{b}\|=\sqrt{3.80}=1.9494
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สี่ในห้าวันผลคูณเป็นบวก คือวันที่สองหุ้นสูงกว่าปกติพร้อมกันหรือต่ำกว่าปกติพร้อมกัน วันที่ห้า A สูงกว่าปกติแต่ B ต่ำกว่า จึงได้ −0.30 วันที่สี่ให้มากที่สุด 1.80 เพราะทั้งคู่ลงแรงพร้อมกัน</p>
+    <p>ผลรวมเป็นบวกชัด 3.37 บอกว่าสองลูกศรชี้ไปทางเดียวกันพอสมควร แต่ตัวเลขนี้ยังขึ้นกับความยาว ขั้นถัดไปจึงต้องหารความยาวออก</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — มุม 38.9 องศา และตรวจว่าเท่ากับ sample correlation</h4>
+  <p>หาร inner product ด้วยผลคูณความยาวตามขั้นที่ 3 แล้วคิด correlation อีกทางด้วยสูตรสถิติ ถ้าขั้นที่ 4 ถูก สองทางต้องได้เลขเดียวกัน</p>
+  <div class="math">\[
+\begin{aligned}
+\cos\theta&=\frac{3.37}{2.2226\times1.9494}=\frac{3.37}{4.3327}=0.778\\
+\theta&=\arccos(0.778)=38.9^\circ\\[6pt]
+\widehat{\operatorname{cov}}(a,b)&=\frac{3.37}{5-1}=0.8425\\
+s_a&=\sqrt{\frac{4.94}{4}}=1.1113,\qquad s_b=\sqrt{\frac{3.80}{4}}=0.9747\\
+\rho_{ab}&=\frac{0.8425}{1.1113\times0.9747}=\frac{0.8425}{1.0832}=0.778
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>บรรทัดบนคือเรขาคณิต: cosine 0.778 คือมุม 38.9 องศา สองลูกศรเอียงไปทางเดียวกันมาก แต่ไม่ทับกัน</p>
+    <p>สามบรรทัดล่างคือสูตรสถิติ covariance และ standard deviation ต่างหารด้วย $n-1=4$ เลข 4 จึงตัดกันหมดเหมือนในขั้นที่ 4 ได้ 0.778 เท่ากันเป๊ะ correlation 0.778 จึงไม่ใช่คำอุปมา มันคือมุม 38.9 องศาจริง ๆ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — มุมนี้ทำให้พอร์ต 60/40 เสี่ยงเท่าไร เทียบกับกรณีตั้งฉาก</h4>
+  <p>พอร์ตลง A 60% และ B 40% ลูกศรของพอร์ตคือ 0.6a + 0.4b กางความยาวกำลังสองแบบ $(x+y)^2=x^2+y^2+2xy$ แล้วดูว่ามุมเข้ามาตรงไหน</p>
+  <div class="math">\[
+\begin{aligned}
+\|\mathbf{p}\|^2&=\|0.6\mathbf{a}+0.4\mathbf{b}\|^2\\
+&=0.6^2\|\mathbf{a}\|^2+0.4^2\|\mathbf{b}\|^2+2(0.6)(0.4)\langle\mathbf{a},\mathbf{b}\rangle\\
+&=0.36(4.94)+0.16(3.80)+0.48(3.37)\\
+&=1.7784+0.6080+1.6176=4.0040\\
+s_p&=\sqrt{4.0040/4}=\sqrt{1.0010}=1.0005\%\\[6pt]
+\langle\mathbf{a},\mathbf{b}\rangle=0:\quad\|\mathbf{p}\|^2&=1.7784+0.6080=2.3864\\
+s_p&=\sqrt{2.3864/4}=0.7724\%\\[6pt]
+\mathbf{p}&=(1.08,\,-0.60,\,0.74,\,-1.38,\,0.16)\\
+\|\mathbf{p}\|^2&=1.1664+0.36+0.5476+1.9044+0.0256=4.004
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>มุมเข้ามาทางพจน์ไขว้ตัวเดียว คือ 0.48 คูณ inner product ได้ 1.6176 เพิ่ม variance จาก 2.3864 เป็น 4.0040 ความผันผวนรายวันจึงเป็น 1.00% แทน 0.77% ถ้าสองหุ้นตั้งฉากกัน สูงกว่าราว 30%</p>
+    <p>บรรทัดล่างตรวจอีกทาง: สร้างผลตอบแทนพอร์ตทีละวันก่อน เช่นวันแรก 0.6(1.2) + 0.4(0.9) = 1.08 แล้วรวมกำลังสองได้ 4.004 ตรงกัน บทเรียนคือการกระจายความเสี่ยงเป็นเรขาคณิต: หาสินทรัพย์ที่ตั้งฉากกับของที่มีอยู่</p>
   </div>
 </section>
 
@@ -212,7 +298,7 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 6 — derive hedge ratio จาก estimation window แยกต่างหาก</h4>
+  <h4>ขั้นที่ 10 — derive hedge ratio จาก estimation window แยกต่างหาก</h4>
   <p>สูตร hedge ratio ไม่ได้มาจากการเดา แต่มาจากการหาจุดต่ำสุดของ variance เพื่อบีบความผันผวนรวมของพอร์ตโฟลิโอให้เหลือน้อยที่สุด</p>
   <div class="math">\[
 \begin{aligned}\operatorname{Var}(r_{\mathrm{portfolio}})&=\operatorname{Var}(r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}})\\[4pt]
@@ -229,7 +315,7 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\fr
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 7 — แปลง hedge ratio เป็น QQQ hedge notional</h4>
+  <h4>ขั้นที่ 11 — แปลง hedge ratio เป็น QQQ hedge notional</h4>
   <p>แปลงอัตราส่วนเป็นจำนวนเงินที่ต้องขายจริง ซึ่งเป็นตัวเลขที่ส่งเข้าตลาดได้</p>
   <div class="math">\[
 \text{QQQ hedge}= -hN=-0.85\times\$12{,}000{,}000=-\$10{,}200{,}000
@@ -240,7 +326,7 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\fr
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 8 — คำนวณความเสี่ยงคงเหลือ: ทำไม basis risk ถึงเท่ากับ $\sin^2\theta$</h4>
+  <h4>ขั้นที่ 12 — คำนวณความเสี่ยงคงเหลือ: ทำไม basis risk ถึงเท่ากับ $\sin^2\theta$</h4>
   <p>การ hedge ไม่ได้ลบความเสี่ยงทิ้งทั้งหมด แต่ลบได้เฉพาะมิติที่ฉายลงบนสินทรัพย์ที่ใช้ hedge ส่วนที่เหลือคือ basis risk ซึ่งสัมพันธ์กับมุมตั้งฉาก $\sin^2\theta$</p>
   <div class="math">\[
 \begin{aligned}\operatorname{Var}(r_{\mathrm{hedged}}^*)&=\sigma_{\mathrm{basket}}^{2}-2h^*\sigma_{\mathrm{basket},\mathrm{QQQ}}+(h^*)^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
@@ -257,7 +343,7 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\fr
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 9 — มอง hedge ratio เป็นการฉายภาพแบบตั้งฉาก (orthogonal projection)</h4>
+  <h4>ขั้นที่ 13 — มอง hedge ratio เป็นการฉายภาพแบบตั้งฉาก (orthogonal projection)</h4>
   <p>linear regression และการ hedge ไม่ใช่คนละเรื่องกับเรขาคณิต แต่คือการฉายภาพแบบตั้งฉากลงบนแนวแกนเดียวกัน ทฤษฎีบทพีทาโกรัสจึงแปลงเป็นกฎการอนุรักษ์ความเสี่ยงในโลกการเงิน</p>
   <div class="math">\[
 \begin{aligned}\mathbf{b}&=h\mathbf{q}+\mathbf{e}\\[4pt]
@@ -268,7 +354,7 @@ h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}=\frac{\langle\
 \]</div>
   <div class="reading">
     <p>ถ้ามองข้อมูลเป็น vector ในปริภูมิ $n$ มิติ การหา hedge ratio หรือ regression slope ก็คือการหาเงาฉายแบบตั้งฉากของ $\mathbf{b}$ ลงบนเส้นตรงที่ขึงโดย $\mathbf{q}$ โดย vector ความคลาดเคลื่อน $\mathbf{e}$ ต้องตั้งฉากกับทิศของ $\mathbf{q}$ ทำให้ inner product ระหว่างทั้งคู่เป็นศูนย์</p>
-    <p>เมื่อจัดรูปจะได้สูตรของ $h$ ทันทีโดยไม่ต้องหา derivative และเมื่อหารทั้งเศษและส่วนด้วย $n-1$ ก้อนบนจะกลายเป็น sample covariance ส่วนก้อนล่างจะกลายเป็น sample variance ซึ่งตรงกับผลลัพธ์จากการ minimize variance ในขั้นที่ 6 ทุกประการ</p>
+    <p>เมื่อจัดรูปจะได้สูตรของ $h$ ทันทีโดยไม่ต้องหา derivative และเมื่อหารทั้งเศษและส่วนด้วย $n-1$ ก้อนบนจะกลายเป็น sample covariance ส่วนก้อนล่างจะกลายเป็น sample variance ซึ่งตรงกับผลลัพธ์จากการ minimize variance ในขั้นที่ 10 ทุกประการ</p>
     <p>ทฤษฎีบทพีทาโกรัสยังยืนยันว่ากำลังสองของความยาวรวม เท่ากับกำลังสองของเงาฉายบวกกับกำลังสองของส่วนที่ตั้งฉาก เมื่อหารตลอดด้วยความยาวรวม จึงได้เอกลักษณ์ $\cos^{2}\theta+\sin^{2}\theta=1$ ซึ่งในทางสถิติคือการแยก variance ออกเป็นส่วนที่อธิบายได้และ residual risk</p>
   </div>
 </section>
@@ -283,7 +369,7 @@ h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}=\frac{\langle\
 
 <section class="pitfall">
   <h4>กับดัก: correlation จาก calm market ไม่ใช่ insurance policy</h4>
-  <p>correlation เป็น estimate จากอดีตและเปลี่ยนได้ตอนที่คุณต้องการ hedge มากที่สุด spread, liquidity, และ composition ของ index ยังสร้าง basis risk แม้ sample correlation สูง ใช้ correlation เพื่อจัดอันดับ candidate และ size hedge แต่ต้อง stress test residual P&amp;L ด้วย scenario ที่ correlation เปลี่ยน ไม่ใช่สักเลข 0.88 ไว้บน dashboard แล้วอธิษฐาน</p>
+  <p>correlation เป็น estimate จากอดีตและเปลี่ยนได้ตอนที่คุณต้องการ hedge มากที่สุด spread, liquidity, และ composition ของ index ยังสร้าง basis risk แม้ sample correlation สูง ใช้ correlation เพื่อจัดอันดับ candidate และ size hedge แต่ต้อง stress test residual P&amp;L ด้วย scenario ที่ correlation เปลี่ยน ไม่ใช่สักเลข 0.896 ไว้บน dashboard แล้วอธิษฐาน</p>
 </section>
 
 <section class="table">
@@ -305,6 +391,7 @@ h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}=\frac{\langle\
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
     <li>inner product รวมการจับคู่ return รายวัน; หลัง standardize แล้วมันแปลงเป็น cosine และ correlation</li>
+    <li>หุ้นห้าวันในโจทย์เปิดเรื่องมี correlation 0.778 ซึ่งคือมุม 38.9 องศา และทำให้พอร์ต 60/40 แกว่ง 1.00% ต่อวันแทน 0.77% ถ้าตั้งฉาก การกระจายความเสี่ยงคือการหาของที่ตั้งฉากกับของที่มี</li>
     <li>มุมเล็กหมายถึง co-movement สูง จึงทำให้ short hedge candidate มีโอกาสชดเชย long book มากขึ้น</li>
     <li>hedge ratio แปลง sensitivity เป็น USD notional; ในตัวอย่าง short QQQ \$10.2M ต่อ basket \$12M</li>
     <li>correlation สูงช่วยเลือก hedge candidate แต่ไม่ลบ basis risk, liquidity risk, หรือ regime change</li>

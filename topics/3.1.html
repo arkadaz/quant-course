@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>เขียนคะแนนสามวิชาเป็นรายการ 70, 80, 90 แล้วส่งให้เครื่องคิดเลข การวางเป็นบรรทัดเดียวหรือสามบรรทัดเปลี่ยนคะแนนหรือเปลี่ยนแค่บทบาท?</p>
-  <p>เฉลย: ตัวเลขเดิมสามตัวไม่เปลี่ยน แต่รูปแถวรับการคูณคนละด้านกับรูปคอลัมน์; การต่อเครื่องจึงต้องดูขนาดก่อน</p>
+  <p>พอร์ต USD 25M ถือ AAPL 50%, JPM 30% และ short NVDA 20% วันนี้สามตัวขยับ +1.2%, −0.6%, +0.4% พอร์ตได้หรือเสียกี่ดอลลาร์ และถ้าโค้ดวางตัวเลขผิดด้านจะได้อะไรออกมา?</p>
+  <p>เฉลย: ได้ USD 85,000 หรือ 0.34% เมื่อวาง weights เป็นแถวนอนแล้วคูณกับ returns ที่เป็นคอลัมน์ ถ้าสลับด้านจะได้ตาราง 3×3 เก้าช่อง ไม่ใช่ P&amp;L ตัวเดียว</p>
   <p>Row vector และ column vector คือรายการตัวเลขแนวนอนหรือแนวตั้ง ตัวเลขไม่เปลี่ยนตัวตนเมื่อพลิก แต่เปลี่ยนมือที่จับมัน; งาน quant ใช้จัด input, weight และ output ของ allocation ให้คูณกันถูกด้าน</p>
 </div>
 
@@ -101,10 +101,10 @@
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.1a — One row of weights, one column of returns</h4>
-  <img src="../figures/3.1-1.svg" alt="Figure 3.1a — One row of weights, one column of returns" loading="lazy">
+  <h4>Figure 3.1a — Row times column, one contribution at a time</h4>
+  <img src="../figures/3.1-1.svg" alt="Figure 3.1a — Row times column, one contribution at a time" loading="lazy">
   <figcaption>
-    <p>แถวของ weights คูณ column ของ returns จึงได้ portfolio return เพียงค่าเดียว; ถ้า orientation ผิด ระบบอาจคืนตารางแทน P&amp;L แล้วพาความมั่นใจผิด ๆ เข้าประชุมเช้า.</p>
+    <p>แต่ละแท่งคือน้ำหนักคูณผลตอบแทนของสินทรัพย์หนึ่งตัว +0.60%, −0.18% และ −0.08% ต่อกันแบบขั้นบันได แล้วได้ผลตอบแทนพอร์ต +0.34% ซึ่งคือผลคูณแถวของน้ำหนักกับหลักของผลตอบแทนที่คำนวณไว้ในหน้านี้</p>
   </figcaption>
 </figure>
 
@@ -246,13 +246,13 @@ r_d\end{bmatrix} = \mathbf{w}_{\mathrm{row}}\mathbf{r}_{\mathrm{col}}
 \begin{aligned}
 \mathbf{w}_{\mathrm{row}}\mathbf{r}_{\mathrm{col}} &= \begin{bmatrix}0.50 & 0.30 & -0.20\end{bmatrix}\begin{bmatrix}0.012\\
 -0.006\\
-0.004\end{bmatrix} = [0.0034] \in \mathbb{R}^{1\times 1} \\
+0.004\end{bmatrix} = [0.0034]\quad(1\times 1) \\
 \mathbf{r}_{\mathrm{col}}\mathbf{w}_{\mathrm{row}} &= \begin{bmatrix}0.012\\
 -0.006\\
 0.004\end{bmatrix}\begin{bmatrix}0.50 & 0.30 & -0.20\end{bmatrix} \\
 &= \begin{bmatrix}0.0060 & 0.0036 & -0.0024\\
 -0.0030 & -0.0018 & 0.0012\\
-0.0020 & 0.0012 & -0.0008\end{bmatrix} \in \mathbb{R}^{3\times 3}
+0.0020 & 0.0012 & -0.0008\end{bmatrix}\quad(3\times 3)
 \end{aligned}
 \]</div>
   <div class="reading">

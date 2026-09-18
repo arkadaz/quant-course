@@ -1,4 +1,4 @@
-mu, sigma = 25.0, 661.0
+mu, sigma = 50.0, 1322.0
 N = np.linspace(1, 1500, 400)
 mu_N = mu*N
 sigma_N = sigma*np.sqrt(N)

@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>หาแอ่งต่ำในห้องมืด วิธีแรกคลำพื้นแล้วก้าวลงทีละน้อย; อีกวิธีส่องไฟดูความโค้งแล้วเดาตำแหน่งก้นแอ่ง วิธีหลังเร็วกว่าเสมอไหม?</p>
-  <p>เฉลย: ไม่เสมอ; ถ้าพื้นเกือบเป็นชาม การดูความโค้งพาไปก้นหลุมไกลได้; ถ้าพื้นขรุขระ การก้าวใหญ่ผิดทิศอาจตกหลุมอื่น</p>
+  <p>call บนกระดานราคา 10.45 ดอลลาร์ หุ้น 100 strike 100 อายุ 1 ปี ดอกเบี้ย 2% ต้องหา volatility ที่ทำให้สูตรราคาให้ 10.45 พอดี เริ่มเดาที่ 30% gradient descent กับ Newton ต้องเดินกี่ก้าว?</p>
+  <p>เฉลย: คำตอบคือ 23.92% ต่อปี gradient descent ที่ขนาดก้าว 0.0005 ต้องเดินราว 9 ก้าวจึงแม่น 6 หลัก เพราะแต่ละก้าวตัด error เหลือ 23.7% Newton ใช้ 2 ก้าว เพราะมันเลือกขนาดก้าวจากความโค้งเอง และถ้าเลือกขนาดก้าวใหญ่กว่า 0.00131 gradient descent จะระเบิดจน volatility ติดลบ</p>
   <p>gradient descent ใช้ทิศลงจาก gradient ส่วน Newton's method ใช้ Hessian เพิ่มข้อมูลความโค้งเพื่อเลือกก้าวและลด objective</p>
   <p>Newton ใช้แผนที่ท้องถิ่น จึงต้องมี line search, damping และหลายจุดเริ่มเพื่อลดการหลงทาง</p>
 </div>
@@ -94,7 +94,7 @@
 
 <section class="formula">
   <h4>ลองสองก้าวด้วยกำลังสองธรรมดา</h4>
-  <p>กำหนด $g(x)=x^2-4$ และ $f(x)=g(x)^2/2$ หาderivativeด้วย chain rule ได้ $g^{\prime}(x)=2x$ และ $f^{\prime}(x)=g(x)g^{\prime}(x)$</p>
+  <p>กำหนด $g(x)=x^2-4$ และ $f(x)=g(x)^2/2$ หา derivative ด้วย chain rule ได้ $g^{\prime}(x)=2x$ และ $f^{\prime}(x)=g(x)g^{\prime}(x)$</p>
   <div class="math">\[
 \begin{aligned}g(3)&=9-4=5,\qquad g^{\prime}(3)=6\\
 f^{\prime}(3)&=5(6)=30\\
@@ -113,16 +113,18 @@ x_{1,\mathrm{Newton}}&=3-5/6=2.1667\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 1 — ที่มาของ Newton's Step: จาก Taylor Expansion สู่ Quadratic Model</h4>
-  <p>เจ็ดบรรทัดนี้แสดงสะพานเชื่อมระหว่างการหาจุดต่ำสุดของ loss กำลังสองกับการหารากสมการราคา เมื่อตัดพจน์ derivative อันดับสองที่ไม่สำคัญออก Newton optimization จะยุบตัวลงกลายเป็น Newton-Raphson root finding โดยสมบูรณ์</p>
+  <p>บรรทัดเหล่านี้แสดงสะพานเชื่อมระหว่างการหาจุดต่ำสุดของ loss กำลังสองกับการหารากสมการราคา เมื่อตัดพจน์ derivative อันดับสองที่ไม่สำคัญออก Newton optimization จะยุบตัวลงกลายเป็น Newton-Raphson root finding โดยสมบูรณ์</p>
   <div class="math">\[
 \begin{aligned}
-f(x+p)&\approx m(p)=f(x)+\nabla f(x)^{\mathsf T}p+\frac{1}{2}p^{\mathsf T}H(x)p\\
-\nabla_p m(p)&=\nabla f(x)+H(x)p=0\\
-H(x)p&=-\nabla f(x)\quad\Longrightarrow\quad p=-H(x)^{-1}\nabla f(x)\\
-f(\sigma)&=\frac{1}{2}\left[C(\sigma)-C_{mkt}\right]^2\\
-f'(\sigma)&=\left(C(\sigma)-C_{mkt}\right)C'(\sigma)=g(\sigma)\mathcal{V}(\sigma)\\
-f''(\sigma)&=\left(C'(\sigma)\right)^2+\left(C(\sigma)-C_{mkt}\right)C''(\sigma)\approx\mathcal{V}(\sigma)^2\\
-\Delta\sigma&=-\frac{f'(\sigma)}{f''(\sigma)}\approx-\frac{g(\sigma)\mathcal{V}(\sigma)}{\mathcal{V}(\sigma)^2}=-\frac{C(\sigma)-C_{mkt}}{\mathcal{V}(\sigma)}
+f(x+p)&\approx m(p)\\
+m(p)&=f(x)+\nabla f(x)^{\mathsf T}p+\tfrac12p^{\mathsf T}H(x)p\\
+0&=\nabla_p m=\nabla f(x)+H(x)p\\
+p&=-H(x)^{-1}\nabla f(x)\\[4pt]
+g&=C(\sigma)-C_{mkt}\\
+f(\sigma)&=\tfrac12\,g^2\\
+f'(\sigma)&=g\,C'(\sigma)=g\,\mathcal V\\
+f''(\sigma)&=\mathcal V^2+g\,C''(\sigma)\approx\mathcal V^2\\
+\Delta\sigma&=-\frac{f'}{f''}\approx-\frac{g\,\mathcal V}{\mathcal V^2}=-\frac{g}{\mathcal V}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -158,12 +160,18 @@ C(\sigma)=S\Phi(d_1)-Ke^{-rT}\Phi(d_2),\quad d_1=\frac{\ln(S/K)+(r+\sigma^2/2)T}
   <h4>ขั้นที่ 4 — คำนวณที่จุดเริ่ม 30%</h4>
   <p>แทน spot 100, strike 100, อายุ 1 ปี, rate 2% และเดา volatility เริ่มต้นที่ 30% ลงในสูตรของขั้นก่อนหน้า ทีละบรรทัด</p>
   <div class="math">\[
-\begin{aligned}d_1&=\frac{\ln(100/100)+\left(0.02+\tfrac12(0.30)^2\right)(1)}{0.30\sqrt1}=\frac{0+0.065}{0.30}=0.216667\\
-d_2&=0.216667-0.30\sqrt1=-0.083333\\
-\Phi(d_1)&=0.585766,\qquad \Phi(d_2)=0.466793\\
+\begin{aligned}
+\ln(S/K)&=\ln1=0\\
+\tfrac12\sigma^2&=0.045\\
+d_1&=\frac{0+(0.02+0.045)(1)}{0.30}=\frac{0.065}{0.30}=0.216667\\
+d_2&=0.216667-0.30=-0.083333\\
+\Phi(d_1)&=0.585766\\
+\Phi(d_2)&=0.466793\\
 Ke^{-rT}&=100e^{-0.02}=98.019867\\
-C(\sigma_0)&=100(0.585766)-98.019867(0.466793)=58.5766-45.7550=12.821581\\
-g(\sigma_0)&=12.821581-10.45=2.371581\end{aligned}
+C(\sigma_0)&=100(0.585766)-98.019867(0.466793)\\
+&=58.5766-45.7550=12.821581\\
+g(\sigma_0)&=12.821581-10.45=2.371581
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$\ln(100/100)=0$ เพราะ spot เท่ากับ strike พอดี เหลือแค่ $0.02+0.045=0.065$ ส่วนด้วย $0.30$</p>
@@ -176,9 +184,13 @@ g(\sigma_0)&=12.821581-10.45=2.371581\end{aligned}
   <h4>ขั้นที่ 5 — หา vega และ gradient</h4>
   <p>vega คือความไวของราคาต่อ volatility และเป็นตัวหารของ Newton ในขั้นถัดไป</p>
   <div class="math">\[
-\begin{aligned}\phi(0.216667)&=\frac{e^{-0.216667^2/2}}{\sqrt{2\pi}}=\frac{e^{-0.023472}}{2.506628}=\frac{0.976802}{2.506628}=0.389687\\
+\begin{aligned}
+\phi(d_1)&=\frac{e^{-0.216667^2/2}}{\sqrt{2\pi}}=\frac{e^{-0.023472}}{2.506628}\\
+&=\frac{0.976802}{2.506628}=0.389687\\
 \mathcal V_0&=S\,\phi(d_1)\sqrt T=100(0.389687)=38.9687\\
-f'(\sigma_0)&=g(\sigma_0)\,\mathcal V_0=2.371581(38.9687)=92.4174\end{aligned}
+f'(\sigma_0)&=g(\sigma_0)\,\mathcal V_0=2.371581(38.9687)\\
+&=92.4174
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$\phi$ คือความสูงของ standard normal ที่จุด $d_1$ ไม่ใช่พื้นที่ใต้กราฟ ดังนั้นจึงไม่ใช่ $\Phi$ ตัวใหญ่</p>
@@ -205,31 +217,120 @@ f'(\sigma_0)&=g(\sigma_0)\,\mathcal V_0=2.371581(38.9687)=92.4174\end{aligned}
 \]</div>
   <div class="reading">
     <p>ก้าวเดียวของ Newton ขยับลงมา 6.1 percentage points ซึ่งไกลกว่า gradient descent และเข้าใกล้คำตอบจริงทันที เพราะตัวหารคือความชันจริง ไม่ใช่ค่าที่เราเดา</p>
-    <p>ที่มาของเศษหาร: รอบค่า $x$ ประมาณ $g(x+\Delta)\approx g(x)+g^{\prime}(x)\Delta$ ต้องการให้ด้านขวาเป็นศูนย์ จึงได้ $g^{\prime}(x)\Delta=-g(x)$ ส่วนด้วยderivativeที่ไม่เป็นศูนย์ได้ $\Delta=-g(x)/g^{\prime}(x)$ นี่เป็น Newton สำหรับหาราก; Newton สำหรับลด loss โดยตรงจะใช้ $-f^{\prime}/f^{\prime\prime}$ ซึ่งไม่ใช่สูตรเดียวกันเสมอ</p>
+    <p>ที่มาของเศษหาร: รอบค่า $x$ ประมาณ $g(x+\Delta)\approx g(x)+g^{\prime}(x)\Delta$ ต้องการให้ด้านขวาเป็นศูนย์ จึงได้ $g^{\prime}(x)\Delta=-g(x)$ ส่วนด้วย derivative ที่ไม่เป็นศูนย์ได้ $\Delta=-g(x)/g^{\prime}(x)$ นี่เป็น Newton สำหรับหาราก; Newton สำหรับลด loss โดยตรงจะใช้ $-f^{\prime}/f^{\prime\prime}$ ซึ่งไม่ใช่สูตรเดียวกันเสมอ</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>gradient descent ครบ 5 รอบ (η = 0.0005)</h4>
+  <table>
+    <thead><tr><th>k</th><th>σₖ</th><th>C(σₖ)</th><th>ส่วนต่าง</th><th>f′(σₖ)</th><th>σₖ₊₁</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>0.300000</td><td>12.821581</td><td>+2.371581</td><td>+92.4175</td><td>0.253791</td></tr>
+      <tr><td>1</td><td>0.253791</td><td>11.018652</td><td>+0.568652</td><td>+22.2110</td><td>0.242686</td></tr>
+      <tr><td>2</td><td>0.242686</td><td>10.584792</td><td>+0.134792</td><td>+5.2670</td><td>0.240052</td></tr>
+      <tr><td>3</td><td>0.240052</td><td>10.481886</td><td>+0.031886</td><td>+1.2460</td><td>0.239429</td></tr>
+      <tr><td>4</td><td>0.239429</td><td>10.457539</td><td>+0.007539</td><td>+0.2946</td><td>0.239282</td></tr>
+      <tr><td>5</td><td>0.239282</td><td>10.451783</td><td>+0.001783</td><td>+0.0697</td><td>0.239247</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>อ่านแถว k = 1: ใส่ 0.253791 กลับเข้าสูตรราคาได้ 11.018652 ยังแพงไป 0.568652 คูณ vega 39.0591 ได้ความชัน 22.2110 คูณ 0.0005 ได้ก้าว −0.011106 จึงไปที่ 0.242686 vega แทบไม่เปลี่ยนตลอดทาง (38.97 → 39.08) เพราะ option ตัวนี้ strike เท่ากับราคาหุ้น vega จึงแบนรอบยอด ค่า loss f ลดจาก 2.812 เหลือ 0.000002</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 8 — Iteration table ที่ตรวจย้อนกลับได้</h4>
+  <h4>ขั้นที่ 8 — error หดเหลือ 23.7% ทุกรอบ และทำนายได้ล่วงหน้า</h4>
+  <p>คำตอบจริงคือ σ⋆ = 0.239236 ลบออกจากแต่ละแถวของตาราง แล้วดูอัตราส่วนของ error รอบต่อรอบ</p>
+  <div class="math">\[
+\begin{aligned}
+e_0&=0.300000-0.239236=0.060764\\
+e_1&=0.014555,\qquad e_1/e_0=0.2395\\
+e_2&=0.003450,\qquad e_2/e_1=0.2370\\
+e_3&=0.000816,\qquad e_3/e_2=0.2366\\[4pt]
+f''&\approx\mathcal V^2=39.0789^2=1527.16\\
+1-\eta f''&=1-0.0005(1527.16)=0.2364
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทุกรอบตัด error เหลือราว 23.7% ตัวเลขนี้ไม่บังเอิญ ใกล้คำตอบ gradient descent หด error ด้วยตัวประกอบ 1 − ηf″ และ f″ ของ loss นี้ประมาณ vega² ตามขั้นที่ 1 ได้ 0.2364 ตรงกับตาราง</p>
+    <p>แบบนี้เรียกว่า linear convergence ได้ความแม่นเพิ่มคงที่ต่อรอบ ราว 0.63 หลักทศนิยม จะเอาแม่น 6 หลักต้องเดินราว 9 รอบ แม่น 10 หลักราว 16 รอบ</p>
+    <p>η = 0.0005 ดูเล็กเพราะความชันใหญ่ถึง 92 ขณะที่ระยะที่ต้องเดินมีแค่ 0.06 ขนาดของ η จึงไม่มีความหมายในตัวเอง มันขึ้นกับหน่วยของ function ถ้าเปลี่ยนราคาเป็นเซนต์ η ที่ถูกต้องจะเปลี่ยนไป 10,000 เท่า</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — Newton คือ gradient descent ที่เลือก η เองจากความโค้ง</h4>
+  <p>วางก้าวของสองวิธีเทียบกัน แล้วหาว่า η เท่าไรทำให้สองก้าวเท่ากัน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{GD step}&=-\eta\,(g\,\mathcal V)\\
+\text{Newton step}&=-\frac{g}{\mathcal V}\\
+\eta\,\mathcal V&=\frac{1}{\mathcal V}\ \Rightarrow\ \eta=\frac{1}{\mathcal V^2}\\[4pt]
+\frac{1}{38.9687^2}&=\frac{1}{1518.56}=0.00065852\\
+0.00065852(92.4175)&=0.060859
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>η = 1/vega² ให้ก้าวยาว 0.060859 เท่ากับก้าวของ Newton พอดี η ที่เราเดาไว้ 0.0005 เล็กกว่าค่าที่เหมาะ 24% จึงเดินสั้นไปทุกก้าว Newton ก้าวเดียวไปถึง 0.239141 แม่นกว่า gradient descent ที่เดินไป 4 ก้าวเสียอีก</p>
+    <p>ประโยคที่ควรจำจากทั้งหัวข้อ: Newton คือ gradient descent ที่ให้ความโค้งเป็นคนเลือก learning rate ไม่ต้องเดา ไม่ต้องจูน และปรับใหม่ทุกก้าว</p>
+    <p>ราคาที่จ่ายคือต้องคำนวณ derivative อันดับสอง ที่นี่คือ vega ตัวเดียว แต่ถ้ามีตัวแปร 500 ตัว Hessian มี 250,000 ช่องและต้องแก้ระบบทุกรอบ นี่คือเหตุผลที่ machine learning ใช้ gradient descent</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — Newton สามรอบ: หลักที่ถูกเพิ่มเป็นเท่าตัว</h4>
   <p>วางผลของทุกก้าวไว้ในตารางเดียว จะเห็นทันทีว่าวิธีไหนเข้าเป้าเร็วกว่า และตรวจย้อนทีละบรรทัดได้</p>
   <div class="math">\[
-\begin{array}{c|ccc}k&amp;0&amp;1&amp;2\\
-\hline\sigma_k&amp;0.300000&amp;0.239141&amp;0.239236\\
-C(\sigma_k)&amp;12.821581&amp;10.4463&amp;10.4500\end{array}
+\begin{aligned}
+\sigma_1&=0.30-\frac{2.371581}{38.9687}=0.2391414\\
+C(\sigma_1)&=10.446291,\qquad g=-0.003709\\
+\sigma_2&=0.2391414-\frac{-0.003709}{39.0790}=0.2392363\\
+C(\sigma_2)&=10.450000\\[4pt]
+e_0&=6.1\times10^{-2}\ \ (1\ \text{digit})\\
+e_1&=9.5\times10^{-5}\ \ (4\ \text{digits})\\
+e_2&=1.4\times10^{-10}\ \ (9\ \text{digits})
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>เริ่มจาก 30% แล้ว Newton method ขยับสู่ประมาณ 23.9141% และ 23.9236%; back-substitution ทำให้ model call price กลับมา USD 10.45 ต่อหุ้น</p>
+    <p>เริ่มจาก 30% Newton ขยับไป 23.9141% แล้ว 23.9236% แทนกลับได้ราคา 10.45 ดอลลาร์ตรงกับตลาด หลักที่ถูกเพิ่มจาก 1 เป็น 4 เป็น 9 เรียกว่า quadratic convergence เพราะ Newton ประมาณ function ด้วยเส้นสัมผัส error ที่เหลือมาจากพจน์อันดับสองของ Taylor จึงเป็นกำลังสองของ error เดิม</p>
+    <p>เทียบจำนวนรอบเพื่อแม่น 6 หลัก gradient descent ที่ η = 0.0005 ต้องราว 9 รอบ Newton 2 รอบ พอ Newton เริ่มเกาะได้แล้วมันจบใน 2 ถึง 3 รอบเสมอ นี่คือเหตุผลที่เครื่องคิดราคา option ใช้วิธีนี้หลายล้านครั้งต่อวินาที</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 9 — Guardrails ก่อนเชื่อคำตอบ</h4>
-  <p>ก่อนเชื่อคำตอบ ต้องเช็กว่าราคาตลาดอยู่ในกรอบที่ไม่มี arbitrage ถ้าหลุดกรอบนี้ implied volatility จะไม่มีคำตอบจริงเลย</p>
+  <h4>ขั้นที่ 11 — learning rate ใหญ่เกินไป: แกว่ง แล้วระเบิด</h4>
+  <p>ใกล้ก้นหุบ error หดด้วย |1 − ηf″| ต้องให้ค่านี้น้อยกว่า 1 จึงได้เพดาน แล้วลองสองค่า เรียกเส้นทางที่ η = 0.0013 ว่า a และที่ η = 0.002 ว่า b ความชันที่ b₁ คือ −188.196 และที่ b₂ คือ 374.407</p>
   <div class="math">\[
-\max(S-Ke^{-rT},0)=100-98.019867=1.980133\qquad\Longrightarrow\qquad 1.980133\le 10.45 \lt 100
+\begin{aligned}
+&|1-\eta f''|\lt1\ \Rightarrow\ 0\lt\eta f''\lt2\\
+\eta_{\max}&=\frac{2}{f''}=\frac{2}{1527.16}=0.001310\\[4pt]
+a&:\ 0.300,\ 0.180,\ 0.298,\ 0.182,\ 0.296\\[4pt]
+b_1&=0.30-0.002(92.418)=0.115165\\
+b_2&=0.115165+0.002(188.196)=0.491557\\
+b_3&=0.491557-0.002(374.407)=-0.257256
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ขอบล่างคือมูลค่าที่ได้แน่ ๆ ถ้าใช้สิทธิ์ตอนหมดอายุ ขอบบนคือราคาหุ้นเอง เพราะสิทธิ์ซื้อหุ้นจะแพงกว่าหุ้นไม่ได้ ราคาตลาด 10.45 อยู่ระหว่างกลาง จึงมีคำตอบแน่นอน</p>
+    <p>η = 0.0013 ต่ำกว่าเพดานนิดเดียว กระโดดข้ามคำตอบทุกครั้งและบีบเข้าช้ามาก η = 0.002 เกินเพดาน กระโดดแรงขึ้นทุกรอบ ภายในสามรอบ σ ติดลบ σ√T ติดลบแล้ว d₁ ไร้ความหมาย โปรแกรมพังหรือคืนค่าขยะ</p>
+    <p>สรุปตาม η: ต่ำกว่า 0.000659 เดินสั้นไป ปลอดภัยแต่ช้า เท่ากับ 0.000659 คือ Newton เร็วที่สุด ระหว่าง 0.000659 กับ 0.00131 ยิงเลยแล้วเด้งกลับแต่ยังลู่เข้า เกิน 0.00131 ระเบิด งานจริงไม่รู้ f″ ล่วงหน้า จึงใช้ line search หรือ learning rate ที่ปรับเองอย่าง Adam ซึ่งก็คือการประมาณ f″ แบบถูก ๆ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — Guardrails ก่อนเชื่อคำตอบ</h4>
+  <p>ก่อนเชื่อคำตอบ ต้องเช็กว่าราคาตลาดอยู่ในกรอบที่ไม่มี arbitrage ถ้าหลุดกรอบนี้ implied volatility จะไม่มีคำตอบจริงเลย</p>
+  <div class="math">\[
+\begin{aligned}
+\sigma\to0&:\ C\to\max(S-Ke^{-rT},0)=100-98.019867=1.980133\\
+\sigma\to\infty&:\ C\to S=100\\
+\mathcal V&=S\,\phi(d_1)\sqrt T>0\ \ \text{for every}\ \sigma\\[4pt]
+1.980133&\le10.45\lt100
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ขอบล่างคือมูลค่าที่ได้แน่ ๆ ถ้าใช้สิทธิ์ตอนหมดอายุ ขอบบนคือราคาหุ้นเอง เพราะสิทธิ์ซื้อหุ้นจะแพงกว่าหุ้นไม่ได้ vega เป็นบวกเสมอ ราคาจึงเพิ่มตาม σ ตลอด ตัดเส้น 10.45 ได้ครั้งเดียว loss มีก้นหุบเดียว เริ่มที่ไหนถ้าลู่เข้าก็ได้คำตอบเดียวกัน</p>
+    <p>ถ้าราคาตลาดต่ำกว่า 1.9801 จะไม่มี σ ใดในโลกที่ให้ราคานั้น โปรแกรมต้องตอบว่าราคาผิด ไม่ใช่วนหาไปเรื่อย ๆ</p>
   </div>
 </section>
 
@@ -277,12 +378,41 @@ C(\sigma_k)&amp;12.821581&amp;10.4463&amp;10.4500\end{array}
   <h4>คำตอบ — implied volatility อยู่ที่ 23.9236%</h4>
   <p>คำตอบ: Newton เริ่มจาก volatility 30% กระโดดไป 23.9141% และรอบถัดไปปิดที่ประมาณ 23.9236% ซึ่งให้ option price 10.4500 USD ต่อหุ้นตรงกับ quote</p>
   <p>ตรวจเองใน 10 วินาที: ก้าวแรกต้องเป็น 0.30 - 2.371581/38.9687 = 0.239141 แล้วแทน 0.239236 กลับใน price function ต้องได้ประมาณ 10.45 USD อยู่ใน bounds 1.980133 ถึง 100</p>
-  <p>ใช้ตัดสินใจ: รับ implied volatility เมื่อ back-substitution ผ่าน tolerance และบันทึก iteration count; ถ้า vega เล็กหรือ Newton หลุด bracket ให้เปลี่ยนเป็น bisection หรือ Brent method</p>
+  <p>gradient descent ที่ η = 0.0005 เดิน 0.300 → 0.2538 → 0.2427 → 0.2401 → 0.2394 → 0.2393 หด error ×0.2366 ทุกรอบ ใช้ราว 9 รอบ Newton ใช้ 2 รอบเพราะมันคือ gradient descent ที่ η = 1/vega² = 0.000659 และถ้า η เกิน 0.00131 ระเบิด</p>
+  <p>แปลว่าอะไร: นี่คือ algorithm เบื้องหลังทุกหน้าจอที่แสดง implied volatility ราคาเข้าไป 23.92% ออกมาในไมโครวินาที และเพราะทุกโต๊ะซื้อขายความผันผวน ไม่ใช่ราคา ความเร็วกับความเสถียรจึงเป็นเรื่องเป็นตาย Newton เร็วแต่ไม่รับประกันว่าลู่เข้า ระบบจริงใช้ Brent's method ที่ผสม bisection กับ Newton พร้อมล็อก σ ไว้ระหว่าง 0.001 ถึง 5.0 ยอมช้าลงนิดแลกกับการไม่มีวันพัง</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ implied volatility ทั้งสองวิธี</summary>
+    <pre><code>import math
+from scipy.stats import norm
+from scipy.optimize import brentq
+def C(s):
+    d1=(0.02+s*s/2)/s; return 100*norm.cdf(d1)-100*math.exp(-0.02)*norm.cdf(d1-s)
+vega=lambda s: 100*norm.pdf((0.02+s*s/2)/s)
+root=brentq(lambda s: C(s)-10.45,0.01,3)
+assert abs(C(0.30)-12.821581)&lt;1e-6 and abs(vega(0.30)-38.9687)&lt;1e-4 and abs(root-0.2392363)&lt;1e-7
+s=0.3; path=[s]
+for _ in range(5): s-=0.0005*(C(s)-10.45)*vega(s); path.append(s)
+assert abs(path[1]-0.253791)&lt;1e-6 and abs(path[5]-0.239282)&lt;1e-6
+assert abs((path[4]-root)/(path[3]-root)-0.2366)&lt;1e-3
+s=0.3
+for _ in range(2): s-=(C(s)-10.45)/vega(s)
+assert abs(s-root)&lt;1e-9
+s=0.3
+for _ in range(3): s-=0.002*(C(s)-10.45)*vega(s)
+assert abs(s+0.257256)&lt;1e-5</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนี้ตรวจราคาและ vega ที่ 30% คำตอบ 0.2392363 เส้นทาง gradient descent ห้ารอบและอัตราหด 0.2366 Newton สองรอบที่ถึงคำตอบแม่นเก้าหลัก และกรณี η = 0.002 ที่ σ ติดลบ −0.257</p>
+  </div>
 </section>
 
 <section class="pitfall">
   <h4>กับดัก: ปล่อย Newton หารด้วย vega ใกล้ศูนย์</h4>
   <p>deep in-the-money หรือ out-of-the-money functions อาจมี vega เล็ก ทำให้ correction ใหญ่มากและ volatility ติดลบ ใช้ bounds, damping และ bracketed fallback เสมอ อีกทั้ง quote stale หรืออยู่นอก arbitrage bounds คือปัญหาข้อมูล ไม่ใช่เหตุให้เพิ่มจำนวน iterations</p>
+  <p>อย่าเอา η ที่ใช้ได้ในโจทย์หนึ่งไปใช้กับอีกโจทย์ η = 0.0005 มาจาก f″ ≈ 1527 ถ้าดัชนีเปลี่ยนจาก 100 จุดเป็น 1,000 จุด vega โตสิบเท่า f″ โตร้อยเท่า η เดิมเกินเพดานทันที อีกข้อคืออย่าหยุดเมื่อก้าวเล็กกว่า tolerance อย่างเดียว gradient descent ที่ η เล็กเกินไปก้าวสั้นตลอดแม้ยังไกลคำตอบ ให้ตรวจส่วนต่างราคาด้วย เช่น |C(σ) − 10.45| น้อยกว่า 0.0001</p>
 </section>
 
 <section class="table">
@@ -307,6 +437,7 @@ C(\sigma_k)&amp;12.821581&amp;10.4463&amp;10.4500\end{array}
     <li>gradient descent ต้องเลือก learning rate ส่วน Newton ใช้ local derivative เพื่อกำหนดก้าว</li>
     <li>ตัวอย่างลู่จาก 30% ไปประมาณ 23.9236% และต้องตรวจด้วย back-substitution</li>
     <li>production solver ต้องมี bracket, damping, price checks และ fallback เมื่อ vega เล็ก</li>
+    <li>gradient descent หด error ด้วย 1 − ηf″ (ที่นี่ 0.2366 ต่อรอบ ราว 9 รอบ) Newton คือ η = 1/f″ (2 รอบ) และ η เกิน 2/f″ = 0.00131 ระเบิด</li>
   </ul>
 </section>
 </article>

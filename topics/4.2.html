@@ -23,10 +23,9 @@
 </header>
 
 <div class="hook">
-  <p>ตารางที่นั่งมีแถวเป็นชื่อนักเรียนและคอลัมน์เป็นวิชา ถ้าอยากถามว่า “วิชานี้มีใครบ้าง” ต้องหมุนมุมมองอย่างไรโดยไม่เปลี่ยนชื่อหรือคะแนน?</p>
-  <p>เฉลย: ค่าทุกตัวยังเดิม แต่ช่องแถว 2 คอลัมน์ 3 ย้ายไปแถว 3 คอลัมน์ 2</p>
-  <p>transpose คือการสลับแถวกับคอลัมน์ของ matrix ใช้เปลี่ยนบทบาท input กับ output หรือจัด vector ให้วางด้านที่คูณได้</p>
-  <p>transpose ไม่ได้สับไพ่ มันแค่หันสมุด 90 องศา งานจริงใช้มันเขียน quadratic form และตรวจทิศทางของข้อมูลใน regression หรือ optimization</p>
+  <p>ตาราง payoff มี 2 แถวคือสองสภาวะตลาด และ 3 คอลัมน์คือสามสินทรัพย์: แถวแรก 2, 3, 7 แถวสอง 1, 6, 5 ระบบ risk ต้องการตารางแบบแถวเป็นสินทรัพย์ เลข 7 ต้องย้ายไปอยู่ช่องไหน และมีเลขตัวไหนเปลี่ยนค่าไหม?</p>
+  <p>เฉลย: เลข 7 ย้ายจากแถว 1 คอลัมน์ 3 ไปแถว 3 คอลัมน์ 1 ตารางใหม่มี 3 แถว 2 คอลัมน์ คือ (2, 1), (3, 6), (7, 5) ไม่มีเลขตัวไหนเปลี่ยนค่า มีแต่ที่อยู่เปลี่ยน</p>
+  <p>transpose คือการสลับแถวกับคอลัมน์ของ matrix ใช้จัด vector ให้วางด้านที่คูณได้ งานจริงใช้มันเขียนความเสี่ยงพอร์ตเป็น quadratic form และตรวจทิศทางของข้อมูลใน regression หรือ optimization</p>
 </div>
 
 <details class="jargon" open>
@@ -75,7 +74,7 @@
   <h4>ความเป็นมา: กำเนิด transpose จากการสลับดัชนีสู่ quadratic form</h4>
   <p>Arthur Cayley เป็นผู้นิยาม transpose อย่างเป็นทางการในบทความปี 1858 เรื่องทฤษฎี matrix ก่อนหน้านั้น นักคณิตศาสตร์รุ่นก่อนหน้าอย่าง Joseph-Louis Lagrange และ Carl Friedrich Gauss ต้องศึกษา quadratic form โดยเขียนเครื่องหมายผลรวมสองชั้นยาวเหยียด และต้องคอยสลับดัชนี $i, j$ ด้วยมือทุกครั้งที่ต้องการวิเคราะห์สมมาตร</p>
   <p>Cayley มองเห็นว่าการสลับแถวเป็นคอลัมน์คือการแปลงเชิงพีชคณิตที่เป็นเอกเทศ การใส่สัญลักษณ์ transpose ทำให้เกิดกฎความสัมพันธ์สำคัญอย่าง $(AB)^{\mathsf T} = B^{\mathsf T}A^{\mathsf T}$ ซึ่งช่วยให้การคำนวณในระบบหลายมิติง่ายขึ้นอย่างมหาศาล</p>
-  <p>ในโลกการเงินเชิงปริมาณ Harry Markowitz ในปี 1952 ได้นำ transpose มาใช้นิยาม portfolio variance ในรูป $w^{\mathsf T}\Sigma w$ หากไม่มี transpose เราจะไม่สามารถเชื่อม vector น้ำหนักพอร์ตเข้ากับ covariance matrix เพื่อยุบตัวเลขความเสี่ยงออกมาเป็นscalarค่าเดียวได้เลย</p>
+  <p>ในโลกการเงินเชิงปริมาณ Harry Markowitz ในปี 1952 ได้นำ transpose มาใช้นิยาม portfolio variance ในรูป $w^{\mathsf T}\Sigma w$ หากไม่มี transpose เราจะไม่สามารถเชื่อม vector น้ำหนักพอร์ตเข้ากับ covariance matrix เพื่อยุบตัวเลขความเสี่ยงออกมาเป็น scalar ค่าเดียวได้เลย</p>
 </section>
 
 <section class="prose">
@@ -118,11 +117,11 @@ A=\begin{bmatrix}1.2&amp;0.4\\
   <div class="math">\[
 \begin{aligned}A&=\begin{bmatrix}1.2&amp;0.4\\
 0.9&amp;0.2\\
-1.5&amp;0.7\end{bmatrix}\in\mathbb{R}^{3\times2}\qquad(m=3,\ n=2)\\[4pt]
+1.5&amp;0.7\end{bmatrix}\quad(3\times2:\ m=3,\ n=2)\\[4pt]
 (A^{\mathsf T})_{ij}&=a_{ji}\qquad\text{(the two indices trade places)}\\[4pt]
 \text{rows of }A^{\mathsf T}&:\ i=1,\dots,n=2\qquad\text{columns: }j=1,\dots,m=3\\[4pt]
-\therefore\quad A^{\mathsf T}&=\begin{bmatrix}1.2&amp;0.9&amp;1.5\\
-0.4&amp;0.2&amp;0.7\end{bmatrix}\in\mathbb{R}^{2\times3}\end{aligned}
+\Longrightarrow\quad A^{\mathsf T}&=\begin{bmatrix}1.2&amp;0.9&amp;1.5\\
+0.4&amp;0.2&amp;0.7\end{bmatrix}\quad(2\times3)\end{aligned}
 \]</div>
   <div class="reading">
     <p>$A$ มี $3$ rows และ $2$ columns ช่อง $(i,j)$ ของ $A^{\mathsf T}$ คือ $a_{ji}$ แปลว่า index แรกของ $A^{\mathsf T}$ วิ่งตาม index ที่สองของ $A$ ซึ่งมีอยู่ $2$ ค่า</p>
@@ -135,9 +134,9 @@ A=\begin{bmatrix}1.2&amp;0.4\\
   <h4>ขั้นที่ 4 — shape เปลี่ยนอย่างไร</h4>
   <p>ขั้นที่ 3 ตรวจกับตารางขนาด 3 คูณ 2 จริง ขั้นนี้เขียนกรณีทั่วไปด้วยตัวอักษร เพื่อให้เห็นว่าผลไม่ได้ขึ้นกับตัวเลขของตัวอย่าง</p>
   <div class="math">\[
-\begin{aligned}A&\in\mathbb{R}^{m\times n}\ \Rightarrow\ a_{ij}\ \text{exists for }i\le m,\ j\le n\\[4pt]
+\begin{aligned}A:\ m\times n\ &\Rightarrow\ a_{ij}\ \text{exists for }i\le m,\ j\le n\\[4pt]
 (A^{\mathsf T})_{ij}&=a_{ji}\ \Rightarrow\ i\le n,\ j\le m\\[4pt]
-\therefore\quad A^{\mathsf T}&\in\mathbb{R}^{n\times m}\end{aligned}
+\Longrightarrow\quad A^{\mathsf T}&:\ n\times m\end{aligned}
 \]</div>
   <div class="reading">
     <p>แถวแรกบอกว่า index ของ $A$ มีอยู่เท่าไร: ตัวแรกวิ่งถึง $m$ ตัวที่สองวิ่งถึง $n$ นี่คือความหมายของคำว่ารูปร่าง ไม่ใช่ข้อมูลเพิ่ม</p>
@@ -195,7 +194,24 @@ u_iv_i&=v_iu_i\\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 8 — การสร้าง quadratic form และ portfolio variance</h4>
+  <h4>ขั้นที่ 8 — ตรวจกฎสลับลำดับด้วยตาราง payoff จากโจทย์เปิดเรื่อง</h4>
+  <p>ตาราง payoff S จากโจทย์เปิดเรื่องมี 2 สภาวะ × 3 สินทรัพย์ ถือสินทรัพย์ 2, 6, 4 หน่วย คูณแถวกับคอลัมน์แบบหัวข้อ 3.1 ได้เงินของแต่ละสภาวะ แล้วลองกฎของขั้นที่ 7 ด้วยตัวเลขจริง</p>
+  <div class="math">\[
+\begin{aligned}
+S&=\begin{bmatrix}2 & 3 & 7\\ 1 & 6 & 5\end{bmatrix},\qquad S^{\mathsf T}=\begin{bmatrix}2 & 1\\ 3 & 6\\ 7 & 5\end{bmatrix},\qquad \theta=\begin{bmatrix}2\\ 6\\ 4\end{bmatrix},\qquad \theta^{\mathsf T}=\begin{bmatrix}2 & 6 & 4\end{bmatrix}\\[4pt]
+S\theta&=\begin{bmatrix}2(2)+3(6)+7(4)\\ 1(2)+6(6)+5(4)\end{bmatrix}=\begin{bmatrix}50\\ 58\end{bmatrix}\\[4pt]
+\theta^{\mathsf T}S^{\mathsf T}&=\begin{bmatrix}2(2)+6(3)+4(7) & 2(1)+6(6)+4(5)\end{bmatrix}=\begin{bmatrix}50 & 58\end{bmatrix}=(S\theta)^{\mathsf T}\\[4pt]
+S^{\mathsf T}\theta^{\mathsf T}&:\quad(3\times2)(1\times3),\qquad 2\ne1
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>Sθ คือเงินที่พอร์ตได้ในสองสภาวะ 50 กับ 58 หัวข้อ 4.3 จะไล่ทีละช่อง ตรงนี้ใช้แค่ตรวจกฎ: พลิกผลลัพธ์ต้องเท่ากับ θᵀ คูณ Sᵀ ซึ่งสลับลำดับแล้ว และได้ 50 กับ 58 เท่าเดิมจริง</p>
+    <p>บรรทัดล่างคือสิ่งที่เกิดถ้าพลิกแต่ไม่สลับลำดับ ตาราง 3 × 2 คูณแถว 1 × 3 มิติตรงกลางเป็น 2 กับ 1 คูณไม่ได้เลย กฎสลับลำดับจึงไม่ใช่ท่าจำ แต่เป็นทางเดียวที่มิติลงตัว ในโค้ดจริง numpy มักเก็บผลตอบแทนเป็นวัน × หุ้น แต่สูตรในตำราเขียนหุ้น × วัน ลืม .T ครั้งเดียว ตัวเลขความเสี่ยงเพี้ยนทั้งรายงาน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — การสร้าง quadratic form และ portfolio variance</h4>
   <p>นี่คือการประยุกต์ใช้ transpose ที่สำคัญที่สุดในทฤษฎีพอร์ต โดย $\Sigma$ คือ covariance matrix ขนาด $d\times d$ และ $w$ คือ vector สัดส่วนลงทุนขนาด $d\times 1$</p>
   <p>เงื่อนไขบังคับคือมิติทางพีชคณิตต้องประสานกัน: $w^{\mathsf T}$ ขนาด $1\times d$ คูณกับ $\Sigma$ ขนาด $d\times d$ แล้วคูณกับ $w$ ขนาด $d\times 1$ จึงจะได้ขนาด $1\times 1$ หากไม่ transpose ตัวหน้า การคูณระหว่าง $d\times 1$ กับ $d\times d$ จะผิดกฎมิติและทำงานไม่ได้ทันที</p>
   <div class="math">\[
@@ -213,13 +229,14 @@ u_iv_i&=v_iu_i\\
 \]</div>
   <div class="reading">
     <p>สูตรนี้เริ่มต้นจากนิยามพื้นฐานของ variance ที่เป็นผลรวมสองชั้นของ covariance ถ่วงน้ำหนักด้วยสัดส่วนการลงทุน การจะเขียนให้อยู่ในรูป matrix จำเป็นต้องแยก vector น้ำหนักออกมาทางซ้ายและขวา</p>
-    <p>vector $w$ ทางขวามือถูกคูณเข้ากับ $\Sigma$ ได้ผลลัพธ์เป็น vector ขนาด $d\times 1$ ซึ่งบอกความเสี่ยงส่วนเพิ่มของแต่ละสินทรัพย์ จากนั้นการคูณด้วย $w^{\mathsf T}$ จากทางซ้ายจะยุบผลลัพธ์ทั้งหมดให้กลายเป็นscalarตัวเดียว</p>
+    <p>vector $w$ ทางขวามือถูกคูณเข้ากับ $\Sigma$ ได้ผลลัพธ์เป็น vector ขนาด $d\times 1$ ซึ่งบอกความเสี่ยงส่วนเพิ่มของแต่ละสินทรัพย์ จากนั้นการคูณด้วย $w^{\mathsf T}$ จากทางซ้ายจะยุบผลลัพธ์ทั้งหมดให้กลายเป็น scalar ตัวเดียว</p>
     <p>เมื่อแทนตัวเลขจริงจากตลาดสองสินทรัพย์ เราจะเห็นผลลัพธ์ที่เป็นตัวเลขชัดเจน ความเสี่ยงรวมของพอร์ตคือ 0.089168 ซึ่งต่ำกว่าการถือครองสินทรัพย์เดี่ยวเพราะมีผลกระจายความเสี่ยงจาก covariance ที่ติดลบ</p>
+    <p>สังเกตว่า Σ ในบรรทัดนี้สมมาตร ช่องแถว 1 คอลัมน์ 2 กับช่องแถว 2 คอลัมน์ 1 เป็น −0.0559 เท่ากัน พลิกแล้วได้ตัวเดิม Σᵀ = Σ เพราะ covariance ของ A กับ B เท่ากับของ B กับ A เสมอ นี่คือเครื่องตรวจฟรีที่พูดถึงตอนต้นหัวข้อ</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 9 — ตรวจด้วยเลขของตัวเอง: transpose สองครั้ง และ quadratic form</h4>
+  <h4>ขั้นที่ 10 — ตรวจด้วยเลขของตัวเอง: transpose สองครั้ง และ quadratic form</h4>
   <p>สองข้อที่ทั้งเล่มใช้ต่อจากนี้ ตรวจได้ด้วยเลขชุดเดียว ข้อแรก transpose สองครั้งแล้วกลับมาที่เดิม ข้อที่สอง quadratic form ให้ผลเป็นเลขตัวเดียว ไม่ใช่ matrix</p>
   <div class="math">\[
 \begin{aligned}B&=\begin{bmatrix}2&amp;1\\
@@ -236,7 +253,8 @@ x^{\mathsf T}Bx&=\begin{bmatrix}1&amp;2\end{bmatrix}\begin{bmatrix}4\\
 6\end{bmatrix}=1(4)+2(6)=16\end{aligned}
 \]</div>
   <div class="reading">
-    <p>สลับ index สองครั้งก็เท่ากับไม่ได้สลับ จึงได้ $B$ กลับคืนมา ข้อนี้ทำให้เขียน $V=W^{\mathsf T}W$ แล้วไม่ต้องกังวลว่ารูปแบบจะเพี้ยน\n\nทางฝั่ง quadratic form: คูณจากขวาก่อนได้ $Bx=(4,6)$ แล้วคูณจากซ้ายด้วย $x^{\mathsf T}$ เหลือ $4+12=16$ ซึ่งเป็น matrix ขนาด $1\times1$ คือเลขตัวเดียว</p>
+    <p>สลับ index สองครั้งก็เท่ากับไม่ได้สลับ จึงได้ $B$ กลับคืนมา ข้อนี้ทำให้เขียน $V=W^{\mathsf T}W$ แล้วไม่ต้องกังวลว่ารูปแบบจะเพี้ยน</p>
+    <p>ทางฝั่ง quadratic form: คูณจากขวาก่อนได้ $Bx=(4,6)$ แล้วคูณจากซ้ายด้วย $x^{\mathsf T}$ เหลือ $4+12=16$ ซึ่งเป็น matrix ขนาด $1\times1$ คือเลขตัวเดียว</p>
     <p>ความกว้าง $1$ นี้มาจากการที่เราบังคับให้ index ทั้งสองฝั่งถูกบวกจนหมด จึงเป็นเหตุผลว่าทำไม portfolio variance ซึ่งเป็นความเสี่ยงก้อนเดียวจึงเขียนเป็น $w^{\mathsf T}Vw$ ได้</p>
   </div>
 </section>
@@ -290,7 +308,9 @@ x^{\mathsf T}Bx&=\begin{bmatrix}1&amp;2\end{bmatrix}\begin{bmatrix}4\\
 
 <section class="example">
   <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: transpose สองครั้งได้ $B$ กลับคืนมา และ quadratic form ของตัวอย่างนี้เท่ากับ $16$ ซึ่งเป็นเลขตัวเดียว ไม่ใช่ตาราง\n\nตรวจเองใน 10 วินาที: ผลลัพธ์ของ quadratic form ต้องมีรูปร่าง $1\times1$ เสมอ ถ้าได้เป็น matrix แปลว่าลำดับการคูณผิดด้าน\n\nใช้ตัดสินใจ: เวลาเห็นสูตรความเสี่ยงในรูป quadratic form ให้อ่านว่ามันคือเลขตัวเดียว จึงเอาไปเทียบกับ budget ความเสี่ยงหรือใส่เป็นข้อจำกัดได้ทันที</p>
+  <p>คำตอบ: transpose สองครั้งได้ $B$ กลับคืนมา และ quadratic form ของตัวอย่างนี้เท่ากับ $16$ ซึ่งเป็นเลขตัวเดียว ไม่ใช่ตาราง</p>
+  <p>ตรวจเองใน 10 วินาที: ผลลัพธ์ของ quadratic form ต้องมีรูปร่าง $1\times1$ เสมอ ถ้าได้เป็น matrix แปลว่าลำดับการคูณผิดด้าน</p>
+  <p>ใช้ตัดสินใจ: เวลาเห็นสูตรความเสี่ยงในรูป quadratic form ให้อ่านว่ามันคือเลขตัวเดียว จึงเอาไปเทียบกับ budget ความเสี่ยงหรือใส่เป็นข้อจำกัดได้ทันที</p>
 </section>
 
 <section class="pitfall">
@@ -316,11 +336,12 @@ x^{\mathsf T}Bx&=\begin{bmatrix}1&amp;2\end{bmatrix}\begin{bmatrix}4\\
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
+    <li>พลิกผลคูณต้องสลับลำดับ: (Sθ)ᵀ = θᵀSᵀ = [50 58] ส่วน Sᵀθᵀ แบบไม่สลับคูณไม่ได้เพราะมิติไม่ตรง และ covariance matrix พลิกแล้วได้ตัวเดิมเสมอ</li>
     <li>transpose สลับ index ตาม $(A^{\mathsf T})_{ij}=A_{ji}$ โดยไม่เปลี่ยน element</li>
     <li>shape $m\times n$ กลายเป็น $n\times m$</li>
     <li>ใช้ transpose เพื่อหันข้อมูลให้ dot product และ matrix multiplication ถูกทิศ</li>
     <li>reshape แบบไม่รักษา labels เป็นความเสี่ยงเชิงระบบ</li>
-    <li>รูปร่างของ transpose ไม่ต้องจำ: index สองตัวสลับที่ จำนวนแถวจึงกลายเป็นจำนวนคอลัมน์ตามdefinition</li>
+    <li>รูปร่างของ transpose ไม่ต้องจำ: index สองตัวสลับที่ จำนวนแถวจึงกลายเป็นจำนวนคอลัมน์ตาม definition</li>
     <li>quadratic form ให้ผลเป็นเลขตัวเดียว เพราะ index ทั้งสองฝั่งถูก sum จนหมด</li>
   </ul>
 </section>

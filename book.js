@@ -10,8 +10,11 @@
 (function () {
   'use strict';
 
-  // MathJax 4 can break a long formula onto several lines on a phone.
-  var MATHJAX_URL = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.3/tex-mml-chtml.js';
+  // MathJax 4 (it can break a long formula onto several lines on a phone) is
+  // shipped inside the book, in mathjax/, so the book works offline and from a
+  // zip.  Its location is worked out from where this script was loaded.
+  var BASE = (document.currentScript && document.currentScript.src || '').replace(/[^\/]*$/, '');
+  var MATHJAX_URL = BASE + 'mathjax/tex-mml-chtml.js';
 
   var ROLE_LABELS = {
     input: 'ของที่ใส่เข้าไป',
@@ -184,8 +187,20 @@
       matchFontHeight: false,
       scale: 1.15
     },
+    loader: {
+      paths: { mathjax: BASE + 'mathjax', fonts: BASE + 'mathjax/fonts' }
+    },
     options: {
-      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      // These need a Web Worker, which a page opened from disk may not start.
+      enableEnrichment: false,
+      enableSpeech: false,
+      enableBraille: false,
+      enableComplexity: false,
+      enableExplorer: false,
+      menuOptions: {
+        settings: { enrich: false, speech: false, braille: false, collapsible: false, assistiveMml: true }
+      }
     },
     startup: {
       pageReady: function () {

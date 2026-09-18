@@ -24,7 +24,7 @@
 
 <div class="hook">
   <p>คุณขายน้ำมะนาวและซ่อมจักรยาน วันฝนตกยอดขายทั้งสองลดพร้อมกัน แต่ยอดเฉลี่ยของสองงานยังบวกกันได้ไหม?</p>
-  <p>เฉลย: ได้สำหรับค่าเฉลี่ย; ไม่ได้สำหรับความแกว่ง เพราะฝนทำหน้าที่เหมือนปุ่ม ‘ล้มพร้อมกัน’ ที่สูตรบวกความเสี่ยงแบบลวก ๆ มองไม่เห็น</p>
+  <p>เฉลย: ค่าเฉลี่ยบวกกันได้เสมอ ขายน้ำมะนาวเฉลี่ยวันละ 300 ซ่อมจักรยานเฉลี่ย 200 รวมเฉลี่ย 500 แต่ความเหวี่ยงบวกตรง ๆ ไม่ได้ ถ้าแต่ละงานเหวี่ยงวันละ 100 และไม่เกี่ยวกัน ความเหวี่ยงรวมคือราก 20,000 หรือราว 141 แต่ถ้าฝนทำให้สองงานขึ้นลงพร้อมกันทุกครั้ง ความเหวี่ยงรวมกลายเป็น 200</p>
   <p>Consequences of independence คือผลลัพธ์ที่ตามมาเมื่อผลลัพธ์ไม่ส่งข่าวถึงกัน: ค่าเฉลี่ยและ variance หรือขนาดการเหวี่ยงของผลรวมมีรูปง่าย ใช้คำนวณรวมหลายแหล่งโดยรู้ว่าสมมติฐานไหนขาดไม่ได้</p>
 </div>
 
@@ -69,7 +69,7 @@
       <tr><td>$f_{X,Y}(x,y)$</td><td>joint density ของสองแหล่งพร้อมกัน</td><td>1/(USD/day)²</td></tr>
       <tr><td>$g,h$</td><td>function ที่ครอบตัวแปรก่อนนำไปเฉลี่ย</td><td>unitless</td></tr>
       <tr><td>$V=Xe^{Y}$</td><td>จำนวนหุ้นคูณตัวคูณราคาปลายงวด</td><td>พันหุ้น</td></tr>
-      <tr><td>$\mathbf 1_{\{X\in A\}}$</td><td>indicator function ที่บอกว่า $X$ ตกอยู่ในเซต $A$ หรือไม่</td><td>unitless</td></tr>
+      <tr><td>$I_A(X)$</td><td>ตัวนับที่เป็น 1 ถ้า $X$ อยู่ในช่วง $A$ และเป็น 0 ถ้าไม่อยู่</td><td>—</td></tr>
     </tbody>
   </table>
 </details>
@@ -200,7 +200,7 @@ g(x)=x^{2},\;h(y)=e^{2y}\;&\Longrightarrow\;\mathbb E[X^{2}e^{2Y}]=\mathbb E[X^{
   <p>ตัวเลขทั้งหมดของส่วนนี้มาจากสองบรรทัดบน ไม่มีเลขอื่นแอบเข้ามาอีก และค่า $s=1$ ของ $Y$ ใหญ่กว่าความผันผวนรายวันมาก มันคือขนาดของหุ้นที่แกว่ง 55% ต่อปี เมื่อถือยาวราวสามปีเศษ ซึ่งเป็นช่วงที่เลขกลม ๆ ทำให้ตรวจด้วยมือได้</p>
   <div class="math">\[
 \begin{aligned}X&:\quad \mathbb E[X]=1,\qquad \operatorname{Var}(X)=4\\
-Y&\sim\mathcal N(0,1),\qquad X\perp Y\\[4pt]
+Y&\sim\mathcal N(0,1),\qquad X,\,Y\ \text{independent}\\[4pt]
 \mathbb E[X^{2}]&=\operatorname{Var}(X)+\big(\mathbb E[X]\big)^{2}\\
 &=4+1^{2}=5\end{aligned}
 \]</div>
@@ -267,8 +267,8 @@ P_0&=100\ \mathrm{USD/share}\\
   <div class="math">\[
 \begin{aligned}\operatorname{Var}(X+Y)&=\mathbb E\Big[\big((X-\mu_X)+(Y-\mu_Y)\big)^{2}\Big]\\
 &=\underbrace{\mathbb E[(X-\mu_X)^{2}]}_{\operatorname{Var}(X)}+\underbrace{\mathbb E[(Y-\mu_Y)^{2}]}_{\operatorname{Var}(Y)}+2\underbrace{\mathbb E[(X-\mu_X)(Y-\mu_Y)]}_{\operatorname{Cov}(X,Y)}\\[4pt]
-\operatorname{Cov}(X,Y)&=\mathbb E[XY]-\mu_X\mu_Y\overset{X\perp Y}{=}\mu_X\mu_Y-\mu_X\mu_Y=0\\[4pt]
-\Rightarrow\;\operatorname{Var}(X+Y)&=\operatorname{Var}(X)+\operatorname{Var}(Y)\qquad\text{only if }X\perp Y\end{aligned}
+\operatorname{Cov}(X,Y)&=\mathbb E[XY]-\mu_X\mu_Y\overset{\text{independent}}{=}\mu_X\mu_Y-\mu_X\mu_Y=0\\[4pt]
+\Rightarrow\;\operatorname{Var}(X+Y)&=\operatorname{Var}(X)+\operatorname{Var}(Y)\qquad\text{when }X,\,Y\text{ independent}\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้นิยามของขั้นที่ 10 กับ $V=X+Y$ แล้วจับคู่ระยะจากค่าเฉลี่ยของสองตัวไว้ในวงเล็บเดียว จากนั้นกระจายด้วย $(a+b)^{2}=a^{2}+b^{2}+2ab$ แล้วเฉลี่ยทีละพจน์ตามกฎขั้นที่ 2</p>
@@ -340,18 +340,18 @@ e&\approx2.718282\\
   <p>การคำนวณความน่าจะเป็นของสองเหตุการณ์ร่วมสามารถมองเป็นกรณีพิเศษของ expected value ของผลคูณได้ทันที โดยเลือก function เป็น indicator function ซึ่งยืนยันว่ากฎการคูณของความน่าจะเป็นและกฎการคูณของ expected value คือเรื่องเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-P(X\in A,\,Y\in B)&=\mathbb E\big[\mathbf 1_{\{X\in A\}}\,\mathbf 1_{\{Y\in B\}}\big]\\[4pt]
-&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}\mathbf 1_A(x)\,\mathbf 1_B(y)\,f_{X,Y}(x,y)\,dx\,dy\\[4pt]
-&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}\mathbf 1_A(x)\,\mathbf 1_B(y)\,f_X(x)f_Y(y)\,dx\,dy\\[4pt]
-&=\Big[\int_{-\infty}^{\infty}\mathbf 1_A(x)f_X(x)\,dx\Big]\Big[\int_{-\infty}^{\infty}\mathbf 1_B(y)f_Y(y)\,dy\Big]\\[4pt]
-&=\mathbb E\big[\mathbf 1_{\{X\in A\}}\big]\,\mathbb E\big[\mathbf 1_{\{Y\in B\}}\big]\\[4pt]
-&=P(X\in A)\,P(Y\in B)
+P(X\ \text{in}\ A,\ Y\ \text{in}\ B)&=\mathbb E\big[I_A(X)\,I_B(Y)\big]\\[4pt]
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\,f_{X,Y}(x,y)\,dx\,dy\\[4pt]
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\,f_X(x)f_Y(y)\,dx\,dy\\[4pt]
+&=\Big[\int_{-\infty}^{\infty}I_A(x)f_X(x)\,dx\Big]\Big[\int_{-\infty}^{\infty}I_B(y)f_Y(y)\,dy\Big]\\[4pt]
+&=\mathbb E\big[I_A(X)\big]\,\mathbb E\big[I_B(Y)\big]\\[4pt]
+&=P(X\ \text{in}\ A)\,P(Y\ \text{in}\ B)
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ทำไมเราถึงใช้คำว่า independence กับทั้งเหตุการณ์และตัวแปร ความจริงแล้วทั้งสองไม่ใช่กฎคนละข้อ แต่เป็นสมการเดียวกันเมื่อมองผ่าน indicator function ซึ่งมีค่าเป็น 1 เมื่อเกิดเหตุการณ์ และ 0 เมื่อไม่เกิด</p>
+    <p>ทำไมเราถึงใช้คำว่า independence กับทั้งเหตุการณ์และตัวแปร ความจริงแล้วทั้งสองไม่ใช่กฎคนละข้อ แต่เป็นสมการเดียวกันเมื่อมองผ่าน indicator function ซึ่งมีค่าเป็น 1 เมื่อค่าตกในช่วงที่ถาม และ 0 เมื่อไม่ตก ค่าเฉลี่ยของตัวนับแบบนี้จึงคือโอกาสของช่วงนั้นพอดี</p>
     <p>เปลี่ยนความน่าจะเป็นร่วมให้อยู่ในรูป expected value ของผลคูณ เมื่อ $X$ และ $Y$ เป็นอิสระต่อกัน joint density จึงแยกเป็นผลคูณของ marginal density ได้ ทำให้ integral สองชั้นแยกเป็นผลคูณของ integral ชั้นเดียวสองก้อน</p>
-    <p>แต่ละก้อนคือ expected value ของ indicator function แต่ละตัว ซึ่งย้อนกลับมาเป็นความน่าจะเป็นของเหตุการณ์เดี่ยวพอดี หาก $P(X\in A)=0.4$ และ $P(Y\in B)=0.3$ ผลลัพธ์ร่วมคือ $0.4\times 0.3=0.12$</p>
+    <p>แต่ละก้อนคือ expected value ของ indicator function แต่ละตัว ซึ่งย้อนกลับมาเป็นความน่าจะเป็นของเหตุการณ์เดี่ยวพอดี ถ้าโอกาสที่ $X$ อยู่ในช่วง $A$ คือ 0.4 และโอกาสที่ $Y$ อยู่ในช่วง $B$ คือ 0.3 โอกาสร่วมคือ 0.4 คูณ 0.3 เท่ากับ 0.12</p>
   </div>
 </section>
 
@@ -367,7 +367,7 @@ P(X\in A,\,Y\in B)&=\mathbb E\big[\mathbf 1_{\{X\in A\}}\,\mathbf 1_{\{Y\in B\}}
   <h4>Figure 6.5a — เงื่อนไขในการใช้งานทางลัดแต่ละข้อ</h4>
   <img src="../figures/6.5-1.svg" alt="Figure 6.5a — เงื่อนไขในการใช้งานทางลัดแต่ละข้อ" loading="lazy">
   <figcaption>
-    <p>การบวกค่าเฉลี่ยเป็นจริงเสมอในทุกกรณี แต่การแยกผลคูณค่าเฉลี่ยและการบวก variance โดยตัดพจน์ร่วมทิ้ง ใช้ independence เป็นเงื่อนไขเพียงพอ ต่อกัน ($X \perp Y$) รองรับเท่านั้น</p>
+    <p>การบวกค่าเฉลี่ยเป็นจริงเสมอในทุกกรณี แต่การแยกผลคูณค่าเฉลี่ยและการบวก variance โดยตัดพจน์ร่วมทิ้ง ต้องมี independence หรืออย่างน้อย covariance เป็นศูนย์ รองรับเท่านั้น</p>
   </figcaption>
 </figure>
 
@@ -401,6 +401,21 @@ P(X\in A,\,Y\in B)&=\mathbb E\big[\mathbf 1_{\{X\in A\}}\,\mathbf 1_{\{Y\in B\}}
   <p>คำตอบ: mean รวมคือ $75+40=115$ USD/day. Variance รวมคือ $30^2+40^2=2{,}500$ จึงมี standard deviation 50 USD/day.</p>
   <p>ตรวจเองใน 10 วินาที: ยก 30 และ 40 กำลังสอง บวกกันได้ 2,500 แล้วกดรากที่สองบนเครื่องคิดเลข ต้องได้ 50.</p>
   <p>แปลว่าอะไรบนโต๊ะ: mean บวกได้เสมอ แต่สูตร risk นี้ใช้ได้เพราะ covariance เป็นศูนย์. กับดักคือบวก standard deviation เป็น 70 โดยตรง.</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — หุ้น 250 วันที่ผลตอบแทนรายวันไม่เกี่ยวกัน</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: หุ้นราคา 100 log return รายวัน 250 วันไม่เกี่ยวกันและมาจากระฆังเดียวกัน ค่าเฉลี่ย 0.04% ความเหวี่ยง 1.1% ราคาปลายปีคือ 100 คูณตัวคูณรายวัน 250 ตัว ถามราคาเฉลี่ยปลายปีและราคาที่แบ่งครึ่งผลลัพธ์</p>
+  <div class="math">\[
+\begin{aligned}S_T&=100\,e^{r_1}e^{r_2}\cdots e^{r_{250}}\\
+\mathbb E[S_T]&=100\,\mathbb E[e^{r_1}]\,\mathbb E[e^{r_2}]\cdots\mathbb E[e^{r_{250}}]=100\,\big(e^{0.0004+0.011^{2}/2}\big)^{250}\\
+&=100\,e^{0.115125}=112.20\\
+\text{median}&=100\,e^{250\times0.0004}=100\,e^{0.1}=110.52\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>บรรทัดที่สองคือกฎของขั้นที่ 6 ค่าเฉลี่ยของผลคูณแยกเป็นผลคูณของค่าเฉลี่ยได้เพราะแต่ละวันไม่เกี่ยวกัน ค่าเฉลี่ยของแต่ละตัวคูณคือ $e^{\mu+\sigma^2/2}$ แบบเดียวกับขั้นที่ 8 และหัวข้อ 1.10</p>
+    <p>ราคาเฉลี่ย 112.20 สูงกว่าราคาที่แบ่งครึ่งผลลัพธ์ 110.52 อยู่ 1.68 ช่องว่างนี้มาจากความโค้งของ $e^x$ ล้วน ๆ ถ้าวันต่าง ๆ เกี่ยวกัน กฎแยกผลคูณใช้ไม่ได้ และต้องคำนวณใหม่ทั้งข้อ</p>
+  </div>
 </section>
 
 <section class="pitfall">

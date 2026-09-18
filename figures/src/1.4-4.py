@@ -1,4 +1,4 @@
-edge_ratio = 25.0/661.0
+edge_ratio = 50.0/1322.0
 Ns = np.array([20, 100, 250, 1000])
 z = edge_ratio*np.sqrt(Ns)
 p_loss = (1 - stats.norm.cdf(z))*100

@@ -23,34 +23,38 @@
 </header>
 
 <div class="hook">
-  <p>ตัวจำลองเดิมให้ค่าเปลี่ยนเมื่อเพิ่ม steps จาก 4 เป็น 64: confidence interval ที่แคบยืนยันคำตอบแล้วหรือไม่?</p>
-  <p>เฉลย: เมื่อเพิ่ม steps จาก 4 เป็น 64 confidence interval ที่แคบยังไม่ยืนยันคำตอบ เพราะมันวัด sampling noise แต่ไม่เห็น bias ใน time grid</p>
-  <p>ไม้บรรทัดที่ละเอียดขึ้นอาจไม่ทำคำตอบนิ่งขึ้นทันที; Euler, Milstein และ exact scheme จึงต้องแข่งกันที่ error คนละชนิด</p>
+  <p>หุ้น \$100 ตัวเดิมจากหัวข้อ 12.2 (drift 12% volatility 28%) จำลองหนึ่งปีเป็น 4 ก้าว ด้วยตัวเลขสุ่มชุดเดียวกัน 0.5, −1.2, 0.8, 0.3 สูตรง่ายที่สุดคลาดจากค่าจริงเท่าไร สูตรที่ดีกว่าคลาดเท่าไร?</p>
+  <p>เฉลย: ค่าจริงคือ \$114.66 สูตร Euler ได้ \$116.08 สูงไป 1.24% สูตร Milstein ได้ \$114.56 ต่ำไปแค่ 0.085% แม่นกว่า 14.7 เท่า และ confidence interval ที่แคบแค่ไหนก็จับความคลาดนี้ไม่ได้ เพราะมันมาจากการซอยเวลา ไม่ใช่จากจำนวนเส้นทาง</p>
+  <p>หัวข้อนี้สร้างสามสูตรจำลองจาก Itô's lemma แล้ววัดความคลาดเคลื่อนสองชนิดแยกกัน</p>
 </div>
 
 <details class="jargon" open>
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>Euler–Maruyama scheme</dt>
-    <dd>first-order time-stepping rule ที่ตรึง drift และ diffusion ที่ต้นช่วง ใช้จำลอง stochastic differential equation ทั่วไปด้วย implementation ที่ง่าย</dd>
+    <dd>สูตรเดินทีละก้าวที่ตรึง drift และขนาดแรงสุ่มไว้ที่ค่าต้นก้าว ใช้จำลองสมการแบบสุ่มทุกชนิดด้วยโค้ดที่ง่ายที่สุด</dd>
     <dt>Milstein scheme</dt>
-    <dd>time-stepping rule ที่เพิ่ม derivative correction ของ diffusion ใช้ลด pathwise error เมื่อ diffusion ขึ้นกับ state และ Brownian driver เป็น scalar</dd>
+    <dd>สูตรเดินทีละก้าวที่เติมพจน์แก้เมื่อขนาดแรงสุ่มเปลี่ยนตามระดับ ใช้ลดความคลาดของเส้นทางเดี่ยว</dd>
     <dt>exact scheme</dt>
-    <dd>transition rule ที่สุ่มจาก distribution จริงของ model ในแต่ละช่วง ใช้ตัด time-discretization error เมื่อ closed-form transition มีอยู่</dd>
+    <dd>สูตรที่สุ่มจากการกระจายจริงของแบบจำลองในแต่ละก้าว ใช้ตัดความคลาดจากการซอยเวลาทิ้งเมื่อมีคำตอบแบบปิด</dd>
     <dt>sampling error</dt>
-    <dd>ความคลาดเคลื่อนจากจำนวน random paths ที่มีจำกัด ใช้รายงานเป็น standard error และลดลงเมื่อเพิ่ม path count</dd>
+    <dd>ความคลาดจากจำนวนเส้นทางที่มีจำกัด ใช้รายงานเป็น standard error และลดลงเมื่อเพิ่มจำนวนเส้นทาง</dd>
     <dt>discretization bias</dt>
-    <dd>ความต่างเชิงระบบจากการแทน continuous dynamics ด้วย finite time steps ใช้ตรวจด้วย grid refinement และไม่หายเมื่อเพิ่ม paths อย่างเดียว</dd>
+    <dd>ความคลาดเชิงระบบจากการแทนเวลาต่อเนื่องด้วยก้าวยาวจำกัด ใช้ตรวจด้วยการซอยก้าวถี่ขึ้น และไม่หายเมื่อเพิ่มเส้นทางอย่างเดียว</dd>
     <dt>strong convergence</dt>
-    <dd>การที่ approximate path เข้าใกล้ exact path บน Brownian shocks ชุดเดียวกัน ใช้ตรวจ path simulation และ sensitivity ที่ต้องจับคู่ paths</dd>
+    <dd>การที่เส้นทางที่จำลองเข้าใกล้เส้นทางจริงเมื่อใช้ตัวเลขสุ่มชุดเดียวกัน ใช้ตรวจงานที่ต้องตามเส้นทาง เช่นความไวที่คิดจากการจับคู่เส้นทาง</dd>
     <dt>weak convergence</dt>
-    <dd>การที่ expected function ของ terminal state เข้าใกล้ค่าจริง ใช้ประเมิน bias ของ Monte Carlo price เมื่อไม่ต้องตาม exact path ทุกจุด</dd>
+    <dd>การที่ค่าเฉลี่ยของสิ่งที่สนใจเข้าใกล้ค่าจริง โดยไม่ต้องตามเส้นทางทุกจุด ใช้ประเมินความคลาดของราคาจาก Monte Carlo</dd>
+    <dt>common random numbers</dt>
+    <dd>การใช้ตัวเลขสุ่มชุดเดียวกันกับทุกสูตรที่เทียบกัน ใช้ให้ความต่างที่เห็นมาจากสูตร ไม่ใช่จากโชค</dd>
     <dt>path-dependent payoff</dt>
-    <dd>payoff ที่ขึ้นกับสิ่งที่เกิดระหว่างทาง ไม่ใช่ terminal state อย่างเดียว ใช้กับ Asian, barrier และ lookback structures</dd>
+    <dd>เงินที่จ่ายขึ้นกับสิ่งที่เกิดระหว่างทาง ไม่ใช่แค่ราคาตอนจบ เช่น Asian, barrier และ lookback ใช้ตัดสินว่าต้องจำลองทีละก้าว</dd>
+    <dt>Brownian bridge</dt>
+    <dd>การสุ่มว่าเส้นทางระหว่างต้นก้าวกับปลายก้าวที่รู้ค่าแล้วแตะระดับหนึ่งหรือไม่ ใช้ตรวจ barrier ระหว่างก้าวโดยไม่ต้องซอยถี่มาก</dd>
     <dt>Geometric Brownian Motion (GBM)</dt>
-    <dd>price model ที่ diffusion แปรตามระดับราคาและมี exact lognormal transition ใช้เปรียบเทียบความคลาดเคลื่อนของ numerical schemes</dd>
+    <dd>แบบจำลองราคาที่แรงสุ่มโตตามราคาและมีคำตอบแบบปิด (หัวข้อ 12.2) ใช้เป็นสนามทดสอบที่รู้คำตอบจริง</dd>
     <dt>Cox–Ingersoll–Ross (CIR) model</dt>
-    <dd>mean-reverting square-root diffusion ที่มีขอบศูนย์ ใช้ทดสอบ scheme ที่ต้องรักษา state ไม่ให้ติดลบ</dd>
+    <dd>แบบจำลองดอกเบี้ยที่แรงสุ่มแปรตามรากที่สองของระดับ (หัวข้อ 12.4) ใช้เป็นตัวอย่างที่ต้องกันค่าไม่ให้ติดลบตอนจำลอง</dd>
   </dl>
 </details>
 
@@ -59,266 +63,260 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$X_k$</td><td>approximate state ที่ time step $k$</td><td>หน่วยของ state</td></tr>
-      <tr><td>$a(X_k)$</td><td>drift coefficient ที่ต้นช่วง</td><td>state/year</td></tr>
-      <tr><td>$b(X_k)$</td><td>diffusion coefficient ที่ต้นช่วง</td><td>state/$\sqrt{\text{year}}$</td></tr>
-      <tr><td>$b'(X_k)$</td><td>อัตราที่ขนาดแรงกระแทกเปลี่ยนไปเมื่อ state ขยับ คือ derivative ของ diffusion coefficient</td><td>$1/\sqrt{\text{year}}$</td></tr>
-      <tr><td>$\Delta t$</td><td>ความยาว time step</td><td>year</td></tr>
-      <tr><td>$\Delta W_k$</td><td>Brownian increment ในหนึ่ง step</td><td>$\sqrt{\text{year}}$</td></tr>
-      <tr><td>$Z_k$</td><td>independent standard Normal draw</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$S_k$</td><td>approximate AAPL price</td><td>USD/share</td></tr>
-      <tr><td>$\mu,\sigma$</td><td>GBM annual drift และ volatility</td><td>$1/\text{year}$, $1/\sqrt{\text{year}}$</td></tr>
-      <tr><td>$p_s,p_d$</td><td>strong และ weak convergence orders</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$X_k$</td><td>ค่าที่จำลองได้ ณ ก้าวที่ $k$</td><td>หน่วยของตัวแปร</td></tr>
+      <tr><td>$a(X_k)$, $b(X_k)$</td><td>drift และขนาดแรงสุ่ม ณ ต้นก้าว</td><td>หน่วย/ปี, หน่วย/$\sqrt{\text{year}}$</td></tr>
+      <tr><td>$b'(X_k)$</td><td>อัตราที่ขนาดแรงสุ่มเปลี่ยนเมื่อระดับขยับ</td><td>$1/\sqrt{\text{year}}$</td></tr>
+      <tr><td>$\Delta t$</td><td>ความยาวหนึ่งก้าว</td><td>ปี</td></tr>
+      <tr><td>$\Delta W_k$</td><td>การขยับของ Brownian motion ในก้าวที่ $k$</td><td>$\sqrt{\text{year}}$</td></tr>
+      <tr><td>$Z_k$</td><td>ตัวเลขสุ่มจากระฆังมาตรฐาน แต่ละก้าวไม่เกี่ยวกัน</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$S_k^E$, $S_k^M$, $S_k^X$</td><td>ราคาจาก Euler, Milstein และสูตรจริง</td><td>USD/หุ้น</td></tr>
+      <tr><td>$\mu$, $\sigma$</td><td>drift และ volatility ต่อปี</td><td>1/ปี, $1/\sqrt{\text{year}}$</td></tr>
+      <tr><td>$p_s$, $p_w$</td><td>อันดับความแม่นแบบเส้นทาง และแบบค่าเฉลี่ย</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\mathbb E_k[\cdot]$</td><td>ค่าเฉลี่ยเมื่อรู้ทุกอย่างถึงต้นก้าวที่ $k$</td><td>หน่วยของตัวข้างใน</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
-  <h4>ที่มาที่ไป: ทฤษฎีสวยแค่ไหน ก็ต้องรันบนเครื่องจริง</h4>
-  <p>สูตรปิดที่ได้จากบทนี้ใช้ได้กับแบบจำลองไม่กี่ตัวเท่านั้น พอเจอสัญญาหรือแบบจำลองที่ซับซ้อนขึ้น ก็ไม่เหลือทางเลือกอื่นนอกจากจำลองเอา</p>
-  <p>และทันทีที่เริ่มจำลอง ปัญหาใหม่ก็โผล่มา คือเราซอยเวลาเป็นก้าว ๆ ซึ่งเป็นการประมาณ และความคลาดเคลื่อนจากการประมาณนั้นปนอยู่กับความคลาดเคลื่อนจากการสุ่ม</p>
-  <p>การแยกสองอย่างนี้ออกจากกันเป็นทักษะที่จำเป็น เพราะแก้คนละวิธี อย่างแรกแก้ด้วยการซอยถี่ขึ้นหรือใช้สูตรที่ดีกว่า อย่างที่สองแก้ด้วยการสุ่มมากขึ้น</p>
-  <p>หัวข้อนี้ใช้ GBM เป็นสนามทดสอบ เพราะมันมีสูตรปิดให้เทียบ จึงรู้คำตอบที่ถูกต้องอยู่แล้ว</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาในประวัติศาสตร์: จาก Euler (1768) สู่ Maruyama (1955) และ Milstein (1974)</h4>
-  <p>ในปี 1768 Leonhard Euler คิดค้นวิธีเชิงตัวเลขก้าวหน้าสำหรับสมการที่ไม่มีความสุ่ม โดยการเดินตามเส้นสัมผัส $x_{k+1} = x_k + f(x_k)\Delta t$ ซึ่งเป็นวิธีที่ตรงไปตรงมาและให้ order of convergence เท่ากับ 1 เสมอ</p>
-  <p>เวลาผ่านไปเกือบสองศตวรรษ ในปี 1955 Gisiro Maruyama นักคณิตศาสตร์ชาวญี่ปุ่น ได้ขยายวิธีของ Euler สู่สมการเชิงสุ่ม โดยบวก Brownian increment $\Delta W_k = \sqrt{\Delta t}Z_k$ เข้าไป จนเกิดเป็น Euler–Maruyama scheme ทว่าผู้ใช้งานพบปัญหาใหญ่ คือ strong convergence order ตกลงมาเหลือเพียง 0.5 การจะลด error บนเส้นทางเดี่ยวลงครึ่งหนึ่ง ต้องซอย step ย่อยเพิ่มขึ้นถึง 4 เท่า ทำให้กินเวลาคำนวณมหาศาล</p>
-  <p>ในปี 1974 Grigori Milstein แก้ปัญหานี้ด้วยการใช้ stochastic Taylor expansion เติมพจน์ integral สองชั้นของ diffusion เข้าไป ทำให้ strong order ดีดกลับขึ้นมาเป็น 1.0 สำเร็จ จุดตัดในการใช้งานจริงคือ ใน model หลายมิติ Milstein ต้องการการคำนวณ Lévy area ข้ามมิติที่ซับซ้อนมาก ในทางปฏิบัติ Euler จึงยังคงเป็นม้าศึกหลักเมื่อมิติของระบบสูงขึ้น</p>
+  <h4>ที่มาที่ไป: จาก Euler (1768) สู่ Maruyama (1955) และ Milstein (1974)</h4>
+  <p>ปี 1768 Leonhard Euler เดินสมการที่ไม่สุ่มตามเส้นสัมผัสทีละก้าว ปี 1955 Gisiro Maruyama ขยายวิธีนี้ไปสมการสุ่มโดยบวกการขยับของ Brownian motion เข้าไป แต่ความแม่นของเส้นทางตกลงครึ่งหนึ่ง จะลดความคลาดลงครึ่งหนึ่งต้องซอยก้าวถี่ขึ้น 4 เท่า</p>
+  <p>ปี 1974 Grigori Milstein เติมพจน์แก้จาก Taylor แบบสุ่ม ความแม่นของเส้นทางกลับมาเท่าวิธีเดิมของ Euler ในแบบจำลองหลายตัวแปร พจน์แก้ของ Milstein ซับซ้อนมาก Euler จึงยังเป็นเครื่องมือหลักเมื่อมีตัวแปรหลายตัว สูตรปิดใช้ได้กับแบบจำลองไม่กี่ตัว ที่เหลือต้องจำลองทั้งหมด</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — นิยามของก้อนสุ่มที่จะใช้ในโค้ด: ต้องคูณด้วยรากของช่วงเวลา</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของวิธีสร้างก้อนสุ่มในโปรแกรม ซึ่งมาจากสมบัติที่ 2 ของหัวข้อ 10.1 ที่ว่า variance ของ increment เท่ากับความยาวช่วง การคูณด้วยรากจึงให้ variance ถูกต้องพอดี ถ้าเผลอคูณด้วยช่วงเวลาแทนราก ความเหวี่ยงที่จำลองได้จะเล็กเกินไปมหาศาลเมื่อ step เล็ก และผลทั้งหมดจะผิดโดยที่กราฟยังดูสมเหตุสมผล</p>
+  <h4>ขั้นที่ 1 — นิยามของก้อนสุ่มในโค้ด: คูณด้วยรากของความยาวก้าว</h4>
+  <p>บรรทัดนี้เป็นนิยามของวิธีสร้างการขยับในโปรแกรม variance ของการขยับต้องเท่ากับความยาวก้าว ตามหัวข้อ 12.1 จึงคูณก้อนมาตรฐานด้วยรากของก้าว</p>
   <div class="math">\[
-\Delta W_k=\sqrt{\Delta t}\,Z_k,\qquad Z_k\overset{\mathrm{iid}}{\sim}\mathcal N(0,1)
+\Delta W_k=\sqrt{\Delta t}\,Z_k,\qquad \Delta t=0.25:\quad Z=(0.5,\ -1.2,\ 0.8,\ 0.3)\ \Rightarrow\ \Delta W=(0.25,\ -0.60,\ 0.40,\ 0.15)
 \]</div>
   <div class="reading">
-    <p>$\Delta t$ คือ step หน่วยปี, $Z_k$ คือ independent standard Normal draw และ $\Delta W_k$ จึงมี variance เท่ากับ $\Delta t$ ตาม Brownian scaling</p>
+    <p>ถ้าเผลอคูณด้วยความยาวก้าวแทนราก ความเหวี่ยงที่จำลองได้จะเล็กเกินไปมากเมื่อก้าวเล็ก และผลทั้งหมดจะผิดทั้งที่กราฟยังดูสมเหตุสมผล ตัวเลขสุ่มสี่ตัวนี้ใช้ร่วมกันทุกสูตรในหัวข้อนี้</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 2 — นิยามของ Euler–Maruyama: ตรึงตัวคูณไว้ที่ต้นก้าว</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของวิธีที่เราเลือกใช้ ไม่ใช่ผลที่พิสูจน์ เราตัดสินใจอ่านค่า drift และ diffusion ที่ต้นก้าว แล้วถือว่ามันคงที่ตลอดก้าวนั้น เหตุผลที่เลือกต้นก้าว ไม่ใช่ปลายก้าว คือเรื่องเดียวกับหัวข้อ 12.3 การอ่านที่ปลายก้าวแปลว่ารู้อนาคต ซึ่งเทรดจริงทำไม่ได้ ส่วนราคาของการตรึงไว้ทั้งก้าว คือสิ่งที่ขั้นถัดไปจะคำนวณ</p>
+  <h4>ขั้นที่ 2 — นิยามของ Euler–Maruyama: ตรึงทุกอย่างไว้ที่ต้นก้าว</h4>
+  <p>บรรทัดนี้เป็นนิยามของวิธีที่เลือก อ่าน drift และขนาดแรงสุ่มที่ต้นก้าว แล้วถือว่าคงที่ตลอดก้าว อ่านที่ต้นก้าวด้วยเหตุผลเดียวกับหัวข้อ 12.3 คือห้ามรู้อนาคต</p>
   <div class="math">\[
-X_{k+1}=X_k+a(X_k)\Delta t+b(X_k)\Delta W_k
+X_{k+1}=X_k+a(X_k)\,\Delta t+b(X_k)\,\Delta W_k
 \]</div>
   <div class="reading">
-    <p>ตรึง drift $a$ และ diffusion $b$ ที่ต้น step $X_k$ แล้วเพิ่ม deterministic increment กับ random increment เพื่อได้ state ถัดไป</p>
+    <p>ก้าวใหม่เท่ากับค่าเดิม บวกส่วนที่คาดได้คูณความยาวก้าว บวกขนาดแรงสุ่มคูณการขยับ ราคาของการตรึงไว้ทั้งก้าวคือสิ่งที่ขั้นถัดไปคำนวณ</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — Milstein correction</h4>
-  <p>Euler ละเลยพจน์หนึ่งที่ Itô บอกว่ามีจริง Milstein เติมพจน์นั้นกลับเข้าไป หกบรรทัดนี้แสดงว่าพจน์ที่เติมไม่ได้เดามา มันคือผลของการยอมรับว่า diffusion เปลี่ยนระหว่างก้าว และ integral ที่โผล่มาก็มีคำตอบแบบปิดอยู่แล้วตั้งแต่หัวข้อ 12.3</p>
+  <h4>ขั้นที่ 3 — พจน์แก้ของ Milstein: ขนาดแรงสุ่มเปลี่ยนระหว่างก้าว</h4>
+  <p>Euler ละเลยว่าขนาดแรงสุ่มเปลี่ยนตามค่าที่ขยับระหว่างก้าว กระจาย Taylor หนึ่งพจน์ แทนส่วนสุ่มของการขยับ แล้วใช้ integral ที่หัวข้อ 12.3 คำนวณไว้</p>
   <div class="math">\[
-\begin{aligned}b(X_s)&\approx b(X_k)+b'(X_k)\big(X_s-X_k\big)\\
-X_s-X_k&\approx b(X_k)\big(W_s-W_k\big)\qquad\text{(random part)}\\
+\begin{aligned}b(X_s)&\approx b(X_k)+b'(X_k)\big(X_s-X_k\big),\qquad X_s-X_k\approx b(X_k)\big(W_s-W_k\big)\\
 \int_{t_k}^{t_{k+1}}b(X_s)\,dW_s&\approx b(X_k)\Delta W_k+b(X_k)b'(X_k)\!\int_{t_k}^{t_{k+1}}\!(W_s-W_k)\,dW_s\\
-\int_{t_k}^{t_{k+1}}(W_s-W_k)\,dW_s&=\tfrac12\big[(\Delta W_k)^{2}-\Delta t\big]\qquad\text{(topic 12.3)}\\
-X_{k+1}&=X_k+a(X_k)\Delta t+b(X_k)\Delta W_k\\
-&\quad+\tfrac12b(X_k)b'(X_k)\big[(\Delta W_k)^{2}-\Delta t\big]\end{aligned}
+\int_{t_k}^{t_{k+1}}(W_s-W_k)\,dW_s&=\tfrac12\big[(\Delta W_k)^{2}-\Delta t\big]\\
+X_{k+1}&=X_k+a(X_k)\Delta t+b(X_k)\Delta W_k+\tfrac12b(X_k)b'(X_k)\big[(\Delta W_k)^{2}-\Delta t\big]\end{aligned}
 \]</div>
   <div class="reading">
-    <p>Euler ละเลยอะไรไป diffusion ไม่ได้คงที่ตลอดก้าว มันเปลี่ยนตามค่าที่ขยับไประหว่างก้าว จึงกระจายแบบ Taylor หนึ่งพจน์ แล้วแทนส่วนที่สุ่มของการขยับลงไป ส่วนที่เป็น drift เล็กกว่าหนึ่งขั้นจึงทิ้งได้</p>
-    <p>แทนกลับเข้า integral ได้พจน์เดิมของ Euler บวกพจน์ใหม่ ซึ่งเป็น integral ที่หัวข้อ 12.3 คำนวณไว้แบบปิดแล้ว ไม่ต้องคำนวณใหม่</p>
-    <p>สังเกตพจน์ที่หักช่วงเวลาออก ซึ่งติดอยู่ในผลนั้น มันทำให้ค่าเฉลี่ยของ correction เป็นศูนย์พอดี แปลว่าการแก้นี้ไม่ได้ย้ายค่าเฉลี่ยไปไหนเลย</p>
-    <p>ประกอบเป็นสูตรที่เขียนโค้ดได้ ผลคือแต่ละเส้นทางตรงขึ้น โดยที่ค่าเฉลี่ยไม่เปลี่ยน นั่นคือความหมายของการลดความคลาดเคลื่อนแบบ strong ไม่ใช่ weak</p>
+    <p>ส่วน drift ของการขยับระหว่างก้าวเล็กกว่าอีกขั้นจึงทิ้งได้ integral บรรทัดสามคือ ½(W² − T) ของหัวข้อ 12.3 ในก้าวเดียว พจน์ที่หักความยาวก้าวออกทำให้ค่าเฉลี่ยของพจน์แก้เป็นศูนย์ พจน์นี้ทำให้เส้นทางตรงขึ้นโดยไม่ย้ายค่าเฉลี่ย</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 4 — สาม rules สำหรับ GBM</h4>
-  <p>GBM โชคดีตรงที่มีสูตรเดินหน้าแบบตรงเป๊ะอยู่ด้วย จึงเทียบสามวิธีบนโจทย์เดียวกันได้ และรู้ว่าคำตอบที่ถูกคืออะไร</p>
+  <h4>ขั้นที่ 4 — สามสูตรสำหรับ GBM</h4>
+  <p>ขนาดแรงสุ่มของ GBM คือ σS อัตราที่มันเปลี่ยนตามราคาคือ σ พจน์แก้จึงเป็น $\tfrac12\sigma^2S\big((\Delta W)^2-\Delta t\big)$ และ GBM มีสูตรจริงให้เทียบจากหัวข้อ 12.2</p>
   <div class="math">\[
-\begin{aligned}S_{k+1}^{E}&=S_k[1+\mu\Delta t+\sigma\Delta W_k],\\
-S_{k+1}^{M}&=S_k+\mu S_k\Delta t+\sigma S_k\Delta W_k+\tfrac12\sigma^2 S_k((\Delta W_k)^2-\Delta t),\\
-S_{k+1}^{X}&=S_ke^{(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k}.\end{aligned}
+\begin{aligned}S_{k+1}^{E}&=S_k\big[1+\mu\Delta t+\sigma\Delta W_k\big]\\
+S_{k+1}^{M}&=S_k\big[1+\mu\Delta t+\sigma\Delta W_k+\tfrac12\sigma^2\big((\Delta W_k)^2-\Delta t\big)\big]\\
+S_{k+1}^{X}&=S_k\,e^{(\mu-\frac12\sigma^2)\Delta t+\sigma\Delta W_k}\\[4pt]
+\mu\Delta t&=0.12(0.25)=0.03,\qquad \tfrac12\sigma^2=0.0392\end{aligned}
 \]</div>
   <div class="reading">
-    <p>สำหรับ GBM diffusion คือ $b(S)=\sigma S$ และ derivative คือ $\sigma$; superscripts $E,M,X$ แทน Euler, Milstein และ exact log transition ตามลำดับ</p>
+    <p>สองสูตรแรกคูณราคาด้วยตัวคูณที่เป็นเส้นตรงของการขยับ สูตรที่สามใช้ exponential ซึ่งไม่มีวันติดลบ ขั้นถัดไปแสดงว่าสามสูตรนี้คือ Taylor ของสูตรที่สามที่ตัดคนละที่</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 5 — พิสูจน์ลำดับชั้นของสาม scheme จาก Itô's Lemma และ Taylor expansion</h4>
-  <p>ทั้งสาม scheme ไม่ได้เกิดขึ้นแยกจากกัน แต่เป็นลำดับชั้นของการตัดทอนอนุกรม Taylor จากผลเฉลยแม่นตรง</p>
-  <p>เมื่อเรากระจาย exponential ของ exact scheme จะเห็นทันทีว่า Milstein คือ Taylor อันดับสอง ส่วน Euler คือการทิ้งความผันผวนระหว่างก้าวออกไป</p>
+  <h4>ขั้นที่ 5 — สามสูตรคือ Taylor ของสูตรจริงที่ตัดคนละที่</h4>
+  <p>ตั้งชื่อเลขชี้กำลังของสูตรจริงว่า u แล้วกระจาย $e^u$ ถึงพจน์กำลังสอง กำลังสองของการขยับมีขนาดเท่าความยาวก้าว จึงเก็บไว้</p>
   <div class="math">\[
-\begin{aligned}d(\ln S_t)&=\frac{1}{S_t}dS_t-\frac{1}{2S_t^2}(dS_t)^2=(\mu-\tfrac12\sigma^2)dt+\sigma\,dW_t\\
-S_{k+1}^X&=S_k\exp\Big((\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k\Big)\equiv S_k e^u\\
-e^u&=1+u+\frac{u^2}{2}+O(u^3)\\
-u&=(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k\\
-u^2&=\sigma^2(\Delta W_k)^2+2\sigma(\mu-\tfrac12\sigma^2)\Delta t\Delta W_k+(\mu-\tfrac12\sigma^2)^2(\Delta t)^2=\sigma^2(\Delta W_k)^2+O(\Delta t^{3/2})\\
-S_{k+1}&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfrac12\sigma^2(\Delta W_k)^2\Big]\\
-&=S_k+\mu S_k\Delta t+\sigma S_k\Delta W_k+\tfrac12\sigma^2 S_k\big[(\Delta W_k)^2-\Delta t\big]\quad\text{(Milstein)}\\
-&\approx S_k\big[1+\mu\Delta t+\sigma\Delta W_k\big]\quad\text{(Euler, drop }O(\Delta t)\text{ diffusion variation)}\end{aligned}
+\begin{aligned}u&=(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k,\qquad e^u\approx1+u+\tfrac12u^2\\
+u^2&=\sigma^2(\Delta W_k)^2+(\text{terms of size }\Delta t^{3/2}\ \text{or smaller})\\
+S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfrac12\sigma^2(\Delta W_k)^2\Big]=S_{k+1}^M\\
+\text{drop }\tfrac12\sigma^2\big((\Delta W_k)^2-\Delta t\big)&\ \Rightarrow\ S_{k+1}^E\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใช้ Itô's Lemma กับ $\ln S_t$ เพื่อหา exact solution ของ Geometric Brownian Motion (GBM) โดยดึงก้อนเลขชี้กำลังออกมาตั้งชื่อเป็น $u$ เพื่อเตรียมกระจาย Taylor</p>
-    <p>กระจาย $e^u$ ถึงกำลังสอง โดยอาศัย Brownian scaling ที่ทำให้ $(\Delta W_k)^2$ มีขนาดระดับ $\Delta t$ จึงใหญ่กว่าเทอมผสม $\Delta t\Delta W_k$ ที่มีขนาด $\Delta t^{3/2}$</p>
-    <p>เมื่อรวมพจน์ $-\frac{1}{2}\sigma^2\Delta t$ จาก drift เข้ากับ $+\frac{1}{2}\sigma^2(\Delta W_k)^2$ จากก้อนกำลังสอง จะประกอบร่างเป็นพจน์แก้ของ Milstein พอดี และหากตัดพจน์นี้ทิ้งก็จะถอยกลับไปเป็น Euler</p>
+    <p>−½σ²Δt จาก drift ของ log รวมกับ +½σ²ΔW² จากกำลังสอง ได้พจน์แก้ของ Milstein พอดี Euler คือการตัดพจน์นี้ทิ้ง Milstein จึงเป็นสูตรจริงที่ตัดช้ากว่าหนึ่งขั้น</p>
   </div>
-</section>
-
-<section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ใช้ราคาเริ่มต้น \$200, annual price drift 10%, volatility 30%, step size 0.25 ปี และ standard Normal draws 0.5, -1.2, 0.8, 0.3 จึงได้ Brownian increments 0.25, -0.60, 0.40, 0.15 การตรึง shocks ทำให้ความต่างที่เห็นเป็นของ scheme ไม่ใช่ random noise</p>
 </section>
 
 <section class="table">
-  <h4>ตารางเดินสี่ก้าว: shock เดียวกัน สาม scheme</h4>
+  <h4>ตารางเดินสี่ก้าว: ตัวเลขสุ่มชุดเดียวกัน สามสูตร</h4>
   <table>
-    <thead><tr><th>ก้าวที่ $k$</th><th>$\Delta W_k$</th><th>Euler $S^E$</th><th>Milstein $S^M$</th><th>Exact $S^X$</th></tr></thead>
+    <thead><tr><th>ก้าวที่ $k$</th><th>$\Delta W_k$</th><th>Euler $S^E$</th><th>Milstein $S^M$</th><th>สูตรจริง $S^X$</th></tr></thead>
     <tbody>
-      <tr><td>เริ่ม</td><td>—</td><td>200.0000</td><td>200.0000</td><td>200.0000</td></tr>
-      <tr><td>1</td><td>+0.25</td><td>220.0000</td><td>218.3125</td><td>218.5615</td></tr>
-      <tr><td>2</td><td>−0.60</td><td>185.9000</td><td>185.5547</td><td>185.0854</td></tr>
-      <tr><td>3</td><td>+0.40</td><td>212.8555</td><td>211.7086</td><td>211.5724</td></tr>
-      <tr><td>4</td><td>+0.15</td><td><strong>227.7554</strong></td><td><strong>224.3609</strong></td><td><strong>224.3747</strong></td></tr>
+      <tr><td>เริ่ม</td><td>—</td><td>100.0000</td><td>100.0000</td><td>100.0000</td></tr>
+      <tr><td>1</td><td>+0.25</td><td>110.0000</td><td>109.2650</td><td>109.4393</td></tr>
+      <tr><td>2</td><td>−0.60</td><td>94.8200</td><td>94.6576</td><td>94.4027</td></tr>
+      <tr><td>3</td><td>+0.40</td><td>108.2844</td><td>107.7650</td><td>107.7453</td></tr>
+      <tr><td>4</td><td>+0.15</td><td><strong>116.0809</strong></td><td><strong>114.5630</strong></td><td><strong>114.6599</strong></td></tr>
     </tbody>
   </table>
   <div class="note">
-    <p>ทั้งสามคอลัมน์ใช้ $\Delta W_k$ ชุดเดียวกันทุกก้าว ความต่างที่เห็นจึงเป็นของสูตร ไม่ใช่ของความบังเอิญ</p>
-    <p>ตัวอย่างก้าวแรกของ Euler คือ $200[1+0.10(0.25)+0.30(0.25)]=200(1.10)=220.0000$ ส่วน Exact คือ $200e^{(0.10-0.045)(0.25)+0.30(0.25)}=218.5615$</p>
+    <p>ก้าวแรกของ Euler คือ 100(1 + 0.03 + 0.07) = 110 ของ Milstein บวก 0.0392(0.0625 − 0.25) = −0.00735 ได้ 109.265 ของสูตรจริงคือ $100e^{0.0202+0.07}$ ได้ 109.4393</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 6 — endpoint reconciliation</h4>
-  <p>อ่านแถวสุดท้ายของตารางมาเทียบกัน</p>
+  <h4>ขั้นที่ 6 — ความคลาดของสองสูตรบนเส้นทางนี้</h4>
+  <p>อ่านแถวสุดท้ายของตารางแล้ววัดว่าแต่ละสูตรพลาดไปกี่เปอร์เซ็นต์เทียบกับสูตรจริง</p>
   <div class="math">\[
-S_1^X=\$224.3747,\qquad S_1^M=\$224.3609,\qquad S_1^E=\$227.7554
+\begin{aligned}\frac{S_1^E-S_1^X}{S_1^X}&=\frac{116.0809-114.6599}{114.6599}=\frac{1.4210}{114.6599}=+1.239\%\\
+\frac{S_1^M-S_1^X}{S_1^X}&=\frac{114.5630-114.6599}{114.6599}=\frac{-0.0969}{114.6599}=-0.085\%\\
+\frac{1.239}{0.085}&=14.7\end{aligned}
 \]</div>
   <div class="reading">
-    <p>Exact คือคำตอบที่ถูกต้อง เพราะ GBM มีสูตรปิด Milstein เกาะติดแทบสนิท ส่วน Euler หลุดไปทางสูงกว่า</p>
-    <p>ความต่างสะสมมาจากทุกก้าว ไม่ได้เกิดที่ก้าวสุดท้ายก้าวเดียว</p>
+    <p>Milstein แม่นกว่าราว 14.7 เท่าบนตัวเลขชุดเดียวกัน ด้วยงานเพิ่มแค่พจน์เดียวต่อก้าว ความต่างสะสมมาจากทุกก้าว ไม่ได้เกิดที่ก้าวสุดท้ายก้าวเดียว</p>
   </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — relative errors ของ path นี้</h4>
-  <p>วัดว่าสองวิธีประมาณพลาดไปกี่เปอร์เซ็นต์ เทียบกับคำตอบที่ถูก</p>
-  <div class="math">\[
-\begin{aligned}\frac{S_1^E-S_1^X}{S_1^X}&=\frac{227.7554-224.3747}{224.3747}=\frac{3.3807}{224.3747}=1.5067\%\\[4pt]
-\frac{S_1^M-S_1^X}{S_1^X}&=\frac{224.3609-224.3747}{224.3747}=\frac{-0.0138}{224.3747}=-0.0062\%\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>Euler พลาดไป 1.5% ส่วน Milstein พลาดเพียง 0.006% ซึ่งเล็กกว่าราว 240 เท่า ด้วยงานคำนวณที่เพิ่มขึ้นนิดเดียว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — นิยามของสองอันดับความแม่น: วัดกันคนละอย่าง</h4>
-  <p>สองก้อนนี้เป็น นิยาม ของวิธีวัดความคลาดเคลื่อน ไม่ใช่ผลที่พิสูจน์ แบบแรกวัดว่าเส้นทางที่จำลองห่างจากเส้นทางจริงเท่าไร เมื่อใช้ก้อนสุ่มชุดเดียวกัน แบบที่สองวัดแค่ว่าค่าเฉลี่ยของสิ่งที่สนใจเพี้ยนไปเท่าไร ซึ่งเป็นสิ่งที่การตั้งราคาต้องการ สองอย่างนี้ไม่เท่ากัน และวิธีหนึ่งอาจดีกว่าในแบบหนึ่งแต่แย่กว่าในอีกแบบ ผลจาก path เดียวจึงสรุปอะไรไม่ได้เลย ต้องรันหลาย step size แล้วดูอัตราการหด</p>
-  <div class="math">\[
-\mathbb E|X_T-X_T^{\Delta t}|=O(\Delta t^{p_s}),\qquad |\mathbb E[\varphi(X_T)]-\mathbb E[\varphi(X_T^{\Delta t})]|=O(\Delta t^{p_d})
-\]</div>
-  <div class="reading">
-    <p>$p_s$ วัด expected pathwise terminal error บน coupled shocks; $p_d$ วัด bias ของ expected test function $\varphi$ และ notation big-O บอก asymptotic rate เมื่อ step เล็ก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — orders มาตรฐาน</h4>
-  <p>ระบุตัวเลขมาตรฐานของแต่ละวิธี พร้อมแยกให้ชัดระหว่างความแม่นของ path เดี่ยว กับความแม่นของค่าเฉลี่ย ซึ่งไม่เท่ากัน</p>
-  <div class="math">\[
-(p_s,p_d)_{Euler}=(1/2,1),\qquad (p_s,p_d)_{Milstein}=(1,1)
-\]</div>
-  <div class="reading">
-    <p>ภายใต้ smooth coefficients และ scalar commutative noise Euler มี strong order หนึ่งส่วนสองและ weak order หนึ่ง ส่วน Milstein ยก strong order เป็นหนึ่ง; nonsmooth payoffs อาจลด observed weak rate</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — พิสูจน์ทำไม Euler มี weak order ดีกว่า strong order: ความคลาดเคลื่อนเฉลี่ยเป็นศูนย์</h4>
-  <p>ความลับที่ทำให้ Euler คำนวณราคา vanilla option ได้ดีทั้งที่เดินเส้นทางเดี่ยวได้แย่ อยู่ที่ก้อน error ที่ถูกทิ้งไป</p>
-  <p>พจน์แก้ของ Milstein ที่ Euler ละเลยไปนั้นมีค่าเฉลี่ยเป็นศูนย์พอดี เมื่อเราเฉลี่ยหลายเส้นทางใน Monte Carlo ค่าความผิดพลาดจึงหักล้างกันเองจนหมด</p>
-  <div class="math">\[
-\begin{aligned}\epsilon_k^{\text{local}}&=\tfrac12 b(X_k)b'(X_k)\big[(\Delta W_k)^2-\Delta t\big]\\
-\mathbb E\big[\epsilon_k^{\text{local}}\mid\mathcal F_k\big]&=\tfrac12 b(X_k)b'(X_k)\Big(\mathbb E\big[(\Delta W_k)^2\mid\mathcal F_k\big]-\Delta t\Big)\\
-&=\tfrac12 b(X_k)b'(X_k)(\Delta t-\Delta t)=0\\
-\mathbb E\big|(\Delta W_k)^2-\Delta t\big|&\sim\sqrt{\mathbb E\big[((\Delta W_k)^2-\Delta t)^2\big]}=\sqrt{2}\,\Delta t\\
-\text{Pathwise (strong): }&\sum_{k=1}^{T/\Delta t}\text{noise}\sim\frac{1}{\sqrt{\Delta t}}\cdot\Delta t=O(\Delta t^{1/2})\\
-\text{Expected (weak): }&\sum_{k=1}^{T/\Delta t}\mathbb E\big[\epsilon_k^{\text{local}}\big]=0\;\Longrightarrow\;\text{bias}=O(\Delta t)\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>พจน์ที่ Euler ทิ้งไปคือ $\epsilon_k^{\text{local}}$ ซึ่งมี $(\Delta W_k)^2 - \Delta t$ เป็นตัวกำหนด เมื่อหา conditional expectation จะได้ $\Delta t - \Delta t = 0$ พอดี แปลว่า error ท้องถิ่นไม่มี bias เลย</p>
-    <p>แต่บนเส้นทางเดี่ยว ค่าสัมบูรณ์ของก้อนนี้ไม่เป็นศูนย์และมีขนาดตาม scale ของ $\Delta t$ เมื่อเดินสุ่ม $N = T/\Delta t$ ก้าว ผลบวกของ noise จะสะสมตามกฎ square root ได้ $\sqrt{N}\Delta t = \Delta t^{1/2}$ ทำให้ strong order เหลือเพียงครึ่งเดียว</p>
-    <p>สำหรับ weak order ก้อน error อันดับหนึ่งเฉลี่ยเป็นศูนย์ bias ที่เหลือจึงมาจากพจน์กำลังสองของ drift ซึ่งมีขนาด $O(\Delta t^2)$ รวม $N$ ก้าวแล้วได้ $O(\Delta t)$ อธิบายว่าทำไม Euler จึงให้ค่าเฉลี่ยที่แม่นยำกว่าเส้นทางเดี่ยวมาก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 11 — เมื่อ Euler ทำราคาเป็นลบ</h4>
-  <p>Euler มีจุดอ่อนที่อันตรายกว่าความคลาดเคลื่อน คือมันทำให้ราคาติดลบได้ ซึ่งเป็นไปไม่ได้ในโลกจริง</p>
-  <div class="math">\[
-1+\mu\Delta t+\sigma\sqrt{\Delta t}Z \lt 0\quad\Longleftrightarrow\quad Z \lt -\frac{1+\mu\Delta t}{\sigma\sqrt{\Delta t}}
-\]</div>
-  <div class="reading">
-    <p>Euler GBM multiplier ติดลบเมื่อ standard Normal draw $Z$ ต่ำกว่า threshold ที่ขึ้นกับ drift, volatility และ step size; exact log transition ไม่มีปัญหานี้เพราะ exponential เป็นบวก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 12 — stress case หนึ่งปี</h4>
-  <p>แสดงว่าปัญหานั้นเกิดจริงบ่อยแค่ไหน เมื่อความผันผวนสูงและก้าวเวลายาว</p>
-  <div class="math">\[
-\mu=0.10,\;\sigma=0.80,\;\Delta t=1:\quad Z \lt -1.375,\qquad \Pr(S_1^E \lt 0)=8.46\%
-\]</div>
-  <div class="reading">
-    <p>stylized high-volatility equity stress ในตลาดสหรัฐฯ ใช้ one-year step; standard Normal lower tail ที่ -1.375 เท่ากับประมาณ 8.46% จึงทำให้ Euler สร้าง negative prices บ่อยเกินรับได้</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การเลือกวิธีจำลองให้ถูก ตัดสินว่าตัวเลขที่ได้เชื่อได้แค่ไหน</p>
-  <p>ใช้จำลองราคาสำหรับตั้งราคา derivative ที่ไม่มีสูตรปิด ซึ่งเป็นส่วนใหญ่ของสัญญาที่ซื้อขายจริง</p>
-  <p>ใช้ทดสอบความเสี่ยงในสถานการณ์สมมติ โดยสุ่มเส้นทางจำนวนมากแล้วดูผลที่แย่ที่สุด</p>
-  <p>ใช้ตัดสินว่าจะยอมลงแรงเขียนวิธีที่แม่นกว่าหรือไม่ ซึ่งคุ้มเมื่อก้าวเวลายาวหรือความผันผวนสูง</p>
 </section>
 
 <figure class="plot">
   <h4>Figure 12.8a — Same shocks, three endpoints</h4>
   <img src="../figures/12.8-1.svg" alt="Figure 12.8a — Same shocks, three endpoints" loading="lazy">
   <figcaption>
-    <p>บน grid สี่ช่วง Milstein เกือบทับ exact endpoint ขณะที่ Euler สูงกว่า 1.51%; comparison นี้ใช้ common random numbers จึงอ่าน error ได้ตรง</p>
+    <p>บนสี่ก้าว Milstein เกือบทับสูตรจริง ขณะที่ Euler สูงกว่า 1.24% การเทียบนี้ใช้ตัวเลขสุ่มชุดเดียวกัน จึงอ่านความคลาดได้ตรง</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — ทำไม Euler สูงไป 1.24%: ผลรวมกำลังสองของเส้นทางนี้น้อยกว่าหนึ่งปี</h4>
+  <p>เทียบ log ของผลคูณตัวคูณ Euler กับ log ของสูตรจริง แล้วใช้ ln(1 + x) ≈ x − x²/2 ดูว่าส่วนต่างมาจากไหน</p>
+  <div class="math">\[
+\begin{aligned}\sum\ln(\text{Euler multipliers})&=\ln1.100+\ln0.862+\ln1.142+\ln1.072=0.14911\\
+\ln\frac{S_1^X}{100}&=0.0808+0.28(0.25-0.60+0.40+0.15)=0.0808+0.056=0.1368\\
+0.14911-0.1368&=0.01231\ \Rightarrow\ e^{0.01231}=1.01239\\[4pt]
+\text{second order}&:\ \tfrac12\sigma^2\Big(T-\sum(\Delta W_k)^2\Big)=0.0392\,(1-0.605)=0.0155\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>log ของตัวคูณ Euler หัก ½σ² คูณกำลังสองของการขยับที่เกิดจริง แต่สูตรจริงหัก ½σ² คูณเวลาเต็ม เส้นทางนี้มีผลรวมกำลังสอง 0.605 น้อยกว่าหนึ่งปี Euler จึงหักน้อยไป ค่าประมาณอันดับสองได้ 0.0155 พจน์ที่เหลือหักลงจนเหลือ 0.0123 พอดี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — นิยามของความแม่นสองแบบ: วัดคนละอย่าง</h4>
+  <p>สองก้อนนี้เป็นนิยาม แบบแรกวัดว่าเส้นทางที่จำลองห่างจากเส้นทางจริงเท่าไรเมื่อใช้ตัวเลขสุ่มชุดเดียวกัน แบบที่สองวัดแค่ว่าค่าเฉลี่ยของสิ่งที่สนใจเพี้ยนไปเท่าไร ซึ่งเป็นสิ่งที่การตั้งราคาต้องการ</p>
+  <div class="math">\[
+\mathbb E\big|X_T-X_T^{\Delta t}\big|\ \propto\ \Delta t^{\,p_s},\qquad \big|\mathbb E[\varphi(X_T)]-\mathbb E[\varphi(X_T^{\Delta t})]\big|\ \propto\ \Delta t^{\,p_w}
+\]</div>
+  <div class="reading">
+    <p>ตัวเลขชี้กำลังบอกว่าความคลาดหดเร็วแค่ไหนเมื่อซอยก้าว ถ้าเป็น 1 ซอยถี่ขึ้นสองเท่า ความคลาดหดครึ่งหนึ่ง ถ้าเป็นครึ่งหนึ่ง ต้องซอยถี่ขึ้นสี่เท่า ผลจากเส้นทางเดียวจึงสรุปอะไรไม่ได้ ต้องรันหลายขนาดก้าวแล้วดูอัตราการหด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — ทำไม Euler แม่นแบบค่าเฉลี่ยดีกว่าแบบเส้นทาง</h4>
+  <p>พจน์ที่ Euler ทิ้งไปคือพจน์แก้ของ Milstein ดูค่าเฉลี่ยของมันเมื่อรู้ทุกอย่างถึงต้นก้าว และขนาดของมันบนเส้นทางเดี่ยว</p>
+  <div class="math">\[
+\begin{aligned}\epsilon_k&=\tfrac12 b(X_k)b'(X_k)\big[(\Delta W_k)^2-\Delta t\big]\\
+\mathbb E_k[\epsilon_k]&=\tfrac12 b\,b'\big(\mathbb E_k[(\Delta W_k)^2]-\Delta t\big)=\tfrac12 b\,b'(\Delta t-\Delta t)=0\\
+\operatorname{SD}\big((\Delta W_k)^2-\Delta t\big)&=\Delta t\sqrt{\operatorname{Var}(Z^2)}=\sqrt2\,\Delta t\\
+\text{path}&:\ \sqrt{T/\Delta t}\,\cdot\,\Delta t=\sqrt{T\,\Delta t}\ \propto\ \Delta t^{1/2}\qquad\text{mean}:\ \textstyle\sum\mathbb E_k[\epsilon_k]=0\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>พจน์ที่ทิ้งไปเฉลี่ยศูนย์ทุกก้าว ความคลาดเหล่านี้จึงหักล้างกันเมื่อเฉลี่ยหลายเส้นทาง แต่บนเส้นทางเดียวมันสะสมแบบรากที่สองของจำนวนก้าว ได้ความคลาดขนาดรากของ Δt ความคลาดของค่าเฉลี่ยที่เหลือมาจากพจน์ที่เล็กกว่า จึงหดตาม Δt</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — อันดับมาตรฐานของสองสูตร</h4>
+  <p>ผลของขั้นที่ 9 เขียนเป็นตัวเลขอันดับ สำหรับแบบจำลองที่ drift และแรงสุ่มเรียบ และมีแรงสุ่มแหล่งเดียว</p>
+  <div class="math">\[
+(p_s,\,p_w)_{\text{Euler}}=\big(\tfrac12,\ 1\big),\qquad (p_s,\,p_w)_{\text{Milstein}}=(1,\ 1)
+\]</div>
+  <div class="reading">
+    <p>Milstein ยกความแม่นของเส้นทางจากครึ่งหนึ่งเป็นหนึ่ง แต่ความแม่นของค่าเฉลี่ยเท่ากัน ถ้าต้องการแค่ราคา option ธรรมดา Euler ก็พอ เงินที่จ่ายที่หักมุม เช่น digital อาจทำให้อัตราที่เห็นจริงช้ากว่านี้</p>
+  </div>
+</section>
 
 <figure class="plot">
   <h4>Figure 12.8b — Strong-order slopes</h4>
   <img src="../figures/12.8-2.svg" alt="Figure 12.8b — Strong-order slopes" loading="lazy">
   <figcaption>
-    <p>บน log–log axes reference slope ของ Euler ลดช้ากว่า Milstein; ลด step 4 เท่าให้ Euler error ลดราว 2 เท่า แต่ Milstein ลดราว 4 เท่าภายใต้ regularity assumptions</p>
+    <p>บนแกน log ทั้งสองแกน ความคลาดของ Euler ลดช้ากว่า Milstein ลดก้าวลง 4 เท่า ความคลาดของ Euler ลดราว 2 เท่า แต่ของ Milstein ลดราว 4 เท่า</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — เมื่อไร Euler ให้ราคาติดลบ</h4>
+  <p>ตัวคูณของ Euler เป็นเส้นตรงของการขยับ จึงติดลบได้เมื่อการขยับลบมากพอ แก้หาเกณฑ์ แล้วแทนตัวเลขของโจทย์</p>
+  <div class="math">\[
+\begin{aligned}1+\mu\Delta t+\sigma\sqrt{\Delta t}\,Z\lt0\ &\Rightarrow\ Z\lt-\frac{1+\mu\Delta t}{\sigma\sqrt{\Delta t}}\\
+\mu=0.12,\ \sigma=0.28,\ \Delta t=0.25&:\ Z\lt-\frac{1.03}{0.28(0.5)}=-7.36\ \Rightarrow\ \text{practically never}\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>σ√Δt เป็นบวก จึงหารได้โดยไม่กลับทิศ ในโจทย์นี้ต้องได้ก้อนมาตรฐานต่ำกว่า −7.36 ซึ่งแทบไม่เกิด สูตรจริงไม่มีปัญหานี้เลยเพราะ exponential เป็นบวกเสมอ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — กรณีเครียด: volatility 80% ก้าวละหนึ่งปี</h4>
+  <p>หุ้นเล็กหรือสินทรัพย์ที่เหวี่ยงแรงจำลองด้วยก้าวหยาบ ใช้เกณฑ์เดิมกับ σ = 0.80 และ Δt = 1</p>
+  <div class="math">\[
+Z\lt-\frac{1+0.12}{0.80(1)}=-1.40,\qquad P(S_1^E\lt0)=\Phi(-1.40)=8.08\%\approx\frac{1}{12}
+\]</div>
+  <div class="reading">
+    <p>ราวหนึ่งในสิบสองเส้นทางได้ราคาติดลบ เงินที่จ่าย log ราคา และรากของราคาพังทั้งชุด วิธีแก้ตามลำดับความถูกต้อง: ใช้สูตรจริงถ้ามี ถ้าไม่มีให้จำลอง log ราคาด้วย Euler แทนราคาดิบ หรือซอยก้าวถี่ขึ้น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — เมื่อแรงสุ่มไม่ขึ้นกับระดับ Milstein เท่ากับ Euler</h4>
+  <p>พจน์แก้ของ Milstein มี b′ คูณอยู่ ถ้าขนาดแรงสุ่มคงที่ เช่น Vasicek ของหัวข้อ 12.4 พจน์แก้หายไป</p>
+  <div class="math">\[
+b(r)=\sigma_V\ \Rightarrow\ b'(r)=0\ \Rightarrow\ \tfrac12\,\sigma_V\cdot0\cdot\big[(\Delta W_k)^2-\Delta t\big]=0\ \Rightarrow\ X^M_{k+1}=X^E_{k+1}
+\]</div>
+  <div class="reading">
+    <p>สองสูตรให้ตัวเลขเดียวกันทุกก้าว แต่ไม่ได้แปลว่าเท่ากับคำตอบจริง Euler ยังคลาดจาก drift ที่ขึ้นกับระดับ สำหรับ Vasicek ควรใช้คำตอบแบบปิดของหัวข้อ 12.4 สุ่มทีละก้าวแทน ซึ่งไม่มีความคลาดจากการซอยเวลาเลย</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>เลือกวิธีตามชนิดของแบบจำลองและเงินที่จ่าย</h4>
+  <table>
+    <thead><tr><th>สถานการณ์</th><th>วิธีที่ควรใช้</th><th>เหตุผล</th></tr></thead>
+    <tbody>
+      <tr><td>GBM และเงินที่จ่ายขึ้นกับราคาตอนจบเท่านั้น</td><td>สูตรจริงก้าวเดียวถึงวันครบกำหนด</td><td>ไม่มีความคลาดจากการซอยเวลา และเร็วที่สุด</td></tr>
+      <tr><td>GBM และเงินที่จ่ายขึ้นกับเส้นทาง</td><td>สูตรจริงทีละก้าว และ Brownian bridge ถ้ามี barrier</td><td>ต้องรู้ค่าระหว่างทาง แต่แต่ละก้าวยังไม่มีความคลาด</td></tr>
+      <tr><td>ไม่มีสูตรปิด แรงสุ่มขึ้นกับระดับ</td><td>Milstein หรือ Euler บน log ของตัวแปร</td><td>ลดความคลาดของเส้นทาง และกันค่าติดลบ</td></tr>
+      <tr><td>CIR หรือตัวแปรที่ต้องไม่ติดลบ</td><td>สุ่มจากการกระจายจริง หรือ Euler ที่ตัดค่าติดลบเป็นศูนย์ก่อนหารากที่สอง</td><td>Euler ธรรมดาทำให้รากของค่าติดลบพัง</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>ความผิดที่พบบ่อยที่สุดในโค้ดตั้งราคาคือใช้ Euler กับราคาดิบทั้งที่มีสูตรจริงให้ใช้</p>
+  </div>
+</section>
 
 <figure class="plot">
   <h4>Figure 12.8c — Two error budgets</h4>
   <img src="../figures/12.8-3.svg" alt="Figure 12.8c — Two error budgets" loading="lazy">
   <figcaption>
-    <p>เพิ่ม paths ลด sampling error แต่ปล่อย discretization bias เท่าเดิม; grid refinement จึงต้องถูกทำแยกจาก confidence interval</p>
+    <p>เพิ่มจำนวนเส้นทางลดความคลาดจากการสุ่ม แต่ความคลาดจากการซอยเวลาเท่าเดิม การซอยก้าวถี่ขึ้นจึงต้องตรวจแยกจาก confidence interval</p>
   </figcaption>
 </figure>
 
 <section class="example">
   <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>คำตอบและความหมาย: exact endpoint ของ path ตัวอย่างคือ 224.3747 USD; Milstein ต่างเพียง 0.0138 USD แต่ Euler สูงกว่า 3.3807 USD. ตัวเลข path เดียวนี้ยังไม่พิสูจน์ convergence จึงต้องรันอย่างน้อยสอง step sizes และแยก sampling error ออกจาก time-discretization bias.</p>
-  <p>ตรวจเองใน 10 วินาที: หาร Milstein error 0.0138 ด้วย exact endpoint 224.3747 ต้องต่ำกว่า 0.0062%, ส่วน Euler error 3.3807 สูงราว 1.51%. ใช้ผลต่างนี้เลือก scheme และ step size แทนการดู confidence interval อย่างเดียว.</p>
+  <p>โจทย์ให้อะไรมาบ้าง: หุ้น \$100 drift 12% volatility 28% สี่ก้าว ก้าวละ 0.25 ปี ตัวเลขสุ่ม 0.5, −1.2, 0.8, 0.3</p>
+  <p>คำตอบ: (ก) สูตรจริง \$114.6599 Milstein \$114.5630 Euler \$116.0809 (ข) Euler คลาด +1.239% Milstein คลาด −0.085% แม่นกว่าราว 14.7 เท่า (ค) Euler ติดลบเมื่อก้อนมาตรฐานต่ำกว่า −7.36 ในโจทย์นี้ แต่ที่ volatility 80% ก้าวละปี เกิด 8.08% (ง) GBM กับเงินที่จ่ายตอนจบ ใช้สูตรจริงก้าวเดียว</p>
+  <p>ตรวจเองใน 10 วินาที: 1.421 หาร 114.66 ได้ราว 1.24% และ 0.0969 หาร 114.66 ได้ราว 0.085%</p>
+  <p>แปลว่าอะไร: ทุกตัวเลขจาก Monte Carlo มีความคลาดสองก้อนที่ต้องรายงานแยก ก้อนจากจำนวนเส้นทาง และก้อนจากการซอยเวลา ก้อนหลังตรวจได้ด้วยการรันสองขนาดก้าวด้วยตัวเลขสุ่มชุดเดิม</p>
 </section>
 
 <section class="prose">
   <h4>อ่านผลจากหลายเส้นทาง</h4>
-  <p>เมื่อมีหลาย paths เราสรุปค่าเฉลี่ยและความไม่แน่นอนด้วย Monte Carlo ได้; แนวคิดนี้เป็นการต่อยอดของการจำลองในบทนี้ ไม่ใช่ prerequisite ของหัวข้อนี้ รายละเอียดเรื่องการสรุปผลและ bootstrap จะเรียนอย่างเป็นระบบในหัวข้อ 17.5.</p>
+  <p>เมื่อมีหลายเส้นทาง เราสรุปค่าเฉลี่ยและความไม่แน่นอนด้วย Monte Carlo ได้ รายละเอียดเรื่องการสรุปผลและ bootstrap จะเรียนอย่างเป็นระบบในหัวข้อ 17.5 หัวข้อนี้สนใจเฉพาะความคลาดจากการซอยเวลา</p>
 </section>
 
 <section class="pitfall">
-  <h4>กับดัก: เรียก Euler กับ constant diffusion ว่า exact</h4>
-  <p>Milstein correction เป็นศูนย์เมื่อ diffusion ไม่ขึ้นกับ state แต่ Euler ยังมี discretization error จาก drift ที่ขึ้นกับ state เช่น Vasicek; เท่ากันระหว่างสอง schemes ไม่ได้แปลว่าเท่ากับคำตอบจริง เพราะสองวิธีอาจผิดเหมือนกันได้</p>
+  <h4>กับดัก: เปลี่ยนตัวเลขสุ่มตอนเทียบสูตร และเรียก Euler กับแรงสุ่มคงที่ว่าแม่นตรง</h4>
+  <p>ถ้าใช้ตัวเลขสุ่มชุดใหม่ตอนเทียบสองสูตร ความต่างที่เห็นจะปนโชคจนอ่านไม่ออก ต้องใช้ common random numbers เสมอ อีกข้อคือ Milstein กับ Euler เท่ากันเมื่อแรงสุ่มคงที่ตามขั้นที่ 13 แต่สองวิธีอาจผิดเหมือนกันได้ การที่สองสูตรตรงกันจึงไม่ใช่หลักฐานว่าตรงกับคำตอบจริง</p>
 </section>
 
 <section class="table">
@@ -336,13 +334,20 @@ S_1^X=\$224.3747,\qquad S_1^M=\$224.3609,\qquad S_1^E=\$227.7554
   </div>
 </section>
 
+<section class="prose">
+  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
+  <p>ใช้จำลองราคาเพื่อตั้งราคา derivative ที่ไม่มีสูตรปิด ซึ่งเป็นสัญญาส่วนใหญ่ที่ซื้อขายจริง และใช้ทดสอบความเสี่ยงโดยสุ่มเส้นทางจำนวนมากแล้วดูผลที่แย่ที่สุด</p>
+  <p>ใช้ตัดสินว่าคุ้มจะเขียนสูตรที่แม่นกว่าหรือไม่ ซึ่งคุ้มเมื่อก้าวยาว volatility สูง หรือต้องการความแม่นของเส้นทางเดี่ยว</p>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>$\Delta W=\sqrt{\Delta t}Z$; ใช้ $\Delta tZ$ ทำ variance scale พัง</li>
-    <li>Euler มี strong order 1/2 ส่วน Milstein มี strong order 1 ภายใต้เงื่อนไขมาตรฐาน</li>
-    <li>exact transition ตัด discretization error แต่ path monitoring ยังต้องจัดการระหว่าง grid points</li>
-    <li>รายงาน sampling error และ grid bias แยกกัน พร้อม common-random-number refinement test</li>
+    <li>การขยับในโค้ดคือรากของความยาวก้าวคูณก้อนมาตรฐาน ใช้ความยาวก้าวคูณแทนทำให้ความเหวี่ยงพัง</li>
+    <li>Euler และ Milstein คือ Taylor ของสูตรจริงที่ตัดคนละที่ พจน์แก้ของ Milstein คือ ½bb′ คูณ (ΔW² − Δt)</li>
+    <li>หุ้น \$100 สี่ก้าว: สูตรจริง \$114.66 Euler +1.24% Milstein −0.085% ความคลาดของ Euler มาจากผลรวมกำลังสอง 0.605 ที่น้อยกว่าหนึ่งปี</li>
+    <li>Euler แม่นแบบเส้นทางอันดับครึ่งหนึ่ง แบบค่าเฉลี่ยอันดับหนึ่ง Milstein แม่นแบบเส้นทางอันดับหนึ่ง</li>
+    <li>รายงานความคลาดจากการสุ่มและจากการซอยเวลาแยกกัน และใช้ตัวเลขสุ่มชุดเดียวกันเมื่อเทียบสูตร</li>
   </ul>
 </section>
 </article>

@@ -1,4 +1,4 @@
-mu_a, sig_a = 25000.0, 20900.0
+mu_a, sig_a = 50000.0, 41800.0
 x = np.linspace(mu_a - 4*sig_a, mu_a + 4*sig_a, 500)
 pdf = stats.norm.pdf(x, mu_a, sig_a)
 distribution(ax, x, {"Annual P&L (CLT normal approx)": pdf},

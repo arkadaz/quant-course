@@ -24,7 +24,7 @@
 
 <div class="hook">
   <p>คุณแบ่งเงิน 100 ดอลลาร์ครึ่งหนึ่งใส่กล่อง A ที่เพิ่ม 10% และอีกครึ่งใส่ B ที่เพิ่ม 4% เงินรวมเพิ่มกี่เปอร์เซ็นต์?</p>
-  <p>เฉลย: ได้ 7% จากการถ่วงน้ำหนัก แต่ความแกว่งไม่ยอมเฉลี่ยเชื่อง ๆ: ถ้า A ขึ้นตอน B ลง การรวมกันช่วยหักแรงกระแทก ไม่ใช่เสกมันให้หาย</p>
+  <p>เฉลย: 7% คือครึ่งของ 10% บวกครึ่งของ 4% ค่าเฉลี่ยถ่วงน้ำหนักได้ตรง ๆ แต่ความเหวี่ยงไม่ได้ ถ้ากล่อง A กับ B เหวี่ยงปีละ 20% เท่ากัน และขึ้นลงพร้อมกันทุกครั้ง ความเหวี่ยงรวมยังเป็น 20% แต่ถ้าไม่เกี่ยวกัน จะเหลือราว 14% เพราะขาหนึ่งขึ้นตอนอีกขาลงเป็นบางปี ขั้นที่ 5 จะหาตัวเลขนี้ในกรณีทั่วไป</p>
   <p>Linear transformation คือการรวมตัวแปรด้วยค่าน้ำหนัก และ portfolio risk ใช้ความสัมพันธ์ร่วมใน covariance matrix เพื่อคำนวณความแกว่งของผลรวม — รากของ diversification</p>
 </div>
 
@@ -155,7 +155,7 @@ w_i=\frac1N:\qquad\sigma_p^{2}&=\sigma^{2}\sum_{i=1}^{N}\frac{1}{N^{2}}=\sigma^{
   <div class="math">\[
 \begin{aligned}\sigma_p^{2}&=\sum_i w_i^{2}\Sigma_{ii}+\sum_{i\ne j}w_iw_j\Sigma_{ij}\\
 \Sigma_{ii}=\sigma^{2},&\qquad \Sigma_{ij}=\rho\sigma^{2}\;(i\ne j)\\
-\#\{i=j\}=N,&\qquad \#\{i\ne j\}=N(N-1)\\
+\text{pairs with }i=j&:\ N,\qquad\text{pairs with }i\ne j:\ N(N-1)\\
 w_i=\frac1N:\qquad\sigma_p^{2}&=N\cdot\frac{\sigma^{2}}{N^{2}}+N(N-1)\cdot\frac{\rho\sigma^{2}}{N^{2}}\\
 &=\frac{\sigma^{2}}{N}+\frac{N-1}{N}\rho\sigma^{2}\\
 &=\sigma^{2}\left(\frac1N+\rho-\frac{\rho}{N}\right)\\
@@ -186,7 +186,7 @@ N\to\infty:\qquad\sigma_p^{2}&\to\rho\sigma^{2}\end{aligned}
   <p>การแปลงเชิงเส้นในรูป matrix $Y = A r + a$ ช่วยให้เราคำนวณผลตอบแทนและความเสี่ยงของหลายพอร์ตโฟลิโอหรือหลายกลยุทธ์พร้อมกันได้ โดย covariance matrix ของผลลัพธ์จะถูกประกบด้วย matrix น้ำหนัก $A\operatorname{Cov}(r)A^{\mathsf T}$ เสมอ ขณะที่ส่วนบวกคงที่ $a$ จะไม่ส่งผลต่อความเสี่ยง</p>
   <div class="math">\[
 \begin{aligned}
-Y&=A r+a,\qquad A\in\mathbb R^{k\times n},\quad a\in\mathbb R^k\\[4pt]
+Y&=A r+a,\qquad A:\ k\times n\ \text{weights},\quad a:\ k\ \text{constants}\\[4pt]
 \mathbb E[Y]&=\mathbb E[A r+a]=A\,\mathbb E[r]+a=A\mu_r+a\\[4pt]
 \operatorname{Cov}(Y)&=\mathbb E\Big[\big(Y-\mathbb E[Y]\big)\big(Y-\mathbb E[Y]\big)^{\mathsf T}\Big]\\[4pt]
 &=\mathbb E\Big[\big((A r+a)-(A\mu_r+a)\big)\big((A r+a)-(A\mu_r+a)\big)^{\mathsf T}\Big]\\[4pt]
@@ -239,10 +239,10 @@ A\Sigma A^{\mathsf T}&=\begin{bmatrix}-0.25&-0.75\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 6.8a — แผนภาพการแปลงเชิงเส้นสู่ผลตอบแทนพอร์ต</h4>
-  <img src="../figures/6.8-1.svg" alt="Figure 6.8a — แผนภาพการแปลงเชิงเส้นสู่ผลตอบแทนพอร์ต" loading="lazy">
+  <h4>Figure 6.8a — ความเสี่ยงของพอร์ต 60/40 เมื่อ correlation เปลี่ยน</h4>
+  <img src="../figures/6.8-1.svg" alt="Figure 6.8a — ความเสี่ยงของพอร์ต 60/40 เมื่อ correlation เปลี่ยน" loading="lazy">
   <figcaption>
-    <p>vector น้ำหนัก $w$ ทำหน้าที่จับคู่คูณกับผลตอบแทนสินทรัพย์แต่ละตัวแล้วรวมเป็นผลตอบแทนเดียว หน่วยของผลตอบแทนจึงยังคงเดิมทุกประการ</p>
+    <p>น้ำหนักเดิม 60/40 ของสินทรัพย์ที่ผันผวน 18% กับ 6% ความผันผวนของพอร์ตเปลี่ยนตาม correlation จาก 8.40% ที่ −1 ถึง 13.2% ที่ +1 ที่ −0.2 ได้ 10.58% ต่ำกว่าการเฉลี่ยความผันผวนตรง ๆ ที่เส้นประ ความเสี่ยงของพอร์ตเท่ากับค่าเฉลี่ยก็ต่อเมื่อสองตัวขยับตามกันเป๊ะเท่านั้น</p>
   </figcaption>
 </figure>
 
@@ -276,6 +276,23 @@ A\Sigma A^{\mathsf T}&=\begin{bmatrix}-0.25&-0.75\\
   <p>คำตอบ: portfolio return คือ $0.5(10\%)+0.5(4\%)=7\%$.</p>
   <p>ตรวจเองใน 10 วินาที: ใน Excel ใส่ <code>=SUMPRODUCT({50%,50%},{10%,4%})</code> ต้องได้ 7% และน้ำหนักต้องรวม 100%.</p>
   <p>แปลว่าอะไร: return ถ่วงน้ำหนักตรง ๆ ได้ แต่ portfolio variance ต้องใช้ $w^{\mathsf{T}}\Sigma w$. กับดักคือเฉลี่ย volatility แบบเดียวกับ return แล้วทำ covariance หล่น.</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — พอร์ตหุ้น 60% หุ้นกู้ 40%: สองทางต้องได้เลขเดียวกัน</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: หุ้นเหวี่ยงปีละ 18% หุ้นกู้ 6% correlation −0.20 จึงมี covariance −0.00216 ถือหุ้น 0.6 หุ้นกู้ 0.4 ถามความเหวี่ยงของพอร์ต แล้วดูว่าถ้า correlation เปลี่ยน คำตอบเปลี่ยนแค่ไหน</p>
+  <div class="math">\[
+\begin{aligned}\text{term by term}&:\ 0.36(0.0324)+0.16(0.0036)+2(0.6)(0.4)(-0.00216)\\
+&=0.011664+0.000576-0.0010368=0.0112032\\
+w^{\mathsf T}\Sigma w&:\ \Sigma w=\begin{bmatrix}0.018576\\0.000144\end{bmatrix},\quad 0.6(0.018576)+0.4(0.000144)=0.0112032\\[4pt]
+\sigma_p&=\sqrt{0.0112032}=10.58\%\quad\text{vs}\quad0.6(18\%)+0.4(6\%)=13.2\%\\[4pt]
+\rho=-1,\,-0.2,\,0,\,+0.5,\,+1&:\ \sigma_p=8.40\%,\ 10.58\%,\ 11.06\%,\ 12.18\%,\ 13.20\%\\[4pt]
+\text{least-risk mix}&:\ a^{*}=\frac{0.0036+0.00216}{0.0324+0.0036+2(0.00216)}=\frac17,\qquad\sigma_p=5.27\%\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สองทางให้ 0.0112032 ทุกหลัก เพราะกาง $w^{\mathsf T}\Sigma w$ ออกมาก็คือสามก้อนเดิม ความเหวี่ยง 10.58% ต่ำกว่าการเฉลี่ยความเหวี่ยงตรง ๆ 13.2% อยู่ 19.8% โดยไม่ลดผลตอบแทนเฉลี่ยเลย ก้อนที่สามที่ติดลบคือของฟรีของการกระจาย</p>
+    <p>13.2% คือคำตอบเมื่อ correlation เป็น +1 พอดี และ 8.40% คือเมื่อเป็น −1 คำตอบจริงจึงต้องอยู่ระหว่างสองเลขนี้เสมอ ส่วนสัดส่วนที่เสี่ยงน้อยที่สุดคือหุ้นหนึ่งในเจ็ด ซึ่งเหวี่ยงแค่ 5.27% ต่ำกว่าหุ้นกู้ล้วน 6% เสียอีก</p>
+  </div>
 </section>
 
 <section class="pitfall">

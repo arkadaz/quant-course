@@ -23,10 +23,9 @@
 </header>
 
 <div class="hook">
-  <p>คุณมีผ้าห่มกันหนาว 6 ผืน ต้องแบ่งให้สามคนที่กลัวความหนาวไม่เท่ากัน จะให้เท่ากันทุกคน หรือให้ลดความหนาวรวมมากที่สุดภายใต้ผ้าห่มเท่าเดิม?</p>
-  <p>เฉลย: ถ้าคนหนึ่งต้องใช้ผ้าห่ม 4 ผืนจึงอุ่น การแบ่ง 2-2-2 อาจดูยุติธรรมแต่ไม่บรรลุเป้าหมายที่ตั้งไว้</p>
-  <p>hedging problem คือการเลือกน้ำหนักของ position เพื่อลดความเสี่ยงภายใต้ budget และ limit โดยแปลงคำว่า “ป้องกัน” ให้เป็นตัวแปร เป้าหมาย และกติกาที่คำนวณได้</p>
-  <p>hedge จึงเหมือนการแบ่งผ้าห่มที่ยอมรับว่าบางคนยังหนาว; งานจริงกำหนด exposure, objective และ constraint ก่อนให้ optimizer ทำงาน</p>
+  <p>ปีหน้าคุณต้องจ่าย 120 ถ้าตลาดขึ้น 90 ถ้าทรงตัว 50 ถ้าลง วันนี้มีหุ้นราคา 100 (ปีหน้าเป็น 130/100/70) กับพันธบัตรราคา 95 (คืน 100 เสมอ) ต้องจ่ายวันนี้อย่างน้อยเท่าไรจึงจ่ายภาระได้ครบทุกกรณี?</p>
+  <p>เฉลย: 90.50 โดยซื้อหุ้น 1 หุ้นและ short พันธบัตร 0.1 หน่วย ได้ 120, 90, 60 ครบทุกกรณี แผนที่ดูถูกกว่าที่ 86.58 จ่ายกรณีทรงตัวได้แค่ 85 จึงใช้ไม่ได้</p>
+  <p>hedging problem คือการเลือกจำนวนสินทรัพย์ให้ payoff ไม่ต่ำกว่าภาระในทุกสภาวะด้วยต้นทุนต่ำสุด เมื่อทุกอย่างเป็นเส้นตรงมันคือ linear program งานจริงใช้ตั้งราคา structured product และเลือก hedge ภายใต้ limit</p>
 </div>
 
 <details class="jargon" open>
@@ -56,6 +55,12 @@
     <dd>quantity ที่ต้องการ minimize หรือ maximize ใช้บอก solver ว่าใน feasible region desk ต้องการคำตอบแบบใด</dd>
     <dt>constraint</dt>
     <dd>เงื่อนไขที่คำตอบต้องเคารพ ใช้ใส่ beta target, non-negativity และ liquidity caps ลงใน model</dd>
+    <dt>liability</dt>
+    <dd>เงินที่ต้องจ่ายในอนาคตซึ่งขึ้นกับว่าตลาดไปทางไหน ใช้เป็นเป้าที่ payoff ของพอร์ต hedge ต้องไม่ต่ำกว่าในทุกสภาวะ</dd>
+    <dt>arbitrage</dt>
+    <dd>พอร์ตที่ได้เงินวันนี้หรือไม่ต้องจ่าย แต่ไม่มีทางขาดทุนในอนาคต ใช้ตรวจว่า LP มีก้นบึ้ง ถ้ามี arbitrage ต้นทุนจะดิ่งลงได้ไม่สิ้นสุด</dd>
+    <dt>incomplete market</dt>
+    <dd>ตลาดที่มีสภาวะมากกว่าทิศที่สินทรัพย์สร้างได้ ใช้อธิบายว่าทำไม hedge ต้องเหลือเงินทิ้งบางสภาวะ และทำไมราคาของภาระเป็นช่วง ไม่ใช่เลขเดียว</dd>
     <dt>beta</dt>
     <dd>sensitivity เชิงเส้นของ return ต่อ market return ใช้แปลง position notional เป็น market exposure ที่นำมาหักล้างกันได้</dd>
     <dt>notional</dt>
@@ -80,10 +85,12 @@
       <tr><td>$R$</td><td>residual market beta ของ basket หลัง hedge</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$c_Q,c_S$</td><td>execution cost ต่อ notional QQQ และ SPY</td><td>USD ต่อ USD million</td></tr>
       <tr><td>$C$</td><td>estimated execution cost รวม</td><td>USD</td></tr>
-      <tr><td>p</td><td>vector ราคาของสินทรัพย์ hedge ณ เวลา $t=0$</td><td></td></tr>
-      <tr><td>\theta</td><td>vector จำนวนหรือ position ของสินทรัพย์ hedge</td><td></td></tr>
-      <tr><td>S</td><td>matrix กระแสจ่ายของสินทรัพย์ในแต่ละสภาวะตลาด ณ $t=1$</td><td></td></tr>
-      <tr><td>X</td><td>vector ภาระผูกพันหรือความเสี่ยงที่ต้องชดเชยในแต่ละสภาวะตลาด</td><td></td></tr>
+      <tr><td>$m,d$</td><td>จำนวนสภาวะตลาด ณ $t=1$ และจำนวนสินทรัพย์ที่ซื้อขายได้</td><td>จำนวน</td></tr>
+      <tr><td>$p$</td><td>vector ราคาของสินทรัพย์ ณ เวลา $t=0$</td><td>USD ต่อหน่วย</td></tr>
+      <tr><td>$\theta$</td><td>vector จำนวนหน่วยที่ถือ ติดลบคือ short</td><td>หน่วย</td></tr>
+      <tr><td>$S$</td><td>ตาราง payoff แถวคือสภาวะ คอลัมน์คือสินทรัพย์</td><td>USD ต่อหน่วย</td></tr>
+      <tr><td>$X$</td><td>vector ภาระที่ต้องจ่ายในแต่ละสภาวะ</td><td>USD</td></tr>
+      <tr><td>$\Delta\theta$</td><td>ทิศที่ขยับจำนวนหน่วยจากแผนเดิม</td><td>หน่วย</td></tr>
     </tbody>
   </table>
 </details>
@@ -103,15 +110,195 @@
   <p>เมื่อแปลงโจทย์ความเสี่ยงข้ามสภาวะตลาด ($S\theta \ge X$) ให้อยู่ในรูปของ exposure ต่อปัจจัยตลาดร่วม (market factor beta) ปัญหาการ hedge จึงกลายสภาพเป็น linear program ที่มี objective function เป็นต้นทุนการทำรายการ และมี constraints เป็นระดับความเสี่ยงที่ยอมรับได้ควบคู่กับเพดานสภาพคล่องของ desk ทำให้ระบบคอมพิวเตอร์สามารถหาคำตอบที่ดีที่สุดได้โดยตรง แทนที่การคาดเดาของมนุษย์</p>
 </section>
 
+<section class="prose">
+  <h4>ตัวอย่างแรก — ภาระสามสภาวะ กับของสองอย่างที่ซื้อได้</h4>
+  <p>เริ่มจากโจทย์เปิดเรื่องและแก้ด้วยมือทีละขั้น ทุกอย่างที่ solver ทำอยู่ในแปดขั้นนี้ครบ แล้วค่อยเขียนเป็นสูตรทั่วไป</p>
+</section>
+
 <section class="formula">
-  <h4>รากฐานคณิตศาสตร์ — โครงสร้าง state-space hedging ของ Haugh และ Iyengar</h4>
-  <p>โครงสร้างของโจทย์ hedging ในเชิงคณิตศาสตร์เริ่มต้นจากการกำหนดสถานะตลาดที่เป็นไปได้ในอนาคต หากเราต้องการปิดความเสี่ยงหรือครอบคลุมภาระผูกพัน $X$ ให้ครบทุกสภาวะ การตั้ง position $\theta$ ต้องให้กระแสจ่ายไม่น้อยกว่า $X$ ในทุกสถานะ โดยมีต้นทุนรวมต่ำที่สุด</p>
+  <h4>ขั้นที่ 1 — ของที่โจทย์ให้: ราคา ตาราง payoff และภาระ</h4>
+  <p>ปีหน้าตลาดไปได้สามทาง ขาขึ้น ทรงตัว ขาลง ภาระที่ต้องจ่ายต่างกันตามทาง วันนี้มีหุ้นกับพันธบัตรให้ซื้อ ตัวเลขชุดนี้คือของที่โจทย์ให้ ไม่ได้คำนวณมา</p>
+  <div class="math">\[
+\begin{aligned}
+p&=(100,\ 95),\qquad X=(120,\ 90,\ 50)\\[4pt]
+S&=\begin{bmatrix}130 & 100\\ 100 & 100\\ 70 & 100\end{bmatrix}\qquad
+\begin{matrix}\text{up}\\ \text{flat}\\ \text{down}\end{matrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>หุ้นราคา 100 วันนี้ ปีหน้าเป็น 130, 100 หรือ 70 พันธบัตรราคา 95 คืน 100 ทุกสภาวะเพราะไม่มีความเสี่ยง แถวคือสภาวะ คอลัมน์คือสินทรัพย์ มีสามสภาวะแต่มีของสองอย่าง จำคู่เลข 3 กับ 2 นี้ไว้</p>
+    <p>ตัวแปรที่ต้องเลือกคือ θ₁ จำนวนหุ้น และ θ₂ จำนวนพันธบัตร ติดลบได้ทั้งคู่: θ₁ ติดลบคือ short หุ้น θ₂ ติดลบคือกู้เงินด้วยการขายพันธบัตร</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — ต้นทุนวันนี้ และแผนแรกที่ใช้ได้แน่</h4>
+  <p>เงินที่จ่ายวันนี้คือราคาคูณจำนวนของแต่ละอย่าง ต้องการให้น้อยที่สุดเพราะเป็นเงินออก ก่อนหาแผนที่ดีที่สุด หาแผนที่ใช้ได้สักแผนก่อน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{cost}&=100\,\theta_1+95\,\theta_2=p^{\mathsf T}\theta\\[4pt]
+\theta=(0,\ 1.2):\quad S\theta&=(120,\ 120,\ 120)\ \ge\ (120,\ 90,\ 50)\\
+\text{cost}&=95(1.2)=114
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>หน่วยตรวจได้ทันที: USD ต่อหน่วยคูณจำนวนหน่วยได้ USD แผนที่ปลอดภัยที่สุดคือถือพันธบัตร 1.2 หน่วย ได้ 120 ทุกสภาวะจึงจ่ายครบแน่ แต่แพง 114 ตัวเลขนี้เป็นเพดาน คำตอบที่ดีที่สุดต้องไม่แพงกว่านี้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — ข้อจำกัดทีละสภาวะ: เกินได้ ขาดไม่ได้</h4>
+  <p>แต่ละสภาวะให้หนึ่งแถว payoff ของพอร์ตในสภาวะนั้นต้องไม่น้อยกว่าภาระของสภาวะนั้น</p>
+  <div class="math">\[
+\begin{aligned}
+\text{up}:&\quad 130\theta_1+100\theta_2\ \ge\ 120\\
+\text{flat}:&\quad 100\theta_1+100\theta_2\ \ge\ 90\\
+\text{down}:&\quad 70\theta_1+100\theta_2\ \ge\ 50
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แถวขาขึ้นอ่านว่า ถ้าตลาดขึ้น หุ้นหนึ่งหุ้นขายได้ 130 พันธบัตรหนึ่งหน่วยคืน 100 รวมกันต้องได้ไม่น้อยกว่าภาระ 120</p>
+    <p>ใช้ ≥ ไม่ใช่ = เพราะถ้าบังคับให้เท่ากันพอดีจะได้สามสมการสองตัวแปร ซึ่งไม่มีคำตอบ เจ้าหนี้ไม่ว่าถ้ามีเงินเหลือ และเป้าหมายที่ต้องการต้นทุนต่ำสุดจะรีดเงินส่วนเกินออกเอง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — ต้นทุนดิ่งลงไม่รู้จบได้ไหม: ตรวจว่าไม่มีเงินฟรี</h4>
+  <p>ถ้ามีทิศที่ payoff ไม่ลดลงในสภาวะใดเลยแต่ต้นทุนติดลบ เราจะเดินไปทางนั้นได้ไม่สิ้นสุด นั่นคือ arbitrage ในสองมิติมีทิศที่ต้องตรวจสองทิศ คือทิศที่เดินเลียบขอบแต่ละด้าน</p>
+  <div class="math">\[
+\begin{aligned}
+70\,\Delta\theta_1+100\,\Delta\theta_2=0\ &\Longrightarrow\ \Delta\theta_A=(1,\,-0.7)\\
+S\,\Delta\theta_A=(60,\ 30,\ 0),\quad &\text{cost}=100-66.5=+33.5\\[4pt]
+130\,\Delta\theta_1+100\,\Delta\theta_2=0\ &\Longrightarrow\ \Delta\theta_B=(-1,\,1.3)\\
+S\,\Delta\theta_B=(0,\ 30,\ 60),\quad &\text{cost}=-100+123.5=+23.5
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทิศ A ทำให้แถวขาลงไม่ขยับ ทิศ B ทำให้แถวขาขึ้นไม่ขยับ ทั้งสองทิศเพิ่ม payoff ได้ แต่ต้องจ่ายเพิ่ม 33.5 และ 23.5 ไม่มีทิศไหนได้ของฟรี ต้นทุนจึงมีก้นบึ้ง</p>
+    <p>ประโยคที่ควรจำ: LP นี้มีคำตอบจำกัดพอดีเมื่อตลาดไม่มี arbitrage เงื่อนไขทางการเงินกับเงื่อนไขทางคณิตศาสตร์เป็นเรื่องเดียวกัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ผู้สมัครอยู่ที่มุม: ให้ข้อจำกัดสองข้อเท่ากันพอดี</h4>
+  <p>เส้นต้นทุนคงที่เป็นเส้นตรง เลื่อนไปทางที่ถูกลงจนจะหลุดออกจากบริเวณที่ใช้ได้ จุดสุดท้ายที่ยังแตะอยู่คือมุม มีตัวแปรสองตัวจึงต้องใช้สองสมการตรึงจุด เลือก 2 จาก 3 ได้ 3 คู่</p>
+  <div class="math">\[
+\begin{aligned}
+(\text{up},\text{flat}):&\quad 30\theta_1=120-90=30\ \Rightarrow\ \theta=(1.000,\ -0.100)\\
+(\text{up},\text{down}):&\quad 60\theta_1=120-50=70\ \Rightarrow\ \theta=(1.1667,\ -0.3167)\\
+(\text{flat},\text{down}):&\quad 30\theta_1=90-50=40\ \Rightarrow\ \theta=(1.3333,\ -0.4333)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แต่ละบรรทัดลบสองสมการกัน พันธบัตรที่คืน 100 ทุกสภาวะหักกันหายพอดี เหลือหุ้นตัวเดียว คู่แรก 130θ₁ − 100θ₁ = 30θ₁ และ 120 − 90 = 30 จึงได้ θ₁ = 1 แทนกลับในแถวทรงตัว 100θ₂ = 90 − 100 = −10 ได้ θ₂ = −0.1</p>
+    <p>คู่ที่สองแทนกลับในแถวขาลง 100θ₂ = 50 − 70(1.1667) = −31.67 คู่ที่สาม 100θ₂ = 50 − 70(1.3333) = −43.33 นี่คือแก่นของ simplex: ไม่ค้นทั้งบริเวณ ค้นแค่มุม</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — เสียบกลับทุกแถว: ถูกที่สุดไม่ได้แปลว่าใช้ได้</h4>
+  <p>มุมแต่ละมุมทำให้สองแถวเท่ากันพอดี แต่ยังไม่รู้ว่าแถวที่สามผ่านไหม ต้องเสียบกลับก่อนเทียบราคา</p>
+  <div class="math">\[
+\begin{aligned}
+&(1.1667,\,-0.3167)\\
+&\qquad \text{cost}=116.67-30.08=86.58\\
+&\qquad \text{flat}=116.67-31.67=85\lt 90\\[4pt]
+&(1.000,\,-0.100)\\
+&\qquad \text{cost}=100-9.5=90.50\\
+&\qquad \text{down}=70-10=60\ge 50\\[4pt]
+&(1.3333,\,-0.4333)\\
+&\qquad \text{cost}=133.33-41.17=92.17\\
+&\qquad \text{up}=173.33-43.33=130\ge 120
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>มุมแรกถูกที่สุด 86.58 แต่สภาวะทรงตัวได้แค่ 85 ขาดไป 5 จึงตกรอบ ถ้าหยิบไปตอบโดยไม่ตรวจ จะได้พอร์ตที่จ่ายภาระไม่ครบในปีที่ตลาดทรงตัว</p>
+    <p>สองมุมที่รอดมีต้นทุน 90.50 กับ 92.17 ผู้ชนะคือ θ = (1, −0.1) กฎของ LP คือทุกครั้งที่แก้จากข้อจำกัดบางข้อ ต้องเอาคำตอบไปเสียบข้อที่เหลือทุกข้อ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — พิสูจน์ว่าหยุดที่มุมนี้จริง: เดินออกทางไหนก็แพงขึ้น</h4>
+  <p>จากมุม (1, −0.1) มีขอบให้เดินออกสองเส้น คือเลียบแถวขาขึ้นหรือเลียบแถวทรงตัว ลองเดินทีละเส้นแล้วดูต้นทุน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{up edge},\ \theta(s)=(1-s,\ -0.1+1.3s):&\quad \text{cost}=100-100s-9.5+123.5s=90.5+23.5s\\
+\text{flat edge},\ \theta(s)=(1+s,\ -0.1-s):&\quad \text{cost}=100+100s-9.5-95s=90.5+5s\\
+s=\tfrac13:&\quad \theta=(1.3333,\,-0.4333),\qquad \text{cost}=90.5+\tfrac53=92.17
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เดินเลียบขอบขาขึ้นต้นทุนเพิ่ม 23.5 ต่อก้าว เดินเลียบขอบทรงตัวต้นทุนเพิ่ม 5 ต่อก้าว และเดินได้ถึง s = 1/3 ก็ชนแถวขาลง ไปโผล่ที่มุม (ทรงตัว, ขาลง) ต้นทุน 92.17 ตรงกับขั้นที่ 6 ออกทางไหนก็แพงขึ้น จุดนี้จึงต่ำสุดจริง</p>
+    <p>ตัวเลขที่ทำให้หยุดได้มีชื่อ: หาน้ำหนักสองตัวที่ 130u₁ + 100u₂ = 100 และ 100u₁ + 100u₂ = 95 ได้ u₁ = 1/6 และ u₂ = 0.7833 บวกทั้งคู่ หัวข้อ 5.3 จะอ่านสองตัวนี้เป็นราคาของเงินหนึ่งดอลลาร์ในแต่ละสภาวะ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 5.1a — Three states, two assets: the answer sits on a corner</h4>
+  <img src="../figures/5.1-5.svg" alt="Figure 5.1a — Three states, two assets: the answer sits on a corner" loading="lazy">
+  <figcaption>
+    <p>พื้นที่สีเขียวคือแผนที่จ่ายภาระครบทุกสภาวะ เส้นประคือเส้นต้นทุน 90.50 ที่แตะพื้นที่ที่มุม (1, −0.1) พอดี กากบาทแดงคือมุม 86.58 ที่อยู่นอกพื้นที่เพราะสภาวะทรงตัวได้แค่ 85</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — อ่านคำตอบเป็นกระแสเงินสด และทำไมต้องเหลือเงินทิ้ง 10</h4>
+  <p>แปลงจำนวนหน่วยกลับเป็นเงินที่ไหลวันนี้และปีหน้า แล้วดูว่าแต่ละสภาวะเหลือเท่าไร</p>
+  <div class="math">\[
+\begin{aligned}
+\text{today}:&\quad 100(1)-95(0.1)=100-9.5=90.50\\[4pt]
+S\theta^*&=\begin{bmatrix}130-10\\ 100-10\\ 70-10\end{bmatrix}=\begin{bmatrix}120\\ 90\\ 60\end{bmatrix},\qquad S\theta^*-X=\begin{bmatrix}0\\ 0\\ 10\end{bmatrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ซื้อหุ้น 1 หุ้นจ่าย 100 ขาย short พันธบัตร 0.1 หน่วยรับ 9.50 ซึ่งคือการกู้เงิน เงินออกสุทธิ 90.50 ปีหน้าต้องคืนพันธบัตร 0.1 × 100 = 10 ทุกสภาวะ สภาวะขาขึ้นและทรงตัวจ่ายพอดี ขาลงเหลือ 10</p>
+    <p>ที่ต้องเหลือเพราะมีของให้ผสมแค่สองอย่างแต่มีสามสภาวะ payoff ที่สร้างได้ทั้งหมดเป็นแผ่นสองมิติในพื้นที่สามมิติ และภาระ (120, 90, 50) ไม่ได้อยู่บนแผ่นนั้น จึงทำให้ตรงครบสามช่องไม่ได้ ตลาดแบบนี้เรียกว่า incomplete market</p>
+    <p>ราคาของภาระนี้จึงเป็นช่วง: พอร์ตถูกสุดที่ไม่ต่ำกว่าภาระทุกสภาวะคือ 90.50 ส่วนมุมที่ตกรอบในขั้นที่ 6 ให้ 120, 85, 50 ซึ่งไม่เกินภาระทุกสภาวะ ราคา 86.58 ช่วง [86.58, 90.50] กว้าง 3.92</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — ภาระ 120/90/50 เฮดจ์ได้ถูกสุด 90.50</h4>
+  <p>คำถาม: ต้องถือหุ้นและพันธบัตรเท่าไร จ่ายวันนี้เท่าไร และทำไมไม่ใช่แผนที่ถูกกว่านี้?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 8</p>
+  <p>1. พอร์ตคือซื้อหุ้น 1 หุ้นและ short พันธบัตร 0.1 หน่วย</p>
+  <p>2. ต้นทุน 100 − 9.5 = 90.50</p>
+  <p>3. ที่มุมนี้ข้อจำกัดขาขึ้นและทรงตัวชนพอดี เดินออกทางไหนต้นทุนเพิ่ม 23.5 หรือ 5 ต่อก้าว ส่วนแผน 86.58 จ่ายสภาวะทรงตัวได้แค่ 85</p>
+  <p>เฉลย: θ* = (1, −0.1) ต้นทุนต่ำสุด 90.50</p>
+  <p>เช็ก 10 วินาที: 130 − 10 = 120, 100 − 10 = 90, 70 − 10 = 60 ≥ 50 และ 100 − 9.5 = 90.5</p>
+  <p>งานจริง: นี่คือแม่แบบของงาน structuring ลูกค้าส่งภาระที่ผูกกับสภาวะตลาดมา ราคาที่ต้องเก็บคือต้นทุนพอร์ต hedge ที่ถูกที่สุด 90.50 บวกกำไรที่ desk ต้องการ ไม่ใช่ค่าเฉลี่ยของภาระตามความน่าจะเป็น (expected value) และเพราะตลาดไม่สมบูรณ์ ฝั่งขายใช้ 90.50 ฝั่งซื้อใช้ 86.58</p>
+  <p>กับดัก: อย่าใส่ θ ≥ 0 เองเพราะเห็นว่าเป็นจำนวนที่ซื้อ คำตอบที่ถูกมี θ₂ = −0.1 ถ้าห้าม short คำตอบย้ายไปซื้อหุ้น 0.9231 หุ้นโดยไม่มีพันธบัตร ต้นทุน 92.31 แพงขึ้น 1.81 เครื่องหมายของตัวแปรเป็นข้อมูลของโจทย์ ไม่ใช่ธรรมเนียมของสูตร</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจมุมทั้งสามและคำตอบ</summary>
+    <pre><code>import numpy as np
+S=np.array([[130,100],[100,100],[70,100.]]); X=np.array([120,90,50.]); p=np.array([100,95.])
+th=np.linalg.solve(S[[0,1]],X[[0,1]])
+assert np.allclose(th,[1.0,-0.1]) and abs(p@th-90.5)&lt;1e-9
+assert np.allclose(S@th,[120,90,60])
+bad=np.linalg.solve(S[[0,2]],X[[0,2]])
+assert abs(p@bad-86.5833)&lt;1e-3 and (S@bad)[1]&lt;90
+other=np.linalg.solve(S[[1,2]],X[[1,2]])
+assert abs(p@other-92.1667)&lt;1e-3 and (S@other&gt;=X-1e-9).all()
+u=np.linalg.solve(S[[0,1]].T,p)
+assert np.allclose(u,[1/6,0.95-1/6])</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนี้แก้สามมุม ตรวจว่ามุม 86.58 ตกแถวทรงตัว มุม 90.50 ผ่านทุกแถว และน้ำหนัก 1/6 กับ 0.7833 ที่ทำให้หยุดได้ ถ้าใช้ solver ให้ปล่อยตัวแปรติดลบได้ ไม่เช่นนั้นจะได้ 92.31</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>นิยาม — ต้นทุน payoff และเงื่อนไข hedge เมื่อมี m สภาวะและ d สินทรัพย์</h4>
+  <p>ขั้นที่ 1 ถึง 8 ทำด้วยตัวเลข m = 3 และ d = 2 บรรทัดข้างล่างเขียนเรื่องเดียวกันให้ใช้ได้กับกี่สภาวะกี่สินทรัพย์ก็ได้ position $\theta$ ต้องให้ payoff ไม่น้อยกว่า $X$ ในทุกสภาวะ โดยมีต้นทุนรวมต่ำที่สุด</p>
   <div class="math">\[
 \begin{aligned}
 \text{Cost at } t=0:\quad & p^{\mathsf T}\theta = \sum_{j=1}^d p_j \theta_j \\
 \text{Payoff at } t=1:\quad & y_i = \sum_{j=1}^d S_{ij}\theta_j \quad (i=1,\dots,m) \implies y = S\theta \\
-\text{Hedging condition}:\quad & y \ge X \iff S\theta \ge X \\
-\text{Optimization LP}:\quad & \min_{\theta\in\mathbb R^d} p^{\mathsf T}\theta \quad \text{s.t. } S\theta \ge X
+\text{Hedging condition}:\quad & y \ge X,\ \text{that is}\ S\theta \ge X \\
+\text{Optimization LP}:\quad & \min_{\theta} p^{\mathsf T}\theta \quad \text{s.t. } S\theta \ge X
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -122,12 +309,12 @@
 </section>
 
 <section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: กำหนด $N=12$, $\beta_B=1.10$ และ target $\beta^*=0.20$ ส่วน QQQ กับ SPY มี beta 1.20 และ 1.00 จำกัด short ตัวละ \$6M และมี cost \$180 กับ \$90 ต่อ notional \$1M ตามลำดับ ทุกตัวเลขเป็น assumption ของ pre-trade model ที่ต้องเก็บ timestamp และ re-estimate เมื่อ liquidity เปลี่ยน</p>
+  <h4>ตัวอย่างที่สอง — hedge beta ของ basket ด้วย QQQ และ SPY</h4>
+  <p>โครงเดียวกันใช้กับ hedge ความเสี่ยงตลาดของ basket หุ้น โจทย์ให้อะไรมาบ้าง: กำหนด $N=12$, $\beta_B=1.10$ และ target $\beta^*=0.20$ ส่วน QQQ กับ SPY มี beta 1.20 และ 1.00 จำกัด short ตัวละ \$6M และมี cost \$180 กับ \$90 ต่อ notional \$1M ตามลำดับ ทุกตัวเลขเป็น assumption ของ pre-trade model ที่ต้องเก็บ timestamp และ re-estimate เมื่อ liquidity เปลี่ยน</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — ลองแผนที่เห็นก่อนเลย: ใช้ตัวเดียว แล้วดูว่าชนรั้วไหม</h4>
+  <h4>ขั้นที่ 9 — ลองแผนที่เห็นก่อนเลย: ใช้ตัวเดียว แล้วดูว่าชนรั้วไหม</h4>
   <p>ก่อนเขียนสมการอะไร ลองแก้ด้วยสามัญสำนึก: ต้องลด beta 10.8 หน่วย มีเครื่องมือสองตัว ลองใช้ทีละตัว</p>
   <div class="math">\[
 \begin{aligned}\text{QQQ}:\quad x_Q&=\frac{10.8}{1.2}=9>6\;\times,\qquad 180(9)=\$1{,}620\\
@@ -147,7 +334,7 @@ x_Q&=\frac{10.8-6}{1.2}=\frac{4.8}{1.2}=4\le6\;\checkmark\end{aligned}
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 2 — คำนวณ beta exposure ที่ต้องลด</h4>
+  <h4>ขั้นที่ 10 — คำนวณ beta exposure ที่ต้องลด</h4>
   <p>เริ่มจากวัดว่าปัญหาใหญ่แค่ไหน คือพอร์ตนี้เกาะตลาดอยู่กี่ดอลลาร์</p>
   <div class="math">\[
 \begin{aligned}
@@ -166,7 +353,7 @@ b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — เขียน residual beta และ risk constraint</h4>
+  <h4>ขั้นที่ 11 — เขียน residual beta และ risk constraint</h4>
   <p>แปลงเป้าหมายว่าลดความเสี่ยงตลาด ให้เป็นข้อบังคับที่เขียนเป็นสมการได้ สี่บรรทัดนี้เป็นพีชคณิตล้วน แต่ต้องเขียนออกมาให้ครบ เพราะมีการพลิกเครื่องหมายอยู่หนึ่งครั้ง และการพลิกผิดคือความต่างระหว่างการ hedge กับการเพิ่มความเสี่ยงเป็นสองเท่า</p>
   <div class="math">\[
 \begin{aligned}R&=1.10-\frac{1.20x_Q+x_S}{12}\;\le\;0.20\\
@@ -181,7 +368,7 @@ b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 4 — ของที่โจทย์ให้: domain และเพดานสภาพคล่อง</h4>
+  <h4>ขั้นที่ 12 — ของที่โจทย์ให้: domain และเพดานสภาพคล่อง</h4>
   <p>สองก้อนนี้เป็น ของที่โจทย์ให้ ไม่ได้คำนวณมา ของจริงมีข้อจำกัดที่ตำราไม่พูดถึง เช่นขายได้ไม่เกินสภาพคล่องที่มีในวันนั้น เลขศูนย์ด้านซ้ายบังคับว่าขนาดคำสั่งติดลบไม่ได้ ส่วนเลข 6 ด้านขวามาจากนโยบายสภาพคล่องของ desk</p>
   <div class="math">\[
 \begin{aligned}
@@ -198,7 +385,7 @@ b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 5 — เขียน cost objective และเทียบประสิทธิภาพ</h4>
+  <h4>ขั้นที่ 13 — เขียน cost objective และเทียบประสิทธิภาพ</h4>
   <p>เมื่อมีหลายวิธีที่ทำได้ ต้องมีเกณฑ์เลือก ซึ่งที่นี่คือต้นทุนรวมที่ต่ำที่สุด</p>
   <div class="math">\[
 \begin{aligned}
@@ -216,9 +403,9 @@ C(x_Q, x_S) &= c_Q x_Q + c_S x_S = 180 x_Q + 90 x_S \\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 6 — ตรวจ optimum ด้วยตัวเลขครบ</h4>
+  <h4>ขั้นที่ 14 — ตรวจ optimum ด้วยตัวเลขครบ</h4>
   <p>ตรวจว่าคำตอบที่ได้ผ่านทุกข้อบังคับจริง ก่อนจะเชื่อมัน</p>
-  <p>อ่านสามบรรทัดนี้เป็นคำตอบได้เลย: ใช้วัตถุดิบ 10.8 หน่วยจากเพดาน 12 เหลือที่ว่าง 1.2 หน่วย ผลตอบแทนสุทธิ 0.20 และจ่ายเงินสด 1,260 ดอลลาร์ จุดนี้จึงใช้ได้จริงและมีต้นทุนที่รู้แน่นอนก่อนส่งคำสั่ง</p>
+  <p>อ่านสามบรรทัดนี้เป็นคำตอบได้เลย: beta ที่ตัดออกได้ 10.8 พอดีตามที่ต้องการ residual beta เหลือ 0.20 ตามเป้า และจ่ายค่าเทรด 1,260 ดอลลาร์ จุดนี้จึงใช้ได้จริงและรู้ต้นทุนก่อนส่งคำสั่ง</p>
   <div class="math">\[
 \begin{aligned}x_Q^*=4,\;x_S^*=6:&\quad 1.20(4)+1.00(6)=4.8+6=10.8\ \checkmark\\
 R&=1.10-\frac{10.8}{12}=1.10-0.90=0.20\ \checkmark\\
@@ -238,32 +425,32 @@ C^*&=180(4)+90(6)=720+540=\$1{,}260\end{aligned}
 </section>
 
 <figure class="plot">
-  <h4>Figure 5.1a — Hedging LP feasible region</h4>
-  <img src="../figures/5.1-1.svg" alt="Figure 5.1a — Hedging LP feasible region" loading="lazy">
+  <h4>Figure 5.1b — Hedging LP feasible region</h4>
+  <img src="../figures/5.1-1.svg" alt="Figure 5.1b — Hedging LP feasible region" loading="lazy">
   <figcaption>
     <p>พื้นที่สีเขียวอยู่เหนือ beta boundary และอยู่ใน liquidity box เท่านั้น จุด (4,6) เป็นมุมแรกที่ใช้ SPY เต็ม cap แล้วผ่าน target พอดี</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.1b — Cost contours touch the feasible set</h4>
-  <img src="../figures/5.1-2.svg" alt="Figure 5.1b — Cost contours touch the feasible set" loading="lazy">
+  <h4>Figure 5.1c — Cost contours touch the feasible set</h4>
+  <img src="../figures/5.1-2.svg" alt="Figure 5.1c — Cost contours touch the feasible set" loading="lazy">
   <figcaption>
     <p>Cost contours มี slope -2 เพราะ QQQ แพงกว่า SPY ต่อ notional เส้น \$1,260 เป็นเส้นต่ำสุดที่แตะ feasible region ที่ (4,6)</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.1c — Beta reconciliation</h4>
-  <img src="../figures/5.1-3.svg" alt="Figure 5.1c — Beta reconciliation" loading="lazy">
+  <h4>Figure 5.1d — Beta reconciliation</h4>
+  <img src="../figures/5.1-3.svg" alt="Figure 5.1d — Beta reconciliation" loading="lazy">
   <figcaption>
     <p>Basket beta 1.10 ถูกลด 0.40 ด้วย QQQ และ 0.50 ด้วย SPY จึงเหลือ residual beta 0.20 ตัวเลขทั้งสี่ต้อง reconcile ก่อนส่ง order</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.1d — Cost per beta exposure removed</h4>
-  <img src="../figures/5.1-4.svg" alt="Figure 5.1d — Cost per beta exposure removed" loading="lazy">
+  <h4>Figure 5.1e — Cost per beta exposure removed</h4>
+  <img src="../figures/5.1-4.svg" alt="Figure 5.1e — Cost per beta exposure removed" loading="lazy">
   <figcaption>
     <p>SPY ลด market beta ได้ถูกกว่าต่อหนึ่ง beta-USD million จึงถูกใช้จนเต็ม cap ส่วน QQQ ทำหน้าที่เติม requirement ที่เหลือ</p>
   </figcaption>
@@ -299,6 +486,8 @@ C^*&=180(4)+90(6)=720+540=\$1{,}260\end{aligned}
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
+    <li>ภาระ 120/90/50 เฮดจ์ด้วยหุ้นกับพันธบัตรได้ถูกสุด 90.50 ที่ θ = (1, −0.1); มุมที่ถูกกว่า 86.58 ตกแถวทรงตัว และเงินเหลือ 10 ในสภาวะขาลงคือราคาของตลาดที่ไม่สมบูรณ์</li>
+    <li>LP มีก้นบึ้งพอดีเมื่อไม่มีทิศที่ได้ของฟรี คำตอบอยู่ที่มุม และต้องเสียบกลับทุกข้อจำกัดก่อนเชื่อ</li>
     <li>risk mandate แปลงเป็น $1.20x_Q+x_S\ge10.8$ พร้อม non-negative domains และ caps ตัวละ \$6M</li>
     <li>objective คือ minimize execution cost หลังจากบังคับ risk constraint แล้ว</li>
     <li>optimum คือ short QQQ \$4M และ SPY \$6M; residual beta 0.20 และ cost \$1,260</li>

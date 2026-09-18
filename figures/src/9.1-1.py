@@ -1,6 +1,6 @@
 from matplotlib.patches import Rectangle
 ax.set_xlim(0,10);ax.set_ylim(0,6);ax.axis('off')
-boxes=[(0.7,1.9,2.1,2.0,'F0','Open'),(0.7,1.2,4.2,3.4,'F1','Price + news'),(0.7,0.5,6.4,4.8,'F2','Price + news + flow')]
+boxes=[(0.7,1.9,2.1,2.0,'Day 0','open'),(0.7,1.2,4.2,3.4,'Day 1','price + news'),(0.7,0.5,6.4,4.8,'Day 2','price + news + flow')]
 for i,(x,y,w,h,f,label) in enumerate(boxes):
     ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=2,color=SERIES[i]))
     ax.text(x+w-0.15,y+h-0.32,f'{f}: {label}',ha='right',va='top',color=SERIES[i],fontsize=8)

@@ -1,17 +1,17 @@
-ax.axis('off')
-# Keep the labels above their matrices: the old returns label sat on the first value.
-ax.text(0.21, 0.84, 'weights  (1 x 3)', fontsize=14, color=INK, ha='center', weight='bold')
-ax.text(0.005, 0.50, '[', fontsize=30, color=INK, va='center')
-for x, value in zip([0.065, 0.200, 0.350], ['0.5', '0.3', '-0.2']):
- ax.text(x, 0.50, value, fontsize=22, color=ACCENT, ha='center', va='center', family='monospace', weight='bold')
-ax.text(0.425, 0.50, ']', fontsize=30, color=INK, va='center')
-ax.text(0.452, 0.50, '×', fontsize=25, color=INK, ha='center', va='center')
-ax.text(0.605, 0.84, 'returns  (3 x 1)', fontsize=14, color=INK, ha='center', weight='bold')
-for y, value in zip([0.64, 0.49, 0.34], ['0.012', '-0.006', '0.004']):
- ax.text(0.475, y, '[', fontsize=24, color=INK, va='center')
- ax.text(0.605, y, value, fontsize=21, color=WARM, ha='center', va='center', family='monospace', weight='bold')
- ax.text(0.725, y, ']', fontsize=24, color=INK, va='center')
-ax.text(0.780, 0.50, '=', fontsize=27, color=INK, ha='center', va='center')
-ax.text(0.905, 0.56, '0.0034', fontsize=26, color=GOOD, ha='center', va='center', family='monospace', weight='bold')
-ax.text(0.905, 0.34, 'portfolio return', fontsize=11, color=MUTED, ha='center', weight='bold')
-ax.set_title('Dimensions determine what a multiplication means', loc='left', fontsize=14, color=INK, pad=14)
+# Portfolio return as a waterfall of weight x return contributions (the product itself lives in the page as LaTeX).
+c = np.array([0.0060, -0.0018, -0.0008])
+starts = np.array([0.0, 0.0060, 0.0042])
+labels = ['asset 1\nw 0.50, r +1.2%', 'asset 2\nw 0.30, r -0.6%', 'asset 3\nw -0.20, r +0.4%', 'portfolio']
+for i, (s0, v) in enumerate(zip(starts, c)):
+    ax.bar(i, v, bottom=s0, color=GOOD if v > 0 else BAD, width=0.6)
+    ax.text(i, s0 + v + (0.00015 if v > 0 else -0.00015), f'{v*100:+.2f}%', ha='center', va='bottom' if v > 0 else 'top', fontsize=10)
+ax.bar(3, 0.0034, color=ACCENT, width=0.6)
+ax.text(3, 0.0034 + 0.00015, '+0.34%', ha='center', va='bottom', fontsize=11, weight='bold')
+for i, top in enumerate([0.0060, 0.0042, 0.0034]):
+    ax.plot([i + 0.3, i + 0.7], [top, top], color=MUTED, lw=0.8, ls=':')
+ax.axhline(0, color=MUTED, lw=0.8)
+ax.set_xticks(range(4), labels)
+ax.set_ylim(-0.0004, 0.0072)
+ax.yaxis.set_major_formatter(lambda y, _: f'{y*100:.1f}%')
+ax.set_ylabel('Contribution to portfolio return')
+ax.set_title('Each weight times its return, stacked: the row-times-column product', loc='left')

@@ -1,8 +1,14 @@
-ax.axis('off')
-ax.text(.08,.72,'$z$\n5 non-negative\nvariables',ha='center',va='center',color=ACCENT,weight='bold')
-ax.text(.48,.72,'$A_{eq}$\n3 × 5\nconstraint map',ha='center',va='center',color=WARM,weight='bold')
-ax.text(.88,.72,'$d$\n3 labelled\ntargets',ha='center',va='center',color=GOOD,weight='bold')
-ax.annotate('',xy=(.36,.72),xytext=(.18,.72),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
-ax.annotate('',xy=(.78,.72),xytext=(.60,.72),arrowprops=dict(arrowstyle='->',color=MUTED,lw=1.5))
-ax.text(.48,.22,r'$A_{eq}z=d$   with   $z\geq0$',ha='center',color=INK,fontsize=11)
-ax.set_xlim(0,1);ax.set_ylim(0,1);ax.set_title('Standard form is a labelled data contract',loc='left')
+# The solver's answer read back against the labelled limits of the prospectus.
+w = np.array([0.25, 0.15, 0.25, 0.25, 0.10])
+x = np.arange(5)
+cols = [ACCENT, ACCENT, GOOD, GOOD, GOOD]
+ax.bar(x, w, color=cols, width=0.6)
+for i, v in enumerate(w):
+    ax.text(i, v + 0.008, f'{v:.2f}', ha='center', fontsize=10)
+ax.axhline(0.25, color=BAD, ls='--', lw=1.2, label='single-asset cap 0.25')
+ax.axvspan(-0.45, 1.45, color=ACCENT, alpha=0.08, label='assets 1 + 2 capped at 0.40 (uses 0.40)')
+ax.set_xticks(x, [f'asset {i+1}' for i in x])
+ax.set_ylim(0, 0.42)
+ax.set_ylabel('weight')
+ax.legend(fontsize=8, loc='upper right', ncol=1, framealpha=0.95)
+ax.set_title("The answer is only tradable with its labels: weights vs limits", loc='left')
