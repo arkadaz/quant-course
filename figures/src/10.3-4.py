@@ -1,6 +1,15 @@
-from matplotlib.patches import FancyBboxPatch
-ax.set_xlim(9.3,16.2);ax.set_ylim(0,1);ax.axis('off');ax.hlines(.48,9.5,16,color=INK,lw=2)
-for x,label,col in [(9.5,'Open',ACCENT),(10,'Decision',BAD),(12,'Noon',MUTED),(16,'Close',GOOD)]:
-    ax.scatter(x,.48,s=45,color=col,zorder=3);ax.text(x,.34,label,ha='center',color=col,fontsize=8)
-ax.axvspan(9.5,10,color=GOOD,alpha=.12);ax.axvspan(10,16,color=BAD,alpha=.08);ax.axvline(10,color=BAD,ls='--',lw=1.3)
-ax.text(9.75,.72,'valid features',ha='center',color=GOOD,weight='bold');ax.text(13,.72,'future information',ha='center',color=BAD,weight='bold');ax.set_title('Decision-time filtration audit',loc='left')
+rng=np.random.default_rng(1030)
+m=np.arange(0,391);k=0.29857                                  # USD per sqrt(minute): 93.60/sqrt(98,280)
+path=np.concatenate([[0],np.cumsum(rng.normal(0,k,390))]);path=path-path[30]+520
+ax.axvspan(0,30,color=GOOD,alpha=.10);ax.axvline(30,color=BAD,ls='--',lw=1.2)
+ax.plot(m[:31],path[:31],color=ACCENT,lw=1.6,label='known at 10:00')
+ax.plot(m[30:],path[30:],color=MUTED,lw=1,alpha=.7,label='what actually happened later')
+f=m[30:];sd=k*np.sqrt(f-30)
+ax.fill_between(f,520-2*sd,520+2*sd,color=WARM,alpha=.15,label='forecast ± 2 SD from 10:00')
+ax.fill_between(f,520-sd,520+sd,color=WARM,alpha=.25,label='forecast ± 1 SD (±5.66 at close)')
+ax.hlines(520,30,390,color=WARM,lw=1.5,ls=':')
+hi=path[:31].max();ax.scatter([int(np.argmax(path[:31]))],[hi],color=GOOD,zorder=3,label=f'valid feature: high by 10:00 = {hi:.2f}')
+ax.scatter([390],[path[390]],color=BAD,zorder=3,label=f'close {path[390]:.2f}: not known at 10:00')
+ax.set_xticks([0,30,120,210,300,390]);ax.set_xticklabels(['9:30','10:00','11:30','13:00','14:30','16:00'])
+ax.set_ylabel('SPY (USD)');ax.set_title('At 10:00 the best forecast of the close is 520; the close itself is off limits',loc='left')
+ax.legend(fontsize=6,loc='upper left',ncol=2)

@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>บันทึกคะแนนสุ่มของเกมตอนนาที 2 และนาที 5 โดยคะแนนนาที 5 มีส่วนของสองนาทีแรกติดมาด้วย ผลคูณเฉลี่ยของสองเวลาเป็นศูนย์หรือไม่?</p>
-  <p>เฉลย: ไม่เป็นศูนย์; เขียนคะแนนนาที 5 เป็นคะแนนนาที 2 บวกส่วนเพิ่ม 3 นาที ส่วนเพิ่มใหม่มีค่าเฉลี่ยศูนย์ จึงเหลือส่วนอดีตที่ซ้อนกัน</p>
-  <p>Conditional expectation คือค่าเฉลี่ยหลังตรึงข้อมูลที่รู้แล้ว คะแนนนาที 5 ไม่ลืมนาที 2 แต่พกมาด้วยกระเป๋าใบใหญ่กว่า; quant ใช้แยกส่วนที่รู้เพื่อหา covariance และตรวจ martingale model</p>
+  <p>กองทุนหนึ่งมีกำไรขาดทุนแกว่งปีละ 12 ล้าน USD มกราคมกำไร 2 ล้าน ผลงานเดือนแรกอธิบายผลทั้งปีได้กี่เปอร์เซ็นต์ และตอนนี้ควรคาดกำไรทั้งปีเท่าไร?</p>
+  <p>เฉลย: correlation ของเดือนแรกกับทั้งปีคือ √(1/12) = 0.289 อธิบายได้แค่ 8.3% และที่อธิบายได้ก็เพราะมกราคมอยู่ในผลทั้งปีอยู่แล้ว คาดกำไรทั้งปี 2 ล้าน USD แต่ยังคลาดได้หนึ่ง standard deviation (SD) 11.49 ล้าน มกราคมบอกอะไรเกี่ยวกับกุมภาพันธ์ถึงธันวาคมไม่ได้เลย</p>
 </div>
 
 <details class="jargon" open>
@@ -168,11 +167,12 @@ W_{t+s}-W_s&:\ \text{new, independent of }\mathcal F_s\end{aligned}
   <h4>ขั้นที่ 4 — ทางเลือกที่สอง: คำนวณ cross term ด้วย independence ของ increments</h4>
   <p>วิธีที่สองนี้ยืนยันผลลัพธ์เดียวกันด้วยสัจพจน์ independent increments โดยไม่ต้องพึ่ง filtration ช่วยให้เห็นชัดเจนว่า cross term หายไปเพราะช่วงเวลาไม่ทับกันจริง ๆ</p>
   <div class="math">\[
-\begin{aligned}[0,s]\cap(s,t+s]&=\varnothing\\[4pt]
-(W_{t+s}-W_s)&\perp\!\!\!\perp(W_s-W_0)\\[4pt]
-W_0=0\;&\Longrightarrow\;(W_{t+s}-W_s)\perp\!\!\!\perp W_s\\[4pt]
-\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]&=\mathbb E_0[W_{t+s}-W_s]\cdot\mathbb E_0[W_s]\\[4pt]
-&=0\cdot0=0\end{aligned}
+\begin{aligned}
+[0,s]\ \text{and}\ (s,t+s]&:\ \text{no common time}\\
+W_s=W_s-W_0&\ \ \text{independent of}\ \ W_{t+s}-W_s\\[4pt]
+\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]&=\mathbb E_0[W_{t+s}-W_s]\cdot\mathbb E_0[W_s]\\
+&=0\cdot0=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทางเลือกนี้ไม่ง้อ conditional expectation หรือ tower property แต่ใช้สัจพจน์ข้อแรกของ Brownian motion ตรง ๆ คือช่วงเวลา $[0,s]$ กับ $(s,t+s]$ ไม่ซ้อนทับกันเลย</p>
@@ -260,10 +260,19 @@ u\le v:\quad W_v&=W_u+(W_v-W_u)\\
   <h4>ขั้นที่ 9 — เดือนแรกเทียบทั้งปี</h4>
   <p>นำสูตร covariance ที่เพิ่งพิสูจน์มาใช้กับคำถามจริง คือผลของเดือนแรกเกี่ยวกับทั้งปีแค่ไหน</p>
   <div class="math">\[
-\rho_{1/12,1}=\sqrt{\frac{1}{12}}=0.288675,\qquad R^2=\rho^2=\frac1{12}=8.33\%
+\begin{aligned}
+\rho_{1/12,1}&=\sqrt{1/12}=1/3.4641=0.2887\\
+R^2&=\rho^2=1/12=8.33\%\\[4pt]
+\text{3 months}&:\ \rho=\sqrt{3/12}=0.500,\quad R^2=25.0\%\\
+\text{6 months}&:\ \rho=\sqrt{6/12}=0.707,\quad R^2=50.0\%\\
+\text{11 months}&:\ \rho=\sqrt{11/12}=0.957,\quad R^2=91.7\%\\[4pt]
+\operatorname{Cov}(W_{1/12},\,W_1-W_{1/12})&=0
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>เวลาสั้นคือ 1/12 ปีและเวลายาวคือ 1 ปี; correlation เท่ากับ 0.288675 ส่วนสัดส่วน variance ที่ simple linear projection อธิบายได้ต้อง square อีกครั้งจึงเหลือ 8.33%</p>
+    <p>เวลาสั้นคือ 1/12 ปีและเวลายาวคือ 1 ปี; correlation เท่ากับ 0.2887 ส่วนสัดส่วน variance ที่อธิบายได้ต้องยกอีกชั้นเป็นกำลังสองจึงเหลือ 8.33%</p>
+    <p>สามบรรทัดกลางคือตารางอ่านเร็ว คอลัมน์ R² เท่ากับสัดส่วนของปีที่เห็นไปแล้วพอดี 3 เดือนคือ 25% 6 เดือนคือ 50% ส่วน correlation ดูใหญ่กว่าเสมอเพราะมันคือรากของตัวเลขนั้น นี่คือกลไกเดียวกับที่ทำให้ backtest ดูน่าเชื่อกว่าที่ควร</p>
+    <p>บรรทัดสุดท้ายคือคำถามที่ควรถามจริง มกราคมเกี่ยวกับ 11 เดือนที่เหลือแค่ไหน สองช่วงไม่มีเวลาร่วมกันเลย covariance จึงเป็นศูนย์เป๊ะ</p>
   </div>
 </section>
 
@@ -284,7 +293,10 @@ u\le v:\quad W_v&=W_u+(W_v-W_u)\\
   <h4>ขั้นที่ 10 — risk เดือนแรกและช่วงที่เหลือ</h4>
   <p>แยกความเสี่ยงทั้งปีออกเป็นส่วนที่เกิดแล้วกับส่วนที่ยังไม่เกิด</p>
   <div class="math">\[
-\operatorname{SD}(P_{1/12})=\$12\text{M}\sqrt{1/12}=\$3.464\text{M},\qquad\operatorname{SD}(P_1-P_{1/12})=\$12\text{M}\sqrt{11/12}=\$11.489\text{M}
+\begin{aligned}
+\operatorname{SD}(P_{1/12})&=\$12\text{M}\sqrt{1/12}=\$3.464\text{M}\\
+\operatorname{SD}(P_1-P_{1/12})&=\$12\text{M}\sqrt{11/12}=\$11.489\text{M}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$P_{1/12}$ คือ January P&amp;L และ $P_1-P_{1/12}$ คือ P&amp;L ของ 11 เดือนที่เหลือ; Brownian scaling แยก standard deviation ตามความยาวแต่ละช่วง</p>
@@ -315,16 +327,42 @@ u\le v:\quad W_v&=W_u+(W_v-W_u)\\
 </figure>
 
 <section class="example">
-  <h4>คำตอบของ investment committee</h4>
-  <p>January กำไร \$2M ทำให้ Brownian conditional forecast ของ full-year P&amp;L เท่ากับ \$2M แต่ uncertainty ของ 11 เดือนที่เหลือยัง \$11.49M เดือนแรกอธิบาย annual variance เพียง 8.33% และตัวเลขนี้เกิดจาก January ถูกนับอยู่ในผลทั้งปี หากถามว่า January ทำนาย February–December หรือไม่ คำตอบภายใต้ model คือ covariance เท่ากับ 0</p>
-  <p>คำถาม: January P&amp;L USD 2M ทำนายค่าเฉลี่ย full-year P&amp;L เท่าไรใน Brownian model?</p>
-  <p>ของที่มี: January P&amp;L USD 2M และ 11 เดือนที่เหลือมี mean ศูนย์.</p>
-  <p>1. แยก full year เป็น January บวก future increment. เพราะ Brownian increment ในอนาคตมี mean ศูนย์.</p>
-  <p>2. คง January USD 2M ไว้เป็น conditional forecast.</p>
-  <p>เฉลย: forecast full-year P&amp;L คือ USD 2M แต่ uncertainty ยัง USD 11.49M.</p>
-  <p>เช็ก 10 วินาที: January คือ 1/12 ของปี จึงอธิบาย annual variance 8.33%.</p>
-  <p>งานจริง: แยก P&amp;L ที่เห็นแล้วออกจาก risk ของเวลาที่ยังเหลือ.</p>
-  <p>กับดัก: ห้ามตีความ January บวกว่ามันสร้าง alpha ให้ February–December.</p>
+  <h4>คำตอบ — มกราคมกำไร 2 ล้าน บอกอะไรเกี่ยวกับทั้งปี</h4>
+  <p>คำถาม: กองทุนมีกำไรขาดทุนแกว่งปีละ 12 ล้าน USD มกราคมกำไร 2 ล้าน เดือนแรกอธิบายผลทั้งปีได้กี่เปอร์เซ็นต์ และควรคาดกำไรทั้งปีเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 6 ถึง 11</p>
+  <p>1. covariance ของสองเวลาคือเวลาที่มาก่อน Cov(W_(1/12), W_1) = 1/12</p>
+  <p>2. correlation = √(1/12) = 0.289 และ R² = 1/12 = 8.33%</p>
+  <p>3. คำทำนายทั้งปีคือ 2 ล้าน USD และความไม่แน่นอนที่เหลือคือ 12 × √(11/12) = 11.49 ล้าน USD</p>
+  <p>4. มกราคมกับกุมภาพันธ์ถึงธันวาคมมี covariance ศูนย์</p>
+  <p>ตรวจเองใน 10 วินาที: √(1/12) = 1/3.464 = 0.289 และ 0.289² = 0.0833 ส่วน 144 × 11/12 = 132 ราก 11.49</p>
+  <p>แปลว่าอะไร: 8.3% ไม่ได้มาจากความสามารถในการทำนาย มันมาจากการนับมกราคมซ้ำในผลทั้งปี ถ้าถามว่ามกราคมบอกอะไรเกี่ยวกับ 11 เดือนที่เหลือ คำตอบคือศูนย์ League table รายไตรมาสจึงแทบไม่มีคุณค่าทางสถิติ และสัญญาจ้างผู้จัดการกองทุนควรวัดผลด้วยหน้าต่างยาว ไม่ใช่ไตรมาสต่อไตรมาส และอย่ารายงาน 0.289 ว่าอธิบายได้ 28.9%</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ covariance ของสองเวลา และตัวเลขกองทุน</summary>
+    <pre><code>import numpy as np
+rng = np.random.default_rng(64)
+n = 2_000_000
+s, v = 1 / 12, 1.0
+Ws = rng.normal(0, np.sqrt(s), n)                   # January
+W1 = Ws + rng.normal(0, np.sqrt(v - s), n)          # full year = January + the rest
+assert abs((W1 * Ws).mean() - s) &lt; 1e-3            # E[W_(t+s) W_s] = s
+rho = np.corrcoef(W1, Ws)[0, 1]
+assert abs(rho - np.sqrt(1 / 12)) &lt; 2e-3 and abs(np.sqrt(1 / 12) - 0.2887) &lt; 1e-4
+assert abs(np.corrcoef(Ws, W1 - Ws)[0, 1]) &lt; 2e-3  # January says nothing about Feb-Dec
+for months, r2 in [(3, .25), (6, .50), (11, 11 / 12)]:
+    assert abs(months / 12 - r2) &lt; 1e-12
+
+sigma_P, jan = 12.0, 2.0                            # USD million
+assert abs(sigma_P * np.sqrt(1 / 12) - 3.464) &lt; 1e-3
+assert abs(sigma_P * np.sqrt(11 / 12) - 11.489) &lt; 1e-3
+forecast = jan + 0.0                                # future increment has mean zero
+assert forecast == 2.0 and abs(144 * 11 / 12 - 132) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดจำลองสองล้านปีเพื่อตรวจว่าค่าเฉลี่ยของผลคูณเท่ากับ 1/12 correlation 0.2887 และมกราคมไม่เกี่ยวกับ 11 เดือนที่เหลือ แล้วตรวจตัวเลขกองทุน 3.464 และ 11.489 ล้าน USD</p>
+  </div>
 </section>
 
 <section class="pitfall">

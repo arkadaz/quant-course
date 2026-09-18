@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ตอน 10:00 คุณเห็นคะแนนเกม 3 รอบแรก; ตอน 10:05 เห็นเพิ่มอีก 2 รอบ คุณตอบคำถามเดิมได้มากขึ้น แต่ไม่ควรแอบใช้คะแนนรอบที่ยังไม่เกิดใช่ไหม?</p>
-  <p>เฉลย: ชุดข้อมูลที่รู้เวลาแรกเป็นส่วนหนึ่งของชุดที่รู้เวลาหลัง: 3 ผลลัพธ์ก่อน แล้วจึง 5 ผลลัพธ์ ไม่ใช่การสลับข้อมูลจากอนาคตเข้ามา</p>
-  <p>Filtration คือครอบครัวของชุดข้อมูลที่เปิดเผยเพิ่มตามเวลา เป็นสปอยล์บล็อกเกอร์ที่กันตอนจบหลุดเข้าฉากแรก; งานจริงใช้ตรวจว่า backtest และ hedge ไม่ได้โกงด้วย future data</p>
+  <p>ตอน 10:00 SPY อยู่ที่ 520 USD ความผันผวน 18% ต่อปี ตลาดปิด 16:00 ราคาปิดที่ทำนายได้ดีที่สุดตอนนี้คือเท่าไร คลาดได้แค่ไหน และ backtest ที่เอาราคาปิดวันนั้นมาตัดสินใจตอน 10:00 ผิดตรงไหน?</p>
+  <p>เฉลย: ทำนายได้ดีที่สุดคือ 520 USD เท่าเดิม เพราะส่วนที่ยังไม่เกิดมีค่าเฉลี่ยศูนย์ ความไม่แน่นอนหนึ่ง standard deviation (SD) คือ 93.60 × √(360/98,280) = 5.66 USD ส่วนราคาปิด 16:00 ยังไม่อยู่ในข้อมูลตอน 10:00 backtest ที่ใช้มันกำลังแอบดูอนาคต</p>
 </div>
 
 <details class="jargon" open>
@@ -53,6 +52,8 @@
     <dd>คำสั่งซื้อหรือขายที่ส่งเข้าสู่ตลาดพร้อมราคาและขนาด ใช้เป็นเวลาตัดสินจริงซึ่งกำหนด cutoff ของข้อมูล</dd>
     <dt>compensated martingale</dt>
     <dd>process ที่หัก predictable drift ออกจาก quantity ที่เดิมมีแนวโน้มแล้วจนเหลือ martingale ใช้แยกส่วนที่คาดหมายได้ออกจาก innovation</dd>
+    <dt>standard deviation (SD)</dt>
+    <dd>ความกว้างของการแกว่งในหน่วยเดียวกับราคา ใช้บอกว่าราคาปิดน่าจะห่างจากคำทำนายราวเท่าไร</dd>
   </dl>
 </details>
 
@@ -61,8 +62,9 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$\mathcal F_t$</td><td>sigma-algebra ของข้อมูลที่รู้ได้ถึงเวลา $t$</td><td>ชุด events</td></tr>
-      <tr><td>$\mathcal F_s\subseteq\mathcal F_t$</td><td>ข้อมูลเวลา $s$ อยู่ภายในข้อมูลเวลา $t$ เมื่อ $s\le t$</td><td>ความสัมพันธ์ของเซต</td></tr>
+      <tr><td>$\mathcal F_t$</td><td>ข้อมูลทั้งหมดที่รู้ถึงเวลา $t$ เช่นราคาทุกจุดที่เห็นแล้ว</td><td>ชุดข้อมูล</td></tr>
+      <tr><td>$S_t$</td><td>ราคา SPY ณ เวลา $t$ ในตัวอย่างนี้</td><td>USD</td></tr>
+      <tr><td>$\mathbb E_{10}[\cdot]$</td><td>ค่าเฉลี่ยเมื่อรู้ข้อมูลถึง 10:00 ย่อจาก $\mathbb E[\cdot\mid\mathcal F_{10:00}]$</td><td>ตาม quantity ด้านใน</td></tr>
       <tr><td>$W_t$</td><td>SBM ที่เวลา $t$ และ adapted กับ filtration ที่กำหนด</td><td>$\sqrt{\mathrm{time}}$</td></tr>
       <tr><td>$\Delta W_{t,s}$</td><td>future increment $W_{t+s}-W_t$</td><td>$\sqrt{\mathrm{time}}$</td></tr>
       <tr><td>$\mathbb E[\cdot\mid\mathcal F_t]$</td><td>conditional expectation เมื่อใช้ข้อมูลถึงเวลา $t$</td><td>ตาม quantity ด้านใน</td></tr>
@@ -96,10 +98,14 @@
   <h4>ขั้นที่ 1 — นิยาม filtration</h4>
   <p>เวลาต่อเนื่องไม่มี 'วันถัดไป' ให้นับ จึงต้องนิยามใหม่ว่าข้อมูลโตขึ้นหมายความว่าอย่างไร กติกาเหลือข้อเดียว คือของเก่าต้องไม่หายไป</p>
   <div class="math">\[
-0\le s\le t\quad\Longrightarrow\quad\mathcal F_s\subseteq\mathcal F_t
+\begin{aligned}
+\mathcal F_{9{:}45}&:\ S_u,\ \ 9{:}30\le u\le9{:}45\\
+\mathcal F_{10{:}00}&:\ S_u,\ \ 9{:}30\le u\le10{:}00\\
+\mathcal F_{16{:}00}&:\ S_u,\ \ 9{:}30\le u\le16{:}00
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$s$ คือเวลาก่อนและ $t$ คือเวลาหลัง; การเป็น subset บอกว่า event ทุกตัวที่ตัดสินได้จากข้อมูลเดิมยังตัดสินได้จากข้อมูลใหม่</p>
+    <p>ข้อมูลตอน 9:45 อยู่ครบในข้อมูลตอน 10:00 และทั้งหมดอยู่ในข้อมูลตอน 16:00 ข้อมูลโตขึ้นได้อย่างเดียว ไม่มีอะไรหาย คำถามที่ตอบได้ด้วยข้อมูลเก่า ยังตอบได้ด้วยข้อมูลใหม่เสมอ นี่คือกติกาข้อเดียวของ filtration</p>
   </div>
 </section>
 
@@ -107,10 +113,12 @@
   <h4>ขั้นที่ 2 — natural filtration ของ Brownian path</h4>
   <p>ในทางปฏิบัติ ข้อมูลที่เรามีคือประวัติราคาที่ผ่านมาทั้งเส้น ขั้นนี้ตั้งชื่อให้กับข้อมูลชุดนั้นโดยเฉพาะ</p>
   <div class="math">\[
-\mathcal F_t^W=\sigma(W_u:0\le u\le t)
+\begin{aligned}
+\mathcal F_t^W&=\text{history of }W_u,\ \ 0\le u\le t
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$\mathcal F_t^W$ คือ information set ที่สร้างจากค่าของ $W_u$ ทุกเวลาตั้งแต่ 0 ถึง $t$; สัญลักษณ์ $\sigma(\cdot)$ หมายถึง sigma-algebra ที่เล็กที่สุดซึ่งทำให้ประวัติทั้งหมดนี้สังเกตได้</p>
+    <p>$\mathcal F_t^W$ คือ information set ที่สร้างจากค่าของ $W_u$ ทุกเวลาตั้งแต่ 0 ถึง $t$; ถ้ารู้ทั้งเส้นทางจนถึงตอนนี้ ก็ตอบได้ทุกคำถามที่เกี่ยวกับอดีต เช่นจุดสูงสุด จุดต่ำสุด หรือค่าเมื่อ 20 นาทีก่อน</p>
   </div>
 </section>
 
@@ -139,7 +147,10 @@
   <h4>ขั้นที่ 3 — นิยามข้อ independence เขียนในภาษาของ filtration</h4>
   <p>บรรทัดนี้เป็นการเขียน นิยาม ข้อแรกของ Brownian motion ใหม่ ไม่ใช่ผลที่พิสูจน์ ข้อเดิมบอกว่าช่วงที่ไม่ทับกันเป็นอิสระต่อกัน ข้อนี้พูดสิ่งเดียวกันแต่เทียบกับ กองข้อมูลทั้งหมดที่เห็นมาถึงตอนนี้ ผลที่ตามมาคือการขยับครั้งหน้าไม่เปลี่ยนเลย ไม่ว่าจะเห็นประวัติมาแบบไหน และนั่นคือสิ่งที่ทำให้คำนวณต่อได้ง่ายมาก</p>
   <div class="math">\[
-\Delta W_{t,s}:=W_{t+s}-W_t\perp\!\!\!\perp\mathcal F_t,\qquad\Delta W_{t,s}\mid\mathcal F_t\sim\mathcal N(0,s)
+\begin{aligned}
+\Delta W_{t,s}&:=W_{t+s}-W_t\ \ \text{independent of}\ \ \mathcal F_t\\
+\Delta W_{t,s}\mid\mathcal F_t&\sim\mathcal N(0,s)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$\Delta W_{t,s}$ คือ increment ในอนาคตยาว $s$; independence ทำให้ conditional distribution หลังเห็น $\mathcal F_t$ ยังเป็น Normal ที่มี mean 0 และ variance $s$ เหมือนเดิม</p>
@@ -265,32 +276,78 @@ W_t+\Delta W_{t,s}&=W_t+\big(W_{t+s}-W_t\big)\\
   <h4>ขั้นที่ 9 — นิยามของ feature ที่ใช้ได้: ตรวจว่ามันอยู่ในกองข้อมูลตอนนั้นหรือยัง</h4>
   <p>สองก้อนนี้เป็นตัวอย่างของ นิยาม เรื่อง measurable ไม่ใช่ผลที่พิสูจน์ กฎมีข้อเดียว: ตัวแปรที่ใช้ตัดสินใจ ณ เวลาหนึ่ง ต้องคำนวณได้จากข้อมูลที่มีถึงเวลานั้น ค่าสูงสุดตั้งแต่เปิดตลาดถึงสิบโมงคำนวณได้ตอนสิบโมง จึงใช้ได้ ส่วนราคาปิดสี่โมงเย็นยังไม่เกิด จึงใช้ไม่ได้ และเป็นสาเหตุของ backtest ที่ดูดีเกินจริง</p>
   <div class="math">\[
-\underbrace{\max_{9{:}30\le u\le10{:}00}S_u}_{\mathcal F_{10{:}00}\text{-measurable}}\;\text{is valid},\qquad\underbrace{S_{16{:}00}}_{\text{not }\mathcal F_{10{:}00}\text{-measurable}}\;\text{is look-ahead}
+\begin{aligned}
+\max_{9{:}30\le u\le10{:}00}S_u&:\ \text{known at 10:00}\ \checkmark\\
+S_{16{:}00}&:\ \text{known only at 16:00}\ \times
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าสูงสุดที่คำนวณจากราคา $S_u$ ถึง 10:00 รู้ได้ก่อนส่ง order จึง measurable กับ filtration ปัจจุบัน ส่วนราคาปิด 16:00 ยังไม่ measurable กับข้อมูล 10:00 และทำให้ backtest รั่ว</p>
   </div>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 10 — ตัวเลขของ SPY: ราคาปิดที่ทำนายได้ดีที่สุดตอน 10:00</h4>
+  <p>ใช้ Brownian motion แบบมีหน่วย USD ของหัวข้อ 10.2 กับ SPY ราคา 520 USD ความผันผวน 18% ต่อปีคือ 93.60 USD ต่อ √ปี ตัด drift ออกก่อนเพราะใน 6 ชั่วโมงมันเล็กมาก แล้วใช้ขั้นที่ 5 และ 6 กับช่วง 10:00 ถึง 16:00</p>
+  <div class="math">\[
+\begin{aligned}
+S_t&=520+93.60\,W_t\\
+\Delta t&=\frac{360}{252\times390}=\frac{360}{98{,}280}=0.003663\\
+\sqrt{\Delta t}&=0.060523\\[4pt]
+\mathbb E_{10}[S_{16}]&=520+93.60\,\mathbb E_{10}[\Delta W]=520\\
+\operatorname{SD}_{10}(S_{16})&=93.60(0.060523)=\$5.66\\
+\mathbb E_{10}[(S_{16}-520)^2]&=5.66^2=32.09
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>หกชั่วโมงจาก 10:00 ถึง 16:00 คือ 360 นาทีจาก 98,280 นาทีที่ตลาดเปิดทั้งปี ส่วนที่ยังไม่เกิดมีค่าเฉลี่ยศูนย์ตามขั้นที่ 5 คำทำนายที่ดีที่สุดของราคาปิดจึงเป็น 520 USD เท่าราคาตอนนี้พอดี ถ้าใส่ drift 8% ต่อปีก็ขยับแค่ 520 × 0.08 × 0.003663 = 0.15 USD</p>
+    <p>ความไม่แน่นอนไม่หายไปไหน หนึ่ง SD คือ 5.66 USD และค่าเฉลี่ยของกำลังสองของการขยับคือ 32.09 ซึ่งโตตามเวลาที่เหลือ ตรงกับขั้นที่ 6 ที่บอกว่ากำลังสองรู้ล่วงหน้าว่าจะโตเท่าไร</p>
+  </div>
+</section>
+
 <figure class="plot">
-  <h4>Figure 10.3d — a timestamp audit exposes the leak</h4>
-  <img src="../figures/10.3-4.svg" alt="Figure 10.3d — a timestamp audit exposes the leak" loading="lazy">
+  <h4>Figure 10.3d — ตอน 10:00 รู้อะไร และไม่รู้อะไร</h4>
+  <img src="../figures/10.3-4.svg" alt="Figure 10.3d — ตอน 10:00 รู้อะไร และไม่รู้อะไร" loading="lazy">
   <figcaption>
-    <p>เส้น decision cutoff แยก valid features ทางซ้ายออกจาก closing price ทางขวา Backtest ที่หยิบ close มาใช้ตอน 10:00 ไม่ได้ค้นพบ predictive edge; มันค้นพบ time machine</p>
+    <p>เส้นน้ำเงินคือราคาที่เห็นแล้วถึง 10:00 ค่าสูงสุดของช่วงนั้นใช้เป็น feature ได้ แถบส้มคือคำทำนายจาก 10:00 ที่ยังอยู่ที่ 520 แต่กว้างขึ้นตามรากของเวลา จนหนึ่ง SD เป็น ±5.66 USD ตอนปิด เส้นเทาคือสิ่งที่เกิดจริงในวันจำลองนี้ ปิดที่ 524.92 ซึ่งตอน 10:00 ยังไม่มีใครรู้ backtest ที่ใช้มันไม่ได้เจอ edge มันเจอเครื่องย้อนเวลา</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>คำตอบของ research desk</h4>
-  <p>signal เดิมไม่ adapted เพราะใช้ราคาปิดหลังตลาดตัดสินใจไปแล้ว จึงต้องทิ้งผล backtest และสร้าง feature จากข้อมูลที่มี ณ เวลาส่งคำสั่งเท่านั้น.</p>
-  <p>คำถาม: เมื่อเห็นค่าปัจจุบันของ SBM แล้วมองไปอีกหนึ่งไตรมาส conditional forecast จะขยับเองไหม?</p>
-  <p>ของที่มี: ค่าปัจจุบัน, horizon หนึ่งไตรมาส และสมมติว่า future increment มี mean ศูนย์.</p>
-  <p>1. คง conditional mean ไว้ที่ค่าปัจจุบัน. เพราะส่วนเพิ่มในอนาคตมีค่าเฉลี่ยศูนย์.</p>
-  <p>2. หา standard deviation จาก square-root ของ horizon. เพราะ Brownian uncertainty โตตามรากเวลา.</p>
-  <p>เฉลย: forecast เฉลี่ยไม่ขยับเอง แต่ uncertainty ยังขยายตามเวลา.</p>
-  <p>เช็ก 10 วินาที: ใน calculator, $\sqrt{1/4}=1/2$; หนึ่งไตรมาสจึงมี scale ครึ่งหน่วย.</p>
-  <p>งานจริง: timestamp feature ทุกตัวก่อน run backtest.</p>
-  <p>กับดัก: adapted ไม่ได้แปลว่า forecast แม่น; มันแปลว่าไม่โกงเวลา.</p>
+  <h4>คำตอบ — ตอน 10:00 รู้อะไรเกี่ยวกับราคาปิดได้บ้าง</h4>
+  <p>คำถาม: ตอน 10:00 SPY อยู่ที่ 520 USD ความผันผวน 18% ต่อปี ราคาปิด 16:00 ที่ทำนายได้ดีที่สุดคือเท่าไร หนึ่ง SD กว้างเท่าไร และ feature ไหนใช้ได้?</p>
+  <p>ของที่มี: ขั้นที่ 3 ถึง 10</p>
+  <p>1. คำทำนายที่ดีที่สุดคือ 520 USD เพราะการขยับที่ยังไม่เกิดมีค่าเฉลี่ยศูนย์ SBM เป็น martingale</p>
+  <p>2. หนึ่ง SD ของราคาปิดคือ 93.60 × √0.003663 = 93.60 × 0.060523 = 5.66 USD</p>
+  <p>3. ค่าสูงสุดตั้งแต่ 9:30 ถึง 10:00 ใช้เป็น feature ได้ ส่วนราคาปิด 16:00 ใช้ไม่ได้ เพราะยังไม่อยู่ใน 𝓕 ตอน 10:00</p>
+  <p>ตรวจเองใน 10 วินาที: 360 ÷ 98,280 = 0.00366 ราก 0.0605 คูณ 93.6 ได้ราว 5.66 และ 5.66² ≈ 32</p>
+  <p>แปลว่าอะไร: backtest ที่หยิบราคาปิดมาตัดสินใจตอน 10:00 ไม่ได้เจอ edge มันเจอเครื่องย้อนเวลา ก่อนวัดผลกลยุทธ์ทุกครั้งต้องประทับเวลาทุก feature ว่ามาถึงเมื่อไร และจำไว้ว่า adapted ไม่ได้แปลว่าทำนายแม่น แค่แปลว่าไม่โกงเวลา</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจคำทำนายราคาปิดและ martingale ของ W² − t</summary>
+    <pre><code>import numpy as np
+S0, sigma_usd = 520.0, 520.0 * 0.18            # 93.60 USD per sqrt(year)
+dt = 360 / (252 * 390)                          # 10:00 to 16:00 in years
+assert abs(sigma_usd - 93.60) &lt; 1e-9 and abs(dt - 0.003663) &lt; 1e-6
+sd = sigma_usd * np.sqrt(dt)
+assert abs(np.sqrt(dt) - 0.060523) &lt; 1e-6 and abs(sd - 5.66) &lt; 0.01
+
+rng = np.random.default_rng(10)
+close = S0 + sigma_usd * rng.normal(0, np.sqrt(dt), 1_000_000)
+assert abs(close.mean() - 520) &lt; 0.03                    # best forecast = price now
+assert abs(close.std() - 5.665) &lt; 0.03
+assert abs(((close - 520) ** 2).mean() - 32.09) &lt; 0.3    # the square grows with time
+
+Wt, s = 0.8, 0.25                                        # W_t^2 - t is a martingale
+W2 = (Wt + rng.normal(0, np.sqrt(s), 1_000_000)) ** 2
+assert abs(W2.mean() - (Wt**2 + s)) &lt; 0.01
+assert abs(0.08 * 520 * dt - 0.152) &lt; 0.001             # drift over six hours</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจ 93.60 USD ต่อ √ปี, 0.003663 ปี, SD 5.66 USD จำลองราคาปิดหนึ่งล้านครั้งว่าเฉลี่ยได้ 520 และกำลังสองเฉลี่ย 32.09 และตรวจว่า W² โตเท่าเวลาพอดี</p>
+  </div>
 </section>
 
 <section class="pitfall">

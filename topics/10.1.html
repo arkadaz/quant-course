@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>หยดหมึกลงแก้วน้ำแล้วมองจุดเล็ก ๆ ที่ลอยสะเปะสะปะ การขยับในนาทีถัดไปขึ้นกับเส้นทางที่มันเคยเดินมาหรือไม่?</p>
-  <p>เฉลย: ไม่ขึ้นกับเส้นทางเดิม; ถ้าช่วงเวลา 1 วินาทีมีความแกว่งหนึ่งหน่วย ช่วง 4 วินาทีไม่ได้แกว่ง 4 หน่วย แต่ขนาดเฉลี่ยโตตามรากของเวลา</p>
-  <p>Brownian motion คือ model ของการเปลี่ยนแปลงต่อเนื่องที่เริ่มจากจุดกำหนด มี increment อิสระและปกติ มันจำอดีตได้แค่ตำแหน่งล่าสุด ไม่ได้เก็บไดอารีทั้งเล่ม; quant ใช้เป็นฐานของ model ราคาและความเสี่ยง</p>
+  <p>กองทุนถือหุ้น SPY ที่ราคา \$520 หาก drift ต่อปีคือ 8% และ volatility คือ 18% ต่อปี โดยหนึ่งปีมี 252 วันทำการ วันละ 390 นาที ในช่วงเวลา 30 นาทีข้างหน้า ราคามีโอกาสแกว่งในกรอบ 95% ประมาณกี่ดอลลาร์?</p>
+  <p>เฉลย: กรอบ 95% คือ [-\$3.19, +\$3.22] รอบราคาเดิม โดย mean ขยับขึ้นเพียง \$0.013 แต่ความผันผวนกว้างถึง \$1.64 เพราะความเสี่ยงโตตามรากของเวลา</p>
 </div>
 
 <details class="jargon" open>
@@ -97,7 +96,10 @@
   <h4>ขั้นที่ 1 — สมบัติที่ 1 — increments ในช่วงไม่ทับกันเป็นอิสระ</h4>
   <p>Brownian motion ถูกนิยามด้วยกติกาสามข้อ ไม่มากไปกว่านี้ ข้อแรกบอกว่าช่วงเวลาที่ไม่ทับกันต้องไม่บอกอะไรเกี่ยวกันเลย นี่คือข้อที่ทำให้ 'ดูกราฟย้อนหลังแล้วทายอนาคต' ใช้ไม่ได้</p>
   <div class="math">\[
-0\le t_0 \lt t_1 \lt \cdots \lt t_n\quad\Longrightarrow\quad B_{t_1}-B_{t_0},\ldots,B_{t_n}-B_{t_{n-1}}\;\text{are independent}
+\begin{aligned}
+&0\le t_0\lt t_1\lt\cdots\lt t_n\\
+&B_{t_1}-B_{t_0},\ \ldots,\ B_{t_n}-B_{t_{n-1}}\ \ \text{independent}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$t_0$ ถึง $t_n$ คือขอบช่วงที่เรียงตามเวลา และ $B_{t_i}-B_{t_{i-1}}$ คือ increment ของช่วงที่ $i$; independence ทำให้ข้อมูลจากช่วงหนึ่งไม่เปลี่ยน distribution ของ increment ในอีกช่วงที่ไม่ทับกัน</p>
@@ -106,12 +108,15 @@
 
 <section class="formula">
   <h4>สมบัติที่ 2 — นิยามข้อที่สอง: distribution ขึ้นกับความยาวช่วงเท่านั้น</h4>
-  <p>บรรทัดนี้เป็นข้อหนึ่งใน นิยาม ของ Brownian motion ไม่ได้พิสูจน์มาจากอะไร เรากำลังเลือกสร้างของที่มีสมบัตินี้ ข้อที่สองบอกว่าการขยับขึ้นกับความยาวของช่วงเท่านั้น ไม่ขึ้นกับว่าเริ่มจับเวลาตอนไหน ครึ่งชั่วโมงตอนเปิดตลาดกับครึ่งชั่วโมงตอนบ่าย จึงอยู่ใต้กฎเดียวกัน ส่วนจะมีของจริงที่ทำตามกฎนี้ได้หรือไม่ เป็นคนละคำถาม</p>
+  <p>สมบัติข้อที่สองระบุว่าการเปลี่ยนแปลงขึ้นกับความยาวของช่วงเวลาเท่านั้น ไม่ขึ้นกับว่าเริ่มจับเวลาตอนไหน ครึ่งชั่วโมงช่วงเช้ากับครึ่งชั่วโมงช่วงบ่ายจึงใช้การกระจายตัวแบบเดียวกัน สำหรับ process ทั่วไปที่มี drift และ volatility จะเขียนเป็น $X_{t+s}-X_t \sim N(\mu s, \sigma^2 s)$</p>
   <div class="math">\[
-B_{t+s}-B_t\sim\mathcal N(0,s)
+\begin{aligned}
+B_{t+s}-B_t&\sim\mathcal N(0,s)\\
+X_{t+s}-X_t&\sim\mathcal N(\mu s,\sigma^2 s)
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$B_{t+s}-B_t$ คือ increment ของ standard Brownian motion ยาว $s$; mean เป็นศูนย์และ variance เท่ากับ $s$ โดยไม่ขึ้นกับตำแหน่งเริ่ม $t$ จึงเรียกว่า stationary increments; ถ้าต้องการ drift และ scale ให้สร้าง $X_t=x+\mu t+\sigma B_t$ ในภายหลัง</p>
+    <p>$B_{t+s}-B_t$ คือ increment ของ standard Brownian motion ยาว $s$; mean เป็นศูนย์และ variance เท่ากับ $s$ โดยไม่ขึ้นกับตำแหน่งเริ่ม $t$ จึงเรียกว่า stationary increments; เมื่อใส่ drift $\mu$ และ volatility $\sigma$ การกระจายจะขยายเป็น mean $\mu s$ และ variance $\sigma^2 s$</p>
   </div>
 </section>
 
@@ -119,11 +124,10 @@ B_{t+s}-B_t\sim\mathcal N(0,s)
   <h4>สมบัติที่ 3 — sample path ต่อเนื่อง</h4>
   <p>ข้อที่สามบังคับว่าเส้นทางห้ามกระโดด ราคาจะข้ามจากค่าหนึ่งไปอีกค่าโดยไม่ผ่านค่าระหว่างกลางไม่ได้ ข้อนี้คือสิ่งที่ทำให้ hedge แบบต่อเนื่องพอจะเป็นไปได้ในทฤษฎี</p>
   <div class="math">\[
-P\big(t\mapsto B_t\ \text{continuous}\big)=1
+P(B_t\text{ continuous},\; t\ge 0)=1
 \]</div>
   <div class="reading">
-    <p>probability 1 หมายถึงแทบทุก sample path ต่อเนื่องตามเวลา: ถ้า path ไปจากค่าหนึ่งสู่อีกค่าหนึ่ง ต้องผ่านค่าระหว่างกลาง แต่ไม่ได้หมายความว่า path เรียบหรือหา derivative ได้</p>
-    <p>อ่านว่า: ความน่าจะเป็นที่เส้นทางจะต่อเนื่องเท่ากับหนึ่ง แปลว่าเส้นทางแทบทุกเส้นไม่ขาดตอน ถ้าไปจากค่าหนึ่งสู่อีกค่าหนึ่ง ต้องผ่านทุกค่าระหว่างกลาง แต่ไม่ได้แปลว่าเส้นเรียบหรือหา derivative ได้</p>
+    <p>probability 1 หมายถึงแทบทุก sample path ต่อเนื่องตามเวลา: ถ้าเส้นทางเดินทางจากค่าหนึ่งไปสู่อีกค่าหนึ่ง ต้องผ่านทุกค่าระหว่างกลางเสมอ แต่ไม่ได้แปลว่าเส้นทางจะเรียบหรือหา derivative ได้</p>
   </div>
 </section>
 
@@ -131,17 +135,18 @@ P\big(t\mapsto B_t\ \text{continuous}\big)=1
   <h4>ทำไมต้องเป็นระฆังคว่ำ — ไม่ได้เลือกเอง แต่ถูกบังคับ</h4>
   <p>นี่คือเหตุผลที่ลองใช้ distribution อื่นแล้วไม่รอด ถ้าให้การขยับหนึ่งวินาทีเป็นแบบ uniform ผลบวกของสองวินาทีจะไม่ใช่ uniform อีกต่อไป ซึ่งขัดกับสมบัติข้อ 2 ที่บอกว่า รูปร่างต้องขึ้นกับความยาวช่วงอย่างเดียว ระฆังคว่ำเป็นตระกูลที่บวกกันแล้วยังเป็นตัวเองอยู่ จึงเป็นตัวเดียวที่อยู่รอดในกรอบนี้</p>
   <div class="math">\[
-\begin{aligned}B_{t+s}-B_t&=\sum_{i=1}^{n}\Big(B_{t+\frac{is}{n}}-B_{t+\frac{(i-1)s}{n}}\Big)\\
-&=\sum_{i=1}^{n}Y_i\\[4pt]
-Y_i\ \text{i.i.d.},\qquad\operatorname{Var}(Y_i)&=\frac{s}{n}\qquad(\text{properties }1,2)\\[4pt]
-\sum_{i=1}^{n}Y_i\ &\xrightarrow[\;n\to\infty\;]{}\ \mathcal N(0,s)\\[4pt]
-\text{but } \sum_{i=1}^{n}Y_i&=B_{t+s}-B_t\quad\text{for every }n\\[4pt]
-\Longrightarrow\qquad B_{t+s}-B_t&\sim\mathcal N(0,s)\end{aligned}
+\begin{aligned}
+B_{t+s}-B_t&=\sum_{i=1}^{n}\Big(B_{t+\frac{is}{n}}-B_{t+\frac{(i-1)s}{n}}\Big)=\sum_{i=1}^{n}Y_i\\[4pt]
+\operatorname{Var}(Y_i)&=\frac{s}{n},\qquad Y_i\ \text{i.i.d.}\quad(\text{properties 1, 2})\\[4pt]
+\sum_{i=1}^{n}Y_i&\xrightarrow[\;n\to\infty\;]{}\ \mathcal N(0,s)\\[4pt]
+\sum_{i=1}^{n}Y_i&=B_{t+s}-B_t\qquad(\text{every }n)\\[4pt]
+B_{t+s}-B_t&\sim\mathcal N(0,s)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คำถามที่ควรถามหลังอ่านสมบัติข้อสองคือ ทำไมต้องระฆังคว่ำ ใครเลือกให้ คำตอบคือไม่มีใครเลือก พอตั้งสมบัติข้อ 1 กับข้อ 2 ไว้แล้ว รูปร่างนี้ไม่มีทางเป็นอย่างอื่น</p>
     <p>วิธีเห็นคือหั่นช่วงเวลาออกเป็น $n$ ท่อนเท่า ๆ กัน การขยับตลอดช่วงก็คือผลบวกของการขยับย่อย ท่อนย่อยเหล่านี้เป็นอิสระต่อกันตามข้อ 1 และหน้าตาเหมือนกันหมดตามข้อ 2</p>
-    <p>จังหวะชี้ขาดอยู่ที่บรรทัดรองสุดท้าย ผลบวกของของเล็ก ๆ ที่เป็นอิสระและเหมือนกันจำนวนมาก ลู่เข้าหาระฆังคว่ำเสมอ ซึ่งคือ Central Limit Theorem ที่จะพิสูจน์กันในบทที่ 14</p>
+    <p>จังหวะชี้ขาดอยู่ที่บรรทัดรองสุดท้าย ผลบวกของของเล็ก ๆ ที่เป็นอิสระและเหมือนกันจำนวนมาก ลู่เข้าหาระฆังคว่ำเสมอ ซึ่งคือ Central Limit Theorem ของหัวข้อ 14.2</p>
     <p>แต่ผลบวกก้อนนั้นไม่ได้แค่ลู่เข้า มันเท่ากับการขยับตลอดช่วงพอดีอยู่แล้ว ไม่ว่าจะหั่นกี่ท่อน ของที่เท่ากับปลายทางของตัวเองอยู่ทุกขั้น ก็ต้องเป็นปลายทางนั้นมาตั้งแต่ต้น</p>
   </div>
 </section>
@@ -171,10 +176,12 @@ Y_i\ \text{i.i.d.},\qquad\operatorname{Var}(Y_i)&=\frac{s}{n}\qquad(\text{proper
   <h4>ขั้นที่ 2 — บวก variance ของช่วงย่อย</h4>
   <p>สามกติกาข้างบนพอแล้วที่จะคำนวณว่าความไม่แน่นอนสะสมอย่างไร สี่บรรทัดนี้ใช้สองในสามข้อ และผลที่ได้ไม่ขึ้นกับ $n$ เลย ถ้ามันขึ้นกับ $n$ แปลว่ากติกาสามข้อขัดกันเอง</p>
   <div class="math">\[
-\begin{aligned}B_s-B_0&=\sum_{i=1}^{n}\Big(B_{is/n}-B_{(i-1)s/n}\Big)\\
-\operatorname{Var}\!\Big(B_{is/n}-B_{(i-1)s/n}\Big)&=\frac{s}{n}\qquad\text{(property 2)}\\
-\text{increments independent}\;&\Longrightarrow\;\operatorname{Var}\Big(\sum_i\Big)=\sum_i\operatorname{Var}\\
-\operatorname{Var}(B_s-B_0)&=n\cdot\frac{s}{n}=s\end{aligned}
+\begin{aligned}
+B_s-B_0&=\sum_{i=1}^{n}\Big(B_{is/n}-B_{(i-1)s/n}\Big)\\
+\operatorname{Var}\Big(B_{is/n}-B_{(i-1)s/n}\Big)&=\frac{s}{n}\qquad(\text{property 2})\\
+\operatorname{Var}(B_s-B_0)&=\sum_{i=1}^{n}\operatorname{Var}\Big(B_{is/n}-B_{(i-1)s/n}\Big)\qquad(\text{property 1})\\
+&=n\cdot\frac{s}{n}=s
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ลองซอยช่วงยาวเป็น $n$ ท่อนเท่า ๆ กัน แล้วบวกกลับ พจน์กลางหักกันหมดเหลือหัวกับท้าย จึงเป็นการเขียนใหม่ ไม่ใช่การประมาณ ท่อนสั้นแต่ละท่อนยาว $s/n$ จึงมี variance เท่ากับความยาวของตัวเองตามสมบัติที่ 2</p>
@@ -234,13 +241,17 @@ s\to4s:\quad\sqrt{4s}&=2\sqrt{s}\end{aligned}
   <h4>ขั้นที่ 5 — mean และ standard deviation ของการเปลี่ยนราคา</h4>
   <p>แทนค่าลงในสองสูตรแล้ววางเทียบกัน นี่คือจุดที่กฎรากที่สองแสดงผลชัดที่สุด และเป็นเหตุผลที่ระยะสั้นแทบไม่มีใครทำเงินจาก drift</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[\Delta S]&=520(0.08)(0.00030525)=41.60(0.00030525)=\$0.0127\\
+\begin{aligned}
+\mathbb E[\Delta S]&=520(0.08)(0.00030525)\\
+&=41.60(0.00030525)=\$0.0127\\
 \sqrt{\Delta t}&=\sqrt{0.00030525}=0.017471\\
-\operatorname{SD}(\Delta S)&=520(0.18)(0.017471)=93.60(0.017471)=\$1.635\end{aligned}
+\operatorname{SD}(\Delta S)&=520(0.18)(0.017471)\\
+&=93.60(0.017471)=\$1.635
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>mean คูณเวลาตรง ๆ แต่ standard deviation คูณ *ราก* ของเวลา นั่นคือเหตุผลที่ค่าสองตัวนี้ต่างกันมหาศาลในช่วงสั้น ๆ</p>
-    <p>ใน 30 นาที ราคาคาดว่าจะขยับขึ้นราวหนึ่งสตางค์ครึ่ง แต่ความไม่แน่นอนกว้างถึงราว 1.64 USD</p>
+    <p>ใน 30 นาที ราคาคาดว่าจะขยับขึ้นราว 1.3 เซนต์ แต่ความไม่แน่นอนกว้างถึงราว 1.64 USD</p>
   </div>
 </section>
 
@@ -248,7 +259,11 @@ s\to4s:\quad\sqrt{4s}&=2\sqrt{s}\end{aligned}
   <h4>ขั้นที่ 6 — กรอบ Normal 95% ภายใต้ model</h4>
   <p>แปลงค่าเฉลี่ยกับความกว้างให้เป็นช่วงที่โต๊ะใช้จริง คือกรอบที่ราคาน่าจะอยู่ข้างในราว 95 ครั้งจากทุก 100 ครั้ง</p>
   <div class="math">\[
-\$0.0127\pm1.96(\$1.635)=\$0.0127\pm\$3.205\;\Longrightarrow\;[\,-\$3.19,\;\$3.22\,]
+\begin{aligned}
+1.96\,\operatorname{SD}&=1.96(\$1.635)=\$3.205\\
+\text{low}&=\$0.0127-\$3.205=-\$3.19\\
+\text{high}&=\$0.0127+\$3.205=+\$3.22
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$1.96\times1.635=3.205$ แล้วบวกลบจาก 0.0127 ได้ขอบล่าง $0.0127-3.205=-3.19$ และขอบบน $0.0127+3.205=3.22$ ช่วงนี้แทบสมมาตรรอบศูนย์ เพราะ drift เล็กมากเมื่อเทียบกับ noise</p>
@@ -264,16 +279,44 @@ s\to4s:\quad\sqrt{4s}&=2\sqrt{s}\end{aligned}
 </figure>
 
 <section class="example">
-  <h4>คำตอบของ risk desk</h4>
-  <p>ภายใต้ Brownian benchmark การเปลี่ยนแปลง 30 นาทีของ SPY มี mean เพียง \$0.013 เทียบกับ standard deviation \$1.64 และกรอบ model 95% ประมาณ -\$3.19 ถึง +\$3.22 สมบัติ independent increments ทำให้ทิศทางครึ่งชั่วโมงก่อนหน้าไม่เปลี่ยน distribution นี้ แต่ช่วง earnings, opening gap และ volatility clustering ต้องใช้ model ที่ผ่อนสมมติฐานสามข้อ</p>
-  <p>คำถาม: ถ้า volatility 30 นาทีคือ USD 1.64 แล้วกรอบ 95% กว้างประมาณเท่าไร?</p>
-  <p>ของที่มี: mean USD 0.013 และ standard deviation USD 1.64.</p>
-  <p>1. คูณ 1.64 ด้วย 1.96 ได้ USD 3.21. เพราะ 1.96 standard deviations ให้กรอบ 95% ภายใต้ Normal model.</p>
-  <p>2. บวกและลบจาก mean ได้ประมาณ -USD 3.19 ถึง +USD 3.22.</p>
-  <p>เฉลย: กรอบ model 95% คือประมาณ -USD 3.19 ถึง +USD 3.22.</p>
-  <p>เช็ก 10 วินาที: 1.64×2≈3.28 จึงควรใกล้ USD 3.2.</p>
-  <p>งานจริง: ใช้เป็น baseline intraday band ก่อนเพิ่ม event stress.</p>
-  <p>กับดัก: อย่าเอา independent increments ไปใช้ข้าม earnings หรือ opening gap โดยไม่ stress เพิ่ม.</p>
+  <h4>คำตอบ — กรอบความเสี่ยง 30 นาทีของ SPY</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: SPY ราคา \$520, drift 8% ต่อปี, volatility 18% ต่อปี, ช่วงเวลา 30 นาทีจาก 252 วันทำการ วันละ 390 นาที</p>
+  <p>คำถาม: ในช่วง 30 นาทีข้างหน้า ราคา SPY มีกรอบการเคลื่อนไหว 95% ภายใต้ model เท่ากับกี่ดอลลาร์?</p>
+  <p>ของที่มี (ขั้นที่ 4 ถึง 6): เวลา 0.00030525 ปี, mean ขยับ 0.0127 ดอลลาร์, standard deviation เท่ากับ 1.635 ดอลลาร์</p>
+  <p>1. คำนวณช่วงกว้าง 95% ด้วย 1.96 คูณ 1.635 ได้ 3.205 ดอลลาร์</p>
+  <p>2. บวกลบจาก mean: ขอบล่าง -\$3.19 และขอบบน +\$3.22</p>
+  <p>คำตอบ: กรอบการเปลี่ยนราคา 95% คือ [-\$3.19, +\$3.22] รอบราคาเดิม หรือคิดเป็นระดับราคาที่ [\$516.81, \$523.22]</p>
+  <p>ตรวจเองใน 10 วินาที: 1.64 × 2 ≈ 3.28 ใกล้ 3.205 ที่ใช้ 1.96 แทน 2 และ drift 0.013 ดอลลาร์แทบไม่ขยับกรอบ ส่วน 520 − 3.19 = 516.81 กับ 520 + 3.22 = 523.22</p>
+  <p>แปลว่าอะไร: ในช่วงสั้น 30 นาที ผลจาก drift มีค่าน้อยมากเมื่อเทียบกับขนาดความผันผวน 1.64 ดอลลาร์ ซึ่งขยายตัวตามรากของเวลา</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจคำนวณกรอบ 30 นาทีของ SPY ด้วย Python</summary>
+    <pre><code>import math
+
+price = 520.0
+mu = 0.08
+sigma = 0.18
+trading_minutes = 252 * 390
+dt = 30.0 / trading_minutes
+
+mean_change = price * mu * dt
+sd_change = price * sigma * math.sqrt(dt)
+margin = 1.96 * sd_change
+lower = mean_change - margin
+upper = mean_change + margin
+
+assert abs(dt - 0.00030525) &lt; 1e-7
+assert abs(mean_change - 0.0127) &lt; 1e-4
+assert abs(sd_change - 1.635) &lt; 1e-3
+assert abs(lower - (-3.19)) &lt; 0.01
+assert abs(upper - 3.22) &lt; 0.01
+print(f"Mean: {mean_change:.4f}, SD: {sd_change:.3f}, Band: [{lower:.2f}, {upper:.2f}]")</code></pre>
+  </details>
+  <div class="note">
+    <p>ตรวจการคำนวณเวลา drift standard deviation และกรอบความเสี่ยง 95% ของ SPY</p>
+  </div>
 </section>
 
 <section class="pitfall">

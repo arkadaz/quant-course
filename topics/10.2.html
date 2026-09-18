@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>โยนเหรียญ 100 ครั้งแล้วให้หัวเดินขวา ก้อยเดินซ้าย จำนวนหัวอาจมากกว่าก้อย แต่คุณคาดว่าระยะห่างสุดท้ายจะใกล้ 100 ก้าวหรือใกล้ 10 ก้าว?</p>
-  <p>เฉลย: ความต่างสุทธิมักมีขนาดราวรากที่สองของ 100 คือ 10 ไม่ใช่ 100; การหักล้างทำให้เส้นทางไม่โตแบบบวกตรง ๆ</p>
-  <p>Standard Brownian motion (SBM) คือ Brownian motion ที่เริ่มศูนย์ มีค่าเฉลี่ยศูนย์ และ variance เท่ากับเวลาที่ผ่านไป เหรียญ 100 ครั้งไม่ได้จัดประชุมให้ทุกก้าวไปทางเดียวกัน; quant ใช้แยกความสุ่มล้วนออกจาก drift หรือ volatility</p>
+  <p>พอร์ต SPY มูลค่า \$25,000,000 มีความผันผวนรายวัน 1.15% หากตลาดเปิด 252 วันต่อปี ความเสี่ยงรายปีและราคา option แบบ at-the-money (ATM) straddle อายุ 30 วันที่ราคาหุ้น \$520 ควรมีมูลค่าเท่าใด?</p>
+  <p>เฉลย: ความผันผวนรายปีคือ 18.26% (ความเสี่ยงพอร์ต \$4.57M ไม่ใช่ \$72.45M) และราคา straddle 30 วันคือ 4.18% ของราคาหุ้น หรือ \$21.72 ต่อหุ้น (\$2,172 ต่อสัญญา) เพราะความเสี่ยงโตตามรากของเวลา</p>
 </div>
 
 <details class="jargon" open>
@@ -43,6 +42,8 @@
     <dd>logarithm ของอัตราส่วนราคาปลายช่วงต่อราคาเริ่มช่วง ซึ่งบวกข้ามช่วงเวลาติดกันได้ ใช้เชื่อม Brownian increments กับผลตอบแทนสะสม</dd>
     <dt>square-root-of-time rule</dt>
     <dd>กฎที่แปลง standard deviation ระหว่าง horizons ด้วยรากของอัตราส่วนเวลา ใช้ annualize หรือ de-annualize volatility เมื่อ increments เป็นอิสระและมี variance คงที่</dd>
+    <dt>at-the-money (ATM)</dt>
+    <dd>สถานะที่ strike เท่ากับราคา spot ปัจจุบันของ underlying ใช้เป็นจุดอ้างอิงคำนวณ option โดยไม่มี intrinsic value</dd>
     <dt>at-the-money straddle</dt>
     <dd>position ที่ซื้อ call option และ put option strike เดียวกับ spot และ expiry เดียวกัน ใช้ซื้อการแกว่งทั้งขาขึ้นและขาลงโดยไม่เลือกทิศ</dd>
     <dt>call option</dt>
@@ -61,6 +62,10 @@
     <dd>หน่วยซื้อขาย option ในตลาดสหรัฐฯ ซึ่งหนึ่งสัญญาโดยทั่วไปอ้างอิง 100 shares ใช้แปลงราคาต่อ share เป็นเงินสดต่อสัญญา</dd>
     <dt>notional</dt>
     <dd>มูลค่าอ้างอิงที่ position ควบคุมก่อนหัก hedge หรือ leverage ใช้แปลง return volatility เป็น P&amp;L risk หน่วย USD</dd>
+    <dt>realized volatility</dt>
+    <dd>ความผันผวนที่วัดได้จริงจากผลตอบแทนในอดีต ใช้เทียบว่าราคา option ในตลาดแพงหรือถูก</dd>
+    <dt>implied volatility</dt>
+    <dd>ความผันผวนที่ต้องใส่ในสูตรให้ได้ราคา option เท่าราคาตลาด ใช้อ่านว่าตลาดคาดความผันผวนในอนาคตเท่าไร</dd>
   </dl>
 </details>
 
@@ -105,10 +110,14 @@
   <h4>ขั้นที่ 1 — นิยาม SBM ในหนึ่งบรรทัด</h4>
   <p>ก่อนจะสร้าง model ราคาอะไรก็ตาม ต้องมีก้อนสุ่มมาตรฐานไว้หนึ่งก้อนก่อน ขั้นนี้นิยามมันด้วยสามเงื่อนไขสั้น ๆ ที่เหลือทั้งบทสร้างต่อจากนี้</p>
   <div class="math">\[
-W_0=0,\qquad W_{t+s}-W_t\sim\mathcal N(0,s),\qquad W_{t+s}-W_t\perp\!\!\!\perp\mathcal F_t
+\begin{aligned}
+W_0&=0\\
+W_{t+s}-W_t&\sim\mathcal N(0,s)\\
+W_{t+s}-W_t&\ \ \text{independent of}\ \ \mathcal F_t
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$W_0$ กำหนดจุดเริ่มที่ 0; ให้ $\mathcal F_t$ แทนข้อมูลจาก path ถึงเวลา $t$; increment ยาว $s$ มี mean 0 และ variance $s$; เครื่องหมาย independence บอกว่า increment อนาคตไม่ขึ้นกับข้อมูลถึงเวลา $t$</p>
+    <p>$W_0$ กำหนดจุดเริ่มที่ 0; ให้ $\mathcal F_t$ แทนข้อมูลจาก path ถึงเวลา $t$; increment ยาว $s$ มี mean 0 และ variance $s$; บรรทัดสามบอกว่า increment อนาคตไม่ขึ้นกับข้อมูลถึงเวลา $t$</p>
   </div>
 </section>
 
@@ -123,7 +132,7 @@ W_t\ \text{normal}\;&\Longrightarrow\;X_t\sim\mathcal N\big(x+\mu t,\ \sigma^{2}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกไม่ใช่ผลลัพธ์ แต่เป็น นิยาม ของสิ่งที่เราสร้างขึ้นเอง: หยิบก้อนมาตรฐานมา แล้วเติมจุดเริ่มต้น ทิศทาง และขนาดความแกว่งเข้าไป คำถามคือของที่สร้างแบบนี้มีหน้าตาอย่างไร</p>
-    <p>หาค่าเฉลี่ยก่อน สองพจน์แรกไม่ได้สุ่มจึงผ่านออกมาตรง ๆ ส่วนก้อนมาตรฐานมีค่าเฉลี่ยศูนย์ตามนิยามของมัน ทิศทางจึงเป็นของที่เราใส่เข้าไปล้วน ๆ</p>
+    <p>หาค่าเฉลี่ยก่อน สองพจน์แรกไม่ได้สุ่มจึงผ่านออกมาตรง ๆ ส่วนก้อนมาตรฐานมีค่าเฉลี่ยเป็นศูนย์ ทิศทางจึงเป็นของที่เราใส่เข้าไปล้วน ๆ</p>
     <p>ต่อด้วยความเหวี่ยง การบวกเลขคงที่ไม่เปลี่ยนความเหวี่ยง เพราะเลื่อนทั้งก้อนเท่ากันหมด ส่วนตัวคูณออกมาเป็นกำลังสองตามหัวข้อ 6.5 แล้วใช้ผลของหัวข้อ 10.1 ว่า variance เท่ากับเวลา</p>
     <p>บรรทัดสุดท้ายคือประเด็นที่ทำให้ทั้งบทเดินต่อได้ การคูณและบวกด้วยเลขคงที่ไม่ทำให้ระฆังเลิกเป็นระฆัง มันแค่เลื่อนและยืด ทุกขนาดจึงสร้างจากก้อนมาตรฐานก้อนเดียวได้หมด</p>
   </div>
@@ -138,7 +147,10 @@ W_t\ \text{normal}\;&\Longrightarrow\;X_t\sim\mathcal N\big(x+\mu t,\ \sigma^{2}
   <h4>ขั้นที่ 3 — สูตรสร้าง path บน grid</h4>
   <p>จะจำลองด้วยคอมพิวเตอร์ได้ ต้องแปลงนิยามที่เป็นเวลาต่อเนื่อง ให้กลายเป็นสูตรเดินทีละก้าวเสียก่อน</p>
   <div class="math">\[
-\Delta W_i=\sqrt{\Delta t}\,Z_i,\quad Z_i\overset{\mathrm{iid}}{\sim}\mathcal N(0,1),\qquad W_{t_k}=\sum_{i=1}^{k}\Delta W_i
+\begin{aligned}
+\Delta W_i&=\sqrt{\Delta t}\,Z_i,\qquad Z_i\ \text{i.i.d.}\ \mathcal N(0,1)\\
+W_{t_k}&=\sum_{i=1}^{k}\Delta W_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$Z_i$ คือ standard Normal draws ที่ independent and identically distributed; นำ $\sqrt{\Delta t}$ มาคูณเพื่อให้แต่ละ increment มี variance $\Delta t$ แล้ว cumulative sum ให้ค่าของ $W$ ที่ grid point $t_k$</p>
@@ -165,10 +177,10 @@ W_t\ \text{normal}\;&\Longrightarrow\;X_t\sim\mathcal N\big(x+\mu t,\ \sigma^{2}
   <h4>ขั้นที่ 4 — self-similarity ของ SBM</h4>
   <p>SBM มีสมบัติที่ใช้ตรวจงานได้ดีมาก คือย่อหรือขยายแกนเวลา แล้วปรับแกนตั้งด้วยราก หน้าตาของมันจะเหมือนเดิมทุกประการ</p>
   <div class="math">\[
-\left\{\frac{W_{ct}}{\sqrt c}:t\ge0\right\}\overset{d}{=}\{W_t:t\ge0\},\qquad c>0
+\frac{W_{ct}}{\sqrt c}\overset{d}{=} W_t\qquad (c>0,\ t\ge 0)
 \]</div>
   <div class="reading">
-    <p>$c$ คือ factor ขยายเวลา; หารแกนตั้งด้วย $\sqrt c$ แล้ว finite-dimensional distributions ของ process เท่ากัน เครื่องหมาย equality in distribution ไม่ได้บอกว่าเป็น sample path เส้นเดียวกัน</p>
+    <p>$c$ คือ factor ขยายเวลา; หารแกนตั้งด้วย $\sqrt c$ แล้ว finite-dimensional distributions ของ process เท่ากันทุกช่วงเวลา เครื่องหมาย equality in distribution ไม่ได้บอกว่าเป็น sample path เส้นเดียวกัน</p>
   </div>
 </section>
 
@@ -206,13 +218,14 @@ Y_{t+s}-Y_t&\sim\mathcal N(0,s)\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 6 — variance ของผลรวม $n$ วัน</h4>
-  <p>คำถามที่โต๊ะถามบ่อยที่สุดคือความเสี่ยงรายวันแปลงเป็นรายเดือนรายปีอย่างไร ห้าบรรทัดนี้ตอบ และที่สำคัญกว่าคำตอบคือบรรทัดที่สอง ซึ่งเป็นจุดที่กฎนี้พัง ในวันที่ตลาดมีแนวโน้มต่อเนื่อง พจน์ไขว้ไม่เป็นศูนย์ และรากที่สองก็ประเมินความเสี่ยงต่ำไป</p>
+  <p>คำถามที่โต๊ะถามบ่อยที่สุดคือความเสี่ยงรายวันแปลงเป็นรายเดือนรายปีอย่างไร สี่บรรทัดนี้ตอบ และที่สำคัญกว่าคำตอบคือบรรทัดที่สอง ซึ่งเป็นจุดที่กฎนี้พัง ในวันที่ตลาดมีแนวโน้มต่อเนื่อง พจน์ไขว้ไม่เป็นศูนย์ และรากที่สองก็ประเมินความเสี่ยงต่ำไป</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\!\left(\sum_{i=1}^{n}r_i\right)&=\sum_{i=1}^{n}\operatorname{Var}(r_i)+\sum_{i\ne j}\operatorname{Cov}(r_i,r_j)\\
-r_i\ \text{independent}\;&\Longrightarrow\;\operatorname{Cov}(r_i,r_j)=0\\
-&=\sum_{i=1}^{n}\operatorname{Var}(r_i)\\
-\operatorname{Var}(r_i)=\sigma_d^{2}:\quad&=n\sigma_d^{2}\\[4pt]
-\operatorname{SD}&=\sigma_d\sqrt{n}\end{aligned}
+\begin{aligned}
+\operatorname{Var}\Big(\sum_{i=1}^{n}r_i\Big)&=\sum_{i=1}^{n}\operatorname{Var}(r_i)+\sum_{i\ne j}\operatorname{Cov}(r_i,r_j)\\
+&=\sum_{i=1}^{n}\operatorname{Var}(r_i)\qquad(\operatorname{Cov}=0,\ \text{independent})\\
+&=n\sigma_d^{2}\qquad(\operatorname{Var}(r_i)=\sigma_d^{2})\\
+\operatorname{SD}&=\sigma_d\sqrt{n}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กาง variance ของผลรวมให้ครบก่อน ตามรูปที่หัวข้อ 6.5 สร้างไว้ คือ variance ของแต่ละวัน บวกพจน์ไขว้ทุกคู่ พจน์ไขว้นั่นแหละคือหัวใจของขั้นนี้</p>
@@ -236,13 +249,20 @@ r_i\ \text{independent}\;&\Longrightarrow\;\operatorname{Cov}(r_i,r_j)=0\\
   <h4>ขั้นที่ 8 — แทน daily volatility 1.15%</h4>
   <p>ความกว้างของ Brownian motion โตตามรากของเวลา ไม่ใช่ตามเวลา จึงต้องถอดรากจำนวนวันก่อนคูณ</p>
   <div class="math">\[
-\begin{aligned}\sigma_{5}&=1.15\%\sqrt5=1.15\%(2.2361)=2.57\%\\
+\begin{aligned}
+\sigma_{5}&=1.15\%\sqrt5=1.15\%(2.2361)=2.57\%\\
 \sigma_{21}&=1.15\%\sqrt{21}=1.15\%(4.5826)=5.27\%\\
-\sigma_{252}&=1.15\%\sqrt{252}=1.15\%(15.8745)=18.26\%\end{aligned}
+\sqrt{252}&=\sqrt{4\times63}=2(7.9373)=15.8745\\
+\sigma_{252}&=1.15\%(15.8745)=18.26\%\\[4pt]
+\text{wrong}&:\ 1.15\%(252)=289.8\%\\
+\text{ratio}&=289.8/18.26=15.87=\sqrt{252}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หนึ่งปีมี 252 วัน แต่ความกว้างโตขึ้นเพียง 15.87 เท่า ไม่ใช่ 252 เท่า</p>
     <p>นี่คือเหตุผลที่ความเสี่ยงรายปีดูเล็กกว่าที่สัญชาตญาณคิด เมื่อเทียบกับความเสี่ยงรายวันคูณจำนวนวัน</p>
+    <p>√252 หาด้วยมือได้ แยก 252 = 4 × 63 แล้วลองยกกำลังสอง 7.93² = 62.885 กับ 7.94² = 63.044 จึงได้ √63 ≈ 7.9373 และ √252 ≈ 15.87 ≈ 16 ทางลัดในหัวคือ σ รายปี ≈ 16 × σ รายวัน เห็น 1% ต่อวันให้อ่านว่าราว 16% ต่อปี</p>
+    <p>สองบรรทัดล่างคือความผิดที่พบบ่อย คูณ 252 ตรง ๆ ได้ 289.8% ผิดไป 15.87 เท่าพอดี ซึ่งคือ √252 นั่นเอง วิธีจับผิดในสองวินาที: ถ้าเวลาเพิ่มสี่เท่า ความเสี่ยงต้องเพิ่มสองเท่า ไม่ใช่สี่เท่า</p>
   </div>
 </section>
 
@@ -263,10 +283,16 @@ r_i\ \text{independent}\;&\Longrightarrow\;\operatorname{Cov}(r_i,r_j)=0\\
   <h4>ขั้นที่ 9 — scale ของการขยับตลอด 30 วัน</h4>
   <p>ใช้กฎรากที่สองกับ horizon ที่โจทย์ถามจริง คือหนึ่งเดือนข้างหน้า</p>
   <div class="math">\[
-\sigma\sqrt T=0.1826\sqrt{30/365}=0.1826\sqrt{0.082192}=0.1826(0.286691)=0.05235=5.235\%
+\begin{aligned}
+T&=30/365=0.082192,\qquad\sqrt T=0.286691\\
+\sigma\sqrt T&=0.182557(0.286691)=0.052337=5.234\%\\[4pt]
+\text{21 trading days}&:\ 0.182557\sqrt{21/252}=0.182557(0.288675)\\
+&=0.052700=5.270\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>30 วันคิดเป็น 0.082192 ปี ถอดรากได้ 0.286691 ความกว้างหนึ่งเดือนจึงเป็นราว 28.7% ของความกว้างทั้งปี</p>
+    <p>สองบรรทัดล่างตรวจอีกทาง 30 วันปฏิทินราว 21 วันทำการ ได้ 5.27% ต่างจาก 5.23% แค่ 0.04 จุด ในบรรทัดเดียวกันห้ามปนสองแบบ แต่คนละบรรทัดได้: σ รายปีนับวันทำการเพราะราคาขยับตอนตลาดเปิด ส่วนอายุสัญญานับวันปฏิทินเพราะหมดอายุตามนาฬิกาจริง สำหรับ option อายุ 2–3 วันความต่างนี้จะใหญ่ขึ้นมาก</p>
   </div>
 </section>
 
@@ -282,7 +308,7 @@ r_i\ \text{independent}\;&\Longrightarrow\;\operatorname{Cov}(r_i,r_j)=0\\
 \]</div>
   <div class="reading">
     <p>$Z$ คือ standard Normal และ $\phi$ คือ density ของมัน; absolute value พับ left tail มารวมกับ right tail ทำให้ expected magnitude เป็น 0.797885 แทน 0</p>
-    <p>แทน $\phi(z)=e^{-z^2/2}/\sqrt{2\pi}$ จะได้ $2/\sqrt{2\pi}$ คูณ integral ของ $ze^{-z^2/2}$ ตั้งแต่ 0 ถึงอนันต์ เพราะderivativeของ $-e^{-z^2/2}$ คือ $ze^{-z^2/2}$ integral จึงเป็น $0-(-1)=1$ เหลือ $2/\sqrt{2\pi}=\sqrt{2/\pi}$</p>
+    <p>แทน $\phi(z)=e^{-z^2/2}/\sqrt{2\pi}$ จะได้ $2/\sqrt{2\pi}$ คูณ integral ของ $ze^{-z^2/2}$ ตั้งแต่ 0 ถึงอนันต์ เพราะ derivative ของ $-e^{-z^2/2}$ คือ $ze^{-z^2/2}$ integral จึงเป็น $0-(-1)=1$ เหลือ $2/\sqrt{2\pi}=\sqrt{2/\pi}$</p>
   </div>
 </section>
 
@@ -290,10 +316,34 @@ r_i\ \text{independent}\;&\Longrightarrow\;\operatorname{Cov}(r_i,r_j)=0\\
   <h4>ขั้นที่ 11 — ราคา straddle แบบ small-move approximation</h4>
   <p>รวมสามชิ้นที่หามาได้เข้าด้วยกัน คือราคาปัจจุบัน ความกว้างของการขยับหนึ่งเดือน และค่าเฉลี่ยของขนาดการขยับ</p>
   <div class="math">\[
-S_0\sigma\sqrt T\,\mathbb E[|Z|]=\$520(0.05235)(0.797885)=\$21.72\;\text{per share}=\$2{,}172\;\text{per contract}
+\begin{aligned}
+S_0\,\sigma\sqrt T\,\mathbb E|Z|&=\$520(0.052337)(0.797885)\\
+&=\$21.72\ \text{per share}\\
+&=\$2{,}172\ \text{per contract}
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$S_0$ คือ spot 520 USD, 5.235% คือ return scale และ 0.797885 คือ expected absolute Normal move; คูณ 100 shares ต่อ contract แปลง premium ต่อ share เป็นเงินสดต่อ US equity option contract</p>
+    <p>$S_0$ คือ spot 520 USD, 5.234% คือ return scale และ 0.797885 คือ expected absolute Normal move; คูณ 100 shares ต่อ contract แปลง premium ต่อ share เป็นเงินสดต่อ US equity option contract</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — ตรวจกับสูตร Black–Scholes เต็ม</h4>
+  <p>ทางลัด 0.798 × σ√T ต้องตรวจกับสูตรเต็มของบทที่ 13 ก่อนเชื่อ ที่ ATM และดอกเบี้ย 0 call กับ put ราคาเท่ากัน straddle จึงเท่ากับสอง call และสูตรยุบเหลือผลต่างของพื้นที่ใต้ระฆังที่สองตำแหน่ง</p>
+  <div class="math">\[
+\begin{aligned}
+\text{straddle}&=2S\big[\Phi(\sigma\sqrt T/2)-\Phi(-\sigma\sqrt T/2)\big]\\
+\sigma\sqrt T/2&=0.052337/2=0.026169\\
+\Phi(0.026169)&=0.510439,\qquad\Phi(-0.026169)=0.489561\\
+2(0.510439-0.489561)&=2(0.020877)=0.041754=4.175\%\\
+\text{shortcut}&:\ 0.797885(0.052337)=0.041759=4.176\%\\[4pt]
+\Phi(x)&\approx0.5+\varphi(0)\,x,\qquad\varphi(0)=\frac{1}{\sqrt{2\pi}}=0.398942
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สูตรเต็มให้ 4.175% ทางลัดให้ 4.176% ต่างกัน 0.001 จุด บนหุ้น 520 USD คือ 21.71 เทียบ 21.72 USD ทางลัดจึงใช้ได้จริงที่ ATM</p>
+    <p>ทำไมแม่นขนาดนี้ ดูบรรทัดสุดท้าย ใกล้ศูนย์ระฆังแทบเป็นเส้นตรง ผลต่างของสองค่านี้จึงเป็น 2φ(0)(σ√T/2) = φ(0)σ√T คูณ 2S ได้ 2φ(0) = 0.798 พอดี นี่คือที่มาของกฎในหัวของโต๊ะว่า ATM call ≈ 0.4 × S × σ√T</p>
+    <p>ทางลัดจะเริ่มเพี้ยนเมื่อ σ√T ใหญ่ เช่น option อายุยาวมาก หรือหุ้นที่ผันผวนสุดขั้ว เพราะระฆังไม่เป็นเส้นตรงอีกต่อไป</p>
   </div>
 </section>
 
@@ -306,16 +356,63 @@ S_0\sigma\sqrt T\,\mathbb E[|Z|]=\$520(0.05235)(0.797885)=\$21.72\;\text{per sha
 </figure>
 
 <section class="example">
-  <h4>คำตอบของ risk desk</h4>
-  <p>weekly, monthly และ annual volatility เท่ากับ 2.57%, 5.27% และ 18.26% ตามลำดับ สำหรับ SPY sleeve \$25M one-standard-deviation P&amp;L risk คือประมาณ \$0.64M, \$1.32M และ \$4.57M ส่วน straddle 30 วันได้ premium sanity check ราว \$21.72 ต่อ share; ถ้าตลาดเสนอห่างมาก ต้องตรวจ implied volatility, dividends, rates และ smile ก่อนสรุปว่าแพงหรือถูก</p>
-  <p>คำถาม: weekly volatility 2.57% แปลงเป็น monthly จะอยู่แถวไหน?</p>
-  <p>ของที่มี: weekly volatility 2.57% และประมาณ 4.2 สัปดาห์ต่อเดือน.</p>
-  <p>1. คูณ 2.57% ด้วยรากที่สองของ 4.2 ได้ประมาณ 5.27%. เพราะ Brownian scaling โตตามรากเวลา.</p>
-  <p>2. คูณ 5.27% กับ SPY sleeve USD 25M ได้ประมาณ USD 1.32M.</p>
-  <p>เฉลย: monthly one-standard-deviation P&amp;L risk คือราว USD 1.32M.</p>
-  <p>เช็ก 10 วินาที: 0.0527×25≈1.32.</p>
-  <p>งานจริง: ใช้แปลง risk budget ข้าม horizon ให้หน่วยตรงกัน.</p>
-  <p>กับดัก: ห้ามคูณ volatility ด้วยเวลาแบบเส้นตรง.</p>
+  <h4>คำตอบ — ความเสี่ยงพอร์ต SPY และราคา ATM straddle 30 วัน</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: พอร์ต SPY มูลค่า \$25,000,000 ผันผวนรายวัน 1.15% (252 วันทำการต่อปี) ราคาหุ้น \$520 และ option อายุ 30 วัน</p>
+  <p>คำถาม: ความผันผวนรายปี และราคา option แบบ ATM straddle อายุ 30 วัน มีมูลค่ากี่ดอลลาร์?</p>
+  <p>ของที่มี (ขั้นที่ 6 ถึง 12): $\sigma_d = 1.15\%$, พอร์ต \$25,000,000, spot \$520, อายุ 30 วัน ($T = 30/365$ ปี)</p>
+  <p>1. คำนวณความผันผวนรายปี: 1.15% คูณ 15.8745 ได้ 18.26% คิดเป็นความเสี่ยงพอร์ต \$4.57M (ไม่ใช่คูณ 252 ตรง ๆ ซึ่งได้ 289.8% และผิดไป 15.87 เท่า)</p>
+  <p>2. คำนวณขนาดแกว่ง 30 วัน: 18.26% คูณ 0.28669 ได้ 5.234%</p>
+  <p>3. คำนวณราคา ATM straddle: คูณด้วย 0.7979 ได้ 4.18% ของราคาหุ้น คิดเป็น \$21.72 ต่อหุ้น (\$2,172 ต่อสัญญา)</p>
+  <p>คำตอบ: ความผันผวนรายปีคือ 18.26% และราคา ATM straddle 30 วันคือ \$21.72 ต่อหุ้น เทียบกับสูตร Black-Scholes (บทที่ 13) เต็มที่ได้ \$21.71</p>
+  <p>ตรวจเองใน 10 วินาที: เอา 16 คูณ 1.15% ได้ราว 18.4% และ straddle ประมาณ 0.8 คูณ 5.23% ได้ราว 4.18%</p>
+  <p>แปลว่าอะไร: ตัวเลขเดียวคือความผันผวนรายวัน 1.15% ตอบได้สามคำถามที่ต่างกันสิ้นเชิง เดือนนี้พอร์ตแกว่งได้แค่ไหน (5.27%) ปีนี้ควรตั้ง limit เท่าไร (18.26% หรือ 4.57 ล้าน USD) และ option ตัวนี้แพงหรือถูก (4.18%) ถ้าตลาดขาย straddle ตัวนี้ที่ 6% แปลว่าตลาดคาดความผันผวนราว 6% ÷ 0.7979 ÷ 0.2867 = 26.2% ต่อปี สูงกว่า 18.26% ที่วัดจากอดีต นั่นคือ implied volatility คุยกับ realized volatility ซึ่งเป็นงานประจำวันของโต๊ะ option</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจการแปลง volatility และราคา straddle ด้วย Python</summary>
+    <pre><code>import math
+from scipy.stats import norm
+
+spot = 520.0
+notional = 25_000_000.0
+sigma_daily = 0.0115
+
+# 1. Horizon volatility
+sigma_5 = sigma_daily * math.sqrt(5)
+sigma_21 = sigma_daily * math.sqrt(21)
+sigma_252 = sigma_daily * math.sqrt(252)
+risk_year = notional * sigma_252
+
+# 2. 30-day option scaling
+T = 30.0 / 365.0
+sigma_T = sigma_252 * math.sqrt(T)
+
+# 3. Expected absolute standard Normal and straddle approximation
+e_abs_z = math.sqrt(2.0 / math.pi)
+straddle_pct = sigma_T * e_abs_z
+straddle_price = spot * straddle_pct
+
+# 4. Full Black-Scholes comparison at ATM, r = 0
+d1 = sigma_T / 2.0
+bs_straddle_pct = 2.0 * (norm.cdf(d1) - norm.cdf(-d1))
+
+assert abs(sigma_5 - 0.0257) &lt; 1e-3
+assert abs(sigma_21 - 0.0527) &lt; 1e-3
+assert abs(sigma_252 - 0.1826) &lt; 1e-3
+assert abs(risk_year - 4_563_925) &lt; 1000
+assert abs(e_abs_z - 0.79788) &lt; 1e-4
+assert abs(straddle_pct - 0.0418) &lt; 1e-3
+assert abs(straddle_price - 21.72) &lt; 0.05
+assert abs(straddle_pct - bs_straddle_pct) &lt; 1e-4
+assert abs(sigma_daily * 252 - 2.898) &lt; 1e-9 and abs(2.898 / sigma_252 - 15.87) &lt; 0.01   # the wrong way
+assert abs(sigma_252 * math.sqrt(21 / 252) - 0.0527) &lt; 1e-4          # trading-day check
+assert abs(0.06 / e_abs_z / math.sqrt(T) - 0.2623) &lt; 1e-4             # implied vol of a 6% straddle
+print(f"Annual vol: {sigma_252*100:.2f}%, Straddle: ${straddle_price:.2f}, BS: {bs_straddle_pct*100:.3f}%")</code></pre>
+  </details>
+  <div class="note">
+    <p>ตรวจการแปลงความผันผวนรายวันเป็นรายปี และราคา straddle เปรียบเทียบกับสูตร Black-Scholes (บทที่ 13)</p>
+  </div>
 </section>
 
 <section class="pitfall">
