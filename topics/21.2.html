@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>มีปุ่มปรุงรส 3 ปุ่ม แต่ต้องทำซุป 6 ถ้วยให้ใกล้เป้าพร้อมกัน. หมุนปุ่มให้ถ้วยแรกดีขึ้น อาจทำให้ถ้วยสุดท้ายแย่ลง—จะวัดว่าดีขึ้นจริงอย่างไร?</p>
-  <p>ถ้าพลาด 0.5, 1.0 และ 0.2 หน่วย ให้ยกกำลังสองแล้วรวม. ถ้วยที่พลาดมากจึงมีน้ำหนักมากโดยธรรมชาติ.</p>
-  <p>เฉลย: ดูคะแนนรวมที่ลดลง ไม่ใช่เลือกชิมถ้วยเดียว. การหาค่าหลายปุ่มที่ลดความพลาดรวมเรียก multivariate optimization; เมื่อตั้งราคาเป็นเป้า งานนี้เรียก calibration. optimizer ไม่มีปุ่ม “อร่อยทุกถ้วย”; มันต้องมีตาชั่งและเบรก.</p>
+  <p>Option 3 สัญญา มีราคา mid 12.70, 6.40, 2.50 USD และ half-spread 0.20, 0.10, 0.10 USD หากราคา model คือ 12.60, 6.50, 2.48 USD เมื่อใช้ Levenberg-Marquardt (LM) damping 25 และ Jacobian 10I ก้าวนี้จะลด objective หรือไม่?</p>
+  <p>เฉลย: ก้าวนี้ทำให้ objective ลดลงจาก 0.645 เหลือ 0.0258 จึงยอมรับก้าวได้ โดยค่า residual ใหม่หดลงเหลือหนึ่งในห้าของเดิม</p>
 </div>
 
 <details class="jargon" open>
@@ -123,11 +122,14 @@ L(\theta)=\frac12\sum_{i=1}^{m}r_i(\theta)^2+\operatorname{penalty}(\theta)
   <p>ที่มาของเป้าหมายกำลังสองไม่ได้ถูกตั้งขึ้นลอย ๆ แต่สืบทอดมาจาก Maximum Likelihood Estimation เมื่อมองว่าราคาตลาดมีความไม่แน่นอนตามขนาดของ bid-ask spread</p>
   <p>สัญญาที่มี bid-ask spread กว้าง หมายถึงสภาพคล่องต่ำและ noise สูง ตัวส่วน $h_i$ จึงทำหน้าที่ลดทอนน้ำหนักของสัญญานั้นโดยอัตโนมัติ ขณะที่สัญญาที่มี spread แคบจะถูกบังคับให้ model คิดราคาตรงกับตลาดอย่างเข้มงวด</p>
   <div class="math">\[
-\begin{aligned}P_i^{mid} &= P_i^{model}(\theta) + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, h_i^2) \\
-p(P^{mid} \mid \theta) &= \prod_{i=1}^{m} \frac{1}{\sqrt{2\pi} h_i} \exp\left( -\frac{(P_i^{model}(\theta) - P_i^{mid})^2}{2 h_i^2} \right) \\
--\ln p(P^{mid} \mid \theta) &= \sum_{i=1}^{m} \left[ \frac{(P_i^{model}(\theta) - P_i^{mid})^2}{2 h_i^2} + \ln(\sqrt{2\pi} h_i) \right] \\
-&= \frac{1}{2}\sum_{i=1}^{m} \left( \frac{P_i^{model}(\theta) - P_i^{mid}}{h_i} \right)^2 + \sum_{i=1}^{m} \ln(\sqrt{2\pi} h_i) \\
-&= \frac{1}{2}\sum_{i=1}^{m} r_i(\theta)^2 + \text{const}\end{aligned}
+\begin{aligned}
+P_i^{mid}&=P_i^{model}(\theta)+\epsilon_i\\
+\epsilon_i&\sim\mathcal{N}(0,h_i^2)\\[4pt]
+r_i(\theta)&=\frac{P_i^{model}(\theta)-P_i^{mid}}{h_i}\\
+p(P^{mid}\mid\theta)&=\prod_{i=1}^{m}\frac{1}{\sqrt{2\pi}\,h_i}\,e^{-r_i^2/2}\\[4pt]
+-\ln p&=\sum_{i=1}^{m}\Big[\frac{r_i^2}{2}+\ln\big(\sqrt{2\pi}\,h_i\big)\Big]\\
+&=\frac12\sum_{i=1}^{m}r_i(\theta)^2+\text{const}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมมติว่าราคาตลาดมี noise แบบ normal distribution รอบราคา model โดยความกว้างของ noise ในแต่ละสัญญาแปรผันตาม bid-ask half-spread $h_i$</p>
@@ -145,8 +147,8 @@ p(P^{mid} \mid \theta) &= \prod_{i=1}^{m} \frac{1}{\sqrt{2\pi} h_i} \exp\left( -
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.2a — ร่องยาวทำให้เดินลงเขาอย่างเดียวช้า</h4>
-  <img src="../figures/21.2-1.svg" alt="ภาพ 21.2a — ร่องยาวทำให้เดินลงเขาอย่างเดียวช้า" loading="lazy">
+  <h4>Figure 21.2a — ร่องยาวทำให้เดินลงเขาอย่างเดียวช้า</h4>
+  <img src="../figures/21.2-1.svg" alt="Figure 21.2a — ร่องยาวทำให้เดินลงเขาอย่างเดียวช้า" loading="lazy">
   <figcaption>
     <p>contour สังเคราะห์มีหุบแคบยาว Gradient ชี้ลงจริงแต่ก้าวตรง ๆ จะซิกแซ็กข้ามร่อง การ scale และ curvature information มีหน้าที่ให้ก้าวเดินตามแกนของปัญหา ไม่ใช่ทำกราฟให้ดูฉลาด</p>
   </figcaption>
@@ -204,32 +206,74 @@ J^{\top}J\,\delta&=-J^{\top}r\end{aligned}
 <section class="formula">
   <h4>สร้างหนึ่งก้าว LM ที่คำนวณตามได้จริง</h4>
   <div class="math">\[
-\begin{aligned}&amp;r=(-0.50,1.00,-0.20)^\top,\quad J=10I,\quad\lambda=25\\
-&(100I+25I)\delta=-10r\\
-&\delta=-0.08r=(0.04,-0.08,0.016)^\top\\
-&amp;r_{\rm new}=r+10\delta=0.20r=(-0.10,0.20,-0.04)^\top\\
-&amp;L_{\rm old}=\tfrac12(0.25+1+0.04)=0.645\\
-&amp;L_{\rm new}=\tfrac12(0.01+0.04+0.0016)=0.0258\end{aligned}
+\begin{aligned}
+r&=(-0.50,\ 1.00,\ -0.20)\\
+J&=10I,\qquad\lambda=25\\[4pt]
+J^\top J+\lambda I&=100I+25I=125I\\
+125\,\delta&=-10r\\
+\delta&=-0.08r\\
+&=(0.04,\ -0.08,\ 0.016)\\[4pt]
+r_{\rm new}&=r+10\delta=0.20r\\
+&=(-0.10,\ 0.20,\ -0.04)\\[4pt]
+L_{\rm old}&=\tfrac12(0.25+1+0.04)\\
+&=0.645\\
+L_{\rm new}&=\tfrac12(0.01+0.04+0.0016)\\
+&=0.0258
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เพื่อให้ลองด้วยมือได้ กำหนด model ฝึกที่มี parameter สามตัว แต่ละตัวขยับ residual ของ quote ตัวเองสิบเท่าและไม่กระทบตัวอื่น Jacobian จึงเป็นสิบคูณ identity นี่เป็นสมมติฐานของแบบฝึก ไม่ใช่ Jacobian ของ Heston</p>
     <p>แก้ระบบ diagonal ด้วยการหารแต่ละแถวด้วย 125 ได้ก้าวสามค่า แทนกลับให้ residual เหลือหนึ่งในห้าจึงทำให้คะแนนเหลือหนึ่งในยี่สิบห้า ราคาใหม่คือ 12.68, 6.42 และ 2.496 USD ตาม half-spread ของโจทย์</p>
-    <p>แบบฝึกนี้เป็นเส้นตรงจึงคำนวณราคาใหม่ได้ตรง สำหรับ model ไม่เป็นเส้นตรงต้องเรียก pricing engine ที่ parameter ใหม่จริง แล้วค่อยตัดสินรับก้าว การที่ local prediction ดีไม่ได้รับประกันว่าราคาจริงดีขึ้น</p>
+    <p>แบบฝึกนี้เป็นเส้นตรงจึงคำนวณราคาใหม่ได้ตรง สำหรับ model ไม่เป็นเส้นตรงต้องเรียก pricing engine ที่ parameter ใหม่จริง แล้วค่อยตัดสินรับก้าว การที่ local prediction ดีไม่ได้แปลว่าราคาจริงจะดีขึ้นเสมอ</p>
   </div>
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — หนึ่งก้าว LM</h4>
-  <p>ของที่มี: option mid \$12.70, \$6.40, \$2.50; half-spread \$0.20, \$0.10, \$0.10; model price \$12.60, \$6.50, \$2.48 และ $\lambda=25$.</p>
-  <p>ถามว่าก้าว LM นี้ควรรับไหม?</p>
-  <p>คำตอบ: residual เปลี่ยนจาก -0.50, 1.00, -0.20 เป็น -0.10, 0.20, -0.04 และ objective ลดจาก 0.645 เหลือ 0.0258 จึงรับก้าวได้.</p>
-  <p>ตรวจเองใน 10 วินาที: รวมกำลังสองของ residual ใหม่ได้ 0.0516 แล้วคูณครึ่งหนึ่ง จึงได้ 0.0258.</p>
-  <p>เอาไปใช้จริง: calibration service รับก้าวเฉพาะเมื่อ reprice ด้วย engine จริงยังลด objective และผ่าน spread check.</p>
+  <h4>คำตอบ — คำนวณหนึ่งก้าว Levenberg–Marquardt</h4>
+  <p>คำถาม: Option 3 สัญญา มีราคา mid 12.70, 6.40, 2.50 USD และ half-spread 0.20, 0.10, 0.10 USD หากราคา model คือ 12.60, 6.50, 2.48 USD เมื่อใช้ LM damping 25 และ Jacobian 10I ก้าวนี้จะลด objective หรือไม่?</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 4): residual เริ่มต้นคือ -0.50, 1.00, -0.20 โดย Jacobian เท่ากับ 10I และ damping 25 พร้อม objective เดิม 0.645</p>
+  <p>1. คำนวณก้าวเสนอ delta: จากสมการระบบเชิงเส้นได้ delta เท่ากับ 0.04, -0.08, 0.016</p>
+  <p>2. residual ใหม่: ค่าใหม่หดตัวเหลือ -0.10, 0.20, -0.04 ซึ่งเท่ากับหนึ่งในห้าของค่าเดิม</p>
+  <p>3. objective ใหม่: คำนวณได้ 0.0258 ซึ่งลดลงจากค่าเดิม 0.645 จึงยอมรับก้าวนี้</p>
+  <p>ตรวจเองใน 10 วินาที: ผลรวมกำลังสองของ residual ใหม่ได้ 0.0516 คูณครึ่งหนึ่งได้ 0.0258 ลดลงจากเดิม 25 เท่า</p>
+  <p>แปลว่าอะไร: damping ควบคุมไม่ให้ก้าวพุ่งเตลิด calibration service รับก้าวเมื่อ objective บน model ลดลงจริง</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจหนึ่งก้าว Levenberg–Marquardt</summary>
+    <pre><code>import numpy as np
+
+p_mid = np.array([12.70, 6.40, 2.50])
+h = np.array([0.20, 0.10, 0.10])
+p_model = np.array([12.60, 6.50, 2.48])
+lam = 25.0
+
+r = (p_model - p_mid) / h
+assert np.allclose(r, np.array([-0.50, 1.00, -0.20]))
+L_old = 0.5 * np.sum(r**2)
+assert abs(L_old - 0.645) &lt; 1e-6
+
+J = 10.0 * np.eye(3)
+A = J.T @ J + lam * np.eye(3)
+g = -J.T @ r
+delta = np.linalg.solve(A, g)
+assert np.allclose(delta, np.array([0.04, -0.08, 0.016]))
+
+r_new = r + J @ delta
+assert np.allclose(r_new, np.array([-0.10, 0.20, -0.04]))
+L_new = 0.5 * np.sum(r_new**2)
+assert abs(L_new - 0.0258) &lt; 1e-6
+assert L_new &lt; L_old</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์คำนวณ residual ปกติ ก้าวเสนอของ LM และยืนยันว่าค่า objective ลดลงจาก 0.645 สู่ 0.0258</p>
+  </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.2b — Nelder–Mead ขยับ simplex โดยดูอันดับ</h4>
-  <img src="../figures/21.2-2.svg" alt="ภาพ 21.2b — Nelder–Mead ขยับ simplex โดยดูอันดับ" loading="lazy">
+  <h4>Figure 21.2b — Nelder–Mead ขยับ simplex โดยดูอันดับ</h4>
+  <img src="../figures/21.2-2.svg" alt="Figure 21.2b — Nelder–Mead ขยับ simplex โดยดูอันดับ" loading="lazy">
   <figcaption>
     <p>สามเหลี่ยมคือ simplex ในสองมิติ จุดแย่สุดถูกสะท้อน ขยาย หรือหดโดยดู objective เท่านั้น มีประโยชน์เป็น baseline เมื่อ engine noisy หรือ gradient ไม่พร้อม แต่ไม่มีหลักประกันในมิติสูงและต้องมี evaluation budget</p>
   </figcaption>
@@ -239,11 +283,12 @@ J^{\top}J\,\delta&=-J^{\top}r\end{aligned}
   <h4>เลือกตระกูล optimizer ตามข้อมูลที่เชื่อได้</h4>
   <p>Nelder–Mead ใช้ objective อย่างเดียว จึงเหมาะตรวจ gradient แต่ช้าเมื่อ parameter มาก BFGS ใช้ gradient ที่ผ่านการทดสอบ จึงคุ้มเมื่อมี analytic derivative หรือ automatic differentiation Gauss–Newton และ LM เหมาะเมื่อ objective เป็นผลรวมกำลังสองของ residual ราคา เพราะ Jacobian ให้โครงสร้างตรงกับโจทย์</p>
   <p>ไม่มี algorithm ใดแก้ stale quote หรือ crossed market ได้ ถ้าข้อมูลผิด optimizer จะทำงานหนักเพื่ออธิบายความผิดของ feed นั่นไม่ใช่ convergence; นั่นคือการ calibrate noise อย่างขยัน</p>
+  <p>สไลด์สรุป Nelder–Mead ว่าค้นหาใน n มิติด้วยกฎ heuristic ใช้แค่ค่าของ objective ไม่ใช้ derivative ใน Python เรียกผ่าน <code>fmin</code> ของ <code>scipy.optimize</code> ข้อดีคือไม่ต้องมี derivative และ objective ไม่เรียบก็ได้ ข้อเสียคือช้าลงมากเมื่อมิติสูง อาจวนหลายรอบโดยแทบไม่ดีขึ้นทั้งที่ยังไกลจากจุดต่ำสุด และไม่รับประกัน global minimum</p>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.2c — BFGS ใช้ curvature ที่เรียนรู้จากก้าวก่อน</h4>
-  <img src="../figures/21.2-3.svg" alt="ภาพ 21.2c — BFGS ใช้ curvature ที่เรียนรู้จากก้าวก่อน" loading="lazy">
+  <h4>Figure 21.2c — BFGS ใช้ curvature ที่เรียนรู้จากก้าวก่อน</h4>
+  <img src="../figures/21.2-3.svg" alt="Figure 21.2c — BFGS ใช้ curvature ที่เรียนรู้จากก้าวก่อน" loading="lazy">
   <figcaption>
     <p>เส้นทางสังเคราะห์เปรียบเทียบ gradient descent กับก้าวที่ใช้ curvature approximation วิธีหลังตัดร่องน้อยกว่าเมื่อ scale ถูกต้อง แต่ line search ยังต้องปฏิเสธก้าวที่ทำให้ objective สูงขึ้น</p>
   </figcaption>
@@ -254,50 +299,84 @@ J^{\top}J\,\delta&=-J^{\top}r\end{aligned}
   <p>จุดเด่นของ BFGS คือการสะสมข้อมูลความโค้งจาก gradient ของแต่ละรอบ ทำให้มีอัตรา convergence แบบ superlinear โดยไม่ต้องหา second derivative ของแบบจำลองราคา</p>
   <p>การหลีกเลี่ยง second derivative มีความสำคัญยิ่งในงาน calibration ทางการเงิน เพราะราคา option จาก numerical method มักมี numerical noise หากทำ finite difference สองชั้น noise จะระเบิดจน matrix ใช้งานไม่ได้</p>
   <div class="math">\[
-\begin{aligned}s_k &= \theta_{k+1} - \theta_k, \quad y_k = \nabla L(\theta_{k+1}) - \nabla L(\theta_k) \\
-H_{k+1} y_k &= s_k \qquad \text{(secant condition)} \\
-H_{k+1} &= (I - \rho_k s_k y_k^\top) H_k (I - \rho_k y_k s_k^\top) + \rho_k s_k s_k^\top \\
-\rho_k &= \frac{1}{y_k^\top s_k} \\
-H_{k+1} y_k &= (I - \rho_k s_k y_k^\top) H_k (y_k - \rho_k y_k (s_k^\top y_k)) + \rho_k s_k (s_k^\top y_k) \\
-&= (I - \rho_k s_k y_k^\top) H_k (0) + s_k = s_k\end{aligned}
+\begin{aligned}
+s_k&=\theta_{k+1}-\theta_k\\
+y_k&=\nabla L(\theta_{k+1})-\nabla L(\theta_k)\\
+\rho_k&=\frac{1}{y_k^\top s_k}\\[4pt]
+H_{k+1}y_k&=s_k\\[4pt]
+H_{k+1}&=(I-\rho_ks_ky_k^\top)\,H_k\,(I-\rho_ky_ks_k^\top)\\
+&\quad+\rho_ks_ks_k^\top\\[4pt]
+(I-\rho_ky_ks_k^\top)\,y_k&=y_k-\rho_ky_k(s_k^\top y_k)=0\\
+\rho_ks_ks_k^\top y_k&=s_k\\
+H_{k+1}y_k&=0+s_k=s_k
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ก้าวที่เดิน $s_k$ และความชันที่เปลี่ยนไป $y_k$ นำมาสร้างเงื่อนไข secant ซึ่งระบุว่า matrix ความโค้งต้องจับคู่แรงดึงกับระยะก้าวได้อย่างสอดคล้อง</p>
     <p>สูตรปรับปรุงของ BFGS ใช้ผลคูณภายนอกของ vector อันดับสอง ทำให้ได้ matrix สมมาตรตัวใหม่โดยไม่ต้องคำนวณ second derivative ตรง ๆ</p>
     <p>เมื่อนำ $y_k$ ไปคูณทดสอบ พจน์ด้านซ้ายจะหักล้างกันจนเหลือศูนย์ ขณะที่พจน์ขวาคืนค่า $s_k$ กลับมาพอดี ยืนยันว่าเงื่อนไข secant สมบูรณ์</p>
     <p>ตราบใดที่ผลคูณ $y_k^\top s_k > 0$ matrix $H_{k+1}$ จะคงสภาพ positive definite เสมอ ทำให้ทิศทาง $-H_k \nabla L_k$ ชี้ลงเขาแน่นอนในทุกรอบ</p>
+    <p>สไลด์สรุป BFGS ว่าเป็นตระกูล quasi-Newton ใน Python เรียกผ่าน <code>fmin_bfgs</code> ของ <code>scipy.optimize</code> ข้อดีคือลู่เข้าเร็วแบบ superlinear เมื่อ objective เป็น convex ข้อเสียคือติดที่จุดอานม้าหรือ local minimum ได้ ต้องการ objective ที่เรียบ และไม่รับประกัน global minimum</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>brute force: กริดห้ามิติรอบจุดเริ่ม และคำตอบที่ติดขอบ</h4>
+  <p>สไลด์ Model Calibration เริ่มจาก Heston ชุด $(\kappa,\theta,\sigma_v,\rho,v_0)=(2.3,\ 0.046,\ 0.0825,\ -0.53,\ 0.054)$ ที่ RMSE 0.8659 แล้ววนลูปห้าชั้น ตั้งราคาทั้งผิวทุกจุดของกริด เก็บชุดที่ error ต่ำสุดไว้</p>
+  <div class="math">\[
+\begin{aligned}
+\kappa&=1.8,\ \ldots,\ 2.8\\
+\theta&=0.036,\ \ldots,\ 0.056\\
+\sigma_v&=0.0725,\ \ldots,\ 0.0925\\
+\rho&=-0.63,\ \ldots,\ -0.43\\
+v_0&=0.044,\ \ldots,\ 0.064\\[4pt]
+11^5&=161{,}051\\[4pt]
+\Theta^*&=(1.8,\ 0.046,\ 0.0925,\ -0.63,\ 0.044)\\
+\text{RMSE}&=0.3670
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แต่ละแกนกว้างเท่ากับจุดเริ่มบวกลบค่าคงที่ คือ $\kappa$ บวกลบ 0.5, $\rho$ บวกลบ 0.1 และอีกสามตัวบวกลบ 0.01 สไลด์ไม่ได้บอกว่าแบ่งกี่จุด ถ้าแบ่งแกนละ 11 จุด ต้องตั้งราคาทั้งผิว 161,051 ครั้ง ทุกแกนที่เพิ่มคูณงานอีก 11 เท่า นี่คือ curse of dimensionality</p>
+    <p>ข้อดีของกริดคือเจอค่าต่ำสุดบนกริดแน่นอนและไม่สนว่าผิว error เรียบหรือไม่ แต่ดูคำตอบให้ดี สี่ในห้าตัวติดขอบ คือ $\kappa=1.8$ ขอบล่าง $\sigma_v=0.0925$ ขอบบน $\rho=-0.63$ ขอบล่าง และ $v_0=0.044$ ขอบล่าง มีแค่ $\theta$ ที่อยู่ข้างใน</p>
+    <p>คำตอบที่ติดขอบแปลว่าค่าต่ำสุดจริงอยู่นอกกล่อง BFGS ที่ไม่มีกล่องขังจึงเดินออกไปถึง $\kappa=3.69$ และ $\sigma_v=0.606$ ได้ RMSE 0.2661 กฎที่ได้คือ ถ้าคำตอบของกริดติดขอบ ให้ขยายกริดก่อนเชื่อผล</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>เปรียบเทียบผลลัพธ์ของ Optimizer บนแบบจำลอง Heston จากข้อมูลจริง</h4>
-  <p>ข้อมูลจริงจากการ calibrate แบบจำลอง Heston บน option ของหุ้น Apple แสดงผลลัพธ์ของแต่ละ optimizer อย่างชัดเจน</p>
+  <p>ข้อมูลจริงจากการ calibrate แบบจำลอง Heston บน option ของหุ้น Apple เปรียบเทียบผลลัพธ์ของแต่ละ optimizer ให้เห็นความแตกต่าง</p>
   <p>สังเกตว่า BFGS ให้ error ต่ำกว่า แต่ได้ค่า parameter ต่างจาก Grid search และ Nelder–Mead อย่างสิ้นเชิง เมื่อตัด slice ดูผิวของ objective function ระหว่างคำตอบ จะพบว่ามี local minima หลายจุดและมีร่องลึกที่ parameter ชดเชยกัน</p>
   <div class="math">\[
-\begin{aligned}\theta_{\text{start}} &= (2.30,\, 0.046,\, 0.083,\, -0.53,\, 0.054) \implies \text{RMSE} = 0.8659 \\
-\hat{\theta}_{\text{grid}} &= (1.80,\, 0.046,\, 0.093,\, -0.63,\, 0.044) \implies \text{RMSE} = 0.3670 \\
-\hat{\theta}_{\text{BFGS}} &= (3.69,\, 0.048,\, 0.606,\, -0.22,\, 0.042) \implies \text{RMSE} = 0.2661 \\
-\hat{\theta}_{\text{Nelder-Mead}} &= (1.95,\, 0.047,\, 0.116,\, -0.74,\, 0.040) \implies \text{RMSE} = 0.2982\end{aligned}
+\begin{aligned}
+\theta_{\text{start}}&=(2.30,\,0.046,\,0.0825,\,-0.53,\,0.054)\\
+\text{RMSE}&=0.8659\\[4pt]
+\hat\theta_{\text{grid}}&=(1.80,\,0.046,\,0.0925,\,-0.63,\,0.044)\\
+\text{RMSE}&=0.3670\\[4pt]
+\hat\theta_{\text{simplex}}&=(1.9524,\,0.0469,\,0.1159,\,-0.7406,\,0.0397)\\
+\text{RMSE}&=0.2790\\[4pt]
+\hat\theta_{\text{BFGS}}&=(3.6941,\,0.0478,\,0.6059,\,-0.2186,\,0.0422)\\
+\text{RMSE}&=0.2661
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>การ calibrate แบบจำลอง Heston 5 parameter บน option call ของหุ้น Apple จากข้อมูล Columbia University แสดงให้เห็นความแตกต่างของแต่ละ algorithm</p>
+    <p>ทุกวงเล็บเรียงเป็น $(\kappa,\theta,\sigma_v,\rho,v_0)$ ของ Heston ที่ calibrate กับ call ของหุ้น Apple ในสไลด์ Model Calibration และ simplex คือคำตอบของ Nelder–Mead</p>
     <p>จุดเริ่มต้นให้ค่า Root Mean Square Error (RMSE) เริ่มต้นที่ 0.8659 ก่อนที่แต่ละวิธีจะวิ่งหาคำตอบ</p>
-    <p>BFGS ให้ error ต่ำสุดที่ 0.2661 ขณะที่ Grid search และ Nelder–Mead ติดอยู่ที่ local minima อื่นที่มีโครงสร้าง parameter ต่างกันโดยสิ้นเชิง</p>
+    <p>BFGS ให้ error ต่ำสุดที่ 0.2661 Nelder–Mead ได้ 0.2790 ใกล้กัน grid search หยุดที่ 0.3670 แต่คำตอบของ Nelder–Mead ต่างจาก BFGS มาก คือ $\kappa=1.95$ เทียบ $3.69$ และ $\sigma_v=0.116$ เทียบ $0.606$</p>
     <p>ผลลัพธ์นี้ยืนยันว่าผิวของ objective function มีหลายหุบเขาและต้องการจุดเริ่มต้นที่ดีเสมอ</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.2d — damping ทำให้ก้าวตรวจสอบได้</h4>
-  <img src="../figures/21.2-4.svg" alt="ภาพ 21.2d — damping ทำให้ก้าวตรวจสอบได้" loading="lazy">
+  <h4>Figure 21.2d — damping ทำให้ก้าวตรวจสอบได้</h4>
+  <img src="../figures/21.2-4.svg" alt="Figure 21.2d — damping ทำให้ก้าวตรวจสอบได้" loading="lazy">
   <figcaption>
-    <p>เมื่อ $\lambda$ เพิ่ม ขนาดก้าว LM ลดลง การเลือก damping ไม่ใช่ค่าเทพ: เพิ่มเมื่อก้าวถูกปฏิเสธ ลดเมื่อ reprice แล้ว objective ลดตามที่คาด และบันทึกลำดับ accept/reject เพื่อให้ audit run ได้</p>
+    <p>เส้นคือขนาดก้าวต่อหนึ่งหน่วย residual ของ LM เมื่อ Jacobian เป็น 10I คือ 10 ÷ (100 + λ) ที่ λ = 25 ได้ 0.08 ตรงกับตัวอย่าง เพิ่ม λ เมื่อก้าวถูกปฏิเสธ ลด λ เมื่อ reprice แล้ว objective ลดตามที่คาด และบันทึกลำดับ accept กับ reject ไว้ตรวจย้อน</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพ 21.2e — parameter ชดเชยกันจนหุบแบน</h4>
-  <img src="../figures/21.2-5.svg" alt="ภาพ 21.2e — parameter ชดเชยกันจนหุบแบน" loading="lazy">
+  <h4>Figure 21.2e — parameter ชดเชยกันจนหุบแบน</h4>
+  <img src="../figures/21.2-5.svg" alt="Figure 21.2e — parameter ชดเชยกันจนหุบแบน" loading="lazy">
   <figcaption>
     <p>แนวทแยงที่เกือบแบนหมายถึง parameter สองตัวให้ราคาใกล้กันได้หลายคู่ ถึง fit วันนี้เท่ากัน ความเสี่ยงต่อ stress อาจต่างมาก จึงต้องใช้หลาย maturity, regularization และรายงาน identifiability</p>
   </figcaption>

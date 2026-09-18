@@ -1,1 +1,11 @@
-ax.axis('off');labels=['Snapshot','Quality\nfilters','Objective +\nbounds','Multi-start\nfit','Validation\nreprice','Approve /\npublish'];xs=np.linspace(.07,.93,6);[ax.text(x,.55,s,ha='center',va='center',bbox=dict(boxstyle='round,pad=.45',fc='#F5F8FF',ec='#1D4ED8')) for x,s in zip(xs,labels)];[ax.annotate('',xy=(xs[j+1]-.055,.55),xytext=(xs[j]+.055,.55),arrowprops=dict(arrowstyle='->',color='#5B6472')) for j in range(5)];ax.text(.5,.18,'Reject and retain evidence at every gate',ha='center',color='#B91C1C');ax.set_xlim(0,1);ax.set_ylim(0,1)
+x=np.arange(3);lab=['K 90\nmid 12.70','K 100\nmid 6.40','K 110\nmid 2.50']
+ini=np.array([12.2-12.70,6.9-6.40,2.7-2.50])/np.array([.20,.10,.10])
+fin=np.array([12.66-12.70,6.43-6.40,2.48-2.50])/np.array([.20,.10,.10])
+ax.axhspan(-1,1,color=GOOD,alpha=.12,label='inside bid-ask: |r| <= 1')
+ax.bar(x-.18,ini,.34,color=BAD,label='initial guess')
+ax.bar(x+.18,fin,.34,color=ACCENT,label='calibrated')
+for xi,v in zip(x,ini): ax.text(xi-.18,v+(.15 if v>0 else -.45),f'{v:.1f}',ha='center',fontsize=7.5)
+for xi,v in zip(x,fin): ax.text(xi+.18,v+(.15 if v>0 else -.45),f'{v:.1f}',ha='center',fontsize=7.5)
+ax.axhline(0,color=INK,lw=.7);ax.set_xticks(x);ax.set_xticklabels(lab)
+ax.set_ylabel('Residual in half-spreads');ax.set_ylim(-3.4,5.9)
+ax.set_title('The acceptance gate: every residual inside the band',loc='left');ax.legend(fontsize=7.3,loc='upper right');ax.grid(axis='y',alpha=.2)

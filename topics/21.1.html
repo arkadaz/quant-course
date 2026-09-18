@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>วาดตาราง 3 × 3: แนวนอนคือราคาของสิ่งหนึ่ง แนวตั้งคือเวลาที่เหลือ. ถ้ารู้ค่าที่ขอบด้านขวา คุณจะเติมค่าช่องวันนี้กลับมาได้ไหม?</p>
-  <p>ลองถ่วงสามช่องข้างหน้าที่มีค่า 7.30, 4.10 และ 2.00. ช่องกลางได้ 4.1684 USD ก่อนเทียบกับเงินที่รับทันที.</p>
-  <p>เฉลย: ช่องวันนี้ได้จากช่องข้างหน้าตามกติกาเดียวกัน ไม่ใช่เดาเอง. วิธีนี้เรียก finite difference และใช้แก้ partial differential equation (PDE) เมื่อไม่มีสูตรปิด. คอมพิวเตอร์ไม่ได้เดาช่องที่หายไป; มันเติมกริดตามกติกาเดิมจนเราเห็นว่าขอบโต๊ะมีผลแค่ไหน.</p>
+  <p>American put บนหุ้นราคา 50 USD มี strike 52 USD ดอกเบี้ย 5% volatility 30% ขั้นราคา 5 USD และขั้นเวลา 0.02 ปี หากอีกก้าวมีค่า 7.30, 4.10 และ 2.00 USD ช่องนี้ควรมีมูลค่าเท่าใด และควรใช้สิทธิ์ทันทีหรือไม่?</p>
+  <p>เฉลย: มูลค่ารอต่อคือ 4.1684 USD สูงกว่าเงินสดจากการใช้สิทธิ์ทันที 2.00 USD จึงควรถือต่อที่มูลค่า 4.1684 USD โดยคอมพิวเตอร์คำนวณถอยหลังจากวันหมดอายุบนกริดด้วย finite difference</p>
 </div>
 
 <details class="jargon" open>
@@ -77,7 +76,7 @@
 <section class="prose">
   <h4>เหตุผลที่ย้อนเวลาจาก expiry</h4>
   <p>ที่ expiry เรารู้ payoff แน่นอน: put จ่ายส่วนที่ strike สูงกว่าหุ้น PDE บอกว่าหาก hedge ความเสี่ยงเล็ก ๆ ของ option ด้วยหุ้นได้ พอร์ตที่เหลือให้ผลตอบแทนเท่าอัตราปลอดความเสี่ยง จึงไม่ใช่สูตรทายราคาหุ้น แต่เป็นราคาที่สอดคล้องกับสมมติฐาน volatility, carry และ no-arbitrage</p>
-  <p>แทนที่จะเก็บราคาทุกค่าที่เป็นไปได้ของหุ้น เราตัดช่วงตั้งแต่ศูนย์ถึงขอบราคาที่เลือกเป็นช่องราคาเท่า ๆ กัน แล้วเดินย้อนจากวันหมดอายุทีละขั้นเวลา เมื่อเพิ่มความละเอียด ต้องทดสอบทั้งช่องราคา ช่องเวลา และขอบใหม่; งานละเอียดขึ้นไม่ได้รับประกันว่าขอบกริดถูกเลือกแล้ว</p>
+  <p>แทนที่จะเก็บราคาทุกค่าที่เป็นไปได้ของหุ้น เราตัดช่วงตั้งแต่ศูนย์ถึงขอบราคาที่เลือกเป็นช่องราคาเท่า ๆ กัน แล้วเดินย้อนจากวันหมดอายุทีละขั้นเวลา เมื่อเพิ่มความละเอียด ต้องทดสอบทั้งช่องราคา ช่องเวลา และขอบใหม่; งานละเอียดขึ้นไม่ได้แปลว่าขอบกริดกว้างพอแล้ว</p>
 </section>
 
 <section class="formula">
@@ -101,7 +100,7 @@
   <div class="reading">
     <p>slope ประมาณจากความต่างของเพื่อนบ้านซ้ายขวาหารระยะห่างสองช่อง curvature ประมาณจาก slope ด้านขวาลบ slope ด้านซ้ายแล้วหารความกว้างช่องอีกครั้ง จึงได้ตัวคูณหนึ่ง ลบสอง หนึ่ง</p>
     <p>ย้ายพจน์เวลาของ PDE ไปอีกฝั่งแล้วเดินจากแถวอนาคตที่รู้กลับหนึ่งก้าว จะได้บรรทัดสุดท้าย แทนสองบรรทัดแรกลงไปและเก็บตัวคูณของช่องซ้าย กลาง ขวา จึงได้ a, b, c ด้านล่าง</p>
-    <p>สูตรderivativeมาจาก Taylor: $V(S+h)=V+hV_S+h^2V_{S\,S}/2+O(h^3)$ และ $V(S-h)=V-hV_S+h^2V_{S\,S}/2+O(h^3)$ ลบสองบรรทัดแล้วหาร $2h$ ได้derivativeหนึ่ง; บวกแล้วลบ $2V$ จากนั้นหาร $h^2$ ได้derivativeสอง ต้องมีความเรียบเพียงพอในบริเวณนั้น</p>
+    <p>สูตรผลต่างมาจาก Taylor expansion: $V(S+h)=V+hV_S+h^2V_{S\,S}/2+O(h^3)$ และ $V(S-h)=V-hV_S+h^2V_{S\,S}/2+O(h^3)$ ลบกันแล้วตัดช่วง $2h$ ได้ partial derivative อันดับหนึ่ง ส่วนบวกกันลบ $2V$ แล้วตัด $h^2$ ได้ partial derivative อันดับสอง function ต้องเรียบพอในบริเวณนั้น</p>
   </div>
 </section>
 
@@ -120,11 +119,15 @@ V_i^n=a_iV_{i-1}^{n+1}+b_iV_i^{n+1}+c_iV_{i+1}^{n+1}
   <h4>ขั้นที่ 3 — นิยามของน้ำหนักสามตัว และที่มาของแต่ละก้อน</h4>
   <p>สามก้อนนี้เป็น นิยาม ของน้ำหนักที่ได้จากการแทน derivative ด้วยผลต่างบนกริด อ่านทีละก้อน: ก้อนที่มีความเหวี่ยงกำลังสองมาจากพจน์ความโค้งในสมการ จึงปรากฏในน้ำหนักทั้งสามตัว ก้อนที่มีอัตราสุทธิมาจากพจน์ความชัน จึงปรากฏด้วยเครื่องหมายตรงข้ามกันในสองข้าง และหายไปจากตัวกลาง ส่วนเลขหนึ่งในตัวกลางคือค่าเดิมที่ยังอยู่ และพจน์ที่มีอัตราคิดลดคือการหักมูลค่าตามเวลา ข้อควรระวัง: ถ้าน้ำหนักตัวใดติดลบ วิธีนี้จะไม่เสถียร ซึ่งเป็นเหตุผลที่ต้องจำกัดขนาดก้าวเวลา</p>
   <div class="math">\[
-a_i=\tfrac12\Delta t(\sigma^2i^2-(r-q)i),\quad b_i=1-\Delta t(\sigma^2i^2+r),\quad c_i=\tfrac12\Delta t(\sigma^2i^2+(r-q)i)
+\begin{aligned}
+a_i&=\tfrac12\Delta t\big(\sigma^2i^2-(r-q)i\big)\\
+b_i&=1-\Delta t\big(\sigma^2i^2+r\big)\\
+c_i&=\tfrac12\Delta t\big(\sigma^2i^2+(r-q)i\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หาก $b_i$ ติดลบ error สามารถโตและสลับเครื่องหมายได้; volatility, จุดขอบ และขั้นเวลาจึงสัมพันธ์กัน</p>
-    <p>แทนสองสูตรผลต่างในสมการก้าวเวลาแล้วรวบตาม $V_{i-1},V_i,V_{i+1}$ พจน์ diffusion ให้coefficient $(1,-2,1)\sigma^2S_i^2\Delta t/(2\Delta S^2)$ พจน์ drift ให้ $(-1,0,1)(r-q)S_i\Delta t/(2\Delta S)$ และ discount หัก $r\Delta t$ จากช่องกลาง ใช้ $S_i=i\Delta S$ จึงตัด $\Delta S$ แล้วได้ $a_i,b_i,c_i$</p>
+    <p>แทนสองสูตรผลต่างในสมการก้าวเวลาแล้วรวบตาม $V_{i-1},V_i,V_{i+1}$ พจน์ diffusion ให้ coefficient $(1,-2,1)\sigma^2S_i^2\Delta t/(2\Delta S^2)$ พจน์ drift ให้ $(-1,0,1)(r-q)S_i\Delta t/(2\Delta S)$ และ discount หัก $r\Delta t$ จากช่องกลาง ใช้ $S_i=i\Delta S$ จึงตัด $\Delta S$ แล้วได้ $a_i,b_i,c_i$</p>
   </div>
 </section>
 
@@ -133,17 +136,21 @@ a_i=\tfrac12\Delta t(\sigma^2i^2-(r-q)i),\quad b_i=1-\Delta t(\sigma^2i^2+r),\qu
   <p>ผลในทางปฏิบัติคือถ้าละเอียดขึ้นสองเท่าในแกนราคา ต้องซอยเวลาถี่ขึ้นสี่เท่า เพราะ $\Delta x$ อยู่ในกำลังสอง ต้นทุนการคำนวณจึงโตเร็วกว่าความละเอียดที่ได้มาก และนี่คือเหตุผลที่ตำแหน่งงานจริงมักใช้ scheme แบบ implicit หรือ Crank-Nicolson ซึ่งแลกความยุ่งยากในการแก้ระบบสมการ กับการไม่มีเพดานเวลาให้ต้องระวัง</p>
   <p>ตรวจเองใน 30 วินาที ตั้งกริดเล็ก ๆ ใส่ค่าหนึ่งไว้กลางแถว แล้วรัน 60 รอบที่ $\lambda=0.6$ ถ้าตัวเลขไม่ระเบิด แปลว่าเขียนสูตรผิด ไม่ใช่ว่าเงื่อนไขนี้ใช้ไม่จริง</p>
   <div class="math">\[
-\begin{aligned}u_j^{n+1}&=u_j^{n}+\lambda\left(u_{j+1}^{n}-2u_j^{n}+u_{j-1}^{n}\right),\qquad\lambda=\frac{\Delta t}{\left(\Delta x\right)^{2}}\\[4pt]
+\begin{aligned}
+u_j^{n+1}&=u_j^{n}+\lambda\big(u_{j+1}^{n}-2u_j^{n}+u_{j-1}^{n}\big)\\
+\lambda&=\frac{\Delta t}{(\Delta x)^{2}}\\[4pt]
 u_j^{n}&=g^{n}e^{ikj\Delta x}\\
-g&=1-4\lambda\sin^{2}\!\left(\frac{k\Delta x}{2}\right)\\[4pt]
-\left|g\right|\le 1\ \ \forall k&\iff 4\lambda\le 2\iff\lambda\le\tfrac12\\[4pt]
-\lambda=0.40:\quad\max\left|u\right|&=0.0556\\
-\lambda=0.50:\quad\max\left|u\right|&=0.0953\\
-\lambda=0.55:\quad\max\left|u\right|&=2{,}862\\
-\lambda=0.60:\quad\max\left|u\right|&=3.1\times10^{7}\end{aligned}
+g&=1-4\lambda\sin^{2}\!\Big(\frac{k\Delta x}{2}\Big)\\[4pt]
+|g|\le1&\implies4\lambda\le2\\
+\lambda&\le\tfrac12\\[4pt]
+\max|u|&=0.0556\quad(\lambda=0.40)\\
+&=0.0953\quad(\lambda=0.50)\\
+&=2{,}862\quad(\lambda=0.55)\\
+&=3.1\times10^{7}\quad(\lambda=0.60)
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>วิธีดูว่าสูตรวนซ้ำจะระเบิดไหม คือใส่คลื่นลูกเดียวเข้าไปแล้วถามว่ารอบหน้ามันโตขึ้นหรือเล็กลง ตัวคูณที่คุมเรื่องนี้คือ $g$ ในบรรทัดที่สาม</p>
+    <p>วิธีดูว่าสูตรวนซ้ำจะระเบิดไหม คือใส่คลื่นลูกเดียวเข้าไปแล้วถามว่ารอบหน้ามันโตขึ้นหรือเล็กลง ตัวคูณที่คุมเรื่องนี้คือ $g$</p>
     <p>ก้อน $\sin^{2}$ วิ่งได้มากสุดเท่ากับหนึ่ง ซึ่งเกิดกับคลื่นที่สั้นที่สุดบนกริด คือคลื่นที่สลับขึ้นลงทุกช่อง ตรงนั้นเองที่ $g$ ต่ำสุด และเป็นจุดที่ตัดสินทุกอย่าง</p>
     <p>แทนค่าสูงสุดลงไปได้ $g=1-4\lambda$ ถ้าจะไม่ให้ขนาดโตขึ้น ต้องไม่ต่ำกว่า $-1$ จัดรูปแล้วได้ $\lambda$ ห้ามเกินครึ่ง นี่คือที่มาของเลขครึ่งที่ดูเหมือนมาจากไหนไม่รู้</p>
     <p>สี่บรรทัดล่างคือผลรันจริง ขยับจาก 0.50 ไป 0.55 แค่นั้น คำตอบกระโดดจาก 0.095 เป็นเกือบสามพัน ไม่ใช่ความคลาดเคลื่อนที่ค่อย ๆ แย่ลง แต่เป็นสวิตช์ที่พลิกทันที</p>
@@ -159,10 +166,10 @@ g&=1-4\lambda\sin^{2}\!\left(\frac{k\Delta x}{2}\right)\\[4pt]
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.1a — grid ทำให้ค่า option มีพิกัด</h4>
-  <img src="../figures/21.1-1.svg" alt="ภาพ 21.1a — grid ทำให้ค่า option มีพิกัด" loading="lazy">
+  <h4>Figure 21.1a — American put ที่แก้บนกริดจริง</h4>
+  <img src="../figures/21.1-1.svg" alt="Figure 21.1a — American put ที่แก้บนกริดจริง" loading="lazy">
   <figcaption>
-    <p>ช่องสีเป็นมูลค่า put สังเคราะห์ตามราคาและเวลาที่เหลือ ราคาใกล้ strike และยังเหลือเวลามากมี time value สูงกว่า payoff ทันที เส้นประคือ strike; การเห็นช่องทำให้ตรวจได้ว่าจุดที่สนใจอยู่กลางกริดหรือกำลังพึ่งขอบ</p>
+    <p>put ที่ strike 52 ดอกเบี้ย 5% volatility 30% แก้บนกริดด้วย implicit scheme 100 ก้าวเวลาและช่องราคา 1 USD สีคือมูลค่าของ put เส้นขาวทึบคือขอบที่ใช้สิทธิ์ทันทีดีกว่า เลื่อนจาก 52 ตอนใกล้หมดอายุลงไปใต้ 40 เมื่อเหลือครึ่งปี จุดส้มคือหุ้น 50 ที่เหลือครึ่งปี มูลค่า 4.78</p>
   </figcaption>
 </figure>
 
@@ -170,7 +177,11 @@ g&=1-4\lambda\sin^{2}\!\left(\frac{k\Delta x}{2}\right)\\[4pt]
   <h4>ขั้นที่ 4 — terminal และ boundary conditions ของ European put</h4>
   <p>payoff และขอบทั้งสองปิด PDE บนช่วงราคาจำกัด</p>
   <div class="math">\[
-V(S,T)=\max(K-S,0),\qquad V(0,t)=Ke^{-r(T-t)},\qquad V(S_{max},t)\approx0
+\begin{aligned}
+V(S,T)&=\max(K-S,\ 0)\\
+V(0,t)&=Ke^{-r(T-t)}\\
+V(S_{max},t)&\approx0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สำหรับ American put ขอบซ้ายเป็น $K$ เพราะ exercise ได้ทันที; เลือก $S_{max}$ แล้วต้องทำ sensitivity test ว่าราคาวันนี้ไม่เปลี่ยนเกิน tolerance</p>
@@ -197,20 +208,17 @@ V(S,T)=\max(K-S,0),\qquad V(0,t)=Ke^{-r(T-t)},\qquad V(S_{max},t)\approx0
   <h4>ขั้นที่ 5 — แทนตัวเลขในหนึ่งช่อง</h4>
   <p>ตัวอย่างกำหนดหุ้น 50 USD, strike 52 USD, อายุครึ่งปี, อัตรา 5% ต่อปี, volatility 30% ต่อรากปี, ช่องราคา 5 USD และก้าวเวลา 0.02 ปี</p>
   <div class="math">\[
-a=0.085,\quad b=0.819,\quad c=0.095,\qquad 0.085(7.30)+0.819(4.10)+0.095(2.00)=4.1684
+\begin{aligned}
+a&=0.085,\quad b=0.819,\quad c=0.095\\[4pt]
+V&=0.085(7.30)+0.819(4.10)\\
+&\quad+0.095(2.00)\\
+&=0.6205+3.3579+0.1900\\
+&=4.1684
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลลัพธ์คือ continuation value 4.1684 USD ต่อหุ้น ณ ช่องราคา 50 USD; intrinsic value ในช่องนี้เท่ากับ 2 USD ต่อหุ้น</p>
   </div>
-</section>
-
-<section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — ช่องหนึ่งของ American put</h4>
-  <p>ของที่มี: continuation value 4.1684 USD ต่อหุ้นใน toy grid และ intrinsic value ของอีก node เท่ากับ 9.00 USD เทียบ continuation 8.70 USD.</p>
-  <p>ถามว่าแต่ละ node ควรถือหรือ exercise?</p>
-  <p>คำตอบ: node แรกถือไว้ที่ 4.1684 USD; node หลัง exercise ที่ 9.00 USD.</p>
-  <p>ตรวจเองใน 10 วินาที: เลือกค่าที่มากกว่าระหว่าง continuation กับ intrinsic ในทุก node.</p>
-  <p>เอาไปใช้จริง: finite-difference engine ใช้กฎนี้หา American option value และระบุ early-exercise boundary ก่อน hedge.</p>
 </section>
 
 <section class="formula">
@@ -225,9 +233,52 @@ V_i^n=\max\!\left(g(S_i),\;V_{i,\mathrm{continuation}}^n\right)
   </div>
 </section>
 
+<section class="example">
+  <h4>คำตอบ — มูลค่า American Put บนกริดหนึ่งช่อง</h4>
+  <p>คำถาม: American put บนหุ้น 50 USD มี strike 52 USD อัตรา 5% volatility 30% ขั้นราคา 5 USD ขั้นเวลา 0.02 ปี อีกก้าวมีค่า 7.30, 4.10, 2.00 USD ช่องนี้ควรมีมูลค่าเท่าใด และควร exercise หรือไม่?</p>
+  <p>ของที่มี (ขั้นที่ 3 ถึง 6): น้ำหนัก a = 0.085, b = 0.819, c = 0.095 และ payoff ทันที 2.00 USD</p>
+  <p>1. continuation value จากการถือรอ: 0.085(7.30) + 0.819(4.10) + 0.095(2.00) ได้ 4.1684 USD</p>
+  <p>2. เปรียบเทียบกับ intrinsic value: 2.00 USD น้อยกว่า 4.1684 USD ดังนั้นจึงควรถือต่อ ไม่ exercise</p>
+  <p>3. มูลค่า American put ที่ช่องนี้: เลือกค่าที่มากกว่า ได้ 4.1684 USD ต่อหุ้น</p>
+  <p>ตรวจเองใน 10 วินาที: ผลรวมน้ำหนัก 0.085 + 0.819 + 0.095 = 0.999 = 1 - (0.05)(0.02) ถูกต้อง และ 4.1684 มากกว่า 2.00 จึงไม่ exercise</p>
+  <p>แปลว่าอะไร: สิทธิ์ในการรอมีค่า 4.1684 - 2.00 = 2.1684 USD ต่อหุ้น finite-difference engine ตรวจสอบเงื่อนไขนี้ทุกช่องเพื่อลากเส้น early-exercise boundary บนกริด</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจน้ำหนักและมูลค่า American Put บนกริด</summary>
+    <pre><code>import numpy as np
+
+S, K, r, q, sigma = 50.0, 52.0, 0.05, 0.0, 0.30
+dS, dt = 5.0, 0.02
+i = int(round(S / dS))
+assert i == 10
+
+a = 0.5 * dt * (sigma**2 * i**2 - (r - q) * i)
+b = 1.0 - dt * (sigma**2 * i**2 + r)
+c = 0.5 * dt * (sigma**2 * i**2 + (r - q) * i)
+assert abs(a - 0.085) &lt; 1e-6
+assert abs(b - 0.819) &lt; 1e-6
+assert abs(c - 0.095) &lt; 1e-6
+assert abs((a + b + c) - (1.0 - r * dt)) &lt; 1e-6
+
+V_down, V_mid, V_up = 7.30, 4.10, 2.00
+V_cont = a * V_down + b * V_mid + c * V_up
+assert abs(V_cont - 4.1684) &lt; 1e-6
+
+intrinsic = max(K - S, 0.0)
+assert intrinsic == 2.0
+V_american = max(intrinsic, V_cont)
+assert abs(V_american - 4.1684) &lt; 1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์คำนวณน้ำหนัก explicit scheme ที่ node i=10 ตรวจสอบเงื่อนไข discount และยืนยันการตัดสินใจถือต่อของ American put</p>
+  </div>
+</section>
+
 <figure class="plot">
-  <h4>ภาพ 21.1b — explicit scheme พังจากปลายกริดก่อน</h4>
-  <img src="../figures/21.1-2.svg" alt="ภาพ 21.1b — explicit scheme พังจากปลายกริดก่อน" loading="lazy">
+  <h4>Figure 21.1b — explicit scheme พังจากปลายกริดก่อน</h4>
+  <img src="../figures/21.1-2.svg" alt="Figure 21.1b — explicit scheme พังจากปลายกริดก่อน" loading="lazy">
   <figcaption>
     <p>ที่ volatility 30% ต่อรากปีและขั้นราคา \$5 ขีดจำกัดที่ระดับ \$400 อยู่ราว 0.00174 ปี เส้นแดงใช้ 0.02 ปีจึงเกินหนึ่งและอาจสั่น แม้กลางกริดดูสงบ เพราะทุกแถวต้องใช้กติกาเดียวกัน</p>
   </figcaption>
@@ -243,7 +294,10 @@ V_i^n=\max\!\left(g(S_i),\;V_{i,\mathrm{continuation}}^n\right)
   <h4>ขั้นที่ 7 — นิยามของอีกสองวิธี ที่แลกงานคำนวณกับความเสถียร</h4>
   <p>สองก้อนนี้เป็น นิยาม ของวิธีที่ต่างออกไป ไม่ใช่ผลที่พิสูจน์ วิธีแรกอ่านค่าของเพื่อนบ้านที่เวลาใหม่แทนที่จะเป็นเวลาเก่า จึงต้องแก้ระบบสมการทุกก้าว แลกกับการที่มันเสถียรไม่ว่าจะเลือกขนาดก้าวเวลาเท่าไร วิธีที่สองเฉลี่ยสองแบบเข้าด้วยกันครึ่งต่อครึ่ง ซึ่งทำให้ความคลาดเคลื่อนหดเร็วกว่า ระบบที่ต้องแก้มีรูปสามแถบทแยง จึงแก้ได้ในเวลาที่แปรตามจำนวนช่องเท่านั้น ไม่ได้แพงอย่างที่การกลับตารางทั่วไปจะเป็น</p>
   <div class="math">\[
-(I-\Delta tL)V^n=V^{n+1},\qquad \left(I-\tfrac12\Delta tL\right)V^n=\left(I+\tfrac12\Delta tL\right)V^{n+1}
+\begin{aligned}
+(I-\Delta t\,L)\,V^n&=V^{n+1}\\[4pt]
+\big(I-\tfrac12\Delta t\,L\big)V^n&=\big(I+\tfrac12\Delta t\,L\big)V^{n+1}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมการแรกคือ implicit Euler และสมการที่สองคือ Crank–Nicolson; $L$ มีหน่วยต่อปีจึงทำให้ vector ทั้งสองข้างยังมีหน่วย USD ต่อหุ้น</p>
@@ -251,18 +305,18 @@ V_i^n=\max\!\left(g(S_i),\;V_{i,\mathrm{continuation}}^n\right)
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.1c — accuracy และ stability เป็นคนละคำถาม</h4>
-  <img src="../figures/21.1-3.svg" alt="ภาพ 21.1c — accuracy และ stability เป็นคนละคำถาม" loading="lazy">
+  <h4>Figure 21.1c — ความเสถียรกับความแม่นเป็นคนละคำถาม</h4>
+  <img src="../figures/21.1-3.svg" alt="Figure 21.1c — ความเสถียรกับความแม่นเป็นคนละคำถาม" loading="lazy">
   <figcaption>
-    <p>เส้นตัวอย่างแสดง error เมื่อเพิ่มจำนวน time steps: implicit ลดแบบอันดับหนึ่ง ส่วน Crank–Nicolson มักลดเร็วกว่าในบริเวณเรียบ การเลือก scheme ต้องดูทั้งกราฟ convergence และการไม่มี oscillation รอบ strike</p>
+    <p>put แบบยุโรปตัวเดียวกันที่หุ้น 50 วัดความคลาดเทียบคำตอบของกริดเดียวกันที่ใช้ 5,000 ก้าว เพื่อแยกความคลาดของเวลาออกจากของช่องราคา เพิ่มก้าวเท่าตัว implicit Euler คลาดลดครึ่งหนึ่ง Crank–Nicolson ลดราวสี่เท่า ช่วงก้าวน้อยมากมันยังลดไม่ถึงนั้นเพราะมุมหักของ payoff ที่ strike</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพ 21.1d — early-exercise boundary ไม่เท่ากับ strike ตายตัว</h4>
-  <img src="../figures/21.1-4.svg" alt="ภาพ 21.1d — early-exercise boundary ไม่เท่ากับ strike ตายตัว" loading="lazy">
+  <h4>Figure 21.1d — ขอบใช้สิทธิ์ก่อนกำหนดไม่ใช่ strike</h4>
+  <img src="../figures/21.1-4.svg" alt="Figure 21.1d — ขอบใช้สิทธิ์ก่อนกำหนดไม่ใช่ strike" loading="lazy">
   <figcaption>
-    <p>เส้นแดงคือ payoff ทันทีและสีน้ำเงินคือ continuation สังเคราะห์ ด้านที่ payoff สูงกว่าคือ exercise region จุดตัดเคลื่อนตามเวลา ดอกเบี้ย dividend และ volatility จึงต้องให้ grid หาคำตอบแทนการใช้ strike เป็น rule-of-thumb</p>
+    <p>เหลือครึ่งปี American put จากกริด (เส้นน้ำเงิน) อยู่เหนือ European put จาก Black–Scholes (เส้นประ) ทุกราคา ที่หุ้น 50 คือ 4.78 เทียบ 4.62 ต่ำกว่า 38.5 เส้นน้ำเงินทับเส้นแดง แปลว่าใช้สิทธิ์ทันทีดีกว่ารอ ขอบนี้จึงอยู่ต่ำกว่า strike 52 มาก</p>
   </figcaption>
 </figure>
 

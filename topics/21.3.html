@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ฟังคอร์ดหนึ่งครั้งแล้วแยกได้ว่ามีเสียงต่ำและเสียงสูงอะไรบ้าง. ถ้าต้องตอบราคา 256 จุด เราต้องเริ่มคำนวณใหม่ 256 รอบจริงไหม?</p>
-  <p>สร้างข้อมูลในมุมความถี่หนึ่งชุด แล้วแปลงกลับเป็นราคาทั้งแถว. วิธีแปลงนี้เรียก Fourier transform; algorithm ที่ทำเร็วเรียก Fast Fourier Transform (FFT).</p>
-  <p>เฉลย: ไม่ต้อง เพราะหลาย strike ใช้โครงสร้างความถี่ชุดเดียวกัน. FFT ไม่ได้คิดเลขเก่งกว่าแบบวิเศษ; มันแค่หยุดอุ่นไมโครเวฟ 256 รอบ.</p>
+  <p>Call option บนหุ้น 100 USD มี strike 100 USD อายุ 1 ปี อัตรา 5% volatility 20% หากใช้ Carr–Madan แปลง Fourier ด้วย damping 1.5 ราคาที่ได้จะตรงกับ Black–Scholes ที่ 10.4506 USD หรือไม่?</p>
+  <p>เฉลย: ตรงกันที่ 10.4506 USD โดย Carr–Madan อินทิเกรต characteristic function บนแกนความถี่ครั้งเดียว และขยายเป็นทั้ง strike ladder ได้ด้วย Fast Fourier Transform (FFT)</p>
 </div>
 
 <details class="jargon" open>
@@ -80,6 +79,79 @@
   <p>และความเร็วนั้นสำคัญมาก เพราะการปรับเทียบต้องคำนวณราคาซ้ำเป็นพันครั้ง</p>
 </section>
 
+<section class="table">
+  <h4>option สองแบบบนหุ้น Apple ที่ 190 USD: คนเก็งกำไร</h4>
+  <table>
+    <thead><tr><th>ราคาหุ้นตอนจบ</th><th>ซื้อหุ้น 100 หุ้น (USD)</th><th>ซื้อ call strike 200 ค่า premium 500 (USD)</th></tr></thead>
+    <tbody>
+      <tr><td>140</td><td>−5,000</td><td>−500</td></tr>
+      <tr><td>170</td><td>−2,000</td><td>−500</td></tr>
+      <tr><td>190</td><td>0</td><td>−500</td></tr>
+      <tr><td>210</td><td>+2,000</td><td>1,000 − 500 = +500</td></tr>
+      <tr><td>240</td><td>+5,000</td><td>4,000 − 500 = +3,500</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>ซื้อหุ้น 100 หุ้นใช้เงิน 19,000 USD ซื้อ call อายุ 3 เดือนจ่ายแค่ 5 USD ต่อหุ้นหรือ 500 USD ขาดทุนมากสุดของ call คือ 500 เท่านั้น แต่กำไรขาขึ้นก็น้อยกว่า และคนเก็งกำไรไม่ต้องถือถึงวันหมดอายุ ขายสัญญาทิ้งก่อนได้</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>option สองแบบบนหุ้น Apple ที่ 190 USD: คนป้องกันความเสี่ยง</h4>
+  <table>
+    <thead><tr><th>ราคาหุ้นตอนจบ</th><th>ถือหุ้นเฉย ๆ (USD)</th><th>ถือหุ้นและซื้อ put strike 180 ค่า premium 800 (USD)</th></tr></thead>
+    <tbody>
+      <tr><td>130</td><td>13,000</td><td>13,000 + 5,000 − 800 = 17,200</td></tr>
+      <tr><td>160</td><td>16,000</td><td>16,000 + 2,000 − 800 = 17,200</td></tr>
+      <tr><td>190</td><td>19,000</td><td>19,000 − 800 = 18,200</td></tr>
+      <tr><td>220</td><td>22,000</td><td>22,000 − 800 = 21,200</td></tr>
+      <tr><td>250</td><td>25,000</td><td>25,000 − 800 = 24,200</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>put อายุ 6 เดือนราคา 8 USD ต่อหุ้นทำให้พอร์ตไม่ต่ำกว่า 17,200 USD ไม่ว่าหุ้นจะตกแค่ไหน ราคาที่จ่ายคือ 800 USD ที่หายไปในกรณีหุ้นไม่ตก คำถามที่เหลือคือ 5 และ 8 USD นั้นยุติธรรมหรือไม่ ซึ่งคือเรื่องของหัวข้อนี้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ราคาวันนี้คือ payoff ถ่วงด้วย density แล้วคิดลด</h4>
+  <p>สัญญากำหนดราคาวันนี้ $S_0$ strike $K$ และวันหมดอายุ $T$ ส่วนราคาตอนจบ $S_T$ ยังไม่รู้ ถ้ารู้ density ของ $S_T$ ภายใต้ risk-neutral measure การตั้งราคาคือการเฉลี่ย payoff แล้วคิดลดกลับมา</p>
+  <div class="math">\[
+\begin{aligned}
+f&=f(S_T\mid S_0)\\[4pt]
+C_0(K,T)&=e^{-rT}\int_0^\infty(S_T-K)^+f\,dS_T\\
+&=e^{-rT}\int_K^\infty(S_T-K)\,f\,dS_T\\[4pt]
+P_0(K,T)&=e^{-rT}\int_0^K(K-S_T)\,f\,dS_T
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$(S_T-K)^+$ คือ payoff ของ call ที่เป็นศูนย์เมื่อหุ้นจบต่ำกว่า strike ช่วงที่ต่ำกว่า $K$ จึงไม่มีอะไรให้บวก integral เริ่มที่ $K$ ได้เลย put กลับกัน จ่ายเฉพาะช่วงศูนย์ถึง $K$</p>
+    <p>ภาพของมันคือพื้นที่ใต้เส้นที่ได้จากการคูณ payoff รูปไม้ฮอกกี้กับ density ของราคาตอนจบ แล้วย่อด้วย $e^{-rT}$ เพื่อคิดเป็นเงินวันนี้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ลองกับ lognormal: บวกแท่งสี่เหลี่ยม 4,096 แท่ง</h4>
+  <p>หุ้น 100 USD strike 80 ดอกเบี้ย 5% dividend yield 1% volatility 30% อายุหนึ่งปี ใช้ density ของ Black–Scholes ช่องละ 0.20 USD จำนวน 4,096 ช่อง</p>
+  <div class="math">\[
+\begin{aligned}
+f(s)&=\frac{e^{-z^2/2}}{s\,\sigma\sqrt{2\pi T}}\\
+z&=\frac{\ln s-m}{\sigma\sqrt T}\\
+m&=\ln S_0+(r-q-\tfrac12\sigma^2)T\\
+&=4.6052-0.0050=4.6002\\[4pt]
+C_0&\approx e^{-rT}\sum_{j=1}^{N}(s_j-K)\,f(s_j)\,w_j\\
+s_j&=80+0.20(j-1)\\
+w_1&=0.10,\qquad w_j=0.20\\[4pt]
+N&=4{,}096:\quad C_0=25.6146
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$z$ คือระยะของ log ราคาจากค่ากลาง $m$ วัดเป็นจำนวน standard deviation ส่วน 0.0050 มาจาก 0.05 − 0.01 − 0.045</p>
+    <p>แทน integral ด้วยแท่งสี่เหลี่ยมกว้าง 0.20 แท่งแรกอยู่ที่ strike พอดีจึงนับครึ่งแท่งตามกฎสี่เหลี่ยมคางหมู แท่งสุดท้ายอยู่ที่ราว 899 USD ซึ่งไกลพอที่ density แทบเป็นศูนย์ งานทั้งหมดคือบวก 4,096 ครั้ง สำหรับ put ขอบบนคือ strike เอง จึงตั้ง $\eta=K/N$ และ $s_j=(j-1)\eta$ แทน</p>
+    <p>ผล 25.6146 USD ตรงกับสูตร Black–Scholes ที่มี dividend ถึงสี่ตำแหน่ง วิธีนี้แม่นและตรงไปตรงมา ปัญหาเดียวคือ model ส่วนใหญ่ เช่น Heston ไม่มีสูตรของ density ให้แทน นี่คือเหตุผลที่ต้องย้ายไปโลกความถี่ในส่วนถัดไป</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>ทำไม log-price จึงเดินทางไปโลกความถี่ได้</h4>
   <p>ราคา option คือ expected payoff ที่ discount แล้ว แต่ payoff call มีส่วนบวกของ $S_T-K$ และ density ของ stochastic-volatility หรือ jump model อาจเขียนยาก หลาย model กลับมี characteristic function ของ log-price ที่คำนวณได้ตรง จึงย้ายงานจาก density ที่มองไม่เห็นไปยัง function เชิงซ้อนที่ทดสอบได้</p>
@@ -89,9 +161,13 @@
 <section class="formula">
   <h4>ลอง distribution สองค่าก่อนมองคลื่น</h4>
   <div class="math">\[
-\begin{aligned}&\Pr(X=0)=\Pr(X=1)=\tfrac12\\
-&\phi(u)=\tfrac12e^{iu(0)}+\tfrac12e^{iu(1)}=\tfrac12+\tfrac12(\cos u+i\sin u)\\
-&\phi(0)=1,\qquad\phi(\pi)=0,\qquad\phi(\pi/2)=\tfrac12+\tfrac12i\end{aligned}
+\begin{aligned}
+\Pr(X=0)&=\Pr(X=1)=\tfrac12\\[4pt]
+\phi(u)&=\tfrac12e^{iu(0)}+\tfrac12e^{iu(1)}\\
+&=\tfrac12+\tfrac12(\cos u+i\sin u)\\[4pt]
+\phi(0)&=1,\qquad\phi(\pi)=0\\
+\phi(\pi/2)&=\tfrac12+\tfrac12i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ให้ X มีค่าได้เพียงศูนย์หรือหนึ่งอย่างละครึ่ง characteristic function คือค่าเฉลี่ยของจุดบนวงกลมที่หมุนด้วยมุม u คูณ X หน่วยจินตภาพ i เก็บแกนตั้ง ส่วนจริงเก็บแกนนอน</p>
@@ -103,10 +179,10 @@
   <h4>ขั้นที่ 1 — นิยามของ characteristic function</h4>
   <p>บรรทัดนี้เป็น นิยาม ของเครื่องมือที่จะใช้ ไม่ใช่ผลที่พิสูจน์ รูปของมันเหมือน Moment Generating Function ในหัวข้อ 7.2 ทุกอย่าง ต่างแค่เปลี่ยนตัวคูณในเลขชี้กำลังเป็นจำนวนจินตภาพ ข้อดีของการเปลี่ยนนั้นคือมันมีค่าจำกัดเสมอ ต่างจากเครื่องมือเดิมที่บาง distribution ไม่มี ซึ่งเป็นข้อจำกัดที่หัวข้อ 7.2 เตือนไว้ ราคาที่จ่ายคือต้องทำงานกับจำนวนเชิงซ้อน</p>
   <div class="math">\[
-\phi_T(u)=\mathbb{E}^{Q}\!\left[e^{iuX_T}\right],\qquad u\in\mathbb{R}
+\phi_T(u)=\mathbb{E}^{Q}\!\left[e^{iuX_T}\right]
 \]</div>
   <div class="reading">
-    <p>$Q$ คือ risk-neutral measure, $X_T$ ไม่มีหน่วย และ $\phi_T(0)=1$ เป็น sanity check แรกของ implementation</p>
+    <p>Q คือ risk-neutral measure, $X_T$ ไม่มีหน่วย และ $\phi_T(0)=1$ เป็น sanity check แรกของ implementation</p>
   </div>
 </section>
 
@@ -126,12 +202,20 @@
   <p>นี่คือรากฐานที่มาของ characteristic function สำหรับ Black–Scholes ที่ไม่ได้หยิบยกมาลอย ๆ แต่มาจากการจัดรูปกำลังสองสมบูรณ์ใน Gaussian integral โดยตรง</p>
   <p>สังเกตว่าพจน์จินตภาพ $iu\mu_T$ ทำหน้าที่เป็นตัวหมุนเฟสของคลื่นตามค่าเฉลี่ยของ log-price ขณะที่พจน์จริง $-\frac{1}{2}\sigma^2 u^2 T$ ทำหน้าที่ลดทอนความสูงของคลื่น ยิ่ง volatility หรือเวลาสูง คลื่นยิ่งสลายตัวเร็วในแกนความถี่</p>
   <div class="math">\[
-\begin{aligned}X_T &= \mu_T + \sigma\sqrt{T} Z, \quad \mu_T = \ln S_0 + (r - q - \tfrac12\sigma^2)T, \quad Z \sim \mathcal{N}(0, 1) \\
-\phi_T(u) &= \mathbb{E}\left[e^{iu X_T}\right] = e^{iu\mu_T}\int_{-\infty}^{\infty} e^{iu\sigma\sqrt{T} z} \frac{1}{\sqrt{2\pi}} e^{-z^2/2} dz \\
-&= e^{iu\mu_T} \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}} \exp\left( -\tfrac12\left[z^2 - 2i(u\sigma\sqrt{T})z + (iu\sigma\sqrt{T})^2 - (iu\sigma\sqrt{T})^2\right] \right) dz \\
-&= e^{iu\mu_T} \exp\left( \tfrac12(iu\sigma\sqrt{T})^2 \right) \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}} \exp\left( -\tfrac12(z - iu\sigma\sqrt{T})^2 \right) dz \\
-&= e^{iu\mu_T - \frac12 \sigma^2 u^2 T} \cdot 1 \\
-&= \exp\left( iu\left[\ln S_0 + (r - q - \tfrac12\sigma^2)T\right] - \tfrac12\sigma^2 u^2 T \right)\end{aligned}
+\begin{aligned}
+X_T&=\mu_T+\sigma\sqrt{T}\,Z\\
+Z&\sim\mathcal{N}(0,1)\\
+\mu_T&=\ln S_0+(r-q-\tfrac12\sigma^2)T\\[4pt]
+\phi_T(u)&=\mathbb{E}\big[e^{iuX_T}\big]\\
+&=e^{iu\mu_T}\int_{-\infty}^{\infty}e^{az}\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz\\
+a&=iu\sigma\sqrt{T}\\[4pt]
+az-\tfrac12z^2&=-\tfrac12(z-a)^2+\tfrac12a^2\\[4pt]
+\phi_T(u)&=e^{iu\mu_T}e^{a^2/2}\\
+&\quad\times\int_{-\infty}^{\infty}\frac{e^{-(z-a)^2/2}}{\sqrt{2\pi}}\,dz\\
+&=e^{iu\mu_T}e^{a^2/2}\cdot1\\
+a^2&=-\sigma^2u^2T\\[4pt]
+\phi_T(u)&=\exp\big(iu\mu_T-\tfrac12\sigma^2u^2T\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เขียน log-price $X_T$ ให้อยู่ในรูปตัวแปร standard normal $Z$ จากนั้นกระจายค่า expected value เป็น integral เทียบ probability density ของ normal distribution</p>
@@ -150,8 +234,8 @@
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.3a — distribution ปรากฏเป็นคลื่นเชิงซ้อน</h4>
-  <img src="../figures/21.3-1.svg" alt="ภาพ 21.3a — distribution ปรากฏเป็นคลื่นเชิงซ้อน" loading="lazy">
+  <h4>Figure 21.3a — distribution ปรากฏเป็นคลื่นเชิงซ้อน</h4>
+  <img src="../figures/21.3-1.svg" alt="Figure 21.3a — distribution ปรากฏเป็นคลื่นเชิงซ้อน" loading="lazy">
   <figcaption>
     <p>ส่วนจริงและส่วนจินตภาพของ Black–Scholes characteristic function ลดขนาดเมื่อความถี่สูงขึ้น ความสั่นเป็นภาษาของ distribution ไม่ใช่การทำนายว่าหุ้นจะสั่น; cutoff ต้องไกลพอให้หางที่ตัดทิ้งเล็กตาม tolerance</p>
   </figcaption>
@@ -195,11 +279,13 @@
   <p>เหตุผลที่สูตร Carr–Madan อินทิเกรตเฉพาะแกนบวกตั้งแต่ศูนย์ถึงอนันต์ ไม่ใช่เพราะละเลยซีกซ้าย แต่เป็นเพราะราคา option ในโลกความจริงเป็นจำนวนจริง</p>
   <p>สมบัติความสมมาตรแบบ conjugate symmetry ทำให้ครึ่งซ้ายและครึ่งขวาให้ข้อมูลเหมือนกันทุกประการ การรวมกันจึงทำให้ส่วนจินตภาพหายไปเหลือเพียงสองเท่าของส่วนจริง ช่วยประหยัดเวลาคำนวณครึ่งหนึ่งทันที</p>
   <div class="math">\[
-\begin{aligned}C(k) &= \frac{e^{-\alpha k}}{2\pi}\int_{-\infty}^{\infty} e^{-iuk}\psi_T(u)\,du \\
-&= \frac{e^{-\alpha k}}{2\pi}\left[ \int_{-\infty}^{0} e^{-iuk}\psi_T(u)\,du + \int_{0}^{\infty} e^{-iuk}\psi_T(u)\,du \right] \\
-&= \frac{e^{-\alpha k}}{2\pi}\left[ \int_{0}^{\infty} \overline{e^{-ivk}\psi_T(v)}\,dv + \int_{0}^{\infty} e^{-iuk}\psi_T(u)\,du \right] \\
-&= \frac{e^{-\alpha k}}{2\pi}\int_{0}^{\infty} 2\Re\left[e^{-iuk}\psi_T(u)\right]du \\
-&= \frac{e^{-\alpha k}}{\pi}\int_{0}^{\infty}\Re\left[e^{-iuk}\psi_T(u)\right]du\end{aligned}
+\begin{aligned}
+f(u)&=e^{-iuk}\psi_T(u)\\
+f(-v)&=\overline{f(v)}\\[4pt]
+C(k)&=\frac{e^{-\alpha k}}{2\pi}\int_{-\infty}^{\infty}f(u)\,du\\
+&=\frac{e^{-\alpha k}}{2\pi}\int_{0}^{\infty}\big[f(v)+\overline{f(v)}\big]\,dv\\
+&=\frac{e^{-\alpha k}}{\pi}\int_{0}^{\infty}\Re\big[f(u)\big]\,du
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แยก integral บนแกนจริงออกเป็นสองช่วง คือตั้งแต่ลบอนันต์ถึงศูนย์ และตั้งแต่ศูนย์ถึงอนันต์</p>
@@ -221,20 +307,112 @@ C(100,1)=10.4506,\qquad S_0-Ke^{-rT}=4.8771,\qquad 4.8771\leq C\leq100
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — call หนึ่งตัว</h4>
-  <p>ของที่มี: spot และ strike 100 USD, อายุ 1 ปี, rate 5% ต่อปี, volatility 20% ต่อรากปี และ damping 1.5.</p>
-  <p>ถามว่า FFT implementation ให้ราคาอยู่ในขอบเขตสมเหตุผลไหม?</p>
-  <p>คำตอบ: สัญญามาตรฐาน 100 หน่วยมีมูลค่า 1,045.06 USD ก่อนค่าธรรมเนียม.</p>
-  <p>ตรวจเองใน 10 วินาที: ราคา call ต้องไม่ติดลบและต้องไม่เกิน spot 100 USD ต่อหน่วย.</p>
-  <p>เอาไปใช้จริง: ผ่าน benchmark ก่อนแล้วจึงใช้ FFT สร้าง strike ladder เร็วพอสำหรับ calibration และ risk run.</p>
+  <h4>คำตอบ — ราคา Call Option ด้วย Carr–Madan</h4>
+  <p>คำถาม: Call option บนหุ้น 100 USD มี strike 100 USD อายุ 1 ปี อัตรา 5% volatility 20% หากใช้ Carr–Madan แปลง Fourier ด้วย damping 1.5 ราคาที่ได้จะตรงกับ Black–Scholes ที่ 10.4506 USD หรือไม่?</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 4): spot 100 USD, strike 100 USD, อัตรา 5%, volatility 20%, damping 1.5 และ characteristic function ของ Black–Scholes</p>
+  <p>1. คำนวณราคาปิด Black–Scholes: ได้ d1 = 0.35, d2 = 0.15 และราคา call เท่ากับ 10.4506 USD ต่อหุ้น</p>
+  <p>2. อินทิเกรตด้วย Carr–Madan บนแกนความถี่: ได้ราคา call เท่ากับ 10.4506 USD ต่อหุ้น ตรงกับสูตรปิด</p>
+  <p>3. สำหรับสัญญามาตรฐาน 100 หุ้น: มูลค่าสัญญาเท่ากับ 1,045.06 USD</p>
+  <p>ตรวจเองใน 10 วินาที: ขอบเขตล่าง 4.8771 USD น้อยกว่าราคา call 10.4506 USD ซึ่งน้อยกว่า spot 100 USD ถูกต้องตาม no-arbitrage bounds</p>
+  <p>แปลว่าอะไร: Carr–Madan ให้ราคาเดียวกับสูตรปิดเมื่อทดสอบบน Black–Scholes จึงนำไปใช้กับ model อย่าง Heston ได้อย่างมั่นใจ</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจราคา Call Option ด้วย Black–Scholes และ Carr–Madan</summary>
+    <pre><code>import numpy as np
+from scipy.stats import norm
+from scipy.integrate import quad
+
+S0, K, T, r, q, sigma, alpha = 100.0, 100.0, 1.0, 0.05, 0.0, 0.20, 1.5
+
+d1 = (np.log(S0 / K) + (r - q + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+d2 = d1 - sigma * np.sqrt(T)
+bs_call = S0 * np.exp(-q * T) * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2)
+assert abs(bs_call - 10.4506) &lt; 1e-4
+
+def phi(u):
+    mu = np.log(S0) + (r - q - 0.5 * sigma**2) * T
+    return np.exp(1j * u * mu - 0.5 * sigma**2 * u**2 * T)
+
+def psi(u):
+    denom = (alpha + 1j * u) * (alpha + 1.0 + 1j * u)
+    return np.exp(-r * T) * phi(u - (alpha + 1.0) * 1j) / denom
+
+k = np.log(K)
+def integrand(u):
+    return np.real(np.exp(-1j * u * k) * psi(u))
+
+val, _ = quad(integrand, 0, 100)
+carr_madan_call = np.exp(-alpha * k) / np.pi * val
+assert abs(carr_madan_call - bs_call) &lt; 1e-4
+
+S0, K, r, q, T, sig = 100.0, 80.0, 0.05, 0.01, 1.0, 0.30         # source examples, K 80
+m = np.log(S0) + (r - q - 0.5 * sig**2) * T
+s = K + 0.20 * np.arange(4096)                                  # direct quadrature
+f = np.exp(-(np.log(s) - m)**2 / (2 * sig**2 * T)) / (s * sig * np.sqrt(2 * np.pi * T))
+w = np.full(4096, 0.20); w[0] = 0.10
+assert abs(np.exp(-r * T) * np.sum((s - K) * f * w) - 25.6146) &lt; 1e-4
+
+def cm(phi, a=1.5, eta=0.25, N=4096):                           # one strike, trapezoid
+    u = np.arange(N) * eta; wt = np.full(N, eta); wt[0] = eta / 2; k = np.log(K)
+    ps = np.exp(-r * T) * phi(u - (a + 1) * 1j) / ((a + 1j * u) * (a + 1 + 1j * u))
+    return np.exp(-a * k) / np.pi * np.sum(np.real(np.exp(-1j * u * k) * ps * wt))
+
+assert abs(cm(lambda u: np.exp(1j * u * m - 0.5 * sig**2 * u**2 * T)) - 25.6146) &lt; 1e-4
+nu, th = 0.5, -0.4                                              # Variance Gamma
+om = np.log(1 - th * nu - 0.5 * sig**2 * nu) / nu
+vg = lambda u: np.exp(1j * u * (np.log(S0) + (r - q + om) * T)) / (1 - 1j * u * th * nu + 0.5 * sig**2 * nu * u**2)**(T / nu)
+assert abs(om - 0.3268) &lt; 1e-4 and abs(cm(vg) - 28.2203) &lt; 1e-4
+
+def heston(qq, kap=2.0, tv=0.05, sv=0.3, rho=-0.7, v0=0.04):
+    def phi(u):
+        g = np.sqrt(sv**2 * (u**2 + 1j * u) + (kap - 1j * rho * sv * u)**2); c = kap - 1j * rho * sv * u
+        num = np.exp(1j * u * np.log(S0) + 1j * u * (r - qq) * T + kap * tv * T * c / sv**2)
+        den = (np.cosh(g * T / 2) + c / g * np.sinh(g * T / 2))**(2 * kap * tv / sv**2)
+        return num / den * np.exp(-(u**2 + 1j * u) * v0 / (g / np.tanh(g * T / 2) + c))
+    return phi
+assert abs(cm(heston(0.01)) - 24.3325) &lt; 1e-4 and abs(cm(heston(0.0)) - 25.2428) &lt; 1e-4
+
+lam = 2 * np.pi / (4096 * 0.25); b1 = 4096 * lam / 2 - np.log(100)      # strike-grid centring
+assert abs(lam - 0.006136) &lt; 1e-6 and abs(-b1 + 2048 * lam - np.log(100)) &lt; 1e-12
+assert abs(80 * np.exp(lam) - 80.49) &lt; 0.01
+assert abs(carr_madan_call - 10.4506) &lt; 1e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์คำนวณราคา Black–Scholes และอินทิเกรต Carr–Madan ผ่าน characteristic function ยืนยันว่าผลลัพธ์ตรงกันที่ 10.4506 USD</p>
+  </div>
 </section>
 
 <section class="example">
-  <h4>ตัวอย่างจริงจากตลาด: การทดสอบ Damping และขนาดกริด FFT จากข้อมูล Columbia</h4>
-  <p>ตารางตัวเลข benchmark จากเอกสาร Columbia University แสดงผลกระทบของค่า damping และขนาดกริดบนสัญญา call อายุหนึ่งปี Spot 100 USD, Strike 80 USD, risk-free rate 5%, dividend yield 1%</p>
-  <p>สำหรับ Black–Scholes ที่ volatility 30% ราคาแม่นยำทางทฤษฎีคือ 25.6146 USD เมื่อใช้กริดความถี่ที่มีขนาด 1024 จุด ค่า $\alpha$ ในช่วง 0.5 ถึง 5.0 ให้ราคา 25.6146 USD ตรงกันทั้งหมด เกิดเป็นที่ราบเรียบที่ทนทานต่อการเลือก damping</p>
-  <p>แต่ถ้าเลือกค่า damping น้อยเกินไป เช่น 0.01 ราคาจะระเบิดเป็น 372.1118 USD เพราะเข้าใกล้จุด singular ที่ศูนย์ ในทางกลับกัน หากลดกริดเหลือ 64 จุดและเลือกค่า damping สูงถึง 10.0 ราคาจะเพี้ยนเหลือ 9.0641 USD จากความผิดพลาดแบบ aliasing</p>
-  <p>สำหรับแบบจำลอง Heston บนสัญญาเดียวกัน ให้ราคา benchmark เท่ากับ 25.2428 USD ซึ่งที่ราบของค่า damping บนกริด 1024 จุด คืนค่า 25.2428 USD ได้อย่างแม่นยำเช่นกัน</p>
+  <h4>ตารางต้นทาง: damping กับขนาดกริดบนสัญญาเดียวกัน</h4>
+  <p>เอกสารต้นทางลองโค้ด FFT ชุดเดียวกับ call อายุหนึ่งปี หุ้น 100 USD strike 80 USD ดอกเบี้ย 5% dividend yield 1% แล้วเปลี่ยนค่า damping ขนาดช่องความถี่ และจำนวนจุดทีละตัว</p>
+  <p>Black–Scholes ที่ volatility 30% ลู่เข้าที่ 25.6146 USD บนกริด 1,024 จุดทุกค่า damping ตั้งแต่ 0.5 ถึง 10 ส่วนกริด 64 จุดที่ช่อง 0.10 เพี้ยนทุกค่า และพังเหลือ 9.0641 ที่ damping 10 เพราะ aliasing</p>
+  <p>ถ้า damping น้อยเกินไป เช่น 0.01 ราคาระเบิดเป็น 138.7 ถึง 372.1 USD เพราะตัวหารในสูตรเข้าใกล้ศูนย์ที่ความถี่ต่ำ ช่วงที่ปลอดภัยในตารางคือ damping ราว 0.5 ถึง 2</p>
+</section>
+
+<section class="formula">
+  <h4>สาม model หนึ่งโค้ด: Black–Scholes, Heston และ Variance Gamma</h4>
+  <p>ข้อดีที่ใหญ่ที่สุดของวิธีนี้คือไม่ผูกกับ model ตัวไหน ขอแค่รู้ characteristic function เอกสารต้นทางลอง model ที่สามคือ Variance Gamma ที่ $\sigma=0.3$, $\nu=0.5$ และ $\theta_v=-0.4$</p>
+  <div class="math">\[
+\begin{aligned}
+X_t&=\theta_v\,\gamma_t+\sigma W_{\gamma_t}\\
+\omega&=\frac1\nu\ln\big(1-\theta_v\nu-\tfrac12\sigma^2\nu\big)\\
+&=2\ln(1+0.2-0.0225)=0.3268\\[4pt]
+\phi_{VG}(u)&=e^{iu[\ln S_0+(r-q+\omega)T]}\,g(u)^{T/\nu}\\
+g(u)&=\frac{1}{1-iu\theta_v\nu+\tfrac12\sigma^2\nu u^2}\\[6pt]
+C_{\text{BMS}}&=25.6146\\
+C_{\text{Heston}}&=24.3325\qquad(q=1\%)\\
+&=25.2428\qquad(q=0)\\
+C_{\text{VG}}&=28.2203
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>Variance Gamma คือ Brownian motion ที่เดินตามนาฬิกาสุ่ม $\gamma_t$ ซึ่งเป็น gamma process ที่เฉลี่ยวิ่งหนึ่งหน่วยต่อปีและมี variance ต่อปีเท่ากับ $\nu$ บางช่วงนาฬิกาเดินเร็ว ราคาจึงกระโดดได้ $\theta_v$ ที่ติดลบทำให้หางซ้ายหนา</p>
+    <p>$\omega$ คือตัวแก้ drift ให้ราคาหุ้นที่คิดลดแล้วเป็น martingale ถ้าลืมมัน ราคาจะไม่ใช่ 28.2203 เพราะ forward ของหุ้นผิด</p>
+    <p>ตาราง Heston ในเอกสารต้นทางใช้ $\kappa=2$, $\theta=0.05$, $\sigma_v=0.3$, $\rho=-0.7$, $v_0=0.04$ และให้ 25.2428 เราคำนวณซ้ำด้วยสองสูตรต่างกันได้ตรงกันที่ 24.3325 เมื่อใส่ dividend 1% ตามที่ตั้งไว้ และได้ 25.2428 พอดีเมื่อ dividend เป็นศูนย์ ตารางนั้นจึงน่าจะรันโดยลืม $q$</p>
+    <p>ข้อดีสองข้อ คือโค้ดเดียวใช้ได้ทุก model และได้ราคาทั้งแถวของ strike ในงาน $O(N\ln N)$ ข้อเสียสองข้อ คือ $\lambda\eta=2\pi/N$ ผูกความแม่นของ integral กับความถี่ของ strike และต้องเลือก $\alpha$, $N$, $\eta$ อย่างระวัง ไม่งั้นเจอ truncation, aliasing หรือจุด singular</p>
+  </div>
 </section>
 
 <section class="formula">
@@ -248,9 +426,31 @@ u_j=j\eta,\qquad \lambda=\frac{2\pi}{N\eta},\qquad b=\frac12N\lambda,\qquad k_v=
   </div>
 </section>
 
+<section class="formula">
+  <h4>เลือก b: วางกริด strike ไว้ตรงไหน</h4>
+  <p>กริด log-strike เริ่มที่ $-b$ แล้วเพิ่มทีละ $\lambda$ เอกสารต้นทางให้สองทางเลือก ลองกับกริด 4,096 จุด ช่องความถี่ 0.25</p>
+  <div class="math">\[
+\begin{aligned}
+\lambda&=\frac{2\pi}{N\eta}=\frac{2\pi}{4{,}096(0.25)}\\
+&=0.006136\\
+k_m&=-b+(m-1)\lambda\\[4pt]
+b_1&=\frac{N\lambda}{2}-\ln S_0\\
+&=12.566-4.605=7.961\\
+k_{2049}&=-7.961+2{,}048\lambda\\
+&=4.605=\ln100\\[4pt]
+b_2&=-\ln K=-\ln80\\
+K_1&=80,\qquad K_2=80e^{\lambda}=80.49
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทางแรกวางกริดให้ราคาหุ้นวันนี้อยู่กลางแถว จุดที่ 2,049 จึงเป็น strike 100 พอดี มีทั้ง strike ต่ำและสูงเท่า ๆ กัน เหมาะเมื่อต้องการทั้ง smile</p>
+    <p>ทางที่สองให้ strike แรกเป็นตัวที่สนใจพอดี เช่น 80 ไม่ต้อง interpolate ที่ strike นั้น แต่ strike ถัดไปห่างกันตาม $\lambda$ ที่ถูกบังคับ คือ 80.49 ไม่ใช่เลขกลม ๆ ที่ตลาดซื้อขาย</p>
+  </div>
+</section>
+
 <figure class="plot">
-  <h4>ภาพ 21.3b — หนึ่ง batch คืนราคาหลาย strike</h4>
-  <img src="../figures/21.3-2.svg" alt="ภาพ 21.3b — หนึ่ง batch คืนราคาหลาย strike" loading="lazy">
+  <h4>Figure 21.3b — หนึ่ง batch คืนราคาหลาย strike</h4>
+  <img src="../figures/21.3-2.svg" alt="Figure 21.3b — หนึ่ง batch คืนราคาหลาย strike" loading="lazy">
   <figcaption>
     <p>เส้นคือ call ladder บน log-strike grid และจุดคือ strike ที่ desk อาจต้องการ ยิ่ง spacing หยาบ strike ที่คำนวณตรงยิ่งห่าง การ interpolate เพิ่มขั้นตอนที่ต้องผ่าน monotonicity และ convexity checks</p>
   </figcaption>
@@ -263,8 +463,8 @@ u_j=j\eta,\qquad \lambda=\frac{2\pi}{N\eta},\qquad b=\frac12N\lambda,\qquad k_v=
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.3c — งานต่อ strike เปลี่ยนเป็นงานต่อ batch</h4>
-  <img src="../figures/21.3-3.svg" alt="ภาพ 21.3c — งานต่อ strike เปลี่ยนเป็นงานต่อ batch" loading="lazy">
+  <h4>Figure 21.3c — งานต่อ strike เปลี่ยนเป็นงานต่อ batch</h4>
+  <img src="../figures/21.3-3.svg" alt="Figure 21.3c — งานต่อ strike เปลี่ยนเป็นงานต่อ batch" loading="lazy">
   <figcaption>
     <p>ภาพเชิงอธิบายเปรียบเทียบจำนวน function work integration ทีละ strike โตตามจำนวน strike ส่วน FFT มีต้นทุนตั้งต้นแล้วตอบ strike เพิ่มใน batch เดียว ตัวเลขเวลาแท้จริงขึ้นกับ model, cache และ hardware จึงต้อง benchmark บน production engine</p>
   </figcaption>
@@ -297,18 +497,18 @@ C(k_v,T)\approx\frac{e^{-\alpha k_v}\eta}{\pi}\sum_{j=0}^{N-1}w_j\Re\!\left[e^{-
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.3d — aliasing พับหางกลับมา</h4>
-  <img src="../figures/21.3-4.svg" alt="ภาพ 21.3d — aliasing พับหางกลับมา" loading="lazy">
+  <h4>Figure 21.3d — aliasing พับหางกลับมา</h4>
+  <img src="../figures/21.3-4.svg" alt="Figure 21.3d — aliasing พับหางกลับมา" loading="lazy">
   <figcaption>
     <p>สีน้ำเงินเป็น density สังเคราะห์บนโดเมนกว้าง สีแดงแสดงหางที่ถูก periodize กลับเข้ามาเมื่อ log-price domain แคบ หางที่ควรอยู่นอกช่วงจึงซ้อนใกล้ปลายและทำให้ราคา strike ไกลเพี้ยน การเพิ่ม $N$ อย่างเดียวไม่พอถ้าช่วง $b$ ยังแคบ</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพ 21.3e — damping ที่ดีควรให้คำตอบตรงกัน</h4>
-  <img src="../figures/21.3-5.svg" alt="ภาพ 21.3e — damping ที่ดีควรให้คำตอบตรงกัน" loading="lazy">
+  <h4>Figure 21.3e — ตารางต้นทางของ damping กับขนาดกริด</h4>
+  <img src="../figures/21.3-5.svg" alt="Figure 21.3e — ตารางต้นทางของ damping กับขนาดกริด" loading="lazy">
   <figcaption>
-    <p>เมื่อ cutoff และ grid เพียงพอ damping หลายค่าควรให้ราคาใกล้กันในบริเวณปลอดภัย ความต่างที่ปลาย grid คือ warning ให้ขยายช่วงหรือปรับ parameter ไม่ใช่เหตุผลให้เลือกเส้นที่สวยกว่า</p>
+    <p>ตัวเลขจากตารางในเอกสารต้นทาง call ที่หุ้น 100 strike 80 volatility 30% ราคาที่ลู่เข้าคือ 25.6146 กริดละเอียด 1,024 จุดให้ค่านี้ทุก alpha ตั้งแต่ 0.5 ถึง 10 เส้นเขียวจึงทับเส้นน้ำเงินพอดี กริด 64 จุดที่ช่อง 0.10 เพี้ยนทุกค่า และพังเหลือ 9.0641 ที่ alpha 10 ส่วน alpha 0.01 ระเบิดเป็น 138.7 ถึง 372.1</p>
   </figcaption>
 </figure>
 

@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ก่อนส่งพัสดุแพง เราเช็กชื่อผู้รับ ที่อยู่ และกล่องบุบก่อน. price model ก็เหมือนกัน: quote ที่ป้อนผิดย่อมให้คำตอบสวยแต่ใช้ไม่ได้. คุณจะบังคับ model ให้ตามทุกจุดไหม?</p>
-  <p>ราคา 2 ตัวต่างกัน 0.10 USD แต่ bid–ask spread กว้าง 0.20 USD. ความต่างนั้นอาจเป็นเสียงรบกวน จึงไม่ควรบังคับ model ไล่ตามทุกจุด.</p>
-  <p>เฉลย: ไม่บังคับตาม noise; ผ่าน spread และตรวจซ้ำก่อน publish. production calibration คือขั้นตอนคัด quote, fit parameter, ตรวจผล และเก็บหลักฐานให้ทำซ้ำได้. ปุ่ม Run สีเขียวยืนยันแค่ว่ากดปุ่ม ไม่ได้ยืนยันว่าบ้านเลขที่ถูก.</p>
+  <p>Option 3 สัญญา มีราคา bid-ask คือ 12.50–12.90, 6.30–6.50 และ 2.40–2.60 USD หาก model ให้ราคา 12.66, 6.43 และ 2.48 USD ภายใต้เกณฑ์ residual ห้ามเกิน 1.0 half-spread การ calibrate นี้จะผ่าน acceptance gate หรือไม่?</p>
+  <p>เฉลย: ผ่าน acceptance gate เพราะทุกราคาอยู่ในช่วง bid-ask โดยมี objective เท่ากับ 0.085 และ maximum residual เพียง 0.30 half-spread ไม่เกินเกณฑ์ 1.0 ที่กำหนด</p>
 </div>
 
 <details class="jargon" open>
@@ -88,7 +87,7 @@
 <section class="prose">
   <h4>ที่มาทางประวัติศาสตร์: วิกฤติแบบจำลองกระตุกและกำเนิดของ Production Pipeline</h4>
   <p>ลองนึกภาพเช้าวันจันทร์ในห้องค้าตราสาร derivative: วันศุกร์ก่อนหน้า วิศวกรการเงิน calibrate แบบจำลอง stochastic volatility จนได้ราคาตรงกับตลาดและมี error เล็กเพียงไม่กี่เซนต์ เทรดเดอร์จึงตั้งสถานะ hedge ความเสี่ยง Delta และ Vega ไว้อย่างสบายใจ แต่เมื่อเปิดตลาดวันจันทร์ ข้อมูลราคาขยับไปเพียงเล็กน้อย เมื่อกดรันคำนวณใหม่โดยไม่มีการควบคุม ค่า parameter กลับกระโดดข้ามคืน เช่น ค่าความเร็วการดึงกลับเฉลี่ยดีดตัวขึ้นสามเท่า และความผันผวนของ volatility พุ่งขึ้นสองเท่า</p>
-  <p>ปรากฏการณ์นี้เรียกว่า parameter chatter หรือความไม่เสถียรของ parameter ซึ่งเกิดจากปัญหา parameter non-identifiability ใน inverse problem ตามนิยามของ Jacques Hadamard (1902) นั่นคือ ผิวของ objective function มีร่องลึกที่แบนราบ ทำให้ parameter หลายชุดที่หน้าตาต่างกันลิบลับ ให้ราคา option ใกล้เคียงกันมาก หากปล่อยให้ optimizer วิ่งอิสระ คำตอบจะแกว่งตาม noise ของราคาตลาด ส่งผลให้ค่า Greek เปลี่ยนทิศทาง และบังคับให้โต๊ะเทรดต้องปรับพอร์ต hedge ทุกวันจนเสียต้นทุนธุรกรรมมหาศาล</p>
+  <p>ปรากฏการณ์นี้เรียกว่า parameter chatter หรือความไม่เสถียรของ parameter ซึ่งเกิดจากปัญหา parameter non-identifiability ใน inverse problem ดังที่ Jacques Hadamard (1902) ชี้ไว้ นั่นคือ ผิวของ objective function มีร่องลึกที่แบนราบ ทำให้ parameter หลายชุดที่หน้าตาต่างกันลิบลับ ให้ราคา option ใกล้เคียงกันมาก หากปล่อยให้ optimizer วิ่งอิสระ คำตอบจะแกว่งตาม noise ของราคาตลาด ส่งผลให้ค่า Greek เปลี่ยนทิศทาง และบังคับให้โต๊ะเทรดต้องปรับพอร์ต hedge ทุกวันจนเสียต้นทุนธุรกรรมมหาศาล</p>
   <p>เพื่อแก้ปัญหานี้ วงการการเงินช่วงทศวรรษ 1990 จึงหยิบยืมหลักการ regularization ของ Andrey Tikhonov (1943) เพื่อดึง parameter ให้เกาะติดกับค่าตั้งต้นหรือคำตอบของวันก่อนหน้า ร่วมกับการใช้ robust loss ของ Peter Huber (1964) เพื่อตัดตอนอิทธิพลของราคาตลาดที่ผิดพลาด การปรับเทียบแบบจำลองจึงเปลี่ยนจากสคริปต์เดี่ยวในห้องวิจัย มาเป็นระบบท่อส่งระดับอุตสาหกรรมที่มีการคัดกรองข้อมูล การค้นหาหลายจุด และประตูอนุมัติอย่างรัดกุมก่อนส่งมอบราคาให้ห้องค้า</p>
 </section>
 
@@ -97,11 +96,14 @@
   <p>ราคาในตลาดจริงไม่เคยเป็นจุดเดียว แต่เป็นช่วงราคาที่ตกลงกันได้ การหารความคลาดเคลื่อนด้วยครึ่งส่วนต่างจึงเป็นการแปลงหน่วยเงิน USD ให้กลายเป็นระยะทางของความคลาดเคลื่อนเทียบกับความกว้างของตลาด</p>
   <p>สัญญาที่มีส่วนต่างแคบ สะท้อนสภาพคล่องสูงและข้อมูลที่ชัดเจน จะถูกบีบให้คิดราคาให้ตรงอย่างแม่นยำ ขณะที่สัญญาที่มีส่วนต่างกว้าง จะยอมให้ model คลาดเคลื่อนได้มากขึ้นโดยไม่ถูกลงโทษเกินจริง</p>
   <div class="math">\[
-\begin{aligned}P_i^{mid} &= \tfrac12(P_i^{bid} + P_i^{ask}), \qquad h_i = \tfrac12(P_i^{ask} - P_i^{bid}) \\
-P_i^{bid} &\le P_i^{model}(\theta) \le P_i^{ask} \\
-P_i^{bid} - P_i^{mid} &\le P_i^{model}(\theta) - P_i^{mid} \le P_i^{ask} - P_i^{mid} \\
--h_i &\le P_i^{model}(\theta) - P_i^{mid} \le h_i \\
--1 &\le \frac{P_i^{model}(\theta) - P_i^{mid}}{h_i} \le 1 \iff |r_i(\theta)| \le 1\end{aligned}
+\begin{aligned}
+P_i^{mid}&=\tfrac12\big(P_i^{bid}+P_i^{ask}\big)\\
+h_i&=\tfrac12\big(P_i^{ask}-P_i^{bid}\big)\\[4pt]
+P_i^{bid}&\le P_i^{model}(\theta)\le P_i^{ask}\\
+-h_i&\le P_i^{model}(\theta)-P_i^{mid}\le h_i\\[4pt]
+r_i(\theta)&=\frac{P_i^{model}(\theta)-P_i^{mid}}{h_i}\\
+-1&\le r_i(\theta)\le1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จุดกึ่งกลางระหว่างราคาซื้อกับราคาขายคือเป้าหมาย และครึ่งหนึ่งของส่วนต่างคือไม้บรรทัดวัดความไม่แน่นอน หากครึ่งส่วนต่างไม่เป็นบวก แปลว่าตลาดล็อกหรือส่งราคาไขว้กัน ต้องกักข้อมูลไว้ตรวจสอบทันที</p>
@@ -123,10 +125,14 @@ P_i^{bid} - P_i^{mid} &\le P_i^{model}(\theta) - P_i^{mid} \le P_i^{ask} - P_i^{
   <p>ในห้องค้าจริง เทรดเดอร์ส่งคำสั่งและดูความเสี่ยงบน volatility surface ไม่ใช่ราคา USD เพราะราคาเงินสดของ option เปลี่ยนแปลงตามราคาหุ้นแม่ตลอดเวลา</p>
   <p>การถ่วงน้ำหนักด้วยส่วนต่างราคา $h_i$ จึงทำหน้าที่เสมือนตัวแทนของ Vega โดยอัตโนมัติ สัญญาที่มี Vega ต่ำมักมี bid-ask spread แคบในรูปเงินสด ทำให้การส่วนด้วย $h_i$ ปรับสมดุลความสำคัญของทุกสัญญาให้เท่าเทียมกัน</p>
   <div class="math">\[
-\begin{aligned}P_i^{model}(\theta) - P_i^{mid} &\approx \nu_i \left( \sigma_i^{model}(\theta) - \sigma_i^{market} \right), \quad \nu_i = \frac{\partial P_i}{\partial \sigma} \\
-\sigma_i^{model}(\theta) - \sigma_i^{market} &\approx \frac{P_i^{model}(\theta) - P_i^{mid}}{\nu_i} \\
-\sum_{i\in\mathcal{Q}} \left( \sigma_i^{model}(\theta) - \sigma_i^{market} \right)^2 &\approx \sum_{i\in\mathcal{Q}} \frac{1}{\nu_i^2} \left( P_i^{model}(\theta) - P_i^{mid} \right)^2 \\
-\Delta \sigma_i^{spread} &\approx \frac{2 h_i}{\nu_i} \implies r_i = \frac{P_i^{model}(\theta) - P_i^{mid}}{h_i} \approx \frac{\sigma_i^{model}(\theta) - \sigma_i^{market}}{\tfrac12\Delta \sigma_i^{spread}}\end{aligned}
+\begin{aligned}
+d_i&=P_i^{model}(\theta)-P_i^{mid}\\
+e_i&=\sigma_i^{model}(\theta)-\sigma_i^{market}\\[4pt]
+d_i&\approx\nu_i\,e_i,\qquad\nu_i=\frac{\partial P_i}{\partial\sigma}\\
+\sum_{i=1}^{m}e_i^2&\approx\sum_{i=1}^{m}\frac{d_i^2}{\nu_i^2}\\[4pt]
+\Delta\sigma_i^{spread}&\approx\frac{2h_i}{\nu_i}\\
+r_i=\frac{d_i}{h_i}&\approx\frac{e_i}{\tfrac12\Delta\sigma_i^{spread}}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ประมาณความต่างของราคาด้วย Taylor series อันดับหนึ่งรอบราคาตลาด พจน์ความชันคือ Vega ซึ่งวัดว่าราคา option เปลี่ยนแปลงไปเท่าใดเมื่อ implied volatility ขยับหนึ่งหน่วย</p>
@@ -136,12 +142,32 @@ P_i^{bid} - P_i^{mid} &\le P_i^{model}(\theta) - P_i^{mid} \le P_i^{ask} - P_i^{
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.4a — recipe เป็นท่อที่มีประตู ไม่ใช่ loop เดียว</h4>
-  <img src="../figures/21.4-1.svg" alt="ภาพ 21.4a — recipe เป็นท่อที่มีประตู ไม่ใช่ loop เดียว" loading="lazy">
+  <h4>Figure 21.4a — ประตูรับงาน: residual ทุกตัวต้องอยู่ในแถบ</h4>
+  <img src="../figures/21.4-1.svg" alt="Figure 21.4a — ประตูรับงาน: residual ทุกตัวต้องอยู่ในแถบ" loading="lazy">
   <figcaption>
-    <p>ขั้นตอนเรียงจาก snapshot ผ่าน quality gates ไปยัง fit, validation, approval และ publish ทุกประตูอาจ reject run ได้ การให้ optimizer เห็นข้อมูลก่อนตรวจเหมือนให้แขกเข้าบ้านก่อนล็อกประตู</p>
+    <p>residual ของ quote สามตัวในหน่วยครึ่ง spread แถบเขียวคือช่วง bid–ask ค่าเริ่มต้นที่ใช้ใน Figure 21.4b หลุดแถบทั้งสามตัว คือ −2.5, 5.0 และ 2.0 หลัง calibrate เหลือ −0.2, 0.3 และ −0.2 จึงผ่านประตูนี้ ก่อนหน้านั้นยังมีประตูคัดข้อมูล และหลังจากนั้นยังมีประตู validation กับการอนุมัติ</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>สูตรห้าขั้นของสไลด์ และการนับ quote กับ parameter</h4>
+  <p>สไลด์ Model Calibration นิยาม calibration ว่าคือการปรับ parameter ของ model จนราคาจาก model เข้ากับราคาตลาด แล้วให้สูตรห้าขั้น เลือกชุดข้อมูล เลือก model เลือก objective เลือกจุดเริ่ม และเลือก optimizer ก่อนทำต้องนับสองอย่าง</p>
+  <div class="math">\[
+\begin{aligned}
+\hat V(S_0,K,r,q,T;\sigma)&=V_{\text{market}}\\
+n_I&=1,\qquad n_P=1\\[4pt]
+\text{Heston}&:\ n_P=5\\
+\text{snapshot}&:\ n_I=3\lt n_P\\
+\text{surface}&:\ n_I\gg n_P
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$n_I$ คือจำนวน quote ที่ใช้ calibrate และ $n_P$ คือจำนวน parameter implied volatility คือกรณีที่ quote หนึ่งตัวแก้ parameter หนึ่งตัว จำนวนเท่ากันพอดี จึงได้คำตอบเดียวที่ fit ตรงเป๊ะ</p>
+    <p>เมื่อ quote มากกว่า parameter อย่างผิวของ Apple ที่มีหลาย strike และหลาย maturity ไม่มีชุดไหน fit ทุกตัวได้พอดี งานจึงเป็นการหาชุดที่พอดีที่สุด นี่คือกรณีปกติ และสไลด์เตือนว่าไม่มี model ไหน fit ทั้งผิวได้สมบูรณ์</p>
+    <p>ถ้า quote น้อยกว่า parameter เช่น snapshot สาม quote ของหัวข้อนี้กับ Heston ห้าตัว จะมีหลายชุดที่ fit ได้ดีเท่ากัน ตัวอย่างสาม quote จึงใช้สอนประตูรับงานได้ แต่ใช้ระบุ Heston ไม่ได้</p>
+    <p>ขั้นเลือกข้อมูลมีสามทาง ใช้ทุกราคา ใช้เฉพาะ call และ put ที่ out-of-the-money เพื่อเลี่ยง quote ที่มีแต่ intrinsic value และสภาพคล่องต่ำ หรือกรองตามเกณฑ์ของผู้ใช้ ส่วนราคาที่ maturity ไกลกว่าที่ตลาดมีต้อง extrapolate จาก model หรือจากเส้น และ maturity สั้นกับยาวกระทบกันซับซ้อน</p>
+  </div>
+</section>
 
 <section class="prose">
   <h4>ขั้นที่หนึ่ง: freeze ข้อมูลก่อนเริ่มคิด</h4>
@@ -156,27 +182,52 @@ P_i^{bid} - P_i^{mid} &\le P_i^{model}(\theta) - P_i^{mid} \le P_i^{ask} - P_i^{
   <p>พจน์แรกบังคับให้ model อธิบายราคาตลาดวันนี้ พจน์ที่สองดึง parameter ไว้ไม่ให้หนีจากค่าตั้งต้นเดิม การปรับตัวแปร $\widetilde\theta$ ให้ไร้หน่วยป้องกันไม่ให้ตัวเลขหลักร้อยกลืนตัวเลขทศนิยม</p>
   <p>หากตั้งค่า $\gamma$ เท่ากับศูนย์ ระบบจะเชื่อข้อมูลตลาดร้อยเปอร์เซ็นต์และเสี่ยงต่อ parameter chatter แต่ถ้าตั้งค่าสูงเกินไป แบบจำลองจะไม่ยอมขยับตามการเปลี่ยนแปลงของตลาด</p>
   <div class="math">\[
-\begin{aligned}P_i^{mid} &= P_i^{model}(\theta) + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, h_i^2) \\
-p(P^{mid} \mid \theta) &= \prod_{i\in\mathcal{Q}} \frac{1}{\sqrt{2\pi} h_i} \exp\left( -\frac{(P_i^{model}(\theta) - P_i^{mid})^2}{2 h_i^2} \right) \\
-p(\widetilde\theta) &= \left(\frac{\gamma}{2\pi}\right)^{p/2} \exp\left( -\frac{\gamma}{2} \|\widetilde\theta - \widetilde\theta_{prior}\|_2^2 \right) \\
-p(\theta \mid P^{mid}) &\propto p(P^{mid} \mid \theta) \, p(\widetilde\theta) \\
--\ln p(\theta \mid P^{mid}) &= \frac{1}{2}\sum_{i\in\mathcal{Q}} \left( \frac{P_i^{model}(\theta) - P_i^{mid}}{h_i} \right)^2 + \frac{\gamma}{2} \|\widetilde\theta - \widetilde\theta_{prior}\|_2^2 + \text{const} \\
-L(\theta) &= \frac{1}{2}\sum_{i\in\mathcal{Q}} \left( \frac{P_i^{model}(\theta) - P_i^{mid}}{h_i} \right)^2 + \frac{\gamma}{2} \|\widetilde\theta - \widetilde\theta_{prior}\|_2^2\end{aligned}
+\begin{aligned}
+P_i^{mid}&=P_i^{model}(\theta)+\epsilon_i\\
+\epsilon_i&\sim\mathcal{N}(0,h_i^2)\\
+-\ln p(P^{mid}\mid\theta)&=\tfrac12\sum_{i=1}^{m}r_i(\theta)^2+\text{const}\\[4pt]
+p(\widetilde\theta)&\propto\exp\Big(-\tfrac{\gamma}{2}\big\|\widetilde\theta-\widetilde\theta_{prior}\big\|_2^2\Big)\\
+p(\theta\mid P^{mid})&\propto p(P^{mid}\mid\theta)\,p(\widetilde\theta)\\[4pt]
+L(\theta)&=\tfrac12\sum_{i=1}^{m}r_i(\theta)^2\\
+&\quad+\tfrac{\gamma}{2}\big\|\widetilde\theta-\widetilde\theta_{prior}\big\|_2^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมมติว่าราคาตลาดกระจายตัวแบบ normal distribution รอบราคาแบบจำลอง โดยมีความกว้างของ noise เท่ากับ $h_i$ ขณะที่ prior ของ parameter มีจุดศูนย์กลางอยู่ที่ค่าของเมื่อวาน</p>
-    <p>ตามกฎของ Bayes ตัว posterior เกิดจากผลคูณของ likelihood กับ prior เมื่อใส่ function ลบ log ผลคูณจะกระจายออกเป็นผลบวก และเลขชี้กำลังของ exponential จะตกลงมาข้างล่าง</p>
+    <p>หลักคิดของ Bayes คือตัว posterior เกิดจากผลคูณของ likelihood กับ prior เมื่อใส่ function ลบ log ผลคูณจะกระจายออกเป็นผลบวก และเลขชี้กำลังของ exponential จะตกลงมาข้างล่าง</p>
     <p>เมื่อตัดพจน์คงที่ซึ่งไม่ขึ้นกับ parameter ทิ้ง จะได้เป้าหมาย $L(\theta)$ พอดี ตัวคูณ $\frac{1}{2}$ มาจากเลขชี้กำลังของ normal distribution และ $\gamma$ คืออัตราส่วนความเชื่อมั่นระหว่างข้อมูลกับ prior</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.4b — mid อย่างเดียวซ่อน information ของตลาด</h4>
-  <img src="../figures/21.4-2.svg" alt="ภาพ 21.4b — mid อย่างเดียวซ่อน information ของตลาด" loading="lazy">
+  <h4>Figure 21.4b — mid อย่างเดียวซ่อน information ของตลาด</h4>
+  <img src="../figures/21.4-2.svg" alt="Figure 21.4b — mid อย่างเดียวซ่อน information ของตลาด" loading="lazy">
   <figcaption>
     <p>แถบคือ bid–ask ของ quote สาม strike จุดแดงเป็น initial model และจุดเขียวเป็น calibrated model model สุดท้ายควรอยู่ในแถบสำหรับ quote ที่ liquid ตาม acceptance policy ไม่ใช่เพียงมีค่าเฉลี่ย residual ต่ำ</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>สามแบบของ objective ลองกับ snapshot เดียวกัน</h4>
+  <p>สไลด์เขียนปัญหาเป็นการหา parameter ที่ทำให้ผลรวมของความคลาดต่ำสุด โดย $H$ เป็นตัววัดความคลาดที่เลือกได้สามแบบ ลองกับราคา model 12.66, 6.43, 2.48 เทียบ mid 12.70, 6.40, 2.50 และวัดรวมด้วย root mean square error (RMSE)</p>
+  <div class="math">\[
+\begin{aligned}
+L(\Theta)&=\sum_{i=1}^{n}H\big(\hat V_i-V_i\big)\\[4pt]
+H_{\text{abs}}&=w_i\,|\hat V_i-V_i|^p\\
+H_{\text{rel}}&=w_i\,\frac{|\hat V_i-V_i|^p}{V_i}\\
+H_{\log}&=w_i\,|\ln\hat V_i-\ln V_i|^p\\[4pt]
+\text{RMSE}&=\sqrt{\tfrac1n\textstyle\sum_{i=1}^{n}(\hat V_i-V_i)^2}\\[6pt]
+|\hat V_i-V_i|&=(0.04,\ 0.03,\ 0.02)\\
+\frac{|\hat V_i-V_i|}{V_i}&=(0.31\%,\ 0.47\%,\ 0.80\%)\\
+\text{RMSE}&=\sqrt{(0.0016+0.0009+0.0004)/3}\\
+&=0.0311
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$\Theta$ ต้องอยู่ในช่วงค่าที่อนุญาต ซึ่งสไลด์เรียกว่า $\Omega$ ส่วน $w_i$ คือน้ำหนักของ quote แต่ละตัว ที่ $p=2$ แบบแรกกลายเป็น weighted least squares ซึ่งใช้กันมากที่สุด และ RMSE คือรากของค่าเฉลี่ยของมันเมื่อน้ำหนักเท่ากัน</p>
+    <p>ดูตัวเลข แบบวัดเป็นเงิน quote ที่ strike ต่ำคลาดมากสุดที่ 0.04 USD แต่แบบวัดเป็นสัดส่วน quote ที่ถูกที่สุดกลับคลาดมากสุดที่ 0.80% แบบ log ให้ตัวเลขเกือบเท่าแบบสัดส่วน การเลือก $H$ จึงเลือกว่าจะให้ option แพงหรือถูกมีเสียงดังกว่ากัน</p>
+  </div>
+</section>
 
 <section class="prose">
   <h4>ขั้นที่สอง: เลือก objective ให้สะท้อนงาน hedge</h4>
@@ -191,12 +242,16 @@ L(\theta) &= \frac{1}{2}\sum_{i\in\mathcal{Q}} \left( \frac{P_i^{model}(\theta) 
   <p>หากตัดต่อเส้นโค้งโดยไม่มีพจน์ชดเชย $-\frac{1}{2} c$ กราฟจะกระโดดไม่ต่อเนื่องทันที และหากใช้ค่าสัมบูรณ์ ความชันที่จุดศูนย์จะขาดตอน ทำให้ optimizer แบบ gradient กระตุกและไม่ converge สู่คำตอบ</p>
   <p>ค่า $c$ มักกำหนดไว้ที่ $1.5$ ถึง $2.0$ เท่าของ half-spread เพื่อให้ quote ปกติได้รับโทษแบบกำลังสอง ขณะที่ quote ผิดปกติได้รับโทษเพียงเชิงเส้น</p>
   <div class="math">\[
-\begin{aligned}\psi_c(r) &= \begin{cases} r, & |r| \le c \\
-c \operatorname{sgn}(r), & |r| > c \end{cases} \\
-\text{for } |r| \le c: \quad \rho_c(r) &= \int_0^r u \, du = \tfrac12 r^2 \\
-\text{for } r > c: \quad \rho_c(r) &= \int_0^c u \, du + \int_c^r c \, du = \tfrac12 c^2 + c(r - c) = c\left(r - \tfrac12 c\right) \\
-\text{for } r \lt -c: \quad \rho_c(r) &= \int_0^{-c} u \, du + \int_{-c}^r (-c) \, du = \tfrac12 c^2 - c(r + c) = c\left(|r| - \tfrac12 c\right) \\
-\lim_{r \to c^-} \rho_c'(r) &= c = \lim_{r \to c^+} \rho_c'(r)\end{aligned}
+\begin{aligned}
+\psi_c(r)&=r\qquad(|r|\le c)\\
+\psi_c(r)&=c\,\operatorname{sgn}(r)\qquad(|r|>c)\\[4pt]
+\rho_c(r)&=\int_0^r u\,du=\tfrac12r^2\qquad(|r|\le c)\\[4pt]
+\rho_c(r)&=\int_0^c u\,du+\int_c^r c\,du\qquad(r>c)\\
+&=\tfrac12c^2+c(r-c)\\
+&=c\big(r-\tfrac12c\big)\\[4pt]
+\rho_c(r)&=c\big(|r|-\tfrac12c\big)\qquad(r\lt-c)\\[4pt]
+\rho_c'(c^-)&=c=\rho_c'(c^+)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>Peter Huber กำหนดให้แรงดึงหรือความชันของ loss โตเชิงเส้นในช่วงแคบ แต่ถูกจำกัดเพดานไว้ไม่เกินค่าคงที่ $c$ เพื่อไม่ให้ข้อมูลผิดพลาดเพียงจุดเดียวดึงคำตอบทั้งระบบจนพัง</p>
@@ -206,8 +261,8 @@ c \operatorname{sgn}(r), & |r| > c \end{cases} \\
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.4c — Huber ลดอำนาจ quote ที่ไกลผิดปกติ</h4>
-  <img src="../figures/21.4-3.svg" alt="ภาพ 21.4c — Huber ลดอำนาจ quote ที่ไกลผิดปกติ" loading="lazy">
+  <h4>Figure 21.4c — Huber ลดอำนาจ quote ที่ไกลผิดปกติ</h4>
+  <img src="../figures/21.4-3.svg" alt="Figure 21.4c — Huber ลดอำนาจ quote ที่ไกลผิดปกติ" loading="lazy">
   <figcaption>
     <p>least squares โตเป็นกำลังสองจึงให้ residual ใหญ่หนึ่งตัวดึง parameter ทั้งชุด Huber เปลี่ยนเป็นเชิงเส้นหลัง threshold เพื่อให้ quote นั้นถูก flag และตรวจ ไม่ใช่ถูกลบออกเงียบ ๆ</p>
   </figcaption>
@@ -216,12 +271,16 @@ c \operatorname{sgn}(r), & |r| > c \end{cases} \\
 <section class="formula">
   <h4>ตรวจ snapshot ทีละ quote</h4>
   <div class="math">\[
-\begin{aligned}&amp;P^{mid}=(12.70,6.40,2.50),\quad h=(0.20,0.10,0.10)\\
-&amp;r_1=(12.66-12.70)/0.20=-0.20\\
-&amp;r_2=(6.43-6.40)/0.10=0.30\\
-&amp;r_3=(2.48-2.50)/0.10=-0.20\\
-&amp;L=\tfrac12(0.04+0.09+0.04)=0.085,\qquad\max|r_i|=0.30\\
-&\rho_1(3)=1(3-0.5)=2.5\quad\text{vs}\quad\tfrac12(3)^2=4.5\end{aligned}
+\begin{aligned}
+P^{mid}&=(12.70,\ 6.40,\ 2.50)\\
+h&=(0.20,\ 0.10,\ 0.10)\\[4pt]
+r_1&=(12.66-12.70)/0.20=-0.20\\
+r_2&=(6.43-6.40)/0.10=0.30\\
+r_3&=(2.48-2.50)/0.10=-0.20\\[4pt]
+L&=\tfrac12(0.04+0.09+0.04)=0.085\\
+\max|r_i|&=0.30\\[4pt]
+\rho_1(3)&=1(3-0.5)=2.5,\qquad\tfrac12(3)^2=4.5
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หาค่ากลางและครึ่ง spread จาก bid กับ ask ของตัวอย่างถัดไปก่อน แล้วลบ model กับค่ากลางหารครึ่ง spread ทีละตัว ทุก residual ไม่มีหน่วย จึงรวมคะแนนได้</p>
@@ -231,21 +290,77 @@ c \operatorname{sgn}(r), & |r| > c \end{cases} \\
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง USD ที่ตรวจเลขได้ — หนึ่ง snapshot ถึง acceptance</h4>
-  <p>ของที่มี: strike 90, 100, 110; bid–ask \$12.50–\$12.90, \$6.30–\$6.50, \$2.40–\$2.60; model price \$12.66, \$6.43, \$2.48 และ policy maximum residual 1.0 half-spread.</p>
-  <p>ถามว่า publish fit นี้ได้เลยไหม?</p>
-  <p>คำตอบ: objective 0.085 และ maximum residual 0.30 ผ่าน price/spread policy แต่ยังต้องรอ grid convergence, reprice และ Greek stability.</p>
-  <p>ตรวจเองใน 10 วินาที: 0.30 ต้องต่ำกว่า limit 1.0 และทุก model price ต้องอยู่ใน bid–ask.</p>
-  <p>เอาไปใช้จริง: production calibration เก็บผล check พร้อม parameter เพื่อหยุด quote เสียก่อนเข้าหนังสือ risk.</p>
+  <h4>คำตอบ — ตรวจสอบ Snapshot ผ่าน Acceptance Gate</h4>
+  <p>คำถาม: Option 3 สัญญา มีราคา bid-ask คือ 12.50–12.90, 6.30–6.50, 2.40–2.60 USD หาก model ให้ราคา 12.66, 6.43, 2.48 USD ภายใต้เกณฑ์ residual ไม่เกิน 1.0 half-spread การ calibrate นี้จะผ่าน acceptance gate หรือไม่?</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 3): mid คือ 12.70, 6.40, 2.50 USD และ half-spread คือ 0.20, 0.10, 0.10 USD ตามลำดับ</p>
+  <p>1. คำนวณ residual แต่ละตัว: ได้ -0.20, +0.30 และ -0.20 ตามลำดับ ทุกตัวมีขนาดไม่เกิน 1.0</p>
+  <p>2. คำนวณค่า objective: 0.5(0.04 + 0.09 + 0.04) ได้ 0.085</p>
+  <p>3. ตรวจสอบเกณฑ์: maximum residual เท่ากับ 0.30 น้อยกว่าเกณฑ์ 1.0 จึงผ่าน fit acceptance gate</p>
+  <p>ตรวจเองใน 10 วินาที: ตรวจว่าราคา model ทั้งสามตัวตกอยู่ในช่วง bid-ask: 12.66 อยู่ใน 12.50–12.90, 6.43 อยู่ใน 6.30–6.50, 2.48 อยู่ใน 2.40–2.60</p>
+  <p>แปลว่าอะไร: model ตั้งราคาได้สอดคล้องกับสภาพคล่องตลาดจริง แต่ระบบ production ยังต้องตรวจ Greek stability ก่อน publish</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Snapshot และ Acceptance Gate</summary>
+    <pre><code>import numpy as np
+
+p_bid = np.array([12.50, 6.30, 2.40])
+p_ask = np.array([12.90, 6.50, 2.60])
+p_model = np.array([12.66, 6.43, 2.48])
+
+p_mid = 0.5 * (p_bid + p_ask)
+h = 0.5 * (p_ask - p_bid)
+
+assert np.allclose(p_mid, np.array([12.70, 6.40, 2.50]))
+assert np.allclose(h, np.array([0.20, 0.10, 0.10]))
+
+r = (p_model - p_mid) / h
+assert np.allclose(r, np.array([-0.20, 0.30, -0.20]))
+
+L = 0.5 * np.sum(r**2)
+assert abs(L - 0.085) &lt; 1e-6
+
+max_r = np.max(np.abs(r))
+assert abs(max_r - 0.30) &lt; 1e-6
+assert max_r &lt;= 1.0
+
+assert np.all(p_model &gt;= p_bid)
+assert np.all(p_model &lt;= p_ask)</code></pre>
+  </details>
+  <div class="note">
+    <p>สคริปต์คำนวณ mid, half-spread, residual และตรวจสอบว่าราคา model อยู่ในกรอบ bid-ask พร้อมผ่านเกณฑ์ residual</p>
+  </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.4d — multi-start บอกว่าคำตอบ robust หรือบังเอิญ</h4>
-  <img src="../figures/21.4-4.svg" alt="ภาพ 21.4d — multi-start บอกว่าคำตอบ robust หรือบังเอิญ" loading="lazy">
+  <h4>Figure 21.4d — error ต่ำลง แต่ parameter ต่างกันมาก</h4>
+  <img src="../figures/21.4-4.svg" alt="Figure 21.4d — error ต่ำลง แต่ parameter ต่างกันมาก" loading="lazy">
   <figcaption>
-    <p>แท่งแสดง objective สุดท้ายจากจุดเริ่มหลายชุด Run ส่วนใหญ่เข้าใกล้ค่าต่ำเดียวกัน แต่ run หนึ่งติด local basin ที่สูงกว่า จึงต้องเก็บทุกผล ไม่ใช่รายงานเฉพาะ winner ผลต่างมากเกิน policy คือเหตุให้ review parameter identifiability</p>
+    <p>ตัวเลขจากสไลด์ Model Calibration จุดเริ่มต้นมี root mean square error (RMSE) 0.8659 grid search ลดเหลือ 0.3670 Nelder–Mead 0.2790 และ BFGS 0.2661 สองตัวหลังต่างกันแค่ 0.013 แต่ BFGS ได้ κ 3.69 และ σ_v 0.606 ขณะที่ Nelder–Mead ได้ 1.95 และ 0.116 error ที่ต่ำกว่าจึงยังไม่ใช่คำตอบที่เชื่อได้ ต้องทำ multi-start และตรวจเงื่อนไขอื่นประกอบ</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>เลือกจุดเริ่ม: เดินเส้นตรงระหว่างสองชุด</h4>
+  <p>optimizer ที่ไม่เชิงเส้นไวต่อจุดเริ่มมาก สไลด์จึงสำรวจก่อน โดยเอา Heston สองชุดมาผสมเป็นเส้นตรง แล้วดูว่า error เปลี่ยนอย่างไรตลอดเส้น ลำดับในวงเล็บคือ $(\kappa,\theta,\sigma_v,\rho,v_0)$</p>
+  <div class="math">\[
+\begin{aligned}
+\Theta(\alpha)&=\alpha\,\Theta_1+(1-\alpha)\,\Theta_2\\
+0&\lt\alpha\lt1\\[4pt]
+\Theta_1&=(1.0,\ 0.02,\ 0.05,\ -0.4,\ 0.08)\\
+\Theta_2&=(3.0,\ 0.06,\ 0.10,\ -0.6,\ 0.04)\\[4pt]
+\Theta(0.5)&=(2.0,\ 0.04,\ 0.075,\ -0.5,\ 0.06)\\
+\Theta(0.25)&=(2.5,\ 0.05,\ 0.0875,\ -0.55,\ 0.05)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$\alpha$ เท่ากับหนึ่งคือชุดแรก เท่ากับศูนย์คือชุดที่สอง ค่ากลางผสมทุกตัวตามสัดส่วนเดียวกัน เช่นที่ครึ่งทาง $\kappa$ อยู่กลาง 1 กับ 3 คือ 2 และ $\rho$ อยู่กลาง −0.4 กับ −0.6 คือ −0.5</p>
+    <p>สไลด์ทำแบบนี้สี่คู่</p>
+    <p>อีกสามคู่คือ (6.0, 0.05, 0.04, +0.7, 0.10) กับ (1.0, 0.02, 0.10, −0.8, 0.04), (1.0, 0.0625, 0.0125, −0.7, 0.05) กับ (8.0, 0.02, 0.05, +0.6, 0.12) และ (4.0, 0.05, 0.03, −0.6, 0.10) กับ (1.0, 0.10, 0.05, +0.7, 0.05) บางคู่ให้ $\rho$ เปลี่ยนเครื่องหมายกลางทาง เส้นตรงจึงผ่านบริเวณที่ smile เอียงคนละทาง</p>
+    <p>ภาพ error ตามเส้นในสไลด์เป็นรูปภาพ ตัวเลขไม่ได้ให้ไว้ แต่บทเรียนตรงกับผลของ grid และ BFGS ด้านล่าง ผิว error ของ Heston ไม่ใช่ชามใบเดียว จุดเริ่มต่างกันจึงพาไปคนละหุบ</p>
+  </div>
+</section>
 
 <section class="prose">
   <h4>ขั้นที่สาม: initial sets และ optimizer policy</h4>
@@ -260,26 +375,37 @@ c \operatorname{sgn}(r), & |r| > c \end{cases} \\
   <p>คำตอบของ BFGS ให้ error ต่ำที่สุด แต่ค่าความผันผวนของ variance สูงถึง 0.6059 ทำให้ละเมิด Feller condition หากส่ง parameter นี้ไปรัน Monte Carlo เส้นทางราคาอาจเกิดปัญหา numerical ล้มเหลว</p>
   <p>ระบบ production จึงต้องมี automated acceptance gates ตรวจสอบความถูกต้องร่วมกัน ทั้งค่าความคลาดเคลื่อน, การเปลี่ยนแปลงข้ามวัน, ความเสถียรของ Greek และข้อจำกัดไร้การเก็งกำไร</p>
   <div class="math">\[
-\begin{aligned}\theta_0 &= (2.3000, 0.0460, 0.0825, -0.5300, 0.0540), \quad \text{RMSE}_0 = 0.8659 \\
-\theta_{\text{Grid}} &= (1.8000, 0.0460, 0.0925, -0.6300, 0.0440), \quad \text{RMSE}_{\text{Grid}} = 0.3670 \\
-\theta_{\text{BFGS}} &= (3.6941, 0.0478, 0.6059, -0.2186, 0.0422), \quad \text{RMSE}_{\text{BFGS}} = 0.2661 \\
-\theta_{\text{NM}} &= (1.9524, 0.0469, 0.1159, -0.7406, 0.0397) \\
-\theta(\alpha) &= \alpha \theta_{\text{Grid}} + (1-\alpha) \theta_{\text{BFGS}}, \quad \alpha \in [0.5, 1.5] \\
-2\kappa\theta &= 2(3.6941)(0.0478) = 0.3532 \lt 0.3671 = (0.6059)^2 = \sigma_v^2\end{aligned}
+\begin{aligned}
+\theta_0&=(2.3000,\,0.0460,\,0.0825,\,-0.5300,\,0.0540)\\
+\text{RMSE}_0&=0.8659\\[4pt]
+\theta_{\text{Grid}}&=(1.8000,\,0.0460,\,0.0925,\,-0.6300,\,0.0440)\\
+\text{RMSE}_{\text{Grid}}&=0.3670\\[4pt]
+\theta_{\text{BFGS}}&=(3.6941,\,0.0478,\,0.6059,\,-0.2186,\,0.0422)\\
+\text{RMSE}_{\text{BFGS}}&=0.2661\\[4pt]
+\theta_{\text{NM}}&=(1.9524,\,0.0469,\,0.1159,\,-0.7406,\,0.0397)\\
+\text{RMSE}_{\text{NM}}&=0.2790\\[4pt]
+\theta(\alpha)&=\alpha\,\theta_{\text{Grid}}+(1-\alpha)\,\theta_{\text{BFGS}}\\
+-0.5&\le\alpha\le1.5\\[4pt]
+2\kappa\theta&=2(3.6941)(0.0478)=0.3532\\
+\sigma_v^2&=(0.6059)^2=0.3671\\
+0.3532&\lt0.3671
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ผลทดสอบจริงจากข้อมูลมหาวิทยาลัย Columbia บนแบบจำลอง Heston 5 parameter แสดงให้เห็นว่า การเริ่มจากจุดเดี่ยว $\theta_0$ ให้ Root Mean Squared Error (RMSE) สูงถึง 0.8659 USD</p>
+    <p>ผลจากสไลด์ Model Calibration บน call ของหุ้น Apple แบบจำลอง Heston 5 parameter แสดงให้เห็นว่า การเริ่มจากจุดเดี่ยว $\theta_0$ ให้ Root Mean Squared Error (RMSE) สูงถึง 0.8659 USD</p>
     <p>วิธี Grid search กวาดพื้นที่ลด error เหลือ 0.3670 USD ขณะที่วิธี Broyden-Fletcher-Goldfarb-Shanno (BFGS) ไถลลงเนินจนได้ error ต่ำสุดที่ 0.2661 USD แต่วิธี Nelder-Mead กลับติดอยู่ที่จุดคำตอบชุดอื่น</p>
+    <p>สไลด์เดินเส้นตรงระหว่างคำตอบของ grid กับ BFGS โดยให้ $\alpha$ วิ่งจาก −0.5 ถึง 1.5 ซึ่งเลยปลายทั้งสองข้างออกไป และทำแบบเดียวกันระหว่าง Nelder–Mead กับ BFGS</p>
+    <p>ระวังว่าสไลด์เส้นทางระหว่าง grid กับ Nelder–Mead ใช้คำตอบ Nelder–Mead อีกชุด คือ (1.6421, 0.0473, 0.1233, −0.5627, 0.0398) ไม่ตรงกับหน้าผลลัพธ์ อาจมาจากการรันคนละครั้ง</p>
     <p>เมื่อทดสอบตัด slice บนเส้นเชื่อมโยงระหว่างผลลัพธ์ทั้งสอง ผิว error แสดงสภาพ non-convex ชัดเจน มีทั้งหุบเขาท้องถิ่นและสันเขาขวางกั้น ยืนยันว่าการค้นหาหลายจุดพร้อมกันเป็นสิ่งจำเป็น</p>
-    <p>บรรทัดสุดท้ายคำนวณเกณฑ์ Feller condition พบว่า $2\kappa\theta$ มีค่าน้อยกว่า $\sigma_v^2$ เล็กน้อย ทำให้ variance มีโอกาสแตะศูนย์ในแบบจำลอง ระบบ production ต้องมีเงื่อนไขตรวจสอบเพื่อแจ้งเตือนก่อนใช้งานจริง</p>
+    <p>ก้อนสุดท้ายคำนวณเกณฑ์ Feller condition พบว่า $2\kappa\theta$ มีค่าน้อยกว่า $\sigma_v^2$ เล็กน้อย ทำให้ variance มีโอกาสแตะศูนย์ในแบบจำลอง ระบบ production ต้องมีเงื่อนไขตรวจสอบเพื่อแจ้งเตือนก่อนใช้งานจริง</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพ 21.4e — fit smile ก่อนและหลังต้องอ่านเป็น residual</h4>
-  <img src="../figures/21.4-5.svg" alt="ภาพ 21.4e — fit smile ก่อนและหลังต้องอ่านเป็น residual" loading="lazy">
+  <h4>Figure 21.4e — ตรวจ Feller ของ parameter ทั้งสี่ชุด</h4>
+  <img src="../figures/21.4-5.svg" alt="Figure 21.4e — ตรวจ Feller ของ parameter ทั้งสี่ชุด" loading="lazy">
   <figcaption>
-    <p>จุดคือ implied-volatility market input สังเคราะห์ เส้นแดงเริ่มต้นพลาด skew และเส้นเขียวหลัง fit เข้าใกล้ แต่ไม่มีเส้นใดพิสูจน์ว่าพลวัตอนาคตถูกต้อง ความต่างตาม maturity และ jump day เป็น model limitations ที่ต้องรายงาน</p>
+    <p>แท่งเขียวคือ 2κθ แท่งแดงคือ σ_v กำลังสอง สามชุดแรกผ่านสบาย ๆ แต่ชุดของ BFGS ที่ error ต่ำสุดได้ 0.3532 น้อยกว่า 0.3671 จึงไม่ผ่าน variance ในแบบจำลองแตะศูนย์ได้ ระบบ production ต้องจับเรื่องนี้ก่อนส่ง parameter ไปใช้</p>
   </figcaption>
 </figure>
 
