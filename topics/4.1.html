@@ -95,10 +95,12 @@
   <h4>ขั้นที่ 1 — ลองกับเครื่องผสมสีก่อน: ตารางคือกติกา ไม่ใช่กล่องเก็บเลข</h4>
   <p>ลองกับเครื่องผสมสีก่อน ใส่แดง 2 หน่วยกับน้ำเงิน 3 หน่วย แล้วให้ตารางเล็ก ๆ บอกว่าแต่ละถังออกมาเท่าไร ทำด้วยมือทั้งหมด ยังไม่ต้องรู้จักคำว่า matrix</p>
   <div class="math">\[
-\begin{aligned}\text{input: }&\text{red }2,\ \text{blue }3\qquad\text{table: }\begin{array}{c|cc}&\text{red}&\text{blue}\\
-\hline\text{orange}&amp;0.5&amp;0\\
-\text{purple}&amp;0.25&amp;0.5\end{array}\\[4pt]
-\text{orange}&=0.5(2)+0(3)=1.0\qquad \text{purple}=0.25(2)+0.5(3)=0.5+1.5=2.0\end{aligned}
+\begin{aligned}
+\text{input}&:\ \text{red }2,\ \text{blue }3\\
+\text{table}&:\ \begin{array}{c|cc}&\text{red}&\text{blue}\\\hline\text{orange}&0.5&0\\\text{purple}&0.25&0.5\end{array}\\[4pt]
+\text{orange}&=0.5(2)+0(3)=1.0\\
+\text{purple}&=0.25(2)+0.5(3)=0.5+1.5=2.0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อ่านทีละแถว: แถว orange บอกว่าหยิบแดงมา 0.5 ของที่มี และไม่หยิบน้ำเงินเลย แถว purple หยิบแดง 0.25 กับน้ำเงิน 0.5 แต่ละ output คือ ‘คูณตามช่องแล้วบวก’ ของแถวตัวเอง</p>
@@ -122,8 +124,10 @@ A:\ m\times n\ \ (\text{rows}\times\text{columns}),\qquad a_{ij}=\text{loading o
   <p>มี matrix หนึ่งแบบที่ต้องรู้จักก่อน คือ identity ซึ่งมีเลข 1 บนแนวทแยงและ 0 ที่เหลือ ลองคูณแถวแรกของตาราง loading ในขั้นถัดไปกับมันด้วยมือ</p>
   <div class="math">\[
 \begin{aligned}
-I_2&=\begin{bmatrix}1 & 0\\ 0 & 1\end{bmatrix}\\[4pt]
-\begin{bmatrix}1.2 & 0.4\end{bmatrix}I_2&=\begin{bmatrix}1.2(1)+0.4(0) & 1.2(0)+0.4(1)\end{bmatrix}=\begin{bmatrix}1.2 & 0.4\end{bmatrix}
+I_2&=\begin{bmatrix}1&0\\0&1\end{bmatrix}\\[4pt]
+\text{first}&=1.2(1)+0.4(0)=1.2\\
+\text{second}&=1.2(0)+0.4(1)=0.4\\
+\begin{bmatrix}1.2&0.4\end{bmatrix}I_2&=\begin{bmatrix}1.2&0.4\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -152,12 +156,11 @@ A=\begin{bmatrix}1.2&amp;0.4\\
   <p>ทำไมต้องพลิก $A$ ก่อนคูณ: กติกา ‘คูณตามช่องแล้วบวก’ ต้องเอาแถวของตารางไปจับกับคอลัมน์ของ input ตารางถูกเก็บเป็น asset × factor แต่คำถามคือ ‘factor แต่ละตัวได้เท่าไร’ จึงต้องให้ factor เป็นแถว การพลิกนั้นคือ transpose ซึ่งหัวข้อ 4.2 จะให้ชื่อและกฎ ตอนนี้แค่รู้ว่าเราหมุนตารางให้แถวตรงกับคำถาม</p>
   <p>แล้วใช้กติกาเดียวกับเครื่องผสมสี: แถว market จับกับ position สามตัว คูณตามช่องแล้วบวก</p>
   <div class="math">\[
-\begin{aligned}y=A^{\mathsf T}w&=\begin{bmatrix}1.2(2)+0.9(-1)+1.5(0.5)\\
-0.4(2)+0.2(-1)+0.7(0.5)\end{bmatrix}\\[4pt]
-&=\begin{bmatrix}2.4-0.9+0.75\\
-0.8-0.2+0.35\end{bmatrix}\\[4pt]
-&=\begin{bmatrix}2.25\\
-0.95\end{bmatrix}\;\text{USD million}\end{aligned}
+\begin{aligned}
+y&=A^{\mathsf T}w\\
+&=\begin{bmatrix}1.2(2)+0.9(-1)+1.5(0.5)\\0.4(2)+0.2(-1)+0.7(0.5)\end{bmatrix}\\[4pt]
+&=\begin{bmatrix}2.4-0.9+0.75\\0.8-0.2+0.35\end{bmatrix}=\begin{bmatrix}2.25\\0.95\end{bmatrix}\ \text{USD million}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แถวแรก: AAPL ให้ $1.2\times2=2.4$, MSFT ที่ short อยู่ให้ $0.9\times(-1)=-0.9$, JPM ให้ $1.5\times0.5=0.75$ รวม 2.25 USD million ของ market exposure</p>

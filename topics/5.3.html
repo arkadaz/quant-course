@@ -163,12 +163,16 @@ u_2\ge0\ \Longrightarrow\ t\le\frac{0.78333}{2}&=0.39167,\qquad 0\le t\le0.39167
   <p>หยิบแผน primal ที่ใช้ได้มาหนึ่งแผน และ u ที่ใช้ได้มาหนึ่งชุด โดยไม่ต้องเป็นตัวที่ดีที่สุด แล้วดูว่าคำตอบถูกบีบไว้แค่ไหน</p>
   <div class="math">\[
 \begin{aligned}
-\theta=(1.3333,\,-0.4333):&\quad S\theta=(130,\ 90,\ 50)\ge X,\qquad p^{\mathsf T}\theta=133.33-41.17=92.17\\[4pt]
-t=0.2:&\quad u=(0.36667,\ 0.38333,\ 0.2)\\
-&\quad 130(0.36667)+100(0.38333)+70(0.2)=47.667+38.333+14=100\\
-&\quad 100(0.36667+0.38333+0.2)=95\\
-&\quad X^{\mathsf T}u=120(0.36667)+90(0.38333)+50(0.2)=44.00+34.50+10.00=88.50\\[4pt]
-92.17\ \ge\ P\ &\ge\ D\ \ge\ 88.50
+\theta&=(1.3333,\,-0.4333)\\
+S\theta&=(130,\ 90,\ 50)\ge X\\
+p^{\mathsf T}\theta&=133.33-41.17=92.17\\[4pt]
+t=0.2&:\ u=(0.36667,\ 0.38333,\ 0.2)\\
+\text{stock}&=130(0.36667)+100(0.38333)+70(0.2)\\
+&=47.667+38.333+14=100\\
+\text{bond}&=100(0.36667+0.38333+0.2)=95\\
+X^{\mathsf T}u&=120(0.36667)+90(0.38333)+50(0.2)\\
+&=44.00+34.50+10.00=88.50\\[4pt]
+92.17&\ge P\ge D\ge88.50
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -416,9 +420,18 @@ u_S(-x_S) &\ge -6u_S \quad (u_S \ge 0) \\
   <h4>ขั้นที่ 15 — ลองราคาเงาสองชุดด้วยมือ: ขอบล่างขยับได้ แต่ไม่เคยเกินต้นทุนจริง</h4>
   <p>ทฤษฎีบอกว่าทุกชุดราคาเงาที่ถูกกติกาให้ขอบล่างของต้นทุน ลองด้วยมือสามชุดแล้วดูว่ามันขยับอย่างไร</p>
   <div class="math">\[
-\begin{aligned}\text{trial 1: }y=90,\;u_Q=u_S=0:&\quad 1.2(90)=108\le180\ \checkmark,\quad 90\le90\ \checkmark\quad\Longrightarrow\quad\text{bound}=10.8(90)=\$972\\
-\text{trial 2: }y=150,\;u_Q=0,\;u_S=60:&\quad 1.2(150)-0=180\le180\ \checkmark,\quad 150-60=90\le90\ \checkmark\quad\Longrightarrow\quad\text{bound}=10.8(150)-6(60)=\$1{,}260\\
-\text{trial 3: }y=160,\;u_Q=0,\;u_S=70:&\quad 1.2(160)=192>180\ \times\ \text{(not allowed)}\end{aligned}
+\begin{aligned}
+\text{trial 1}&:\ y=90,\ u_Q=u_S=0\\
+&\quad1.2(90)=108\le180\ \checkmark\\
+&\quad90\le90\ \checkmark\\
+&\quad\text{bound}=10.8(90)=\$972\\[4pt]
+\text{trial 2}&:\ y=150,\ u_Q=0,\ u_S=60\\
+&\quad1.2(150)-0=180\le180\ \checkmark\\
+&\quad150-60=90\le90\ \checkmark\\
+&\quad\text{bound}=10.8(150)-6(60)=\$1{,}260\\[4pt]
+\text{trial 3}&:\ y=160,\ u_Q=0,\ u_S=70\\
+&\quad1.2(160)=192\gt180\ \times
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ชุดแรกถูกกติกาแต่ให้ขอบล่างแค่ 972 ซึ่งต่ำกว่าต้นทุนจริง 1,260 มันบอกแค่ว่า ‘ไม่มีทางถูกกว่า 972’ ซึ่งจริงแต่ไม่คม</p>
@@ -432,9 +445,9 @@ u_S(-x_S) &\ge -6u_S \quad (u_S \ge 0) \\
   <p>ลองน้ำหนักชุดหนึ่งแล้วตรวจทีละข้อว่าถูกกติกาไหม</p>
   <div class="math">\[
 \begin{aligned}
-\text{QQQ dual row:}\quad & 1.2y^* - u_Q^* = 1.2(150) - 0 = 180 \le 180\ \checkmark \\
-\text{SPY dual row:}\quad & y^* - u_S^* = 150 - 60 = 90 \le 90\ \checkmark \\
-\text{Non-negativity:}\quad & y^* = 150 \ge 0,\quad u_Q^* = 0 \ge 0,\quad u_S^* = 60 \ge 0\ \checkmark
+\text{QQQ row}&:\ 1.2y^*-u_Q^*=1.2(150)-0=180\le180\ \checkmark\\
+\text{SPY row}&:\ y^*-u_S^*=150-60=90\le90\ \checkmark\\
+\text{signs}&:\ y^*=150,\ u_Q^*=0,\ u_S^*=60\ \ \text{all}\ge0\ \checkmark
 \end{aligned}
 \]</div>
   <div class="reading">

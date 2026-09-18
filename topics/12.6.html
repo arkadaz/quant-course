@@ -162,10 +162,12 @@ W_1=0&:\ e^{-0.063776}=0.9382\end{aligned}
   <h4>ขั้นที่ 6 — ตรวจว่าน้ำหนักเป็น martingale ตลอดทาง</h4>
   <p>น้ำหนักรวมเป็น 1 ที่ปลายทางยังไม่พอ การเปลี่ยนน้ำหนักต้องสอดคล้องกันทุกเวลา คือค่าเฉลี่ยของน้ำหนักปลายทางเมื่อรู้ข้อมูลถึงเวลา s ต้องเท่ากับน้ำหนัก ณ เวลา s</p>
   <div class="math">\[
-\begin{aligned}Z_T&=Z_s\,e^{-\lambda(W_T-W_s)-\frac12\lambda^{2}(T-s)}\\
+\begin{aligned}
+Z_T&=Z_s\,e^{-\lambda(W_T-W_s)-\frac12\lambda^{2}(T-s)}\\
 W_T-W_s&\sim\mathcal N(0,\,T-s)\\
-\mathbb E_s\big[e^{-\lambda(W_T-W_s)-\frac12\lambda^{2}(T-s)}\big]&=e^{\frac12\lambda^{2}(T-s)}e^{-\frac12\lambda^{2}(T-s)}=1\\
-\mathbb E_s[Z_T]&=Z_s\cdot1=Z_s\end{aligned}
+\mathbb E_s\big[e^{-\lambda(W_T-W_s)}\big]&=e^{\frac12\lambda^{2}(T-s)}\\
+\mathbb E_s[Z_T]&=Z_s\,e^{\frac12\lambda^{2}(T-s)}\,e^{-\frac12\lambda^{2}(T-s)}=Z_s
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แยกน้ำหนักเป็นก้อนที่รู้แล้ว ณ เวลา s กับก้อนของการขยับหลังจากนั้น ก้อนหลังไม่เกี่ยวกับสิ่งที่รู้แล้ว ณ เวลา s ค่าเฉลี่ยของมันใช้สูตรเดียวกับขั้นที่ 5 ได้ 1 ถ้าน้ำหนักไม่เป็น martingale น้ำหนักรวมอาจเกินหรือขาด และ Q จะไม่ใช่ชุดโอกาสจริง</p>

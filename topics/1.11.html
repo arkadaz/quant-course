@@ -481,11 +481,16 @@ X=-\frac{\ln(1-0.63)}{0.2}=-\frac{\ln0.37}{0.2}=\frac{0.9943}{0.2}=4.97\ \text{s
   <h4>ขั้นที่ 21 — Box-Muller ปี 1958: เมื่อย้อน CDF ของ Normal ด้วยสูตรปิดไม่ได้</h4>
   <p>CDF ของ Normal ไม่มีสูตรปิด จึงย้อนตรง ๆ ไม่ได้ Box-Muller ใช้เลขเรียบสองตัว $u_1=0.25$ และ $u_2=0.60$ สร้างรัศมีกับมุม แล้วฉายกลับเป็น Normal สองตัว</p>
   <div class="math">\[
-\begin{aligned}\varphi(z_1)\,\varphi(z_2)&=\frac{1}{2\pi}e^{-(z_1^2+z_2^2)/2}=\frac{1}{2\pi}e^{-r^2/2}\\
-f_{r^2}(v)&=\tfrac12e^{-v/2}\ \Rightarrow\ r=\sqrt{-2\ln U_1},\qquad\theta=2\pi U_2\\
-Z_1=r\cos\theta,&\qquad Z_2=r\sin\theta\\[4pt]
-r=\sqrt{-2\ln0.25}&=1.6651,\qquad\theta=2\pi\times0.60=3.7699\\
-Z_1=1.6651\cos3.7699&=-1.3471,\qquad Z_2=1.6651\sin3.7699=-0.9787\end{aligned}
+\begin{aligned}
+\varphi(z_1)\,\varphi(z_2)&=\frac{1}{2\pi}e^{-(z_1^2+z_2^2)/2}=\frac{1}{2\pi}e^{-r^2/2}\\
+f_{r^2}(v)&=\tfrac12e^{-v/2}\\
+r&=\sqrt{-2\ln U_1},\qquad\theta=2\pi U_2\\
+Z_1&=r\cos\theta,\qquad Z_2=r\sin\theta\\[4pt]
+r&=\sqrt{-2\ln0.25}=1.6651\\
+\theta&=2\pi(0.60)=3.7699\\
+Z_1&=1.6651\cos3.7699=-1.3471\\
+Z_2&=1.6651\sin3.7699=-0.9787
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความสูงของระฆังสองมิติขึ้นกับรัศมีอย่างเดียว มุมจึงสุ่มเรียบรอบวง ส่วนรัศมีคูณตัวเองมี density $\tfrac12e^{-v/2}$ ซึ่งคือ Exponential ที่อัตรา ½ ย้อนได้ด้วยขั้นที่ 19 ไม่ต้องใช้ $1-U$ เพราะ $U$ กับ $1-U$ สุ่มเหมือนกัน</p>

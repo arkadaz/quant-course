@@ -156,10 +156,15 @@ W_T^{2}-0&=T+2\int_0^{T}W_t\,dW_t\\
   <h4>ขั้นที่ 7 — ความเสี่ยงของกำไรสะสม: พิสูจน์ Itô isometry</h4>
   <p>กระจายกำลังสองของผลรวมเป็นพจน์ของแต่ละช่วงกับพจน์ไขว้ของทุกคู่ แล้วใช้เหตุผลเดียวกับขั้นที่ 6</p>
   <div class="math">\[
-\begin{aligned}I_n^2&=\sum_{i} H_{t_i}^2 (\Delta W_i)^2 + 2\sum_{i \lt j} H_{t_i} H_{t_j}\,\Delta W_i\,\Delta W_j\\
-\mathbb E[H_{t_i} H_{t_j}\Delta W_i\Delta W_j]&=\mathbb E\big[H_{t_i} H_{t_j}\Delta W_i\,\mathbb E_{t_j}[\Delta W_j]\big] = 0\\
-\mathbb E[H_{t_i}^2 (\Delta W_i)^2]&=\mathbb E\big[H_{t_i}^2\,\mathbb E_{t_i}[(\Delta W_i)^2]\big] = \mathbb E[H_{t_i}^2]\,\Delta t_i\\
-\mathbb E[I_n^2]&=\sum_{i} \mathbb E[H_{t_i}^2]\,\Delta t_i\ \to\ \int_0^T \mathbb E[H_t^2]\,dt\end{aligned}
+\begin{aligned}
+I_n^2&=\sum_{i}H_{t_i}^2(\Delta W_i)^2\\
+&\quad+2\sum_{i\lt j}H_{t_i}H_{t_j}\,\Delta W_i\,\Delta W_j\\
+\mathbb E[H_{t_i}H_{t_j}\Delta W_i\Delta W_j]&=\mathbb E\big[H_{t_i}H_{t_j}\Delta W_i\,\mathbb E_{t_j}[\Delta W_j]\big]\\
+&=0\\
+\mathbb E[H_{t_i}^2(\Delta W_i)^2]&=\mathbb E\big[H_{t_i}^2\,\mathbb E_{t_i}[(\Delta W_i)^2]\big]\\
+&=\mathbb E[H_{t_i}^2]\,\Delta t_i\\
+\mathbb E[I_n^2]&=\sum_{i}\mathbb E[H_{t_i}^2]\,\Delta t_i\ \to\ \int_0^T\mathbb E[H_t^2]\,dt
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์ไขว้ของคู่ที่ i มาก่อน j มองจากต้นช่วง j ทุกอย่างรู้แล้ว ยกเว้นการขยับช่วง j ซึ่งเฉลี่ยศูนย์ พจน์ไขว้จึงหายทุกคู่ พจน์ของแต่ละช่วงเหลือกำลังสองของสถานะคูณความยาวช่วง รวมกันได้ integral ตามเวลา</p>

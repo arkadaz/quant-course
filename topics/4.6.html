@@ -243,14 +243,14 @@ x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(
   <h4>ขั้นที่ 9 — หาทิศพิเศษของ eigenvalue ตัวใหญ่ แล้วตรวจว่าตารางแค่ยืดมันจริง</h4>
   <p>eigenvalue บอกว่ายืดกี่เท่า แต่ยังไม่บอกว่ายืดทิศไหน ทิศหาได้จากสมการเดิมโดยแทน $\lambda_1$ กลับเข้าไป</p>
   <div class="math">\[
-\begin{aligned}(\Sigma-\lambda_1I)v=0:&\quad (0.0004-0.000996554)v_1+0.00024\,v_2=0\;\Longrightarrow\;v_2=\frac{0.000596554}{0.00024}v_1=2.486\,v_1\\
-v&\propto\begin{bmatrix}1\\
-2.486\end{bmatrix}\;\Longrightarrow\;\text{unit length }v=\begin{bmatrix}0.3733\\
-0.9277\end{bmatrix}\\[4pt]
-\text{check: }\Sigma v&=\begin{bmatrix}0.0004(0.3733)+0.00024(0.9277)\\
-0.00024(0.3733)+0.0009(0.9277)\end{bmatrix}=\begin{bmatrix}0.0003720\\
-0.0009245\end{bmatrix},\qquad \lambda_1v=\begin{bmatrix}0.0003720\\
-0.0009245\end{bmatrix}\;\checkmark\end{aligned}
+\begin{aligned}
+&\Sigma=10^{-4}\begin{bmatrix}4&2.4\\2.4&9\end{bmatrix},\qquad\lambda_1=9.96554\times10^{-4}\\
+&(\Sigma-\lambda_1I)v=0:\ \ (4-9.96554)\,v_1+2.4\,v_2=0\\
+&v_2=\frac{5.96554}{2.4}\,v_1=2.486\,v_1\\
+&v\propto\begin{bmatrix}1\\2.486\end{bmatrix}\ \Longrightarrow\ v=\begin{bmatrix}0.3733\\0.9277\end{bmatrix}\\[4pt]
+&\Sigma v=10^{-4}\begin{bmatrix}4(0.3733)+2.4(0.9277)\\2.4(0.3733)+9(0.9277)\end{bmatrix}\\
+&\quad=10^{-4}\begin{bmatrix}3.720\\9.245\end{bmatrix}=\lambda_1v\ \checkmark
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือสมการ $\Sigma v=\lambda_1 v$ ย้ายข้างเป็น $(\Sigma-\lambda_1 I)v=0$ แล้วอ่านแถวบน: มันบอกอัตราส่วน $v_2/v_1$ เท่านั้น เพราะ eigenvector ยาวเท่าไรก็ได้ ทิศคือสิ่งที่นับ</p>
@@ -265,20 +265,13 @@ v&\propto\begin{bmatrix}1\\
   <p>เมื่อได้แกนความเสี่ยงหลักจาก eigenvalue ตัวใหญ่แล้ว เราต้องหาแกนที่สองที่คู่กับ eigenvalue ตัวเล็ก เพื่อดูว่าความเสี่ยงส่วนที่เหลือหน้าตาเป็นอย่างไร และตรวจว่าสองแกนนี้ตั้งฉากกันตามทฤษฎีจริงหรือไม่</p>
   <div class="math">\[
 \begin{aligned}
-(\Sigma - \lambda_2 I)v &= 0 \\
-(0.0004 - 0.000303446)\,v_1 + 0.00024\,v_2 &= 0 \\
-0.000096554\,v_1 + 0.00024\,v_2 &= 0 \\
-v_2 &= -\frac{0.000096554}{0.00024}v_1 \approx -0.402308\,v_1 \\
-v_2 &\propto \begin{bmatrix} 1 \\
--0.402308 \end{bmatrix}\;\Longrightarrow\; \text{unit length } v_2 = \begin{bmatrix} 0.9277 \\
--0.3733 \end{bmatrix} \\[4pt]
-\Sigma v_2 &= \begin{bmatrix} 0.0004(0.9277) + 0.00024(-0.3733) \\
-0.00024(0.9277) + 0.0009(-0.3733) \end{bmatrix} = \begin{bmatrix} 0.0002815 \\
--0.0001133 \end{bmatrix} \\
-\lambda_2 v_2 &= 0.000303446 \begin{bmatrix} 0.9277 \\
--0.3733 \end{bmatrix} = \begin{bmatrix} 0.0002815 \\
--0.0001133 \end{bmatrix}\;\checkmark \\[4pt]
-v_1^{\mathsf{T}}v_2 &= (0.3733)(0.9277) + (0.9277)(-0.3733) = 0.3463 - 0.3463 = 0\;\checkmark
+&(\Sigma-\lambda_2I)v=0,\qquad\lambda_2=3.03446\times10^{-4}\\
+&(4-3.03446)\,v_1+2.4\,v_2=0\\
+&v_2=-\frac{0.96554}{2.4}\,v_1=-0.402308\,v_1\\
+&v_2\propto\begin{bmatrix}1\\-0.402308\end{bmatrix}\ \Longrightarrow\ v_2=\begin{bmatrix}0.9277\\-0.3733\end{bmatrix}\\[4pt]
+&\Sigma v_2=10^{-4}\begin{bmatrix}4(0.9277)+2.4(-0.3733)\\2.4(0.9277)+9(-0.3733)\end{bmatrix}\\
+&\quad=10^{-4}\begin{bmatrix}2.815\\-1.133\end{bmatrix}=\lambda_2v_2\ \checkmark\\[4pt]
+&v_1^{\mathsf T}v_2=0.3733(0.9277)+0.9277(-0.3733)=0\ \checkmark
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -331,10 +324,11 @@ Cv=kv\ &\Longrightarrow\ (0.0625\,C)v=0.0625\,k\,v
   <p>ใช้เหตุผลของขั้นที่ 6 กับตาราง 3 × 3 ตั้ง u = 1 − k ให้เขียนสั้น แล้วกระจายตามแถวแรก</p>
   <div class="math">\[
 \begin{aligned}
-\det\begin{bmatrix}u & 0.7 & 0.7\\ 0.7 & u & 0.7\\ 0.7 & 0.7 & u\end{bmatrix}&=u(u^2-0.49)-0.7(0.7u-0.49)+0.7(0.49-0.7u)\\
+&\det\begin{bmatrix}u&0.7&0.7\\0.7&u&0.7\\0.7&0.7&u\end{bmatrix}\\
+&=u(u^2-0.49)-0.7(0.7u-0.49)+0.7(0.49-0.7u)\\
 &=u^3-0.49u-0.49u+0.343+0.343-0.49u\\
 &=u^3-1.47u+0.686=0\\[4pt]
-3\rho^2&=3(0.49)=1.47,\qquad 2\rho^3=2(0.343)=0.686
+&3\rho^2=3(0.49)=1.47,\qquad 2\rho^3=2(0.343)=0.686
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -401,9 +395,13 @@ v_1\cdot v_2&=1-1+0=0,\qquad v_1\cdot v_3=1+1-2=0,\qquad v_2\cdot v_3=1-1+0=0
   <div class="math">\[
 \begin{aligned}
 \lambda&=0.150,\ 0.01875,\ 0.01875\gt0\\
-D_1&=1,\qquad D_2=1(1)-0.7(0.7)=0.51,\qquad D_3=\det C=0.216\qquad\text{all}\gt0\\[4pt]
-\lambda_{\text{big}}=\sigma^2(1+2\rho)\gt0,\quad \lambda_{\text{small}}&=\sigma^2(1-\rho)\gt0\quad\Longrightarrow\quad -0.5\lt\rho\lt1\\[4pt]
-\rho=-0.6:\quad \lambda_{\text{big}}&=0.0625(1-1.2)=-0.0125,\qquad D_2=1-0.36=0.64,\qquad D_3=(1.6)^2(-0.2)=-0.512
+D_1&=1,\qquad D_2=1(1)-0.7(0.7)=0.51\\
+D_3&=\det C=0.216\gt0\\[4pt]
+\lambda_{\text{big}}&=\sigma^2(1+2\rho)\gt0\\
+\lambda_{\text{small}}&=\sigma^2(1-\rho)\gt0\\
+&\Longrightarrow\ -0.5\lt\rho\lt1\\[4pt]
+\rho=-0.6&:\ \lambda_{\text{big}}=0.0625(1-1.2)=-0.0125\\
+D_2&=1-0.36=0.64,\qquad D_3=(1.6)^2(-0.2)=-0.512
 \end{aligned}
 \]</div>
   <div class="reading">

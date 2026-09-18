@@ -103,7 +103,11 @@
   <h4>ขั้นที่ 1 — สะสมความน่าจะเป็นด้วย joint CDF</h4>
   <p>ตัวเดียวเรานับสะสมจากซ้ายไปขวา พอมีสองตัวก็นับสะสมจากมุมล่างซ้ายขึ้นมา แนวคิดเดิมเป๊ะ เพิ่มมาอีกแกนเท่านั้น</p>
   <div class="math">\[
-F_{X,Y}(x,y)=P(X\le x,\;Y\le y),\qquad F_{X,Y}(-1\%,-1\%)=\frac{10}{100}=0.10\quad\text{vs}\quad 0.20\times0.20=0.04\ \text{if independent}
+\begin{aligned}
+F_{X,Y}(x,y)&=P(X\le x,\;Y\le y)\\
+F_{X,Y}(-1\%,-1\%)&=10/100=0.10\\
+\text{independent}&:\ 0.20(0.20)=0.04
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>มุมซ้ายบนของตารางคือวันที่ทั้งคู่ลง: 10 จาก 100 วัน นี่คือค่าของ joint CDF ที่จุด $(-1\%,-1\%)$</p>
@@ -191,9 +195,10 @@ f_{X,Y}(x, y) = \lim_{\Delta y \to 0} \lim_{\Delta x \to 0} \frac{P(\dots)}{\Del
   <p>นี่คือรูปทั่วไปสำหรับพอร์ตที่มีสินทรัพย์ $n$ ตัว ปริมาตรรวมใต้ผิว joint PDF เหนือทุกค่าของ $n$ ผลตอบแทนต้องเท่ากับ 1 เสมอ</p>
   <div class="math">\[
 \begin{aligned}
-F_X(x_1, \dots, x_n) &= P(X_1 \le x_1, \dots, X_n \le x_n) = \int_{-\infty}^{x_1} \dots \int_{-\infty}^{x_n} f_X(u_1, \dots, u_n)\,du_1 \dots du_n \\[6pt]
-f_X(x_1, \dots, x_n) &= \frac{\partial^n F_X(x_1, \dots, x_n)}{\partial x_1\,\partial x_2 \dots \partial x_n} \ge 0 \\[6pt]
-\int_{-\infty}^{\infty} \dots \int_{-\infty}^{\infty} f_X(u_1, \dots, u_n)\,du_1 \dots du_n &= F_X(\infty, \dots, \infty) = 1.0
+F_X(x_1,\dots,x_n)&=P(X_1\le x_1,\dots,X_n\le x_n)\\
+&=\int_{-\infty}^{x_1}\!\!\cdots\int_{-\infty}^{x_n}f_X(u_1,\dots,u_n)\,du_1\cdots du_n\\[6pt]
+f_X(x_1,\dots,x_n)&=\frac{\partial^nF_X(x_1,\dots,x_n)}{\partial x_1\cdots\partial x_n}\ge0\\[6pt]
+1&=\int_{-\infty}^{\infty}\!\!\cdots\int_{-\infty}^{\infty}f_X(u_1,\dots,u_n)\,du_1\cdots du_n
 \end{aligned}
 \]</div>
   <div class="reading">

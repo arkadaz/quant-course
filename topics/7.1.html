@@ -168,14 +168,16 @@ q(r) &= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
   <p>Mahalanobis distance ในขั้นก่อนหน้าดูเป็นนามธรรม ลองแทนตัวเลขสองมุมของเมฆแล้วเทียบกัน</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma^{-1} &= \frac{1}{\sigma_1^2 \sigma_2^2 (1 - \rho^2)} \begin{bmatrix} \sigma_2^2 & -\rho \sigma_1 \sigma_2 \\
--\rho \sigma_1 \sigma_2 & \sigma_1^2 \end{bmatrix} = \frac{1}{1 - \rho^2} \begin{bmatrix} \frac{1}{\sigma_1^2} & -\frac{\rho}{\sigma_1 \sigma_2} \\
--\frac{\rho}{\sigma_1 \sigma_2} & \frac{1}{\sigma_2^2} \end{bmatrix} \\
-q(r) &= \begin{bmatrix} r_1 - \mu_1 & r_2 - \mu_2 \end{bmatrix} \Sigma^{-1} \begin{bmatrix} r_1 - \mu_1 \\
-r_2 - \mu_2 \end{bmatrix} = \frac{1}{1 - \rho^2} \left[ \frac{(r_1 - \mu_1)^2}{\sigma_1^2} - 2\rho \frac{(r_1 - \mu_1)(r_2 - \mu_2)}{\sigma_1 \sigma_2} + \frac{(r_2 - \mu_2)^2}{\sigma_2^2} \right] \\
-&= \frac{z_1^2 - 2\rho z_1 z_2 + z_2^2}{1 - \rho^2} \quad \text{where } z_1 = \frac{r_1 - \mu_1}{\sigma_1},\ z_2 = \frac{r_2 - \mu_2}{\sigma_2} \\
-z_1 = 1,\ z_2 = 1:\quad q &= \frac{1^2 - 2(0.40)(1)(1) + 1^2}{1 - 0.40^2} = \frac{1.20}{0.84} \approx 1.4286,\quad e^{-q/2} = e^{-0.7143} \approx 0.4895 \\
-z_1 = 1,\ z_2 = -1:\quad q &= \frac{1^2 - 2(0.40)(1)(-1) + (-1)^2}{1 - 0.40^2} = \frac{2.80}{0.84} \approx 3.3333,\quad e^{-q/2} = e^{-1.6667} \approx 0.1889
+\Sigma^{-1}&=\frac{1}{\sigma_1^2\sigma_2^2(1-\rho^2)}\begin{bmatrix}\sigma_2^2&-\rho\sigma_1\sigma_2\\-\rho\sigma_1\sigma_2&\sigma_1^2\end{bmatrix}\\
+&=\frac{1}{1-\rho^2}\begin{bmatrix}\frac{1}{\sigma_1^2}&-\frac{\rho}{\sigma_1\sigma_2}\\-\frac{\rho}{\sigma_1\sigma_2}&\frac{1}{\sigma_2^2}\end{bmatrix}\\[4pt]
+q(r)&=\begin{bmatrix}r_1-\mu_1&r_2-\mu_2\end{bmatrix}\Sigma^{-1}\begin{bmatrix}r_1-\mu_1\\r_2-\mu_2\end{bmatrix}\\
+&=\frac{1}{1-\rho^2}\Bigl[\frac{(r_1-\mu_1)^2}{\sigma_1^2}-2\rho\frac{(r_1-\mu_1)(r_2-\mu_2)}{\sigma_1\sigma_2}\\
+&\qquad+\frac{(r_2-\mu_2)^2}{\sigma_2^2}\Bigr]\\
+&=\frac{z_1^2-2\rho z_1z_2+z_2^2}{1-\rho^2},\qquad z_i=\frac{r_i-\mu_i}{\sigma_i}\\[4pt]
+z=(1,\,1)&:\ q=\frac{1-0.80+1}{0.84}=\frac{1.20}{0.84}=1.4286\\
+&\quad e^{-q/2}=e^{-0.7143}=0.4895\\
+z=(1,\,-1)&:\ q=\frac{1+0.80+1}{0.84}=\frac{2.80}{0.84}=3.3333\\
+&\quad e^{-q/2}=e^{-1.6667}=0.1889
 \end{aligned}
 \]</div>
   <div class="reading">

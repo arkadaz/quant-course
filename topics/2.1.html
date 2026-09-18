@@ -334,14 +334,18 @@ g(X)=X:\qquad\mathbb{E}[X\mid X]&=X\end{aligned}
   <h4>ขั้นที่ 10 — ประกอบเป็น Law of Total Variance: ความเสี่ยงแยกเป็นสองก้อน</h4>
   <p>ใช้นิยามของ variance แล้วใส่กฎที่พิสูจน์ไปแล้วเข้าไปสองครั้ง จะได้การแยกที่อ่านความหมายออกได้ทันที</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(Y)&=\mathbb{E}[Y^{2}]-\big(\mathbb{E}[Y]\big)^{2}\\
-&=\mathbb{E}\Big[\mathbb{E}[Y^{2}\mid X]\Big]-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^{2}\\
-&=\mathbb{E}\Big[\mathrm{Var}(Y\mid X)\Big]+\underbrace{\mathbb{E}\Big[\big(\mathbb{E}[Y\mid X]\big)^{2}\Big]-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^{2}}_{=\ \mathrm{Var}(\mathbb{E}[Y\mid X])\ \text{by the same shortcut}}\\[4pt]
-&=\underbrace{\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]}_{\text{risk inside each state}}+\underbrace{\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)}_{\text{risk from not knowing the state}}\end{aligned}
+\begin{aligned}
+\mathrm{Var}(Y)&=\mathbb{E}[Y^{2}]-\big(\mathbb{E}[Y]\big)^{2}\\
+&=\mathbb{E}\big[\mathbb{E}[Y^{2}\mid X]\big]-\big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\big)^{2}\\
+\mathbb{E}[Y^{2}\mid X]&=\mathrm{Var}(Y\mid X)+\big(\mathbb{E}[Y\mid X]\big)^{2}\\[4pt]
+\mathrm{Var}(Y)&=\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]\\
+&\quad+\mathbb{E}\big[(\mathbb{E}[Y\mid X])^{2}\big]-\big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\big)^{2}\\
+&=\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]+\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรก: สูตรลัดของ variance บรรทัดที่สอง: tower property ใส่ทั้ง $Y^2$ และ $Y$</p>
-    <p>บรรทัดที่สาม: แทน $\mathbb{E}[Y^2\mid X]$ ด้วยผลของขั้นก่อน ก้อน $\mathrm{Var}(Y\mid X)$ แยกออกมา ส่วนสองพจน์ที่เหลือคือ ‘ค่าเฉลี่ยของกำลังสอง ลบ กำลังสองของค่าเฉลี่ย’ ของตัวแปร $\mathbb{E}[Y\mid X]$ ซึ่งคือ variance ของมันตามสูตรลัดเดิม</p>
+    <p>บรรทัดที่สามคือผลของขั้นก่อน บรรทัดที่สี่แทน $\mathbb{E}[Y^2\mid X]$ ด้วยมัน ก้อน $\mathrm{Var}(Y\mid X)$ แยกออกมา ส่วนสองพจน์ที่เหลือคือ ‘ค่าเฉลี่ยของกำลังสอง ลบ กำลังสองของค่าเฉลี่ย’ ของตัวแปร $\mathbb{E}[Y\mid X]$ ซึ่งคือ variance ของมันตามสูตรลัดเดิม</p>
     <p>อ่านความหมาย: ก้อนซ้ายคือความเสี่ยงที่เหลืออยู่ *แม้จะรู้แล้ว* ว่าพรุ่งนี้ตลาดอยู่สภาวะไหน ก้อนขวาคือความเสี่ยงจากการไม่รู้สภาวะ การรู้สภาวะช่วยอธิบายความต่างของค่าเฉลี่ยระหว่างกลุ่ม</p>
     <p>แต่ไม่ได้ทำให้ P&amp;L หรือความเสี่ยงของพอร์ตเดิมเปลี่ยนเอง หากหัก conditional mean ออกจาก P&amp;L ความคลาดเคลื่อนที่เหลือมี variance เท่าก้อนซ้าย หัวข้อ 2.2 จะใส่ตัวเลขจริงให้ทั้งสองก้อน</p>
   </div>

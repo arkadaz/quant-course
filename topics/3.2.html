@@ -343,18 +343,12 @@ x&=0.6(2.5y)+0.2(1.25z)=1.5y+0.25z\\[4pt]
   <p>ตัวอย่างนี้จำลองปัญหา hedging จากทฤษฎี optimization หากสินทรัพย์สองตัวมี payoff vector ที่เป็นอิสระต่อกัน เราจะผสมสัดส่วนเพื่อสร้างกระแสเงินสดเลียนแบบสัญญาใด ๆ ในสองสถานะได้เสมอ แต่หากเพิ่มหุ้นตัวที่สามที่มีกระแสเงินเป็นสองเท่าของหุ้นเดิม หุ้นนั้นจะไม่เพิ่มมิติใหม่และไม่ช่วยกระจายความเสี่ยงเพิ่มขึ้นเลย</p>
   <div class="math">\[
 \begin{aligned}
-\theta_1\begin{bmatrix}120\\
-80\end{bmatrix} + \theta_2\begin{bmatrix}105\\
-105\end{bmatrix} &= \begin{bmatrix}20\\
-0\end{bmatrix} \\
-\begin{cases}120\theta_1 + 105\theta_2 = 20 \\
-80\theta_1 + 105\theta_2 = 0\end{cases} &\Longrightarrow 40\theta_1 = 20 \implies \theta_1 = 0.50 \\
-80(0.50) + 105\theta_2 = 0 &\Longrightarrow \theta_2 = -\frac{40}{105} = -\frac{8}{21} \approx -0.381 \\
-\theta_1 S_1 + \theta_2 S_2 &= 0.50\begin{bmatrix}120\\
-80\end{bmatrix} - \frac{8}{21}\begin{bmatrix}105\\
-105\end{bmatrix} = \begin{bmatrix}60-40\\
-40-40\end{bmatrix} = \begin{bmatrix}20\\
-0\end{bmatrix}
+&\theta_1\begin{bmatrix}120\\80\end{bmatrix}+\theta_2\begin{bmatrix}105\\105\end{bmatrix}=\begin{bmatrix}20\\0\end{bmatrix}\\
+&120\theta_1+105\theta_2=20\\
+&80\theta_1+105\theta_2=0\\
+&40\theta_1=20\ \Longrightarrow\ \theta_1=0.50\\
+&80(0.50)+105\theta_2=0\ \Longrightarrow\ \theta_2=-\tfrac{40}{105}=-\tfrac{8}{21}\\
+&0.50\begin{bmatrix}120\\80\end{bmatrix}-\tfrac{8}{21}\begin{bmatrix}105\\105\end{bmatrix}=\begin{bmatrix}60-40\\40-40\end{bmatrix}=\begin{bmatrix}20\\0\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -369,12 +363,14 @@ x&=0.6(2.5y)+0.2(1.25z)=1.5y+0.25z\\[4pt]
   <p>สามมิติทดสอบด้วยมือได้เหมือนเดิม: ตั้งสมการผสมให้ได้ศูนย์ แล้วไล่แก้ทีละบรรทัด ถ้าบังคับให้ทุกตัวเป็นศูนย์ แปลว่าไม่มีใครสร้างจากใครได้</p>
   <p>บรรทัดล่างคือทางลัดที่หัวข้อ 4.5 จะอธิบายเต็ม: determinant ไม่เป็นศูนย์ก็ต่อเมื่อคอลัมน์ทั้งสามเป็นอิสระกัน คิดจากแถวบนด้วยการกระจายทีละคอลัมน์</p>
   <div class="math">\[
-\begin{aligned}a\mathbf{u}+b\mathbf{v}+c\mathbf{w}=\mathbf{0}\;&\Longrightarrow\;\begin{cases}a+c=0\\
-b+c=0\\
-a+b=0\end{cases}\;\Longrightarrow\;a=-c,\;b=-c,\;(-c)+(-c)=0\;\Longrightarrow\;c=0\;\Longrightarrow\;a=b=0\\[6pt]
-\det\begin{bmatrix}1&amp;0&amp;1\\
-0&amp;1&amp;1\\
-1&amp;1&amp;0\end{bmatrix}&=1\,(1\cdot0-1\cdot1)-0\,(0\cdot0-1\cdot1)+1\,(0\cdot1-1\cdot1)=-1+0-1=-2\ne0\end{aligned}
+\begin{aligned}
+a\mathbf{u}+b\mathbf{v}+c\mathbf{w}&=\mathbf{0}\\
+&\Longrightarrow\ a+c=0,\ \ b+c=0,\ \ a+b=0\\
+&\Longrightarrow\ a=-c,\ \ b=-c,\ \ -2c=0\\
+&\Longrightarrow\ c=0,\ \ a=b=0\\[6pt]
+\det\begin{bmatrix}1&0&1\\0&1&1\\1&1&0\end{bmatrix}&=1(0-1)-0(0-1)+1(0-1)\\
+&=-1+0-1=-2\ne0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดบน: จากสมการที่หนึ่งและสอง $a$ กับ $b$ ต่างเท่ากับ $-c$ แทนในสมการที่สามได้ $-2c=0$ จึง $c=0$ แล้ว $a=b=0$ ตาม ไม่มีทางผสมให้ได้ศูนย์นอกจากใส่ศูนย์ทุกตัว</p>

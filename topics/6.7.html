@@ -143,11 +143,15 @@ E[r_3]\end{bmatrix}
   <h4>ขั้นที่ 4 — สร้าง covariance matrix จากสามวันนี้ ทีละช่อง</h4>
   <p>สูตร outer product ในขั้นถัดไปดูน่ากลัว แต่กับสามวันมันคือการลบ คูณ บวก หาร ที่ทำในหัวได้</p>
   <div class="math">\[
-\begin{aligned}\text{deviations: }&\text{Tech }(4-5,\,6-5,\,5-5)=(-1,\,1,\,0),\qquad\text{Energy }(1-2,\,4-2,\,1-2)=(-1,\,2,\,-1)\\
-\hat\Sigma_{T,T}&=\frac{(-1)^{2}+1^{2}+0^{2}}{3-1}=\frac{2}{2}=1,\qquad \hat\Sigma_{E,E}=\frac{(-1)^{2}+2^{2}+(-1)^{2}}{2}=\frac{6}{2}=3\\
-\hat\Sigma_{T,E}&=\frac{(-1)(-1)+(1)(2)+(0)(-1)}{2}=\frac{1+2+0}{2}=1.5=\hat\Sigma_{E,T}\\[4pt]
-\hat\Sigma&=\begin{bmatrix}1&amp;1.5\\
-1.5&amp;3\end{bmatrix}\;\mathrm{bp}^{2},\qquad \rho=\frac{1.5}{\sqrt{1\times3}}=0.866\end{aligned}
+\begin{aligned}
+\text{Tech}&:\ (4-5,\,6-5,\,5-5)=(-1,\,1,\,0)\\
+\text{Energy}&:\ (1-2,\,4-2,\,1-2)=(-1,\,2,\,-1)\\[4pt]
+\hat\Sigma_{T,T}&=\frac{(-1)^{2}+1^{2}+0^{2}}{3-1}=\frac{2}{2}=1\\
+\hat\Sigma_{E,E}&=\frac{(-1)^{2}+2^{2}+(-1)^{2}}{2}=\frac{6}{2}=3\\
+\hat\Sigma_{T,E}&=\frac{(-1)(-1)+(1)(2)+(0)(-1)}{2}=\frac{3}{2}=1.5\\[4pt]
+\hat\Sigma&=\begin{bmatrix}1&1.5\\1.5&3\end{bmatrix}\ \mathrm{bp}^{2}\\
+\rho&=1.5/\sqrt{1\times3}=0.866
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ช่องแนวทแยงคือ variance ของแต่ละตัว (ค่าเฉลี่ยของกำลังสองของระยะห่าง เหมือนหัวข้อ 1.4) ช่องนอกแนวทแยงคือ covariance: จับคู่ระยะห่างของสองตัว *วันเดียวกัน* คูณกันแล้วเฉลี่ย</p>
@@ -271,12 +275,13 @@ D^{-1}&=\begin{bmatrix}1&amp;0\\
   <h4>ตัวอย่างที่สอง — สร้าง covariance matrix จากความเหวี่ยงกับ correlation</h4>
   <p>โจทย์ให้อะไรมาบ้าง: พอร์ตสามสินทรัพย์ หุ้นเหวี่ยงปีละ 18% หุ้นกู้ 6% ทองคำ 15% correlation หุ้นกับหุ้นกู้ −0.20 หุ้นกับทอง +0.05 หุ้นกู้กับทอง +0.25 มีตัวเลขแค่ 6 ตัว แต่ตารางมี 9 ช่อง</p>
   <div class="math">\[
-\begin{aligned}\Sigma_{ii}&=\sigma_i^{2},\qquad\Sigma_{ij}=\rho_{ij}\,\sigma_i\,\sigma_j\\[4pt]
-\Sigma&=\begin{bmatrix}0.18^{2}&-0.20(0.18)(0.06)&0.05(0.18)(0.15)\\
-\cdot&0.06^{2}&0.25(0.06)(0.15)\\
-\cdot&\cdot&0.15^{2}\end{bmatrix}=\begin{bmatrix}0.03240&-0.00216&0.00135\\
--0.00216&0.00360&0.00225\\
-0.00135&0.00225&0.02250\end{bmatrix}\end{aligned}
+\begin{aligned}
+\Sigma_{ii}&=\sigma_i^{2},\qquad\Sigma_{ij}=\rho_{ij}\,\sigma_i\,\sigma_j\\[4pt]
+\Sigma_{12}&=-0.20(0.18)(0.06)=-0.00216\\
+\Sigma_{13}&=0.05(0.18)(0.15)=0.00135\\
+\Sigma_{23}&=0.25(0.06)(0.15)=0.00225\\[4pt]
+\Sigma&=10^{-5}\begin{bmatrix}3240&-216&135\\-216&360&225\\135&225&2250\end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ช่องทแยงคือความเหวี่ยงคูณตัวเอง ช่องนอกทแยงคือ correlation คูณความเหวี่ยงของสองตัว ขั้นที่ 7 ทำกลับทางนี้พอดี ช่องซ้ายล่างเหมือนขวาบนตามขั้นที่ 5 ตัวเลข 6 ตัวจึงเติมได้ครบ 9 ช่อง</p>
