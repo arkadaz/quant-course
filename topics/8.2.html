@@ -101,9 +101,12 @@
   <div class="math">\[
 \begin{aligned}
 q(x) &= x^{\mathsf T}Vx = \sum_{i=1}^n \sum_{j=1}^n x_i V_{ij} x_j \\
-\frac{\partial q}{\partial x_k} &= \frac{\partial}{\partial x_k}\Big(x_k^2 V_{kk} + x_k \sum_{j \ne k} V_{kj} x_j + x_k \sum_{i \ne k} x_i V_{ik} + \sum_{i \ne k}\sum_{j \ne k} x_i V_{ij} x_j\Big) \\
+&\frac{\partial q}{\partial x_k}\\
+&= \frac{\partial}{\partial x_k}\Big(x_k^2 V_{kk} + x_k \sum_{j \ne k} V_{kj} x_j\\
+&\qquad + x_k \sum_{i \ne k} x_i V_{ik} + \sum_{i \ne k}\sum_{j \ne k} x_i V_{ij} x_j\Big) \\
 &= 2 V_{kk} x_k + \sum_{j \ne k} V_{kj} x_j + \sum_{i \ne k} V_{ik} x_i \\
-&= \sum_{j=1}^n V_{kj} x_j + \sum_{i=1}^n V_{ik} x_i = (Vx)_k + (V^{\mathsf T}x)_k \\
+&= \sum_{j=1}^n V_{kj} x_j + \sum_{i=1}^n V_{ik} x_i\\
+&= (Vx)_k + (V^{\mathsf T}x)_k \\
 \nabla q(x) &= (V + V^{\mathsf T})x \overset{V=V^{\mathsf T}}{=} 2Vx
 \end{aligned}
 \]</div>
@@ -135,12 +138,15 @@ D_u q(x) &= \lim_{t \to 0}\frac{q(x+tu) - q(x)}{t} = \nabla q(x)^{\mathsf T}u \\
   <h4>ขั้นที่ 4 — แทนพอร์ตปัจจุบัน</h4>
   <p>คูณแถวต่อแถวก่อน แล้วค่อยคูณสองข้างนอกสุด</p>
   <div class="math">\[
-\begin{aligned}Vx&=\begin{bmatrix}0.040(0.60)+0.006(0.40)\\
-0.006(0.60)+0.010(0.40)\end{bmatrix}=\begin{bmatrix}0.0240+0.0024\\
+\begin{aligned}
+Vx&=\begin{bmatrix}0.040(0.60)+0.006(0.40)\\
+0.006(0.60)+0.010(0.40)\end{bmatrix}\\
+&=\begin{bmatrix}0.0240+0.0024\\
 0.0036+0.0040\end{bmatrix}=\begin{bmatrix}0.0264\\
 0.0076\end{bmatrix}\\[4pt]
 \nabla q(x)&=2Vx=\begin{bmatrix}0.0528\\
-0.0152\end{bmatrix}\end{aligned}
+0.0152\end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แถวบนของ $V$ คูณกับน้ำหนักได้ 0.0264 แถวล่างได้ 0.0076 แล้วคูณสองทั้งคู่ ผลคือ marginal annual variance ของ SPY และ AGG ต่อหนึ่งหน่วยน้ำหนัก ณ พอร์ต 60/40</p>
@@ -165,11 +171,12 @@ D_u q(x) &= \lim_{t \to 0}\frac{q(x+tu) - q(x)}{t} = \nabla q(x)^{\mathsf T}u \\
   <p>หุ้นผันผวนกว่าพันธบัตรแค่ 2 เท่า แต่ gradient บอกว่าเพิ่มหุ้นแพงกว่า 3.474 เท่า ส่วนต่างมาจากพอร์ตที่ถืออยู่ ไม่ใช่จากตัวสินทรัพย์ แล้วตรวจตัวเลขด้วยเอกลักษณ์ที่ใช้ได้กับ objective กำลังสองทุกตัว</p>
   <div class="math">\[
 \begin{aligned}
-\frac{\partial q/\partial x_1}{\partial q/\partial x_2}&=\frac{0.0528}{0.0152}=3.474\\
-\frac{\sigma_1}{\sigma_2}&=\frac{0.20}{0.10}=2\\[4pt]
-\nabla q^{\mathsf T}x&=(2Vx)^{\mathsf T}x=2x^{\mathsf T}Vx=2q\\
-0.0528(0.6)+0.0152(0.4)&=0.03168+0.00608=0.03776\\
-2(0.018880)&=0.03776
+&\frac{\partial q/\partial x_1}{\partial q/\partial x_2}=\frac{0.0528}{0.0152}=3.474\\
+&\frac{\sigma_1}{\sigma_2}=\frac{0.20}{0.10}=2\\[4pt]
+&\nabla q^{\mathsf T}x=(2Vx)^{\mathsf T}x=2x^{\mathsf T}Vx=2q\\
+&0.0528(0.6)+0.0152(0.4)\\
+&=0.03168+0.00608=0.03776\\
+&2(0.018880)=0.03776
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -196,11 +203,14 @@ d=\begin{bmatrix}0.01\\
   <div class="math">\[
 \begin{aligned}
 q(x+d) &= (x+d)^{\mathsf T}V(x+d) \\
-&= x^{\mathsf T}Vx + x^{\mathsf T}Vd + d^{\mathsf T}Vx + d^{\mathsf T}Vd \\
+&= x^{\mathsf T}Vx + x^{\mathsf T}Vd\\
+&\quad + d^{\mathsf T}Vx + d^{\mathsf T}Vd \\
 &= q(x) + 2x^{\mathsf T}Vd + d^{\mathsf T}Vd \\
 &= q(x) + \nabla q(x)^{\mathsf T}d + d^{\mathsf T}Vd \\
-q(x+d) - q(x) &= \nabla q(x)^{\mathsf T}d + d^{\mathsf T}Vd \\
-&= 0.0528(0.01) + \begin{bmatrix}0.01&amp;0\end{bmatrix}\begin{bmatrix}0.040&amp;0.006\\
+&q(x+d) - q(x)\\
+&= \nabla q(x)^{\mathsf T}d + d^{\mathsf T}Vd \\
+&= 0.0528(0.01)\\
+&\quad + \begin{bmatrix}0.01&amp;0\end{bmatrix}\begin{bmatrix}0.040&amp;0.006\\
 0.006&amp;0.010\end{bmatrix}\begin{bmatrix}0.01\\
 0\end{bmatrix} \\
 &= 0.000528 + 0.000004 = 0.000532
@@ -218,13 +228,15 @@ q(x+d) - q(x) &= \nabla q(x)^{\mathsf T}d + d^{\mathsf T}Vd \\
   <p>0.0528 คืออัตราเปลี่ยนของ variance ซึ่งเป็นหน่วยกำลังสอง คนคุยกันด้วย σ ใช้ chain rule กับ σ = √q</p>
   <div class="math">\[
 \begin{aligned}
-\frac{\partial\sigma_p}{\partial x_1}&=\frac{1}{2\sqrt q}\,\frac{\partial q}{\partial x_1}=\frac{0.0528}{2(0.137405)}\\
+&\frac{\partial\sigma_p}{\partial x_1}=\frac{1}{2\sqrt q}\,\frac{\partial q}{\partial x_1}\\
+&=\frac{0.0528}{2(0.137405)}\\
 &=\frac{0.0528}{0.274809}=0.19213\\
-0.19213\times0.01&=0.0019213\\[4pt]
-\sqrt{0.019412}&=0.139327\\
-\Delta\sigma_p&=0.139327-0.137405=0.001922\\[4pt]
-\frac{\partial\sigma_p}{\partial x_2}&=\frac{0.0152}{0.274809}=0.05531\\
-\frac{0.19213}{0.05531}&=3.474
+&0.19213\times0.01=0.0019213\\[4pt]
+&\sqrt{0.019412}=0.139327\\
+\Delta\sigma_p&=0.139327-0.137405\\
+&=0.001922\\[4pt]
+&\frac{\partial\sigma_p}{\partial x_2}=\frac{0.0152}{0.274809}=0.05531\\
+&\frac{0.19213}{0.05531}=3.474
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -295,11 +307,14 @@ q''(x_1)&=0.076>0
   <p>ทำขั้นที่ 11 ซ้ำด้วยตัวอักษรแทนตัวเลข จะได้สูตรที่ใช้กับพอร์ตสองตัวใดก็ได้ และเห็นว่าเมื่อไรสินทรัพย์ที่ผันผวนกว่าจะไม่ควรถือเลย</p>
   <div class="math">\[
 \begin{aligned}
-g(x_1)&=V_{11}x_1^2+2V_{12}x_1(1-x_1)+V_{22}(1-x_1)^2\\
-g'(x_1)&=2V_{11}x_1+2V_{12}(1-2x_1)-2V_{22}(1-x_1)=0\\
+g(x_1)&=V_{11}x_1^2+2V_{12}x_1(1-x_1)\\
+&\quad+V_{22}(1-x_1)^2\\
+g'(x_1)&=2V_{11}x_1+2V_{12}(1-2x_1)\\
+&\quad-2V_{22}(1-x_1)=0\\
 x_1&=\frac{V_{22}-V_{12}}{V_{11}+V_{22}-2V_{12}}\\
-&=\frac{0.010-0.006}{0.040+0.010-0.012}=\frac{0.004}{0.038}=0.105263\\[4pt]
-x_1>0\ \text{when}\ V_{22}&>V_{12}\\
+&=\frac{0.010-0.006}{0.040+0.010-0.012}\\
+&=\frac{0.004}{0.038}=0.105263\\[4pt]
+&x_1>0\ \text{when}\ V_{22}>V_{12}\\
 \sigma_2^2&>\rho\sigma_1\sigma_2\\
 \rho&\lt\frac{\sigma_2}{\sigma_1}=\frac{0.10}{0.20}=0.5
 \end{aligned}

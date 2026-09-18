@@ -100,15 +100,19 @@ g&=x_1+x_2=b,\qquad x_1,\ x_2\ge0\\
 
 <section class="formula">
   <h4>ขั้นที่ 2 — ที่มาทางเรขาคณิต: ระนาบสัมผัสและความสมดุลของ Gradient</h4>
-  <p>เจ็ดบรรทัดนี้แสดงหลักการทางเรขาคณิตของการสัมผัสกันระหว่างเส้นชั้นความสูงของ objective และเส้นขอบของข้อจำกัด เมื่อแนวตั้งฉากของทั้งสองเส้นขนานกัน การเพิ่มค่าบนเส้นขอบจะเป็นไปไม่ได้อีกต่อไป</p>
+  <p>สูตรข้างล่างแสดงหลักการทางเรขาคณิตของการสัมผัสกันระหว่างเส้นชั้นความสูงของ objective และเส้นขอบของข้อจำกัด เมื่อแนวตั้งฉากของทั้งสองเส้นขนานกัน การเพิ่มค่าบนเส้นขอบจะเป็นไปไม่ได้อีกต่อไป</p>
   <div class="math">\[
 \begin{aligned}
-g(x)=b\ \text{along}\ d&:\quad \nabla g(x)^{\mathsf T}d=0\\
-\nabla f(x)^{\mathsf T}d\ne0&:\quad f(x+\epsilon d)>f(x)\ \text{or}\ f(x-\epsilon d)>f(x)\\
-\text{at}\ x^\star&:\quad \nabla f(x^\star)^{\mathsf T}d=0\ \text{for every such}\ d\\
+&g(x)=b\ \text{along}\ d:\\
+&\quad \nabla g(x)^{\mathsf T}d=0\\
+&\nabla f(x)^{\mathsf T}d\ne0:\\
+&\quad f(x+\epsilon d)>f(x)\\
+&\quad\text{or}\ f(x-\epsilon d)>f(x)\\
+&\text{at}\ x^\star:\\
+&\quad \nabla f(x^\star)^{\mathsf T}d=0\ \text{for every such}\ d\\
 \nabla f(x^\star)&=\nu\,\nabla g(x^\star)\\
-\nabla f(x^\star)-\nu\,\nabla g(x^\star)&=0\\
-\nabla_x\mathcal{L}(x^\star,\nu)&=0\\
+&\nabla f(x^\star)-\nu\,\nabla g(x^\star)=0\\
+&\nabla_x\mathcal{L}(x^\star,\nu)=0\\
 \mathcal{L}&=f(x)-\nu\big(g(x)-b\big)
 \end{aligned}
 \]</div>
@@ -138,15 +142,18 @@ g(x)=b\ \text{along}\ d&:\quad \nabla g(x)^{\mathsf T}d=0\\
 
 <section class="formula">
   <h4>ขั้นที่ 4 — แก้ระบบทีละตัว</h4>
-  <p>แก้ระบบสมการโดยเขียนทุกตัวให้อยู่ในรูปของราคาเงาตัวเดียวก่อน เจ็ดบรรทัดนี้เป็นพีชคณิตล้วน แต่เขียนออกมาให้ครบเพราะมันคือจุดที่หลายคนข้ามแล้วหลงทาง ผลลัพธ์บรรทัดสุดท้ายจะถูกแทนกลับเพื่อหาน้ำหนักจริงในขั้นถัดไป</p>
+  <p>แก้ระบบสมการโดยเขียนทุกตัวให้อยู่ในรูปของราคาเงาตัวเดียวก่อน สูตรข้างล่างเป็นพีชคณิตล้วน แต่เขียนออกมาให้ครบเพราะมันคือจุดที่หลายคนข้ามแล้วหลงทาง ผลลัพธ์บรรทัดสุดท้ายจะถูกแทนกลับเพื่อหาน้ำหนักจริงในขั้นถัดไป</p>
   <div class="math">\[
-\begin{aligned}\bar\nu&:=\nu\Big/\!\left(\frac{\mathrm{USD\ million}}{\mathrm{year}}\right)\\
-\frac{2}{1+x_1}=\bar\nu\;&\Longrightarrow\;1+x_1=\frac{2}{\bar\nu}\;\Longrightarrow\;x_1=\frac{2}{\bar\nu}-1\\
-\frac{4}{1+x_2}=\bar\nu\;&\Longrightarrow\;x_2=\frac{4}{\bar\nu}-1\\
+\begin{aligned}
+\bar\nu&:=\nu\Big/\!\left(\frac{\mathrm{USD\ million}}{\mathrm{year}}\right)\\
+&\frac{2}{1+x_1}=\bar\nu\\
+&\;\Longrightarrow\;1+x_1=\frac{2}{\bar\nu}\;\Longrightarrow\;x_1=\frac{2}{\bar\nu}-1\\
+&\frac{4}{1+x_2}=\bar\nu\;\Longrightarrow\;x_2=\frac{4}{\bar\nu}-1\\
 x_1+x_2&=b\\
-\frac{2}{\bar\nu}-1+\frac{4}{\bar\nu}-1&=b\\
-\frac{6}{\bar\nu}-2&=b\\
-\bar\nu&=\frac{6}{b+2}\end{aligned}
+&\frac{2}{\bar\nu}-1+\frac{4}{\bar\nu}-1=b\\
+&\frac{6}{\bar\nu}-2=b\\
+\bar\nu&=\frac{6}{b+2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกตัดหน่วยออกจากตัวคูณ เพื่อให้ที่เหลือเป็นเลขล้วน คำนวณง่ายขึ้น สองบรรทัดถัดมาแก้เงื่อนไขของขั้นที่ 3 ทีละข้าง คูณไขว้แล้วย้าย 1 ไปอีกข้าง</p>
@@ -161,11 +168,14 @@ x_1+x_2&=b\\
   <div class="math">\[
 \begin{aligned}
 \bar\nu&=\frac{6}{12+2}=\frac{6}{14}=\frac37=0.428571\\
-x_1&=\frac{2}{3/7}-1=\frac{14}{3}-\frac33=\frac{11}{3}=3.666667\\
-x_2&=\frac{4}{3/7}-1=\frac{28}{3}-\frac33=\frac{25}{3}=8.333333\\
+x_1&=\frac{2}{3/7}-1=\frac{14}{3}-\frac33=\frac{11}{3}\\
+&=3.666667\\
+x_2&=\frac{4}{3/7}-1=\frac{28}{3}-\frac33=\frac{25}{3}\\
+&=8.333333\\
 x_1+x_2&=\frac{36}{3}=12\\[4pt]
-\frac{2}{14/3}&=\frac{6}{14}=0.428571,\qquad \frac{4}{28/3}=\frac{12}{28}=0.428571\\
-\frac{x_2}{x_1}&=\frac{25}{11}=2.27
+&\frac{2}{14/3}=\frac{6}{14}=0.428571\\
+&\frac{4}{28/3}=\frac{12}{28}=0.428571\\
+&\frac{x_2}{x_1}=\frac{25}{11}=2.27
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -181,8 +191,10 @@ x_1+x_2&=\frac{36}{3}=12\\[4pt]
 \begin{aligned}
 F^\star(12)&=2\ln\frac{14}{3}+4\ln\frac{28}{3}\\
 \ln\frac{14}{3}&=1.540445\\
-\ln\frac{28}{3}&=\ln2+\ln\frac{14}{3}=0.693147+1.540445=2.233592\\
-F^\star(12)&=3.080890+8.934368=12.015259
+\ln\frac{28}{3}&=\ln2+\ln\frac{14}{3}\\
+&=0.693147+1.540445=2.233592\\
+F^\star(12)&=3.080890+8.934368\\
+&=12.015259
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -195,9 +207,11 @@ F^\star(12)&=3.080890+8.934368=12.015259
   <p>ลองสองวิธีที่คนมักเดา แล้วเทียบกับคำตอบของขั้นที่ 5 และ 6</p>
   <div class="math">\[
 \begin{aligned}
-6:6&\quad 2\ln7+4\ln7=6(1.94591)=11.675\\
-4:8&\quad 2\ln5+4\ln9=3.2189+8.7889=12.008\\
-3.667:8.333&\quad 12.015
+6:6&\quad 2\ln7+4\ln7\\
+&\quad=6(1.94591)=11.675\\
+4:8&\quad 2\ln5+4\ln9\\
+&\quad=3.2189+8.7889=12.008\\
+&3.667:8.333\quad 12.015
 \end{aligned}
 \]</div>
   <div class="reading">

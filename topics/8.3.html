@@ -244,14 +244,17 @@ f(150, -100) &= 150^2 + 3(150)(-100) + (-100)^3 \\
 
 <section class="formula">
   <h4>ขั้นที่ 9 — Mean-variance มีความโค้งคงที่</h4>
-  <p>กลับมาที่ปัญหาพอร์ต ซึ่งโชคดีตรงที่ความโค้งคงที่ทุกจุด หกบรรทัดนี้แสดงว่าความโชคดีนั้นมาจากไหน คือ objective มีกำลังสูงสุดแค่สอง หา derivative สองครั้งแล้วตัวแปรก็หายหมด ต่างจากตัวอย่าง cubic ในขั้นที่ 8 อย่างสิ้นเชิง</p>
+  <p>กลับมาที่ปัญหาพอร์ต ซึ่งโชคดีตรงที่ความโค้งคงที่ทุกจุด สูตรข้างล่างแสดงว่าความโชคดีนั้นมาจากไหน คือ objective มีกำลังสูงสุดแค่สอง หา derivative สองครั้งแล้วตัวแปรก็หายหมด ต่างจากตัวอย่าง cubic ในขั้นที่ 8 อย่างสิ้นเชิง</p>
   <div class="math">\[
-\begin{aligned}J(x)&=\mu^{\mathsf T}x-\gamma\,x^{\mathsf T}Vx\\
-\frac{\partial}{\partial x}\big(\mu^{\mathsf T}x\big)&=\mu\\
-\frac{\partial}{\partial x}\big(x^{\mathsf T}Vx\big)&=2Vx\qquad(V=V^{\mathsf T})\\
+\begin{aligned}
+J(x)&=\mu^{\mathsf T}x-\gamma\,x^{\mathsf T}Vx\\
+&\frac{\partial}{\partial x}\big(\mu^{\mathsf T}x\big)=\mu\\
+&\frac{\partial}{\partial x}\big(x^{\mathsf T}Vx\big)=2Vx\qquad(V=V^{\mathsf T})\\
 \nabla J&=\mu-2\gamma Vx\\
 H_J&=\frac{\partial}{\partial x}\big(\mu-2\gamma Vx\big)=-2\gamma V\\[4pt]
-\gamma>0,\ V\ \text{positive definite}\;&\Longrightarrow\;H_J\ \text{negative definite everywhere}\end{aligned}
+&\gamma>0,\ V\ \text{positive definite}\\
+&\;\Longrightarrow\;H_J\ \text{negative definite everywhere}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>objective ของพอร์ตคือผลตอบแทนคาดหวังหักค่าปรับความเสี่ยง หา derivative ทีละพจน์ พจน์เชิงเส้นมีความชันคงที่เท่ากับตัวคูณของมันเอง ส่วนพจน์กำลังสองให้ $2Vx$ ซึ่งเป็นรูปหลายมิติของ $\frac{d}{dx}(ax^{2})=2ax$ เลข 2 โผล่มาได้เพราะ V สมมาตร ตามที่หัวข้อ 8.2 พิสูจน์ไว้</p>
