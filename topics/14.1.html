@@ -90,9 +90,14 @@
   <h4>ขั้นที่ 1 — เหรียญด้วยมือ: สัดส่วนหัวเหวี่ยงน้อยลงช้า ๆ</h4>
   <p>โยนเหรียญเที่ยงตรง n ครั้ง แต่ละครั้งได้ 1 ถ้าหัว 0 ถ้าก้อย ค่าเฉลี่ยคือสัดส่วนหัว แต่ละครั้งเหวี่ยงรอบ 0.5 ด้วยความเหวี่ยง 0.5</p>
   <div class="math">\[
-\begin{aligned}\sigma&=\sqrt{0.5(1-0.5)}=0.5,\qquad \operatorname{SE}=\frac{0.5}{\sqrt n}\\
-n=4&:\ 0.25\qquad n=100:\ 0.05\qquad n=10{,}000:\ 0.005\\
-\operatorname{SE}\le0.01&\ \Rightarrow\ \sqrt n\ge\frac{0.5}{0.01}=50\ \Rightarrow\ n\ge2{,}500\end{aligned}
+\begin{aligned}
+\sigma&=\sqrt{0.5(1-0.5)}=0.5\\
+\operatorname{SE}&=\frac{0.5}{\sqrt n}\\
+&n=4:\ 0.25\qquad n=100:\ 0.05\\
+&n=10{,}000:\ 0.005\\
+&\operatorname{SE}\le0.01\\
+&\Rightarrow\ \sqrt n\ge\frac{0.5}{0.01}=50\ \Rightarrow\ n\ge2{,}500
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สี่ครั้งสัดส่วนหัวเหวี่ยงได้ถึง ±0.25 จึงออก 3 ใน 4 หรือ 1 ใน 4 ได้ง่าย ร้อยครั้งเหลือ ±0.05 จะให้ความเหวี่ยงเหลือ 0.01 ต้องโยน 2,500 ครั้ง ตัวเลขรากที่สองนี้คือคำตอบเรื่องความเร็วของ Bernoulli ขั้นต่อไปแสดงว่ามาจากไหน</p>
@@ -134,9 +139,16 @@ n=4&:\ 0.25\qquad n=100:\ 0.05\qquad n=10{,}000:\ 0.005\\
   <h4>ขั้นที่ 4 — ตัวเลขของ desk: ต้องใช้กี่ไม้ กี่วัน</h4>
   <p>ใช้ความเหวี่ยง \$2 และกำไรเฉลี่ย \$0.005 ต่อไม้ของคำถามเปิด แล้วนับว่าความเหวี่ยงของค่าเฉลี่ยลดลงแค่ไหน</p>
   <div class="math">\[
-\begin{aligned}\operatorname{SE}(\bar X_n)&=\frac{2}{\sqrt n}:\qquad n=100\to0.2,\qquad n=10{,}000\to0.02\\
-\operatorname{SE}=\mu&\ \Rightarrow\ n=\Big(\frac{2}{0.005}\Big)^2=160{,}000\ \text{trades}=16\ \text{days}\\
-\operatorname{SE}=\frac{\mu}{2}&\ \Rightarrow\ n=\Big(\frac{2\times2}{0.005}\Big)^2=640{,}000\ \text{trades}=64\ \text{days}\end{aligned}
+\begin{aligned}
+&\operatorname{SE}(\bar X_n)=\frac{2}{\sqrt n}:\\
+&\quad n=100\to0.2,\qquad n=10{,}000\to0.02\\
+&\operatorname{SE}=\mu\\
+&\Rightarrow\ n=\Big(\frac{2}{0.005}\Big)^2=160{,}000\ \text{trades}\\
+&=16\ \text{days}\\
+&\operatorname{SE}=\frac{\mu}{2}\\
+&\Rightarrow\ n=\Big(\frac{2\times2}{0.005}\Big)^2=640{,}000\ \text{trades}\\
+&=64\ \text{days}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ที่หมื่นไม้ต่อวัน ความเหวี่ยงของค่าเฉลี่ยยังใหญ่กว่า edge สี่เท่า วันเดียวตัดสินอะไรไม่ได้ ให้ค่าเฉลี่ยห่างศูนย์สองเท่าของความเหวี่ยงต้องใช้ 64 วัน นี่คือคำตอบของคำถามเปิด ทุกครั้งที่อยากให้ความเหวี่ยงลดครึ่งหนึ่ง ต้องเก็บข้อมูลเพิ่มสี่เท่า</p>
@@ -169,9 +181,13 @@ P(S_n\lt0)&\approx\Phi(-0.25)=0.4013=40.13\%\end{aligned}
   <h4>ขั้นที่ 6 — หนึ่งปี 250 วัน: หน่วยของเวลาต้องตรงกัน</h4>
   <p>ถ้าวันเป็นอิสระต่อกัน ใช้เหตุผลเดียวกันข้าม 250 วัน</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[\text{year}]&=250(50)=12{,}500\ \text{USD},\qquad \operatorname{SD}(\text{year})=200\sqrt{250}=3{,}162.28\ \text{USD}\\
+\begin{aligned}
+\mathbb E[\text{year}]&=250(50)=12{,}500\ \text{USD}\\
+&\operatorname{SD}(\text{year})=200\sqrt{250}\\
+&=3{,}162.28\ \text{USD}\\
 \mathrm{SR}_{\rm year}&=\frac{12{,}500}{3{,}162.28}=3.953=0.25\sqrt{250}\\
-P(\text{losing year})&\approx\Phi(-3.953)=0.004\%\end{aligned}
+&P(\text{losing year})\approx\Phi(-3.953)=0.004\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>วันขาดทุน 40% แต่ปีขาดทุนแทบไม่เกิด ถ้าวันเป็นอิสระจริง ทุกตัวเลขต้องบอกหน่วยเวลา ห้ามเอา \$50 ต่อวันไปเทียบกับความเหวี่ยงต่อปีโดยไม่แปลงหน่วย</p>
@@ -190,9 +206,12 @@ P(\text{losing year})&\approx\Phi(-3.953)=0.004\%\end{aligned}
   <h4>ขั้นที่ 7 — Markov's inequality: ขอบเขตจากค่าเฉลี่ยอย่างเดียว</h4>
   <p>Andrey Markov (ราวปี 1884) สร้างขอบเขตที่ง่ายที่สุดระหว่างค่าเฉลี่ยกับโอกาส ขอแค่ตัวเลขไม่ติดลบ ไม่ต้องรู้รูปแบบใดเลย</p>
   <div class="math">\[
-\begin{aligned}Y\ge0,\ a\gt0:\qquad\mathbb E[Y]&=\int_0^{\infty}y\,f(y)\,dy\ \ge\ \int_a^{\infty}y\,f(y)\,dy\\
+\begin{aligned}
+&Y\ge0,\ a\gt0:\\
+\mathbb E[Y]&=\int_0^{\infty}y\,f(y)\,dy\ \ge\ \int_a^{\infty}y\,f(y)\,dy\\
 &\ge a\int_a^{\infty}f(y)\,dy=a\,P(Y\ge a)\\
-P(Y\ge a)&\le\frac{\mathbb E[Y]}{a}\end{aligned}
+P(Y\ge a)&\le\frac{\mathbb E[Y]}{a}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัดส่วนที่ต่ำกว่า a ทิ้ง ค่าลดลงเท่านั้นเพราะส่วนที่ตัดไม่ติดลบ ในช่วงที่เหลือ y ไม่น้อยกว่า a จึงแทน y ด้วย a ได้ integral ที่เหลือคือโอกาสที่ Y ไม่น้อยกว่า a พอดี เช่นเงินเดือนเฉลี่ย \$3,000 คนที่ได้เกิน \$30,000 มีไม่เกิน 10%</p>
@@ -203,9 +222,13 @@ P(Y\ge a)&\le\frac{\mathbb E[Y]}{a}\end{aligned}
   <h4>ขั้นที่ 8 — Chebyshev's inequality: แทนระยะห่างกำลังสองลงใน Markov</h4>
   <p>ต้องการโอกาสที่ค่าเฉลี่ยหลุดห่างจาก μ เกิน ε ระยะห่างกำลังสองไม่ติดลบแน่นอน จึงผ่านเงื่อนไขเดียวที่ Markov ขอ</p>
   <div class="math">\[
-\begin{aligned}Y=\big(\bar X_n-\mu\big)^{2},\qquad a&=\varepsilon^{2}\\
-P\big(|\bar X_n-\mu|\ge\varepsilon\big)=P\big((\bar X_n-\mu)^{2}\ge\varepsilon^{2}\big)&\le\frac{\mathbb E\big[(\bar X_n-\mu)^{2}\big]}{\varepsilon^{2}}=\frac{\operatorname{Var}(\bar X_n)}{\varepsilon^{2}}=\frac{\sigma^{2}}{n\varepsilon^{2}}\\
-n\to\infty&\ \Rightarrow\ \frac{\sigma^{2}}{n\varepsilon^{2}}\to0\end{aligned}
+\begin{aligned}
+Y&=\big(\bar X_n-\mu\big)^{2},\qquad a=\varepsilon^{2}\\
+&P\big(|\bar X_n-\mu|\ge\varepsilon\big)\\
+&=P\big((\bar X_n-\mu)^{2}\ge\varepsilon^{2}\big)\\
+&\le\frac{\mathbb E\big[(\bar X_n-\mu)^{2}\big]}{\varepsilon^{2}}=\frac{\operatorname{Var}(\bar X_n)}{\varepsilon^{2}}=\frac{\sigma^{2}}{n\varepsilon^{2}}\\
+&n\to\infty\ \Rightarrow\ \frac{\sigma^{2}}{n\varepsilon^{2}}\to0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวเศษกลายเป็นนิยามของ variance พอดี ผลของขั้นที่ 3 จึงเสียบเข้าได้ โอกาสหลุดกรอบถูกกดด้วย n ที่อยู่ข้างล่าง เก็บข้อมูลมากพอ โอกาสพลาดจะเล็กเท่าไรก็ได้ นี่คือใจความของ LLN และไม่มีตรงไหนต้องรู้ว่าข้อมูลเป็นรูปแบบใด</p>
@@ -229,9 +252,14 @@ n\to\infty&\ \Rightarrow\ \frac{\sigma^{2}}{n\varepsilon^{2}}\to0\end{aligned}
   <h4>ขั้นที่ 10 — เมื่อข้อมูลสัมพันธ์กัน: นับทุกคู่</h4>
   <p>ถ้าไม้ตอบสนองข่าวเดียวกัน ข้อสมมติของขั้นที่ 3 พัง กาง variance ของผลรวมเป็นตาราง covariance ทุกคู่ สมมติทุกคู่มี correlation ρ เท่ากัน</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\Big(\sum_{i=1}^{n}X_i\Big)&=\sum_i\sum_j\operatorname{Cov}(X_i,X_j)=\sum_i\operatorname{Var}(X_i)+\sum_{i\ne j}\operatorname{Cov}(X_i,X_j)\\
-&=n\sigma^2+n(n-1)\rho\sigma^2=n\sigma^2\big[1+(n-1)\rho\big]\\
-\operatorname{Var}(\bar X_n)&=\frac{\sigma^2}{n}\big[1+(n-1)\rho\big]\end{aligned}
+\begin{aligned}
+&\operatorname{Var}\Big(\sum_{i=1}^{n}X_i\Big)\\
+&=\sum_i\sum_j\operatorname{Cov}(X_i,X_j)\\
+&=\sum_i\operatorname{Var}(X_i)+\sum_{i\ne j}\operatorname{Cov}(X_i,X_j)\\
+&=n\sigma^2+n(n-1)\rho\sigma^2\\
+&=n\sigma^2\big[1+(n-1)\rho\big]\\
+\operatorname{Var}(\bar X_n)&=\frac{\sigma^2}{n}\big[1+(n-1)\rho\big]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตาราง n × n มีเส้นทแยง n ช่อง คือ variance ของตัวเอง และนอกเส้นทแยง n(n − 1) ช่อง ช่องละ ρσ² ถ้า ρ เป็นศูนย์ สูตรกลับเป็นขั้นที่ 3 พอดี ถ้า ρ เป็นบวกแม้นิดเดียว ตัวคูณในวงเล็บใหญ่ได้มากเมื่อ n ใหญ่ เพราะจำนวนคู่โตเร็วกว่าจำนวนไม้</p>
@@ -242,9 +270,13 @@ n\to\infty&\ \Rightarrow\ \frac{\sigma^{2}}{n\varepsilon^{2}}\to0\end{aligned}
   <h4>ขั้นที่ 11 — correlation หนึ่งในพัน กินข้อมูลไปเก้าในสิบ</h4>
   <p>เทียบสูตรของขั้นที่ 10 กับ σ²/n ได้จำนวนไม้อิสระที่เทียบเท่า แทนหมื่นไม้ต่อวันกับ ρ = 0.001</p>
   <div class="math">\[
-\begin{aligned}n_{\rm eff}&=\frac{n}{1+(n-1)\rho}\\
-n=10{,}000,\ \rho=0.001&:\quad1+9{,}999(0.001)=10.999,\qquad n_{\rm eff}=\frac{10{,}000}{10.999}=909\\
-n\to\infty&:\quad n_{\rm eff}\to\frac{1}{\rho}=1{,}000\end{aligned}
+\begin{aligned}
+n_{\rm eff}&=\frac{n}{1+(n-1)\rho}\\
+&n=10{,}000,\ \rho=0.001:\\
+&\quad1+9{,}999(0.001)=10.999\\
+&\quad n_{\rm eff}=\frac{10{,}000}{10.999}=909\\
+&n\to\infty:\quad n_{\rm eff}\to\frac{1}{\rho}=1{,}000
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หนึ่งในพันคูณเกือบหมื่นคู่ได้เกือบสิบ หมื่นไม้จึงมีค่าเท่ากับไม้อิสระ 909 ไม้ confidence interval ที่คำนวณด้วยจำนวนดิบแคบกว่าความจริงราวสามเท่า และไม่ว่าเพิ่มไม้เท่าไร ก็ได้ไม่เกินพันไม้อิสระ นี่คือเพดานที่การเทรดถี่ขึ้นทะลุไม่ได้</p>
@@ -255,9 +287,14 @@ n\to\infty&:\quad n_{\rm eff}\to\frac{1}{\rho}=1{,}000\end{aligned}
   <h4>ขั้นที่ 12 — เมื่อไม่มีค่าเฉลี่ยให้เข้าหา: Cauchy</h4>
   <p>LLN ต้องการให้ค่าเฉลี่ยจริงมีค่าจำกัด ข้อมูลแบบ Cauchy ของหัวข้อ 1.11 ไม่มีค่าเฉลี่ย ดูว่าค่าเฉลี่ยจาก n ตัวเป็นอย่างไร</p>
   <div class="math">\[
-\begin{aligned}\mathbb E|X|&=\int_{-\infty}^{\infty}\frac{|x|}{\pi(1+x^2)}\,dx=\infty\\
-X_i\sim\text{Cauchy}&\ \Rightarrow\ \bar X_n\sim\text{Cauchy}\quad\text{for every }n\\
-P(|\bar X_n|\gt10)&=P(|X_1|\gt10)=1-\frac{2}{\pi}\arctan(10)=6.3\%\quad\text{for every }n\end{aligned}
+\begin{aligned}
+\mathbb E|X|&=\int_{-\infty}^{\infty}\frac{|x|}{\pi(1+x^2)}\,dx=\infty\\
+&X_i\sim\text{Cauchy}\\
+&\Rightarrow\ \bar X_n\sim\text{Cauchy}\quad\text{for every }n\\
+&P(|\bar X_n|\gt10)=P(|X_1|\gt10)\\
+&=1-\frac{2}{\pi}\arctan(10)=6.3\%\\
+&\quad\text{for every }n
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของหนึ่งล้านตัวเหวี่ยงเท่ากับตัวเดียว เพราะค่าสุดขั้วแต่ละตัวใหญ่พอจะลากค่าเฉลี่ยทั้งก้อน กำไรของกลยุทธ์ขายหางความเสี่ยงไม่ได้เป็น Cauchy พอดี แต่หางอ้วนพอให้ค่าเฉลี่ยตัวอย่างสวยหลายปีก่อนเหตุการณ์เดียวกินกำไรคืน</p>

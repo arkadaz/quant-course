@@ -104,9 +104,12 @@ P(5\ \text{green years})&=\big(\tfrac12\big)^{5}=\tfrac1{32}=3.1\%\\
   <h4>ขั้นที่ 2 — จากค่าเฉลี่ยของผลตอบแทนส่วนเกินไปสู่การทดสอบ Sharpe</h4>
   <p>null คือกลยุทธ์ไม่มี edge ค่าเฉลี่ยของผลตอบแทนส่วนเกินจึงเป็นศูนย์ ซึ่งก็คือ Sharpe จริงเป็นศูนย์ วัดว่าค่าเฉลี่ยที่เห็นห่างศูนย์กี่เท่าของความคลาด</p>
   <div class="math">\[
-\begin{aligned}H_0&:\ \mu_e=0\qquad(\text{same as }\mathrm{SR}=0)\\
+\begin{aligned}
+H_0&:\ \mu_e=0\qquad(\text{same as }\mathrm{SR}=0)\\
 t&=\frac{\bar r_e-0}{s_e/\sqrt T}=\frac{\bar r_e}{s_e}\sqrt T=\widehat{\mathrm{SR}}\sqrt T\\
-\widehat{\mathrm{SR}}=1.20,\ T=3&:\quad t=1.20\sqrt3=1.20(1.73205)=2.0785\end{aligned}
+&\widehat{\mathrm{SR}}=1.20,\ T=3:\\
+&\quad t=1.20\sqrt3=1.20(1.73205)=2.0785
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความคลาดของค่าเฉลี่ยคือความเหวี่ยงหารรากของจำนวนปี จัดรูปแล้ว s_e ไปรวมกับค่าเฉลี่ยเป็น Sharpe ส่วนรากของจำนวนปีขึ้นไปคูณด้านบน การทดสอบนี้จึงต้องรู้แค่ Sharpe กับจำนวนปี ไม่ต้องรู้ค่าเฉลี่ยกับความเหวี่ยงแยกกัน</p>
@@ -117,9 +120,13 @@ t&=\frac{\bar r_e-0}{s_e/\sqrt T}=\frac{\bar r_e}{s_e}\sqrt T=\widehat{\mathrm{S
   <h4>ขั้นที่ 3 — p-value สองหาง และผ่านแบบเฉียดแค่ไหน</h4>
   <p>ภายใต้ null ค่า t มีรูปราวระฆังมาตรฐาน alternative คือ edge ต่างจากศูนย์ทั้งสองทาง จึงนับทั้งสองหาง</p>
   <div class="math">\[
-\begin{aligned}\Phi(2.0785)&=0.981168,\qquad 1-0.981168=0.018832\\
+\begin{aligned}
+\Phi(2.0785)&=0.981168\\
+&1-0.981168=0.018832\\
 p&=2(0.018832)=0.0377=3.77\%\lt5\%\\
-\mathrm{SR}_{\rm crit}&=\frac{1.96}{\sqrt3}=\frac{1.96}{1.73205}=1.132,\qquad 1.20-1.132=0.068\end{aligned}
+\mathrm{SR}_{\rm crit}&=\frac{1.96}{\sqrt3}=\frac{1.96}{1.73205}=1.132\\
+&1.20-1.132=0.068
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>Φ ไม่มีสูตรปิด ต้องเปิดตาราง ผ่านเกณฑ์ 5% ก็จริง แต่ Sharpe เกินเส้นแค่ 0.068 หรือราว 6% ของค่าที่ต้องการ ถ้าเดือนใดเดือนหนึ่งใน 36 เดือนแย่ลงนิดเดียว ผลจะพลิกเป็นไม่ผ่านทันที</p>
@@ -150,9 +157,14 @@ p&=2\big(1-\Phi(2)\big)=2(1-0.977250)=2(0.022750)=4.55\%\end{aligned}
   <h4>ขั้นที่ 5 — power: ถ้ามีฝีมือจริง จะจับได้บ่อยแค่ไหน</h4>
   <p>สมมติ active return 3% เป็นของจริง ค่า t ที่วัดได้จะแกว่งรอบค่ากลาง 2.00 ด้วยความเหวี่ยง 1 ปฏิเสธ null เมื่อ t เกิน 1.96 เลื่อนจุดศูนย์ไปที่ 2.00 แล้วอ่านพื้นที่</p>
   <div class="math">\[
-\begin{aligned}P(t\gt1.96)&=P(Z\gt1.96-2.00)=P(Z\gt-0.04)=\Phi(0.04)=51.6\%\\
-\text{false negative}&=1-0.516=48.4\%\\
-80\%\ \text{power}&:\ 0.5\sqrt n=1.96+0.8416=2.8016\ \Rightarrow\ \sqrt n=5.603\ \Rightarrow\ n=31.4\approx32\ \text{years}\end{aligned}
+\begin{aligned}
+&P(t\gt1.96)=P(Z\gt1.96-2.00)\\
+&=P(Z\gt-0.04)=\Phi(0.04)=51.6\%\\
+&\text{false negative}=1-0.516=48.4\%\\
+&80\%\ \text{power}:\\
+&\quad 0.5\sqrt n=1.96+0.8416=2.8016\\
+&\quad\Rightarrow\ \sqrt n=5.603\ \Rightarrow\ n=31.4\approx32\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อมูล 16 ปีให้ p = 4.55% ก็จริง แต่ถ้าผู้จัดการเก่งจริง การทดสอบจับได้แค่ครึ่งเดียว โยนเหรียญก็ได้เท่านี้ 0.8416 คือจุดที่ระฆังมีพื้นที่ทางซ้าย 80% อยากจับได้ 80% ของเวลาต้องใช้ 32 ปี นี่คือครึ่งที่หายไปของการทดสอบ</p>
@@ -174,10 +186,18 @@ P(t\gt1.96)=\Phi(2.0785-1.96)=\Phi(0.1185)=54.7\%,\qquad 1-0.547=45.3\%
   <h4>ขั้นที่ 7 — ความคลาดของ Sharpe เอง: สองแหล่งรวมกัน</h4>
   <p>ขั้นที่ 2 ทดสอบว่าค่าเฉลี่ยต่างจากศูนย์ไหม ตอนนี้ถามใหม่ว่า Sharpe จริงน่าจะเท่าไร Sharpe เป็นอัตราส่วนของค่าประมาณสองตัว ใช้ Delta method กระจายรอบค่าจริง</p>
   <div class="math">\[
-\begin{aligned}\widehat{\mathrm{SR}}-\mathrm{SR}&\approx\frac{1}{\sigma}(\bar r_e-\mu)-\frac{\mu}{\sigma^2}(\hat\sigma-\sigma)\\
-\operatorname{Var}(\widehat{\mathrm{SR}})&\approx\frac{1}{\sigma^2}\cdot\frac{\sigma^2}{T}+\frac{\mu^2}{\sigma^4}\cdot\frac{\sigma^2}{2T}=\frac{1}{T}+\frac{\mathrm{SR}^2}{2T}=\frac{1+\tfrac12\mathrm{SR}^2}{T}\\
-\operatorname{SE}(\widehat{\mathrm{SR}})&\approx\sqrt{\frac{1+\tfrac12(1.44)}{3}}=\sqrt{\frac{1.72}{3}}=0.757\\
-95\%\ \text{interval}&:\ 1.20\pm1.96(0.757)=1.20\pm1.484=[-0.28,\ 2.68]\end{aligned}
+\begin{aligned}
+&\widehat{\mathrm{SR}}-\mathrm{SR}\\
+&\approx\frac{1}{\sigma}(\bar r_e-\mu)-\frac{\mu}{\sigma^2}(\hat\sigma-\sigma)\\
+&\operatorname{Var}(\widehat{\mathrm{SR}})\\
+&\approx\frac{1}{\sigma^2}\cdot\frac{\sigma^2}{T}+\frac{\mu^2}{\sigma^4}\cdot\frac{\sigma^2}{2T}\\
+&=\frac{1}{T}+\frac{\mathrm{SR}^2}{2T}=\frac{1+\tfrac12\mathrm{SR}^2}{T}\\
+&\operatorname{SE}(\widehat{\mathrm{SR}})\\
+&\approx\sqrt{\frac{1+\tfrac12(1.44)}{3}}=\sqrt{\frac{1.72}{3}}=0.757\\
+&95\%\ \text{interval}:\\
+&\quad 1.20\pm1.96(0.757)=1.20\pm1.484\\
+&\quad=[-0.28,\ 2.68]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความชันตามค่าเฉลี่ยคือหนึ่งส่วน σ ตามความเหวี่ยงคือ −μ/σ² variance ของความเหวี่ยงคือ σ²/(2T) จากหัวข้อ 14.3 ผลตอบแทนแบบระฆังทำให้ค่าเฉลี่ยกับความเหวี่ยงไม่เกี่ยวกัน พจน์ไขว้จึงเป็นศูนย์</p>
@@ -189,9 +209,15 @@ P(t\gt1.96)=\Phi(2.0785-1.96)=\Phi(0.1185)=54.7\%,\qquad 1-0.547=45.3\%
   <h4>ขั้นที่ 8 — ต้องใช้ข้อมูลกี่ปี: พลิกสูตรกลับ</h4>
   <p>จาก t = Sharpe คูณรากของจำนวนปี ได้จำนวนปีเท่ากับ t หาร Sharpe ทั้งก้อนกำลังสอง ตอบสามคำถามที่ต่างกัน</p>
   <div class="math">\[
-\begin{aligned}t=1.96&:\quad T=\Big(\frac{1.96}{1.20}\Big)^2=1.6333^2=2.67\ \text{years}\\
-\text{interval above }0&:\quad 1.20\gt1.96\sqrt{\frac{1.72}{T}}\ \Rightarrow\ T\gt\frac{1.96^2(1.72)}{1.44}=\frac{6.6076}{1.44}=4.59\ \text{years}\\
-t=3&:\quad T=\Big(\frac{3}{1.20}\Big)^2=2.5^2=6.25\ \text{years}\end{aligned}
+\begin{aligned}
+&t=1.96:\\
+&\quad T=\Big(\frac{1.96}{1.20}\Big)^2=1.6333^2=2.67\ \text{years}\\
+&\text{interval above }0:\\
+&\quad 1.20\gt1.96\sqrt{\frac{1.72}{T}}\\
+&\quad\Rightarrow\ T\gt\frac{1.96^2(1.72)}{1.44}=\frac{6.6076}{1.44}=4.59\ \text{years}\\
+&t=3:\\
+&\quad T=\Big(\frac{3}{1.20}\Big)^2=2.5^2=6.25\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผ่านเกณฑ์ 5% ต้องใช้แค่ 2.67 ปี จึงผ่านมาได้แบบเฉียด แต่ให้ช่วงของ Sharpe พ้นศูนย์ต้องใช้ 4.59 ปี และถ้าใช้เกณฑ์ที่เข้มกว่าอย่าง t = 3 ต้อง 6.25 ปี เกณฑ์ที่เข้มขึ้นต้องซื้อด้วยเวลา ไม่ใช่ด้วยการแปลงข้อมูลรายวันซ้ำ ๆ</p>
@@ -210,9 +236,14 @@ t=3&:\quad T=\Big(\frac{3}{1.20}\Big)^2=2.5^2=6.25\ \text{years}\end{aligned}
   <h4>ขั้นที่ 9 — เมื่อผลตอบแทนงวดติดกันเกี่ยวกัน: ความคลาดต้องขยาย</h4>
   <p>กาง variance ของผลรวมให้ครบรวมพจน์ไขว้ทุกคู่ คู่ที่ห่างกัน k งวดมี T − k คู่ แต่ละคู่มี covariance เท่ากับ variance คูณ autocorrelation</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\Big(\sum_{t=1}^{T}r_t\Big)&=T\gamma_0+2\sum_{k=1}^{T-1}(T-k)\,\gamma_0\,\rho_k\\
-\operatorname{Var}(\bar r_e)&=\frac{\gamma_0}{T}\Big(1+2\sum_{k=1}^{T-1}\Big(1-\frac{k}{T}\Big)\rho_k\Big)\\
-\rho_k=0.5^k,\ T\ \text{large}&:\quad 1+\frac{2(0.5)}{1-0.5}=3,\qquad \sqrt3=1.732\end{aligned}
+\begin{aligned}
+&\operatorname{Var}\Big(\sum_{t=1}^{T}r_t\Big)\\
+&=T\gamma_0+2\sum_{k=1}^{T-1}(T-k)\,\gamma_0\,\rho_k\\
+&\operatorname{Var}(\bar r_e)\\
+&=\frac{\gamma_0}{T}\Big(1+2\sum_{k=1}^{T-1}\Big(1-\frac{k}{T}\Big)\rho_k\Big)\\
+&\rho_k=0.5^k,\ T\ \text{large}:\\
+&\quad 1+\frac{2(0.5)}{1-0.5}=3,\qquad \sqrt3=1.732
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>γ₀ คือ variance ของงวดเดียว ถ้าความเกี่ยวกันจางครึ่งหนึ่งทุกงวด ตัวคูณของ variance เป็นสามเท่า ความคลาดโต 1.732 เท่า ค่า t ที่รายงานไว้ต้องเอาเลขนั้นหาร t = 2.08 จะเหลือ 1.20 กลยุทธ์ที่ดูผ่านเกณฑ์อาจไม่ผ่านเลย</p>

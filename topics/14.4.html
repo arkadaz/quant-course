@@ -85,7 +85,8 @@
   <div class="math">\[
 \begin{aligned}
 \Phi(1.96)&=0.9750\\
-P(-1.96\lt Z\lt1.96)&=0.9750-0.0250=0.95\\
+&P(-1.96\lt Z\lt1.96)\\
+&=0.9750-0.0250=0.95\\
 \Phi(1.645)&=0.9500\ \Rightarrow\ 90\%\\
 \Phi(2.576)&=0.9950\ \Rightarrow\ 99\%\\
 2\Phi(2)-1&=0.9545
@@ -100,9 +101,12 @@ P(-1.96\lt Z\lt1.96)&=0.9750-0.0250=0.95\\
   <h4>ขั้นที่ 2 — ความเหวี่ยงของค่าเฉลี่ยของผู้จัดการตามจำนวนปี</h4>
   <p>active return เหวี่ยง 6% ต่อปี และปีต่าง ๆ ไม่เกี่ยวกัน ใช้ผลของหัวข้อ 14.3 กับจำนวนปีต่าง ๆ</p>
   <div class="math">\[
-\begin{aligned}\operatorname{SE}(\hat\mu)&=\frac{\sigma}{\sqrt n}=\frac{6\%}{\sqrt n}\\
-n=1&:\ 6.00\%\qquad n=4:\ 3.00\%\qquad n=5:\ \frac{6}{2.236}=2.68\%\\
-n=9&:\ 2.00\%\qquad n=16:\ 1.50\%\end{aligned}
+\begin{aligned}
+\operatorname{SE}(\hat\mu)&=\frac{\sigma}{\sqrt n}=\frac{6\%}{\sqrt n}\\
+&n=1:\ 6.00\%\qquad n=4:\ 3.00\%\\
+&n=5:\ \frac{6}{2.236}=2.68\%\\
+&n=9:\ 2.00\%\qquad n=16:\ 1.50\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สิ่งที่บวกกันได้เมื่อปีไม่เกี่ยวกันคือ variance ไม่ใช่ความเหวี่ยง จึงหดตามรากของจำนวนปี ข้อมูล 16 ปีลดความคลาดลงแค่สี่เท่าจากปีเดียว</p>
@@ -113,9 +117,14 @@ n=9&:\ 2.00\%\qquad n=16:\ 1.50\%\end{aligned}
   <h4>ขั้นที่ 3 — จากรูประฆังถึงช่วง: จัดอสมการให้ค่าจริงอยู่ตรงกลาง</h4>
   <p>Central Limit Theorem (CLT) ของหัวข้อ 14.2 บอกว่าค่าเฉลี่ยลบค่าจริงหารความคลาดมีรูปราวระฆังมาตรฐาน ตัดหางด้วยตัวคูณจากขั้นที่ 1 แล้วจัดรูปทีละบรรทัด</p>
   <div class="math">\[
-\begin{aligned}P\Big(-z_{1-\alpha/2}\lt\frac{\hat\mu-\mu}{\sigma/\sqrt n}\lt z_{1-\alpha/2}\Big)&\approx1-\alpha\\
--z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\ \lt\ \hat\mu-\mu\ &\lt\ z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\\
-\hat\mu-z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\ \lt\ \mu\ &\lt\ \hat\mu+z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\end{aligned}
+\begin{aligned}
+&P\Big(-z_{1-\alpha/2}\lt\frac{\hat\mu-\mu}{\sigma/\sqrt n}\lt z_{1-\alpha/2}\Big)\\
+&\approx1-\alpha\\
+&-z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\ \lt\ \hat\mu-\mu\\
+&\quad\lt\ z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\\
+&\hat\mu-z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\ \lt\ \mu\\
+&\quad\lt\ \hat\mu+z_{1-\alpha/2}\frac{\sigma}{\sqrt n}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คูณทุกข้างด้วยความคลาด แล้วลบ μ̂ และกลับเครื่องหมาย ทิศของอสมการกลับตามการคูณลบ ตอนนี้ขอบทั้งสองเป็นของที่คำนวณจากข้อมูล ส่วน μ อยู่ตรงกลาง ช่วงจึงเปลี่ยนตามข้อมูล ค่าจริงไม่เปลี่ยน</p>
@@ -124,10 +133,14 @@ n=9&:\ 2.00\%\qquad n=16:\ 1.50\%\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 4 — นิยามของ confidence interval และตัวเลข 4 ปี</h4>
-  <p>บรรทัดแรกเป็นนิยามของช่วงที่เราเลือกรายงาน สร้างจากบรรทัดสุดท้ายของขั้นที่ 3 แทนผู้จัดการที่ 4 ปี</p>
+  <p>สองบรรทัดแรกเป็นนิยามของช่วงที่เราเลือกรายงาน สร้างจากสองบรรทัดสุดท้ายของขั้นที่ 3 แทนผู้จัดการที่ 4 ปี</p>
   <div class="math">\[
-\begin{aligned}{[L,U]}&=\Big[\hat\mu-z_{1-\alpha/2}\frac{\sigma}{\sqrt n},\ \ \hat\mu+z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\Big]\\
-n=4&:\ 1.96\times3\%=5.88\%,\qquad [3-5.88,\ 3+5.88]=[-2.88\%,\ 8.88\%]\end{aligned}
+\begin{aligned}
+{[L,U]}&=\Big[\hat\mu-z_{1-\alpha/2}\frac{\sigma}{\sqrt n},\\
+&\qquad\hat\mu+z_{1-\alpha/2}\frac{\sigma}{\sqrt n}\Big]\\
+&n=4:\ 1.96\times3\%=5.88\%\\
+&[3-5.88,\ 3+5.88]=[-2.88\%,\ 8.88\%]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ช่วงครอบทั้งขาดทุน 2.88% ต่อปีและกำไร 8.88% ต่อปี ศูนย์อยู่ในนั้นสบาย ๆ ข้อมูล 4 ปียังแยกผู้จัดการคนนี้ออกจากคนที่ไม่มีฝีมือเลยไม่ได้</p>
@@ -197,9 +210,14 @@ n&\gt3.92^2=15.37\ \Rightarrow\ n=16\ \text{years}\end{aligned}
   <h4>ขั้นที่ 7 — ทำไมต้องเปลี่ยนจาก z เป็น t เมื่อข้อมูลน้อย</h4>
   <p>ถ้ารู้ σ จริง ตัวหารเป็นค่าคงที่ แต่ปกติเราต้องประมาณ σ จากข้อมูลชุดเดียวกัน ตัวหารจึงแกว่งด้วย ทั้งก้อนจึงหางหนากว่าระฆัง</p>
   <div class="math">\[
-\begin{aligned}\frac{\hat\mu-\mu}{\sigma/\sqrt n}&\sim\mathcal N(0,1),\qquad \frac{\hat\mu-\mu}{s/\sqrt n}\sim t_{n-1}\quad(\text{normal data})\\
-n=4&:\ t_{0.975,3}=3.182\qquad n=16:\ t_{0.975,15}=2.131\qquad n=30:\ t_{0.975,29}=2.045\\
-\frac{3.182}{1.96}&=1.62\end{aligned}
+\begin{aligned}
+&\frac{\hat\mu-\mu}{\sigma/\sqrt n}\sim\mathcal N(0,1)\\
+&\frac{\hat\mu-\mu}{s/\sqrt n}\sim t_{n-1}\quad(\text{normal data})\\
+&n=4:\ t_{0.975,3}=3.182\\
+&n=16:\ t_{0.975,15}=2.131\\
+&n=30:\ t_{0.975,29}=2.045\\
+&\frac{3.182}{1.96}=1.62
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>William Gosset พบรูปนี้ราวปี 1908 ที่โรงเบียร์ Guinness เพราะมีข้อมูลทีละสี่ห้าตัว เขาตีพิมพ์ในนามปากกา Student ที่ 4 ปี ตัวคูณคือ 3.182 ช่วงกว้างกว่าแบบ z ถึง 62% ค่าเฉลี่ยของข้อมูลกินข้อมูลไปหนึ่งตัว จึงเหลือ 3 degrees of freedom</p>
@@ -210,9 +228,15 @@ n=4&:\ t_{0.975,3}=3.182\qquad n=16:\ t_{0.975,15}=2.131\qquad n=30:\ t_{0.975,2
   <h4>ขั้นที่ 8 — ช่วงแบบ t ของผู้จัดการ: 16 ปียังไม่พอ</h4>
   <p>ใช้ s = 6% ที่ประมาณจากข้อมูล แทนตัวคูณ t แล้วแก้หาจำนวนปีที่ช่วงพ้นศูนย์อีกครั้ง</p>
   <div class="math">\[
-\begin{aligned}n=4&:\ 3\pm3.182(3\%)=3\pm9.55\ \Rightarrow\ [-6.55\%,\ 12.55\%]\\
-n=16&:\ 3\pm2.131(1.5\%)=3\pm3.20\ \Rightarrow\ [-0.20\%,\ 6.20\%]\\
-n=17&:\ 2.120\times\frac{6}{4.123}=3.08\gt3\qquad n=18:\ 2.110\times\frac{6}{4.243}=2.98\lt3\ \Rightarrow\ 18\ \text{years}\end{aligned}
+\begin{aligned}
+&n=4:\ 3\pm3.182(3\%)=3\pm9.55\\
+&\quad\Rightarrow\ [-6.55\%,\ 12.55\%]\\
+&n=16:\ 3\pm2.131(1.5\%)=3\pm3.20\\
+&\quad\Rightarrow\ [-0.20\%,\ 6.20\%]\\
+&n=17:\ 2.120\times\frac{6}{4.123}=3.08\gt3\\
+&n=18:\ 2.110\times\frac{6}{4.243}=2.98\lt3\\
+&\quad\Rightarrow\ 18\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ที่ 16 ปีช่วงแบบ t ยังครอบศูนย์ เพราะนับความไม่แน่นอนของ s ด้วย ต้องใช้ 18 ปี ถ้าเผลอใช้ 1.96 กับข้อมูลน้อยตัว ช่วงจะแคบกว่าที่ควร และวิธีจะครอบค่าจริงน้อยกว่า 95% ที่สัญญาไว้</p>

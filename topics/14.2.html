@@ -89,10 +89,15 @@
   <h4>ขั้นที่ 1 — นับด้วยมือ: ลูกเต๋าหนึ่ง สอง และสี่ลูก</h4>
   <p>ก่อนสูตร ลองนับสิ่งที่นับได้ ผลรวมของลูกเต๋าแต่ละค่าเกิดได้กี่วิธี</p>
   <div class="math">\[
-\begin{aligned}\text{one die}&:\ P(1)=P(2)=\cdots=P(6)=\tfrac16\\
-N_2(s),\ s=2,\ldots,12&:\ 1,2,3,4,5,6,5,4,3,2,1\qquad(\text{total }36)\\
+\begin{aligned}
+&\text{one die}:\\
+&\quad P(1)=P(2)=\cdots=P(6)=\tfrac16\\
+&N_2(s),\ s=2,\ldots,12:\\
+&\quad 1,2,3,4,5,6,5,4,3,2,1\qquad(\text{total }36)\\
 P(7)&=\tfrac{6}{36},\qquad P(2)=P(12)=\tfrac1{36}\\
-\text{four dice}&:\ P(14)=\tfrac{146}{1{,}296},\qquad P(4)=P(24)=\tfrac1{1{,}296}\end{aligned}
+&\text{four dice}:\\
+&\quad P(14)=\tfrac{146}{1{,}296},\qquad P(4)=P(24)=\tfrac1{1{,}296}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>N₂(s) คือจำนวนวิธีที่สองลูกรวมได้ s ลูกเดียวราบ ทุกหน้าโอกาสเท่ากัน สองลูกได้ผลรวม 7 หกวิธี แต่ได้ 2 วิธีเดียว จึงเป็นสามเหลี่ยม สี่ลูกได้ 14 ถึง 146 วิธี ปลายทั้งสองวิธีเดียว รูปเริ่มโค้งเป็นระฆัง ตรงกลางประกอบได้หลายทาง ปลายต้องให้ทุกลูกออกสุดโต่งพร้อมกัน</p>
@@ -103,10 +108,17 @@ P(7)&=\tfrac{6}{36},\qquad P(2)=P(12)=\tfrac1{36}\\
   <h4>ขั้นที่ 2 — ระฆังทายสี่ลูกเต๋าได้แม่นแค่ไหน</h4>
   <p>หาจุดกลางและความเหวี่ยงของลูกเดียว แล้วใช้ระฆังทายโอกาสที่ผลรวมสี่ลูกได้อย่างน้อย 20 เทียบกับการนับตรง</p>
   <div class="math">\[
-\begin{aligned}\text{one die}&:\ \mu=3.5,\qquad \sigma^2=\tfrac{1^2+2^2+\cdots+6^2}{6}-3.5^2=\tfrac{91}{6}-12.25=\tfrac{35}{12}\\
-\text{four dice}&:\ \text{mean }14,\qquad \operatorname{SD}=\sqrt{4\cdot\tfrac{35}{12}}=3.416\\
-\text{bell}&:\ P(S\ge20)\approx1-\Phi\Big(\frac{19.5-14}{3.416}\Big)=1-\Phi(1.61)=5.37\%\\
-\text{exact count}&:\ \tfrac{70}{1{,}296}=5.40\%\end{aligned}
+\begin{aligned}
+&\text{one die}:\\
+&\quad\mu=3.5,\qquad \sigma^2=\tfrac{1^2+2^2+\cdots+6^2}{6}-3.5^2\\
+&\quad=\tfrac{91}{6}-12.25=\tfrac{35}{12}\\
+&\text{four dice}:\\
+&\quad\text{mean }14,\qquad \operatorname{SD}=\sqrt{4\cdot\tfrac{35}{12}}=3.416\\
+&\text{bell}:\\
+&\quad P(S\ge20)\approx1-\Phi\Big(\frac{19.5-14}{3.416}\Big)\\
+&\quad=1-\Phi(1.61)=5.37\%\\
+&\text{exact count}:\ \tfrac{70}{1{,}296}=5.40\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้ 19.5 แทน 20 เพราะผลรวมเป็นจำนวนเต็ม แค่สี่ลูก ระฆังก็ทายคลาดเพียง 0.03 percentage points ทั้งที่ลูกเต๋าลูกเดียวราบสนิท นี่คือพลังของ CLT ที่สูตรข้างล่างอธิบาย</p>
@@ -115,11 +127,17 @@ P(7)&=\tfrac{6}{36},\qquad P(2)=P(12)=\tfrac1{36}\\
 
 <section class="formula">
   <h4>ขั้นที่ 3 — นิยามของค่าเฉลี่ยที่ปรับแล้ว: ให้ทุกจำนวนข้อมูลใช้ไม้บรรทัดเดียวกัน</h4>
-  <p>ค่าเฉลี่ยหดเข้าหาจุดเดียวเมื่อข้อมูลมาก จะดูรูปร่างได้ต้องขยายกลับด้วยความเหวี่ยงของค่าเฉลี่ย บรรทัดที่สองเป็นนิยาม</p>
+  <p>ค่าเฉลี่ยหดเข้าหาจุดเดียวเมื่อข้อมูลมาก จะดูรูปร่างได้ต้องขยายกลับด้วยความเหวี่ยงของค่าเฉลี่ย บรรทัดที่สามถึงสี่เป็นนิยาม</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[\bar X_n]&=\mu,\qquad\operatorname{SD}(\bar X_n)=\frac{\sigma}{\sqrt n}\qquad\text{(topic 14.1)}\\
-Z_n&=\frac{\bar X_n-\mu}{\sigma/\sqrt n},\qquad \mathbb E[Z_n]=0,\qquad\operatorname{Var}(Z_n)=1\\
-\text{CLT}&:\ \text{the shape of }Z_n\ \text{approaches}\ \mathcal N(0,1)\ \text{as }n\ \text{grows}\end{aligned}
+\begin{aligned}
+\mathbb E[\bar X_n]&=\mu\\
+\operatorname{SD}(\bar X_n)&=\frac{\sigma}{\sqrt n}\qquad\text{(topic 14.1)}\\
+Z_n&=\frac{\bar X_n-\mu}{\sigma/\sqrt n}\\
+&\mathbb E[Z_n]=0,\qquad\operatorname{Var}(Z_n)=1\\
+&\text{CLT}:\\
+&\quad\text{the shape of }Z_n\ \text{approaches}\ \mathcal N(0,1)\\
+&\quad\text{as }n\ \text{grows}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จุดกลางและความกว้างเราคำนวณเองได้แล้ว CLT บอกเรื่องเดียวคือรูปร่าง ย้อนการปรับกลับได้ว่าค่าเฉลี่ยมีรูปราวระฆังที่จุดกลาง μ ความกว้าง σ หารรากของ n เป็นค่าประมาณที่ต้องตรวจ ไม่ใช่ความจริงที่ทุก n</p>
@@ -130,10 +148,18 @@ Z_n&=\frac{\bar X_n-\mu}{\sigma/\sqrt n},\qquad \mathbb E[Z_n]=0,\qquad\operator
   <h4>ขั้นที่ 4 — ทำไมต้องเป็นระฆัง: พจน์กำลังสองชนะทุกพจน์</h4>
   <p>ใช้ MGF ที่เปลี่ยนผลรวมของตัวแปรอิสระเป็นผลคูณ ปรับข้อมูลแต่ละตัวให้จุดกลางศูนย์ ความกว้างหนึ่ง แล้วกระจาย Taylor ของ exponential</p>
   <div class="math">\[
-\begin{aligned}Y_i&=\frac{X_i-\mu}{\sigma},\quad\mathbb E[Y_i]=0,\quad\mathbb E[Y_i^2]=1,\quad Z_n=\frac1{\sqrt n}\sum_{i=1}^n Y_i\\
-M_Y(s)&=\mathbb E\Big[1+sY+\frac{s^2Y^2}{2}+\cdots\Big]=1+0+\frac{s^2}{2}+(\text{smaller terms})\\
-M_{Z_n}(t)&=\Big(M_Y\big(\tfrac{t}{\sqrt n}\big)\Big)^n=\Big(1+\frac{t^2}{2n}+(\text{smaller})\Big)^n\\
-\lim_{n\to\infty}M_{Z_n}(t)&=e^{t^2/2}=\int_{-\infty}^\infty e^{tz}\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=M_{\mathcal N(0,1)}(t)\end{aligned}
+\begin{aligned}
+Y_i&=\frac{X_i-\mu}{\sigma}\\
+&\mathbb E[Y_i]=0,\quad\mathbb E[Y_i^2]=1\\
+Z_n&=\frac1{\sqrt n}\sum_{i=1}^n Y_i\\
+M_Y(s)&=\mathbb E\Big[1+sY+\frac{s^2Y^2}{2}+\cdots\Big]\\
+&=1+0+\frac{s^2}{2}+(\text{smaller terms})\\
+M_{Z_n}(t)&=\Big(M_Y\big(\tfrac{t}{\sqrt n}\big)\Big)^n\\
+&=\Big(1+\frac{t^2}{2n}+(\text{smaller})\Big)^n\\
+&\lim_{n\to\infty}M_{Z_n}(t)\\
+&=e^{t^2/2}=\int_{-\infty}^\infty e^{tz}\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz\\
+&=M_{\mathcal N(0,1)}(t)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์กำลังหนึ่งตายเพราะจุดกลางเป็นศูนย์ พจน์กำลังสองมีตัวคูณเป็น variance ซึ่งเป็นหนึ่ง ไม่ว่ารูปเดิมเบ้แค่ไหน ข้อมูลอิสระทำให้ MGF ของผลรวมเป็นผลคูณ n ตัว กำลังสองของรากของ n คือ n พอดี แล้ว $(1+a/n)^n$ เข้าหา $e^a$</p>
@@ -158,8 +184,11 @@ n=10&:\ \Big(1+\frac{1}{20}\Big)^{10}=1.05^{10}=1.6289\\
   <h4>ขั้นที่ 6 — ผู้จัดการกองทุน: ความเหวี่ยงของค่าเฉลี่ยตามจำนวนปี</h4>
   <p>active return เฉลี่ย 3% ต่อปี เหวี่ยง 6% ต่อปี ปีต่าง ๆ เป็นอิสระต่อกัน ใช้สูตรของหัวข้อ 14.1</p>
   <div class="math">\[
-\begin{aligned}\operatorname{SE}&=\frac{6\%}{\sqrt n}\\
-n=1&:\ 6.00\%\qquad n=4:\ \frac{6}{2}=3.00\%\qquad n=9:\ \frac63=2.00\%\qquad n=16:\ \frac64=1.50\%\end{aligned}
+\begin{aligned}
+\operatorname{SE}&=\frac{6\%}{\sqrt n}\\
+&n=1:\ 6.00\%\qquad n=4:\ \frac{6}{2}=3.00\%\\
+&n=9:\ \frac63=2.00\%\qquad n=16:\ \frac64=1.50\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สิ่งที่บวกกันได้เมื่ออิสระคือ variance ไม่ใช่ความเหวี่ยง หาร n² แล้วเหลือ n ข้างล่าง ถอดรากได้รากของ n ข้อมูล 4 ปีให้ความเหวี่ยงของค่าเฉลี่ยเท่ากับ 3% คือเท่ากับค่าเฉลี่ยที่วัดได้พอดี</p>
@@ -178,9 +207,14 @@ n=1&:\ 6.00\%\qquad n=4:\ \frac{6}{2}=3.00\%\qquad n=9:\ \frac63=2.00\%\qquad n=
   <h4>ขั้นที่ 7 — t-statistic คือคุณภาพคูณรากของจำนวนปี</h4>
   <p>วัดว่าค่าเฉลี่ยห่างจากศูนย์กี่เท่าของความเหวี่ยงของค่าเฉลี่ย แล้วแยกรากออกมา</p>
   <div class="math">\[
-\begin{aligned}t&=\frac{\bar X_n-0}{\sigma/\sqrt n}=\frac{\bar X_n}{\sigma}\sqrt n=\mathrm{IR}\sqrt n,\qquad \mathrm{IR}=\frac{0.03}{0.06}=0.50\\
-n=4&:\ t=1.00\qquad n=16:\ t=2.00\qquad n=36:\ t=3.00\qquad n=100:\ t=5.00\\
-t=2&\ \Rightarrow\ n=\Big(\frac{2}{\mathrm{IR}}\Big)^2=\Big(\frac{2}{0.50}\Big)^2=16,\qquad \mathrm{IR}=0.25\ \Rightarrow\ 64\ \text{years}\end{aligned}
+\begin{aligned}
+t&=\frac{\bar X_n-0}{\sigma/\sqrt n}=\frac{\bar X_n}{\sigma}\sqrt n=\mathrm{IR}\sqrt n\\
+\mathrm{IR}&=\frac{0.03}{0.06}=0.50\\
+&n=4:\ t=1.00\qquad n=16:\ t=2.00\\
+&n=36:\ t=3.00\qquad n=100:\ t=5.00\\
+&t=2\ \Rightarrow\ n=\Big(\frac{2}{\mathrm{IR}}\Big)^2=\Big(\frac{2}{0.50}\Big)^2=16\\
+&\mathrm{IR}=0.25\ \Rightarrow\ 64\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความนานทำงานแทนคุณภาพ กลยุทธ์ธรรมดาที่รันนานพอก็ดูมีนัยสำคัญได้ ข้อมูลสี่เท่าทำให้ t โตแค่สองเท่า คุณภาพลดครึ่งหนึ่ง เวลาที่ต้องรอเพิ่มสี่เท่า สิบหกปีนานกว่าอายุของกลยุทธ์ส่วนใหญ่</p>
@@ -210,9 +244,13 @@ P\big(\bar X_4\ge3\%\ \big|\ \mu=0\big)\approx1-\Phi\Big(\frac{3\%-0}{3\%}\Big)=
   <h4>ขั้นที่ 9 — skewness หายช้า: หดตามรากของ n เท่านั้น</h4>
   <p>ถ้าข้อมูลรายตัวมี skewness ค่าเฉลี่ยก็ยังเอียงอยู่บ้าง หาค่าเฉลี่ยของกำลังสามของผลรวม ข้อมูลอิสระจุดกลางศูนย์ทำให้พจน์ไขว้ทุกตัวเป็นศูนย์</p>
   <div class="math">\[
-\begin{aligned}\mathbb E\Big[\Big(\sum_{i=1}^nY_i\Big)^3\Big]&=\sum_{i=1}^n\mathbb E[Y_i^3]=n\gamma\qquad(\gamma=\text{skewness of one }Y)\\
+\begin{aligned}
+&\mathbb E\Big[\Big(\sum_{i=1}^nY_i\Big)^3\Big]\\
+&=\sum_{i=1}^n\mathbb E[Y_i^3]=n\gamma\\
+&\quad(\gamma=\text{skewness of one }Y)\\
 \gamma_{\bar Y}&=\frac{n\gamma}{(\sqrt n)^3}=\frac{\gamma}{\sqrt n}\\
-\gamma=-1,\ n=30&:\ \frac{-1}{\sqrt{30}}=-0.18\end{aligned}
+&\gamma=-1,\ n=30:\ \frac{-1}{\sqrt{30}}=-0.18
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>γ ของค่าเฉลี่ยคือผลรวมกำลังสามหารความเหวี่ยงของผลรวมกำลังสาม พจน์ไขว้อย่าง Y_i² Y_j มี Y_j ตัวเดียวที่เฉลี่ยศูนย์ จึงหายหมด เหลือ n พจน์ skewness หดแค่ตามรากของ n ค่าเฉลี่ยของ 30 วันจากผลตอบแทนที่ skewness −1 ยังเหลือ −0.18 ตรงกลางดูเป็นระฆังแล้ว แต่หางซ้ายยังหนากว่าระฆัง</p>
@@ -231,9 +269,17 @@ P\big(\bar X_4\ge3\%\ \big|\ \mu=0\big)\approx1-\Phi\Big(\frac{3\%-0}{3\%}\Big)=
   <h4>ขั้นที่ 10 — เมื่อปีติดกันเกี่ยวกัน: ความเหวี่ยงของค่าเฉลี่ยต้องคูณเพิ่ม</h4>
   <p>ถ้าปีติดกันมี autocorrelation ρ และห่างกัน k ปีมี $\rho^k$ variance ของผลรวมต้องบวกพจน์ไขว้ทุกคู่ เมื่อ n ใหญ่ ตัวคูณคือผลรวมของ autocorrelation ทั้งสองทิศ</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(\bar X_n)&\approx\frac{\sigma^2}{n}\Big(1+2\sum_{k=1}^{\infty}\rho^k\Big)=\frac{\sigma^2}{n}\Big(1+\frac{2\rho}{1-\rho}\Big)=\frac{\sigma^2}{n}\cdot\frac{1+\rho}{1-\rho}\\
-\rho=0.5&:\ \frac{1.5}{0.5}=3\ \Rightarrow\ \operatorname{SE}\ \text{is}\ \sqrt3=1.73\ \text{times the iid value}\\
-n=16&:\ \operatorname{SE}=1.50\%\times1.73=2.60\%,\qquad t=\frac{3}{2.60}=1.15\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(\bar X_n)\\
+&\approx\frac{\sigma^2}{n}\Big(1+2\sum_{k=1}^{\infty}\rho^k\Big)\\
+&=\frac{\sigma^2}{n}\Big(1+\frac{2\rho}{1-\rho}\Big)\\
+&=\frac{\sigma^2}{n}\cdot\frac{1+\rho}{1-\rho}\\
+&\rho=0.5:\ \frac{1.5}{0.5}=3\\
+&\Rightarrow\ \operatorname{SE}\ \text{is}\ \sqrt3=1.73\\
+&\quad\text{times the iid value}\\
+&n=16:\ \operatorname{SE}=1.50\%\times1.73=2.60\%\\
+&t=\frac{3}{2.60}=1.15
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลรวมของอนุกรม ρ + ρ² + ⋯ คือ ρ หาร 1 − ρ ที่ ρ = 0.5 ความเหวี่ยงของค่าเฉลี่ยใหญ่ขึ้น 1.73 เท่า ประวัติ 16 ปีที่ดูเหมือน t = 2 จะเหลือแค่ 1.15 ต้องใช้ long-run variance หรือ block bootstrap แทนสูตร iid</p>
