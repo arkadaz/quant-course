@@ -138,10 +138,14 @@
   <h4>ขั้นที่ 3 — สอง asset แบบขยาย</h4>
   <p>กางกรณีสองสินทรัพย์ออกมาให้เห็นทุกพจน์ เพราะเป็นรูปที่ใช้บ่อยที่สุดบนโต๊ะจริง และเป็นรูปเดียวกับที่หัวข้อ 6.5 สร้างไว้ ต่างกันแค่ตรงนี้มีน้ำหนักติดมาด้วย</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(a_1X+a_2Y)&=\mathbb{E}\big[\big(a_1(X-\mu_X)+a_2(Y-\mu_Y)\big)^{2}\big]\\
-&=a_1^{2}\,\mathbb{E}\big[(X-\mu_X)^{2}\big]+a_2^{2}\,\mathbb{E}\big[(Y-\mu_Y)^{2}\big]\\
+\begin{aligned}
+&\operatorname{Var}(a_1X+a_2Y)\\
+&=\mathbb{E}\big[\big(a_1(X-\mu_X)+a_2(Y-\mu_Y)\big)^{2}\big]\\
+&=a_1^{2}\,\mathbb{E}\big[(X-\mu_X)^{2}\big]\\
+&\quad+a_2^{2}\,\mathbb{E}\big[(Y-\mu_Y)^{2}\big]\\
 &\quad+2a_1a_2\,\mathbb{E}\big[(X-\mu_X)(Y-\mu_Y)\big]\\
-&=a_1^{2}\sigma_X^{2}+a_2^{2}\sigma_Y^{2}+2a_1a_2\sigma_{X,Y}\end{aligned}
+&=a_1^{2}\sigma_X^{2}+a_2^{2}\sigma_Y^{2}+2a_1a_2\sigma_{X,Y}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือขั้นที่ 2 เขียนกางสำหรับสองสินทรัพย์ โดยเอาน้ำหนักเข้าไปคูณระยะจากค่าเฉลี่ยก่อน จากนั้นกระจาย $(a+b)^{2}=a^{2}+b^{2}+2ab$ แล้วเฉลี่ยทีละพจน์ตามกฎของหัวข้อ 1.3 น้ำหนักออกมาเป็นกำลังสองเพราะมันอยู่ในวงเล็บที่ถูกยกกำลังสอง</p>
@@ -151,14 +155,21 @@
 
 <section class="formula">
   <h4>ขั้นที่ 4 — Normal closure</h4>
-  <p>สมบัติที่ทำให้ทุกอย่างง่ายขึ้นมากคือผลรวมของ Normal ยังเป็น Normal หกบรรทัดนี้ไม่ได้ขอให้เชื่อ มันคำนวณ MGF ออกมาแล้วเทียบกับของที่รู้จัก ชิ้นส่วนทุกชิ้นถูกพิสูจน์มาก่อนหน้านี้แล้วทั้งหมด</p>
+  <p>สมบัติที่ทำให้ทุกอย่างง่ายขึ้นมากคือผลรวมของ Normal ยังเป็น Normal สูตรข้างล่างไม่ได้ขอให้เชื่อ มันคำนวณ MGF ออกมาแล้วเทียบกับของที่รู้จัก ชิ้นส่วนทุกชิ้นถูกพิสูจน์มาก่อนหน้านี้แล้วทั้งหมด</p>
   <div class="math">\[
-\begin{aligned}r&=\mu+Cz,\qquad z_i\ \text{iid}\ \mathcal N(0,1),\qquad C\,C^{\mathsf{T}}=\Sigma\\
-a^{\mathsf{T}}r&=a^{\mathsf{T}}\mu+\sum_i b_i z_i,\qquad b=C^{\mathsf{T}}a\\[4pt]
-\mathbb{E}\big[e^{t\sum_i b_iz_i}\big]&=\prod_i\mathbb{E}\big[e^{tb_iz_i}\big]=\prod_i e^{t^{2}b_i^{2}/2}=e^{t^{2}\|b\|^{2}/2}\\
+\begin{aligned}
+r&=\mu+Cz\\
+&\quad z_i\ \text{iid}\ \mathcal N(0,1),\qquad C\,C^{\mathsf{T}}=\Sigma\\
+a^{\mathsf{T}}r&=a^{\mathsf{T}}\mu+\sum_i b_i z_i\\
+b&=C^{\mathsf{T}}a\\[4pt]
+&\mathbb{E}\big[e^{t\sum_i b_iz_i}\big]\\
+&=\prod_i\mathbb{E}\big[e^{tb_iz_i}\big]=\prod_i e^{t^{2}b_i^{2}/2}\\
+&=e^{t^{2}\|b\|^{2}/2}\\
 \|b\|^{2}&=b^{\mathsf{T}}b=a^{\mathsf{T}}C\,C^{\mathsf{T}}a=a^{\mathsf{T}}\Sigma a\\[4pt]
-\mathbb{E}\big[e^{t\,a^{\mathsf{T}}r}\big]&=e^{t\,a^{\mathsf{T}}\mu+t^{2}(a^{\mathsf{T}}\Sigma a)/2}\\
-\Longrightarrow\;a^{\mathsf{T}}r&\sim\mathcal N\big(a^{\mathsf{T}}\mu,\;a^{\mathsf{T}}\Sigma a\big)\end{aligned}
+&\mathbb{E}\big[e^{t\,a^{\mathsf{T}}r}\big]\\
+&=e^{t\,a^{\mathsf{T}}\mu+t^{2}(a^{\mathsf{T}}\Sigma a)/2}\\
+&\Longrightarrow\;a^{\mathsf{T}}r\sim\mathcal N\big(a^{\mathsf{T}}\mu,\;a^{\mathsf{T}}\Sigma a\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เป้าหมายคือพิสูจน์ว่าผลรวมของระฆังยังเป็นระฆัง วิธีคือคำนวณ Moment Generating Function (MGF) ของมันออกมา แล้วเทียบกับของที่รู้จัก เริ่มจากสร้าง MVN จากก้อนสุ่มอิสระ ซึ่งหัวข้อ 7.6 จะลงมือทำจริง คูณน้ำหนักเข้าไปแล้วได้ค่าคงที่บวกผลรวมถ่วงน้ำหนักของก้อนสุ่มอิสระ</p>
@@ -172,12 +183,18 @@ a^{\mathsf{T}}r&=a^{\mathsf{T}}\mu+\sum_i b_i z_i,\qquad b=C^{\mathsf{T}}a\\[4pt
   <p>ในงานจริงข้อนี้คือเหตุผลที่ risk report ทั้งใบคำนวณได้ด้วย matrix เดียว ไม่ว่าจะถามความเสี่ยงของสินทรัพย์เดี่ยว ของกลุ่ม หรือของทั้งพอร์ต ทุกคำถามคือการเลือก $A$ คนละแบบ แล้วบีบด้วยสูตรเดิม</p>
   <p>และเป็นเหตุผลที่ Normal ได้รับความนิยมเกินหน้าตระกูลอื่น distribution ส่วนใหญ่บวกกันแล้วเปลี่ยนรูป พอเปลี่ยนรูปแล้วต้องคำนวณใหม่ทั้งหมด ส่วน Normal บวกกันแล้วยังเป็นตัวเอง เหลือแค่ปรับค่ากลางกับความแกว่ง</p>
   <div class="math">\[
-\begin{aligned}Y=AX+c\ &\Longrightarrow\ Y\sim\mathcal N\left(A\mu+c,\ A\Sigma A^{\mathsf T}\right)\\[4pt]
-A=\begin{bmatrix}1&amp;0&\cdots&amp;0\end{bmatrix}&\Longrightarrow\ Y=X_1\sim\mathcal N\left(\mu_1,\Sigma_{11}\right)\\[4pt]
-A=\begin{bmatrix}1&amp;1\end{bmatrix}&\Longrightarrow\ Y=X_1+X_2\\[4pt]
-A=\begin{bmatrix}1&amp;-1\end{bmatrix}&\Longrightarrow\ Y=X_1-X_2\\[4pt]
-A=w^{\mathsf T}&\Longrightarrow\ Y=w^{\mathsf T}X\sim\mathcal N\left(w^{\mathsf T}\mu,\ w^{\mathsf T}\Sigma w\right)\\[4pt]
-w^{\mathsf T}X\ \text{Normal for every}\ w&\Longrightarrow\ X\ \text{is MVN}\end{aligned}
+\begin{aligned}
+&Y=AX+c\\
+&\Longrightarrow\ Y\sim\mathcal N\left(A\mu+c,\ A\Sigma A^{\mathsf T}\right)\\[4pt]
+&A=\begin{bmatrix}1&amp;0&\cdots&amp;0\end{bmatrix}\\
+&\Longrightarrow\ Y=X_1\sim\mathcal N\left(\mu_1,\Sigma_{11}\right)\\[4pt]
+&A=\begin{bmatrix}1&amp;1\end{bmatrix}\ \Longrightarrow\ Y=X_1+X_2\\[4pt]
+&A=\begin{bmatrix}1&amp;-1\end{bmatrix}\ \Longrightarrow\ Y=X_1-X_2\\[4pt]
+&A=w^{\mathsf T}\\
+&\Longrightarrow\ Y=w^{\mathsf T}X\sim\mathcal N\left(w^{\mathsf T}\mu,\ w^{\mathsf T}\Sigma w\right)\\[4pt]
+&w^{\mathsf T}X\ \text{Normal for every}\ w\\
+&\Longrightarrow\ X\ \text{is MVN}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมบัติข้อนี้ดูเรียบง่ายจนเหมือนของแถม แต่ลองเปลี่ยน $A$ ไปเรื่อย ๆ แล้วจะเห็นว่าเกือบทุกอย่างในบทนี้เป็นกรณีเฉพาะของมัน</p>
@@ -191,11 +208,17 @@ w^{\mathsf T}X\ \text{Normal for every}\ w&\Longrightarrow\ X\ \text{is MVN}\end
   <h4>ขั้นที่ 5 — คำตอบของ portfolio 60/40</h4>
   <p>ผลรวมเชิงเส้นของสองตัว: ค่าเฉลี่ยบวกกันตรง ๆ แต่ variance ต้องมีพจน์ไขว้ด้วย เพราะสองตัวขยับไปด้วยกันบางส่วน</p>
   <div class="math">\[
-\begin{aligned}E[L]&=0.6(0.0004)+0.4(0.0003)=0.00024+0.00012=0.00036=0.036\%\\[6pt]
-\operatorname{Var}(L)&=0.6^2(0.0004)+2(0.6)(0.4)(0.00024)+0.4^2(0.0009)\\
+\begin{aligned}
+E[L]&=0.6(0.0004)+0.4(0.0003)\\
+&=0.00024+0.00012\\
+&=0.00036=0.036\%\\[6pt]
+\operatorname{Var}(L)&=0.6^2(0.0004)\\
+&\quad+2(0.6)(0.4)(0.00024)\\
+&\quad+0.4^2(0.0009)\\
 &=0.000144+0.0001152+0.000144\\
 &=0.0004032\\[4pt]
-\sigma_L&=\sqrt{0.0004032}=0.02008=2.008\%\end{aligned}
+\sigma_L&=\sqrt{0.0004032}=0.02008=2.008\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์กลางคือส่วนที่มาจากการเคลื่อนไหวร่วม ถ้าสองตัวเป็นอิสระกันสนิท พจน์นี้จะเป็นศูนย์ และ $\sigma_L$ จะเหลือเพียง 1.70%</p>
@@ -209,8 +232,9 @@ w^{\mathsf T}X\ \text{Normal for every}\ w&\Longrightarrow\ X\ \text{is MVN}\end
   <p>ของที่โจทย์ให้: น้ำหนัก w = (0.50, 0.30, 0.20) บนหุ้นไทย หุ้นกู้ ทองคำ ผลตอบแทนเฉลี่ยรายปี μ = (0.09, 0.03, 0.05) ความผันผวน 18%, 6%, 15% และ Σ ตัวเดียวกับหัวข้อ 7.3 น้ำหนักรวมได้ 1.00 พอดี ไม่มีเงินสดหรือเงินกู้ พอร์ตจึงเป็นรูปทั่วไปของหัวข้อนี้ โดย A = wᵀ และค่าคงที่ c = 0 ส่วน w เล่นบทเดียวกับ a ในขั้นที่ 1 ถึง 4</p>
   <div class="math">\[
 \begin{aligned}
-R_p&=0.50X_1+0.30X_2+0.20X_3=w^{\mathsf T}X\\
-\text{size}:\ (1\times3)(3\times1)&=1\times1\\[4pt]
+R_p&=0.50X_1+0.30X_2+0.20X_3\\
+&=w^{\mathsf T}X\\
+&\text{size}:\ (1\times3)(3\times1)=1\times1\\[4pt]
 \mu_p&=w^{\mathsf T}\mu\\
 &=0.50(0.09)+0.30(0.03)+0.20(0.05)\\
 &=0.0450+0.0090+0.0100\\

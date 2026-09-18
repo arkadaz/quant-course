@@ -92,14 +92,20 @@
 
 <section class="formula">
   <h4>ขั้นที่ 1 — คำนวณ marginal ออกมาเอง: อินทิเกรตอีกแกนทิ้งด้วยกำลังสองสมบูรณ์</h4>
-  <p>ข้อความที่ว่า marginal ของ MVN ยังเป็น Normal มักถูกยกมาเฉย ๆ หกบรรทัดนี้คำนวณมันออกมา และเครื่องมือที่ใช้มีชิ้นเดียวคือกำลังสองสมบูรณ์ สำหรับกรณีที่มีมากกว่าสองตัว ทำซ้ำแบบนี้ทีละแกนจนเหลือแกนที่ต้องการ ผลออกมารูปเดียวกัน และผลพลอยได้ของบรรทัดที่สี่คือคำตอบของหัวข้อ 7.4 ทั้งหัวข้อ</p>
+  <p>ข้อความที่ว่า marginal ของ MVN ยังเป็น Normal มักถูกยกมาเฉย ๆ สูตรข้างล่างคำนวณมันออกมา และเครื่องมือที่ใช้มีชิ้นเดียวคือกำลังสองสมบูรณ์ สำหรับกรณีที่มีมากกว่าสองตัว ทำซ้ำแบบนี้ทีละแกนจนเหลือแกนที่ต้องการ ผลออกมารูปเดียวกัน และผลพลอยได้ของบรรทัดที่สี่คือคำตอบของหัวข้อ 7.4 ทั้งหัวข้อ</p>
   <div class="math">\[
-\begin{aligned}u&=\frac{x-\mu_X}{\sigma_X},\qquad v=\frac{y-\mu_Y}{\sigma_Y}\\
-f_{X,Y}&=\frac{1}{2\pi\sigma_X\sigma_Y\sqrt{1-\rho^{2}}}\exp\!\left(-\frac{u^{2}-2\rho uv+v^{2}}{2(1-\rho^{2})}\right)\\[4pt]
-u^{2}-2\rho uv+v^{2}&=(v-\rho u)^{2}+u^{2}(1-\rho^{2})\\[4pt]
-f_{X,Y}&=\underbrace{\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}}_{\text{no }y}\cdot\frac{1}{\sigma_Y\sqrt{2\pi}\sqrt{1-\rho^{2}}}e^{-\frac{(v-\rho u)^{2}}{2(1-\rho^{2})}}\\[4pt]
-f_X(x)&=\int_{-\infty}^{\infty}f_{X,Y}\,dy=\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}\cdot 1\\[4pt]
-\Longrightarrow\;X&\sim\mathcal N(\mu_X,\sigma_X^{2})\end{aligned}
+\begin{aligned}
+u&=\frac{x-\mu_X}{\sigma_X},\qquad v=\frac{y-\mu_Y}{\sigma_Y}\\
+f_{X,Y}&=\frac{1}{2\pi\sigma_X\sigma_Y\sqrt{1-\rho^{2}}}\\
+&\quad\exp\!\left(-\frac{u^{2}-2\rho uv+v^{2}}{2(1-\rho^{2})}\right)\\[4pt]
+&u^{2}-2\rho uv+v^{2}\\
+&=(v-\rho u)^{2}+u^{2}(1-\rho^{2})\\[4pt]
+f_{X,Y}&=\underbrace{\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}}_{\text{no }y}\\
+&\quad\cdot\frac{1}{\sigma_Y\sqrt{2\pi}\sqrt{1-\rho^{2}}}e^{-\frac{(v-\rho u)^{2}}{2(1-\rho^{2})}}\\[4pt]
+f_X(x)&=\int_{-\infty}^{\infty}f_{X,Y}\,dy\\
+&=\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}\cdot 1\\[4pt]
+&\Longrightarrow\;X\sim\mathcal N(\mu_X,\sigma_X^{2})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อความที่ว่า marginal ของ MVN ยังเป็นระฆัง มักถูกยกมาเฉย ๆ ขั้นนี้คำนวณออกมาจริง เริ่มจากเปลี่ยนหน่วยให้ทั้งสองแกนวัดเป็นจำนวนเท่าของความกว้างตัวเอง แล้วเขียน joint density ตามหัวข้อ 7.1</p>
@@ -172,14 +178,15 @@ f_1(r_1)&=\int f(r_1,r_2)\,dr_2\\
   <p>การตรวจสอบว่า marginal density มีพื้นที่รวมใต้กราฟเท่ากับหนึ่งพอดี สามารถพิสูจน์ได้ถึงรากฐาน โดยเปลี่ยนตัวแปรเป็น $u$ แล้วใช้เทคนิคอินทิเกรตสองมิติบนพิกัดเชิงขั้วเพื่อหาค่า Gaussian integral</p>
   <div class="math">\[
 \begin{aligned}
-\int_{-\infty}^{\infty}f_{r_X}(x)\,dx&=\int_{-\infty}^{\infty}\frac{1}{\sigma_X\sqrt{2\pi}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\,dx\\
+&\int_{-\infty}^{\infty}f_{r_X}(x)\,dx\\
+&=\int_{-\infty}^{\infty}\frac{1}{\sigma_X\sqrt{2\pi}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\,dx\\
 &=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-u^2/2}\,du=\frac{I}{\sqrt{2\pi}}\\[4pt]
 I^2&=\int_{-\infty}^{\infty}e^{-u^2/2}\,du\int_{-\infty}^{\infty}e^{-v^2/2}\,dv\\
 &=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}e^{-(u^2+v^2)/2}\,du\,dv\\
 &=\int_0^{2\pi}\int_0^{\infty}e^{-s^2/2}\,s\,ds\,d\theta\\
 &=2\pi\Big[-e^{-s^2/2}\Big]_0^{\infty}=2\pi(0+1)=2\pi\\[4pt]
 I&=\sqrt{2\pi}\\
-\int_{-\infty}^{\infty}f_{r_X}(x)\,dx&=\frac{\sqrt{2\pi}}{\sqrt{2\pi}}=1
+&\int_{-\infty}^{\infty}f_{r_X}(x)\,dx=\frac{\sqrt{2\pi}}{\sqrt{2\pi}}=1
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -197,16 +204,21 @@ I&=\sqrt{2\pi}\\
 \begin{aligned}
 r &= \begin{bmatrix} r_1 \\
 r_2 \end{bmatrix},\quad \mu = \begin{bmatrix} \mu_1 \\
-\mu_2 \end{bmatrix},\quad \Sigma = \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
+\mu_2 \end{bmatrix}\\
+\Sigma &= \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
 \Sigma_{21} & \Sigma_{22} \end{bmatrix} \\
 P &= \begin{bmatrix} I_k & 0 \end{bmatrix} \implies r_1 = P r \\
 \mathbb{E}[r_1] &= P \mu = \begin{bmatrix} I_k & 0 \end{bmatrix} \begin{bmatrix} \mu_1 \\
 \mu_2 \end{bmatrix} = \mu_1 \\
-\operatorname{Cov}(r_1) &= P \Sigma P^\top = \begin{bmatrix} I_k & 0 \end{bmatrix} \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
+&\operatorname{Cov}(r_1) = P \Sigma P^\top\\
+&= \begin{bmatrix} I_k & 0 \end{bmatrix} \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
 \Sigma_{21} & \Sigma_{22} \end{bmatrix} \begin{bmatrix} I_k \\
-0 \end{bmatrix} = \Sigma_{11} \\
-M_{r_1}(s_1) &= M_r\left( \begin{bmatrix} s_1 \\
-0 \end{bmatrix} \right) = \exp\left( s_1^\top \mu_1 + \frac{1}{2} s_1^\top \Sigma_{11} s_1 \right) \implies r_1 \sim \mathcal{MN}_k(\mu_1, \Sigma_{11})
+0 \end{bmatrix}\\
+&= \Sigma_{11} \\
+&M_{r_1}(s_1) = M_r\left( \begin{bmatrix} s_1 \\
+0 \end{bmatrix} \right)\\
+&= \exp\left( s_1^\top \mu_1 + \frac{1}{2} s_1^\top \Sigma_{11} s_1 \right)\\
+&\implies r_1 \sim \mathcal{MN}_k(\mu_1, \Sigma_{11})
 \end{aligned}
 \]</div>
   <div class="reading">

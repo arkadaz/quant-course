@@ -104,9 +104,17 @@
   <h4>ขั้นที่ 1 — อ่านคำตอบออกมาจากกำลังสองสมบูรณ์ของหัวข้อ 7.3</h4>
   <p>ไม่ต้องพิสูจน์ใหม่ สูตรทั้งสามของหัวข้อนี้อ่านออกมาจากก้อนที่สองของกำลังสองสมบูรณ์ในหัวข้อ 7.3 ได้ตรง ๆ</p>
   <div class="math">\[
-\begin{aligned}Y\mid X=x&\sim\mathcal{N}\!\Big(\mu_Y+\rho\,\sigma_Y\,\frac{x-\mu_X}{\sigma_X},\;\sigma_Y^{2}(1-\rho^{2})\Big)\\[4pt]
-\text{slope: }\ \rho\frac{\sigma_Y}{\sigma_X}&=\frac{\sigma_{X,Y}}{\sigma_X\sigma_Y}\cdot\frac{\sigma_Y}{\sigma_X}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}=0.40\times\frac{0.03}{0.02}=0.60\\
-\text{residual variance: }\ \sigma_Y^{2}(1-\rho^{2})&=0.0009(1-0.16)=0.000756\end{aligned}
+\begin{aligned}
+&Y\mid X=x\\
+&\sim\mathcal{N}\!\Big(\mu_Y+\rho\,\sigma_Y\,\frac{x-\mu_X}{\sigma_X},\\
+&\qquad\sigma_Y^{2}(1-\rho^{2})\Big)\\[4pt]
+&\text{slope: }\ \rho\frac{\sigma_Y}{\sigma_X}\\
+&=\frac{\sigma_{X,Y}}{\sigma_X\sigma_Y}\cdot\frac{\sigma_Y}{\sigma_X}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}\\
+&=0.40\times\frac{0.03}{0.02}=0.60\\
+&\text{residual variance: }\\
+&\sigma_Y^{2}(1-\rho^{2})\\
+&=0.0009(1-0.16)=0.000756
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หัวข้อ 7.3 แยกผิวเป็น ‘ระฆังคว่ำของ $X$’ คูณ ‘ระฆังคว่ำของ $Y$ ที่จุดกลางเลื่อนตาม $z_X$’ ก้อนหลังนั่นแหละคือ distribution ของ $Y$ เมื่อรู้ $X$ (ส่วนด้วย $f_X$ ตามหัวข้อ 6.3 แล้วเหลือแค่มัน)</p>
@@ -166,11 +174,17 @@ f_{Y\mid X}&=\frac{f_{X,Y}}{f_X}\\
   <p>ก้อน $\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}$ นี้มีชื่อทางพีชคณิตว่า Schur complement และเป็นตัวเดียวกับที่โผล่มาในการกลับ matrix แบบแบ่งบล็อก ความหมายทางการเงินของมันคือ ส่วนของความเสี่ยงที่อธิบายได้ด้วยสิ่งที่เรารู้แล้ว จึง hedge ทิ้งได้</p>
   <p>ตรวจเองใน 10 วินาที ใส่ correlation เป็นศูนย์ ก้อนที่ลบต้องหายไปทั้งก้อน และความไม่แน่นอนต้องเท่าเดิมเป๊ะ ถ้าไม่เท่า แปลว่าแทนค่าผิด</p>
   <div class="math">\[
-\begin{aligned}\Sigma_{2\cdot 1}&=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\\[4pt]
-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}&=\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)^{\mathsf T}\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)\ \succeq\ 0\\[4pt]
-\Longrightarrow\quad\Sigma_{2\cdot 1}&\preceq\Sigma_{22}\\[4pt]
-\text{scalar case}:\quad\sigma_{2\cdot 1}^{2}&=\sigma_2^{2}\left(1-\rho^{2}\right)\\[4pt]
-\rho=0.6:\quad\sigma_{2\cdot 1}^{2}&=0.64\,\sigma_2^{2}\end{aligned}
+\begin{aligned}
+\Sigma_{2\cdot 1}&=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\\[4pt]
+&\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\\
+&=\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)^{\mathsf T}\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)\\
+&\ \succeq\ 0\\[4pt]
+&\Longrightarrow\quad\Sigma_{2\cdot 1}\preceq\Sigma_{22}\\[4pt]
+&\text{scalar case}:\\
+\sigma_{2\cdot 1}^{2}&=\sigma_2^{2}\left(1-\rho^{2}\right)\\[4pt]
+&\rho=0.6:\\
+\sigma_{2\cdot 1}^{2}&=0.64\,\sigma_2^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ก้อนที่ถูกลบออกไปเขียนใหม่ได้เป็นของบางอย่างคูณกับทรานสโพสของตัวมันเอง ของแบบนั้นไม่มีทางติดลบ เหมือนกำลังสองที่ไม่มีทางน้อยกว่าศูนย์</p>
@@ -184,12 +198,17 @@ f_{Y\mid X}&=\frac{f_{X,Y}}{f_X}\\
   <h4>ขั้นที่ 5 — hedge P&amp;L</h4>
   <p>แปลงทั้งหมดเป็นผลลัพธ์ที่วัดได้ คือหลัง hedge แล้วเหลือความเสี่ยงเท่าไร คำตอบตรงกับความไม่แน่นอนที่เหลือในขั้นที่ 4 พอดี ซึ่งไม่ใช่เรื่องบังเอิญ มันคือความหมายของคำว่า hedge ด้วยอัตราที่ดีที่สุด</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(Y-\beta X)&=\sigma_Y^{2}+\beta^{2}\sigma_X^{2}-2\beta\sigma_{X,Y}\qquad\text{(step 5 of 6.5)}\\
+\begin{aligned}
+&\operatorname{Var}(Y-\beta X)\\
+&=\sigma_Y^{2}+\beta^{2}\sigma_X^{2}-2\beta\sigma_{X,Y}\\
+&\quad\text{(step 5 of 6.5)}\\
 \beta&=\frac{\sigma_{X,Y}}{\sigma_X^{2}}\\
 \beta^{2}\sigma_X^{2}&=\frac{\sigma_{X,Y}^{2}}{\sigma_X^{4}}\sigma_X^{2}=\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
 2\beta\sigma_{X,Y}&=\frac{2\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
-\operatorname{Var}(Y-\beta X)&=\sigma_Y^{2}+\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}-\frac{2\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
-&=\sigma_Y^{2}-\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}\end{aligned}
+&\operatorname{Var}(Y-\beta X)\\
+&=\sigma_Y^{2}+\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}-\frac{2\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
+&=\sigma_Y^{2}-\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คราวนี้เดินอีกทางเพื่อตรวจ: กางความเสี่ยงของพอร์ตที่ถือ $Y$ และขาย $X$ ตามอัตรา $\beta$ น้ำหนักของ $X$ เป็นลบเพราะเป็นการขาย พจน์ไขว้จึงติดลบ รูปนี้มาจากหัวข้อ 6.5 ไม่ใช่ของใหม่</p>
@@ -201,11 +220,25 @@ f_{Y\mid X}&=\frac{f_{X,Y}}{f_X}\\
   <h4>ขั้นที่ 6 — ทำไม 0.60 คือขนาด hedge ที่ดีที่สุด: ลองสามขนาดแล้วดูรูปตัว U</h4>
   <p>hedge ratio มาจากสองที่: จาก conditional distribution และจากการถามว่า ‘ขนาดไหนทำให้ความเสี่ยงที่เหลือน้อยที่สุด’ ลองทางที่สองด้วยมือ</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(Y-bX)&=\sigma_Y^{2}-2b\,\sigma_{X,Y}+b^{2}\sigma_X^{2}\qquad(\text{expand the square as in 6.5})\\
-b=0.3:&\quad 0.0009-2(0.3)(0.00024)+0.3^{2}(0.0004)=0.0009-0.000144+0.000036=0.000792\\
-b=0.6:&\quad 0.0009-0.000288+0.000144=0.000756\quad(\text{lowest})\\
-b=0.9:&\quad 0.0009-0.000432+0.000324=0.000792\\[4pt]
-\frac{d}{db}:&\quad -2\sigma_{X,Y}+2b\,\sigma_X^{2}=0\;\Longrightarrow\;b^{*}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}=0.60\end{aligned}
+\begin{aligned}
+&\mathrm{Var}(Y-bX)\\
+&=\sigma_Y^{2}-2b\,\sigma_{X,Y}+b^{2}\sigma_X^{2}\\
+&\quad(\text{expand the square as in 6.5})\\
+&b=0.3:\\
+&\quad 0.0009-2(0.3)(0.00024)\\
+&\quad+0.3^{2}(0.0004)\\
+&\quad=0.0009-0.000144+0.000036\\
+&\quad=0.000792\\
+&b=0.6:\\
+&\quad 0.0009-0.000288+0.000144\\
+&\quad=0.000756\quad(\text{lowest})\\
+&b=0.9:\\
+&\quad 0.0009-0.000432+0.000324\\
+&\quad=0.000792\\[4pt]
+&\frac{d}{db}:\\
+&\quad -2\sigma_{X,Y}+2b\,\sigma_X^{2}=0\\
+&\;\Longrightarrow\;b^{*}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}=0.60
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>hedge น้อยไป (0.3) เหลือความเสี่ยงตลาดค้าง hedge มากไป (0.9) สร้างความเสี่ยงใหม่จากตัว SPY เอง ทั้งสองให้ 0.000792 เท่ากันพอดี จุดต่ำสุดอยู่ตรงกลางที่ 0.6 นี่คือเส้น U ในรูป 7.4c</p>
@@ -217,12 +250,18 @@ b=0.9:&\quad 0.0009-0.000432+0.000324=0.000792\\[4pt]
   <h4>ขั้นที่ 7 — แทนค่าจาก joint model</h4>
   <p>รู้ $X$ แล้วสองอย่างเปลี่ยน: จุดกลางของ $Y$ ขยับตาม $\beta$ และความไม่แน่นอนที่เหลือหดลง ขั้นนี้คำนวณทั้งสองอย่าง</p>
   <div class="math">\[
-\begin{aligned}\beta&=\frac{\sigma_{XY}}{\sigma_X^2}=\frac{0.00024}{0.0004}=0.60\\[4pt]
-E[Y\mid X=-0.03]&=0.0003+0.60(-0.03-0.0004)\\
-&=0.0003+0.60(-0.0304)=0.0003-0.01824=-0.01794\\[4pt]
-\operatorname{Var}(Y\mid X)&=\sigma_Y^2-\beta\,\sigma_{XY}=0.0009-0.60(0.00024)\\
+\begin{aligned}
+\beta&=\frac{\sigma_{XY}}{\sigma_X^2}=\frac{0.00024}{0.0004}=0.60\\[4pt]
+&E[Y\mid X=-0.03]\\
+&=0.0003+0.60(-0.03-0.0004)\\
+&=0.0003+0.60(-0.0304)\\
+&=0.0003-0.01824=-0.01794\\[4pt]
+&\operatorname{Var}(Y\mid X)\\
+&=\sigma_Y^2-\beta\,\sigma_{XY}\\
+&=0.0009-0.60(0.00024)\\
 &=0.0009-0.000144=0.000756\\
-\sigma_{Y\mid X}&=\sqrt{0.000756}=0.02750=2.75\%\end{aligned}
+\sigma_{Y\mid X}&=\sqrt{0.000756}=0.02750=2.75\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$X$ ต่ำกว่าค่ากลางอยู่ 0.0304 และ $Y$ ตามไปด้วยอัตรา 0.60 จุดกลางของ $Y$ จึงตกลงมาที่ $-1.794\%$</p>
@@ -253,9 +292,12 @@ E[Y\mid X=-0.03]&=0.0003+0.60(-0.03-0.0004)\\
   <p>การตรวจแรกดูว่าความกว้างใหม่ขึ้นกับขนาดของข่าวไหม การตรวจที่สองเฉลี่ยค่าพยากรณ์ทุกแบบของข่าว แล้วต้องได้ค่าเฉลี่ยเดิมกลับมา</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma_{2\mid1}&=1.00-0.49\quad\text{no }x_1\ \text{inside}\\[4pt]
-\mathbb{E}[X_2]=\mathbb{E}\big[\mathbb{E}[X_2\mid X_1]\big]&=\mathbb{E}\big[0.03+0.58333(X_1-0)\big]\\
-&=0.03+0.58333\,\mathbb{E}[X_1]=0.03+0.58333(0)=0.03\%
+\Sigma_{2\mid1}&=1.00-0.49\\
+&\quad\text{no }x_1\ \text{inside}\\[4pt]
+&\mathbb{E}[X_2]=\mathbb{E}\big[\mathbb{E}[X_2\mid X_1]\big]\\
+&=\mathbb{E}\big[0.03+0.58333(X_1-0)\big]\\
+&=0.03+0.58333\,\mathbb{E}[X_1]\\
+&=0.03+0.58333(0)=0.03\%
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -269,14 +311,21 @@ E[Y\mid X=-0.03]&=0.0003+0.60(-0.03-0.0004)\\
   <p>ใช้ค่าจาก Φ ในตารางระฆังคว่ำ และค่า z ที่ทิ้งพื้นที่ซ้าย 1% คือ −2.326 พอร์ตมีมูลค่า 100 ล้านดอลลาร์</p>
   <div class="math">\[
 \begin{aligned}
-\text{before}:\ P(X_2\lt0)&=\Phi\Big(\frac{0-0.03}{1.00}\Big)=48.8\%\\
-\text{after}:\ P(X_2\lt0)&=\Phi\Big(\frac{0+1.1367}{0.7141}\Big)=\Phi(1.592)=94.4\%\\[4pt]
-\text{before}:\ P(X_2\lt-1)&=\Phi(-1.03)=15.2\%\\
-\text{after}:\ P(X_2\lt-1)&=\Phi\Big(\frac{-1+1.1367}{0.7141}\Big)=\Phi(0.191)=57.6\%\\[4pt]
-\text{VaR}_{99}\ \text{before}&=0.03-2.326(1.00)=-2.296\%\\
-\text{VaR}_{99}\ \text{after}&=-1.1367-2.326(0.7141)\\
+&\text{before}:\ P(X_2\lt0)\\
+&=\Phi\Big(\frac{0-0.03}{1.00}\Big)=48.8\%\\
+&\text{after}:\ P(X_2\lt0)\\
+&=\Phi\Big(\frac{0+1.1367}{0.7141}\Big)=\Phi(1.592)=94.4\%\\[4pt]
+&\text{before}:\ P(X_2\lt-1)\\
+&=\Phi(-1.03)=15.2\%\\
+&\text{after}:\ P(X_2\lt-1)\\
+&=\Phi\Big(\frac{-1+1.1367}{0.7141}\Big)=\Phi(0.191)=57.6\%\\[4pt]
+&\text{VaR}_{99}\ \text{before}\\
+&=0.03-2.326(1.00)=-2.296\%\\
+&\text{VaR}_{99}\ \text{after}\\
+&=-1.1367-2.326(0.7141)\\
 &=-1.1367-1.6611=-2.798\%\\
-2{,}798{,}000-2{,}296{,}000&=502{,}000\quad(+21.9\%)
+&2{,}798{,}000-2{,}296{,}000\\
+&=502{,}000\quad(+21.9\%)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -290,12 +339,20 @@ E[Y\mid X=-0.03]&=0.0003+0.60(-0.03-0.0004)\\
   <p>ของที่โจทย์ให้: ETF σ₁ = 1.20% μ₁ = 0.03% พอร์ต σ₂ = 1.55% μ₂ = 0.05% ต่อวัน ρ = 0.82 และพอร์ตมูลค่า 100 ล้านดอลลาร์ ทำงานในหน่วยทศนิยมแล้วเก็บเลขไว้ 8 หลักจนจบ</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma_{11}&=0.0120^2=0.00014400,\qquad \Sigma_{22}=0.0155^2=0.00024025\\
-\Sigma_{21}&=0.82(0.0120)(0.0155)=0.82(0.000186)=0.00015252\\[4pt]
-\beta=\Sigma_{21}\Sigma_{11}^{-1}&=\frac{0.00015252}{0.00014400}=\frac{15{,}252}{14{,}400}=1.0592\\
-\beta=\rho\frac{\sigma_2}{\sigma_1}&=0.82\times\frac{1.55}{1.20}=0.82\times1.291667=1.0592\\[4pt]
-\text{short ETF}&=1.0592\times100{,}000{,}000=105{,}920{,}000\\
-\text{wrong denominator}&:\ \frac{0.00015252}{0.00024025}=0.635
+\Sigma_{11}&=0.0120^2=0.00014400\\
+\Sigma_{22}&=0.0155^2=0.00024025\\
+\Sigma_{21}&=0.82(0.0120)(0.0155)\\
+&=0.82(0.000186)=0.00015252\\[4pt]
+&\beta=\Sigma_{21}\Sigma_{11}^{-1}\\
+&=\frac{0.00015252}{0.00014400}=\frac{15{,}252}{14{,}400}=1.0592\\
+&\beta=\rho\frac{\sigma_2}{\sigma_1}\\
+&=0.82\times\frac{1.55}{1.20}\\
+&=0.82\times1.291667=1.0592\\[4pt]
+&\text{short ETF}\\
+&=1.0592\times100{,}000{,}000\\
+&=105{,}920{,}000\\
+&\text{wrong denominator}:\\
+&\quad\frac{0.00015252}{0.00024025}=0.635
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -331,12 +388,20 @@ x_1-\mu_1&=-3.00-0.03=-3.03\%\\
   <p>วัดความเสี่ยงที่เหลือสองหน่วย แล้วแปลงเป็น VaR 99% หนึ่งวัน ค่าเฉลี่ยหลัง hedge คือ μ₂ − βμ₁</p>
   <div class="math">\[
 \begin{aligned}
-\sigma:&\quad \frac{0.887}{1.55}=0.5724\ \Rightarrow\ \text{cut }42.8\%\\
-\text{variance}:&\quad \frac{0.00007871}{0.00024025}=0.3276\ \Rightarrow\ \text{cut }67.2\%=\rho^2\\[4pt]
-\text{VaR}_{99}\ \text{before}&=0.05-2.326(1.550)=-3.555\%\ \Rightarrow\ -3{,}555{,}300\\
-\text{after}&=\big(0.05-1.0592(0.03)\big)-2.326(0.887)\\
-&=0.0182-2.063=-2.045\%\ \Rightarrow\ -2{,}045{,}317\\
-\text{capital saved}&\approx1.51\ \text{million per day}
+&\sigma:\\
+&\quad \frac{0.887}{1.55}=0.5724\ \Rightarrow\ \text{cut }42.8\%\\
+&\text{variance}:\\
+&\quad \frac{0.00007871}{0.00024025}=0.3276\\
+&\quad\Rightarrow\ \text{cut }67.2\%=\rho^2\\[4pt]
+&\text{VaR}_{99}\ \text{before}\\
+&=0.05-2.326(1.550)=-3.555\%\\
+&\ \Rightarrow\ -3{,}555{,}300\\
+&\text{after}\\
+&=\big(0.05-1.0592(0.03)\big)-2.326(0.887)\\
+&=0.0182-2.063=-2.045\%\\
+&\ \Rightarrow\ -2{,}045{,}317\\
+&\text{capital saved}\\
+&\approx1.51\ \text{million per day}
 \end{aligned}
 \]</div>
   <div class="reading">

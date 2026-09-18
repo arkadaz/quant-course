@@ -99,11 +99,18 @@
   <p>แทนที่จะจำสูตร density สำเร็จรูป ขั้นนี้สร้างขึ้นจากจุดเริ่มต้นที่ง่ายที่สุด นั่นคือ vector ของ Standard Normal ที่เป็นอิสระต่อกัน แล้วแปลงเชิงเส้นผ่าน matrix เพื่อกำหนด mean vector และ covariance matrix ตามต้องการ</p>
   <div class="math">\[
 \begin{aligned}
-f_Z(z) &= \prod_{i=1}^d \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} z_i^2} = \frac{1}{(2\pi)^{d/2}} e^{-\frac{1}{2} z^\top z} \\
-r &= \mu + L z \implies z = L^{-1}(r - \mu) \quad (L L^\top = \Sigma) \\
-J &= \frac{\partial r}{\partial z} = L \implies |\det J| = |\det L| = \sqrt{\det(L L^\top)} = |\Sigma|^{1/2} \\
-z^\top z &= (r - \mu)^\top (L^{-1})^\top L^{-1} (r - \mu) = (r - \mu)^\top (L L^\top)^{-1} (r - \mu) = (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
-f(r) &= f_Z(L^{-1}(r - \mu)) \cdot |\det J|^{-1} = \frac{1}{(2\pi)^{d/2} |\Sigma|^{1/2}} e^{-\frac{1}{2}(r - \mu)^\top \Sigma^{-1} (r - \mu)}
+f_Z(z) &= \prod_{i=1}^d \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} z_i^2}\\
+&= \frac{1}{(2\pi)^{d/2}} e^{-\frac{1}{2} z^\top z} \\
+r &= \mu + L z\\
+&\implies z = L^{-1}(r - \mu) \quad (L L^\top = \Sigma) \\
+J &= \frac{\partial r}{\partial z} = L\\
+&\implies |\det J| = |\det L|\\
+&= \sqrt{\det(L L^\top)} = |\Sigma|^{1/2} \\
+z^\top z &= (r - \mu)^\top (L^{-1})^\top L^{-1} (r - \mu)\\
+&= (r - \mu)^\top (L L^\top)^{-1} (r - \mu)\\
+&= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
+f(r) &= f_Z(L^{-1}(r - \mu)) \cdot |\det J|^{-1}\\
+&= \frac{1}{(2\pi)^{d/2} |\Sigma|^{1/2}} e^{-\frac{1}{2}(r - \mu)^\top \Sigma^{-1} (r - \mu)}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -151,11 +158,18 @@ q(r) &= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
   <h4>ขั้นที่ 4 — กลับ matrix 2×2 ด้วยมือ แล้วดูว่า determinant ทำอะไรใน density</h4>
   <p>สูตรมี $\Sigma^{-1}$ กับ $|\Sigma|$ ซึ่งสำหรับสองสินทรัพย์คำนวณด้วยมือได้ ทำให้เห็นว่ามันไม่ใช่กล่องดำ</p>
   <div class="math">\[
-\begin{aligned}|\Sigma|&=0.0004(0.0009)-0.00024^{2}=3.6\times10^{-7}-5.76\times10^{-8}=3.024\times10^{-7}\\
+\begin{aligned}
+|\Sigma|&=0.0004(0.0009)-0.00024^{2}\\
+&=3.6\times10^{-7}-5.76\times10^{-8}\\
+&=3.024\times10^{-7}\\
 \Sigma^{-1}&=\frac{1}{|\Sigma|}\begin{bmatrix}0.0009&-0.00024\\
--0.00024&amp;0.0004\end{bmatrix}=\begin{bmatrix}2{,}976.19&-793.65\\
+-0.00024&amp;0.0004\end{bmatrix}\\
+&=\begin{bmatrix}2{,}976.19&-793.65\\
 -793.65&amp;1{,}322.75\end{bmatrix}\\
-\text{front constant: }&\frac{1}{(2\pi)^{1}|\Sigma|^{1/2}}=\frac{1}{6.2832\times0.00054991}=\frac{1}{0.0034551}=289.4\end{aligned}
+&\text{front constant: }\\
+&\frac{1}{(2\pi)^{1}|\Sigma|^{1/2}}=\frac{1}{6.2832\times0.00054991}\\
+&=\frac{1}{0.0034551}=289.4
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กฎกลับ 2×2 จากหัวข้อ 8.5 ก็ใช้ที่นี่: สลับสองช่องแนวทแยง กลับเครื่องหมายสองช่องนอกแนวทแยง แล้วเอา determinant มาหารทุกช่อง</p>
@@ -168,15 +182,20 @@ q(r) &= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
   <p>Mahalanobis distance ในขั้นก่อนหน้าดูเป็นนามธรรม ลองแทนตัวเลขสองมุมของเมฆแล้วเทียบกัน</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma^{-1}&=\frac{1}{\sigma_1^2\sigma_2^2(1-\rho^2)}\begin{bmatrix}\sigma_2^2&-\rho\sigma_1\sigma_2\\-\rho\sigma_1\sigma_2&\sigma_1^2\end{bmatrix}\\
+\Sigma^{-1}&=\frac{1}{\sigma_1^2\sigma_2^2(1-\rho^2)}\\
+&\quad\begin{bmatrix}\sigma_2^2&-\rho\sigma_1\sigma_2\\-\rho\sigma_1\sigma_2&\sigma_1^2\end{bmatrix}\\
 &=\frac{1}{1-\rho^2}\begin{bmatrix}\frac{1}{\sigma_1^2}&-\frac{\rho}{\sigma_1\sigma_2}\\-\frac{\rho}{\sigma_1\sigma_2}&\frac{1}{\sigma_2^2}\end{bmatrix}\\[4pt]
 q(r)&=\begin{bmatrix}r_1-\mu_1&r_2-\mu_2\end{bmatrix}\Sigma^{-1}\begin{bmatrix}r_1-\mu_1\\r_2-\mu_2\end{bmatrix}\\
-&=\frac{1}{1-\rho^2}\Bigl[\frac{(r_1-\mu_1)^2}{\sigma_1^2}-2\rho\frac{(r_1-\mu_1)(r_2-\mu_2)}{\sigma_1\sigma_2}\\
+&=\frac{1}{1-\rho^2}\Bigl[\frac{(r_1-\mu_1)^2}{\sigma_1^2}\\
+&\qquad-2\rho\frac{(r_1-\mu_1)(r_2-\mu_2)}{\sigma_1\sigma_2}\\
 &\qquad+\frac{(r_2-\mu_2)^2}{\sigma_2^2}\Bigr]\\
-&=\frac{z_1^2-2\rho z_1z_2+z_2^2}{1-\rho^2},\qquad z_i=\frac{r_i-\mu_i}{\sigma_i}\\[4pt]
-z=(1,\,1)&:\ q=\frac{1-0.80+1}{0.84}=\frac{1.20}{0.84}=1.4286\\
+&=\frac{z_1^2-2\rho z_1z_2+z_2^2}{1-\rho^2}\\
+&\quad z_i=\frac{r_i-\mu_i}{\sigma_i}\\[4pt]
+z=(1,\,1)&:\ q=\frac{1-0.80+1}{0.84}\\
+&\quad=\frac{1.20}{0.84}=1.4286\\
 &\quad e^{-q/2}=e^{-0.7143}=0.4895\\
-z=(1,\,-1)&:\ q=\frac{1+0.80+1}{0.84}=\frac{2.80}{0.84}=3.3333\\
+z=(1,\,-1)&:\ q=\frac{1+0.80+1}{0.84}\\
+&\quad=\frac{2.80}{0.84}=3.3333\\
 &\quad e^{-q/2}=e^{-1.6667}=0.1889
 \end{aligned}
 \]</div>
@@ -200,8 +219,9 @@ q&=\frac{2.25-2(0.82)(1.5)(-1.5)+2.25}{1-0.82^2}\\
 z&=(1.5,\ 1.5)\\
 q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
 \sqrt q&=1.572\\[4pt]
-P(q\gt25)&=e^{-25/2}=e^{-12.5}=3.7\times10^{-6}\\
-P(q\gt2.4725)&=e^{-1.236}=0.29
+&P(q\gt25)=e^{-25/2}\\
+&=e^{-12.5}=3.7\times10^{-6}\\
+&P(q\gt2.4725)=e^{-1.236}=0.29
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -215,10 +235,15 @@ P(q\gt2.4725)&=e^{-1.236}=0.29
   <p>เมื่อตัดความเกี่ยวพันออกด้วยการกำหนดให้ correlation เป็นศูนย์ โครงสร้างของ Multivariate Normal จะลดรูปลงมาเป็นผลคูณของระฆังคว่ำสองใบที่เป็นอิสระต่อกันทันที</p>
   <div class="math">\[
 \begin{aligned}
-\rho = 0 \implies q(r) &= \frac{z_1^2 - 2(0)z_1 z_2 + z_2^2}{1 - 0^2} = z_1^2 + z_2^2 \\
-|\Sigma| &= \sigma_1^2 \sigma_2^2 (1 - 0^2) = \sigma_1^2 \sigma_2^2 \implies |\Sigma|^{1/2} = \sigma_1 \sigma_2 \\
-f(r_1, r_2) &= \frac{1}{2\pi \sigma_1 \sigma_2} \exp\left(-\frac{1}{2}(z_1^2 + z_2^2)\right) \\
-&= \left( \frac{1}{\sigma_1 \sqrt{2\pi}} e^{-\frac{1}{2} z_1^2} \right) \cdot \left( \frac{1}{\sigma_2 \sqrt{2\pi}} e^{-\frac{1}{2} z_2^2} \right) = f_1(r_1) \cdot f_2(r_2)
+&\rho = 0 \implies q(r)\\
+&= \frac{z_1^2 - 2(0)z_1 z_2 + z_2^2}{1 - 0^2} = z_1^2 + z_2^2 \\
+|\Sigma| &= \sigma_1^2 \sigma_2^2 (1 - 0^2) = \sigma_1^2 \sigma_2^2\\
+&\implies |\Sigma|^{1/2} = \sigma_1 \sigma_2 \\
+&f(r_1, r_2)\\
+&= \frac{1}{2\pi \sigma_1 \sigma_2} \exp\left(-\frac{1}{2}(z_1^2 + z_2^2)\right) \\
+&= \left( \frac{1}{\sigma_1 \sqrt{2\pi}} e^{-\frac{1}{2} z_1^2} \right)\\
+&\quad\cdot \left( \frac{1}{\sigma_2 \sqrt{2\pi}} e^{-\frac{1}{2} z_2^2} \right)\\
+&= f_1(r_1) \cdot f_2(r_2)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -234,12 +259,21 @@ f(r_1, r_2) &= \frac{1}{2\pi \sigma_1 \sigma_2} \exp\left(-\frac{1}{2}(z_1^2 + z
   <p>การหา probability ของบริเวณวงรี Mahalanobis ไม่จำเป็นต้องคำนวณ integral สองชั้นโดยตรง เพราะระยะทางกำลังสอง $q(r)$ มี distribution แบบ Chi-Square ที่มี 2 degrees of freedom ซึ่งมีสูตรสะสมแบบปิด</p>
   <div class="math">\[
 \begin{aligned}
-P(\text{inside }B) &= \iint_B f(r_1, r_2) \, dr_1 \, dr_2 \\
-B_c:\ q(r) \le c^2\ &\text{same as}\ z_1^2 + z_2^2 \le c^2 \\
-q(r) &\sim \chi^2_2 \implies f_Q(q) = \frac{1}{2} e^{-q/2} \quad (q \ge 0) \\
-P(q \le c^2) &= \int_0^{c^2} \frac{1}{2} e^{-q/2} \, dq = \left[ -e^{-q/2} \right]_0^{c^2} = 1 - e^{-c^2/2} \\
-c = 1:\quad P(q \le 1) &= 1 - e^{-0.5} \approx 1 - 0.6065 = 0.3935 \quad (39.35\%) \\
-c^2 = 5.991:\quad P(q \le 5.991) &= 1 - e^{-2.9955} \approx 1 - 0.0500 = 0.9500 \quad (95.00\%)
+&P(\text{inside }B)\\
+&= \iint_B f(r_1, r_2) \, dr_1 \, dr_2 \\
+&B_c:\ q(r) \le c^2\\
+&\text{same as}\ z_1^2 + z_2^2 \le c^2 \\
+&q(r) \sim \chi^2_2\\
+&\implies f_Q(q) = \frac{1}{2} e^{-q/2} \quad (q \ge 0) \\
+&P(q \le c^2)\\
+&= \int_0^{c^2} \frac{1}{2} e^{-q/2} \, dq = \left[ -e^{-q/2} \right]_0^{c^2}\\
+&= 1 - e^{-c^2/2} \\
+&c = 1:\\
+&P(q \le 1) = 1 - e^{-0.5} \approx 1 - 0.6065\\
+&= 0.3935 \quad (39.35\%) \\
+&c^2 = 5.991:\\
+&P(q \le 5.991) = 1 - e^{-2.9955}\\
+&\approx 1 - 0.0500 = 0.9500 \quad (95.00\%)
 \end{aligned}
 \]</div>
   <div class="reading">

@@ -101,9 +101,16 @@
   <h4>ขั้นที่ 1 — ลองกับถุงบัตร 1, 2, 3 ก่อน: สร้างเครื่องมือด้วยมือแล้วกดปุ่ม</h4>
   <p>ก่อนนิยามอะไร ลองกับบัตรสามใบ: เขียน $e^{tX}$ ของแต่ละใบ เฉลี่ยกัน แล้วหา derivative</p>
   <div class="math">\[
-\begin{aligned}M(t)&=\mathbb{E}[e^{tX}]=\tfrac13\big(e^{t}+e^{2t}+e^{3t}\big)\\
-M'(t)&=\tfrac13\big(e^{t}+2e^{2t}+3e^{3t}\big)\;\Longrightarrow\;M'(0)=\tfrac13(1+2+3)=2=\mathbb{E}[X]\\
-M''(t)&=\tfrac13\big(e^{t}+4e^{2t}+9e^{3t}\big)\;\Longrightarrow\;M''(0)=\tfrac13(1+4+9)=\tfrac{14}{3}=\mathbb{E}[X^{2}]\end{aligned}
+\begin{aligned}
+M(t)&=\mathbb{E}[e^{tX}]\\
+&=\tfrac13\big(e^{t}+e^{2t}+e^{3t}\big)\\
+M'(t)&=\tfrac13\big(e^{t}+2e^{2t}+3e^{3t}\big)\\
+&\;\Longrightarrow\;M'(0)=\tfrac13(1+2+3)\\
+&=2=\mathbb{E}[X]\\
+M''(t)&=\tfrac13\big(e^{t}+4e^{2t}+9e^{3t}\big)\\
+&\;\Longrightarrow\;M''(0)=\tfrac13(1+4+9)\\
+&=\tfrac{14}{3}=\mathbb{E}[X^{2}]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หา derivative ของ $e^{2t}$ ได้ $2e^{2t}$: เลข 2 ที่โดดออกมาคือค่าของบัตร พอแทน $t=0$ ทุก $e^{0}=1$ เหลือแค่ค่าบัตรถ่วงน้ำหนักเท่า ๆ กัน คือค่าเฉลี่ย</p>
@@ -116,11 +123,16 @@ M''(t)&=\tfrac13\big(e^{t}+4e^{2t}+9e^{3t}\big)\;\Longrightarrow\;M''(0)=\tfrac1
   <p>นิยามของ MGF ไม่ได้ถูกตั้งขึ้นมาลอย ๆ แต่สร้างขึ้นมาจาก Taylor series ของ exponential เพื่อทำหน้าที่เป็นคลังเก็บค่า expected value ของกำลังต่าง ๆ $\mathbb{E}[X^n]$ ไว้หน้าตัวคูณ $t^n / n!$</p>
   <div class="math">\[
 \begin{aligned}
-e^u &= \sum_{n=0}^\infty \frac{u^n}{n!} = 1 + u + \frac{u^2}{2!} + \frac{u^3}{3!} + \cdots \\
-u = tX \implies e^{tX} &= \sum_{n=0}^\infty \frac{(tX)^n}{n!} = 1 + tX + \frac{t^2 X^2}{2!} + \frac{t^3 X^3}{3!} + \cdots \\
-M_X(t) = \mathbb{E}[e^{tX}] &= \mathbb{E}\left[\sum_{n=0}^\infty \frac{t^n X^n}{n!}\right] = \sum_{n=0}^\infty \frac{t^n}{n!} \mathbb{E}[X^n] \\
-&= 1 + t\,\mathbb{E}[X] + \frac{t^2}{2!}\,\mathbb{E}[X^2] + \frac{t^3}{3!}\,\mathbb{E}[X^3] + \cdots \\
-\left.\frac{d^n}{dt^n} M_X(t)\right|_{t=0} &= \mathbb{E}[X^n]
+e^u &= \sum_{n=0}^\infty \frac{u^n}{n!}\\
+&= 1 + u + \frac{u^2}{2!} + \frac{u^3}{3!} + \cdots \\
+&u = tX \implies e^{tX}\\
+&= \sum_{n=0}^\infty \frac{(tX)^n}{n!}\\
+&= 1 + tX + \frac{t^2 X^2}{2!} + \frac{t^3 X^3}{3!} + \cdots \\
+&M_X(t) = \mathbb{E}[e^{tX}]\\
+&= \mathbb{E}\left[\sum_{n=0}^\infty \frac{t^n X^n}{n!}\right] = \sum_{n=0}^\infty \frac{t^n}{n!} \mathbb{E}[X^n] \\
+&= 1 + t\,\mathbb{E}[X] + \frac{t^2}{2!}\,\mathbb{E}[X^2]\\
+&\quad + \frac{t^3}{3!}\,\mathbb{E}[X^3] + \cdots \\
+&\left.\frac{d^n}{dt^n} M_X(t)\right|_{t=0} = \mathbb{E}[X^n]
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -133,12 +145,16 @@ M_X(t) = \mathbb{E}[e^{tX}] &= \mathbb{E}\left[\sum_{n=0}^\infty \frac{t^n X^n}{
 
 <section class="formula">
   <h4>ขั้นที่ 3 — derivative ครั้งแรกให้ค่าเฉลี่ย</h4>
-  <p>การกดปุ่มครั้งแรกแล้วได้ค่าเฉลี่ยดูเหมือนเวทมนตร์ สี่บรรทัดนี้บอกว่ามันคือกฎลูกโซ่ บวกกับการแทนศูนย์ครั้งเดียว และบอกด้วยว่าขั้นตอนไหนคือขั้นที่ต้องขอเงื่อนไข</p>
+  <p>การกดปุ่มครั้งแรกแล้วได้ค่าเฉลี่ยดูเหมือนเวทมนตร์ สูตรข้างล่างบอกว่ามันคือกฎลูกโซ่ บวกกับการแทนศูนย์ครั้งเดียว และบอกด้วยว่าขั้นตอนไหนคือขั้นที่ต้องขอเงื่อนไข</p>
   <div class="math">\[
-\begin{aligned}M_X(t)&=\mathbb{E}[e^{tX}]\\
+\begin{aligned}
+M_X(t)&=\mathbb{E}[e^{tX}]\\
 \frac{d}{dt}e^{tX}&=Xe^{tX}\\
-M_X'(t)&=\frac{d}{dt}\mathbb{E}\big[e^{tX}\big]=\mathbb{E}\Big[\frac{d}{dt}e^{tX}\Big]=\mathbb{E}\big[Xe^{tX}\big]\\
-t=0:\quad M_X'(0)&=\mathbb{E}\big[Xe^{0}\big]=\mathbb{E}[X]=\mu\end{aligned}
+M_X'(t)&=\frac{d}{dt}\mathbb{E}\big[e^{tX}\big]\\
+&=\mathbb{E}\Big[\frac{d}{dt}e^{tX}\Big]=\mathbb{E}\big[Xe^{tX}\big]\\
+&t=0:\\
+M_X'(0)&=\mathbb{E}\big[Xe^{0}\big]=\mathbb{E}[X]=\mu
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>การกดปุ่มครั้งเดียวแล้วได้ค่าเฉลี่ยออกมาดูเหมือนเวทมนตร์ แต่มันคือกฎลูกโซ่ล้วน ๆ หา derivative ของ $e^{tX}$ เทียบ $t$ ตัวที่คูณ $t$ อยู่คือ $X$ มันจึงหล่นออกมาข้างหน้า</p>
@@ -150,11 +166,19 @@ t=0:\quad M_X'(0)&=\mathbb{E}\big[Xe^{0}\big]=\mathbb{E}[X]=\mu\end{aligned}
   <h4>ขั้นที่ 4 — derivative ครั้งที่สองให้ความแกว่ง</h4>
   <p>กดปุ่มอีกครั้งได้ moment ที่สอง แล้วจึงแปลงเป็น variance ด้วยสูตรลัดของหัวข้อ 1.4 สองบรรทัดล่างคือใบเสร็จ: ถ้าเครื่องมือถูก มันต้องคืนความแกว่งเดิมที่โจทย์ให้มา</p>
   <div class="math">\[
-\begin{aligned}M_X''(t)&=\frac{d}{dt}\mathbb{E}\big[Xe^{tX}\big]=\mathbb{E}\big[X^{2}e^{tX}\big]\\
-t=0:\quad M_X''(0)&=\mathbb{E}\big[X^{2}\big]\\[4pt]
-\operatorname{Var}(X)&=\mathbb{E}[X^{2}]-\mu^{2}=M_X''(0)-\big(M_X'(0)\big)^{2}\\[4pt]
-\mu=75,\ \sigma=300:\quad M_X''(0)&=300^{2}+75^{2}=90{,}000+5{,}625=95{,}625\\
-\operatorname{Var}(X)&=95{,}625-5{,}625=90{,}000=300^{2}\end{aligned}
+\begin{aligned}
+M_X''(t)&=\frac{d}{dt}\mathbb{E}\big[Xe^{tX}\big]\\
+&=\mathbb{E}\big[X^{2}e^{tX}\big]\\
+&t=0:\\
+M_X''(0)&=\mathbb{E}\big[X^{2}\big]\\[4pt]
+\operatorname{Var}(X)&=\mathbb{E}[X^{2}]-\mu^{2}\\
+&=M_X''(0)-\big(M_X'(0)\big)^{2}\\[4pt]
+&\mu=75,\ \sigma=300:\\
+M_X''(0)&=300^{2}+75^{2}\\
+&=90{,}000+5{,}625=95{,}625\\
+\operatorname{Var}(X)&=95{,}625-5{,}625\\
+&=90{,}000=300^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กดปุ่มอีกครั้งด้วยวิธีเดียวกับขั้นที่ 3 คราวนี้กับ $Xe^{tX}$ จึงได้ $X$ หล่นออกมาอีกตัว แทน $t=0$ ก็เหลือค่าเฉลี่ยของกำลังสอง จากนั้นใช้สูตรลัดของ variance ที่สร้างไว้ในหัวข้อ 1.4 ไม่ใช่ของใหม่ เขียนใหม่ให้เห็นว่าทั้งสองก้อนมาจากเครื่องมือชิ้นเดียวกัน</p>
@@ -169,9 +193,12 @@ t=0:\quad M_X''(0)&=\mathbb{E}\big[X^{2}\big]\\[4pt]
 \begin{aligned}
 M_{X+Y}(t) &= \mathbb{E}\left[e^{t(X+Y)}\right] \\
 &= \mathbb{E}\left[e^{tX} \cdot e^{tY}\right] \\
-&= \mathbb{E}\left[e^{tX}\right] \cdot \mathbb{E}\left[e^{tY}\right] \quad (X,\ Y\ \text{independent}) \\
+&= \mathbb{E}\left[e^{tX}\right] \cdot \mathbb{E}\left[e^{tY}\right]\\
+&\quad (X,\ Y\ \text{independent}) \\
 &= M_X(t) \cdot M_Y(t) \\
-X_1, \dots, X_n \text{ i.i.d.} \implies M_{\sum X_i}(t) &= \prod_{i=1}^n M_{X_i}(t) = \big(M_{X_1}(t)\big)^n
+&X_1, \dots, X_n \text{ i.i.d.}\\
+&\implies M_{\sum X_i}(t) = \prod_{i=1}^n M_{X_i}(t)\\
+&= \big(M_{X_1}(t)\big)^n
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -187,12 +214,23 @@ X_1, \dots, X_n \text{ i.i.d.} \implies M_{\sum X_i}(t) &= \prod_{i=1}^n M_{X_i}
   <p>ระฆังคว่ำคือ distribution ที่ใช้บ่อยที่สุด เครื่องมือของมันจึงควรมีสูตรปิด และเรามีชิ้นส่วนครบแล้วตั้งแต่บทที่ 1</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb{E}[e^{a Z}] &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{az - z^2/2} \, dz = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2 + \frac{a^2}{2}} \, dz \\
-&= e^{a^2/2} \left( \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2} \, dz \right) = e^{a^2/2} \\
-X = \mu + \sigma Z \implies M_X(t) &= \mathbb{E}\left[e^{t(\mu + \sigma Z)}\right] = e^{\mu t} \mathbb{E}\left[e^{(t\sigma)Z}\right] = e^{\mu t + \frac{1}{2} \sigma^2 t^2} \\
-M_X'(t) &= (\mu + \sigma^2 t) M_X(t) \implies M_X'(0) = \mu \\
-M_X''(t) &= \sigma^2 M_X(t) + (\mu + \sigma^2 t)^2 M_X(t) \implies M_X''(0) = \sigma^2 + \mu^2 \\
-\mu = 75,\, \sigma = 300: \quad M_X''(0) &= 300^2 + 75^2 = 90{,}000 + 5{,}625 = 95{,}625 \implies \operatorname{Var}(X) = 90{,}000 = 300^2
+&\mathbb{E}[e^{a Z}]\\
+&= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{az - z^2/2} \, dz\\
+&= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2 + \frac{a^2}{2}} \, dz \\
+&= e^{a^2/2} \left( \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2} \, dz \right)\\
+&= e^{a^2/2} \\
+&X = \mu + \sigma Z \implies M_X(t)\\
+&= \mathbb{E}\left[e^{t(\mu + \sigma Z)}\right] = e^{\mu t} \mathbb{E}\left[e^{(t\sigma)Z}\right]\\
+&= e^{\mu t + \frac{1}{2} \sigma^2 t^2} \\
+&M_X'(t) = (\mu + \sigma^2 t) M_X(t)\\
+&\implies M_X'(0) = \mu \\
+&M_X''(t) = \sigma^2 M_X(t)\\
+&\quad + (\mu + \sigma^2 t)^2 M_X(t)\\
+&\implies M_X''(0) = \sigma^2 + \mu^2 \\
+&\mu = 75,\, \sigma = 300:\\
+&M_X''(0) = 300^2 + 75^2\\
+&= 90{,}000 + 5{,}625 = 95{,}625\\
+&\implies \operatorname{Var}(X) = 90{,}000 = 300^2
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -209,10 +247,16 @@ M_X''(t) &= \sigma^2 M_X(t) + (\mu + \sigma^2 t)^2 M_X(t) \implies M_X''(0) = \s
   <p>log return $R\sim N(0.09,\,0.22^2)$ และราคาปีหน้าคือ $S_T=S_0e^{R}$ คำถามคือค่าเฉลี่ยของ $e^R$ ซึ่งคือ MGF ของ R ที่ t = 1 พอดี ใช้สูตรปิดจากขั้นที่ 6 ได้เลย ไม่ต้องอินทิเกรตใหม่</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb{E}\Big[\frac{S_T}{S_0}\Big]=\mathbb{E}[e^{R}]=M_R(1)&=e^{\mu+\sigma^2/2}\\
-\sigma^2=0.22^2=0.0484,\qquad \frac{\sigma^2}{2}&=0.0242,\qquad \mu+\frac{\sigma^2}{2}=0.1142\\
-e^{0.1142}=1.1210\quad(\text{mean}),\qquad e^{0.09}&=1.0942\quad(\text{median})\\[4pt]
-100\times1.1210=112.10,\qquad 100\times1.0942&=109.42,\qquad 112.10-109.42=2.68
+&\mathbb{E}\Big[\frac{S_T}{S_0}\Big]=\mathbb{E}[e^{R}]=M_R(1)\\
+&=e^{\mu+\sigma^2/2}\\
+\sigma^2&=0.22^2=0.0484\\
+\frac{\sigma^2}{2}&=0.0242\\
+&\mu+\frac{\sigma^2}{2}=0.1142\\
+&e^{0.1142}=1.1210\quad(\text{mean})\\
+&e^{0.09}=1.0942\quad(\text{median})\\[4pt]
+&100\times1.1210=112.10\\
+&100\times1.0942=109.42\\
+&112.10-109.42=2.68
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -226,9 +270,13 @@ e^{0.1142}=1.1210\quad(\text{mean}),\qquad e^{0.09}&=1.0942\quad(\text{median})\
   <p>ถ้าถือ short สนใจค่าเฉลี่ยของ $S_0/S_T=e^{-R}$ ซึ่งคือ MGF ที่ t = −1 ไม่ต้องพิสูจน์ใหม่ แล้วลองคูณสองทางเข้าด้วยกัน</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb{E}[e^{-R}]=M_R(-1)&=e^{-\mu+\sigma^2/2}=e^{-0.09+0.0242}=e^{-0.0658}=0.9363\\[4pt]
-\mathbb{E}[e^{R}]\times\mathbb{E}[e^{-R}]&=e^{\mu+\sigma^2/2}\times e^{-\mu+\sigma^2/2}=e^{\sigma^2}=e^{0.0484}=1.0496\\
-e^{R}\times e^{-R}&=1\quad\text{every outcome}
+&\mathbb{E}[e^{-R}]=M_R(-1)\\
+&=e^{-\mu+\sigma^2/2}=e^{-0.09+0.0242}\\
+&=e^{-0.0658}=0.9363\\[4pt]
+&\mathbb{E}[e^{R}]\times\mathbb{E}[e^{-R}]\\
+&=e^{\mu+\sigma^2/2}\times e^{-\mu+\sigma^2/2}\\
+&=e^{\sigma^2}=e^{0.0484}=1.0496\\
+&e^{R}\times e^{-R}=1\quad\text{every outcome}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -255,11 +303,17 @@ e^{R}\times e^{-R}&=1\quad\text{every outcome}
   <p>จากสูตรหนึ่งมิติ เราขยายสู่หลายมิติได้อย่างเป็นธรรมชาติ โดยมองว่าการคูณ inner product $s^\top X$ คือการแปลงเป็นตัวแปรแบบ scalar หนึ่งมิติที่มี mean และ variance ตามโครงสร้าง matrix</p>
   <div class="math">\[
 \begin{aligned}
-X &\sim \mathcal{MN}_d(\mu, \Sigma) \implies X = \mu + L z \quad (L L^\top = \Sigma,\, Z \sim \mathcal{N}_d(0, I)) \\
-s^\top X &= s^\top \mu + s^\top L z = s^\top \mu + (L^\top s)^\top Z \\
-\mathbb{E}[s^\top X] &= s^\top \mu,\quad \operatorname{Var}(s^\top X) = (L^\top s)^\top (L^\top s) = s^\top L L^\top s = s^\top \Sigma s \\
+X &\sim \mathcal{MN}_d(\mu, \Sigma)\\
+&\implies X = \mu + L z\\
+&\quad (L L^\top = \Sigma,\, Z \sim \mathcal{N}_d(0, I)) \\
+s^\top X &= s^\top \mu + s^\top L z\\
+&= s^\top \mu + (L^\top s)^\top Z \\
+\mathbb{E}[s^\top X] &= s^\top \mu\\
+&\operatorname{Var}(s^\top X) = (L^\top s)^\top (L^\top s)\\
+&= s^\top L L^\top s = s^\top \Sigma s \\
 s^\top X &\sim \mathcal{N}\left(s^\top \mu,\, s^\top \Sigma s\right) \\
-M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right] = \exp\left(s^\top \mu + \frac{1}{2} s^\top \Sigma s\right)
+M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
+&= \exp\left(s^\top \mu + \frac{1}{2} s^\top \Sigma s\right)
 \end{aligned}
 \]</div>
   <div class="reading">
