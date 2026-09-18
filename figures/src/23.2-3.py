@@ -1,1 +1,11 @@
-g=np.linspace(1,8,100);mc=7*g+5;ax.plot(g,mc,color=BAD,lw=2,label='marginal cost = 7G + $5');ax.axhline(90,color=GOOD,lw=2,ls=(0,(4,2)),label='power LMP = $90/MWh');ax.fill_between(g,mc,90,where=mc<90,color=GOOD,alpha=.18);ax.axvline(3,color=ACCENT,lw=1,ls=':');ax.set_xlabel('Gas price G (USD/MMBtu)');ax.set_ylabel('USD/MWh');ax.set_title('Dispatch region from the spark spread',loc='left');ax.legend(fontsize=7.3);ax.grid(alpha=.2)
+g=np.linspace(1,13,200);mc=7*g+5
+ax.plot(g,mc,color=BAD,lw=2,label='marginal cost = 7G + 5')
+ax.axhline(90,color=GOOD,lw=2,ls=(0,(4,2)),label='power LMP = 90')
+ax.fill_between(g,mc,90,where=mc<90,color=GOOD,alpha=.15)
+ax.scatter([3.0],[26],color=INK,zorder=3,s=30)
+ax.annotate('',xy=(3.0,90),xytext=(3.0,26),arrowprops=dict(arrowstyle='<->',color=INK,lw=1))
+ax.text(3.25,56,'spark spread 64\n500 MWh x 64 = 32,000',fontsize=7.5,color=INK)
+ax.annotate('gas 3.00: cost 26',xy=(3.0,26),xytext=(3.5,14),fontsize=7.5)
+ax.axvline(85/7,color=MUTED,lw=1,ls=':');ax.text(85/7-0.15,40,'gas above 12.14:\nplant stays off',fontsize=7.5,color=MUTED,ha='right')
+ax.set_xlabel('Gas price G (USD/MMBtu)');ax.set_ylabel('USD/MWh');ax.set_ylim(0,100)
+ax.set_title('The plant runs only while cost is below the power price',loc='left');ax.legend(fontsize=7.3,loc='lower right');ax.grid(alpha=.2)

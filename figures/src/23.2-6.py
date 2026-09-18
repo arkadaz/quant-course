@@ -1,1 +1,15 @@
-ax.axis('off');nodes=[(.08,.72,'Gas / Henry Hub'),(.08,.28,'Power / LMP'),(.42,.50,'Heat rate + conversion'),(.70,.72,'Outright price'),(.70,.50,'Basis / location'),(.70,.28,'Volume / shape'),(.93,.50,'P&L and limits')];[ax.text(x,y,s,ha='center',va='center',fontsize=8,bbox=dict(boxstyle='round,pad=.45',fc='#e8f1f5' if x<.7 else '#f6ead7',ec='#6d8793',lw=.8)) for x,y,s in nodes];[ax.annotate('',xy=b,xytext=a,arrowprops=dict(arrowstyle='->',lw=1,color='#50636b')) for a,b in [((.18,.72),(.33,.55)),((.18,.28),(.33,.45)),((.51,.50),(.65,.72)),((.51,.50),(.65,.50)),((.51,.50),(.65,.28)),((.78,.72),(.87,.55)),((.78,.50),(.87,.50)),((.78,.28),(.87,.45))]];ax.set_title('Gas-to-power risk decomposition',loc='left')
+x=np.linspace(-0.8,0.2,401)
+storage=9800*4.20*(1+x)-30190
+dispatch=500*np.maximum(90*(1+x)-26,0)
+ax.plot(x*100,storage/1000,color=ACCENT,lw=2.2,label='gas storage: 9,800 x winter price - 30,190')
+ax.plot(x*100,dispatch/1000,color=WARM,lw=2.2,label='power plant: 500 x max(LMP - 26, 0)')
+ax.axhline(0,color=INK,lw=.7)
+be1=(30190/9800/4.20-1)*100;be2=(26/90-1)*100
+ax.axvline(be1,color=ACCENT,lw=.9,ls=':');ax.axvline(be2,color=WARM,lw=.9,ls=':')
+ax.text(be1+1,-12,f'{be1:.1f}%: winter 3.0806,\nstorage profit gone',fontsize=7.3,color=ACCENT)
+ax.text(be2+1,3,f'{be2:.1f}%: LMP 26,\nplant switches off',fontsize=7.3,color=WARM)
+ax.scatter([0,0],[10.97,32.0],color=INK,zorder=3,s=26)
+ax.annotate('10,970',xy=(0,10.97),xytext=(4,-11),textcoords='offset points',fontsize=7.5)
+ax.annotate('32,000',xy=(0,32.0),xytext=(4,4),textcoords='offset points',fontsize=7.5)
+ax.set_xlabel('Change in the selling price from the example (%)');ax.set_ylabel('P&L (USD thousand)')
+ax.set_title('How far each price can fall before the profit is gone',loc='left');ax.legend(fontsize=7.3,loc='upper left');ax.grid(alpha=.2)
