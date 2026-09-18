@@ -210,10 +210,15 @@ M_{400}&=S_{400}-400\mu=165{,}000-128{,}000=37{,}000\ \text{USD}\end{aligned}
   <h4>ขั้นที่ 9 — ความเหวี่ยงของเส้นส่วนเกิน: ทำไม variance บวกกันเป็น $n\sigma^2$</h4>
   <p>ค่าเฉลี่ยของส่วนเกินไม่ขยับ แต่ความไม่แน่นอนยังกว้างขึ้น ยกกำลังสองของผลรวมปกติมีพจน์คูณข้ามโผล่มา ขั้นนี้แสดงว่าสมบัติ martingale กวาดพจน์คูณข้ามทิ้งทั้งหมด</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(M_n)&=\mathbb E[M_n^2]=\mathbb E\!\left[\left(\sum_{i=1}^{n}Y_i\right)^{\!2}\right]\\
+\begin{aligned}
+\operatorname{Var}(M_n)&=\mathbb E[M_n^2]\\
+&=\mathbb E\!\left[\left(\sum_{i=1}^{n}Y_i\right)^{\!2}\right]\\
 &=\sum_{i=1}^{n}\mathbb E[Y_i^2]+2\sum_{1\le i \lt j\le n}\mathbb E[Y_i Y_j]\\
-\mathbb E[Y_i Y_j]&=\mathbb E\big[\mathbb E_{j-1}[Y_i Y_j]\big]=\mathbb E\big[Y_i\,\mathbb E_{j-1}[Y_j]\big]=\mathbb E[Y_i\cdot0]=0\\
-\operatorname{Var}(M_n)&=\sum_{i=1}^{n}\sigma^2=n\sigma^2\end{aligned}
+&\mathbb E[Y_i Y_j]\\
+&=\mathbb E\big[\mathbb E_{j-1}[Y_i Y_j]\big]\\
+&=\mathbb E\big[Y_i\,\mathbb E_{j-1}[Y_j]\big]=\mathbb E[Y_i\cdot0]=0\\
+\operatorname{Var}(M_n)&=\sum_{i=1}^{n}\sigma^2=n\sigma^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ส่วนเกินมีค่าเฉลี่ยศูนย์ variance จึงเหลือค่าเฉลี่ยของกำลังสอง กระจายกำลังสองได้พจน์ของแต่ละไม้กับพจน์คูณข้ามของทุกคู่</p>
@@ -225,9 +230,15 @@ M_{400}&=S_{400}-400\mu=165{,}000-128{,}000=37{,}000\ \text{USD}\end{aligned}
   <h4>ขั้นที่ 10 — ตรวจสูตรด้วยเกมมือ: สองไม้ได้ variance 8</h4>
   <p>สูตรที่ได้ควรตรวจกับของที่นับได้ ในเกมมือส่วนเกินรายไม้เป็น +2 หรือ −2 จึงมี variance 4 หลังสองไม้สูตรทำนาย 8 ลองนับทั้งสี่เส้นทาง</p>
   <div class="math">\[
-\begin{aligned}\sigma^2&=\tfrac12(2)^2+\tfrac12(-2)^2=4\\
-Y_1+Y_2&:\ (+2+2),\ (+2-2),\ (-2+2),\ (-2-2)=4,\ 0,\ 0,\ -4\\
-\mathbb E[M_2^2]&=\tfrac14(16)+\tfrac14(0)+\tfrac14(0)+\tfrac14(16)=8=2\times4\end{aligned}
+\begin{aligned}
+\sigma^2&=\tfrac12(2)^2+\tfrac12(-2)^2=4\\
+&Y_1+Y_2:\\
+&\quad(+2+2),\ (+2-2),\ (-2+2),\ (-2-2)\\
+&\quad=4,\ 0,\ 0,\ -4\\
+&\mathbb E[M_2^2]\\
+&=\tfrac14(16)+\tfrac14(0)+\tfrac14(0)+\tfrac14(16)\\
+&=8=2\times4
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สองเส้นทางที่ส่วนเกินหักล้างกันเหลือศูนย์ คือที่มาของการที่พจน์คูณข้ามหายไป ผลนับด้วยมือได้ 8 ตรงกับสองเท่าของ 4 ตามสูตร</p>
@@ -238,8 +249,13 @@ Y_1+Y_2&:\ (+2+2),\ (+2-2),\ (-2+2),\ (-2-2)=4,\ 0,\ 0,\ -4\\
   <h4>ขั้นที่ 11 — ขนาดความเหวี่ยงหลัง 400 ไม้ของ desk</h4>
   <p>ส่วนเกิน \$37,000 จะแปลว่าเก่งหรือฟลุ้คตอบไม่ได้ถ้าไม่รู้ว่าความเหวี่ยงปกติกว้างแค่ไหน variance มีหน่วยเป็นเงินยกกำลังสอง จึงถอดรากกลับเป็นหน่วยเงิน</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(M_{400})&=400\sigma^2=400(2{,}500)^2=400(6{,}250{,}000)=2.5\times10^{9}\ \text{USD}^2\\
-\operatorname{SD}(M_{400})&=\sigma\sqrt{400}=2{,}500(20)=50{,}000\ \text{USD}\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(M_{400})\\
+&=400\sigma^2=400(2{,}500)^2\\
+&=400(6{,}250{,}000)=2.5\times10^{9}\ \text{USD}^2\\
+&\operatorname{SD}(M_{400})\\
+&=\sigma\sqrt{400}=2{,}500(20)=50{,}000\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความเหวี่ยงปกติของส่วนเกินหลัง 400 ไม้คือ \$50,000 ใหญ่กว่าส่วนเกินที่เห็น \$37,000 เสียอีก สัญญาณจึงยังจมอยู่ใน noise</p>

@@ -98,10 +98,16 @@
   <h4>ขั้นที่ 1 — กติกาเป็นตัวเลข: ตัวส่วนโตขึ้นทุกครั้ง</h4>
   <p>เริ่มด้วยแดง 1 เขียว 1 หยิบแล้วใส่คืนพร้อมเติมสีเดิมอีกลูก หลังหยิบ n ครั้งจึงมีลูกทั้งหมด n + 2 ลูก ทุกลูกมีสิทธิ์ถูกหยิบเท่ากัน</p>
   <div class="math">\[
-\begin{aligned}\text{after }n\text{ draws}:\quad\text{total}&=n+2,\qquad\text{red}=R_n\\
-P(\text{red next}\mid R_n=k)&=\frac{k}{n+2},\qquad P(\text{green next}\mid R_n=k)=\frac{n+2-k}{n+2}\\[4pt]
-\text{red next}&\Rightarrow R_{n+1}=k+1,\qquad \text{green next}\Rightarrow R_{n+1}=k\\[4pt]
-n=0&:\ P(\text{red})=\tfrac12\qquad n=1,\ R_1=2:\ P(\text{red})=\tfrac23\end{aligned}
+\begin{aligned}
+&\text{after }n\text{ draws}:\\
+\text{total}&=n+2,\qquad\text{red}=R_n\\
+&P(\text{red next}\mid R_n=k)=\frac{k}{n+2}\\
+&P(\text{green next}\mid R_n=k)=\frac{n+2-k}{n+2}\\[4pt]
+&\text{red next}\Rightarrow R_{n+1}=k+1\\
+&\text{green next}\Rightarrow R_{n+1}=k\\[4pt]
+&n=0:\ P(\text{red})=\tfrac12\\
+&n=1,\ R_1=2:\ P(\text{red})=\tfrac23
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>โอกาสได้แดงคือจำนวนลูกแดงหารลูกทั้งหมด ได้แดงแล้วแดงเพิ่มหนึ่งลูก ได้เขียวแล้วแดงเท่าเดิม ครั้งแรกโอกาสครึ่งต่อครึ่ง แต่ถ้าครั้งแรกได้แดง โหลกลายเป็นแดง 2 เขียว 1 และโอกาสแดงครั้งที่สองขึ้นเป็นสองในสาม</p>
@@ -112,10 +118,17 @@ n=0&:\ P(\text{red})=\tfrac12\qquad n=1,\ R_1=2:\ P(\text{red})=\tfrac23\end{ali
   <h4>ขั้นที่ 2 — สองครั้งแรกด้วยมือ: ทุกจำนวนแดงมีโอกาสเท่ากัน</h4>
   <p>ก่อนสูตรใด ๆ ลองนับสองครั้งแรก มีสี่ลำดับที่เป็นไปได้ คูณโอกาสตามทางแล้วรวมตามจำนวนแดง จากนั้นหาค่าเฉลี่ยของสัดส่วน</p>
   <div class="math">\[
-\begin{aligned}\text{red, red}&:\ \tfrac12\cdot\tfrac23=\tfrac13\qquad\text{red, green}:\ \tfrac12\cdot\tfrac13=\tfrac16\\
-\text{green, red}&:\ \tfrac12\cdot\tfrac13=\tfrac16\qquad\text{green, green}:\ \tfrac12\cdot\tfrac23=\tfrac13\\[4pt]
-P(J_2=2)&=\tfrac13,\qquad P(J_2=1)=\tfrac16+\tfrac16=\tfrac13,\qquad P(J_2=0)=\tfrac13\\[4pt]
-\mathbb E[M_2]&=\tfrac13\cdot\tfrac34+\tfrac13\cdot\tfrac24+\tfrac13\cdot\tfrac14=\tfrac{6}{12}=\tfrac12\end{aligned}
+\begin{aligned}
+&\text{red, red}:\ \tfrac12\cdot\tfrac23=\tfrac13\\
+&\text{red, green}:\ \tfrac12\cdot\tfrac13=\tfrac16\\
+&\text{green, red}:\ \tfrac12\cdot\tfrac13=\tfrac16\\
+&\text{green, green}:\ \tfrac12\cdot\tfrac23=\tfrac13\\[4pt]
+P(J_2=2)&=\tfrac13\\
+P(J_2=1)&=\tfrac16+\tfrac16=\tfrac13\\
+P(J_2=0)&=\tfrac13\\[4pt]
+\mathbb E[M_2]&=\tfrac13\cdot\tfrac34+\tfrac13\cdot\tfrac24+\tfrac13\cdot\tfrac14\\
+&=\tfrac{6}{12}=\tfrac12
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แดงแล้วเขียวกับเขียวแล้วแดงได้โอกาสเท่ากันพอดี ทั้งที่ลำดับต่างกัน โอกาสขึ้นกับว่าได้แดงกี่ครั้ง ไม่ใช่ได้ตอนไหน ตำราเรียกสมบัตินี้ว่า exchangeability</p>
@@ -135,10 +148,14 @@ P(J_2=2)&=\tfrac13,\qquad P(J_2=1)=\tfrac16+\tfrac16=\tfrac13,\qquad P(J_2=0)=\t
   <h4>ขั้นที่ 3 — จำนวนลูกแดงเอียงขึ้นเสมอ จึงวัดผิดสิ่ง</h4>
   <p>ถ่วงสองกรณีของขั้นที่ 1 ด้วยโอกาสแล้วรวมกัน จำนวนลูกแดงลดไม่ได้ และเพิ่มได้ทุกครั้ง จึงไม่ใช่ martingale</p>
   <div class="math">\[
-\begin{aligned}\mathbb E_n[R_{n+1}]&=(R_n+1)\frac{R_n}{n+2}+R_n\left(1-\frac{R_n}{n+2}\right)\\
+\begin{aligned}
+&\mathbb E_n[R_{n+1}]\\
+&=(R_n+1)\frac{R_n}{n+2}+R_n\left(1-\frac{R_n}{n+2}\right)\\
 &=\frac{R_n^2}{n+2}+\frac{R_n}{n+2}+R_n-\frac{R_n^2}{n+2}\\
 &=R_n\left(\frac{1}{n+2}+1\right)=R_n\,\frac{n+3}{n+2}\\[4pt]
-n=1,\ R_1=2&:\ \tfrac23(3)+\tfrac13(2)=\tfrac83=2\cdot\tfrac43\end{aligned}
+&n=1,\ R_1=2:\\
+&\quad\tfrac23(3)+\tfrac13(2)=\tfrac83=2\cdot\tfrac43
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์ที่มีกำลังสองโผล่สองครั้งด้วยเครื่องหมายตรงข้าม จึงหักกันทิ้ง ที่เหลือดึงตัวร่วมได้ตัวคูณที่มากกว่า 1 เสมอ ตัวอย่างบรรทัดล่างนับตรงได้ 8/3 ตรงกับสูตร จำนวนแดงโตเพราะทั้งโหลโต ไม่ใช่เพราะแดงได้เปรียบ</p>
@@ -160,9 +177,13 @@ M_n=\frac{R_n}{n+2}
   <h4>ขั้นที่ 5 — พิสูจน์ว่าสัดส่วนเป็น martingale</h4>
   <p>แทนผลของขั้นที่ 3 ลงไป ตัวส่วนของครั้งถัดไปคือ n + 3 ซึ่งรู้ล่วงหน้า ไม่สุ่ม จึงดึงออกนอกค่าเฉลี่ยได้</p>
   <div class="math">\[
-\begin{aligned}\mathbb E_n[M_{n+1}]&=\mathbb E_n\!\left[\frac{R_{n+1}}{n+3}\right]=\frac{1}{n+3}\,\mathbb E_n[R_{n+1}]\\
+\begin{aligned}
+&\mathbb E_n[M_{n+1}]\\
+&=\mathbb E_n\!\left[\frac{R_{n+1}}{n+3}\right]=\frac{1}{n+3}\,\mathbb E_n[R_{n+1}]\\
 &=\frac{1}{n+3}\cdot R_n\,\frac{n+3}{n+2}=\frac{R_n}{n+2}=M_n\\[4pt]
-n=1,\ M_1=\tfrac23&:\ \tfrac23\cdot\tfrac34+\tfrac13\cdot\tfrac24=\tfrac{6}{12}+\tfrac{2}{12}=\tfrac23=M_1\end{aligned}
+&n=1,\ M_1=\tfrac23:\\
+&\quad\tfrac23\cdot\tfrac34+\tfrac13\cdot\tfrac24=\tfrac{6}{12}+\tfrac{2}{12}=\tfrac23=M_1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>n + 3 อยู่ทั้งบนและล่างจึงตัดกันพอดี ตัวคูณที่ทำให้จำนวนแดงเอียงขึ้นหายไปกับตัวส่วนที่โตเท่ากัน บรรทัดล่างตรวจด้วยเลข หลังได้แดงครั้งแรก สัดส่วน 2/3 และค่าเฉลี่ยของครั้งถัดไปก็ยัง 2/3</p>
@@ -173,9 +194,13 @@ n=1,\ M_1=\tfrac23&:\ \tfrac23\cdot\tfrac34+\tfrac13\cdot\tfrac24=\tfrac{6}{12}+
   <h4>ขั้นที่ 6 — ใช้สัดส่วนทำนายจำนวนแดงข้างหน้า</h4>
   <p>หยิบไป 100 ครั้งมีลูกแดง 70 ลูก ค่าเฉลี่ยของจำนวนลูกแดงหลังหยิบครบ 200 ครั้งคือเท่าไร ไม่ต้องรู้ว่าระหว่างทางเกิดอะไร</p>
   <div class="math">\[
-\begin{aligned}M_{100}&=\frac{R_{100}}{100+2}=\frac{70}{102}=0.6863\\
-\mathbb E_{100}[M_{200}]&=M_{100}=\frac{70}{102}\\
-\mathbb E_{100}[R_{200}]&=(200+2)\,\mathbb E_{100}[M_{200}]=202\times\frac{70}{102}=\frac{14{,}140}{102}=138.63\end{aligned}
+\begin{aligned}
+M_{100}&=\frac{R_{100}}{100+2}=\frac{70}{102}=0.6863\\
+&\mathbb E_{100}[M_{200}]=M_{100}=\frac{70}{102}\\
+&\mathbb E_{100}[R_{200}]\\
+&=(200+2)\,\mathbb E_{100}[M_{200}]=202\times\frac{70}{102}\\
+&=\frac{14{,}140}{102}=138.63
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กับดักคือตอบ 70 เพราะจำว่า martingale แปลว่าไม่ขยับ แต่สิ่งที่ไม่ขยับคือสัดส่วน วิธีที่ถูกคือแปลงเป็นสัดส่วนด้วยตัวส่วนตอนนี้ 102 ปล่อยให้นิ่ง แล้วแปลงกลับด้วยตัวส่วนตอนนั้น 202</p>
@@ -195,10 +220,17 @@ n=1,\ M_1=\tfrac23&:\ \tfrac23\cdot\tfrac34+\tfrac13\cdot\tfrac24=\tfrac{6}{12}+
   <h4>ขั้นที่ 7 — โอกาสของลำดับหนึ่งลำดับขึ้นกับจำนวนแดงเท่านั้น</h4>
   <p>ขยายการนับของขั้นที่ 2 ไปที่ n ครั้ง ลำดับหนึ่งที่ได้แดง j ครั้งคือการคูณโอกาสทีละครั้งตามขั้นที่ 1 แยกดูตัวส่วนกับตัวเศษ</p>
   <div class="math">\[
-\begin{aligned}\text{denominators}&:\ 2\cdot3\cdots(n+1)=\frac{(n+1)!}{1!}\\
-\text{red numerators}&:\ 1\cdot2\cdots j=j!\qquad\text{green numerators}:\ 1\cdot2\cdots(n-j)=(n-j)!\\[4pt]
-P(\text{one sequence with }j\text{ reds})&=\frac{j!\,(n-j)!}{(n+1)!}\\[4pt]
-n=2,\ j=2&:\ \frac{2!\,0!}{3!}=\frac{2}{6}=\frac13\end{aligned}
+\begin{aligned}
+&\text{denominators}:\\
+&\quad 2\cdot3\cdots(n+1)=\frac{(n+1)!}{1!}\\
+&\text{red numerators}:\\
+&\quad 1\cdot2\cdots j=j!\\
+&\text{green numerators}:\\
+&\quad 1\cdot2\cdots(n-j)=(n-j)!\\[4pt]
+&P(\text{one sequence with }j\text{ reds})\\
+&=\frac{j!\,(n-j)!}{(n+1)!}\\[4pt]
+&n=2,\ j=2:\ \frac{2!\,0!}{3!}=\frac{2}{6}=\frac13
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>โหลโตทีละลูกทุกครั้งไม่ว่าได้สีอะไร ตัวส่วนจึงวิ่ง 2, 3 ไปจนถึง n + 1 เสมอ ครั้งที่ได้แดง ตัวเศษคือจำนวนแดงตอนนั้น ซึ่งเริ่มที่ 1 แล้วโตทีละหนึ่ง ฝั่งเขียวก็เช่นกัน</p>
@@ -210,8 +242,12 @@ n=2,\ j=2&:\ \frac{2!\,0!}{3!}=\frac{2}{6}=\frac13\end{aligned}
   <h4>ขั้นที่ 8 — รวมทุกลำดับ: ทุกจำนวนแดงมีโอกาส 1 ใน n + 1</h4>
   <p>ลำดับที่ได้แดงเท่ากันมีโอกาสเท่ากันและไม่ทับกัน จึงนับจำนวนลำดับด้วยการเลือกตำแหน่งแบบหัวข้อ 1.5 แล้วคูณ</p>
   <div class="math">\[
-\begin{aligned}P(J_n=j)&=\binom{n}{j}\cdot\frac{j!\,(n-j)!}{(n+1)!}=\frac{n!}{j!\,(n-j)!}\cdot\frac{j!\,(n-j)!}{(n+1)!}\\
-&=\frac{n!}{(n+1)!}=\frac{n!}{(n+1)\,n!}=\frac{1}{n+1},\qquad j=0,1,\ldots,n\end{aligned}
+\begin{aligned}
+P(J_n=j)&=\binom{n}{j}\cdot\frac{j!\,(n-j)!}{(n+1)!}\\
+&=\frac{n!}{j!\,(n-j)!}\cdot\frac{j!\,(n-j)!}{(n+1)!}\\
+&=\frac{n!}{(n+1)!}=\frac{n!}{(n+1)\,n!}=\frac{1}{n+1}\\
+&\quad j=0,1,\ldots,n
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กางแฟกทอเรียลออก j! และ (n − j)! อยู่ทั้งบนและล่างจึงตัดกันหมด ผลที่ได้ไม่มี j อยู่เลย ทุกจำนวนแดงจึงมีโอกาสเท่ากัน ซึ่งขัดกับสัญชาตญาณของคนที่ชินกับเหรียญ การเติมลูกสีเดิมคือสิ่งที่ทำให้ตัดกันพอดี</p>
@@ -222,9 +258,14 @@ n=2,\ j=2&:\ \frac{2!\,0!}{3!}=\frac{2}{6}=\frac13\end{aligned}
   <h4>ขั้นที่ 9 — สัดส่วนที่เป็นไปได้หลัง n ครั้ง</h4>
   <p>แปลงจำนวนครั้งที่ได้แดงเป็นสัดส่วน ลูกแดงทั้งหมดคือหนึ่งลูกตั้งต้นบวกลูกที่เติมทุกครั้งที่ได้แดง</p>
   <div class="math">\[
-\begin{aligned}R_n&=1+J_n,\qquad M_n=\frac{1+J_n}{n+2}\\
-J_n=0,1,\ldots,n\ &\Rightarrow\ M_n=\frac{1}{n+2},\ \frac{2}{n+2},\ \ldots,\ \frac{n+1}{n+2}\\[4pt]
-n=2{,}000&:\ 2{,}001\ \text{values, each with probability }\frac{1}{2{,}001}\end{aligned}
+\begin{aligned}
+R_n&=1+J_n\\
+M_n&=\frac{1+J_n}{n+2}\\
+&J_n=0,1,\ldots,n\\
+&\Rightarrow\ M_n=\frac{1}{n+2},\ \frac{2}{n+2},\ \ldots,\ \frac{n+1}{n+2}\\[4pt]
+&n=2{,}000:\\
+&\quad 2{,}001\ \text{values, each with probability }\frac{1}{2{,}001}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ได้แดงศูนย์ครั้งให้สัดส่วนต่ำสุด ได้แดงทุกครั้งให้สูงสุด ค่าที่เป็นไปได้เรียงห่างเท่ากัน และขั้นที่ 8 บอกว่าทุกค่ามีน้ำหนักเท่ากัน พอหยิบมากขึ้น จุดเหล่านี้ถี่ขึ้นจนเรียบเสมอทั้งช่วง</p>
@@ -235,10 +276,16 @@ n=2{,}000&:\ 2{,}001\ \text{values, each with probability }\frac{1}{2{,}001}\end
   <h4>ขั้นที่ 10 — ตอบคำถามเปิด: 100 ครั้ง ช่วง 45% ถึง 55%</h4>
   <p>นับว่าจำนวนแดงค่าไหนให้สัดส่วนในช่วงนั้น แล้วเทียบกับเหรียญ 100 ครั้งที่ใช้ระฆังของหัวข้อ 1.9 พร้อมปรับครึ่งหน่วยเพราะนับเป็นจำนวนเต็ม</p>
   <div class="math">\[
-\begin{aligned}0.45\le\frac{1+J}{102}\le0.55\ &\Rightarrow\ 45.9\le1+J\le56.1\ \Rightarrow\ J=45,\ldots,55\\
+\begin{aligned}
+&0.45\le\frac{1+J}{102}\le0.55\\
+&\Rightarrow\ 45.9\le1+J\le56.1\\
+&\Rightarrow\ J=45,\ldots,55\\
 P_{\text{urn}}&=\frac{11}{101}=10.9\%\\[4pt]
-\text{coin}:\ \operatorname{SD}(\text{heads})&=\sqrt{100(0.5)(0.5)}=5,\qquad z=\frac{55.5-50}{5}=1.1\\
-P_{\text{coin}}&=2\Phi(1.1)-1=0.729=72.9\%\end{aligned}
+&\text{coin}:\ \operatorname{SD}(\text{heads})\\
+&=\sqrt{100(0.5)(0.5)}=5\\
+z&=\frac{55.5-50}{5}=1.1\\
+P_{\text{coin}}&=2\Phi(1.1)-1=0.729=72.9\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จำนวนแดงที่ใช้ได้มี 11 ค่าจาก 101 ค่าที่โอกาสเท่ากัน ส่วนเหรียญกระจุกรอบ 50 หัว ความเหวี่ยงแค่ 5 หัว ช่วงนี้จึงกินพื้นที่เกือบสามในสี่ ค่าเฉลี่ยเท่ากันแต่ความกว้างต่างกันลิบลับ</p>
@@ -249,10 +296,17 @@ P_{\text{coin}}&=2\Phi(1.1)-1=0.729=72.9\%\end{aligned}
   <h4>ขั้นที่ 11 — ความกว้างของสัดส่วนหลัง n ครั้ง: กว้างขึ้น ไม่ได้แคบลง</h4>
   <p>จำนวนครั้งที่ได้แดงมีโอกาสเท่ากันทุกค่าตั้งแต่ 0 ถึง n หาค่าเฉลี่ยของกำลังสองด้วยผลรวมกำลังสอง แล้วแปลงเป็นสัดส่วน</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[J_n]&=\frac n2,\qquad \mathbb E[J_n^2]=\frac{1}{n+1}\sum_{j=0}^{n}j^2=\frac{1}{n+1}\cdot\frac{n(n+1)(2n+1)}{6}=\frac{n(2n+1)}{6}\\
-\operatorname{Var}(J_n)&=\frac{n(2n+1)}{6}-\frac{n^2}{4}=\frac{4n^2+2n-3n^2}{12}=\frac{n(n+2)}{12}\\
+\begin{aligned}
+\mathbb E[J_n]&=\frac n2\\
+\mathbb E[J_n^2]&=\frac{1}{n+1}\sum_{j=0}^{n}j^2\\
+&=\frac{1}{n+1}\cdot\frac{n(n+1)(2n+1)}{6}=\frac{n(2n+1)}{6}\\
+\operatorname{Var}(J_n)&=\frac{n(2n+1)}{6}-\frac{n^2}{4}\\
+&=\frac{4n^2+2n-3n^2}{12}=\frac{n(n+2)}{12}\\
 \operatorname{Var}(M_n)&=\frac{\operatorname{Var}(J_n)}{(n+2)^2}=\frac{n}{12(n+2)}\\[4pt]
-n=1&:\ \operatorname{SD}=\tfrac16=0.1667\qquad n=2:\ \operatorname{SD}=\sqrt{\tfrac{1}{24}}=0.2041\qquad n=2{,}000:\ \operatorname{SD}=0.288531\end{aligned}
+&n=1:\ \operatorname{SD}=\tfrac16=0.1667\\
+&n=2:\ \operatorname{SD}=\sqrt{\tfrac{1}{24}}=0.2041\\
+&n=2{,}000:\ \operatorname{SD}=0.288531
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลรวมกำลังสองตรวจได้เร็ว ที่ n = 2 ได้ 0 + 1 + 4 = 5 ตรงกับ 2·3·5/6 สัดส่วนมีตัวส่วน n + 2 จึงหาร variance ด้วยกำลังสองของมัน</p>
@@ -264,9 +318,15 @@ n=1&:\ \operatorname{SD}=\tfrac16=0.1667\qquad n=2:\ \operatorname{SD}=\sqrt{\tf
   <h4>ขั้นที่ 12 — สัดส่วนสุดท้ายกระจายเท่ากันทั้งช่วง 0 ถึง 1</h4>
   <p>สัดส่วนอยู่ระหว่าง 0 กับ 1 เสมอ martingale convergence theorem จึงบอกว่าแต่ละเส้นทางนิ่งที่ค่าหนึ่ง คำถามคือค่านั้นกระจายอย่างไร หาโอกาสสะสมตรง ๆ จากขั้นที่ 8 โดยนับจำนวนค่าที่ไม่เกินระดับ x</p>
   <div class="math">\[
-\begin{aligned}P(M_n\le x)&=P\!\left(\frac{1+J_n}{n+2}\le x\right)=P\big(J_n\le x(n+2)-1\big)\\
+\begin{aligned}
+&P(M_n\le x)\\
+&=P\!\left(\frac{1+J_n}{n+2}\le x\right)\\
+&=P\big(J_n\le x(n+2)-1\big)\\
 &=\frac{\text{number of allowed }j}{n+1}=\frac{\lfloor x(n+2)\rfloor}{n+1}\\
-P(M_\infty\le x)&=\lim_{n\to\infty}\frac{\lfloor x(n+2)\rfloor}{n+1}=x,\qquad 0\lt x\lt1\end{aligned}
+&P(M_\infty\le x)\\
+&=\lim_{n\to\infty}\frac{\lfloor x(n+2)\rfloor}{n+1}=x\\
+&\quad 0\lt x\lt1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ย้ายข้างให้เหลือเงื่อนไขบนจำนวนแดง จำนวนค่าที่ใช้ได้คือ x(n+2) ปัดลงเป็นจำนวนเต็ม แต่ละค่ามีน้ำหนัก 1 ใน n + 1</p>
@@ -278,9 +338,13 @@ P(M_\infty\le x)&=\lim_{n\to\infty}\frac{\lfloor x(n+2)\rfloor}{n+1}=x,\qquad 0\
   <h4>ขั้นที่ 13 — ค่าเฉลี่ยและความกว้างของสัดส่วนสุดท้าย</h4>
   <p>density เท่ากับ 1 ตลอดช่วง ค่าเฉลี่ยและค่าเฉลี่ยของกำลังสองจึงหาได้ด้วย integral สั้น ๆ</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[M_\infty]&=\int_0^1 x\,dx=\frac12,\qquad \mathbb E[M_\infty^2]=\int_0^1 x^2\,dx=\frac13\\
-\operatorname{Var}(M_\infty)&=\frac13-\left(\frac12\right)^2=\frac{4-3}{12}=\frac{1}{12}\\
-\operatorname{SD}(M_\infty)&=\sqrt{\frac{1}{12}}=0.288675\end{aligned}
+\begin{aligned}
+\mathbb E[M_\infty]&=\int_0^1 x\,dx=\frac12\\
+\mathbb E[M_\infty^2]&=\int_0^1 x^2\,dx=\frac13\\
+\operatorname{Var}(M_\infty)&=\frac13-\left(\frac12\right)^2\\
+&=\frac{4-3}{12}=\frac{1}{12}\\
+\operatorname{SD}(M_\infty)&=\sqrt{\frac{1}{12}}=0.288675
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยยังเป็นครึ่งหนึ่งตามที่ martingale บังคับ แต่ความเหวี่ยงเกือบ 29 percentage points ขั้นที่ 11 เข้าใกล้ตัวเลขนี้จากด้านล่าง: 0.288531 ที่ 2,000 ครั้ง</p>
@@ -299,8 +363,12 @@ P(M_\infty\le x)&=\lim_{n\to\infty}\frac{\lfloor x(n+2)\rfloor}{n+1}=x,\qquad 0\
   <h4>ขั้นที่ 14 — โอกาสของช่วงเท่ากับความกว้างของช่วง</h4>
   <p>เมื่อ density เท่ากับ 1 ตลอด โอกาสที่สัดส่วนสุดท้ายตกในช่วงใดคือความกว้างของช่วงนั้นเอง desk ถามสองช่วง คือใกล้เสมอ และมีผู้ชนะขาด</p>
   <div class="math">\[
-\begin{aligned}P(0.45\le M_\infty\le0.55)&=\int_{0.45}^{0.55}1\,dx=0.10\\
-P(M_\infty\le0.10\ \text{or}\ M_\infty\ge0.90)&=0.10+0.10=0.20\end{aligned}
+\begin{aligned}
+&P(0.45\le M_\infty\le0.55)\\
+&=\int_{0.45}^{0.55}1\,dx=0.10\\
+&P(M_\infty\le0.10\ \text{or}\ M_\infty\ge0.90)\\
+&=0.10+0.10=0.20
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ช่วงใกล้เสมอกว้าง 0.10 ได้ 10% ช่วงสุดขอบสองด้านรวมกว้าง 0.20 ได้ 20% การมีผู้ชนะขาดจึงเกิดบ่อยเป็นสองเท่าของการจบแบบใกล้เสมอ</p>
@@ -311,10 +379,15 @@ P(M_\infty\le0.10\ \text{or}\ M_\infty\ge0.90)&=0.10+0.10=0.20\end{aligned}
   <h4>ขั้นที่ 15 — เทียบกับเหรียญ 2,000 ครั้ง</h4>
   <p>ถ้าคิดว่าคำสั่งซื้อขายแต่ละรายไม่เกี่ยวกัน จะได้ภาพเหรียญ ความเหวี่ยงของสัดส่วนหัวหดตามรากที่สองของจำนวนครั้ง</p>
   <div class="math">\[
-\begin{aligned}\operatorname{SD}(\widehat p_{2000})&=\sqrt{\frac{0.5(1-0.5)}{2{,}000}}=0.011180\\
+\begin{aligned}
+&\operatorname{SD}(\widehat p_{2000})\\
+&=\sqrt{\frac{0.5(1-0.5)}{2{,}000}}=0.011180\\
 z&=\frac{0.55-0.50}{0.011180}=4.47\\
-P(0.45\le\widehat p_{2000}\le0.55)&=2\Phi(4.47)-1=0.999992\\
-P(\widehat p_{2000}\le0.10\ \text{or}\ \widehat p_{2000}\ge0.90)&\approx0\end{aligned}
+&P(0.45\le\widehat p_{2000}\le0.55)\\
+&=2\Phi(4.47)-1=0.999992\\
+&P(\widehat p_{2000}\le0.10\ \text{or}\ \widehat p_{2000}\ge0.90)\\
+&\approx0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ช่วง 45% ถึง 55% ห่างจากกลาง 4.47 เท่าของความเหวี่ยง ระฆังให้โอกาสเกิน 99.99% ภาพเหรียญบอกว่าเสมอแน่นอน ภาพโหลบอกว่าเสมอแค่ 10% คนละคำตอบเพราะสมมติฐานเรื่องความเกี่ยวกันต่างกัน</p>
@@ -333,9 +406,14 @@ P(\widehat p_{2000}\le0.10\ \text{or}\ \widehat p_{2000}\ge0.90)&\approx0\end{al
   <h4>ขั้นที่ 16 — โหลเริ่มด้วย a แดง b เขียว: นับแบบเดิม</h4>
   <p>ใช้วิธีของขั้นที่ 7 กับโหลที่เริ่มด้วยลูกมากขึ้น ตัวส่วนเริ่มที่ a + b ตัวเศษฝั่งแดงเริ่มที่ a ฝั่งเขียวเริ่มที่ b แล้วคูณจำนวนลำดับเข้าไป</p>
   <div class="math">\[
-\begin{aligned}P(J_n=j)&=\binom{n}{j}\frac{a(a+1)\cdots(a+j-1)\cdot b(b+1)\cdots(b+n-j-1)}{(a+b)(a+b+1)\cdots(a+b+n-1)}\\[4pt]
-a(a+1)\cdots(a+j-1)&=\frac{(a+j-1)!}{(a-1)!}\\[4pt]
-a=b=1&:\ \binom{n}{j}\frac{j!\,(n-j)!}{(n+1)!}=\frac{1}{n+1}\end{aligned}
+\begin{aligned}
+&P(J_n=j)\\
+&=\binom{n}{j}\frac{a(a+1)\cdots(a+j-1)\cdot b(b+1)\cdots(b+n-j-1)}{(a+b)(a+b+1)\cdots(a+b+n-1)}\\[4pt]
+&a(a+1)\cdots(a+j-1)\\
+&=\frac{(a+j-1)!}{(a-1)!}\\[4pt]
+&a=b=1:\\
+&\quad\binom{n}{j}\frac{j!\,(n-j)!}{(n+1)!}=\frac{1}{n+1}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลคูณของตัวเลขเรียงกันเขียนเป็นแฟกทอเรียลหารกันได้ เพราะ a และ b เป็นจำนวนลูกจึงเป็นจำนวนเต็ม แทน a = b = 1 กลับไปได้ผลของขั้นที่ 8 พอดี</p>
@@ -346,10 +424,15 @@ a=b=1&:\ \binom{n}{j}\frac{j!\,(n-j)!}{(n+1)!}=\frac{1}{n+1}\end{aligned}
   <h4>ขั้นที่ 17 — รูปร่างของสัดส่วนสุดท้าย: Beta distribution</h4>
   <p>เมื่อหยิบมาก ๆ ผลคูณเรียงกันยาวประมาณด้วยกำลังได้ นี่คือที่มาของรูปร่าง แล้วตัวคงที่ด้านหน้าทำให้พื้นที่ใต้เส้นเท่ากับหนึ่ง</p>
   <div class="math">\[
-\begin{aligned}\frac{(a+j-1)!}{j!}&=(j+1)(j+2)\cdots(j+a-1)\approx j^{\,a-1}\\
-P(J_n=j)&\propto j^{\,a-1}(n-j)^{\,b-1}\ \Rightarrow\ \text{with }x=\frac jn:\ \propto x^{a-1}(1-x)^{b-1}\\[4pt]
+\begin{aligned}
+&\frac{(a+j-1)!}{j!}\\
+&=(j+1)(j+2)\cdots(j+a-1)\approx j^{\,a-1}\\
+&P(J_n=j)\propto j^{\,a-1}(n-j)^{\,b-1}\\
+&\Rightarrow\ \text{with }x=\frac jn:\ \propto x^{a-1}(1-x)^{b-1}\\[4pt]
 f(x)&=\frac{(a+b-1)!}{(a-1)!\,(b-1)!}\,x^{a-1}(1-x)^{b-1}\\
-a=b=1&:\ f(x)=\frac{1!}{0!\,0!}\,x^0(1-x)^0=1\end{aligned}
+&a=b=1:\\
+&\quad f(x)=\frac{1!}{0!\,0!}\,x^0(1-x)^0=1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลคูณ a − 1 ตัวที่แต่ละตัวใกล้ j มีค่าราว $j^{a-1}$ เมื่อ j ใหญ่ ฝั่งเขียวก็เช่นกัน รวมกับตัวส่วนที่ไม่ขึ้นกับ j ได้รูปร่างของ Beta distribution</p>
