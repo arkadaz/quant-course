@@ -1,1 +1,7 @@
-lam=np.array([0,.25,.5,1.0,2.0]);frontload=np.array([.20,.28,.36,.50,.66]);ax.plot(lam,100*frontload,marker='o',color=ACCENT,lw=2);ax.set_xlabel('Relative risk-aversion weight');ax.set_ylabel('Shares sold in first interval (%)');ax.set_title('Risk aversion front-loads execution',loc='left');ax.grid(alpha=.25)
+n=np.array([849.8424,104.6009,29.9362,7.4082,3.5549,1.5721,0.7746,0.9429,0.6981,0.6696])
+x=1000-np.cumsum(n);k=np.arange(1,11)
+ax.bar(k,n,color=ACCENT,width=.6,label='shares sold in the period')
+ax.plot(np.concatenate([[0],k]),np.concatenate([[1000],x]),'o-',color=BAD,lw=1.8,label='shares still held')
+ax.annotate('85% in period 1',xy=(1,849.8),xytext=(2.2,760),fontsize=7.5,arrowprops=dict(arrowstyle='->',lw=.8,color=INK))
+ax.set_xticks(np.arange(0,11));ax.set_xlabel('Period');ax.set_ylabel('Shares')
+ax.set_title('Course spreadsheet: 1,000 shares in 10 periods, risk weight 1',loc='left');ax.legend(fontsize=7.5);ax.grid(alpha=.2)
