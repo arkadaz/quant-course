@@ -209,14 +209,19 @@ W_t+\Delta W_{t,s}&=W_t+\big(W_{t+s}-W_t\big)\\
 
 <section class="formula">
   <h4>ขั้นที่ 6 — $W_t^2$ มี predictable drift</h4>
-  <p>ลองทำแบบเดียวกันกับกำลังสองบ้าง คราวนี้ผลไม่เหมือนเดิม หกบรรทัดนี้ชี้จุดต่างไว้ที่บรรทัดที่ห้า ซึ่งเป็นที่มาของทุกอย่างในบทถัดไป กำลังสองของสิ่งที่เฉลี่ยแล้วเป็นศูนย์ ไม่ได้เฉลี่ยแล้วเป็นศูนย์ตาม</p>
+  <p>ลองทำแบบเดียวกันกับกำลังสองบ้าง คราวนี้ผลไม่เหมือนเดิม สูตรข้างล่างชี้จุดต่างไว้ที่บรรทัดที่ค่าเฉลี่ยของกำลังสองของ $\Delta W_{t,s}$ ออกมาเป็น $s$ ซึ่งเป็นที่มาของทุกอย่างในบทถัดไป กำลังสองของสิ่งที่เฉลี่ยแล้วเป็นศูนย์ ไม่ได้เฉลี่ยแล้วเป็นศูนย์ตาม</p>
   <div class="math">\[
-\begin{aligned}W_{t+s}^{2}&=\big(W_t+\Delta W_{t,s}\big)^{2}\\
+\begin{aligned}
+W_{t+s}^{2}&=\big(W_t+\Delta W_{t,s}\big)^{2}\\
 &=W_t^{2}+2W_t\,\Delta W_{t,s}+\Delta W_{t,s}^{2}\\
-\mathbb E[W_{t+s}^{2}\mid\mathcal F_t]&=W_t^{2}+2W_t\,\mathbb E[\Delta W_{t,s}\mid\mathcal F_t]+\mathbb E[\Delta W_{t,s}^{2}\mid\mathcal F_t]\\
-\mathbb E[\Delta W_{t,s}\mid\mathcal F_t]&=0\\
-\mathbb E[\Delta W_{t,s}^{2}\mid\mathcal F_t]&=\operatorname{Var}(\Delta W_{t,s})=s\\
-&=W_t^{2}+0+s=W_t^{2}+s\end{aligned}
+&\mathbb E[W_{t+s}^{2}\mid\mathcal F_t]\\
+&=W_t^{2}+2W_t\,\mathbb E[\Delta W_{t,s}\mid\mathcal F_t]\\
+&\quad+\mathbb E[\Delta W_{t,s}^{2}\mid\mathcal F_t]\\
+&\mathbb E[\Delta W_{t,s}\mid\mathcal F_t]=0\\
+&\mathbb E[\Delta W_{t,s}^{2}\mid\mathcal F_t]\\
+&=\operatorname{Var}(\Delta W_{t,s})=s\\
+&=W_t^{2}+0+s=W_t^{2}+s
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ลองยกกำลังสองการแยกของขั้นที่ 4 ดู แล้วกระจายตามสูตร $(a+b)^{2}$ ได้สามพจน์ เฉลี่ยทีละพจน์ โดยดึง $W_t$ ที่รู้ค่าแล้วออกมาข้างหน้าได้ พจน์ไขว้หายไปด้วยเหตุผลเดียวกับขั้นที่ 5</p>
@@ -229,10 +234,13 @@ W_t+\Delta W_{t,s}&=W_t+\big(W_{t+s}-W_t\big)\\
   <h4>ขั้นที่ 7 — conditional variance ของ Brownian motion ในอนาคต</h4>
   <p>ผลลัพธ์นี้บอกเราว่า แม้ตำแหน่งปัจจุบัน $W_t$ จะกำหนดค่ากึ่งกลางของการพยากรณ์ในอนาคต แต่ระดับความไม่แน่นอนรอบค่ากึ่งกลางนั้นสะสมเพิ่มขึ้นตามระยะเวลา $s$ เท่านั้น โดยไม่สนใจว่าอดีตที่ผ่านมาเส้นทางจะอยู่ที่ระดับใด</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(W_{t+s}\mid\mathcal F_t)&=\mathbb E\big[W_{t+s}^{2}\mid\mathcal F_t\big]-\big(\mathbb E[W_{t+s}\mid\mathcal F_t]\big)^{2}\\[4pt]
+\begin{aligned}
+&\operatorname{Var}(W_{t+s}\mid\mathcal F_t)\\
+&=\mathbb E\big[W_{t+s}^{2}\mid\mathcal F_t\big]-\big(\mathbb E[W_{t+s}\mid\mathcal F_t]\big)^{2}\\[4pt]
 &=\big(W_t^{2}+s\big)-(W_t)^{2}\\[4pt]
 &=W_t^{2}+s-W_t^{2}\\[4pt]
-&=s\end{aligned}
+&=s
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คำนวณ variance ของตำแหน่งในอนาคตด้วยสูตรพื้นฐาน คือ expected value ของกำลังสอง ลบด้วยกำลังสองของ expected value; ทั้งสองก้อนถูกคำนวณไว้แล้วในขั้นที่ 5 และ 6</p>
@@ -294,9 +302,11 @@ S_{16{:}00}&:\ \text{known only at 16:00}\ \times
 S_t&=520+93.60\,W_t\\
 \Delta t&=\frac{360}{252\times390}=\frac{360}{98{,}280}=0.003663\\
 \sqrt{\Delta t}&=0.060523\\[4pt]
-\mathbb E_{10}[S_{16}]&=520+93.60\,\mathbb E_{10}[\Delta W]=520\\
-\operatorname{SD}_{10}(S_{16})&=93.60(0.060523)=\$5.66\\
-\mathbb E_{10}[(S_{16}-520)^2]&=5.66^2=32.09
+&\mathbb E_{10}[S_{16}]\\
+&=520+93.60\,\mathbb E_{10}[\Delta W]=520\\
+&\operatorname{SD}_{10}(S_{16})\\
+&=93.60(0.060523)=\$5.66\\
+&\mathbb E_{10}[(S_{16}-520)^2]=5.66^2=32.09
 \end{aligned}
 \]</div>
   <div class="reading">

@@ -119,14 +119,19 @@
   <h4>ขั้นที่ 1 — แยก shared history กับ future increment</h4>
   <p>จะหาค่าเฉลี่ยของผลคูณจากสองเวลา อย่าไปคิดทั้งเส้นทาง ให้แยกค่าที่เวลาหลังออกเป็นส่วนที่ใช้ร่วมกับเวลาแรก บวกส่วนที่เกิดหลังจากนั้น จุดที่เลือกแยกไม่ใช่เรื่องบังเอิญ มันคือจุดเดียวที่ทำให้สองก้อนเป็นอิสระต่อกัน</p>
   <div class="math">\[
-\begin{aligned}(W_{t+s}-W_s)+W_s&=W_{t+s}-W_s+W_s\\
+\begin{aligned}
+&(W_{t+s}-W_s)+W_s\\
+&=W_{t+s}-W_s+W_s\\
 &=W_{t+s}\\[4pt]
-W_s&:\ \text{shared with the earlier time}\\
-W_{t+s}-W_s&:\ \text{new, independent of }\mathcal F_s\end{aligned}
+&W_s:\\
+&\quad\text{shared with the earlier time}\\
+&W_{t+s}-W_s:\\
+&\quad\text{new, independent of }\mathcal F_s
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>สองบรรทัดแรกคือการบวกและลบ $W_s$ ครั้งเดียว ซึ่งไม่เปลี่ยนค่าอะไรเลย จึงเป็นจริงบนทุกเส้นทาง ไม่ใช่การประมาณ</p>
-    <p>สองบรรทัดล่างอธิบายว่าทำไมถึงแยกตรงนี้ ไม่ใช่ที่อื่น: ก้อนล่างสุดคือส่วนที่เวลาแรกกับเวลาหลังใช้ร่วมกัน</p>
+    <p>สามบรรทัดแรกคือการบวกและลบ $W_s$ ครั้งเดียว ซึ่งไม่เปลี่ยนค่าอะไรเลย จึงเป็นจริงบนทุกเส้นทาง ไม่ใช่การประมาณ</p>
+    <p>สี่บรรทัดล่างอธิบายว่าทำไมถึงแยกตรงนี้ ไม่ใช่ที่อื่น: ก้อนล่างสุดคือส่วนที่เวลาแรกกับเวลาหลังใช้ร่วมกัน</p>
     <p>ส่วนก้อนบนคือส่วนที่เกิดขึ้นหลังเวลาแรกไปแล้ว ซึ่งสมบัติข้อแรกของ Brownian motion รับประกันว่าไม่เกี่ยวกับอะไรที่เกิดก่อนหน้านั้น</p>
     <p>การแยกให้ก้อนหนึ่งเป็นอิสระจากอีกก้อน คือสิ่งที่ทำให้ขั้นถัดไปคำนวณได้</p>
   </div>
@@ -155,11 +160,14 @@ W_{t+s}-W_s&:\ \text{new, independent of }\mathcal F_s\end{aligned}
   <h4>ขั้นที่ 3 — คำนวณ cross term ทีละชั้น</h4>
   <p>พจน์ไขว้ดูน่ากลัวที่สุด แต่จัดการได้โดยแทรกข้อมูล ณ เวลาแรกเข้าไปก่อน แล้วดึงส่วนที่รู้แล้วออกมานอกวงเล็บ</p>
   <div class="math">\[
-\begin{aligned}\mathbb E_0[(W_{t+s}-W_s)W_s]&=\mathbb E_0\!\left[\mathbb E[(W_{t+s}-W_s)W_s\mid\mathcal F_s]\right]\\
-&=\mathbb E_0\!\left[W_s\,\mathbb E[W_{t+s}-W_s\mid\mathcal F_s]\right]=0.\end{aligned}
+\begin{aligned}
+&\mathbb E_0[(W_{t+s}-W_s)W_s]\\
+&=\mathbb E_0\!\left[\mathbb E[(W_{t+s}-W_s)W_s\mid\mathcal F_s]\right]\\
+&=\mathbb E_0\!\left[W_s\,\mathbb E[W_{t+s}-W_s\mid\mathcal F_s]\right]=0.
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดแรกใช้ tower property แทรก $\mathcal F_s$; บรรทัดสองดึง $W_s$ ออกเพราะรู้แล้ว และ conditional mean ของ increment ใหม่เท่ากับ 0 จึงทำให้ cross term ทั้งก้อนเป็น 0</p>
+    <p>สองบรรทัดแรกใช้ tower property แทรก $\mathcal F_s$; บรรทัดที่สามดึง $W_s$ ออกเพราะรู้แล้ว และ conditional mean ของ increment ใหม่เท่ากับ 0 จึงทำให้ cross term ทั้งก้อนเป็น 0</p>
   </div>
 </section>
 
@@ -168,9 +176,12 @@ W_{t+s}-W_s&:\ \text{new, independent of }\mathcal F_s\end{aligned}
   <p>วิธีที่สองนี้ยืนยันผลลัพธ์เดียวกันด้วยสัจพจน์ independent increments โดยไม่ต้องพึ่ง filtration ช่วยให้เห็นชัดเจนว่า cross term หายไปเพราะช่วงเวลาไม่ทับกันจริง ๆ</p>
   <div class="math">\[
 \begin{aligned}
-[0,s]\ \text{and}\ (s,t+s]&:\ \text{no common time}\\
-W_s=W_s-W_0&\ \ \text{independent of}\ \ W_{t+s}-W_s\\[4pt]
-\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]&=\mathbb E_0[W_{t+s}-W_s]\cdot\mathbb E_0[W_s]\\
+&[0,s]\ \text{and}\ (s,t+s]:\\
+&\quad\text{no common time}\\
+&W_s=W_s-W_0\\
+&\ \ \text{independent of}\ \ W_{t+s}-W_s\\[4pt]
+&\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]\\
+&=\mathbb E_0[W_{t+s}-W_s]\cdot\mathbb E_0[W_s]\\
 &=0\cdot0=0
 \end{aligned}
 \]</div>
@@ -212,17 +223,23 @@ W_s=W_s-W_0&\ \ \text{independent of}\ \ W_{t+s}-W_s\\[4pt]
   <h4>ขั้นที่ 7 — covariance ของ Brownian levels</h4>
   <p>ผลลัพธ์ข้างบนขยายเป็นสูตรทั่วไปได้ทันที และคำว่า minimum ในสูตรนี้ หมายถึงเวลาที่มาก่อน ไม่ได้หมายถึงค่าของเส้นทางที่ต่ำกว่า ความยาวของประวัติที่ใช้ร่วมกันต่างหากที่เป็นตัวกำหนดว่าสองเวลานั้นเกาะกันแค่ไหน</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[W_u]=0\;&\Longrightarrow\;\operatorname{Cov}(W_u,W_v)=\mathbb E[W_uW_v]\\[4pt]
-u\le v:\quad W_v&=W_u+(W_v-W_u)\\
-\mathbb E[W_uW_v]&=\mathbb E[W_u^{2}]+\mathbb E\big[W_u(W_v-W_u)\big]\\
+\begin{aligned}
+&\mathbb E[W_u]=0\\
+&\;\Longrightarrow\;\operatorname{Cov}(W_u,W_v)=\mathbb E[W_uW_v]\\[4pt]
+&u\le v:\\
+W_v&=W_u+(W_v-W_u)\\
+\mathbb E[W_uW_v]&=\mathbb E[W_u^{2}]\\
+&\quad+\mathbb E\big[W_u(W_v-W_u)\big]\\
 &=u+\mathbb E[W_u]\,\mathbb E[W_v-W_u]\\
 &=u+0=u\\[4pt]
-\text{either order}:\quad\operatorname{Cov}(W_u,W_v)&=\min(u,v)\end{aligned}
+&\text{either order}:\\
+&\operatorname{Cov}(W_u,W_v)=\min(u,v)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มด้วยการทำให้โจทย์เบาลง ค่าเฉลี่ยเป็นศูนย์ พจน์ที่ต้องลบในสูตรลัดของ covariance ในหัวข้อ 6.5 จึงหายไป เหลือค่าเฉลี่ยของผลคูณล้วน ๆ จากนั้นสมมติให้เวลาแรกมาก่อน แล้วแยกแบบเดียวกับขั้นที่ 1</p>
     <p>กระจายแล้วเฉลี่ยทีละพจน์ ก้อนแรกคือ variance ของ $W_u$ ซึ่งเท่ากับ $u$ ตามหัวข้อ 10.1 ส่วนพจน์ไขว้แยกคูณกันได้เพราะสองก้อนเป็นอิสระ และ increment มีค่าเฉลี่ยศูนย์ ผลคูณจึงเป็นศูนย์ เหลือ $u$ ล้วน ๆ</p>
-    <p>บรรทัดสุดท้ายบอกว่า ความเกี่ยวพันของสองเวลาถูกกำหนดโดยช่วงที่ทั้งคู่แชร์กันเท่านั้น คือเวลาที่มาก่อน ส่วนที่งอกออกไปทีหลังไม่มีส่วนร่วมเลย</p>
+    <p>สองบรรทัดสุดท้ายบอกว่า ความเกี่ยวพันของสองเวลาถูกกำหนดโดยช่วงที่ทั้งคู่แชร์กันเท่านั้น คือเวลาที่มาก่อน ส่วนที่งอกออกไปทีหลังไม่มีส่วนร่วมเลย</p>
   </div>
 </section>
 
@@ -263,15 +280,18 @@ u\le v:\quad W_v&=W_u+(W_v-W_u)\\
 \begin{aligned}
 \rho_{1/12,1}&=\sqrt{1/12}=1/3.4641=0.2887\\
 R^2&=\rho^2=1/12=8.33\%\\[4pt]
-\text{3 months}&:\ \rho=\sqrt{3/12}=0.500,\quad R^2=25.0\%\\
-\text{6 months}&:\ \rho=\sqrt{6/12}=0.707,\quad R^2=50.0\%\\
-\text{11 months}&:\ \rho=\sqrt{11/12}=0.957,\quad R^2=91.7\%\\[4pt]
-\operatorname{Cov}(W_{1/12},\,W_1-W_{1/12})&=0
+&\text{3 months}:\ \rho=\sqrt{3/12}=0.500\\
+&\quad R^2=25.0\%\\
+&\text{6 months}:\ \rho=\sqrt{6/12}=0.707\\
+&\quad R^2=50.0\%\\
+&\text{11 months}:\ \rho=\sqrt{11/12}=0.957\\
+&\quad R^2=91.7\%\\[4pt]
+&\operatorname{Cov}(W_{1/12},\,W_1-W_{1/12})=0
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>เวลาสั้นคือ 1/12 ปีและเวลายาวคือ 1 ปี; correlation เท่ากับ 0.2887 ส่วนสัดส่วน variance ที่อธิบายได้ต้องยกอีกชั้นเป็นกำลังสองจึงเหลือ 8.33%</p>
-    <p>สามบรรทัดกลางคือตารางอ่านเร็ว คอลัมน์ R² เท่ากับสัดส่วนของปีที่เห็นไปแล้วพอดี 3 เดือนคือ 25% 6 เดือนคือ 50% ส่วน correlation ดูใหญ่กว่าเสมอเพราะมันคือรากของตัวเลขนั้น นี่คือกลไกเดียวกับที่ทำให้ backtest ดูน่าเชื่อกว่าที่ควร</p>
+    <p>บรรทัดที่สามถึงแปดคือตารางอ่านเร็ว คอลัมน์ R² เท่ากับสัดส่วนของปีที่เห็นไปแล้วพอดี 3 เดือนคือ 25% 6 เดือนคือ 50% ส่วน correlation ดูใหญ่กว่าเสมอเพราะมันคือรากของตัวเลขนั้น นี่คือกลไกเดียวกับที่ทำให้ backtest ดูน่าเชื่อกว่าที่ควร</p>
     <p>บรรทัดสุดท้ายคือคำถามที่ควรถามจริง มกราคมเกี่ยวกับ 11 เดือนที่เหลือแค่ไหน สองช่วงไม่มีเวลาร่วมกันเลย covariance จึงเป็นศูนย์เป๊ะ</p>
   </div>
 </section>
@@ -307,11 +327,16 @@ R^2&=\rho^2=1/12=8.33\%\\[4pt]
   <h4>ขั้นที่ 11 — forecast สิ้นปีหลังเห็น January P&amp;L</h4>
   <p>รวมทุกอย่างเป็นคำตอบที่ใช้ได้ คือพอเห็นผลเดือนมกราคมแล้ว ควรปรับความคาดหวังของทั้งปีอย่างไร</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[P_1\mid\mathcal F_{1/12}]&=P_{1/12}+\mathbb E\big[P_1-P_{1/12}\mid\mathcal F_{1/12}\big]\\[4pt]
+\begin{aligned}
+&\mathbb E[P_1\mid\mathcal F_{1/12}]\\
+&=P_{1/12}+\mathbb E\big[P_1-P_{1/12}\mid\mathcal F_{1/12}\big]\\[4pt]
 &=\$2\text{M}+0=\$2\text{M}\\[4pt]
-\operatorname{Var}(P_1\mid\mathcal F_{1/12})&=\operatorname{Var}(P_1-P_{1/12})=\sigma_P^2\cdot\frac{11}{12}\\[4pt]
+&\operatorname{Var}(P_1\mid\mathcal F_{1/12})\\
+&=\operatorname{Var}(P_1-P_{1/12})=\sigma_P^2\cdot\frac{11}{12}\\[4pt]
 &=(\$12\text{M})^2\cdot\frac{11}{12}=144\cdot\frac{11}{12}=\$132\text{M}^2\\[4pt]
-\operatorname{SD}(P_1\mid\mathcal F_{1/12})&=\sqrt{132}\approx\$11.489\text{M}\end{aligned}
+&\operatorname{SD}(P_1\mid\mathcal F_{1/12})\\
+&=\sqrt{132}\approx\$11.489\text{M}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>January P&amp;L 2 ล้าน USD รู้แล้วจึงเป็น conditional mean ของ annual total เมื่อ future increment มี mean 0; uncertainty ที่ยังเหลือมาจาก 11 เดือนข้างหน้าและยังใหญ่ถึง 11.489 ล้าน USD</p>
