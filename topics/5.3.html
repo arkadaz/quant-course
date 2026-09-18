@@ -114,8 +114,13 @@
   <p>ตัวเลขทั้งหมดยกมาจากหัวข้อ 5.1 ไม่ได้คำนวณใหม่ จับคู่สัญลักษณ์ของโจทย์กับรูปตำรา min cᵀx ภายใต้ Ax ≥ b ทีละตัว</p>
   <div class="math">\[
 \begin{aligned}
-P&=\min_{\theta}\ p^{\mathsf T}\theta\quad \text{s.t.}\ S\theta\ge X,\qquad P=90.50\ \text{at}\ \theta^*=(1,\,-0.1)\\[4pt]
-x\leftarrow\theta\ (2\times1),\quad c&\leftarrow p=(100,\,95),\quad A\leftarrow S\ (3\times2),\quad b\leftarrow X=(120,\,90,\,50)
+P&=\min_{\theta}\ p^{\mathsf T}\theta\\
+&\quad \text{s.t.}\ S\theta\ge X\\
+P&=90.50\ \text{at}\ \theta^*=(1,\,-0.1)\\[4pt]
+x&\leftarrow\theta\ (2\times1)\\
+c&\leftarrow p=(100,\,95)\\
+A&\leftarrow S\ (3\times2)\\
+b&\leftarrow X=(120,\,90,\,50)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -128,10 +133,18 @@ x\leftarrow\theta\ (2\times1),\quad c&\leftarrow p=(100,\,95),\quad A\leftarrow 
   <p>คูณแถวของสภาวะที่ i ด้วย uᵢ ≥ 0 เครื่องหมายอสมการไม่พลิก แล้วบวกสามแถวเข้าด้วยกัน จัดกลุ่มตาม θ₁ กับ θ₂</p>
   <div class="math">\[
 \begin{aligned}
-u_1(130\theta_1+100\theta_2)+u_2(100\theta_1+100\theta_2)+u_3(70\theta_1+100\theta_2)&\ge 120u_1+90u_2+50u_3\\
-(130u_1+100u_2+70u_3)\,\theta_1+100(u_1+u_2+u_3)\,\theta_2&\ge X^{\mathsf T}u\\[4pt]
-130u_1+100u_2+70u_3=100,\qquad 100(u_1+u_2+u_3)=95\quad&\Longrightarrow\quad 100\theta_1+95\theta_2\ge X^{\mathsf T}u\\[4pt]
-D=\max_u\ X^{\mathsf T}u\quad \text{s.t.}\quad S^{\mathsf T}u=p,\ \ u&\ge0
+&u_1(130\theta_1+100\theta_2)\\
+&\quad+u_2(100\theta_1+100\theta_2)\\
+&\quad+u_3(70\theta_1+100\theta_2)\\
+&\ge 120u_1+90u_2+50u_3\\
+&(130u_1+100u_2+70u_3)\,\theta_1\\
+&\quad+100(u_1+u_2+u_3)\,\theta_2\\
+&\ge X^{\mathsf T}u\\[4pt]
+&130u_1+100u_2+70u_3=100\\
+&100(u_1+u_2+u_3)=95\\
+&\quad\Longrightarrow\quad 100\theta_1+95\theta_2\ge X^{\mathsf T}u\\[4pt]
+D&=\max_u\ X^{\mathsf T}u\\
+&\quad \text{s.t.}\quad S^{\mathsf T}u=p,\ \ u\ge0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -145,11 +158,18 @@ D=\max_u\ X^{\mathsf T}u\quad \text{s.t.}\quad S^{\mathsf T}u=p,\ \ u&\ge0
   <p>ข้อจำกัด Sᵀu = p อ่านทีละคอลัมน์ของ S คือทีละสินทรัพย์ ตั้ง t = u₃ แล้วเขียน u₁ กับ u₂ ในรูปของ t</p>
   <div class="math">\[
 \begin{aligned}
-\text{stock}:\quad 130u_1+100u_2+70t&=100\\
-\text{bond}:\quad 100u_1+100u_2+100t&=95\\[4pt]
-\text{subtract}:\quad 30u_1-30t=5\ &\Longrightarrow\ u_1=\tfrac16+t=0.16667+t\\
-u_2=0.95-t-u_1&=0.78333-2t\\[4pt]
-u_2\ge0\ \Longrightarrow\ t\le\frac{0.78333}{2}&=0.39167,\qquad 0\le t\le0.39167
+&\text{stock}:\\
+&\quad 130u_1+100u_2+70t=100\\
+&\text{bond}:\\
+&\quad 100u_1+100u_2+100t=95\\[4pt]
+&\text{subtract}:\\
+&\quad 30u_1-30t=5\\
+&\Longrightarrow\ u_1=\tfrac16+t=0.16667+t\\
+u_2&=0.95-t-u_1\\
+&=0.78333-2t\\[4pt]
+&u_2\ge0\\
+&\Longrightarrow\ t\le\frac{0.78333}{2}=0.39167\\
+&0\le t\le0.39167
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -185,9 +205,14 @@ X^{\mathsf T}u&=120(0.36667)+90(0.38333)+50(0.2)\\
   <p>แทน u(t) จากขั้นที่ 3 ลงใน Xᵀu แล้วกางทีละก้อน</p>
   <div class="math">\[
 \begin{aligned}
-X^{\mathsf T}u(t)&=120(0.16667+t)+90(0.78333-2t)+50t\\
-&=(20.0+70.5)+(120-180+50)\,t=90.5-10t\\[4pt]
-t^*=0:\quad u^*&=(0.16667,\ 0.78333,\ 0),\qquad D=90.50=P
+X^{\mathsf T}u(t)&=120(0.16667+t)\\
+&\quad+90(0.78333-2t)+50t\\
+&=(20.0+70.5)\\
+&\quad+(120-180+50)\,t\\
+&=90.5-10t\\[4pt]
+&t^*=0:\\
+u^*&=(0.16667,\ 0.78333,\ 0)\\
+D&=90.50=P
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -201,9 +226,18 @@ t^*=0:\quad u^*&=(0.16667,\ 0.78333,\ 0),\qquad D=90.50=P
   <p>คูณเงินที่เหลือของแต่ละสภาวะกับราคาของสภาวะนั้น ทุกแถวต้องได้ศูนย์</p>
   <div class="math">\[
 \begin{aligned}
-\text{up}:&\quad \text{slack}=120-120=0,\qquad u_1^*=0.16667,\qquad 0\times0.16667=0\\
-\text{flat}:&\quad \text{slack}=90-90=0,\qquad\ \ u_2^*=0.78333,\qquad 0\times0.78333=0\\
-\text{down}:&\quad \text{slack}=60-50=10,\qquad u_3^*=0,\qquad\ \ \ \ \ 10\times0=0
+&\text{up}:\\
+&\quad \text{slack}=120-120=0\\
+&\quad u_1^*=0.16667\\
+&\quad 0\times0.16667=0\\
+&\text{flat}:\\
+&\quad \text{slack}=90-90=0\\
+&\quad u_2^*=0.78333\\
+&\quad 0\times0.78333=0\\
+&\text{down}:\\
+&\quad \text{slack}=60-50=10\\
+&\quad u_3^*=0\\
+&\quad 10\times0=0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -216,11 +250,22 @@ t^*=0:\quad u^*&=(0.16667,\ 0.78333,\ 0),\qquad D=90.50=P
   <p>ถ้า u ในแต่ละสภาวะคือราคาจริง การเพิ่มภาระของสภาวะนั้น 1 ดอลลาร์ต้องทำให้ต้นทุน hedge เพิ่มเท่ากับ u พอดี ลองแก้ใหม่ทีละแถว</p>
   <div class="math">\[
 \begin{aligned}
-X_1:120\to121:&\quad 30\theta_1=121-90\ \Rightarrow\ \theta_1=1.03333,\ \theta_2=0.9-1.03333=-0.13333\\
-&\quad \text{cost}=103.333-12.667=90.6667=90.50+0.16667\\
-X_2:90\to91:&\quad 30\theta_1=120-91\ \Rightarrow\ \theta_1=0.96667,\ \theta_2=0.91-0.96667=-0.05667\\
-&\quad \text{cost}=96.667-5.383=91.2833=90.50+0.78333\\
-X_3:50\to51:&\quad \text{down payoff }60\ge51,\ \text{same}\ \theta^*,\quad \text{cost}=90.50+0
+&X_1:120\to121:\\
+&\quad 30\theta_1=121-90\\
+&\quad\Rightarrow\ \theta_1=1.03333\\
+&\quad\theta_2=0.9-1.03333=-0.13333\\
+&\quad \text{cost}=103.333-12.667\\
+&\quad=90.6667=90.50+0.16667\\
+&X_2:90\to91:\\
+&\quad 30\theta_1=120-91\\
+&\quad\Rightarrow\ \theta_1=0.96667\\
+&\quad\theta_2=0.91-0.96667=-0.05667\\
+&\quad \text{cost}=96.667-5.383\\
+&\quad=91.2833=90.50+0.78333\\
+&X_3:50\to51:\\
+&\quad \text{down payoff }60\ge51\\
+&\quad\text{same}\ \theta^*\\
+&\quad \text{cost}=90.50+0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -234,12 +279,20 @@ X_3:50\to51:&\quad \text{down payoff }60\ge51,\ \text{same}\ \theta^*,\quad \tex
   <p>uᵢ* คือราคาวันนี้ของสัญญาที่จ่าย 1 ดอลลาร์ถ้าสภาวะ i เกิด ตรวจก่อนว่ามันให้ราคาของที่มีในตลาดถูก แล้วค่อยตั้งราคา call</p>
   <div class="math">\[
 \begin{aligned}
-\text{stock}:&\quad 130(0.16667)+100(0.78333)+70(0)=21.667+78.333=100\\
-\text{bond}:&\quad 100(0.16667+0.78333+0)=95\\
-\text{call},\ K=100:&\quad \text{payoff}=(30,\ 0,\ 0),\qquad \text{price}=30(0.16667)=5.00\\[4pt]
-\textstyle\sum_i u_i^*&=0.95,\qquad r=\frac{1}{0.95}-1=5.26\%\\
+&\text{stock}:\\
+&\quad 130(0.16667)+100(0.78333)\\
+&\quad+70(0)=21.667+78.333=100\\
+&\text{bond}:\\
+&\quad 100(0.16667+0.78333+0)=95\\
+&\text{call},\ K=100:\\
+&\quad \text{payoff}=(30,\ 0,\ 0)\\
+&\quad \text{price}=30(0.16667)=5.00\\[4pt]
+&\textstyle\sum_i u_i^*=0.95\\
+r&=\frac{1}{0.95}-1=5.26\%\\
 q&=\frac{u^*}{0.95}=(0.17544,\ 0.82456,\ 0)\\
-0.95\,\big[0.17544(130)+0.82456(100)\big]&=0.95(105.263)=100
+&0.95\,\big[0.17544(130)\\
+&\quad+0.82456(100)\big]\\
+&=0.95(105.263)=100
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -253,9 +306,17 @@ q&=\frac{u^*}{0.95}=(0.17544,\ 0.82456,\ 0)\\
   <p>ขั้นที่ 3 บอกว่า u ที่ใช้ได้มีทั้งเส้น ราคา call ที่คิดจาก u แต่ละชุดจึงต่างกัน ตรวจปลายทั้งสองด้วยพอร์ตจริง</p>
   <div class="math">\[
 \begin{aligned}
-\text{call}(t)&=30\,u_1=30(0.16667+t),\qquad 0\le t\le0.39167\ \Longrightarrow\ 5.00\ \text{to}\ 16.75\\[4pt]
-\theta=(1,\,-1):&\quad \text{payoff}=(30,\ 0,\ -30)\le(30,\ 0,\ 0),\qquad \text{cost}=100-95=5.00\\
-\theta=(0.5,\,-0.35):&\quad \text{payoff}=(30,\ 15,\ 0)\ge(30,\ 0,\ 0),\qquad \text{cost}=50-33.25=16.75
+\text{call}(t)&=30\,u_1=30(0.16667+t)\\
+&0\le t\le0.39167\\
+&\Longrightarrow\ 5.00\ \text{to}\ 16.75\\[4pt]
+&\theta=(1,\,-1):\\
+&\quad \text{payoff}=(30,\ 0,\ -30)\\
+&\quad\le(30,\ 0,\ 0)\\
+&\quad \text{cost}=100-95=5.00\\
+&\theta=(0.5,\,-0.35):\\
+&\quad \text{payoff}=(30,\ 15,\ 0)\\
+&\quad\ge(30,\ 0,\ 0)\\
+&\quad \text{cost}=50-33.25=16.75
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -269,9 +330,16 @@ q&=\frac{u^*}{0.95}=(0.17544,\ 0.82456,\ 0)\\
   <p>สัญญาหนึ่งจ่ายราคา p วันนี้ แล้วได้กระแสเงิน c₁, c₂, … ในอนาคต ซึ่งเป็นบวกหรือลบก็ได้ สองบรรทัดแรกเป็นนิยามของตลาดที่ไม่มีเงินฟรี บรรทัดล่างลองกับ call</p>
   <div class="math">\[
 \begin{aligned}
-\text{weak}:&\quad c_k\ge0\ \text{for every}\ k\quad\Longrightarrow\quad p\ge0\\
-\text{strong}:&\quad c_k\ge0\ \text{for every}\ k,\ \text{some}\ c_l\gt0\quad\Longrightarrow\quad p\gt0\\[4pt]
-\text{call}:&\quad (30,\ 0,\ 0)\ge0,\ \ 30\gt0\quad\Longrightarrow\quad \text{price}\gt0:\quad 5.00\gt0
+&\text{weak}:\\
+&\quad c_k\ge0\ \text{for every}\ k\\
+&\quad\Longrightarrow\quad p\ge0\\
+&\text{strong}:\\
+&\quad c_k\ge0\ \text{for every}\ k,\\
+&\quad\text{some}\ c_l\gt0\\
+&\quad\Longrightarrow\quad p\gt0\\[4pt]
+&\text{call}:\\
+&\quad (30,\ 0,\ 0)\ge0,\ \ 30\gt0\\
+&\quad\Longrightarrow\quad \text{price}\gt0:\quad 5.00\gt0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -285,10 +353,16 @@ q&=\frac{u^*}{0.95}=(0.17544,\ 0.82456,\ 0)\\
   <p>พันธบัตรจ่าย A = 100 ในอีกหนึ่งปี กู้หรือให้กู้ได้ไม่จำกัดที่ดอกเบี้ย r = 5.26% ซึ่งได้จากขั้นที่ 8 สร้างสองพอร์ตที่ปีหน้าได้ศูนย์พอดี แล้วใช้กติกาข้อแรกกับต้นทุนวันนี้</p>
   <div class="math">\[
 \begin{aligned}
-\text{portfolio 1}:&\quad z_1=p-\frac{A}{1+r},\qquad t=1:\ A-A=0\ \Longrightarrow\ z_1\ge0\\
-\text{portfolio 2}:&\quad z_2=\frac{A}{1+r}-p,\qquad t=1:\ -A+A=0\ \Longrightarrow\ z_2\ge0\\[4pt]
-p\ge\frac{A}{1+r}\ \ \text{and}\ \ p\le\frac{A}{1+r}\ &\Longrightarrow\ p=\frac{100}{1.0526}=95.00\\[4pt]
-r_b=6\%,\ r_l=5\%:&\quad \frac{100}{1.06}=94.34\ \le\ p\ \le\ \frac{100}{1.05}=95.24
+&\text{portfolio 1}:\\
+&\quad z_1=p-\frac{A}{1+r}\\
+&\quad t=1:\ A-A=0\ \Longrightarrow\ z_1\ge0\\
+&\text{portfolio 2}:\\
+&\quad z_2=\frac{A}{1+r}-p\\
+&\quad t=1:\ -A+A=0\ \Longrightarrow\ z_2\ge0\\[4pt]
+&p\ge\frac{A}{1+r}\ \ \text{and}\ \ p\le\frac{A}{1+r}\\
+&\Longrightarrow\ p=\frac{100}{1.0526}=95.00\\[4pt]
+&r_b=6\%,\ r_l=5\%:\\
+&\quad \frac{100}{1.06}=94.34\ \le\ p\ \le\ \frac{100}{1.05}=95.24
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -355,10 +429,16 @@ c^{\mathsf T}x &\ge (A^{\mathsf T}u)^{\mathsf T}x \quad (\text{from } A^{\mathsf
   <p>ใช้วิธีเดียวกับขั้นที่ 2 กับโจทย์ dual เอง: ถ่วงแต่ละแถวของ Aᵀu ≤ c ด้วยตัวแปรใหม่ที่ไม่ติดลบ แล้วถามว่าได้ขอบบนของ bᵀu เป็นอะไร</p>
   <div class="math">\[
 \begin{aligned}
-D&=\max_u\ b^{\mathsf T}u\quad \text{s.t.}\ A^{\mathsf T}u\le c,\ u\ge0\\[4pt]
-x\ge0:\quad x^{\mathsf T}A^{\mathsf T}u&\le c^{\mathsf T}x\\
-Ax\ge b,\ u\ge0:\quad b^{\mathsf T}u&\le(Ax)^{\mathsf T}u=x^{\mathsf T}A^{\mathsf T}u\le c^{\mathsf T}x\\[4pt]
-\text{tightest upper bound}:\quad &\min_x\ c^{\mathsf T}x\quad \text{s.t.}\ Ax\ge b,\ x\ge0\ =\ P
+D&=\max_u\ b^{\mathsf T}u\\
+&\quad \text{s.t.}\ A^{\mathsf T}u\le c,\ u\ge0\\[4pt]
+&x\ge0:\\
+x^{\mathsf T}A^{\mathsf T}u&\le c^{\mathsf T}x\\
+&Ax\ge b,\ u\ge0:\\
+b^{\mathsf T}u&\le(Ax)^{\mathsf T}u=x^{\mathsf T}A^{\mathsf T}u\\
+&\le c^{\mathsf T}x\\[4pt]
+&\text{tightest upper bound}:\\
+&\min_x\ c^{\mathsf T}x\quad \text{s.t.}\ Ax\ge b,\ x\ge0\\
+&=\ P
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -390,10 +470,11 @@ Ax\ge b,\ u\ge0:\quad b^{\mathsf T}u&\le(Ax)^{\mathsf T}u=x^{\mathsf T}A^{\maths
   <p>แนวคิดของ dual คือหาขอบล่างของต้นทุน โดยผสมข้อบังคับเข้าด้วยกันด้วยน้ำหนักที่ไม่ติดลบ</p>
   <div class="math">\[
 \begin{aligned}
-y(1.2x_Q + x_S) &\ge 10.8y \quad (y \ge 0) \\
-u_Q(-x_Q) &\ge -6u_Q \quad (u_Q \ge 0) \\
-u_S(-x_S) &\ge -6u_S \quad (u_S \ge 0) \\
-(1.2y - u_Q)x_Q + (y - u_S)x_S &\ge 10.8y - 6u_Q - 6u_S
+&y(1.2x_Q + x_S) \ge 10.8y \quad (y \ge 0) \\
+&u_Q(-x_Q) \ge -6u_Q \quad (u_Q \ge 0) \\
+&u_S(-x_S) \ge -6u_S \quad (u_S \ge 0) \\
+&(1.2y - u_Q)x_Q + (y - u_S)x_S\\
+&\ge 10.8y - 6u_Q - 6u_S
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -445,9 +526,14 @@ u_S(-x_S) &\ge -6u_S \quad (u_S \ge 0) \\
   <p>ลองน้ำหนักชุดหนึ่งแล้วตรวจทีละข้อว่าถูกกติกาไหม</p>
   <div class="math">\[
 \begin{aligned}
-\text{QQQ row}&:\ 1.2y^*-u_Q^*=1.2(150)-0=180\le180\ \checkmark\\
-\text{SPY row}&:\ y^*-u_S^*=150-60=90\le90\ \checkmark\\
-\text{signs}&:\ y^*=150,\ u_Q^*=0,\ u_S^*=60\ \ \text{all}\ge0\ \checkmark
+&\text{QQQ row}:\\
+&\quad 1.2y^*-u_Q^*=1.2(150)-0\\
+&\quad=180\le180\ \checkmark\\
+&\text{SPY row}:\\
+&\quad y^*-u_S^*=150-60=90\le90\ \checkmark\\
+&\text{signs}:\\
+&\quad y^*=150,\ u_Q^*=0,\ u_S^*=60\\
+&\quad \text{all}\ge0\ \checkmark
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -462,8 +548,10 @@ u_S(-x_S) &\ge -6u_S \quad (u_S \ge 0) \\
   <p>จุดที่สวยที่สุดของทั้งหัวข้อ คือขอบล่างที่ดีที่สุดไม่ได้ต่ำกว่าคำตอบจริง แต่เท่ากันพอดี</p>
   <div class="math">\[
 \begin{aligned}
-V_P(x^*) &= 180(4) + 90(6) = 720 + 540 = \$1{,}260 \\
-V_D(y^*, u^*) &= 10.8(150) - 6(0) - 6(60) = 1{,}620 - 0 - 360 = \$1{,}260 \\
+V_P(x^*) &= 180(4) + 90(6)\\
+&= 720 + 540 = \$1{,}260 \\
+V_D(y^*, u^*) &= 10.8(150) - 6(0) - 6(60)\\
+&= 1{,}620 - 0 - 360 = \$1{,}260 \\
 V_P - V_D &= 1{,}260 - 1{,}260 = 0
 \end{aligned}
 \]</div>

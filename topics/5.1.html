@@ -136,8 +136,11 @@ S&=\begin{bmatrix}130 & 100\\ 100 & 100\\ 70 & 100\end{bmatrix}\qquad
   <p>เงินที่จ่ายวันนี้คือราคาคูณจำนวนของแต่ละอย่าง ต้องการให้น้อยที่สุดเพราะเป็นเงินออก ก่อนหาแผนที่ดีที่สุด หาแผนที่ใช้ได้สักแผนก่อน</p>
   <div class="math">\[
 \begin{aligned}
-\text{cost}&=100\,\theta_1+95\,\theta_2=p^{\mathsf T}\theta\\[4pt]
-\theta=(0,\ 1.2):\quad S\theta&=(120,\ 120,\ 120)\ \ge\ (120,\ 90,\ 50)\\
+\text{cost}&=100\,\theta_1+95\,\theta_2\\
+&=p^{\mathsf T}\theta\\[4pt]
+&\theta=(0,\ 1.2):\\
+S\theta&=(120,\ 120,\ 120)\\
+&\ \ge\ (120,\ 90,\ 50)\\
 \text{cost}&=95(1.2)=114
 \end{aligned}
 \]</div>
@@ -167,10 +170,14 @@ S&=\begin{bmatrix}130 & 100\\ 100 & 100\\ 70 & 100\end{bmatrix}\qquad
   <p>ถ้ามีทิศที่ payoff ไม่ลดลงในสภาวะใดเลยแต่ต้นทุนติดลบ เราจะเดินไปทางนั้นได้ไม่สิ้นสุด นั่นคือ arbitrage ในสองมิติมีทิศที่ต้องตรวจสองทิศ คือทิศที่เดินเลียบขอบแต่ละด้าน</p>
   <div class="math">\[
 \begin{aligned}
-70\,\Delta\theta_1+100\,\Delta\theta_2=0\ &\Longrightarrow\ \Delta\theta_A=(1,\,-0.7)\\
-S\,\Delta\theta_A=(60,\ 30,\ 0),\quad &\text{cost}=100-66.5=+33.5\\[4pt]
-130\,\Delta\theta_1+100\,\Delta\theta_2=0\ &\Longrightarrow\ \Delta\theta_B=(-1,\,1.3)\\
-S\,\Delta\theta_B=(0,\ 30,\ 60),\quad &\text{cost}=-100+123.5=+23.5
+&70\,\Delta\theta_1+100\,\Delta\theta_2=0\\
+&\Longrightarrow\ \Delta\theta_A=(1,\,-0.7)\\
+&S\,\Delta\theta_A=(60,\ 30,\ 0)\\
+&\text{cost}=100-66.5=+33.5\\[4pt]
+&130\,\Delta\theta_1+100\,\Delta\theta_2=0\\
+&\Longrightarrow\ \Delta\theta_B=(-1,\,1.3)\\
+&S\,\Delta\theta_B=(0,\ 30,\ 60)\\
+&\text{cost}=-100+123.5=+23.5
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -184,9 +191,15 @@ S\,\Delta\theta_B=(0,\ 30,\ 60),\quad &\text{cost}=-100+123.5=+23.5
   <p>เส้นต้นทุนคงที่เป็นเส้นตรง เลื่อนไปทางที่ถูกลงจนจะหลุดออกจากบริเวณที่ใช้ได้ จุดสุดท้ายที่ยังแตะอยู่คือมุม มีตัวแปรสองตัวจึงต้องใช้สองสมการตรึงจุด เลือก 2 จาก 3 ได้ 3 คู่</p>
   <div class="math">\[
 \begin{aligned}
-(\text{up},\text{flat}):&\quad 30\theta_1=120-90=30\ \Rightarrow\ \theta=(1.000,\ -0.100)\\
-(\text{up},\text{down}):&\quad 60\theta_1=120-50=70\ \Rightarrow\ \theta=(1.1667,\ -0.3167)\\
-(\text{flat},\text{down}):&\quad 30\theta_1=90-50=40\ \Rightarrow\ \theta=(1.3333,\ -0.4333)
+&(\text{up},\text{flat}):\\
+&\quad 30\theta_1=120-90=30\\
+&\quad\Rightarrow\ \theta=(1.000,\ -0.100)\\
+&(\text{up},\text{down}):\\
+&\quad 60\theta_1=120-50=70\\
+&\quad\Rightarrow\ \theta=(1.1667,\ -0.3167)\\
+&(\text{flat},\text{down}):\\
+&\quad 30\theta_1=90-50=40\\
+&\quad\Rightarrow\ \theta=(1.3333,\ -0.4333)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -222,9 +235,17 @@ S\,\Delta\theta_B=(0,\ 30,\ 60),\quad &\text{cost}=-100+123.5=+23.5
   <p>จากมุม (1, −0.1) มีขอบให้เดินออกสองเส้น คือเลียบแถวขาขึ้นหรือเลียบแถวทรงตัว ลองเดินทีละเส้นแล้วดูต้นทุน</p>
   <div class="math">\[
 \begin{aligned}
-\text{up edge},\ \theta(s)=(1-s,\ -0.1+1.3s):&\quad \text{cost}=100-100s-9.5+123.5s=90.5+23.5s\\
-\text{flat edge},\ \theta(s)=(1+s,\ -0.1-s):&\quad \text{cost}=100+100s-9.5-95s=90.5+5s\\
-s=\tfrac13:&\quad \theta=(1.3333,\,-0.4333),\qquad \text{cost}=90.5+\tfrac53=92.17
+&\text{up edge},\\
+&\theta(s)=(1-s,\ -0.1+1.3s):\\
+&\quad \text{cost}=100-100s-9.5+123.5s\\
+&\quad =90.5+23.5s\\
+&\text{flat edge},\\
+&\theta(s)=(1+s,\ -0.1-s):\\
+&\quad \text{cost}=100+100s-9.5-95s\\
+&\quad =90.5+5s\\
+&s=\tfrac13:\\
+&\quad \theta=(1.3333,\,-0.4333)\\
+&\quad \text{cost}=90.5+\tfrac53=92.17
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -246,8 +267,10 @@ s=\tfrac13:&\quad \theta=(1.3333,\,-0.4333),\qquad \text{cost}=90.5+\tfrac53=92.
   <p>แปลงจำนวนหน่วยกลับเป็นเงินที่ไหลวันนี้และปีหน้า แล้วดูว่าแต่ละสภาวะเหลือเท่าไร</p>
   <div class="math">\[
 \begin{aligned}
-\text{today}:&\quad 100(1)-95(0.1)=100-9.5=90.50\\[4pt]
-S\theta^*&=\begin{bmatrix}130-10\\ 100-10\\ 70-10\end{bmatrix}=\begin{bmatrix}120\\ 90\\ 60\end{bmatrix},\qquad S\theta^*-X=\begin{bmatrix}0\\ 0\\ 10\end{bmatrix}
+&\text{today}:\\
+&\quad 100(1)-95(0.1)=100-9.5=90.50\\[4pt]
+S\theta^*&=\begin{bmatrix}130-10\\ 100-10\\ 70-10\end{bmatrix}=\begin{bmatrix}120\\ 90\\ 60\end{bmatrix}\\
+S\theta^*-X&=\begin{bmatrix}0\\ 0\\ 10\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -295,10 +318,15 @@ assert np.allclose(u,[1/6,0.95-1/6])</code></pre>
   <p>ขั้นที่ 1 ถึง 8 ทำด้วยตัวเลข m = 3 และ d = 2 บรรทัดข้างล่างเขียนเรื่องเดียวกันให้ใช้ได้กับกี่สภาวะกี่สินทรัพย์ก็ได้ position $\theta$ ต้องให้ payoff ไม่น้อยกว่า $X$ ในทุกสภาวะ โดยมีต้นทุนรวมต่ำที่สุด</p>
   <div class="math">\[
 \begin{aligned}
-\text{Cost at } t=0:\quad & p^{\mathsf T}\theta = \sum_{j=1}^d p_j \theta_j \\
-\text{Payoff at } t=1:\quad & y_i = \sum_{j=1}^d S_{ij}\theta_j \quad (i=1,\dots,m) \implies y = S\theta \\
-\text{Hedging condition}:\quad & y \ge X,\ \text{that is}\ S\theta \ge X \\
-\text{Optimization LP}:\quad & \min_{\theta} p^{\mathsf T}\theta \quad \text{s.t. } S\theta \ge X
+&\text{Cost at } t=0:\\
+&\quad p^{\mathsf T}\theta = \sum_{j=1}^d p_j \theta_j \\
+&\text{Payoff at } t=1:\\
+&\quad y_i = \sum_{j=1}^d S_{ij}\theta_j \quad (i=1,\dots,m)\\
+&\quad \implies y = S\theta \\
+&\text{Hedging condition}:\\
+&\quad y \ge X,\ \text{that is}\ S\theta \ge X \\
+&\text{Optimization LP}:\\
+&\quad \min_{\theta} p^{\mathsf T}\theta \quad \text{s.t. } S\theta \ge X
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -317,16 +345,23 @@ assert np.allclose(u,[1/6,0.95-1/6])</code></pre>
   <h4>ขั้นที่ 9 — ลองแผนที่เห็นก่อนเลย: ใช้ตัวเดียว แล้วดูว่าชนรั้วไหม</h4>
   <p>ก่อนเขียนสมการอะไร ลองแก้ด้วยสามัญสำนึก: ต้องลด beta 10.8 หน่วย มีเครื่องมือสองตัว ลองใช้ทีละตัว</p>
   <div class="math">\[
-\begin{aligned}\text{QQQ}:\quad x_Q&=\frac{10.8}{1.2}=9>6\;\times,\qquad 180(9)=\$1{,}620\\
-\text{SPY}:\quad x_S&=\frac{10.8}{1.0}=10.8>6\;\times,\qquad 90(10.8)=\$972\\[4pt]
-\frac{180}{1.2}&=\$150\ \text{/beta},\qquad\frac{90}{1.0}=\$90\ \text{/beta}\\[4pt]
+\begin{aligned}
+&\text{QQQ}:\\
+x_Q&=\frac{10.8}{1.2}=9>6\;\times\\
+&\quad 180(9)=\$1{,}620\\
+&\text{SPY}:\\
+x_S&=\frac{10.8}{1.0}=10.8>6\;\times\\
+&\quad 90(10.8)=\$972\\[4pt]
+\frac{180}{1.2}&=\$150\ \text{/beta}\\
+\frac{90}{1.0}&=\$90\ \text{/beta}\\[4pt]
 x_S&=6\;\Longrightarrow\;\text{beta }6\\
-x_Q&=\frac{10.8-6}{1.2}=\frac{4.8}{1.2}=4\le6\;\checkmark\end{aligned}
+x_Q&=\frac{10.8-6}{1.2}=\frac{4.8}{1.2}=4\le6\;\checkmark
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สองแผนแรกล้มเหลวด้วยเหตุผลเดียวกัน คือขายเกินเพดานสภาพคล่อง 6 ต่อตัว ต้องผสม</p>
     <p>บรรทัดที่สามคือคำถามที่ถูก: ไม่ใช่ ‘ตัวไหนถูกกว่าต่อดอลลาร์’ แต่ ‘ตัวไหนถูกกว่าต่อหนึ่งหน่วย beta ที่ลดได้’ SPY ชนะ (90 ต่อ 150) จึงใช้ SPY จนชนเพดาน แล้วให้ QQQ เติมส่วนที่ขาด $4.8/1.2=4$</p>
-    <p>ทั้งหัวข้อที่เหลือคือการเขียนความคิดห้าบรรทัดนี้ให้เป็นภาษาที่คอมพิวเตอร์รับได้ ตัวเลข 4 กับ 6 จะโผล่มาอีกครั้งตอนท้าย</p>
+    <p>ทั้งหัวข้อที่เหลือคือการเขียนความคิดในสูตรนี้ให้เป็นภาษาที่คอมพิวเตอร์รับได้ ตัวเลข 4 กับ 6 จะโผล่มาอีกครั้งตอนท้าย</p>
     <p>เครื่องหมายกากบาทในสองบรรทัดแรกหมายถึงแผนนั้นชนเพดานสภาพคล่องที่ 6 จึงทำไม่ได้จริง ตัวเลขค่าใช้จ่ายข้างหลังคือค่าที่จะต้องจ่ายถ้าทำได้ ใส่ไว้เพื่อเทียบเท่านั้น</p>
     <p>บรรทัดกลางหารค่าใช้จ่ายด้วย beta ที่ลดได้ต่อหนึ่งหน่วย SPY ถูกกว่าต่อหนึ่งหน่วย beta จึงควรใช้ให้เต็มเพดานก่อน</p>
     <p>สองบรรทัดล่างใช้ SPY เต็ม 6 แล้วให้ QQQ รับส่วนที่เหลือ ซึ่งอยู่ในเพดานพอดี</p>
@@ -338,11 +373,17 @@ x_Q&=\frac{10.8-6}{1.2}=\frac{4.8}{1.2}=4\le6\;\checkmark\end{aligned}
   <p>เริ่มจากวัดว่าปัญหาใหญ่แค่ไหน คือพอร์ตนี้เกาะตลาดอยู่กี่ดอลลาร์</p>
   <div class="math">\[
 \begin{aligned}
-\text{Dollar Beta}_{\text{initial}} &= N \times \beta_B = 12 \times 1.10 = 13.20\;\text{beta-USD million} \\
-\text{Dollar Beta}_{\text{target}} &= N \times \beta^* = 12 \times 0.20 = 2.40\;\text{beta-USD million} \\
-b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
+&\text{Dollar Beta}_{\text{initial}}\\
+&= N \times \beta_B = 12 \times 1.10\\
+&= 13.20\;\text{beta-USD million} \\
+&\text{Dollar Beta}_{\text{target}}\\
+&= N \times \beta^* = 12 \times 0.20\\
+&= 2.40\;\text{beta-USD million} \\
+b &= \text{Dollar Beta}_{\text{initial}}\\
+&\quad - \text{Dollar Beta}_{\text{target}} \\
 &= N\beta_B - N\beta^* = N(\beta_B - \beta^*) \\
-&= 12(1.10 - 0.20) = 12(0.90) = 10.80\;\text{beta-USD million}
+&= 12(1.10 - 0.20) = 12(0.90)\\
+&= 10.80\;\text{beta-USD million}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -372,9 +413,12 @@ b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
   <p>สองก้อนนี้เป็น ของที่โจทย์ให้ ไม่ได้คำนวณมา ของจริงมีข้อจำกัดที่ตำราไม่พูดถึง เช่นขายได้ไม่เกินสภาพคล่องที่มีในวันนั้น เลขศูนย์ด้านซ้ายบังคับว่าขนาดคำสั่งติดลบไม่ได้ ส่วนเลข 6 ด้านขวามาจากนโยบายสภาพคล่องของ desk</p>
   <div class="math">\[
 \begin{aligned}
-\text{Short direction (domain):}\quad & x_Q \ge 0,\quad x_S \ge 0 \\
-\text{Desk liquidity caps:}\quad & x_Q \le 6,\quad x_S \le 6 \\
-\text{Combined box constraints:}\quad & 0 \le x_Q \le 6,\quad 0 \le x_S \le 6
+&\text{Short direction (domain):}\\
+&\quad x_Q \ge 0,\quad x_S \ge 0 \\
+&\text{Desk liquidity caps:}\\
+&\quad x_Q \le 6,\quad x_S \le 6 \\
+&\text{Combined box constraints:}\\
+&\quad 0 \le x_Q \le 6,\quad 0 \le x_S \le 6
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -389,10 +433,14 @@ b &= \text{Dollar Beta}_{\text{initial}} - \text{Dollar Beta}_{\text{target}} \\
   <p>เมื่อมีหลายวิธีที่ทำได้ ต้องมีเกณฑ์เลือก ซึ่งที่นี่คือต้นทุนรวมที่ต่ำที่สุด</p>
   <div class="math">\[
 \begin{aligned}
-\text{eff}_{\text{QQQ}}&=c_Q/\beta_Q=180/1.20=\$150\ \text{per beta-million}\\
-\text{eff}_{\text{SPY}}&=c_S/\beta_S=90/1.00=\$90\ \text{per beta-million}\\
-C(x_Q,x_S)&=c_Qx_Q+c_Sx_S=180x_Q+90x_S\\
-\min C&\ \ \text{subject to}\ \ 1.20x_Q+x_S\ge10.8
+\text{eff}_{\text{QQQ}}&=c_Q/\beta_Q=180/1.20\\
+&=\$150\ \text{per beta-million}\\
+\text{eff}_{\text{SPY}}&=c_S/\beta_S=90/1.00\\
+&=\$90\ \text{per beta-million}\\
+C(x_Q,x_S)&=c_Qx_Q+c_Sx_S\\
+&=180x_Q+90x_S\\
+&\min C\ \ \text{subject to}\\
+&\quad 1.20x_Q+x_S\ge10.8
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -405,11 +453,17 @@ C(x_Q,x_S)&=c_Qx_Q+c_Sx_S=180x_Q+90x_S\\
 <section class="formula">
   <h4>ขั้นที่ 14 — ตรวจ optimum ด้วยตัวเลขครบ</h4>
   <p>ตรวจว่าคำตอบที่ได้ผ่านทุกข้อบังคับจริง ก่อนจะเชื่อมัน</p>
-  <p>อ่านสามบรรทัดนี้เป็นคำตอบได้เลย: beta ที่ตัดออกได้ 10.8 พอดีตามที่ต้องการ residual beta เหลือ 0.20 ตามเป้า และจ่ายค่าเทรด 1,260 ดอลลาร์ จุดนี้จึงใช้ได้จริงและรู้ต้นทุนก่อนส่งคำสั่ง</p>
+  <p>อ่านสูตรนี้เป็นคำตอบได้เลย: beta ที่ตัดออกได้ 10.8 พอดีตามที่ต้องการ residual beta เหลือ 0.20 ตามเป้า และจ่ายค่าเทรด 1,260 ดอลลาร์ จุดนี้จึงใช้ได้จริงและรู้ต้นทุนก่อนส่งคำสั่ง</p>
   <div class="math">\[
-\begin{aligned}x_Q^*=4,\;x_S^*=6:&\quad 1.20(4)+1.00(6)=4.8+6=10.8\ \checkmark\\
-R&=1.10-\frac{10.8}{12}=1.10-0.90=0.20\ \checkmark\\
-C^*&=180(4)+90(6)=720+540=\$1{,}260\end{aligned}
+\begin{aligned}
+&x_Q^*=4,\;x_S^*=6:\\
+&\quad 1.20(4)+1.00(6)\\
+&\quad=4.8+6=10.8\ \checkmark\\
+R&=1.10-\frac{10.8}{12}\\
+&=1.10-0.90=0.20\ \checkmark\\
+C^*&=180(4)+90(6)\\
+&=720+540=\$1{,}260
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้ SPY เต็ม cap \$6M แล้ว QQQ \$4M เติม beta exposure อีก 4.8 ทำให้รวมเป็น 10.8 และ residual beta เท่ากับ 0.20 พอดี Cost คือ \$720 บวก \$540 รวม \$1,260</p>

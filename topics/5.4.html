@@ -128,11 +128,16 @@
   <p>ถ้าไม่มีข้อจำกัดเลย เทเงินให้ทีมที่กำไรสูงสุดได้ไม่จำกัด ข้อจำกัดคือทั้งหมดของปัญหานี้ แทนที่จะห้ามใช้เกิน ให้ตั้งค่าเช่า uᵢ ต่อทรัพยากร i หนึ่งหน่วย แล้วปล่อยให้ทุกทีมทำอะไรก็ได้</p>
   <div class="math">\[
 \begin{aligned}
-\mathcal L(x,u)&=c^{\mathsf T}x+u^{\mathsf T}(b-Ax),\qquad u\ge0\\
-b-Ax\ge0,\ u\ge0\ &\Longrightarrow\ u^{\mathsf T}(b-Ax)\ge0\ \Longrightarrow\ c^{\mathsf T}x\le\mathcal L(x,u)\\[4pt]
+\mathcal L(x,u)&=c^{\mathsf T}x+u^{\mathsf T}(b-Ax)\\
+&\quad u\ge0\\
+&b-Ax\ge0,\ u\ge0\\
+&\Longrightarrow\ u^{\mathsf T}(b-Ax)\ge0\\
+&\Longrightarrow\ c^{\mathsf T}x\le\mathcal L(x,u)\\[4pt]
 \mathcal L(x,u)&=u^{\mathsf T}b+(c-A^{\mathsf T}u)^{\mathsf T}x\\
-(c-A^{\mathsf T}u)_j\gt0\ &\Longrightarrow\ \text{raise }x_j\ \text{forever}\\
-A^{\mathsf T}u\ge c\ &\Longrightarrow\ \text{best }x=0,\quad \mathcal L\le u^{\mathsf T}b
+&(c-A^{\mathsf T}u)_j\gt0\\
+&\Longrightarrow\ \text{raise }x_j\ \text{forever}\\
+&A^{\mathsf T}u\ge c\\
+&\Longrightarrow\ \text{best }x=0,\quad \mathcal L\le u^{\mathsf T}b
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -163,10 +168,13 @@ D=\min\quad &50u_1+200u_2+2.4u_3\\
   <p>เลือก u ที่ถูกกติกามาสักชุด ไม่ต้องดีที่สุด แล้วตรวจทีละแถว</p>
   <div class="math">\[
 \begin{aligned}
-u=(0.5,\ 0,\ 2.0):\quad \text{team 1}:&\ 0.150+0+0.080=0.230\ge0.20\\
-\text{team 2}:&\ 0.250\ge0.21\\
-\text{team 3}:&\ 0.125\ge0.09\\[4pt]
-u^{\mathsf T}b&=50(0.5)+200(0)+2.4(2.0)=25.0+0+4.8=29.8
+&u=(0.5,\ 0,\ 2.0):\\
+&\text{team 1}:\ 0.150+0+0.080\\
+&\quad=0.230\ge0.20\\
+&\text{team 2}:\ 0.250\ge0.21\\
+&\text{team 3}:\ 0.125\ge0.09\\[4pt]
+u^{\mathsf T}b&=50(0.5)+200(0)+2.4(2.0)\\
+&=25.0+0+4.8=29.8
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -179,11 +187,15 @@ u^{\mathsf T}b&=50(0.5)+200(0)+2.4(2.0)=25.0+0+4.8=29.8
   <p>ทรัพยากรที่หายากที่สุดคือ VaR จึงจัดอันดับด้วยกำไรส่วน VaR ที่กิน แล้วเติมตามลำดับ</p>
   <div class="math">\[
 \begin{aligned}
-\frac{0.20}{0.30}=0.667,\qquad \frac{0.21}{0.50}=0.420,\qquad \frac{0.09}{0.25}&=0.360\\[4pt]
-x_1=60\ (\text{liquidity cap}):\quad \text{VaR used}=0.30(60)&=18,\qquad \text{left}=50-18=32\\
-x_2=\frac{32}{0.50}=64,\qquad x_3&=0\\
-\text{gross}=60+64+0=124&\le200\\
-\text{profit}=0.20(60)+0.21(64)+0.09(0)&=12.00+13.44=25.44
+&\frac{0.20}{0.30}=0.667,\qquad \frac{0.21}{0.50}=0.420\\
+&\frac{0.09}{0.25}=0.360\\[4pt]
+&x_1=60\ (\text{liquidity cap}):\\
+&\quad \text{VaR used}=0.30(60)=18\\
+&\quad \text{left}=50-18=32\\
+x_2&=\frac{32}{0.50}=64,\qquad x_3=0\\
+&\text{gross}=60+64+0=124\le200\\
+&\text{profit}=0.20(60)+0.21(64)\\
+&\quad+0.09(0)=12.00+13.44=25.44
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -197,10 +209,16 @@ x_2=\frac{32}{0.50}=64,\qquad x_3&=0\\
   <p>สองกฎ: ข้อจำกัดที่ไม่ชนมีราคาเงาเป็นศูนย์ และทีมที่ได้เงินทำให้แถว dual ของทีมนั้นเป็นสมการพอดี</p>
   <div class="math">\[
 \begin{aligned}
-\text{gross slack}=76\gt0\ &\Longrightarrow\ u_2=0\\
-x_2=64\gt0:\quad 0.50u_1+u_2=0.21\ &\Longrightarrow\ u_1=\frac{0.21}{0.50}=0.42\\
-x_1=60\gt0:\quad 0.30(0.42)+0+0.04u_3=0.20\ &\Longrightarrow\ 0.04u_3=0.074,\quad u_3=1.85\\
-x_3=0:\quad 0.25(0.42)+0=0.105\ &\ge\ 0.09\\[4pt]
+&\text{gross slack}=76\gt0\\
+&\Longrightarrow\ u_2=0\\
+&x_2=64\gt0:\\
+&\quad 0.50u_1+u_2=0.21\\
+&\Longrightarrow\ u_1=\frac{0.21}{0.50}=0.42\\
+&x_1=60\gt0:\\
+&\quad 0.30(0.42)+0+0.04u_3=0.20\\
+&\Longrightarrow\ 0.04u_3=0.074,\quad u_3=1.85\\
+&x_3=0:\\
+&\quad 0.25(0.42)+0=0.105\ \ge\ 0.09\\[4pt]
 u^*&=(0.42,\ 0,\ 1.85)
 \end{aligned}
 \]</div>
@@ -215,8 +233,11 @@ u^*&=(0.42,\ 0,\ 1.85)
   <p>คูณราคาเงากับโควตาที่มีแล้วบวก ต้องได้กำไรจากขั้นที่ 5 พอดี</p>
   <div class="math">\[
 \begin{aligned}
-D=50(0.42)+200(0)+2.4(1.85)&=21.00+0+4.44=25.44=P\\[4pt]
-\text{guess }(0.5,0,2.0):\ 29.80,\qquad u^*:\ 25.44\ &\Longrightarrow\ \text{gap closed}
+D&=50(0.42)+200(0)+2.4(1.85)\\
+&=21.00+0+4.44=25.44=P\\[4pt]
+&\text{guess }(0.5,0,2.0):\ 29.80\\
+&u^*:\ 25.44\\
+&\Longrightarrow\ \text{gap closed}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -230,10 +251,14 @@ D=50(0.42)+200(0)+2.4(1.85)&=21.00+0+4.44=25.44=P\\[4pt]
   <p>ราคาเงาใช้ได้เฉพาะช่วงหนึ่ง วิธีตรวจคือผ่อนเพดานทีละข้อหนึ่งหน่วยแล้วตามรอยเงิน</p>
   <div class="math">\[
 \begin{aligned}
-\text{VaR }50\to51&:\ \Delta x_2=1/0.50=+2\\
-&\quad\Delta\text{profit}=0.21(2)=+0.42\quad(60,\ 66,\ 0)\\
-\text{gross }200\to201&:\ \text{nothing moves},\ \ \Delta\text{profit}=0\\
-\text{liq }2.4\to3.4&:\ \Delta x_1=1/0.04=+25\\
+&\text{VaR }50\to51:\\
+&\quad\Delta x_2=1/0.50=+2\\
+&\quad\Delta\text{profit}=0.21(2)=+0.42\\
+&\quad(60,\ 66,\ 0)\\
+&\text{gross }200\to201:\\
+&\quad\text{nothing moves},\ \ \Delta\text{profit}=0\\
+&\text{liq }2.4\to3.4:\\
+&\quad\Delta x_1=1/0.04=+25\\
 &\quad\text{VaR}+0.30(25)=+7.5\\
 &\quad\Delta x_2=-7.5/0.50=-15\\
 &\quad\Delta\text{profit}=0.20(25)-0.21(15)\\
@@ -286,12 +311,20 @@ assert abs(np.dot([0.5,0,2.0],[50,200,2.4])-29.8)&lt;1e-9</code></pre>
   <p>ตัวอย่างแรกเป็นโจทย์ max จึงได้ขอบบน บรรทัดข้างล่างคือกระจกของมันสำหรับโจทย์ min ซึ่งให้ขอบล่าง กระบวนการผ่อนคลายข้อจำกัดด้วย Lagrangian เป็นวิธีสากลที่ใช้สร้างโจทย์คู่สำหรับ linear program ทุกประเภท โดยเริ่มจากการติดราคาให้กับการละเมิด แล้วจัดกลุ่มตัวแปรเพื่อค้นหาเงื่อนไขที่ทำให้ขอบล่างมีค่าคงที่ไม่ร่วงลงสู่ลบอนันต์</p>
   <div class="math">\[
 \begin{aligned}
-\text{Primal LP:}\quad & P = \min_x \{ c^{\mathsf T}x : Ax \ge b,\; x \ge 0 \} \\
-\text{Penalised Lagrangian:}\quad & \mathcal L(x, u) = c^{\mathsf T}x - u^{\mathsf T}(Ax - b) \quad (u \ge 0) \\
-\text{Regroup coefficients:}\quad & \mathcal L(x, u) = b^{\mathsf T}u + (c - A^{\mathsf T}u)^{\mathsf T}x \\
-\text{Dual function:}\quad & q(u) = \min_{x \ge 0} \mathcal L(x, u) = \begin{cases} b^{\mathsf T}u, & A^{\mathsf T}u \le c \\
+&\text{Primal LP:}\\
+&\quad P = \min_x \{ c^{\mathsf T}x : Ax \ge b,\; x \ge 0 \} \\
+&\text{Penalised Lagrangian:}\\
+&\quad \mathcal L(x, u) = c^{\mathsf T}x - u^{\mathsf T}(Ax - b)\\
+&\quad (u \ge 0) \\
+&\text{Regroup coefficients:}\\
+&\quad \mathcal L(x, u) = b^{\mathsf T}u + (c - A^{\mathsf T}u)^{\mathsf T}x \\
+&\text{Dual function:}\\
+&\quad q(u) = \min_{x \ge 0} \mathcal L(x, u)\\
+&\quad = \begin{cases} b^{\mathsf T}u, & A^{\mathsf T}u \le c \\
 -\infty, & \text{otherwise} \end{cases} \\
-\text{Dual problem:}\quad & D = \max_{u \ge 0} q(u) = \max_{u \ge 0} \{ b^{\mathsf T}u : A^{\mathsf T}u \le c \}
+&\text{Dual problem:}\\
+&\quad D = \max_{u \ge 0} q(u)\\
+&\quad = \max_{u \ge 0} \{ b^{\mathsf T}u : A^{\mathsf T}u \le c \}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -325,11 +358,18 @@ g_S(x)&=x_S-6\le0.\end{aligned}
   <p>บรรทัดนี้เป็น นิยาม ของก้อนที่เราสร้างขึ้นมาเอง ไม่ได้พิสูจน์มาจากอะไร แนวคิดคือแทนที่จะห้ามเด็ดขาด เราตั้งค่าปรับให้กับการฝ่าฝืนทุกข้อ ตัวคูณแต่ละตัวคือราคาต่อหนึ่งหน่วยที่ฝ่าฝืน และถูกบังคับให้ไม่ติดลบ ประโยชน์ของการเขียนแบบนี้จะเห็นในขั้นถัดไป ตอนจัดกลุ่มใหม่</p>
   <div class="math">\[
 \begin{aligned}
-\text{Primal cost:}\quad & C(x) = 180x_Q + 90x_S \\
-\text{Penalty beta:}\quad & y \cdot g_B(x) = y(10.8 - 1.2x_Q - x_S) \\
-\text{Penalty QQQ cap:}\quad & u_Q \cdot g_Q(x) = u_Q(x_Q - 6) \\
-\text{Penalty SPY cap:}\quad & u_S \cdot g_S(x) = u_S(x_S - 6) \\
-\mathcal L(x; y, u_Q, u_S) &= C(x) + y g_B(x) + u_Q g_Q(x) + u_S g_S(x),\quad y, u_Q, u_S \ge 0
+&\text{Primal cost:}\\
+&\quad C(x) = 180x_Q + 90x_S \\
+&\text{Penalty beta:}\\
+&\quad y \cdot g_B(x) = y(10.8 - 1.2x_Q - x_S) \\
+&\text{Penalty QQQ cap:}\\
+&\quad u_Q \cdot g_Q(x) = u_Q(x_Q - 6) \\
+&\text{Penalty SPY cap:}\\
+&\quad u_S \cdot g_S(x) = u_S(x_S - 6) \\
+&\mathcal L(x; y, u_Q, u_S)\\
+&= C(x) + y g_B(x)\\
+&\quad + u_Q g_Q(x) + u_S g_S(x)\\
+&\quad y, u_Q, u_S \ge 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -371,9 +411,15 @@ q(y,u_Q,u_S)=\min_{x_Q,x_S\ge0}\mathcal L=\begin{cases}10.8y-6u_Q-6u_S,&\substac
   <p>ผลที่ได้ตรงกับโจทย์คู่ที่เขียนไว้ในหัวข้อก่อนหน้าทุกบรรทัด แปลว่าสองวิธีสร้างโจทย์คู่ให้ผลเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-\text{QQQ slope condition:}\quad & 180 - 1.2y + u_Q \ge 0 \;\Longrightarrow\; 1.2y - u_Q \le 180 \\
-\text{SPY slope condition:}\quad & 90 - y + u_S \ge 0 \;\Longrightarrow\; y - u_S \le 90 \\
-\text{Dual feasibility system:}\quad & 1.2y - u_Q \le 180,\quad y - u_S \le 90,\quad y, u_Q, u_S \ge 0
+&\text{QQQ slope condition:}\\
+&\quad 180 - 1.2y + u_Q \ge 0\\
+&\quad\Longrightarrow\; 1.2y - u_Q \le 180 \\
+&\text{SPY slope condition:}\\
+&\quad 90 - y + u_S \ge 0\\
+&\quad\Longrightarrow\; y - u_S \le 90 \\
+&\text{Dual feasibility system:}\\
+&\quad 1.2y - u_Q \le 180,\quad y - u_S \le 90\\
+&\quad y, u_Q, u_S \ge 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -388,9 +434,12 @@ q(y,u_Q,u_S)=\min_{x_Q,x_S\ge0}\mathcal L=\begin{cases}10.8y-6u_Q-6u_S,&\substac
   <p>แทนค่าที่จุดเหมาะที่สุด ค่าของโจทย์คู่ต้องเท่ากับค่าของโจทย์เดิมพอดี</p>
   <div class="math">\[
 \begin{aligned}
-q(150, 0, 60) &= 10.8(150) - 6(0) - 6(60) \\
+&q(150, 0, 60)\\
+&= 10.8(150) - 6(0) - 6(60) \\
 &= 1{,}620 - 0 - 360 = \$1{,}260 \\
-\mathcal L(x; 150, 0, 60) &= 1{,}260 + x_Q(180 - 1.2(150) + 0) + x_S(90 - 150 + 60) \\
+&\mathcal L(x; 150, 0, 60)\\
+&= 1{,}260 + x_Q(180 - 1.2(150) + 0)\\
+&\quad + x_S(90 - 150 + 60) \\
 &= 1{,}260 + 0x_Q + 0x_S = \$1{,}260
 \end{aligned}
 \]</div>
@@ -406,11 +455,16 @@ q(150, 0, 60) &= 10.8(150) - 6(0) - 6(60) \\
   <p>ลองใช้ราคาที่ถูกกติกาแต่ยังไม่ดีที่สุด เพื่อยืนยันว่ามันให้ขอบล่างเสมอ ไม่เคยเกินจริง</p>
   <div class="math">\[
 \begin{aligned}
-q(\lambda_0) &= 10.8(130) - 6(0) - 6(45) = 1{,}404 - 0 - 270 = \$1{,}134 \\
-\text{Slopes:}\quad & 180 - 1.2(130) + 0 = 180 - 156 = 24 \ge 0 \\
-& 90 - 130 + 45 = 5 \ge 0 \\
+q(\lambda_0) &= 10.8(130) - 6(0) - 6(45)\\
+&= 1{,}404 - 0 - 270 = \$1{,}134 \\
+&\text{Slopes:}\\
+&\quad 180 - 1.2(130) + 0\\
+&\quad = 180 - 156 = 24 \ge 0 \\
+&\quad 90 - 130 + 45 = 5 \ge 0 \\
 \mathcal L(x; \lambda_0) &= 1{,}134 + 24x_Q + 5x_S \\
-\mathcal L(4, 6; \lambda_0) &= 1{,}134 + 24(4) + 5(6) = 1{,}134 + 96 + 30 = \$1{,}260
+&\mathcal L(4, 6; \lambda_0)\\
+&= 1{,}134 + 24(4) + 5(6)\\
+&= 1{,}134 + 96 + 30 = \$1{,}260
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -425,10 +479,19 @@ q(\lambda_0) &= 10.8(130) - 6(0) - 6(45) = 1{,}404 - 0 - 270 = \$1{,}134 \\
   <p>ราคาเงาไม่ใช่ตัวเลขลอย ๆ มันบอกตรง ๆ ว่าถ้าผ่อนข้อบังคับนั้นหนึ่งหน่วย จะประหยัดได้เท่าไร</p>
   <div class="math">\[
 \begin{aligned}
-\text{Relax SPY cap:}\quad & U_S = 6 \to 7 \\
-\text{New hedge sizes:}\quad & x_S = 7,\quad x_Q = \frac{10.8 - 7}{1.2} = \frac{3.8}{1.2} = \frac{19}{6}\;\text{USD million} \\
-\text{New total cost:}\quad & C = 180\left(\frac{19}{6}\right) + 90(7) = 30(19) + 630 = 570 + 630 = \$1{,}200 \\
-\text{Cost saving:}\quad & \Delta C = \$1{,}260 - \$1{,}200 = \$60 = u_S^* \times 1
+&\text{Relax SPY cap:}\\
+&\quad U_S = 6 \to 7 \\
+&\text{New hedge sizes:}\\
+&\quad x_S = 7\\
+&\quad x_Q = \frac{10.8 - 7}{1.2} = \frac{3.8}{1.2} = \frac{19}{6}\\
+&\quad\;\text{USD million} \\
+&\text{New total cost:}\\
+&\quad C = 180\left(\frac{19}{6}\right) + 90(7)\\
+&\quad = 30(19) + 630 = 570 + 630\\
+&\quad = \$1{,}200 \\
+&\text{Cost saving:}\\
+&\quad \Delta C = \$1{,}260 - \$1{,}200\\
+&\quad = \$60 = u_S^* \times 1
 \end{aligned}
 \]</div>
   <div class="reading">

@@ -107,8 +107,13 @@
   <p>ตัวเลขชุดนี้คือของที่โจทย์ให้ ตัวแปรตัดสินใจคือ w น้ำหนักเงินของหุ้นแต่ละตัว ทุกกฎคือรั้วที่ครอบ w</p>
   <div class="math">\[
 \begin{aligned}
-w&=(w_1,\ w_2,\ w_3,\ w_4,\ w_5),\qquad w_{\text{proposed}}=(0.30,\ 0.20,\ 0.20,\ 0.20,\ 0.10)\\[4pt]
-\text{rules}:&\quad \textstyle\sum_i w_i=1,\qquad w_i\ge0,\qquad w_i\le0.25,\qquad w_1+w_2\le0.40
+w&=(w_1,\ w_2,\ w_3,\ w_4,\ w_5)\\
+&w_{\text{proposed}}\\
+&=(0.30,\ 0.20,\ 0.20,\\
+&\qquad 0.20,\ 0.10)\\[4pt]
+\text{rules}&:\\
+&\quad \textstyle\sum_i w_i=1,\qquad w_i\ge0\\
+&\quad w_i\le0.25,\qquad w_1+w_2\le0.40
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -121,11 +126,17 @@ w&=(w_1,\ w_2,\ w_3,\ w_4,\ w_5),\qquad w_{\text{proposed}}=(0.30,\ 0.20,\ 0.20,
   <p>กติกาแปล: หนึ่งเงื่อนไขเป็นหนึ่งแถว ตัวเลขในแถวบอกว่านับหุ้นตัวไหนเท่าไร อสมการทุกข้อเขียนเป็นแบบไม่เกินให้หมด เพราะ solver รับรูปเดียว</p>
   <div class="math">\[
 \begin{aligned}
-A_{eq}&=\begin{bmatrix}1 & 1 & 1 & 1 & 1\end{bmatrix},\qquad b_{eq}=1\\[4pt]
-w_i\ge0\quad&\Longrightarrow\quad -w_i\le0\qquad(5\ \text{rows})\\
-w_i\le0.25\quad&\Longrightarrow\quad \phantom{-}w_i\le0.25\qquad(5\ \text{rows})\\
-w_1+w_2\le0.40\quad&\Longrightarrow\quad \begin{bmatrix}1 & 1 & 0 & 0 & 0\end{bmatrix}w\le0.40\qquad(1\ \text{row})\\[4pt]
-A_{in}&=\begin{bmatrix}-I_5\\ I_5\\ 1\ \ 1\ \ 0\ \ 0\ \ 0\end{bmatrix},\qquad b_{in}=\begin{bmatrix}0\cdot\mathbf{1}\\ 0.25\cdot\mathbf{1}\\ 0.40\end{bmatrix}
+A_{eq}&=\begin{bmatrix}1 & 1 & 1 & 1 & 1\end{bmatrix}\\
+b_{eq}&=1\\[4pt]
+w_i\ge0\quad&\Longrightarrow\quad -w_i\le0\\
+&\qquad(5\ \text{rows})\\
+w_i\le0.25\quad&\Longrightarrow\quad \phantom{-}w_i\le0.25\\
+&\qquad(5\ \text{rows})\\
+&w_1+w_2\le0.40\quad\Longrightarrow\\
+&\quad \begin{bmatrix}1 & 1 & 0 & 0 & 0\end{bmatrix}w\le0.40\\
+&\qquad(1\ \text{row})\\[4pt]
+A_{in}&=\begin{bmatrix}-I_5\\ I_5\\ 1\ \ 1\ \ 0\ \ 0\ \ 0\end{bmatrix}\\
+b_{in}&=\begin{bmatrix}0\cdot\mathbf{1}\\ 0.25\cdot\mathbf{1}\\ 0.40\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -139,10 +150,17 @@ A_{in}&=\begin{bmatrix}-I_5\\ I_5\\ 1\ \ 1\ \ 0\ \ 0\ \ 0\end{bmatrix},\qquad b_
   <p>คูณ A_in กับ w แล้วเทียบกับ b_in ทีละแถว แถวไหนเกินคือกฎที่ละเมิด</p>
   <div class="math">\[
 \begin{aligned}
-A_{eq}w&=0.30+0.20+0.20+0.20+0.10=1.00=b_{eq}\\[4pt]
-\text{rows 1-5}:&\quad -w=(-0.30,\,-0.20,\,-0.20,\,-0.20,\,-0.10)\le0\\
-\text{rows 6-10}:&\quad \phantom{-}w=(0.30,\,0.20,\,0.20,\,0.20,\,0.10),\qquad \text{row 6}:\ 0.30\gt0.25\\
-\text{row 11}:&\quad w_1+w_2=0.30+0.20=0.50\gt0.40
+A_{eq}w&=0.30+0.20+0.20+0.20+0.10\\
+&=1.00=b_{eq}\\[4pt]
+&\text{rows 1-5}:\\
+&\quad -w=(-0.30,\,-0.20,\,-0.20,\\
+&\qquad -0.20,\,-0.10)\le0\\
+&\text{rows 6-10}:\\
+&\quad \phantom{-}w=(0.30,\,0.20,\,0.20,\,0.20,\,0.10)\\
+&\quad \text{row 6}:\ 0.30\gt0.25\\
+&\text{row 11}:\\
+&\quad w_1+w_2=0.30+0.20\\
+&\quad=0.50\gt0.40
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -155,10 +173,17 @@ A_{eq}w&=0.30+0.20+0.20+0.20+0.10=1.00=b_{eq}\\[4pt]
   <p>กดสองตัวที่เป็นปัญหาลงให้พอดีเพดาน แล้วย้ายเงินที่ปลดออกไปใส่ตัวที่ยังมีที่ว่าง</p>
   <div class="math">\[
 \begin{aligned}
-w_1:\ 0.30\to0.25,\quad w_2:\ 0.20\to0.15\quad&\Longrightarrow\quad \text{freed}=0.05+0.05=0.10\\
-w_3:\ 0.20\to0.25,\quad w_4:\ 0.20\to0.25\quad&\Longrightarrow\quad \text{added}=0.05+0.05=0.10\\[4pt]
-w'=(0.25,\ 0.15,\ 0.25,\ 0.25,\ 0.10):\quad &\textstyle\sum_i w'_i=1.00,\quad \min_i w'_i=0.10\ge0\\
-&\max_i w'_i=0.25\le0.25,\quad w'_1+w'_2=0.40\le0.40
+&w_1:\ 0.30\to0.25\\
+&w_2:\ 0.20\to0.15\\
+&\quad\Longrightarrow\quad \text{freed}=0.05+0.05=0.10\\
+&w_3:\ 0.20\to0.25\\
+&w_4:\ 0.20\to0.25\\
+&\quad\Longrightarrow\quad \text{added}=0.05+0.05=0.10\\[4pt]
+&w'=(0.25,\ 0.15,\ 0.25,\ 0.25,\ 0.10):\\
+&\quad\textstyle\sum_i w'_i=1.00\\
+&\quad\min_i w'_i=0.10\ge0\\
+&\quad\max_i w'_i=0.25\le0.25\\
+&\quad w'_1+w'_2=0.40\le0.40
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -188,10 +213,19 @@ w'=(0.25,\ 0.15,\ 0.25,\ 0.25,\ 0.10):\quad &\textstyle\sum_i w'_i=1.00,\quad \m
   <p>ลองแถวธนาคาร f(w) = w₁ + w₂ กับสองพอร์ต แล้วผสมครึ่งต่อครึ่งสองทาง ถ้าเป็นเชิงเส้น สองทางต้องได้เลขเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-v&=(0.20,\ 0.20,\ 0.20,\ 0.20,\ 0.20):\quad f(w_{\text{proposed}})=0.50,\quad f(v)=0.40\\
-f(0.5w_{\text{proposed}}+0.5v)&=f(0.25,\ 0.20,\ 0.20,\ 0.20,\ 0.15)=0.45=0.5(0.50)+0.5(0.40)\\[4pt]
-\tfrac12(w'+v)&=(0.225,\ 0.175,\ 0.225,\ 0.225,\ 0.150)\\
-\text{sum}&=1.000,\qquad \max=0.225\le0.25,\qquad 0.225+0.175=0.400\le0.40
+v&=(0.20,\ 0.20,\ 0.20,\\
+&\qquad 0.20,\ 0.20):\\
+&\quad f(w_{\text{proposed}})=0.50,\quad f(v)=0.40\\
+&f(0.5w_{\text{proposed}}+0.5v)\\
+&=f(0.25,\ 0.20,\ 0.20,\\
+&\qquad 0.20,\ 0.15)\\
+&=0.45=0.5(0.50)+0.5(0.40)\\[4pt]
+&\tfrac12(w'+v)\\
+&=(0.225,\ 0.175,\ 0.225,\\
+&\qquad 0.225,\ 0.150)\\
+\text{sum}&=1.000\\
+\max&=0.225\le0.25\\
+&\quad 0.225+0.175=0.400\le0.40
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -239,11 +273,19 @@ assert (Ain@mid&lt;=bin_+1e-12).all() and abs(mid.sum()-1)&lt;1e-12</code></pre>
   <p>ตัวอย่างแรกใช้รูป A_eq w = b_eq กับ A_in w ≤ b_in ซึ่งเป็นรูปทั่วไปของ LP บาง solver ต้องการสมการล้วนกับตัวแปรไม่ติดลบ กติกาพื้นฐานในการแปลงโจทย์ linear program ทั่วไปให้อยู่ในรูปมาตรฐาน มีหลักการตายตัวสามข้อ คือการลบ surplus สำหรับขอบล่าง การบวก slack สำหรับขอบบน และการกลับเครื่องหมายสำหรับโจทย์ maximize โดยตัวแปรทุกตัวในระบบใหม่ต้องไม่ติดลบเสมอ</p>
   <div class="math">\[
 \begin{aligned}
-\text{General LP:}\quad & \min\ \text{or}\ \max\ c^{\mathsf T}x\quad \text{s.t.}\ A_{eq}x=b_{eq},\ A_{in}x\le b_{in} \\
-\text{Lower bound to equality:}\quad & a_i^{\mathsf T}x \ge b_i\ \text{becomes}\ a_i^{\mathsf T}x - s_i = b_i \quad (s_i \ge 0) \\
-\text{Upper bound to equality:}\quad & a_i^{\mathsf T}x \le b_i\ \text{becomes}\ a_i^{\mathsf T}x + s_i = b_i \quad (s_i \ge 0) \\
-\text{Objective standardisation:}\quad & \max f(x) = -\min\,\big(-f(x)\big) \\
-\text{Standard equality system:}\quad & A_{\text{eq}}z = d,\qquad z \ge 0
+&\text{General LP:}\\
+&\quad \min\ \text{or}\ \max\ c^{\mathsf T}x\\
+&\quad \text{s.t.}\ A_{eq}x=b_{eq},\ A_{in}x\le b_{in} \\
+&\text{Lower bound to equality:}\\
+&\quad a_i^{\mathsf T}x \ge b_i\ \text{becomes}\\
+&\quad a_i^{\mathsf T}x - s_i = b_i \quad (s_i \ge 0) \\
+&\text{Upper bound to equality:}\\
+&\quad a_i^{\mathsf T}x \le b_i\ \text{becomes}\\
+&\quad a_i^{\mathsf T}x + s_i = b_i \quad (s_i \ge 0) \\
+&\text{Objective standardisation:}\\
+&\quad \max f(x) = -\min\,\big(-f(x)\big) \\
+&\text{Standard equality system:}\\
+&\quad A_{\text{eq}}z = d,\qquad z \ge 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -263,10 +305,14 @@ assert (Ain@mid&lt;=bin_+1e-12).all() and abs(mid.sum()-1)&lt;1e-12</code></pre>
   <p>โจทย์จริงมาในรูปที่ไม่เป็นระเบียบ มีทั้งมากกว่าและน้อยกว่าปนกัน เริ่มจากเขียนมันตามที่เป็นก่อน</p>
   <div class="math">\[
 \begin{aligned}
-\text{Risk mandate (lower bound):}\quad & 1.20x_Q + 1.00x_S \ge 10.8 \\
-\text{QQQ desk liquidity cap:}\quad & x_Q \le 6 \\
-\text{SPY desk liquidity cap:}\quad & x_S \le 6 \\
-\text{Non-negative short notionals:}\quad & x_Q \ge 0,\quad x_S \ge 0
+&\text{Risk mandate (lower bound):}\\
+&\quad 1.20x_Q + 1.00x_S \ge 10.8 \\
+&\text{QQQ desk liquidity cap:}\\
+&\quad x_Q \le 6 \\
+&\text{SPY desk liquidity cap:}\\
+&\quad x_S \le 6 \\
+&\text{Non-negative short notionals:}\\
+&\quad x_Q \ge 0,\quad x_S \ge 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -281,10 +327,12 @@ assert (Ain@mid&lt;=bin_+1e-12).all() and abs(mid.sum()-1)&lt;1e-12</code></pre>
   <p>แปลงข้อบังคับแบบ 'อย่างน้อย' ให้เป็นสมการ โดยหักส่วนที่เกินออกเป็นตัวแปรใหม่</p>
   <div class="math">\[
 \begin{aligned}
-1.20x_Q + x_S &\ge 10.8 \\
-(1.20x_Q + x_S) - 10.8 &\ge 0 \\
-\text{Define surplus:}\quad s_B &:= (1.20x_Q + x_S) - 10.8 \ge 0 \\
-1.20x_Q + x_S - s_B &= 10.8,\qquad s_B \ge 0
+&1.20x_Q + x_S \ge 10.8 \\
+&(1.20x_Q + x_S) - 10.8 \ge 0 \\
+&\text{Define surplus:}\\
+&s_B := (1.20x_Q + x_S) - 10.8 \ge 0 \\
+&1.20x_Q + x_S - s_B = 10.8\\
+&s_B \ge 0
 \end{aligned}
 \]</div>
   <div class="reading">
