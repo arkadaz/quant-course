@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>ย้ายของในบ้านจากห้อง A ไป B ทำให้ห้อง B น่าอยู่ขึ้น 100 USD ในจินตนาการ แต่ค่ารถและแรงย้าย 120 USD คุณควรย้ายไหม?</p>
-  <p>เฉลย: ไม่ควร; ประโยชน์สุทธิจากการย้ายเป็น 100 ลบ 120 เท่ากับ -20 USD; แผนใหม่ที่ดูดีกว่าโดยไม่คิดค่าเปลี่ยนจึงแย่กว่าเมื่อทำจริง</p>
+  <p>พอร์ต 50 ล้านดอลลาร์ถืออยู่ 40/40/20 optimizer ที่ไม่คิดต้นทุนสั่งให้เปลี่ยนเป็น 60/30/10 ค่าซื้อขาย 10 bp ต้องจ่ายเท่าไร และถ้ากองทุนจำกัด turnover ไว้ 10% ควรหยุดตรงไหน?</p>
+  <p>เฉลย: ต้องซื้อขายรวม 20 ล้านดอลลาร์ (turnover 20%) จ่าย 20,000 ดอลลาร์ cap 10% เดินได้ครึ่งทางที่ 50/35/15 จ่าย 10,000 และถ้ากำไรส่วนเพิ่มของสินทรัพย์ไหนชนะต้นทุนไม่ได้ทั้งขาซื้อและขาขาย ในช่องกว้าง 20 bp รอบพอร์ตเดิม คำตอบที่ดีที่สุดคืออย่าเทรดเลย</p>
   <p>transaction cost คือค่าใช้จ่ายจากการปรับ position; mean-variance optimization with transaction costs ชั่ง expected return, variance และต้นทุนขยับพร้อมกัน</p>
   <p>portfolio ไม่ย้ายฟรี: optimizer ต้องให้ turnover ชนะ fee, spread และ price impact ก่อนเปลี่ยนน้ำหนัก</p>
 </div>
@@ -94,7 +94,7 @@
 </section>
 
 <section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
+  <h4>โจทย์: ปรับพอร์ต 50 ล้านดอลลาร์ไปหาเป้าหมายใหม่</h4>
   <p>โจทย์ให้อะไรมาบ้าง: mean-variance แบบมี friction ต้องตัดสินใจ trade จาก $w_0$ เพราะ cost ขึ้นกับระยะที่เดินไปหา $w$ ตัวอย่างใช้ portfolio value USD 50 million, one-period annual forecasts และ linear cost 10 bp เท่ากันทุกกองเพื่อให้ตรวจเลขได้ ตลาดจริงต้องใช้ bid–ask, participation และ impact estimates รายสินทรัพย์</p>
 </section>
 
@@ -161,14 +161,17 @@ c_i=10\ \mathrm{bp}=0.001:\qquad \operatorname{TC}=W\sum_i c_i|\Delta w_i|=50{,}
   <p>เป้าหมายข้อนี้มีสี่พจน์ ซึ่งดูเหมือนรวมของหลายอย่างที่ไม่มีที่มา แต่ทุกพจน์มาจากสองคำถามเดียวกัน: เราได้อะไร และเราเสียอะไร</p>
   <p>สองพจน์แรกคือผลตอบแทนที่คาดหวังกับค่าปรับความเสี่ยงจากบทก่อน สองพจน์หลังคือค่าใช้จ่ายจากการเทรด ซึ่งแยกเป็นสองส่วนตามกลไกที่ต่างกัน</p>
   <div class="math">\[
-\begin{aligned}\text{traded}&=|w_i-w_{0i}|\,W\\[4pt]
+\begin{aligned}
+\text{traded}&=|w_i-w_{0i}|\,W\\[4pt]
 \text{spread cost}&=s_i\,|w_i-w_{0i}|\,W\ \Rightarrow\ c_i=s_i\\[4pt]
 \text{impact cost}&=\kappa_i(w_i-w_{0i})^{2},\qquad\kappa_i=\frac{\lambda_i W}{2P_0V_i}\\[6pt]
-\therefore\quad\max_{w}\ &\mu^{\mathsf T}w-\gamma w^{\mathsf T}Vw-\sum_i c_i|w_i-w_{0i}|-\sum_i\kappa_i(w_i-w_{0i})^{2}\end{aligned}
+\text{objective}&=\mu^{\mathsf T}w-\gamma w^{\mathsf T}Vw\\
+&\quad-\sum_i c_i|w_i-w_{0i}|-\sum_i\kappa_i(w_i-w_{0i})^{2}\ \to\ \max
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าใช้จ่ายก้อนแรกคือส่วนต่างราคาซื้อขาย ทุกหน่วยที่เทรดต้องจ่ายครึ่งส่วนต่างนี้ ไม่ว่าจะเทรดเล็กหรือใหญ่ และเพราะขนาดของธุรกรรมคือผลต่างน้ำหนักคูณขนาดพอร์ต ค่าใช้จ่ายจึงแปรผันตรงกับค่าสัมบูรณ์ของผลต่างนั้น</p>
-    <p>ผลที่ได้คือพจน์ค่าสัมบูรณ์ในเป้าหมาย และcoefficientของมันคือครึ่งส่วนต่างนั่นเอง ซึ่งวัดได้จากข้อมูลตลาดโดยตรง ไม่ต้องประมาณ</p>
+    <p>ผลที่ได้คือพจน์ค่าสัมบูรณ์ในเป้าหมาย และ coefficient ของมันคือครึ่งส่วนต่างนั่นเอง ซึ่งวัดได้จากข้อมูลตลาดโดยตรง ไม่ต้องประมาณ</p>
     <p>ค่าใช้จ่ายก้อนที่สองคือผลกระทบต่อราคา ซึ่งไม่แปรผันตรง แต่โตเร็วขึ้นเมื่อเทรดก้อนใหญ่ เพราะคำสั่งของเรากินสภาพคล่องไปเรื่อย ๆ ขั้นที่แล้วจึงทำ integral ออกมาได้พจน์กำลังสอง</p>
     <p>พอประกอบสี่พจน์เข้าด้วยกันจึงได้เป้าหมายในบรรทัดสุดท้าย สังเกตว่าไม่มีพจน์ใดที่ถูกใส่เข้ามา เพราะอยากให้คำตอบสวย ทุกพจน์แทนค่าใช้จ่ายจริงก้อนหนึ่ง และการแก้ปัญหานี้จึงเป็นการหาจุดที่ ผลตอบแทนที่คาดหวังหักทุกค่าใช้จ่ายแล้วสูงสุด</p>
   </div>
@@ -251,15 +254,17 @@ W\lVert w_{\rm cap}-w_0\rVert_1=50{,}000{,}000(0.20)=\$10{,}000{,}000,\qquad \op
   <h4>ขั้นที่ 11 — เงื่อนไข no-trade แบบหนึ่งสินทรัพย์</h4>
   <p>ผลที่ใช้ได้จริงที่สุดของหัวข้อนี้ คือมีช่วงหนึ่งที่คำตอบคือไม่ต้องทำอะไรเลย แม้พอร์ตจะไม่ตรงเป้าหมายก็ตาม และเหตุผลอยู่ที่หักมุมของค่าสัมบูรณ์ในบรรทัดที่สาม ไม่ใช่เพราะใครตั้งกฎห้ามเทรด</p>
   <div class="math">\[
-\begin{aligned}g_i&=\frac{\partial}{\partial w_i}\big(\mu^{\mathsf T}w-\gamma w^{\mathsf T}Vw\big)\\
-c_i\lvert w_i-w_{0i}\rvert:\quad\frac{\partial}{\partial w_i^{+}}&=+c_i,\qquad\frac{\partial}{\partial w_i^{-}}=-c_i\\[4pt]
-w_i\uparrow\;&\Longleftrightarrow\;g_i-\nu>+c_i\\
-w_i\downarrow\;&\Longleftrightarrow\;g_i-\nu \lt -c_i\\[4pt]
-\lvert g_i-\nu\rvert\le c_i\;&\Longleftrightarrow\;\Delta w_i=0\end{aligned}
+\begin{aligned}
+g_i&=\frac{\partial}{\partial w_i}\big(\mu^{\mathsf T}w-\gamma w^{\mathsf T}Vw\big)\\
+\text{cost slope going up}&=+c_i,\qquad \text{going down}=-c_i\\[4pt]
+\text{buy more}&:\quad g_i-\nu>+c_i\\
+\text{sell some}&:\quad g_i-\nu\lt-c_i\\[4pt]
+\text{no trade}&:\quad \lvert g_i-\nu\rvert\le c_i\ \Rightarrow\ \Delta w_i=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือกำไรส่วนเพิ่มต่อหนึ่งหน่วยน้ำหนัก ยังไม่คิดค่าธรรมเนียม ส่วนบรรทัดสองคือความชันของต้นทุนสองข้างของจุดที่ยังไม่ซื้อขาย เครื่องหมายบวกและลบข้างบนหมายถึงเข้าใกล้จากทางขวาและทางซ้าย ค่าสัมบูรณ์ทำให้สองข้างไม่เท่ากัน จึงเกิดหักมุมตรงจุดนั้น</p>
-    <p>ลูกศรขึ้นและลงอ่านว่าเพิ่มหรือลดน้ำหนัก และจะคุ้มก็ต่อเมื่อกำไรส่วนเพิ่มหลังหักราคาของงบ ชนะต้นทุนที่ต้องจ่ายเพื่อขยับ บรรทัดสุดท้ายคือกรณีที่ไม่ชนะทั้งสองทาง คำตอบที่ดีที่สุดจึงคืออยู่เฉย ๆ โดย $\nu$ มาจากข้อบังคับผลรวมน้ำหนักเป็น 1 และต้องดูทุกช่องพร้อมกัน ไม่ใช่ทีละช่อง</p>
+    <p>เพิ่มหรือลดน้ำหนักจะคุ้มก็ต่อเมื่อกำไรส่วนเพิ่มหลังหักราคาของงบ ชนะต้นทุนที่ต้องจ่ายเพื่อขยับ บรรทัดสุดท้ายคือกรณีที่ไม่ชนะทั้งสองทาง คำตอบที่ดีที่สุดจึงคืออยู่เฉย ๆ โดย $\nu$ มาจากข้อบังคับผลรวมน้ำหนักเป็น 1 และต้องดูทุกช่องพร้อมกัน ไม่ใช่ทีละช่อง</p>
   </div>
 </section>
 
@@ -268,19 +273,20 @@ w_i\downarrow\;&\Longleftrightarrow\;g_i-\nu \lt -c_i\\[4pt]
   <p>ทำไมจุดที่คุ้มที่สุดถึงเป็นการไม่ซื้อขายเลย การพิสูจน์ด้วย Karush-Kuhn-Tucker (KKT) ผ่าน subgradient เผยให้เห็นกลไกที่แท้จริงว่า ทำไม friction จึงสร้างโซนคุ้มครองรอบพอร์ตปัจจุบัน</p>
   <div class="math">\[
 \begin{aligned}
-\mathcal{L}(w,\nu) &= \mu^{\mathsf{T}}w - \gamma w^{\mathsf{T}}Vw - \sum_{i=1}^d c_i|w_i - w_{0i}| - \nu(\mathbf{1}^{\mathsf{T}}w - 1) \\
-\partial_{w_i}|w_i - w_{0i}| &= \begin{cases} \{+1\}, & w_i > w_{0i} \\
-\{-1\}, & w_i \lt w_{0i} \\
-[-1,+1], & w_i = w_{0i} \end{cases} \\
-0 &\in g_i(w) - \nu - c_i\,\partial_{w_i}|w_i - w_{0i}| \\
-g_i(w_0) - \nu &\in [-c_i,+c_i] \iff |g_i(w_0) - \nu| \le c_i \implies \Delta w_i = 0 \\
-\text{width} &= c_i - (-c_i) = 2c_i = 2(0.001) = 0.002 = 20\ \mathrm{bp}
+\mathcal{L}(w,\nu)&=\mu^{\mathsf{T}}w-\gamma w^{\mathsf{T}}Vw\\
+&\quad-\sum_{i=1}^d c_i|w_i-w_{0i}|-\nu(\mathbf{1}^{\mathsf{T}}w-1)\\[4pt]
+s_i&=+1\ \ \text{when}\ w_i>w_{0i}\\
+s_i&=-1\ \ \text{when}\ w_i\lt w_{0i}\\
+-1\le s_i&\le+1\ \ \text{when}\ w_i=w_{0i}\\[4pt]
+0&=g_i(w)-\nu-c_i\,s_i\\
+g_i(w_0)-\nu&=c_i\,s_i\ \ \text{with}\ -1\le s_i\le1\\
+&\Rightarrow\ |g_i(w_0)-\nu|\le c_i\ \Rightarrow\ \Delta w_i=0\\[4pt]
+\text{width}&=c_i-(-c_i)=2c_i=0.002=20\ \mathrm{bp}
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>function ค่าสัมบูรณ์มีจุดหักมุมที่ $w_i = w_{0i}$ จึงไม่มี derivative เดี่ยว แต่มีกลุ่มความชันที่ยอมรับได้เรียกว่า subdifferential ซึ่งครอบคลุมค่าตั้งแต่ $-1$ ถึง $+1$ ทั้งหมด</p>
-    <p>เงื่อนไขความเหมาะสมของ Lagrange บังคับให้ผลรวมของ marginal benefit หักล้างกับ subgradient ของต้นทุนพอดี หากความชันของประโยชน์สุทธิ $g_i - 
-u$ มีค่าน้อยกว่าค่าธรรมเนียม $c_i$ จุดศูนย์จะตกอยู่ในช่วงนี้ทันที</p>
+    <p>function ค่าสัมบูรณ์มีจุดหักมุมที่ $w_i = w_{0i}$ จึงไม่มี derivative เดี่ยว แต่มีกลุ่มความชันที่ยอมรับได้เรียกว่า subdifferential ซึ่งครอบคลุมค่าตั้งแต่ $-1$ ถึง $+1$ ทั้งหมด เขียนแทนด้วย s ที่เลือกได้ในช่วงนั้น</p>
+    <p>เงื่อนไขความเหมาะสมของ Lagrange บังคับให้ผลรวมของ marginal benefit หักล้างกับ subgradient ของต้นทุนพอดี หากความชันของประโยชน์สุทธิ $g_i-\nu$ มีค่าน้อยกว่าค่าธรรมเนียม $c_i$ จุดศูนย์จะตกอยู่ในช่วงนี้ทันที</p>
     <p>ผลลัพธ์นี้สร้างย่าน no-trade band ที่มีความกว้างเท่ากับ $2c_i$ หรือ 20 basis points หากสัญญาณคาดการณ์ไม่ได้แรงพอที่จะทะลุขอบเขตนี้ การขยับพอร์ตจะทำให้ขาดทุนสุทธิ คำตอบที่ให้กำไรสูงสุดจึงคือการไม่ทำอะไรเลย</p>
   </div>
 </section>
@@ -327,9 +333,29 @@ u$ มีค่าน้อยกว่าค่าธรรมเนียม $
 
 <section class="example">
   <h4>คำตอบ — turnover cap ลด trade เหลือ 10M USD</h4>
+  <p>คำถาม: เปลี่ยนจาก 40/40/20 เป็น 60/30/10 เสียค่าซื้อขายเท่าไร และถ้า cap turnover 10% ต้องหยุดตรงไหน?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 12</p>
+  <p>ถ้าเดินเต็มทาง ซื้อขายรวม 20 ล้านดอลลาร์ turnover 20% จ่าย 20,000 ดอลลาร์</p>
   <p>คำตอบ: turnover cap 10% พา weights จาก [0.40,0.40,0.20] ไป [0.50,0.35,0.15] จึงซื้อ SPY 5 USD million และขาย AGG กับ QQQ อย่างละ 2.5 USD million รวม gross trade 10 USD million และ cost 10,000 USD</p>
   <p>ตรวจเองใน 10 วินาที: absolute weight changes รวม 0.20 ดังนั้น turnover แบบหารสองเท่ากับ 0.10; 10 USD million × 0.001 ต้องได้ cost 10,000 USD</p>
   <p>ใช้ตัดสินใจ: ส่ง target ที่ถูก cap นี้แทนเป้าหมาย 60/30/10 เมื่อ mandate จำกัด turnover และต้องแทน 10 bp ด้วย cost rate รายสินทรัพย์ก่อนใช้งานจริง</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ turnover ต้นทุน และพอร์ตที่ถูก cap</summary>
+    <pre><code>import numpy as np
+W=50_000_000; w0=np.array([.40,.40,.20]); wt=np.array([.60,.30,.10]); c=0.001
+dw=wt-w0; TO=0.5*np.abs(dw).sum()
+assert abs(dw.sum())&lt;1e-12 and abs(TO-0.20)&lt;1e-12
+assert abs(W*np.abs(dw).sum()-20_000_000)&lt;1e-6 and abs(W*c*np.abs(dw).sum()-20_000)&lt;1e-6
+wc=w0+0.10/TO*dw
+assert np.allclose(wc,[.50,.35,.15]) and abs(0.5*np.abs(wc-w0).sum()-0.10)&lt;1e-12
+assert abs(W*c*np.abs(wc-w0).sum()-10_000)&lt;1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนี้ตรวจว่าการซื้อขายรวมเป็นศูนย์ turnover 20% ยอดซื้อขาย 20 ล้าน ค่าใช้จ่าย 20,000 และพอร์ตที่เดินครึ่งทางตาม cap 10% คือ 50/35/15 ซึ่งจ่าย 10,000</p>
+  </div>
 </section>
 
 <section class="pitfall">
