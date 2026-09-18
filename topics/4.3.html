@@ -109,9 +109,13 @@ AB&=\begin{bmatrix}1(2)+1(0)&amp;1(0)+1(1)\\
   <h4>ขั้นที่ 2 — เงื่อนไข shape</h4>
   <p>เงื่อนไขรูปร่างไม่ใช่กฎที่ต้องท่องแยกจากสูตรคูณ มันตามมาจากสูตรคูณโดยตรง เพราะสูตรนั้นมี index กลางที่ต้องวิ่งเท่ากันทั้งสองฝั่ง</p>
   <div class="math">\[
-\begin{aligned}(AB)_{ij}&=\sum_{k=1}^{n}a_{ik}b_{kj}\\[4pt]
-a_{ik}\ \text{needs }k\le n,\quad b_{kj}\ \text{share }k\\[4pt]
-A:\ m\times n,\quad B:\ n\times p\ &\Rightarrow\ AB:\ m\times p\end{aligned}
+\begin{aligned}
+(AB)_{ij}&=\sum_{k=1}^{n}a_{ik}b_{kj}\\[4pt]
+&a_{ik}\ \text{needs }k\le n,\\
+&b_{kj}\ \text{share }k\\[4pt]
+&A:\ m\times n,\quad B:\ n\times p\\
+&\Rightarrow\ AB:\ m\times p
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากนิยามของช่องหนึ่งของผลคูณ ซึ่งมีผลรวมวิ่งอยู่บน index กลาง $k$</p>
@@ -136,11 +140,16 @@ A:\ m\times n,\quad B:\ n\times p\ &\Rightarrow\ AB:\ m\times p\end{aligned}
   <p>บรรทัดก่อนหน้านี้บอกว่า 'แต่ละช่องคือแถวคูณคอลัมน์' ซึ่งเป็นนิยาม ไม่ใช่คำอธิบาย คำถามที่ยังค้างคือ ทำไมต้องเป็นแบบนั้น ทำไมไม่คูณตรงช่องต่อช่องเหมือนการบวก matrix</p>
   <p>เริ่มจากความหมายจริงของผลคูณ: $AB$ คือ matrix ของการทำงานต่อกัน คือทำ $B$ ก่อนแล้วทำ $A$ ไม่ใช่ผลคูณของตัวเลขสองก้อน แต่เป็นการประกอบสอง mapping เข้าด้วยกัน</p>
   <div class="math">\[
-\begin{aligned}\text{two machines in a row: }x\ (p\ \text{numbers})&\ \xrightarrow{\;B\;}\ z\ (n)\ \xrightarrow{\;A\;}\ y\ (m)\\[4pt]
-z_{k}&=\sum_{j=1}^{p}b_{kj}x_{j}\qquad\text{(B meets }x\text{ first)}\\
+\begin{aligned}
+&\text{two machines in a row: }\\
+&x\ (p\ \text{numbers})\ \xrightarrow{\;B\;}\ z\ (n)\ \xrightarrow{\;A\;}\ y\ (m)\\[4pt]
+z_{k}&=\sum_{j=1}^{p}b_{kj}x_{j}\\
+&\quad\text{(B meets }x\text{ first)}\\
 y_{i}&=\sum_{k=1}^{n}a_{ik}z_{k}\\[4pt]
-y_{i}&=\sum_{k=1}^{n}a_{ik}\Bigl(\sum_{j=1}^{p}b_{kj}x_{j}\Bigr)=\sum_{j=1}^{p}\Bigl(\sum_{k=1}^{n}a_{ik}b_{kj}\Bigr)x_{j}\\[4pt]
-\Longrightarrow\quad(AB)_{ij}&=\sum_{k=1}^{n}a_{ik}b_{kj}\end{aligned}
+y_{i}&=\sum_{k=1}^{n}a_{ik}\Bigl(\sum_{j=1}^{p}b_{kj}x_{j}\Bigr)\\
+&=\sum_{j=1}^{p}\Bigl(\sum_{k=1}^{n}a_{ik}b_{kj}\Bigr)x_{j}\\[4pt]
+&\Longrightarrow\quad(AB)_{ij}=\sum_{k=1}^{n}a_{ik}b_{kj}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เราไม่ต้องจำสูตรเลย แค่เขียนสิ่งที่โจทย์บอกลงไปแล้วแทนที่ $z_k$ คือผลของเครื่องแรก ส่วน $y_i$ คือผลของเครื่องที่สองที่กิน $z$ เป็น input เมื่อแทน $z_k$ ทั้งก้อนลงใน $y_i$ จะเหลือ $x_j$ ตัวเดียวคูณกับก้อนที่อยู่ในวงเล็บ</p>
@@ -200,18 +209,24 @@ vv^{\mathsf T}&=\begin{bmatrix}1\\ -2\end{bmatrix}\begin{bmatrix}1 & -2\end{bmat
   <h4>ขั้นที่ 8 — portfolio mapping</h4>
   <p>ความหมายจริงของการคูณคือแปลงจากภาษาหนึ่งไปอีกภาษาหนึ่ง เช่นจากน้ำหนักพอร์ตไปเป็นความเสี่ยงต่อปัจจัยแต่ละตัว</p>
   <div class="math">\[
-\begin{aligned}A&=\begin{bmatrix}1.0&amp;0.8&amp;0.6\\
-0.3&amp;0.5&amp;0.2\\
-0.1&amp;0.2&amp;0.4\end{bmatrix}\;\text{(unitless loading)},\qquad w=\begin{bmatrix}2\\
+\begin{aligned}
+A&=\begin{bmatrix}1.0&0.8&0.6\\
+0.3&0.5&0.2\\
+0.1&0.2&0.4\end{bmatrix}\\
+&\quad\text{(unitless loading)}\\
+w&=\begin{bmatrix}2\\
 -1\\
 1\end{bmatrix}\;\text{USD million}\\[4pt]
 y=Aw&=\begin{bmatrix}1.0(2)+0.8(-1)+0.6(1)\\
 0.3(2)+0.5(-1)+0.2(1)\\
-0.1(2)+0.2(-1)+0.4(1)\end{bmatrix}=\begin{bmatrix}2.0-0.8+0.6\\
+0.1(2)+0.2(-1)+0.4(1)\end{bmatrix}\\
+&=\begin{bmatrix}2.0-0.8+0.6\\
 0.6-0.5+0.2\\
 0.2-0.2+0.4\end{bmatrix}=\begin{bmatrix}1.8\\
 0.3\\
-0.4\end{bmatrix}\;\text{USD million}\end{aligned}
+0.4\end{bmatrix}\\
+&\quad\;\text{USD million}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แต่ละ row ของ $A$ เป็น factor และแต่ละ column เป็น asset แถว market จับ $w$: AAPL ให้ 2.0, MSFT ที่ short ให้ $-0.8$, JPM ให้ 0.6 รวม 1.8 USD million ทำแบบเดียวกันอีกสองแถวได้ quality 0.3 และ rates 0.4</p>
@@ -221,13 +236,17 @@ y=Aw&=\begin{bmatrix}1.0(2)+0.8(-1)+0.6(1)\\
 
 <section class="formula">
   <h4>ขั้นที่ 9 — composition ของ mappings</h4>
-  <p>คูณต่อกันหลายชั้นคือการแปลงต่อกันหลายทอด ห้าบรรทัดนี้แสดงว่าการจัดวงเล็บใหม่ไม่เปลี่ยนคำตอบ แต่ให้สังเกตว่าเราไม่เคยสลับลำดับของ $A$ กับ $B$ เลย นั่นคือสิ่งที่สลับไม่ได้ ต่างจากการจัดวงเล็บซึ่งสลับได้</p>
+  <p>คูณต่อกันหลายชั้นคือการแปลงต่อกันหลายทอด สูตรข้างล่างแสดงว่าการจัดวงเล็บใหม่ไม่เปลี่ยนคำตอบ แต่ให้สังเกตว่าเราไม่เคยสลับลำดับของ $A$ กับ $B$ เลย นั่นคือสิ่งที่สลับไม่ได้ ต่างจากการจัดวงเล็บซึ่งสลับได้</p>
   <div class="math">\[
-\begin{aligned}(Bw)_k&=\sum_j B_{kj}w_j\\
-\big(A(Bw)\big)_i&=\sum_k A_{ik}(Bw)_k=\sum_k A_{ik}\sum_j B_{kj}w_j\\
+\begin{aligned}
+(Bw)_k&=\sum_j B_{kj}w_j\\
+&\big(A(Bw)\big)_i\\
+&=\sum_k A_{ik}(Bw)_k=\sum_k A_{ik}\sum_j B_{kj}w_j\\
 &=\sum_j\Big(\sum_k A_{ik}B_{kj}\Big)w_j\\
 (AB)_{ij}&=\sum_k A_{ik}B_{kj}\\
-\Longrightarrow\;\big(A(Bw)\big)_i&=\sum_j (AB)_{ij}w_j=\big((AB)w\big)_i\end{aligned}
+&\Longrightarrow\;\big(A(Bw)\big)_i\\
+&=\sum_j (AB)_{ij}w_j=\big((AB)w\big)_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คำถามคือ แปลงทีละชั้น กับคูณตารางรวมก่อนแล้วแปลงครั้งเดียว ได้ผลเท่ากันไหม วิธีตรวจคือกางออกมาทีละช่อง ผ่านชั้นแรกได้ผลรวมหนึ่งชั้น ผ่านชั้นที่สองได้ผลรวมซ้อนกันสองชั้น</p>
@@ -281,19 +300,28 @@ u_3&=0.50(0.00135)+0.30(0.00225)+0.20(0.02250)\\
   <p>คูณ wᵀ กับ u ได้ variance ของพอร์ต แล้วตรวจอีกทางด้วยการกางผลรวมสองชั้นทุกพจน์</p>
   <div class="math">\[
 \begin{aligned}
-\sigma_p^2=w^{\mathsf T}u&=0.50(0.015822)+0.30(0.000450)\\
+\sigma_p^2&=w^{\mathsf T}u\\
+&=0.50(0.015822)+0.30(0.000450)\\
 &\quad+0.20(0.005850)\\
-&=0.0079110+0.0001350+0.0011700\\
+&=0.0079110+0.0001350\\
+&\quad+0.0011700\\
 &=0.0092160\\
 \sigma_p&=\sqrt{0.009216}=0.0960=9.60\%\\[6pt]
-\text{diagonal}&=0.25(0.03240)+0.09(0.00360)\\
+\text{diagonal}&=0.25(0.03240)\\
+&\quad+0.09(0.00360)\\
 &\quad+0.04(0.02250)\\
-&=0.008100+0.000324+0.000900=0.009324\\
-\text{cross}&=0.30(-0.00216)+0.20(0.00135)\\
+&=0.008100+0.000324\\
+&\quad+0.000900=0.009324\\
+\text{cross}&=0.30(-0.00216)\\
+&\quad+0.20(0.00135)\\
 &\quad+0.12(0.00225)\\
-&=-0.000648+0.000270+0.000270=-0.000108\\
-\text{total}&=0.009324-0.000108=0.009216\\[6pt]
-\text{average }\sigma&=0.5(18\%)+0.3(6\%)+0.2(15\%)=13.8\%
+&=-0.000648+0.000270\\
+&\quad+0.000270=-0.000108\\
+\text{total}&=0.009324-0.000108\\
+&=0.009216\\[6pt]
+&\text{average }\sigma\\
+&=0.5(18\%)+0.3(6\%)+0.2(15\%)\\
+&=13.8\%
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -362,21 +390,28 @@ assert abs((w*u/np.sqrt(var)).sum()-np.sqrt(var))&lt;1e-12</code></pre>
   <h4>ขั้นที่ 14 — ตรวจด้วยเลขของตัวเอง: สองทางต้องได้ผลเท่ากัน</h4>
   <p>การต่อสองเครื่องกับการรวมก่อนคูณให้ผลเหมือนกันเสมอ แต่ไม่ควรเชื่อจนกว่าจะเห็นกับเลขเอง ตัวอย่างนี้ใช้ matrix คนละชุดกับตัวอย่างแรก เพื่อไม่ให้คำตอบถูกจำจากตัวเลขเดิม</p>
   <div class="math">\[
-\begin{aligned}A&=\begin{bmatrix}1&amp;2\\
-0&amp;1\end{bmatrix},\qquad B=\begin{bmatrix}1&amp;0\\
-3&amp;1\end{bmatrix},\qquad x=\begin{bmatrix}1\\
+\begin{aligned}
+A&=\begin{bmatrix}1&2\\
+0&1\end{bmatrix},\qquad B=\begin{bmatrix}1&0\\
+3&1\end{bmatrix}\\
+x&=\begin{bmatrix}1\\
 1\end{bmatrix}\\[4pt]
-\text{route 1: }Bx&=\begin{bmatrix}1(1)+0(1)\\
+&\text{route 1: }\\
+Bx&=\begin{bmatrix}1(1)+0(1)\\
 3(1)+1(1)\end{bmatrix}=\begin{bmatrix}1\\
-4\end{bmatrix},\qquad A(Bx)=\begin{bmatrix}1(1)+2(4)\\
+4\end{bmatrix}\\
+A(Bx)&=\begin{bmatrix}1(1)+2(4)\\
 0(1)+1(4)\end{bmatrix}=\begin{bmatrix}9\\
 4\end{bmatrix}\\[6pt]
-\text{route 2: }AB&=\begin{bmatrix}1(1)+2(3)&amp;1(0)+2(1)\\
-0(1)+1(3)&amp;0(0)+1(1)\end{bmatrix}=\begin{bmatrix}7&amp;2\\
-3&amp;1\end{bmatrix}\\[4pt]
+&\text{route 2: }\\
+AB&=\begin{bmatrix}1(1)+2(3)&1(0)+2(1)\\
+0(1)+1(3)&0(0)+1(1)\end{bmatrix}\\
+&=\begin{bmatrix}7&2\\
+3&1\end{bmatrix}\\[4pt]
 (AB)x&=\begin{bmatrix}7(1)+2(1)\\
 3(1)+1(1)\end{bmatrix}=\begin{bmatrix}9\\
-4\end{bmatrix}\end{aligned}
+4\end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทางที่หนึ่งเดินตามลำดับจริง: $B$ กิน $x$ ก่อน ได้ $(1,4)$ แล้ว $A$ กินผลนั้นต่อ ได้ $(9,4)$ ทางที่สองรวมสองเครื่องเป็น $AB$ ก่อน แล้วคูณกับ $x$ ครั้งเดียว ก็ได้ $(9,4)$ เท่ากัน</p>

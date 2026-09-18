@@ -131,10 +131,11 @@ B=\begin{bmatrix}1&amp;1&amp;0\\
   <p>ค่า determinant ที่ไม่เท่ากับศูนย์เป็นหลักประกันว่า columns ของ $B$ ไม่มีทิศทางใดทับซ้อนกัน จึงรับประกันว่า $B$ สามารถกลับค่า (invertible) ได้ และทุกพอร์ตสามหุ้นจะมีพิกัดบน basis นี้เสมอ</p>
   <div class="math">\[
 \begin{aligned}
-\det(B) &= \det\begin{bmatrix}1&amp;1&amp;0\\
-1&-1&amp;0\\
-0&amp;0&amp;1\end{bmatrix} \\
-&= 1\cdot((-1)(1) - (0)(0)) - 1\cdot((1)(1) - (0)(0)) + 0 \\
+\det(B) &= \det\begin{bmatrix}1&1&0\\
+1&-1&0\\
+0&0&1\end{bmatrix} \\
+&= 1\cdot((-1)(1) - (0)(0))\\
+&\quad - 1\cdot((1)(1) - (0)(0)) + 0 \\
 &= 1(-1) - 1(1) = -2 \ne 0
 \end{aligned}
 \]</div>
@@ -148,10 +149,13 @@ B=\begin{bmatrix}1&amp;1&amp;0\\
   <h4>ขั้นที่ 3 — ทำไมพิกัดในแกนชุดหนึ่งมีได้ชุดเดียว</h4>
   <p>สองสมบัติของแกนชุดใหม่ในขั้นที่ 2 ทำงานคนละหน้าที่ ความครอบคลุมรับประกันว่าเขียนได้ ส่วน linear independence รับประกันว่าเขียนได้แบบเดียว ข้อหลังนี่เองที่ทำให้พูดคำว่าพิกัดของพอร์ตได้</p>
   <div class="math">\[
-\begin{aligned}\mathbf{x}&=\sum_i a_i\mathbf{v}_i=\sum_i b_i\mathbf{v}_i\\
+\begin{aligned}
+\mathbf{x}&=\sum_i a_i\mathbf{v}_i=\sum_i b_i\mathbf{v}_i\\
 \mathbf{0}&=\sum_i\big(a_i-b_i\big)\mathbf{v}_i\\[4pt]
-\mathbf{v}_1,\dots,\mathbf{v}_n\ \text{independent}&\;\Longrightarrow\;a_1-b_1=\cdots=a_n-b_n=0\\
-a_i&=b_i\end{aligned}
+&\mathbf{v}_1,\dots,\mathbf{v}_n\ \text{independent}\\
+&\;\Longrightarrow\;a_1-b_1=\cdots=a_n-b_n=0\\
+a_i&=b_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถามคำถามที่ดูเหมือนไม่จำเป็นก่อน ถ้าเขียนจุดเดิมด้วยแกนชุดเดียวกันสองครั้ง จะได้ตัวเลขชุดเดียวกันเสมอไหม ถ้าไม่ ภาษาที่เราเพิ่งสร้างขึ้นก็กำกวม และทั้งหัวข้อนี้ก็ใช้ไม่ได้</p>
@@ -194,14 +198,16 @@ B\mathbf{c}&=\begin{bmatrix}5.5+0.5\\
 B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
 0.5 & -0.5 & 0\\
 0 & 0 & 1\end{bmatrix} \\
-\mathbf{c} = B^{-1}\mathbf{x} &= \begin{bmatrix}0.5 & 0.5 & 0\\
+\mathbf{c} &= B^{-1}\mathbf{x}\\
+&= \begin{bmatrix}0.5 & 0.5 & 0\\
 0.5 & -0.5 & 0\\
 0 & 0 & 1\end{bmatrix}\begin{bmatrix}6\\
 5\\
 4\end{bmatrix} \\
 &= \begin{bmatrix}0.5(6) + 0.5(5)\\
 0.5(6) - 0.5(5)\\
-1(4)\end{bmatrix} = \begin{bmatrix}3+2.5\\
+1(4)\end{bmatrix}\\
+&= \begin{bmatrix}3+2.5\\
 3-2.5\\
 4\end{bmatrix} = \begin{bmatrix}5.5\\
 0.5\\

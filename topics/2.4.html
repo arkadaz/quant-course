@@ -112,11 +112,16 @@
   <h4>ขั้นที่ 1 — conditional distribution เมื่อรู้จำนวนคำสั่งรวม</h4>
   <p>เริ่มจากสมมติว่ารู้จำนวนคำสั่งทั้งหมดแล้ว การแบ่งเป็นสองกลุ่มก็เป็นแค่การโยนเหรียญซ้ำ ๆ ซึ่งเป็นสถานการณ์เดียวกับหัวข้อ 1.5 ทุกประการ จึงยืมสูตรที่พิสูจน์ไว้ที่นั่นมาใช้ได้ทันที</p>
   <div class="math">\[
-\begin{aligned}P\big(N_A=k\mid N=n\big)&=\binom{n}{k}p^{k}(1-p)^{n-k}\\
-&\uparrow\ \text{one given split: }p^{k}(1-p)^{n-k}\\
+\begin{aligned}
+&P\big(N_A=k\mid N=n\big)\\
+&=\binom{n}{k}p^{k}(1-p)^{n-k}\\
+&\uparrow\ \text{one given split: }\\
+&\quad p^{k}(1-p)^{n-k}\\
 &\uparrow\ \text{number of splits: }\binom{n}{k}\\[4pt]
-N_A\mid N=n&\sim\operatorname{Binomial}(n,p)\\
-N_B&=n-N_A\end{aligned}
+&N_A\mid N=n\\
+&\sim\operatorname{Binomial}(n,p)\\
+N_B&=n-N_A
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตรึงจำนวนคำสั่งรวมไว้ที่ $n$ ก่อน แล้วทุกอย่างกลายเป็นการโยนเหรียญซ้ำ ๆ ที่ออกหัวด้วยโอกาส $p$ ลูกศรสองอันชี้ขึ้นไปที่ชิ้นส่วนสองชิ้นของสูตร: การแยกที่เจาะจงหนึ่งแบบมีโอกาสเป็นผลคูณ เพราะแต่ละใบตัดสินใจแยกจากกัน ส่วนตัวนับข้างหน้าบอกว่ามีกี่แบบที่ให้ $k$ ใบเท่ากัน</p>
@@ -128,11 +133,20 @@ N_B&=n-N_A\end{aligned}
   <h4>ขั้นที่ 2 — คำนวณ expected value และอัตราการไหลเข้า (arrival rates) ผ่าน Tower Property</h4>
   <p>แต่ละคำสั่งที่เดินทางมาถึงจะถูกแยกสายด้วยเหรียญอิสระ เราจึงเขียนจำนวนคำสั่งของสาย A ในรูปผลรวมสุ่ม (random sum) ของ indicator random variable แล้วหา expected value ด้วย Tower Property เพื่อหาอัตราเฉลี่ยที่แท้จริง</p>
   <div class="math">\[
-\begin{aligned}N_A(t)&=\sum_{i=1}^{N(t)}I_i,\qquad I_i\sim\operatorname{Bernoulli}(p)\\[4pt]
-\mathbb E\big[N_A(t)\mid N(t)=n\big]&=\mathbb E\left[\sum_{i=1}^{n}I_i\;\middle|\;N(t)=n\right]=\sum_{i=1}^{n}\mathbb E[I_i]=np\\[4pt]
-\mathbb E\big[N_A(t)\big]&=\mathbb E\Big[\mathbb E\big[N_A(t)\mid N(t)\big]\Big]=\mathbb E\big[pN(t)\big]=p\,\mathbb E\big[N(t)\big]=p\lambda t\\[4pt]
-\lambda_A&=\frac{\mathbb E[N_A(t)]}{t}=\frac{p\lambda t}{t}=p\lambda=0.6(20)=12\;\text{orders/minute}\\[4pt]
-\lambda_B&=(1-p)\lambda=0.4(20)=8\;\text{orders/minute}\end{aligned}
+\begin{aligned}
+N_A(t)&=\sum_{i=1}^{N(t)}I_i\\
+I_i&\sim\operatorname{Bernoulli}(p)\\[4pt]
+&\mathbb E\big[N_A(t)\mid N(t)=n\big]\\
+&=\mathbb E\left[\sum_{i=1}^{n}I_i\;\middle|\;N(t)=n\right]\\
+&=\sum_{i=1}^{n}\mathbb E[I_i]=np\\[4pt]
+&\mathbb E\big[N_A(t)\big]\\
+&=\mathbb E\Big[\mathbb E\big[N_A(t)\mid N(t)\big]\Big]\\
+&=\mathbb E\big[pN(t)\big]=p\,\mathbb E\big[N(t)\big]=p\lambda t\\[4pt]
+\lambda_A&=\frac{\mathbb E[N_A(t)]}{t}=\frac{p\lambda t}{t}=p\lambda\\
+&=0.6(20)=12\;\text{orders/minute}\\[4pt]
+\lambda_B&=(1-p)\lambda=0.4(20)\\
+&=8\;\text{orders/minute}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เรามองจำนวนคำสั่งสาย A เป็นผลรวมสุ่มของตัวชี้วัด $I_i$ ที่มีค่า 1 เมื่อคำสั่งเข้ากลุ่ม A และ 0 เมื่อเข้ากลุ่ม B เมื่อ condition บนยอดรวม $N(t)=n$ ขอบเขตบนจะถูกล็อกเป็นค่าคงที่ ทำให้ดึง expected value ผ่านผลบวกเข้ามาข้างในได้ทันที ผลรวมของเหรียญ $n$ อันจึงได้ $np$</p>
@@ -145,12 +159,21 @@ N_B&=n-N_A\end{aligned}
   <h4>ขั้นที่ 3 — คำนวณ variance ของสายย่อยผ่าน EVVE: ยืนยันร่องรอยของ Poisson</h4>
   <p>ก่อนจะคำนวณ distribution เต็มรูปแบบ เราใช้กฎ Law of Total Variance (EVVE) ตรวจสอบความผันผวนของสายย่อย เพื่อดูว่า variance ยังคงเท่ากับ expected value ตามเอกลักษณ์ของ Poisson หรือไม่</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\big(N_A(t)\big)&=\operatorname{Var}\Big(\mathbb E\big[N_A(t)\mid N(t)\big]\Big)+\mathbb E\Big[\operatorname{Var}\big(N_A(t)\mid N(t)\big)\Big]\\[4pt]
+\begin{aligned}
+&\operatorname{Var}\big(N_A(t)\big)\\
+&=\operatorname{Var}\Big(\mathbb E\big[N_A(t)\mid N(t)\big]\Big)\\
+&\quad+\mathbb E\Big[\operatorname{Var}\big(N_A(t)\mid N(t)\big)\Big]\\[4pt]
 &=\operatorname{Var}\big(pN(t)\big)+\mathbb E\big[N(t)p(1-p)\big]\\[4pt]
-&=p^2\operatorname{Var}\big(N(t)\big)+p(1-p)\mathbb E\big[N(t)\big]\\[4pt]
-&=p^2(\lambda t)+p(1-p)(\lambda t)=p\lambda t\big(p+1-p\big)\\[4pt]
+&=p^2\operatorname{Var}\big(N(t)\big)\\
+&\quad+p(1-p)\mathbb E\big[N(t)\big]\\[4pt]
+&=p^2(\lambda t)+p(1-p)(\lambda t)\\
+&=p\lambda t\big(p+1-p\big)\\[4pt]
 &=p\lambda t=\mathbb E\big[N_A(t)\big]\\[4pt]
-\operatorname{Var}\big(N_A(1)\big)&=0.6(20)(1)=12\;\text{orders}^2,\qquad \operatorname{Var}\big(N_B(1)\big)=0.4(20)(1)=8\;\text{orders}^2\end{aligned}
+&\operatorname{Var}\big(N_A(1)\big)=0.6(20)(1)\\
+&=12\;\text{orders}^2\\
+&\operatorname{Var}\big(N_B(1)\big)=0.4(20)(1)\\
+&=8\;\text{orders}^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กฎ EVVE แยกความผันผวนของสายย่อยออกเป็นสองก้อน: ความผันผวนจากยอดรวมคำสั่งที่ไหลเข้ามา ($pN(t)$) และความผันผวนจากการสุ่มโยนเหรียญแบ่งสายในแต่ละคำสั่ง ($N(t)p(1-p)$)</p>
@@ -161,14 +184,19 @@ N_B&=n-N_A\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 4 — คำนวณ marginal ของสายเดียว: รวมทุกความเป็นไปได้ของยอดรวม</h4>
-  <p>ขั้นที่ 2 และ 3 คำนวณ expected value และ variance ของแต่ละสายไว้แล้ว แต่ยังไม่ได้บอกว่าสายย่อยยังเป็น Poisson หรือเปล่า หกบรรทัดนี้คำนวณออกมาตรง ๆ โดยรวมทุกความเป็นไปได้ของยอดรวมทิ้ง ส่วนคำถามว่าสองสาย independent กันหรือไม่ เป็นคนละเรื่อง และอยู่ในขั้นถัดไป</p>
+  <p>ขั้นที่ 2 และ 3 คำนวณ expected value และ variance ของแต่ละสายไว้แล้ว แต่ยังไม่ได้บอกว่าสายย่อยยังเป็น Poisson หรือเปล่า สูตรข้างล่างนี้คำนวณออกมาตรง ๆ โดยรวมทุกความเป็นไปได้ของยอดรวมทิ้ง ส่วนคำถามว่าสองสาย independent กันหรือไม่ เป็นคนละเรื่อง และอยู่ในขั้นถัดไป</p>
   <div class="math">\[
-\begin{aligned}P(N_A=k)&=\sum_{n\ge k}P(N=n)\,P(N_A=k\mid N=n)\\
-&=\sum_{n\ge k}\frac{e^{-\lambda t}(\lambda t)^{n}}{n!}\cdot\frac{n!}{k!\,(n-k)!}p^{k}(1-p)^{n-k}\\
-&=\frac{e^{-\lambda t}(p\lambda t)^{k}}{k!}\sum_{n\ge k}\frac{\big((1-p)\lambda t\big)^{n-k}}{(n-k)!}\\
+\begin{aligned}
+&P(N_A=k)\\
+&=\sum_{n\ge k}P(N=n)\,P(N_A=k\mid N=n)\\
+&=\sum_{n\ge k}\frac{e^{-\lambda t}(\lambda t)^{n}}{n!}\\
+&\quad\cdot\frac{n!}{k!\,(n-k)!}p^{k}(1-p)^{n-k}\\
+&=\frac{e^{-\lambda t}(p\lambda t)^{k}}{k!}\\
+&\quad\sum_{n\ge k}\frac{\big((1-p)\lambda t\big)^{n-k}}{(n-k)!}\\
 m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
 &=\frac{e^{-\lambda t}(p\lambda t)^{k}}{k!}\,e^{(1-p)\lambda t}\\
-&=\frac{e^{-p\lambda t}(p\lambda t)^{k}}{k!}\end{aligned}
+&=\frac{e^{-p\lambda t}(p\lambda t)^{k}}{k!}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ขั้นที่ 1 ตอบได้เฉพาะตอนที่รู้ยอดรวม แต่จริง ๆ เราไม่รู้ ทางออกคือรวมทุกความเป็นไปได้ของยอดรวมทิ้ง ถ้าอยากได้ $k$ ใบในสาย A ยอดรวมต้องอย่างน้อย $k$ แล้วถ่วงด้วยโอกาสของยอดรวมนั้น บรรทัดสองแทนสองสูตรที่มีอยู่แล้ว คือ Poisson จากหัวข้อ 1.6 และ Binomial จากขั้นที่ 1</p>
@@ -180,8 +208,14 @@ m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
   <h4>ขั้นที่ 5 — พิสูจน์สามบรรทัด: ทำไมสายย่อยยังเป็น Poisson และเป็นอิสระต่อกัน</h4>
   <p>ขั้นก่อนหน้าบอกผลลัพธ์ แต่ยังไม่ได้บอกว่าทำไม ลองเขียนโอกาสที่ A ได้ $k$ และ B ได้ $j$ พร้อมกัน แล้วดูว่ามันแยกเป็นสองก้อนได้เอง</p>
   <div class="math">\[
-\begin{aligned}P(N_A=k,\,N_B=j)&=P(N=k+j)\binom{k+j}{k}p^{k}(1-p)^{j}=\frac{e^{-\lambda t}(\lambda t)^{k+j}}{(k+j)!}\cdot\frac{(k+j)!}{k!\,j!}\,p^{k}(1-p)^{j}\\[4pt]
-&=\underbrace{\frac{e^{-p\lambda t}(p\lambda t)^{k}}{k!}}_{\text{Poisson}(p\lambda t)\text{ for }N_A}\cdot\underbrace{\frac{e^{-(1-p)\lambda t}\big((1-p)\lambda t\big)^{j}}{j!}}_{\text{Poisson}((1-p)\lambda t)\text{ for }N_B}\end{aligned}
+\begin{aligned}
+&P(N_A=k,\,N_B=j)\\
+&=P(N=k+j)\binom{k+j}{k}p^{k}(1-p)^{j}\\
+&=\frac{e^{-\lambda t}(\lambda t)^{k+j}}{(k+j)!}\\
+&\quad\cdot\frac{(k+j)!}{k!\,j!}\,p^{k}(1-p)^{j}\\[4pt]
+&=\underbrace{\frac{e^{-p\lambda t}(p\lambda t)^{k}}{k!}}_{\text{Poisson}(p\lambda t)\text{ for }N_A}\\
+&\quad\cdot\underbrace{\frac{e^{-(1-p)\lambda t}\big((1-p)\lambda t\big)^{j}}{j!}}_{\text{Poisson}((1-p)\lambda t)\text{ for }N_B}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรก: ถ้ากลุ่ม A ได้ $k$ และกลุ่ม B ได้ $j$ แปลว่ามีคำสั่งรวม $k+j$ (Poisson จากหัวข้อ 1.6) แล้วโยนเหรียญแยกได้ $k$ หัวจาก $k+j$ ครั้ง (Binomial จากหัวข้อ 1.5)</p>
@@ -194,12 +228,20 @@ m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
   <h4>ขั้นที่ 6 — เส้นทางลัดสายที่สอง: พิสูจน์ Poisson Thinning ผ่าน Probability Generating Function</h4>
   <p>หากการกระจายแบบ Binomial ในขั้นก่อนหน้าดูซับซ้อน เราสามารถสร้างผลลัพธ์เดียวกันในสามบรรทัดด้วย Probability Generating Function (PGF) นิยามจาก $G_X(s)=\mathbb E[s^X]$ ซึ่งเก็บข้อมูล probability ทุกค่าไว้บนเลขชี้กำลัง</p>
   <div class="math">\[
-\begin{aligned}G_{N_A}(s)&=\mathbb E\big[s^{N_A(t)}\big]=\mathbb E\left[\mathbb E\left[s^{\sum_{i=1}^{N(t)}I_i}\;\middle|\;N(t)\right]\right]=\mathbb E\left[\big(1-p+ps\big)^{N(t)}\right]\\[4pt]
-&=\exp\Big(\lambda t\big(1-p+ps-1\big)\Big)=\exp\Big(p\lambda t(s-1)\Big)\\[4pt]
-G_{N_A,N_B}(s_1,s_2)&=\mathbb E\big[s_1^{N_A}s_2^{N_B}\big]=\mathbb E\left[\big(ps_1+(1-p)s_2\big)^{N(t)}\right]\\[4pt]
+\begin{aligned}
+&G_{N_A}(s)=\mathbb E\big[s^{N_A(t)}\big]\\
+&=\mathbb E\left[\mathbb E\left[s^{\sum_{i=1}^{N(t)}I_i}\;\middle|\;N(t)\right]\right]\\
+&=\mathbb E\left[\big(1-p+ps\big)^{N(t)}\right]\\[4pt]
+&=\exp\Big(\lambda t\big(1-p+ps-1\big)\Big)\\
+&=\exp\Big(p\lambda t(s-1)\Big)\\[4pt]
+&G_{N_A,N_B}(s_1,s_2)\\
+&=\mathbb E\big[s_1^{N_A}s_2^{N_B}\big]\\
+&=\mathbb E\left[\big(ps_1+(1-p)s_2\big)^{N(t)}\right]\\[4pt]
 &=\exp\Big(\lambda t\big(ps_1+(1-p)s_2-1\big)\Big)\\[4pt]
-&=\exp\Big(p\lambda t(s_1-1)+(1-p)\lambda t(s_2-1)\Big)\\[4pt]
-&=G_{N_A}(s_1)\cdot G_{N_B}(s_2)\end{aligned}
+&=\exp\Big(p\lambda t(s_1-1)\\
+&\quad+(1-p)\lambda t(s_2-1)\Big)\\[4pt]
+&=G_{N_A}(s_1)\cdot G_{N_B}(s_2)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สำหรับเหรียญ $I_i$ แต่ละอัน $G_I(s) = (1-p)s^0 + ps^1 = 1-p+ps$ เมื่อแทนในผลรวมสุ่มผ่าน Tower Property ฐานจะกลายเป็น $(1-p+ps)^{N(t)}$ ทันที จากนั้นใส่สูตร PGF ของ Poisson ที่มีรูปทั่วไปเป็น $\exp(\lambda t(u-1))$</p>
@@ -212,10 +254,18 @@ G_{N_A,N_B}(s_1,s_2)&=\mathbb E\big[s_1^{N_A}s_2^{N_B}\big]=\mathbb E\left[\big(
   <h4>ขั้นที่ 7 — ตรวจด้วยตัวเลขเล็ก ๆ: $\lambda t=2$, $p=\tfrac12$, $k=j=1$</h4>
   <p>ทฤษฎีบทที่พิสูจน์ด้วยสัญลักษณ์ควรผ่านการตรวจด้วยเลขเล็ก ๆ ทั้งกรณีแบ่งเท่าและกรณีเทไปข้างเดียว เพื่อยืนยันว่าผลคูณ marginal เท่ากับ joint distribution ตรงกันทุกจุด</p>
   <div class="math">\[
-\begin{aligned}P(N_A=1,N_B=1)&=\underbrace{\frac{e^{-2}2^{2}}{2!}}_{P(N=2)}\cdot\underbrace{\binom{2}{1}\tfrac12\cdot\tfrac12}_{1/2}=e^{-2}\approx 0.1353\\[4pt]
-P(N_A=1)\,P(N_B=1)&=\frac{e^{-1}1^{1}}{1!}\cdot\frac{e^{-1}1^{1}}{1!}=e^{-2}\approx 0.1353\\[4pt]
-P(N_A=2,N_B=0)&=\underbrace{\frac{e^{-2}2^2}{2!}}_{P(N=2)}\cdot\underbrace{\binom{2}{2}\left(\tfrac12\right)^2\left(\tfrac12\right)^0}_{1/4}=\frac{e^{-2}}{2}\approx 0.0677\\[4pt]
-P(N_A=2)\,P(N_B=0)&=\frac{e^{-1}1^2}{2!}\cdot\frac{e^{-1}1^0}{0!}=\frac{e^{-2}}{2}\approx 0.0677\end{aligned}
+\begin{aligned}
+&P(N_A=1,N_B=1)\\
+&=\underbrace{\frac{e^{-2}2^{2}}{2!}}_{P(N=2)}\cdot\underbrace{\binom{2}{1}\tfrac12\cdot\tfrac12}_{1/2}\\
+&=e^{-2}\approx 0.1353\\[4pt]
+&P(N_A=1)\,P(N_B=1)\\
+&=\frac{e^{-1}1^{1}}{1!}\cdot\frac{e^{-1}1^{1}}{1!}=e^{-2}\approx 0.1353\\[4pt]
+&P(N_A=2,N_B=0)\\
+&=\underbrace{\frac{e^{-2}2^2}{2!}}_{P(N=2)}\cdot\underbrace{\binom{2}{2}\left(\tfrac12\right)^2\left(\tfrac12\right)^0}_{1/4}\\
+&=\frac{e^{-2}}{2}\approx 0.0677\\[4pt]
+&P(N_A=2)\,P(N_B=0)\\
+&=\frac{e^{-1}1^2}{2!}\cdot\frac{e^{-1}1^0}{0!}=\frac{e^{-2}}{2}\approx 0.0677
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ฝั่งซ้ายนับตรง: มีคำสั่ง 2 ใบ (โอกาส $2e^{-2}$) แล้วแยกไปคนละสาย (โอกาส $\tfrac12$) ได้ $e^{-2} \approx 0.1353$ เทียบกับฝั่งขวาที่คูณ marginal ของแต่ละสาย (Poisson ค่าเฉลี่ย 1 ตัวละสาย) ได้ $e^{-2}$ เท่ากันเป๊ะ</p>
@@ -227,9 +277,14 @@ P(N_A=2)\,P(N_B=0)&=\frac{e^{-1}1^2}{2!}\cdot\frac{e^{-1}1^0}{0!}=\frac{e^{-2}}{
   <h4>ขั้นที่ 8 — พยากรณ์จำนวนคำสั่งและ variance ใน 5 นาที</h4>
   <p>แทนตัวเลขจริงเพื่อวางแผนกำลังคนและระบบในช่วงเวลาหนึ่ง พร้อมคำนวณ variance เพื่อดูช่วงการแกว่งตัวของคำสั่ง</p>
   <div class="math">\[
-\begin{aligned}\mathbb E\big[N_A(5)\big]&=12(5)=60\;\text{orders},\qquad \mathbb E\big[N_B(5)\big]=8(5)=40\;\text{orders}\\[4pt]
-\operatorname{Var}\big(N_A(5)\big)&=12(5)=60\;\text{orders}^2,\qquad \operatorname{Var}\big(N_B(5)\big)=8(5)=40\;\text{orders}^2\\[4pt]
-\mathbb E\big[N(5)\big]&=\mathbb E\big[N_A(5)\big]+\mathbb E\big[N_B(5)\big]=60+40=100\;\text{orders}\end{aligned}
+\begin{aligned}
+\mathbb E\big[N_A(5)\big]&=12(5)=60\;\text{orders}\\
+\mathbb E\big[N_B(5)\big]&=8(5)=40\;\text{orders}\\[4pt]
+\operatorname{Var}\big(N_A(5)\big)&=12(5)=60\;\text{orders}^2\\
+\operatorname{Var}\big(N_B(5)\big)&=8(5)=40\;\text{orders}^2\\[4pt]
+\mathbb E\big[N(5)\big]&=\mathbb E\big[N_A(5)\big]+\mathbb E\big[N_B(5)\big]\\
+&=60+40=100\;\text{orders}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อแทนค่าช่วงเวลา $t=5$ นาที จะได้จำนวนคำสั่ง marketable ที่คาดว่าจะได้รับเท่ากับ $12(5)=60$ คำสั่ง และ passive เท่ากับ $8(5)=40$ คำสั่ง รวมกันเป็น 100 คำสั่งพอดี</p>
@@ -299,13 +354,17 @@ P(N_A=2)\,P(N_B=0)&=\frac{e^{-1}1^2}{2!}\cdot\frac{e^{-1}1^0}{0!}=\frac{e^{-2}}{
   <p>คำสั่งที่ส่งออกเป็น Poisson อัตรา 120 ต่อชั่วโมง แต่ละคำสั่งได้จับคู่ด้วยโอกาส 0.35 แยกกัน กำไรเฉลี่ยต่อการจับคู่ \$45 ใช้ thinning แล้วตรวจ variance ด้วย EVVE ของหัวข้อ 2.2</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb E[K]&=\lambda p=120(0.35)=42\ \text{fills per hour}\\
-\mathrm{Var}(K)&=p^{2}\,\mathrm{Var}(N)+p(1-p)\,\mathbb E[N]\\
-&=0.1225(120)+0.2275(120)=14.7+27.3=42\\
+\mathbb E[K]&=\lambda p=120(0.35)\\
+&=42\ \text{fills per hour}\\
+\mathrm{Var}(K)&=p^{2}\,\mathrm{Var}(N)\\
+&\quad+p(1-p)\,\mathbb E[N]\\
+&=0.1225(120)+0.2275(120)\\
+&=14.7+27.3=42\\
 \text{profit}&=45(42)=\$1{,}890\ \text{per hour}\\
 &=1{,}890(7)=\$13{,}230\ \text{per day}\\
 \mathrm{SD}&=45\sqrt{42}=45(6.48)=\$291.6\\
-\mathrm{CV}&=291.6/1{,}890=15.4\%=1/\sqrt{42}
+\mathrm{CV}&=291.6/1{,}890=15.4\%\\
+&=1/\sqrt{42}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -318,9 +377,15 @@ P(N_A=2)\,P(N_B=0)&=\frac{e^{-1}1^2}{2!}\cdot\frac{e^{-1}1^0}{0!}=\frac{e^{-2}}{
   <h4>ขั้นที่ 10 — คู่แข่งเร็วขึ้น อัตราจับคู่ตกเหลือ 25%</h4>
   <p>ยังส่ง 120 คำสั่งต่อชั่วโมงเท่าเดิม เปลี่ยนแค่โอกาสจับคู่จาก 0.35 เป็น 0.25</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[K]&=120\times0.25=30,\qquad\text{profit}=45\times30=\$1{,}350\ \text{per hour}\\
-\text{lost}&=1{,}890-1{,}350=\$540\ \text{per hour}=\frac{540}{1{,}890}=28.6\%=1-\frac{0.25}{0.35}\\
-\mathrm{SD}&=45\sqrt{30}=\$246.5,\qquad\mathrm{CV}=\frac{246.5}{1{,}350}=18.3\%\end{aligned}
+\begin{aligned}
+\mathbb E[K]&=120\times0.25=30\\
+\text{profit}&=45\times30=\$1{,}350\ \text{per hour}\\
+\text{lost}&=1{,}890-1{,}350\\
+&=\$540\ \text{per hour}=\frac{540}{1{,}890}\\
+&=28.6\%=1-\frac{0.25}{0.35}\\
+\mathrm{SD}&=45\sqrt{30}=\$246.5\\
+\mathrm{CV}&=\frac{246.5}{1{,}350}=18.3\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อัตราจับคู่ตก 10 percentage points แต่กำไรหาย 28.6% ไม่ใช่ 10% เพราะกำไรแปรตาม $p$ ตรง ๆ จึงหาย 10 ส่วนใน 35 ส่วน หรือวันละ \$3,780 ตลอด 7 ชั่วโมง และความเหวี่ยงเทียบขนาดแย่ลงจาก 15.4% เป็น 18.3%</p>

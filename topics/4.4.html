@@ -102,10 +102,17 @@ f(x_1,x_2)=x_1+2x_2
   <p>ลองผสมแผน (4, 2) กับแผน (8, 3) อย่างละครึ่ง แล้วคิดงบที่ใช้สองทาง: ผสมแผนก่อนแล้วค่อยคิดงบ กับคิดงบของแต่ละแผนก่อนแล้วค่อยผสม แล้วลองกับกฎที่ไม่ใช่เส้นตรงเทียบ</p>
   <div class="math">\[
 \begin{aligned}
-f\big(0.5(4,2)+0.5(8,3)\big)&=f(6,\ 2.5)=6+2(2.5)=11\\
-0.5\,f(4,2)+0.5\,f(8,3)&=0.5(8)+0.5(14)=4+7=11\\[6pt]
-f(x)=x_1f(e_1)+x_2f(e_2)&=x_1(1)+x_2(2)=\begin{bmatrix}1 & 2\end{bmatrix}\begin{bmatrix}x_1\\ x_2\end{bmatrix}\\[6pt]
-g(x_1,x_2)=x_1^2:\quad g(6,\ 2.5)=36,\qquad &0.5\,g(4,2)+0.5\,g(8,3)=0.5(16)+0.5(64)=40
+&f\big(0.5(4,2)+0.5(8,3)\big)\\
+&=f(6,\ 2.5)=6+2(2.5)=11\\
+&0.5\,f(4,2)+0.5\,f(8,3)\\
+&=0.5(8)+0.5(14)=4+7=11\\[6pt]
+&f(x)=x_1f(e_1)+x_2f(e_2)\\
+&=x_1(1)+x_2(2)\\
+&=\begin{bmatrix}1 & 2\end{bmatrix}\begin{bmatrix}x_1\\ x_2\end{bmatrix}\\[6pt]
+&g(x_1,x_2)=x_1^2:\\
+&\quad g(6,\ 2.5)=36\\
+&0.5\,g(4,2)+0.5\,g(8,3)\\
+&=0.5(16)+0.5(64)=40
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -160,12 +167,20 @@ x_2\end{bmatrix},\quad b=10\;\text{USD million}
   <h4>ขั้นที่ 5 — ตรวจ point ที่เลือก</h4>
   <p>ตรวจว่าจุดที่เราสนใจอยู่บนระนาบจริงไหม ก่อนจะไปคิดเรื่องดีที่สุด</p>
   <div class="math">\[
-\begin{aligned}w=\begin{bmatrix}4\\
-2\end{bmatrix}:&\quad a^{\mathsf T}w=1(4)+2(2)=8\le10,\qquad 10-8=2\\
-w=\begin{bmatrix}8\\
-3\end{bmatrix}:&\quad a^{\mathsf T}w=1(8)+2(3)=14>10,\qquad 14-10=4\\[4pt]
-s\,w=\begin{bmatrix}4s\\
-2s\end{bmatrix}:&\quad 4s+2(2s)=8s=10\;\Longrightarrow\;s=1.25\end{aligned}
+\begin{aligned}
+w&=\begin{bmatrix}4\\
+2\end{bmatrix}:\\
+&\quad a^{\mathsf T}w=1(4)+2(2)=8\le10\\
+&\quad 10-8=2\\
+w&=\begin{bmatrix}8\\
+3\end{bmatrix}:\\
+&\quad a^{\mathsf T}w=1(8)+2(3)=14>10\\
+&\quad 14-10=4\\[4pt]
+s\,w&=\begin{bmatrix}4s\\
+2s\end{bmatrix}:\\
+&\quad 4s+2(2s)=8s=10\\
+&\;\Longrightarrow\;s=1.25
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>จุดแรกใช้ budget 8 จาก 10 จึงผ่านและเหลือ slack 2 หน่วย ส่วนจุดที่สองใช้ไป 14 เกินไป 4 หน่วย จึงตกตั้งแต่ก่อนส่ง order</p>
@@ -178,29 +193,37 @@ s\,w=\begin{bmatrix}4s\\
   <p>ตัวอย่างนี้จำลองจากปัญหา hedging ในตลาดจริง โดย $S$ คือ matrix ของ payoff และ $X$ คือ vector ของภาระผูกพันที่ต้องจ่ายคืน</p>
   <p>เงื่อนไขบังคับคือมิติของ matrix และ vector ต้องสอดคล้องกัน และอสมการต้องเป็นจริงพร้อมกันทุกแถว หากมีแม้แต่สถานะเดียวที่ผลลัพธ์ต่ำกว่าภาระหนี้ พอร์ตนั้นจะตกเป็น infeasible ทันที นอกจากนี้หากข้อกำหนดขัดแย้งกันเอง เช่น กำหนดผลตอบแทนขั้นต่ำสูงกว่าขอบเขตสูงสุดที่ทำได้ บริเวณ feasible region จะกลายเป็นเซตว่าง</p>
   <div class="math">\[
-\begin{aligned}S\theta \ge X:\quad &\begin{bmatrix} S_{11} & S_{12} \\
+\begin{aligned}
+&S\theta \ge X:\\
+&\begin{bmatrix} S_{11} & S_{12} \\
 S_{21} & S_{22} \\
 S_{31} & S_{32} \end{bmatrix} \begin{bmatrix} \theta_1 \\
-\theta_2 \end{bmatrix} \ge \begin{bmatrix} X_1 \\
+\theta_2 \end{bmatrix}\\
+&\quad\ge \begin{bmatrix} X_1 \\
 X_2 \\
 X_3 \end{bmatrix} \\[6pt]
 S\theta &= \begin{bmatrix} 120 & 105 \\
 100 & 105 \\
 70 & 105 \end{bmatrix} \begin{bmatrix} 0.5 \\
-0.5 \end{bmatrix} = \begin{bmatrix} 120(0.5) + 105(0.5) \\
+0.5 \end{bmatrix}\\
+&= \begin{bmatrix} 120(0.5) + 105(0.5) \\
 100(0.5) + 105(0.5) \\
-70(0.5) + 105(0.5) \end{bmatrix} = \begin{bmatrix} 112.5 \\
+70(0.5) + 105(0.5) \end{bmatrix}\\
+&= \begin{bmatrix} 112.5 \\
 102.5 \\
 87.5 \end{bmatrix} \;\text{USD} \\[6pt]
-\text{slack} &= S\theta - X = \begin{bmatrix} 112.5 \\
+\text{slack} &= S\theta - X\\
+&= \begin{bmatrix} 112.5 \\
 102.5 \\
 87.5 \end{bmatrix} - \begin{bmatrix} 110 \\
 100 \\
-80 \end{bmatrix} = \begin{bmatrix} 2.5 \\
+80 \end{bmatrix}\\
+&= \begin{bmatrix} 2.5 \\
 2.5 \\
 7.5 \end{bmatrix} \ge \begin{bmatrix} 0 \\
 0 \\
-0 \end{bmatrix}\end{aligned}
+0 \end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กฎการ hedge บังคับว่าในทุกสถานะของตลาด กระแสเงินสดที่ได้รับจากพอร์ตต้องไม่ต่ำกว่าภาระผูกพันที่ต้องจ่าย อสมการแต่ละแถวจึงทำหน้าที่เป็น hyperplane กั้นระหว่างพอร์ตที่รอดกับพอร์ตที่ผิดนัดชำระ</p>
@@ -214,10 +237,18 @@ S\theta &= \begin{bmatrix} 120 & 105 \\
   <p>ข้อบังคับแต่ละข้อไม่ได้ตัดคำตอบทิ้งทั้งหมด แต่กันพื้นที่ครึ่งหนึ่งออกไป เหลือ half-plane ที่ยังใช้ได้ พอ intersect กันหลายครึ่งระนาบจึงเหลือรูปปิด</p>
   <p>สมบัติที่ทำให้เรื่องนี้มีประโยชน์คือ convexity: ถ้า $u$ กับ $v$ อยู่ในบริเวณที่ใช้ได้ จุดทุกจุดบนเส้นตรงระหว่างสองตัวนั้นก็อยู่ด้วย นี่คือเหตุผลที่มุมเป็นตัวแทนของทั้งบริเวณได้</p>
   <div class="math">\[
-\begin{aligned}x_{1}+2x_{2}&\le10,\qquad x_{1}\ge0,\qquad x_{2}\ge0\\[4pt]
-x_{1}+2x_{2}&=10,\qquad x_{1}=0,\qquad x_{2}=0\\[4pt]
+\begin{aligned}
+x_{1}+2x_{2}&\le10\\
+x_{1}&\ge0,\qquad x_{2}\ge0\\[4pt]
+x_{1}+2x_{2}&=10\\
+x_{1}&=0,\qquad x_{2}=0\\[4pt]
 &\Rightarrow\ (0,0),\quad(10,0),\quad(0,5)\\[6pt]
-a^{\mathsf T}u\le b,\ a^{\mathsf T}v\le b,\ 0\le\lambda\le1&\ \Rightarrow\ a^{\mathsf T}\big(\lambda u+(1-\lambda)v\big)=\lambda a^{\mathsf T}u+(1-\lambda)a^{\mathsf T}v\le\lambda b+(1-\lambda)b=b\end{aligned}
+&a^{\mathsf T}u\le b,\ a^{\mathsf T}v\le b,\\
+&0\le\lambda\le1\\
+&\ \Rightarrow\ a^{\mathsf T}\big(\lambda u+(1-\lambda)v\big)\\
+&=\lambda a^{\mathsf T}u+(1-\lambda)a^{\mathsf T}v\\
+&\le\lambda b+(1-\lambda)b=b
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แต่ละอสมการให้เส้นขอบหนึ่งเส้น ตัดกับแกนที่ $x_1=0$ และ $x_2=0$ เกิดจุดตัดสามจุดคือ $(0,0)$ กับ $(10,0)$ กับ $(0,5)$ สามจุดนี้กำหนดสามเหลี่ยมทั้งรูป</p>

@@ -97,9 +97,16 @@
   <h4>ขั้นที่ 1 — สามวันด้วยมือ: ตอนไหนคูณค่าเฉลี่ยได้ ตอนไหนไม่ได้</h4>
   <p>ก่อนพิสูจน์อะไร ลองสามวันด้วยมือ ครั้งแรกให้กำไรต่อไม้เท่ากันทุกวัน ครั้งที่สองให้วันยุ่งกำไรต่อไม้ลด แล้วดูว่าสูตร ‘คูณค่าเฉลี่ย’ รอดตอนไหน</p>
   <div class="math">\[
-\begin{aligned}\text{fills}&:\ 10,\ 12,\ 14\qquad(\text{mean }12)\\[4pt]
-\$75\ \text{every day}&:\ 750,\ 900,\ 1{,}050\ \Rightarrow\ \frac{2{,}700}{3}=\$900=12\times75\\[4pt]
-\$50\ \text{on the busy day}&:\ 750,\ 900,\ 700\ \Rightarrow\ \frac{2{,}350}{3}=\$783.33\ne\$900\end{aligned}
+\begin{aligned}
+\text{fills}&:\ 10,\ 12,\ 14\\
+&\quad(\text{mean }12)\\[4pt]
+&\$75\ \text{every day}:\\
+&750,\ 900,\ 1{,}050\\
+&\Rightarrow\ \frac{2{,}700}{3}=\$900=12\times75\\[4pt]
+&\$50\ \text{on the busy day}:\\
+&750,\ 900,\ 700\\
+&\Rightarrow\ \frac{2{,}350}{3}=\$783.33\ne\$900
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวอย่างแรกกำไรต่อไม้คงที่ 75 จึงคูณค่าเฉลี่ยจำนวนไม้ 12 ได้ 900 ตรงกับการนับ</p>
@@ -183,11 +190,13 @@ S_N &= \sum_{i=1}^{\infty} X_i\,I_i,\qquad I_i=1\ \text{if}\ N\ge i,\ \text{else
   <p>ก่อนจะหาความเสี่ยงรวมของวัน ต้องตอบให้ได้ก่อนว่าถ้าวันนี้มีคำสั่งจับคู่พอดี $n$ รายการ ความเหวี่ยงของยอดสะสมจะเป็นเท่าใด</p>
   <div class="math">\[
 \begin{aligned}
-\mathrm{Var}(S_N \mid N=n) &= \mathrm{Var}\Big(\sum_{i=1}^{n} X_i \Bigm| N=n\Big) \\
-&= \sum_{i=1}^{n} \mathrm{Var}(X_i \mid N=n) + 2\sum_{1\le i \lt j \le n} \mathrm{Cov}(X_i, X_j \mid N=n) \\
+&\mathrm{Var}(S_N \mid N=n)\\
+&= \mathrm{Var}\Big(\sum_{i=1}^{n} X_i \Bigm| N=n\Big) \\
+&= \sum_{i=1}^{n} \mathrm{Var}(X_i \mid N=n)\\
+&\quad + 2\sum_{1\le i \lt j \le n} \mathrm{Cov}(X_i, X_j \mid N=n) \\
 &= \sum_{i=1}^{n} \sigma_X^2 + 0 \\
 &= n\,\sigma_X^2 \\
-\Longrightarrow\quad \mathrm{Var}(S_N \mid N) &= N\,\sigma_X^2
+&\Longrightarrow\quad \mathrm{Var}(S_N \mid N) = N\,\sigma_X^2
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -201,8 +210,16 @@ S_N &= \sum_{i=1}^{\infty} X_i\,I_i,\qquad I_i=1\ \text{if}\ N\ge i,\ \text{else
   <h4>ขั้นที่ 8 — ความเหวี่ยงของยอดรวม: ใช้ Law of Total Variance จากหัวข้อ 2.2</h4>
   <p>ค่าเฉลี่ย 900 ยังไม่พอตัดสินใจ ต้องรู้ว่าวันจริงเหวี่ยงจาก 900 แค่ไหน สมมติเพิ่มว่ากำไรต่อไม้มี standard deviation 150 USD แล้วใช้กฎแยกความเสี่ยงสองก้อนที่เพิ่งเรียน</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(S_N)&=\mathbb{E}\big[\mathrm{Var}(S_N\mid N)\big]+\mathrm{Var}\big(\mathbb{E}[S_N\mid N]\big)=\mathbb{E}[N\sigma_X^{2}]+\mathrm{Var}(N\mu)=\mathbb{E}[N]\,\sigma_X^{2}+\mu^{2}\,\mathrm{Var}(N)\\[4pt]
-N\sim\text{Poisson}(12),\ \sigma_X=\$150:&\quad 12(150^{2})+75^{2}(12)=270{,}000+67{,}500=337{,}500\;\Rightarrow\;\mathrm{SD}(S_N)=\sqrt{337{,}500}=\$581\end{aligned}
+\begin{aligned}
+\mathrm{Var}(S_N)&=\mathbb{E}\big[\mathrm{Var}(S_N\mid N)\big]\\
+&\quad+\mathrm{Var}\big(\mathbb{E}[S_N\mid N]\big)\\
+&=\mathbb{E}[N\sigma_X^{2}]+\mathrm{Var}(N\mu)\\
+&=\mathbb{E}[N]\,\sigma_X^{2}+\mu^{2}\,\mathrm{Var}(N)\\[4pt]
+&N\sim\text{Poisson}(12),\ \sigma_X=\$150:\\
+&\quad 12(150^{2})+75^{2}(12)\\
+&=270{,}000+67{,}500=337{,}500\\
+&\;\Rightarrow\;\mathrm{SD}(S_N)=\sqrt{337{,}500}=\$581
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ก้อนแรก: เมื่อรู้ว่ามี $n$ ไม้ variance ของผลรวมคือ $n\sigma_X^2$ (ไม้ independent จากหัวข้อ 1.4) เฉลี่ยทับด้วย $N$ ได้ $\mathbb{E}[N]\sigma_X^2$</p>
@@ -218,10 +235,16 @@ N\sim\text{Poisson}(12),\ \sigma_X=\$150:&\quad 12(150^{2})+75^{2}(12)=270{,}000
   <p>การแตกความเสี่ยงออกเป็นสองก้อนทำให้เห็นภาพชัดเจนว่า ความผันผวนของ daily P&amp;L มาจากฝีมือการจับคู่ราคาหรือมาจากจังหวะเวลาของตลาด</p>
   <div class="math">\[
 \begin{aligned}
-\text{Trade risk: } \mathbb{E}[N]\,\sigma_X^2 &= 12 \times 150^2 = 270{,}000\;\text{USD}^2\quad (80.0\%) \\[4pt]
-\text{Timing risk: } \mu^2\,\mathrm{Var}(N) &= 75^2 \times 12 = 67{,}500\;\text{USD}^2\quad (20.0\%) \\[4pt]
-\mathrm{Var}(S_N) &= 270{,}000 + 67{,}500 = 337{,}500\;\text{USD}^2 \\[4pt]
-\mathrm{SD}(S_N) &= \sqrt{337{,}500} \approx 580.95\;\text{USD/day}
+&\text{Trade risk: }\\
+\mathbb{E}[N]\,\sigma_X^2 &= 12 \times 150^2\\
+&= 270{,}000\;\text{USD}^2\quad (80.0\%) \\[4pt]
+&\text{Timing risk: }\\
+\mu^2\,\mathrm{Var}(N) &= 75^2 \times 12\\
+&= 67{,}500\;\text{USD}^2\quad (20.0\%) \\[4pt]
+\mathrm{Var}(S_N) &= 270{,}000 + 67{,}500\\
+&= 337{,}500\;\text{USD}^2 \\[4pt]
+\mathrm{SD}(S_N) &= \sqrt{337{,}500}\\
+&\approx 580.95\;\text{USD/day}
 \end{aligned}
 \]</div>
   <div class="reading">

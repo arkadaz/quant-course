@@ -105,12 +105,16 @@
   <h4>ขั้นที่ 1 — ลองกับฟิลเตอร์สีเทาก่อน: การแปลงที่ย้อนกลับไม่ได้ หน้าตาเป็นอย่างไร</h4>
   <p>ลองกับฟิลเตอร์ที่รวมสีแดงกับน้ำเงินเป็นสีเทาก่อน มันคือตารางแถวเดียว ใส่ภาพสองแบบเข้าไปแล้วดูว่าแยกออกไหม</p>
   <div class="math">\[
-\begin{aligned}\text{gray}&=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}\text{red}\\
+\begin{aligned}
+\text{gray}&=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}\text{red}\\
 \text{blue}\end{bmatrix}\\[4pt]
-\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
-0\end{bmatrix}&=0.5,\qquad \begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}0\\
-1\end{bmatrix}=0.5,\qquad \begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
--1\end{bmatrix}=0\end{aligned}
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
+0\end{bmatrix}=0.5\\
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}0\\
+1\end{bmatrix}=0.5\\
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
+-1\end{bmatrix}=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ภาพแดงล้วน $(1,0)$ กับน้ำเงินล้วน $(0,1)$ ให้สีเทา 0.5 เท่ากัน เห็นแค่ 0.5 จึงบอกไม่ได้ว่ามาจากภาพไหน ข้อมูลหายไปหนึ่งทิศ</p>
@@ -151,8 +155,12 @@ Ax&=(x_1+3x_2)\begin{bmatrix}1\\2\end{bmatrix}\\
   <div class="math">\[
 \begin{aligned}
 S&=\begin{bmatrix}1 & 2 & 3\\ 2 & 4 & 6\end{bmatrix}\\[4pt]
-R_2-2R_1:&\quad (2-2,\ 4-4,\ 6-6)=(0,\ 0,\ 0)\quad\Longrightarrow\quad \begin{bmatrix}1 & 2 & 3\\ 0 & 0 & 0\end{bmatrix}\\[4pt]
-\begin{bmatrix}2\\ 4\end{bmatrix}&=2\begin{bmatrix}1\\ 2\end{bmatrix},\qquad \begin{bmatrix}3\\ 6\end{bmatrix}=3\begin{bmatrix}1\\ 2\end{bmatrix}\quad\Longrightarrow\quad \operatorname{rank}(S)=1
+&R_2-2R_1:\\
+&\quad (2-2,\ 4-4,\ 6-6)=(0,\ 0,\ 0)\\
+&\quad\Longrightarrow\quad \begin{bmatrix}1 & 2 & 3\\ 0 & 0 & 0\end{bmatrix}\\[4pt]
+&\begin{bmatrix}2\\ 4\end{bmatrix}=2\begin{bmatrix}1\\ 2\end{bmatrix}\\
+&\begin{bmatrix}3\\ 6\end{bmatrix}=3\begin{bmatrix}1\\ 2\end{bmatrix}\\
+&\quad\Longrightarrow\quad \operatorname{rank}(S)=1
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -166,9 +174,15 @@ R_2-2R_1:&\quad (2-2,\ 4-4,\ 6-6)=(0,\ 0,\ 0)\quad\Longrightarrow\quad \begin{bm
   <p>คิด Sθ ตรง ๆ สำหรับ θ อะไรก็ได้ แล้วตั้งชื่อก้อนที่โผล่ซ้ำ</p>
   <div class="math">\[
 \begin{aligned}
-S\theta&=\begin{bmatrix}\theta_1+2\theta_2+3\theta_3\\ 2(\theta_1+2\theta_2+3\theta_3)\end{bmatrix}=\lambda\begin{bmatrix}1\\ 2\end{bmatrix},\qquad \lambda:=\theta_1+2\theta_2+3\theta_3\\[4pt]
-\theta=(1,1,1):&\quad \lambda=6,\qquad S\theta=(6,\ 12)=6(1,\ 2)\\
-\theta=(10,0,0),\ (0,5,0),\ (0,0,\tfrac{10}{3}):&\quad \lambda=10\ \text{each},\qquad S\theta=(10,\ 20)
+S\theta&=\begin{bmatrix}\theta_1+2\theta_2+3\theta_3\\ 2(\theta_1+2\theta_2+3\theta_3)\end{bmatrix}\\
+&=\lambda\begin{bmatrix}1\\ 2\end{bmatrix}\\
+\lambda&:=\theta_1+2\theta_2+3\theta_3\\[4pt]
+&\theta=(1,1,1):\\
+&\quad \lambda=6,\qquad S\theta=(6,\ 12)=6(1,\ 2)\\
+&\theta=(10,0,0),\ (0,5,0),\\
+&\quad(0,0,\tfrac{10}{3}):\\
+&\quad \lambda=10\ \text{each}\\
+&\quad S\theta=(10,\ 20)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -182,9 +196,15 @@ S\theta&=\begin{bmatrix}\theta_1+2\theta_2+3\theta_3\\ 2(\theta_1+2\theta_2+3\th
   <p>hedge พอดีแปลว่าหา θ ที่ Sθ = X ซึ่งก็คือถามว่า X อยู่บนเส้น λ(1, 2) หรือไม่</p>
   <div class="math">\[
 \begin{aligned}
-X=(10,\ 10):&\quad \lambda(1)=10\Rightarrow\lambda=10,\qquad \lambda(2)=10\Rightarrow\lambda=5,\qquad 10\ne5\\[4pt]
-X'=(10,\ 20):&\quad \lambda=10\ \text{from both rows}\\
-\theta=(4,\ 0,\ 2):&\quad 1(4)+2(0)+3(2)=10,\qquad 2(4)+4(0)+6(2)=20
+X&=(10,\ 10):\\
+&\quad \lambda(1)=10\Rightarrow\lambda=10\\
+&\quad \lambda(2)=10\Rightarrow\lambda=5\\
+&\quad 10\ne5\\[4pt]
+X'&=(10,\ 20):\\
+&\quad \lambda=10\ \text{from both rows}\\
+\theta&=(4,\ 0,\ 2):\\
+&\quad 1(4)+2(0)+3(2)=10\\
+&\quad 2(4)+4(0)+6(2)=20
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -195,15 +215,20 @@ X'=(10,\ 20):&\quad \lambda=10\ \text{from both rows}\\
 
 <section class="formula">
   <h4>ขั้นที่ 6 — เงื่อนไข invertibility</h4>
-  <p>ถ้าไม่ทำข้อมูลหาย ก็ย้อนกลับได้ เจ็ดบรรทัดนี้ทำให้ประโยคนั้นตรวจได้ โดยเดินทั้งสองทางของเครื่องหมายเท่ากับ ทางแรกบอกว่าอะไรพังเมื่อทิศไม่ครบ ทางที่สองบอกว่าอะไรใช้ได้เมื่อทิศครบ ขั้นถัดไปจะกางทางแรกให้เห็นเป็นตัวเลข</p>
+  <p>ถ้าไม่ทำข้อมูลหาย ก็ย้อนกลับได้ สูตรข้างล่างทำให้ประโยคนั้นตรวจได้ โดยเดินทั้งสองทางของเครื่องหมายเท่ากับ ทางแรกบอกว่าอะไรพังเมื่อทิศไม่ครบ ทางที่สองบอกว่าอะไรใช้ได้เมื่อทิศครบ ขั้นถัดไปจะกางทางแรกให้เห็นเป็นตัวเลข</p>
   <div class="math">\[
-\begin{aligned}\operatorname{rank}(A) \lt n\;&\Longrightarrow\;Az=0\ \text{for some}\ z\ne0\\
+\begin{aligned}
+&\operatorname{rank}(A) \lt n\\
+&\;\Longrightarrow\;Az=0\ \text{for some}\ z\ne0\\
 A(w+z)&=Aw+Az=Aw\\
 w+z&\ne w,\qquad A(w+z)=Aw\\
 &\Longrightarrow\;\text{no}\ A^{-1}\\[6pt]
-\operatorname{rank}(A)=n\;&\Longrightarrow\;Aw=b\ \text{solvable for each}\ b\\
-\text{one}\ w\ \text{per}\ b:\quad Aw&=b\\
-&\Longrightarrow\;A^{-1}\ \text{exists}\end{aligned}
+&\operatorname{rank}(A)=n\\
+&\;\Longrightarrow\;Aw=b\\
+&\quad\text{solvable for each}\ b\\
+&\text{one}\ w\ \text{per}\ b:\quad Aw=b\\
+&\Longrightarrow\;A^{-1}\ \text{exists}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทางแรกดูว่าอะไรพังเมื่อทิศไม่ครบ: จะมีทิศที่ถูกบีบจนเหลือศูนย์ บวกทิศนั้นเข้าไปใน input เท่าไรก็ได้ ผลลัพธ์ไม่ขยับเลย จึงมี input สองตัวที่ต่างกันแต่ให้ผลเดียวกัน การย้อนกลับจากผลลัพธ์จึงเลือกไม่ถูกว่าจะเป็นตัวไหน นั่นคือความหมายของคำว่าไม่มีตัวย้อนกลับ</p>
@@ -244,15 +269,20 @@ A(w+cz)&=Aw+A(cz)\\
   <h4>ขั้นที่ 9 — เมื่อกลับได้ ก็เขียนตัวกลับของ $2\times2$ ออกมาตรง ๆ</h4>
   <p>ขั้นที่ 6 ตอบว่ากลับได้เมื่อไร ขั้นนี้ตอบว่ากลับแล้วหน้าตาเป็นอย่างไร สำหรับ $2\times2$ ซึ่งเป็นขนาดที่ต้องคำนวณด้วยมือบ่อยที่สุด ทั้งในหัวข้อ 7.1, 8.5 และ 17.3</p>
   <div class="math">\[
-\begin{aligned}A&=\begin{bmatrix}a&amp;b\\
-c&amp;d\end{bmatrix},\qquad Ax=\begin{bmatrix}1\\
+\begin{aligned}
+A&=\begin{bmatrix}a&amp;b\\
+c&amp;d\end{bmatrix}\\
+Ax&=\begin{bmatrix}1\\
 0\end{bmatrix}\\
 ax_1+bx_2&=1\\
 cx_1+dx_2&=0\\[4pt]
-d(\text{row }1)-b(\text{row }2):\quad(ad-bc)\,x_1&=d\\
-a(\text{row }2)-c(\text{row }1):\quad(ad-bc)\,x_2&=-c\\[4pt]
+&d(\text{row }1)-b(\text{row }2):\\
+(ad-bc)\,x_1&=d\\
+&a(\text{row }2)-c(\text{row }1):\\
+(ad-bc)\,x_2&=-c\\[4pt]
 A^{-1}&=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\
--c&amp;a\end{bmatrix}\end{aligned}
+-c&amp;a\end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวกลับไม่ได้มาจากการท่องจำ มันคือคำตอบของคำถามว่า ต้องคูณอะไรถึงจะได้หลักแรกของ identity กลับมา จึงตั้งเป็นระบบสมการสองบรรทัดแล้วแก้ตรง ๆ</p>
@@ -267,11 +297,18 @@ A^{-1}&=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\
   <p>ตัดตลาดเหลือสินทรัพย์ 1 กับ 2 ได้ตาราง 2 × 2 ลองสูตรตัวกลับจากขั้นที่ 9 แล้วเทียบกับตลาดที่เพิ่มสินทรัพย์จ่าย (3, 1)</p>
   <div class="math">\[
 \begin{aligned}
-B&=\begin{bmatrix}1 & 2\\ 2 & 4\end{bmatrix}:\quad \det B=1(4)-2(2)=0\quad\Longrightarrow\quad \text{no}\ B^{-1}\\[6pt]
-C&=\begin{bmatrix}1 & 3\\ 2 & 1\end{bmatrix}:\quad \det C=1(1)-3(2)=-5\\
-C^{-1}&=\frac{1}{-5}\begin{bmatrix}1 & -3\\ -2 & 1\end{bmatrix}=\begin{bmatrix}-0.2 & 0.6\\ 0.4 & -0.2\end{bmatrix}\\
-C^{-1}C&=\begin{bmatrix}-0.2+1.2 & -0.6+0.6\\ 0.4-0.4 & 1.2-0.2\end{bmatrix}=\begin{bmatrix}1 & 0\\ 0 & 1\end{bmatrix}\\[6pt]
-\theta=C^{-1}X&=\begin{bmatrix}-0.2(10)+0.6(10)\\ 0.4(10)-0.2(10)\end{bmatrix}=\begin{bmatrix}4\\ 2\end{bmatrix},\qquad C\theta=\begin{bmatrix}4+6\\ 8+2\end{bmatrix}=\begin{bmatrix}10\\ 10\end{bmatrix}
+B&=\begin{bmatrix}1 & 2\\ 2 & 4\end{bmatrix}:\\
+&\quad \det B=1(4)-2(2)=0\\
+&\quad\Longrightarrow\quad \text{no}\ B^{-1}\\[6pt]
+C&=\begin{bmatrix}1 & 3\\ 2 & 1\end{bmatrix}:\\
+&\quad \det C=1(1)-3(2)=-5\\
+C^{-1}&=\frac{1}{-5}\begin{bmatrix}1 & -3\\ -2 & 1\end{bmatrix}\\
+&=\begin{bmatrix}-0.2 & 0.6\\ 0.4 & -0.2\end{bmatrix}\\
+C^{-1}C&=\begin{bmatrix}-0.2+1.2 & -0.6+0.6\\ 0.4-0.4 & 1.2-0.2\end{bmatrix}\\
+&=\begin{bmatrix}1 & 0\\ 0 & 1\end{bmatrix}\\[6pt]
+\theta&=C^{-1}X\\
+&=\begin{bmatrix}-0.2(10)+0.6(10)\\ 0.4(10)-0.2(10)\end{bmatrix}=\begin{bmatrix}4\\ 2\end{bmatrix}\\
+C\theta&=\begin{bmatrix}4+6\\ 8+2\end{bmatrix}=\begin{bmatrix}10\\ 10\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -312,21 +349,28 @@ x^{\mathsf T}\Sigma^{-1}x&=\begin{bmatrix}x_1&amp;x_2\end{bmatrix}\begin{bmatrix
   <p>ตัวอย่างนี้แสดงบทบาทของ invertibility ในการคำนวณพอร์ต Mean-Variance โดย $\Sigma$ คือ covariance matrix ขนาด $2\times 2$ และ $\hat{\mu}$ คือ excess return</p>
   <p>เงื่อนไขบังคับคือ matrix ต้องเป็น full rank ซึ่งตรวจได้จาก determinant ที่ต้องไม่เป็นศูนย์ หาก rank บกพร่อง inverse จะไม่มีอยู่จริง และสมการหาน้ำหนักพอร์ตจะไม่มีคำตอบเดียว ในโปรแกรมคำนวณทั่วไป ความพยายามหา inverse ของ matrix ที่ singular จะส่งผลให้น้ำหนักพุ่งเข้าสู่อินฟินิตี้และพอร์ตพังทลาย</p>
   <div class="math">\[
-\begin{aligned}\det(\Sigma) &= (0.04)(0.05) - (0.02)(0.02) = 0.0020 - 0.0004 = 0.0016 \\[4pt]
+\begin{aligned}
+\det(\Sigma) &= (0.04)(0.05) - (0.02)(0.02)\\
+&= 0.0020 - 0.0004 = 0.0016 \\[4pt]
 \Sigma^{-1} &= \frac{1}{0.0016} \begin{bmatrix} 0.05 & -0.02 \\
--0.02 & 0.04 \end{bmatrix} = \begin{bmatrix} 31.25 & -12.5 \\
+-0.02 & 0.04 \end{bmatrix}\\
+&= \begin{bmatrix} 31.25 & -12.5 \\
 -12.5 & 25.0 \end{bmatrix} \\[4pt]
-w = \Sigma^{-1} \hat{\mu} &= \begin{bmatrix} 31.25 & -12.5 \\
+w &= \Sigma^{-1} \hat{\mu}\\
+&= \begin{bmatrix} 31.25 & -12.5 \\
 -12.5 & 25.0 \end{bmatrix} \begin{bmatrix} 0.08 \\
 0.04 \end{bmatrix} \\
 &= \begin{bmatrix} 31.25(0.08) - 12.5(0.04) \\
--12.5(0.08) + 25.0(0.04) \end{bmatrix} = \begin{bmatrix} 2.5 - 0.5 \\
+-12.5(0.08) + 25.0(0.04) \end{bmatrix}\\
+&= \begin{bmatrix} 2.5 - 0.5 \\
 -1.0 + 1.0 \end{bmatrix} = \begin{bmatrix} 2.0 \\
 0.0 \end{bmatrix} \\[6pt]
 \Sigma_{\text{sing}} z &= \begin{bmatrix} 0.04 & 0.04 \\
 0.04 & 0.04 \end{bmatrix} \begin{bmatrix} 1 \\
 -1 \end{bmatrix} = \begin{bmatrix} 0 \\
-0 \end{bmatrix}, \quad \det(\Sigma_{\text{sing}}) = 0\end{aligned}
+0 \end{bmatrix}\\
+&\det(\Sigma_{\text{sing}}) = 0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อ covariance matrix มี full rank เราสามารถหา determinant ซึ่งได้ 0.0016 และกลับ matrix ได้อย่างแม่นยำ น้ำหนักพอร์ตที่ได้จะสะท้อนผลตอบแทนส่วนเกินเทียบกับความเสี่ยงจริง</p>
@@ -348,9 +392,16 @@ w = \Sigma^{-1} \hat{\mu} &= \begin{bmatrix} 31.25 & -12.5 \\
   <p>จะหาพอร์ตที่ความเสี่ยงต่ำสุดของหุ้น N = 500 ตัว สูตรต้องใช้ตัวกลับของ covariance ประมาณจากผลตอบแทนรายวัน T = 250 วัน ด้วย Σ̂ = RᵀR / T แล้วโปรแกรมขึ้นว่า singular matrix ก่อนดูตัวเลขสักตัว ให้นับกับเหตุผลเรื่อง rank</p>
   <div class="math">\[
 \begin{aligned}
-\frac{N(N+1)}{2}&=\frac{500(501)}{2}=125{,}250\ \text{unknowns},\qquad T\times N=250(500)=125{,}000\ \text{numbers}\\[4pt]
-Rx=0\ \Longrightarrow\ R^{\mathsf T}Rx&=0,\qquad R^{\mathsf T}Rx=0\ \Longrightarrow\ x^{\mathsf T}R^{\mathsf T}Rx=\|Rx\|^2=0\ \Longrightarrow\ Rx=0\\[4pt]
-\operatorname{rank}(\hat\Sigma)=\operatorname{rank}(R)&\le\min(250,\ 500)=250\ \lt\ 500
+&\frac{N(N+1)}{2}=\frac{500(501)}{2}\\
+&=125{,}250\ \text{unknowns}\\
+&T\times N=250(500)\\
+&=125{,}000\ \text{numbers}\\[4pt]
+&Rx=0\ \Longrightarrow\ R^{\mathsf T}Rx=0\\
+&R^{\mathsf T}Rx=0\\
+&\Longrightarrow\ x^{\mathsf T}R^{\mathsf T}Rx=\|Rx\|^2=0\\
+&\Longrightarrow\ Rx=0\\[4pt]
+&\operatorname{rank}(\hat\Sigma)=\operatorname{rank}(R)\\
+&\le\min(250,\ 500)=250\ \lt\ 500
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -364,12 +415,18 @@ Rx=0\ \Longrightarrow\ R^{\mathsf T}Rx&=0,\qquad R^{\mathsf T}Rx=0\ \Longrightar
   <p>สัดส่วนเดียวกันคือข้อมูลน้อยกว่าหุ้น ผลตอบแทนวันนั้น r = (0.02, 0.01) Σ̂ = rrᵀ คือหน้าตาของ vvᵀ ในหัวข้อ 4.3</p>
   <div class="math">\[
 \begin{aligned}
-\hat\Sigma=rr^{\mathsf T}&=\begin{bmatrix}0.02(0.02) & 0.02(0.01)\\ 0.01(0.02) & 0.01(0.01)\end{bmatrix}=\begin{bmatrix}0.000400 & 0.000200\\ 0.000200 & 0.000100\end{bmatrix}\\[4pt]
-R_2-0.5R_1&=(0.0002-0.0002,\ 0.0001-0.0001)=(0,\ 0)\\
-\det\hat\Sigma&=0.000400(0.000100)-0.000200(0.000200)\\
+\hat\Sigma&=rr^{\mathsf T}\\
+&=\begin{bmatrix}0.02(0.02) & 0.02(0.01)\\ 0.01(0.02) & 0.01(0.01)\end{bmatrix}\\
+&=\begin{bmatrix}0.000400 & 0.000200\\ 0.000200 & 0.000100\end{bmatrix}\\[4pt]
+&R_2-0.5R_1\\
+&=(0.0002-0.0002,\ 0.0001-0.0001)\\
+&=(0,\ 0)\\
+\det\hat\Sigma&=0.000400(0.000100)\\
+&\quad-0.000200(0.000200)\\
 &=4\times10^{-8}-4\times10^{-8}=0\\[6pt]
 w&=(1,\ -2)\\
-\hat\Sigma w&=\begin{bmatrix}0.0004-0.0004\\ 0.0002-0.0002\end{bmatrix}=\begin{bmatrix}0\\ 0\end{bmatrix},\qquad w^{\mathsf T}\hat\Sigma w=0\\
+\hat\Sigma w&=\begin{bmatrix}0.0004-0.0004\\ 0.0002-0.0002\end{bmatrix}=\begin{bmatrix}0\\ 0\end{bmatrix}\\
+w^{\mathsf T}\hat\Sigma w&=0\\
 r^{\mathsf T}w&=1(0.02)+(-2)(0.01)=0
 \end{aligned}
 \]</div>
@@ -384,11 +441,24 @@ r^{\mathsf T}w&=1(0.02)+(-2)(0.01)=0
   <p>Ledoit–Wolf shrinkage ผสม Σ̂ กับเป้าหมาย F ที่กลับด้านได้แน่นอน เลือก F เป็นแนวทแยงของ Σ̂ ซึ่งคือสมมติว่าไม่มี correlation และใช้ δ = 0.20</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma^*&=(1-\delta)\hat\Sigma+\delta F,\qquad F=\begin{bmatrix}0.000400 & 0\\ 0 & 0.000100\end{bmatrix}\\
-\Sigma^*_{11}&=0.80(0.000400)+0.20(0.000400)=0.000400,\qquad \Sigma^*_{12}=0.80(0.000200)+0.20(0)=0.000160\\[4pt]
-\det\Sigma^*&=0.000400(0.000100)-0.000160^2=4.00\times10^{-8}-2.56\times10^{-8}=1.44\times10^{-8}\\
-(\Sigma^*)^{-1}&=\frac{1}{1.44\times10^{-8}}\begin{bmatrix}0.000100 & -0.000160\\ -0.000160 & 0.000400\end{bmatrix}=\begin{bmatrix}6{,}944.4 & -11{,}111.1\\ -11{,}111.1 & 27{,}777.8\end{bmatrix}\\
-\text{row 1 check}:&\quad 6{,}944.4(0.0004)-11{,}111.1(0.00016)=2.7778-1.7778=1
+\Sigma^*&=(1-\delta)\hat\Sigma+\delta F\\
+F&=\begin{bmatrix}0.000400 & 0\\ 0 & 0.000100\end{bmatrix}\\
+\Sigma^*_{11}&=0.80(0.000400)\\
+&\quad+0.20(0.000400)\\
+&=0.000400\\
+\Sigma^*_{12}&=0.80(0.000200)+0.20(0)\\
+&=0.000160\\[4pt]
+\det\Sigma^*&=0.000400(0.000100)\\
+&\quad-0.000160^2\\
+&=4.00\times10^{-8}-2.56\times10^{-8}\\
+&=1.44\times10^{-8}\\
+(\Sigma^*)^{-1}&=\frac{1}{1.44\times10^{-8}}\\
+&\quad\begin{bmatrix}0.000100 & -0.000160\\ -0.000160 & 0.000400\end{bmatrix}\\
+&=\begin{bmatrix}6{,}944.4 & -11{,}111.1\\ -11{,}111.1 & 27{,}777.8\end{bmatrix}\\
+&\text{row 1 check}:\\
+&\quad 6{,}944.4(0.0004)\\
+&\quad-11{,}111.1(0.00016)\\
+&=2.7778-1.7778=1
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -402,15 +472,24 @@ r^{\mathsf T}w&=1(0.02)+(-2)(0.01)=0
   <p>ตรวจสามอย่าง: พอร์ตผีตอนนี้เสี่ยงเท่าไร พอร์ตความเสี่ยงต่ำสุดหน้าตาอย่างไร และถ้าใช้ δ น้อยลงเกิดอะไรขึ้น</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma^*w&=\begin{bmatrix}0.0004-0.00032\\0.00016-0.0002\end{bmatrix}=\begin{bmatrix}0.00008\\-0.00004\end{bmatrix}\\
-w^{\mathsf T}\Sigma^*w&=0.00008+0.00008=0.00016\\
+\Sigma^*w&=\begin{bmatrix}0.0004-0.00032\\0.00016-0.0002\end{bmatrix}\\
+&=\begin{bmatrix}0.00008\\-0.00004\end{bmatrix}\\
+w^{\mathsf T}\Sigma^*w&=0.00008+0.00008\\
+&=0.00016\\
 \sigma&=\sqrt{0.00016}=1.265\%\\[4pt]
-(\Sigma^*)^{-1}\mathbf1&=(6{,}944.4-11{,}111.1,\ -11{,}111.1+27{,}777.8)\\
+&(\Sigma^*)^{-1}\mathbf1\\
+&=(6{,}944.4-11{,}111.1,\\
+&\quad -11{,}111.1+27{,}777.8)\\
 &=(-4{,}166.7,\ 16{,}666.7)\\
-\text{weights}&=\Big(\frac{-4{,}166.7}{12{,}500},\ \frac{16{,}666.7}{12{,}500}\Big)=(-33.3\%,\ 133.3\%)\\[4pt]
-\delta=0.01&:\ \det=0.000400(0.000100)-0.000198^2\\
+\text{weights}&=\Big(\frac{-4{,}166.7}{12{,}500},\ \frac{16{,}666.7}{12{,}500}\Big)\\
+&=(-33.3\%,\ 133.3\%)\\[4pt]
+\delta&=0.01:\\
+\det&=0.000400(0.000100)\\
+&\quad-0.000198^2\\
 &\quad=7.96\times10^{-10}\\
-(\Sigma^*)^{-1}_{11}&=0.0001/(7.96\times10^{-10})=125{,}628
+&(\Sigma^*)^{-1}_{11}\\
+&=0.0001/(7.96\times10^{-10})\\
+&=125{,}628
 \end{aligned}
 \]</div>
   <div class="reading">

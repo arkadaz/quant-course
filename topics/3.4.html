@@ -126,9 +126,13 @@
   <p>สามข้อนี้คือเงื่อนไขที่ทำให้ตัวเลขขนาดเอาไปคุม risk ได้: ไม่ติดลบ ขยายตาม leverage ตรง ๆ และรวมสองพอร์ตแล้วไม่เกินผลรวมของสองขนาด ขั้นที่ 8 และ 9 จะลองกติกาข้อสองกับข้อหนึ่งด้วยตัวเลขจริง</p>
   <div class="math">\[
 \begin{aligned}
-\text{1. Positive Definiteness:} &\quad \|\mathbf{0}\| = 0, \quad \|\mathbf{x}\| > 0\ \text{when}\ \mathbf{x} \ne \mathbf{0} \\
-\text{2. Absolute Homogeneity:} &\quad \|\alpha \mathbf{x}\| = |\alpha|\,\|\mathbf{x}\| \\
-\text{3. Triangle Inequality:} &\quad \|\mathbf{x} + \mathbf{y}\| \le \|\mathbf{x}\| + \|\mathbf{y}\|
+&\text{1. Positive Definiteness:}\\
+&\quad \|\mathbf{0}\| = 0, \quad \|\mathbf{x}\| > 0\\
+&\quad\ \text{when}\ \mathbf{x} \ne \mathbf{0} \\
+&\text{2. Absolute Homogeneity:}\\
+&\quad \|\alpha \mathbf{x}\| = |\alpha|\,\|\mathbf{x}\| \\
+&\text{3. Triangle Inequality:}\\
+&\quad \|\mathbf{x} + \mathbf{y}\| \le \|\mathbf{x}\| + \|\mathbf{y}\|
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -200,11 +204,14 @@ B&=\sqrt{0.10^{2}}=0.10\\
   <p>ไม้บรรทัดที่สามยกกำลังสองก่อนบวก เครื่องหมายหายไปเองและตัวใหญ่ได้น้ำหนักมาก</p>
   <div class="math">\[
 \begin{aligned}
-\|\mathbf{w}\|_2^2&=0.40^2+(-0.25)^2+0.30^2+0.15^2+(-0.10)^2\\
-&=0.16+0.0625+0.09+0.0225+0.01=0.345\\
+\|\mathbf{w}\|_2^2&=0.40^2+(-0.25)^2+0.30^2\\
+&\quad+0.15^2+(-0.10)^2\\
+&=0.16+0.0625+0.09\\
+&\quad+0.0225+0.01=0.345\\
 \|\mathbf{w}\|_2&=\sqrt{0.345}=0.5874\\[6pt]
 N_{\text{eff}}&=\frac{1}{\|\mathbf{w}\|_2^2}=\frac{1}{0.345}=2.90\\
-w_i=0.2\ \text{each}:\quad N_{\text{eff}}&=\frac{1}{5(0.2)^2}=\frac{1}{0.20}=5
+&w_i=0.2\ \text{each}:\\
+N_{\text{eff}}&=\frac{1}{5(0.2)^2}=\frac{1}{0.20}=5
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -230,10 +237,14 @@ w_i=0.2\ \text{each}:\quad N_{\text{eff}}&=\frac{1}{5(0.2)^2}=\frac{1}{0.20}=5
   <p>สามค่าที่ได้เรียงกันพอดี ขั้นนี้แสดงว่าลำดับนี้ไม่ใช่โชคของพอร์ตนี้</p>
   <div class="math">\[
 \begin{aligned}
-\|\mathbf{w}\|_\infty=0.40\ \le\ \|\mathbf{w}\|_2&=0.5874\ \le\ \|\mathbf{w}\|_1=1.20\\[6pt]
-\|\mathbf{w}\|_2^2=0.16+(0.0625+0.09+0.0225+0.01)&=0.16+0.185\ \ge\ 0.16=\|\mathbf{w}\|_\infty^2\\[4pt]
-\|\mathbf{w}\|_1^2=\Big(\sum_i|w_i|\Big)^2&=\sum_i w_i^2+2\sum_{i\lt j}|w_i||w_j|\ \ge\ \|\mathbf{w}\|_2^2\\
-1.20^2=1.44\ &\ge\ 0.345
+&\|\mathbf{w}\|_\infty=0.40\\
+&\le\ \|\mathbf{w}\|_2=0.5874\ \le\ \|\mathbf{w}\|_1=1.20\\[6pt]
+&\|\mathbf{w}\|_2^2=0.16+(0.0625+0.09\\
+&\quad+0.0225+0.01)=0.16+0.185\\
+&\ge\ 0.16=\|\mathbf{w}\|_\infty^2\\[4pt]
+&\|\mathbf{w}\|_1^2=\Big(\sum_i|w_i|\Big)^2\\
+&=\sum_i w_i^2+2\sum_{i\lt j}|w_i||w_j|\ \ge\ \|\mathbf{w}\|_2^2\\
+&1.20^2=1.44\ \ge\ 0.345
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -263,10 +274,13 @@ x=(1,2)&:\ \|x\|_1=3,\quad\|x\|_2=\sqrt5=2.236\\
   <div class="math">\[
 \begin{aligned}
 m&=\frac{\|\mathbf{w}\|_1}{n}\\[4pt]
-\sum_i\big(|w_i|-m\big)^2&=\sum_i w_i^2-2m\sum_i|w_i|+n\,m^2\\
-&=\|\mathbf{w}\|_2^2-\frac{2\|\mathbf{w}\|_1^2}{n}+\frac{\|\mathbf{w}\|_1^2}{n}=\|\mathbf{w}\|_2^2-\frac{\|\mathbf{w}\|_1^2}{n}\ \ge\ 0\\[4pt]
+&\sum_i\big(|w_i|-m\big)^2\\
+&=\sum_i w_i^2-2m\sum_i|w_i|+n\,m^2\\
+&=\|\mathbf{w}\|_2^2-\frac{2\|\mathbf{w}\|_1^2}{n}+\frac{\|\mathbf{w}\|_1^2}{n}\\
+&=\|\mathbf{w}\|_2^2-\frac{\|\mathbf{w}\|_1^2}{n}\ \ge\ 0\\[4pt]
 \|\mathbf{w}\|_1&\le\sqrt{n}\,\|\mathbf{w}\|_2\\[4pt]
-1.20&\le\sqrt5\,(0.5874)=2.236\times0.5874=1.313
+1.20&\le\sqrt5\,(0.5874)\\
+&=2.236\times0.5874=1.313
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -481,10 +495,14 @@ N\|\Delta\mathbf{w}\|_1=10{,}000{,}000\times0.30=\$3{,}000{,}000
   <p>optimizer มักใส่ค่าปรับตามขนาดของ weights เพื่อไม่ให้คำตอบสุดโต่ง ค่าปรับแบบกำลังสองของ L2 เรียกว่า ridge แบบ L1 เรียกว่า lasso ลองดูว่าการลด weight ทีละ 0.01 ได้ค่าปรับคืนเท่าไร</p>
   <div class="math">\[
 \begin{aligned}
-\text{ridge},\ 0.40\to0.39:&\quad 0.40^2-0.39^2=0.1600-0.1521=0.0079\\
-\text{ridge},\ 0.01\to0:&\quad 0.01^2-0^2=0.0001\\[4pt]
-\text{lasso},\ 0.40\to0.39:&\quad 0.40-0.39=0.01\\
-\text{lasso},\ 0.01\to0:&\quad 0.01-0=0.01
+&\text{ridge},\ 0.40\to0.39:\\
+&\quad 0.40^2-0.39^2=0.1600-0.1521=0.0079\\
+&\text{ridge},\ 0.01\to0:\\
+&\quad 0.01^2-0^2=0.0001\\[4pt]
+&\text{lasso},\ 0.40\to0.39:\\
+&\quad 0.40-0.39=0.01\\
+&\text{lasso},\ 0.01\to0:\\
+&\quad 0.01-0=0.01
 \end{aligned}
 \]</div>
   <div class="reading">

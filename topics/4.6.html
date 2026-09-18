@@ -154,8 +154,12 @@ x^{\mathsf{T}}r-x^{\mathsf{T}}\mu&=x^{\mathsf{T}}(r-\mu)\\
   <p>ความเสี่ยงติดลบไม่ได้ เงื่อนไขที่รับประกันข้อนั้นเขียนได้สามแบบที่เท่ากันหมด และแบบที่ตรวจง่ายที่สุดคือดูว่าทุก eigenvalue เป็นบวก</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma=\Sigma^{\mathsf{T}},\qquad \Sigma\succ0\ &:\quad x^{\mathsf{T}}\Sigma x>0\ \text{ for every }x\ne0\\
-\text{same test}&:\quad \lambda_i>0\ \text{ for every }i
+&\Sigma=\Sigma^{\mathsf{T}}\\
+&\Sigma\succ0:\\
+&\quad x^{\mathsf{T}}\Sigma x>0\\
+&\quad\text{ for every }x\ne0\\
+&\text{same test}:\\
+&\quad \lambda_i>0\ \text{ for every }i
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -194,11 +198,13 @@ x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(
 \Sigma v - \lambda I v &= 0 \\
 (\Sigma - \lambda I)v &= 0,\qquad v \ne 0 \\
 \det(\Sigma - \lambda I) &= 0 \\
-\det\begin{bmatrix} \Sigma_{11}-\lambda & \Sigma_{12} \\
-\Sigma_{21} & \Sigma_{22}-\lambda \end{bmatrix} &= 0 \\
-(\Sigma_{11}-\lambda)(\Sigma_{22}-\lambda) - \Sigma_{12}\Sigma_{21} &= 0 \\
-\lambda^2 - (\Sigma_{11}+\Sigma_{22})\,\lambda + (\Sigma_{11}\Sigma_{22}-\Sigma_{12}\Sigma_{21}) &= 0 \\
-\lambda^2 - (\operatorname{tr}\Sigma)\,\lambda + \det\Sigma &= 0
+&\det\begin{bmatrix} \Sigma_{11}-\lambda & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}-\lambda \end{bmatrix} = 0 \\
+&(\Sigma_{11}-\lambda)(\Sigma_{22}-\lambda)\\
+&\quad - \Sigma_{12}\Sigma_{21} = 0 \\
+&\lambda^2 - (\Sigma_{11}+\Sigma_{22})\,\lambda\\
+&\quad + (\Sigma_{11}\Sigma_{22}-\Sigma_{12}\Sigma_{21}) = 0 \\
+&\lambda^2 - (\operatorname{tr}\Sigma)\,\lambda + \det\Sigma = 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -213,13 +219,22 @@ x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(
   <h4>ขั้นที่ 7 — คำนวณ eigenvalues ของข้อมูลตัวอย่าง</h4>
   <p>จาก $\Sigma v=\lambda v$ ลบ $\lambda v$ สองข้างได้ $(\Sigma-\lambda I)v=0$ ต้องการคำตอบ $v\ne0$ จึงต้องให้ matrix นี้กลับด้านไม่ได้ หรือ determinant เป็นศูนย์ สำหรับสองคูณสอง determinant คือ $(a-\lambda)(d-\lambda)-bc=\lambda^2-(a+d)\lambda+(ad-bc)$ นี่คือที่มาของสมการกำลังสองด้านล่าง ไม่ได้เลือก coefficient ขึ้นมาเอง</p>
   <div class="math">\[
-\begin{aligned}\operatorname{tr}\Sigma&=0.0004+0.0009=0.0013\\
-\det\Sigma&=0.0004(0.0009)-0.00024^2=0.00000036-0.0000000576=0.0000003024\\[4pt]
-\lambda^2&-0.0013\,\lambda+0.0000003024=0\\[4pt]
-\sqrt{\;}\;&:\ 0.0013^2-4(0.0000003024)=0.00000169-0.0000012096=0.0000004804\\
+\begin{aligned}
+\operatorname{tr}\Sigma&=0.0004+0.0009=0.0013\\
+\det\Sigma&=0.0004(0.0009)-0.00024^2\\
+&=0.00000036-0.0000000576\\
+&=0.0000003024\\[4pt]
+&\lambda^2-0.0013\,\lambda\\
+&\quad+0.0000003024=0\\[4pt]
+&\sqrt{\;}\;:\\
+&\ 0.0013^2-4(0.0000003024)\\
+&=0.00000169-0.0000012096\\
+&=0.0000004804\\
 &\quad \sqrt{0.0000004804}=0.000693109\\[4pt]
-\lambda_{1,2}&=\frac{0.0013\pm0.000693109}{2}=\begin{cases}0.000996554\\
-0.000303446\end{cases}\end{aligned}
+\lambda_{1,2}&=\frac{0.0013\pm0.000693109}{2}\\
+&=\begin{cases}0.000996554\\
+0.000303446\end{cases}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกสองบรรทัดคือ trace กับ determinant ซึ่งเป็นค่าคงที่สองตัวของสมการ จากนั้นก็คือสูตรกำลังสองที่คุ้นเคย รากทั้งสองเป็นบวก จึงยืนยันว่า matrix นี้ positive definite</p>
@@ -308,9 +323,13 @@ x^{\mathsf{T}}\Sigma x &= \lambda_1 c_1^2 + \lambda_2 c_2^2 \\
   <p>หุ้นแบงก์สามตัว σ = 25% เท่ากัน ρ = 0.70 ทุกคู่ ช่องทแยงคือ variance ช่องนอกทแยงคือ covariance แล้วดึง 0.0625 ออกเป็นตัวคูณร่วม</p>
   <div class="math">\[
 \begin{aligned}
-\sigma^2&=0.25^2=0.0625,\qquad \rho\sigma^2=0.7(0.0625)=0.04375\\[4pt]
-\Sigma&=\begin{bmatrix}0.0625 & 0.04375 & 0.04375\\ 0.04375 & 0.0625 & 0.04375\\ 0.04375 & 0.04375 & 0.0625\end{bmatrix}=0.0625\,C,\qquad C=\begin{bmatrix}1 & 0.7 & 0.7\\ 0.7 & 1 & 0.7\\ 0.7 & 0.7 & 1\end{bmatrix}\\[4pt]
-Cv=kv\ &\Longrightarrow\ (0.0625\,C)v=0.0625\,k\,v
+\sigma^2&=0.25^2=0.0625\\
+\rho\sigma^2&=0.7(0.0625)=0.04375\\[4pt]
+\Sigma&=\begin{bmatrix}0.0625 & 0.04375 & 0.04375\\ 0.04375 & 0.0625 & 0.04375\\ 0.04375 & 0.04375 & 0.0625\end{bmatrix}\\
+&=0.0625\,C\\
+C&=\begin{bmatrix}1 & 0.7 & 0.7\\ 0.7 & 1 & 0.7\\ 0.7 & 0.7 & 1\end{bmatrix}\\[4pt]
+Cv&=kv\\
+&\Longrightarrow\ (0.0625\,C)v=0.0625\,k\,v
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -342,10 +361,16 @@ Cv=kv\ &\Longrightarrow\ (0.0625\,C)v=0.0625\,k\,v
   <p>ทุกแถวของ C หน้าตาเหมือนกัน แค่สลับตำแหน่ง จึงลองทิศที่ทุกช่องเท่ากัน ถ้าคูณแล้วได้ทิศเดิมก็จบ เพราะนิยาม Cv = kv ตรวจได้ในบรรทัดเดียว</p>
   <div class="math">\[
 \begin{aligned}
-C\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}&=\begin{bmatrix}1+0.7+0.7\\ 0.7+1+0.7\\ 0.7+0.7+1\end{bmatrix}=2.4\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}\ \Longrightarrow\ k=2.4,\quad u=1-2.4=-1.4\\
-(-1.4)^3-1.47(-1.4)+0.686&=-2.744+2.058+0.686=0\\[4pt]
-u^3-1.47u+0.686&=(u+1.4)(u^2-1.4u+0.49)\\
-(-1.4)^2-4(0.49)&=1.96-1.96=0\ \Longrightarrow\ u=\frac{1.4}{2}=0.7\ \text{twice}\\[4pt]
+&C\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}=\begin{bmatrix}1+0.7+0.7\\ 0.7+1+0.7\\ 0.7+0.7+1\end{bmatrix}\\
+&=2.4\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}\\
+&\Longrightarrow\ k=2.4,\quad u=1-2.4=-1.4\\
+&(-1.4)^3-1.47(-1.4)+0.686\\
+&=-2.744+2.058+0.686=0\\[4pt]
+&u^3-1.47u+0.686\\
+&=(u+1.4)(u^2-1.4u+0.49)\\
+&(-1.4)^2-4(0.49)\\
+&=1.96-1.96=0\\
+&\Longrightarrow\ u=\frac{1.4}{2}=0.7\ \text{twice}\\[4pt]
 k&=2.4,\quad 0.3,\quad 0.3
 \end{aligned}
 \]</div>
@@ -378,9 +403,13 @@ k&=2.4,\quad 0.3,\quad 0.3
   <p>ลองพอร์ต long/short (1, −1, 0) กับพอร์ต (1, 1, −2) คูณ Σ ทีละแถว</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}&=0.0625\begin{bmatrix}1-0.7\\ 0.7-1\\ 0.7-0.7\end{bmatrix}=\begin{bmatrix}0.01875\\ -0.01875\\ 0\end{bmatrix}=0.01875\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}\\
-\Sigma\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}&=0.0625\begin{bmatrix}1+0.7-1.4\\ 0.7+1-1.4\\ 0.7+0.7-2\end{bmatrix}=0.0625\begin{bmatrix}0.3\\ 0.3\\ -0.6\end{bmatrix}=0.01875\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}\\[4pt]
-v_1\cdot v_2&=1-1+0=0,\qquad v_1\cdot v_3=1+1-2=0,\qquad v_2\cdot v_3=1-1+0=0
+&\Sigma\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}=0.0625\begin{bmatrix}1-0.7\\ 0.7-1\\ 0.7-0.7\end{bmatrix}\\
+&=\begin{bmatrix}0.01875\\ -0.01875\\ 0\end{bmatrix}=0.01875\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}\\
+&\Sigma\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}=0.0625\begin{bmatrix}1+0.7-1.4\\ 0.7+1-1.4\\ 0.7+0.7-2\end{bmatrix}\\
+&=0.0625\begin{bmatrix}0.3\\ 0.3\\ -0.6\end{bmatrix}=0.01875\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}\\[4pt]
+v_1\cdot v_2&=1-1+0=0\\
+v_1\cdot v_3&=1+1-2=0\\
+v_2\cdot v_3&=1-1+0=0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -395,13 +424,16 @@ v_1\cdot v_2&=1-1+0=0,\qquad v_1\cdot v_3=1+1-2=0,\qquad v_2\cdot v_3=1-1+0=0
   <div class="math">\[
 \begin{aligned}
 \lambda&=0.150,\ 0.01875,\ 0.01875\gt0\\
-D_1&=1,\qquad D_2=1(1)-0.7(0.7)=0.51\\
+D_1&=1\\
+D_2&=1(1)-0.7(0.7)=0.51\\
 D_3&=\det C=0.216\gt0\\[4pt]
 \lambda_{\text{big}}&=\sigma^2(1+2\rho)\gt0\\
 \lambda_{\text{small}}&=\sigma^2(1-\rho)\gt0\\
 &\Longrightarrow\ -0.5\lt\rho\lt1\\[4pt]
-\rho=-0.6&:\ \lambda_{\text{big}}=0.0625(1-1.2)=-0.0125\\
-D_2&=1-0.36=0.64,\qquad D_3=(1.6)^2(-0.2)=-0.512
+\rho&=-0.6:\\
+\lambda_{\text{big}}&=0.0625(1-1.2)=-0.0125\\
+D_2&=1-0.36=0.64\\
+D_3&=(1.6)^2(-0.2)=-0.512
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -415,10 +447,19 @@ D_2&=1-0.36=0.64,\qquad D_3=(1.6)^2(-0.2)=-0.512
   <p>เทียบสองพอร์ตที่ยาวหนึ่งหน่วยเท่ากัน แล้วดูพอร์ตซื้ออย่างเดียวที่ลงเงินพอดี 100% และวันที่ ρ พุ่งเป็น 0.9</p>
   <div class="math">\[
 \begin{aligned}
-\tfrac{1}{\sqrt3}(1,1,1):&\quad \sigma=\sqrt{0.150}=38.73\%,\qquad \text{weights sum}=3(0.5774)=1.732\\
-\tfrac{1}{\sqrt2}(1,-1,0):&\quad \sigma=\sqrt{0.01875}=13.69\%,\qquad \frac{13.69}{38.73}=0.354,\qquad \frac{0.01875}{0.15}=\frac18\\[4pt]
-w=(\tfrac13,\tfrac13,\tfrac13):&\quad \text{variance}=\frac{0.150}{3}=0.05,\qquad \sigma=\sqrt{0.05}=22.36\%\\[4pt]
-\rho=0.9:&\quad \lambda_{\text{big}}=0.0625(2.8)=0.175,\qquad \lambda_{\text{small}}=0.0625(0.1)=0.00625,\qquad \sigma=7.9\%
+&\tfrac{1}{\sqrt3}(1,1,1):\\
+&\quad \sigma=\sqrt{0.150}=38.73\%\\
+&\quad \text{weights sum}=3(0.5774)=1.732\\
+&\tfrac{1}{\sqrt2}(1,-1,0):\\
+&\quad \sigma=\sqrt{0.01875}=13.69\%\\
+&\quad \frac{13.69}{38.73}=0.354,\qquad \frac{0.01875}{0.15}=\frac18\\[4pt]
+&w=(\tfrac13,\tfrac13,\tfrac13):\\
+&\quad \text{variance}=\frac{0.150}{3}=0.05\\
+&\quad \sigma=\sqrt{0.05}=22.36\%\\[4pt]
+&\rho=0.9:\\
+&\quad \lambda_{\text{big}}=0.0625(2.8)=0.175\\
+&\quad \lambda_{\text{small}}=0.0625(0.1)=0.00625\\
+&\quad \sigma=7.9\%
 \end{aligned}
 \]</div>
   <div class="reading">
