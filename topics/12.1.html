@@ -90,9 +90,14 @@
   <h4>ขั้นที่ 1 — เส้นเรียบ: ผลรวมกำลังสองหายไป</h4>
   <p>เริ่มจากเส้นตรง x(t) = t บนหนึ่งปี ซอยเป็น n ช่วงเท่ากัน ทุกช่วงขยับเท่ากับความยาวช่วงพอดี</p>
   <div class="math">\[
-\begin{aligned}\Delta x_i&=\Delta t=\frac{T}{n}\\
-\sum_{i=1}^{n}(\Delta x_i)^2&=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\\[4pt]
-T=1&:\quad n=50\to0.02,\qquad n=200\to0.005,\qquad n=1{,}000\to0.001\end{aligned}
+\begin{aligned}
+\Delta x_i&=\Delta t=\frac{T}{n}\\
+&\sum_{i=1}^{n}(\Delta x_i)^2\\
+&=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\\[4pt]
+&T=1:\\
+&\quad n=50\to0.02,\qquad n=200\to0.005\\
+&\quad n=1{,}000\to0.001
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กำลังสองของก้าวเล็กเล็กกว่าตัวก้าวมาก บวก n ก้อนแล้วยังเหลือหนึ่งส่วน n ซอยถี่ขึ้นเท่าไรก็ยิ่งหาย นี่คือเหตุผลที่ calculus ปกติทิ้งพจน์กำลังสองได้เสมอ ทุกเส้นที่มีความชันก็เป็นแบบนี้</p>
@@ -103,9 +108,13 @@ T=1&:\quad n=50\to0.02,\qquad n=200\to0.005,\qquad n=1{,}000\to0.001\end{aligned
   <h4>ขั้นที่ 2 — ของที่โจทย์ให้: ก้าวของเส้นสุ่มมีขนาดรากของเวลา</h4>
   <p>Brownian motion ของบทที่ 10 กำหนดให้การขยับในช่วงยาว Δt เป็นรูประฆังที่ค่าเฉลี่ยศูนย์ และ variance เท่ากับ Δt เขียนเป็นก้อนมาตรฐานคูณตัวปรับขนาด</p>
   <div class="math">\[
-\begin{aligned}\Delta W_i&=W_{t_i}-W_{t_{i-1}}=\sqrt{\Delta t}\;Z_i,\qquad Z_i\sim\mathcal N(0,1)\\
+\begin{aligned}
+\Delta W_i&=W_{t_i}-W_{t_{i-1}}=\sqrt{\Delta t}\;Z_i\\
+&\quad Z_i\sim\mathcal N(0,1)\\
 \mathbb E[\Delta W_i]&=\sqrt{\Delta t}\;\mathbb E[Z_i]=0\\
-\operatorname{Var}(\Delta W_i)&=(\sqrt{\Delta t})^2\operatorname{Var}(Z_i)=\Delta t\end{aligned}
+&\operatorname{Var}(\Delta W_i)\\
+&=(\sqrt{\Delta t})^2\operatorname{Var}(Z_i)=\Delta t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวปรับขนาดต้องเป็นรากของ Δt เพราะ variance ถูกคูณด้วยกำลังสองของตัวปรับ ก้าวของเส้นสุ่มจึงใหญ่กว่าก้าวของเส้นเรียบมาก เมื่อ Δt = 0.001 ก้าวเรียบยาว 0.001 แต่ก้าวสุ่มยาวราว 0.032</p>
@@ -116,9 +125,13 @@ T=1&:\quad n=50\to0.02,\qquad n=200\to0.005,\qquad n=1{,}000\to0.001\end{aligned
   <h4>ขั้นที่ 3 — ทำไมต้องเป็นรากของเวลา: ขนาดอื่นพังทั้งคู่</h4>
   <p>ลองขนาดอื่นแล้วดูว่าความเหวี่ยงรวมทั้งปีเป็นเท่าไร ก้าวแต่ละช่วงไม่เกี่ยวกัน variance จึงบวกกันได้</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(\Delta W_i)=\Delta t&:\quad \operatorname{Var}(W_T)=n\cdot\frac{T}{n}=T\\
-\operatorname{Var}(\Delta W_i)=(\Delta t)^2&:\quad \operatorname{Var}(W_T)=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\to0\\[4pt]
-T=1,\ n=1{,}000&:\quad 1\quad\text{vs}\quad 0.001\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(\Delta W_i)=\Delta t:\\
+&\quad \operatorname{Var}(W_T)=n\cdot\frac{T}{n}=T\\
+&\operatorname{Var}(\Delta W_i)=(\Delta t)^2:\\
+&\quad \operatorname{Var}(W_T)=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\to0\\[4pt]
+&T=1,\ n=1{,}000:\quad 1\quad\text{vs}\quad 0.001
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้าก้าวเล็กแบบเส้นเรียบ ความเหวี่ยงรวมทั้งปีหายไปเมื่อซอยถี่ เส้นทางจะแบนราบ ไม่ใช่ random walk ขนาดรากของเวลาคือขนาดเดียวที่ทำให้ความเหวี่ยงทั้งปีเท่าเดิม ไม่ว่าจะซอยกี่ช่วง</p>
@@ -143,10 +156,18 @@ Q_n&=\sum_{i=1}^{n}(\Delta W_i)^2=\frac{T}{n}\sum_{i=1}^{n}Z_i^2\\
   <h4>ขั้นที่ 5 — กำลังสามหายไป: กำลังสองคือกำลังเดียวที่รอด</h4>
   <p>ถ้าสงสัยว่ากำลังสองพิเศษจริงไหม ลองกำลังสาม ก่อนอื่นหาค่าเฉลี่ยของขนาดก้อนมาตรฐานกำลังสาม ด้วยการแทน u = z²/2</p>
   <div class="math">\[
-\begin{aligned}\mathbb E|Z|^3&=2\int_0^{\infty}z^3\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=\frac{2}{\sqrt{2\pi}}\int_0^{\infty}2u\,e^{-u}\,du=\frac{2\cdot2}{\sqrt{2\pi}}=1.596\\
-C_n&=\sum_{i=1}^{n}|\Delta W_i|^3=\left(\frac{T}{n}\right)^{3/2}\sum_{i=1}^{n}|Z_i|^3\\
-\mathbb E[C_n]&=\left(\frac{T}{n}\right)^{3/2}n\,(1.596)=\frac{1.596\,T^{3/2}}{\sqrt n}\\[4pt]
-T=1&:\quad n=50\to0.226,\qquad n=200\to0.113,\qquad n=1{,}000\to0.050\end{aligned}
+\begin{aligned}
+&\mathbb E|Z|^3\\
+&=2\int_0^{\infty}z^3\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz\\
+&=\frac{2}{\sqrt{2\pi}}\int_0^{\infty}2u\,e^{-u}\,du=\frac{2\cdot2}{\sqrt{2\pi}}=1.596\\
+C_n&=\sum_{i=1}^{n}|\Delta W_i|^3\\
+&=\left(\frac{T}{n}\right)^{3/2}\sum_{i=1}^{n}|Z_i|^3\\
+\mathbb E[C_n]&=\left(\frac{T}{n}\right)^{3/2}n\,(1.596)\\
+&=\frac{1.596\,T^{3/2}}{\sqrt n}\\[4pt]
+&T=1:\\
+&\quad n=50\to0.226,\qquad n=200\to0.113\\
+&\quad n=1{,}000\to0.050
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อแทน u = z²/2 จะได้ z³ dz = 2u du และพื้นที่ใต้ $u\,e^{-u}$ จาก 0 ถึงอนันต์เท่ากับ 1 ต่อมา ตัวคูณเวลาของกำลังสามคือ $(T/n)^{3/2}$ บวก n ก้อนแล้วยังเหลือหนึ่งส่วนรากของ n จึงหายไป</p>
@@ -158,9 +179,15 @@ T=1&:\quad n=50\to0.226,\qquad n=200\to0.113,\qquad n=1{,}000\to0.050\end{aligne
   <h4>ขั้นที่ 6 — ผลรวมกำลังสองแทบไม่เหวี่ยงเมื่อซอยถี่</h4>
   <p>ค่าเฉลี่ยเป็น T แล้ว ต่อไปดูว่าเหวี่ยงรอบ T แค่ไหน ค่าเฉลี่ยของกำลังสี่ของก้อนมาตรฐานคือ 3 (หัวข้อ 10.5) และแต่ละช่วงไม่เกี่ยวกัน</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(Z_i^2)&=\mathbb E[Z_i^4]-\big(\mathbb E[Z_i^2]\big)^2=3-1=2\\
-\operatorname{Var}(Q_n)&=\left(\frac{T}{n}\right)^2\cdot2n=\frac{2T^2}{n},\qquad \operatorname{SD}(Q_n)=T\sqrt{\frac2n}\\[4pt]
-T=1&:\quad n=50\to0.200,\qquad n=200\to0.100,\qquad n=1{,}000\to0.0447\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(Z_i^2)\\
+&=\mathbb E[Z_i^4]-\big(\mathbb E[Z_i^2]\big)^2=3-1=2\\
+\operatorname{Var}(Q_n)&=\left(\frac{T}{n}\right)^2\cdot2n=\frac{2T^2}{n}\\
+\operatorname{SD}(Q_n)&=T\sqrt{\frac2n}\\[4pt]
+&T=1:\\
+&\quad n=50\to0.200,\qquad n=200\to0.100\\
+&\quad n=1{,}000\to0.0447
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวคูณข้างหน้ามีกำลังสองของ n ขณะที่จำนวนก้อนมีแค่ n ความเหวี่ยงจึงหดตามรากของจำนวนช่วง ผลรวมนี้ประกอบจากของสุ่มล้วน ๆ แต่ออกมาเป็นตัวเลขที่รู้ล่วงหน้าได้ นี่คือตัวเลขของคำถามเปิด</p>
@@ -202,10 +229,15 @@ Q_4&=0.024+0.360+0.181+0.055=0.620,\qquad \operatorname{SD}(Q_4)=\sqrt{\tfrac24}
   <h4>ขั้นที่ 8 — ผลในทางปฏิบัติ: วัด volatility ได้แม่น แต่วัด drift ไม่ได้</h4>
   <p>หุ้นที่ volatility 20% ต่อปี ผลตอบแทนรายวันคือ σ คูณรากของ 1/252 คูณก้อนมาตรฐาน realized variance ของหนึ่งปีจึงเป็น σ² คูณ Q ของ 252 ช่วง ใช้ขั้นที่ 4 และ 6 ได้ทันที</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[RV]&=\sigma^2T=0.2^2(1)=0.04\\
-\operatorname{SD}(RV)&=\sigma^2T\sqrt{\frac{2}{252}}=0.04(0.08909)=0.00356\\
+\begin{aligned}
+\mathbb E[RV]&=\sigma^2T=0.2^2(1)=0.04\\
+\operatorname{SD}(RV)&=\sigma^2T\sqrt{\frac{2}{252}}\\
+&=0.04(0.08909)=0.00356\\
 \operatorname{SD}(\widehat\sigma)&\approx\frac{\operatorname{SD}(RV)}{2\sigma}=\frac{0.00356}{0.4}=0.0089\\[4pt]
-\text{drift from 1 year}&:\ \operatorname{SD}=\frac{\sigma}{\sqrt T}=20\%,\qquad 2\,\frac{0.20}{\sqrt T}=0.08\ \Rightarrow\ T=25\ \text{years}\end{aligned}
+&\text{drift from 1 year}:\\
+&\quad\operatorname{SD}=\frac{\sigma}{\sqrt T}=20\%\\
+&\quad 2\,\frac{0.20}{\sqrt T}=0.08\ \Rightarrow\ T=25\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อมูลรายวันหนึ่งปีวัด volatility ได้ 20% บวกลบราว 0.9 จุด เพราะรากของ σ² + e ประมาณเท่ากับ σ + e/(2σ) ส่วน drift วัดจากค่าเฉลี่ยของผลตอบแทน ซึ่งซอยถี่ไม่ช่วยเลย</p>
@@ -231,10 +263,17 @@ Q_4&=0.024+0.360+0.181+0.055=0.620,\qquad \operatorname{SD}(Q_4)=\sqrt{\tfrac24}
   <h4>ขั้นที่ 10 — ตารางคูณของ Itô: ทำไม dW dt และ dt² เป็นศูนย์</h4>
   <p>นับขนาดแบบเดียวกัน พจน์ไหนเล็กกว่าความยาวช่วงจะหายเมื่อบวกทั้งปี ก่อนอื่นค่าเฉลี่ยของขนาดก้อนมาตรฐานคือ 2 คูณ integral ของ z คูณระฆังจาก 0 ถึงอนันต์</p>
   <div class="math">\[
-\begin{aligned}\mathbb E|Z|&=2\int_0^{\infty}z\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=\frac{2}{\sqrt{2\pi}}=0.798\\
-\sum_{i=1}^{n}|\Delta W_i|\,\Delta t&=(\Delta t)^{3/2}\sum_{i=1}^{n}|Z_i|,\qquad \mathbb E=\left(\frac Tn\right)^{3/2}n\,(0.798)=0.798\,\frac{T^{3/2}}{\sqrt n}\to0\\
-\sum_{i=1}^{n}(\Delta t)^2&=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\to0\\[4pt]
-(dW)^2=dt,\qquad dW\,dt&=0,\qquad (dt)^2=0\end{aligned}
+\begin{aligned}
+\mathbb E|Z|&=2\int_0^{\infty}z\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz\\
+&=\frac{2}{\sqrt{2\pi}}=0.798\\
+&\sum_{i=1}^{n}|\Delta W_i|\,\Delta t\\
+&=(\Delta t)^{3/2}\sum_{i=1}^{n}|Z_i|\\
+&\mathbb E=\left(\frac Tn\right)^{3/2}n\,(0.798)\\
+&=0.798\,\frac{T^{3/2}}{\sqrt n}\to0\\
+&\sum_{i=1}^{n}(\Delta t)^2=n\left(\frac{T}{n}\right)^2=\frac{T^2}{n}\to0\\[4pt]
+&(dW)^2=dt,\qquad dW\,dt=0\\
+&(dt)^2=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลคูณของก้าวสุ่มกับความยาวช่วงมีขนาดราว $(\Delta t)^{3/2}$ บวก n ก้อนแล้วเหลือหนึ่งส่วนรากของ n จึงหายไป ความยาวช่วงกำลังสองหายเร็วกว่านั้นอีก ในสี่ช่องของตาราง เหลือรอดช่องเดียว</p>
@@ -253,15 +292,24 @@ Q_4&=0.024+0.360+0.181+0.055=0.620,\qquad \operatorname{SD}(Q_4)=\sqrt{\tfrac24}
   <h4>ขั้นที่ 11 — chain rule ปกติให้คำตอบผิด: ลองกับ W²</h4>
   <p>ใช้ f(W) = W² ที่รู้คำตอบอยู่แล้ว ค่าเฉลี่ยของ $W_1^2$ คือ variance ของ $W_1$ ซึ่งเท่ากับ 1 ดูว่า chain rule สองแบบให้อะไร แล้วตรวจกับสี่ช่วงของขั้นที่ 7</p>
   <div class="math">\[
-\begin{aligned}W_i^2-W_{i-1}^2&=(W_{i-1}+\Delta W_i)^2-W_{i-1}^2=2W_{i-1}\Delta W_i+(\Delta W_i)^2\\
+\begin{aligned}
+&W_i^2-W_{i-1}^2\\
+&=(W_{i-1}+\Delta W_i)^2-W_{i-1}^2\\
+&=2W_{i-1}\Delta W_i+(\Delta W_i)^2\\
 W_T^2&=\sum_{i=1}^{n}2W_{i-1}\Delta W_i+Q_n\\
-\text{ordinary rule }d(W^2)=2W\,dW&:\quad \mathbb E[W_1^2]=0\qquad\text{(wrong)}\\
-\text{Itô: }d(W^2)=2W\,dW+dt&:\quad \mathbb E[W_1^2]=0+1=1\qquad\text{(right)}\\[4pt]
-n=4:\quad 2(0)(0.155)+2(0.155)(-0.6)&+2(-0.445)(0.425)+2(-0.02)(0.235)=-0.574\\
--0.574+0.620&=0.046=(0.215)^2=W_4^2\end{aligned}
+&\text{ordinary rule }d(W^2)=2W\,dW:\\
+&\quad \mathbb E[W_1^2]=0\qquad\text{(wrong)}\\
+&\text{Itô: }d(W^2)=2W\,dW+dt:\\
+&\quad \mathbb E[W_1^2]=0+1=1\qquad\text{(right)}\\[4pt]
+&n=4:\\
+&\quad 2(0)(0.155)+2(0.155)(-0.6)\\
+&\quad+2(-0.445)(0.425)+2(-0.02)(0.235)\\
+&\quad=-0.574\\
+&-0.574+0.620=0.046=(0.215)^2=W_4^2
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดแรกกระจายวงเล็บตรง ๆ ไม่มีการประมาณ บวกทุกช่วงได้ผลรวมที่เป็นจริงเสมอ ก้อนแรกเฉลี่ยศูนย์ เพราะแต่ละก้าวเฉลี่ยศูนย์และตำแหน่งก่อนก้าวรู้อยู่แล้ว</p>
+    <p>สามบรรทัดแรกกระจายวงเล็บตรง ๆ ไม่มีการประมาณ บวกทุกช่วงได้ผลรวมที่เป็นจริงเสมอ ก้อนแรกเฉลี่ยศูนย์ เพราะแต่ละก้าวเฉลี่ยศูนย์และตำแหน่งก่อนก้าวรู้อยู่แล้ว</p>
     <p>chain rule ปกติทิ้งผลรวมกำลังสองไป จึงได้ค่าเฉลี่ยศูนย์ ซึ่งผิด ตัวเลขสี่ช่วงยืนยัน ก้อนแรก −0.574 บวกผลรวมกำลังสอง 0.620 ได้ 0.046 เท่ากับตำแหน่งสุดท้าย 0.215 ยกกำลังสองพอดี</p>
   </div>
 </section>
@@ -270,11 +318,17 @@ n=4:\quad 2(0)(0.155)+2(0.155)(-0.6)&+2(-0.445)(0.425)+2(-0.02)(0.235)=-0.574\\
   <h4>ขั้นที่ 12 — chain rule ของ Itô สำหรับ f ใด ๆ: เก็บพจน์ความโค้ง</h4>
   <p>ทำแบบเดียวกับ f ทั่วไปด้วย Taylor expansion พจน์ที่สองคือความโค้งคูณกำลังสองของก้าว ซึ่งเส้นเรียบทิ้งได้ แต่เส้นสุ่มทิ้งไม่ได้</p>
   <div class="math">\[
-\begin{aligned}f(W_{t+\Delta t})-f(W_t)&=f'(W_t)\,\Delta W+\tfrac12f''(W_t)\,(\Delta W)^2+\cdots\\
-\text{smooth path}&:\ (\Delta x)^2\ \text{has size}\ (\Delta t)^2\ \Rightarrow\ \text{dropped}\\
-\text{Brownian path}&:\ (\Delta W)^2\ \text{has size}\ \Delta t\ \Rightarrow\ \text{kept}\\
+\begin{aligned}
+&f(W_{t+\Delta t})-f(W_t)\\
+&=f'(W_t)\,\Delta W+\tfrac12f''(W_t)\,(\Delta W)^2+\cdots\\
+&\text{smooth path}:\\
+&\quad(\Delta x)^2\ \text{has size}\ (\Delta t)^2\ \Rightarrow\ \text{dropped}\\
+&\text{Brownian path}:\\
+&\quad(\Delta W)^2\ \text{has size}\ \Delta t\ \Rightarrow\ \text{kept}\\
 df&=f'(W_t)\,dW_t+\tfrac12f''(W_t)\,dt\\[4pt]
-f(W)=W^2&:\ f'=2W,\ f''=2\ \Rightarrow\ d(W^2)=2W\,dW+dt\end{aligned}
+&f(W)=W^2:\ f'=2W,\ f''=2\\
+&\Rightarrow\ d(W^2)=2W\,dW+dt
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์ครึ่งหนึ่งของความโค้งคูณ dt คือ Itô correction แทน f = W² แล้วได้ผลเดียวกับขั้นที่ 11 พจน์นี้คือราคาที่ต้องจ่ายเพราะเส้นทางขรุขระ หัวข้อ 12.2 จะใช้กับราคาหุ้นจริง</p>

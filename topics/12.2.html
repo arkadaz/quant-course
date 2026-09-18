@@ -86,14 +86,17 @@
   <h4>ขั้นที่ 1 — สี่ก้าวด้วยมือ: chain rule เดิมทำหายไปเท่าไร</h4>
   <p>ก่อนกฎทั่วไป ลอง chain rule ที่เรียนมากับ f(W) = W² บนเส้นทางสั้น ๆ สี่ก้าว แล้วเทียบกับค่าจริง</p>
   <div class="math">\[
-\begin{aligned}W&:\ 0\to0.5\to0\to0.5\to1.0\\
+\begin{aligned}
+W&:\ 0\to0.5\to0\to0.5\to1.0\\
 \Delta W&:\ +0.5,\ -0.5,\ +0.5,\ +0.5\\[4pt]
-W_T^{2}-W_0^{2}&=1.0^{2}-0^{2}=1\\
-\sum2W_{t_i}\Delta W_i&=2\big[0(0.5)+0.5(-0.5)+0(0.5)+0.5(0.5)\big]=0\\
-1-0&=1=\sum(\Delta W_i)^{2}=4(0.25)\end{aligned}
+&W_T^{2}-W_0^{2}=1.0^{2}-0^{2}=1\\
+&\sum2W_{t_i}\Delta W_i\\
+&=2\big[0(0.5)+0.5(-0.5)+0(0.5)+0.5(0.5)\big]=0\\
+&1-0=1=\sum(\Delta W_i)^{2}=4(0.25)
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดสามคือค่าที่เปลี่ยนไปจริง อ่านจากปลายลบต้น บรรทัดสี่คือสิ่งที่ chain rule เดิมให้ ซึ่งได้ศูนย์ ส่วนที่หายไป 1 หน่วยเท่ากับผลรวมกำลังสองของก้าวพอดี</p>
+    <p>บรรทัดที่สามคือค่าที่เปลี่ยนไปจริง อ่านจากปลายลบต้น บรรทัดที่สี่ถึงห้าคือสิ่งที่ chain rule เดิมให้ ซึ่งได้ศูนย์ ส่วนที่หายไป 1 หน่วยเท่ากับผลรวมกำลังสองของก้าวพอดี</p>
     <p>ถ้า W เป็นเส้นเรียบ ส่วนนี้จะหายไปเอง แต่หัวข้อ 12.1 แสดงว่ากับเส้นสุ่มมันไม่หาย หัวข้อ 12.3 จะใช้เส้นทางเดียวกันนี้อีกครั้ง ตอนคุยเรื่องกำไรปลอมจากการมองอนาคต</p>
   </div>
 </section>
@@ -102,11 +105,16 @@ W_T^{2}-W_0^{2}&=1.0^{2}-0^{2}=1\\
   <h4>ขั้นที่ 2 — กฎ (dW)² = dt ด้วยตัวเลข: ซอยหนึ่งปีเป็น 10,000 ท่อน</h4>
   <p>ใช้เส้นสุ่มแบบง่ายที่สุด แต่ละท่อนขยับขึ้นหรือลงเท่ากับรากของความยาวท่อน แล้วบวกผลคูณทุกแบบทั้งปี เทียบกับเส้นตรงที่ขยับท่อนละ dt</p>
   <div class="math">\[
-\begin{aligned}dt&=\frac{1}{10{,}000}=0.0001,\qquad |dW|=\sqrt{0.0001}=0.01\\
-\sum(dW)^2&=10{,}000\times(0.01)^2=1.000=T\\
-\sum(dt)^2&=10{,}000\times(0.0001)^2=0.0001\to0\\
-\sum dt\,|dW|&=10{,}000\times0.0001\times0.01=0.01\to0\\
-\text{straight line}:\ \sum(dx)^2&=10{,}000\times(0.0001)^2=0.0001\to0\end{aligned}
+\begin{aligned}
+dt&=\frac{1}{10{,}000}=0.0001\\
+|dW|&=\sqrt{0.0001}=0.01\\
+&\sum(dW)^2=10{,}000\times(0.01)^2=1.000=T\\
+&\sum(dt)^2=10{,}000\times(0.0001)^2=0.0001\to0\\
+&\sum dt\,|dW|=10{,}000\times0.0001\times0.01\\
+&=0.01\to0\\
+&\text{straight line}:\\
+&\sum(dx)^2=10{,}000\times(0.0001)^2=0.0001\to0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เครื่องหมายบวกลบหายไปตอนหากำลังสอง ผลรวมกำลังสองจึงได้ 1 เท่ากับเวลาทั้งปีพอดี ไม่ว่าเส้นทางจะออกหัวหรือก้อยกี่ครั้ง ส่วนผลรวมอื่นเล็กลงเรื่อย ๆ เมื่อซอยถี่ขึ้น</p>
@@ -128,10 +136,14 @@ dX_t=a(t,X_t)\,dt+b(t,X_t)\,dW_t
   <h4>ขั้นที่ 4 — Taylor expansion ถึงอันดับสอง: ห้ามตัดพจน์ที่สอง</h4>
   <p>กระจายแบบเดียวกับที่เรียนมา แล้วดูทีละพจน์ว่าอันไหนรอด เหตุผลของพจน์ที่เก็บไว้คือการคำนวณในหัวข้อ 12.1 ไม่ใช่ธรรมเนียม</p>
   <div class="math">\[
-\begin{aligned}f(t+dt,x+dx)-f(t,x)&=f_t\,dt+f_x\,dx+\tfrac12f_{xx}(dx)^{2}+f_{tx}\,dt\,dx+\tfrac12f_{tt}(dt)^{2}+\cdots\\
-(dt)^{2}=0,\quad dt\,dx&=0\qquad\text{(step 2)}\\
-(dx)^{2}&=(dX_t)^{2}\ \text{survives}\\
-df&=f_t\,dt+f_x\,dX_t+\tfrac12f_{xx}(dX_t)^{2}\end{aligned}
+\begin{aligned}
+&f(t+dt,x+dx)-f(t,x)\\
+&=f_t\,dt+f_x\,dx+\tfrac12f_{xx}(dx)^{2}\\
+&\quad+f_{tx}\,dt\,dx+\tfrac12f_{tt}(dt)^{2}+\cdots\\
+&(dt)^{2}=0,\quad dt\,dx=0\qquad\text{(step 2)}\\
+&(dx)^{2}=(dX_t)^{2}\ \text{survives}\\
+df&=f_t\,dt+f_x\,dX_t+\tfrac12f_{xx}(dX_t)^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กำลังสองของเวลาและผลคูณของเวลากับการขยับหดเร็วกว่าเวลา จึงหายไปเหมือนในวิชาปกติ จุดที่ต่างคือกำลังสองของการขยับ ซึ่งมีขนาดเท่า dt พอดี เราจึงเก็บสามพจน์ ไม่ใช่สองพจน์แบบ chain rule เดิม</p>
@@ -168,14 +180,18 @@ dt\,dW_t&=0\\
   <h4>ขั้นที่ 7 — ประกอบเป็น Itô's lemma</h4>
   <p>รวมทุกพจน์ที่เหลือ ได้กฎที่ใช้ตลอดบทนี้และบทถัดไป ไม่มีของใหม่นอกจากการแทนค่าและจัดกลุ่ม</p>
   <div class="math">\[
-\begin{aligned}df&=f_t\,dt+f_x\,dX_t+\tfrac12f_{xx}(dX_t)^{2}\\
+\begin{aligned}
+df&=f_t\,dt+f_x\,dX_t+\tfrac12f_{xx}(dX_t)^{2}\\
 &=f_t\,dt+f_x\big(a\,dt+b\,dW_t\big)+\tfrac12f_{xx}\,b^{2}\,dt\\
 &=\big(f_t+a\,f_x+\tfrac12b^{2}f_{xx}\big)dt+b\,f_x\,dW_t\\[4pt]
-f=x^2,\ a=0,\ b=1&:\quad d(W^2)=(0+0+\tfrac12\cdot1\cdot2)\,dt+2W\,dW=dt+2W\,dW\end{aligned}
+&f=x^2,\ a=0,\ b=1:\\
+&\quad d(W^2)=(0+0+\tfrac12\cdot1\cdot2)\,dt+2W\,dW\\
+&\quad=dt+2W\,dW
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แทนสมการของขั้นที่ 3 และผลของขั้นที่ 6 แล้วจัดกลุ่ม วงเล็บแรกคือส่วนที่คาดได้ ก้อนหลังคือความเหวี่ยง ของใหม่คือครึ่งหนึ่งของ b² คูณความโค้ง</p>
-    <p>บรรทัดล่างตรวจกับขั้นที่ 1 เส้นทาง W² ได้ dt เพิ่มมาต่อหน่วยเวลา ซึ่งคือส่วนที่หายไปจาก chain rule เดิมพอดี</p>
+    <p>สามบรรทัดล่างตรวจกับขั้นที่ 1 เส้นทาง W² ได้ dt เพิ่มมาต่อหน่วยเวลา ซึ่งคือส่วนที่หายไปจาก chain rule เดิมพอดี</p>
   </div>
 </section>
 
@@ -183,9 +199,12 @@ f=x^2,\ a=0,\ b=1&:\quad d(W^2)=(0+0+\tfrac12\cdot1\cdot2)\,dt+2W\,dW=dt+2W\,dW\
   <h4>ขั้นที่ 8 — ของที่โจทย์ให้: หุ้นแบบ GBM และทำไมต้องใช้ log</h4>
   <p>หุ้นราคา \$100 มี drift 12% และ volatility 28% ต่อปี ทั้งสองพจน์ของสมการมี S คูณอยู่ เอา S หารทั้งสองข้างได้การเปลี่ยนเป็นเปอร์เซ็นต์ ซึ่งมีพฤติกรรมเรียบง่าย</p>
   <div class="math">\[
-\begin{aligned}dS_t&=\mu S_t\,dt+\sigma S_t\,dW_t,\qquad S_0=100,\ \mu=0.12,\ \sigma=0.28\\
+\begin{aligned}
+dS_t&=\mu S_t\,dt+\sigma S_t\,dW_t\\
+&S_0=100,\ \mu=0.12,\ \sigma=0.28\\
 \frac{dS_t}{S_t}&=\mu\,dt+\sigma\,dW_t\\
-\ln(S_0\times m)&=\ln S_0+\ln m\end{aligned}
+&\ln(S_0\times m)=\ln S_0+\ln m
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวที่เรียบง่ายคืออัตราส่วน ไม่ใช่ผลต่างเป็นดอลลาร์ แก้สมการตรง ๆ ไม่ได้เพราะ S โผล่ทั้งสองข้าง function ที่เปลี่ยนการคูณเป็นการบวกคือ log จึงเลือก f(S) = ln S</p>
@@ -255,9 +274,15 @@ S_T&=S_0\,e^{\left(\mu-\tfrac12\sigma^{2}\right)T+\sigma\sqrt T\,Z}\end{aligned}
   <h4>ขั้นที่ 13 — ค่าเฉลี่ยของราคาปลายปี: เติมกำลังสองให้ครบ</h4>
   <p>ต้องการค่าเฉลี่ยของ $e^{cZ}$ เขียนเป็น integral กับระฆัง แล้วจัดเลขชี้กำลังให้เป็นกำลังสองสมบูรณ์</p>
   <div class="math">\[
-\begin{aligned}\mathbb E\big[e^{cZ}\big]&=\int_{-\infty}^{\infty}e^{cz}\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=e^{c^2/2}\int_{-\infty}^{\infty}\frac{e^{-(z-c)^2/2}}{\sqrt{2\pi}}\,dz=e^{c^2/2}\\
-c=\sigma\sqrt T&:\quad \mathbb E[S_T]=S_0\,e^{(\mu-\frac12\sigma^2)T}\,e^{\frac12\sigma^2T}=S_0\,e^{\mu T}\\
-\mathbb E[S_1]&=100\,e^{0.12}=100(1.127497)=112.75\ \text{USD}\end{aligned}
+\begin{aligned}
+&\mathbb E\big[e^{cZ}\big]\\
+&=\int_{-\infty}^{\infty}e^{cz}\,\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz\\
+&=e^{c^2/2}\int_{-\infty}^{\infty}\frac{e^{-(z-c)^2/2}}{\sqrt{2\pi}}\,dz=e^{c^2/2}\\
+&c=\sigma\sqrt T:\\
+&\quad \mathbb E[S_T]=S_0\,e^{(\mu-\frac12\sigma^2)T}\,e^{\frac12\sigma^2T}=S_0\,e^{\mu T}\\
+\mathbb E[S_1]&=100\,e^{0.12}=100(1.127497)\\
+&=112.75\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>cz − z²/2 เท่ากับ c²/2 − (z − c)²/2 integral ที่เหลือคือพื้นที่ใต้ระฆังที่เลื่อนไปอยู่ที่ c ซึ่งเท่ากับ 1 พจน์ +½σ² หักล้างกับ −½σ² พอดี ค่าเฉลี่ยจึงโตด้วย drift เต็ม 12%</p>
@@ -277,8 +302,12 @@ c=\sigma\sqrt T&:\quad \mathbb E[S_T]=S_0\,e^{(\mu-\frac12\sigma^2)T}\,e^{\frac1
   <h4>ขั้นที่ 14 — โอกาสขาดทุนหลังหนึ่งปี แม้ drift เป็นบวก</h4>
   <p>ราคาปลายปีต่ำกว่า \$100 เมื่อ log ของอัตราส่วนติดลบ แปลงเป็นเงื่อนไขบนก้อนมาตรฐาน แล้วอ่านจากระฆัง</p>
   <div class="math">\[
-\begin{aligned}S_1\lt100\ &\Rightarrow\ 0.0808+0.28\,Z\lt0\ \Rightarrow\ Z\lt-\frac{0.0808}{0.28}=-0.2886\\
-P(S_1\lt100)&=\Phi(-0.2886)=0.386=38.6\%\end{aligned}
+\begin{aligned}
+&S_1\lt100\\
+&\Rightarrow\ 0.0808+0.28\,Z\lt0\\
+&\Rightarrow\ Z\lt-\frac{0.0808}{0.28}=-0.2886\\
+&P(S_1\lt100)=\Phi(-0.2886)=0.386=38.6\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หุ้นที่แบบจำลองบอกว่าโตเฉลี่ย 12% ต่อปี ยังมีโอกาสเกือบสี่ในสิบที่จะขาดทุนในปีเดียว ตัวเลขนี้ใช้ drift ของ log คือ 8.08% ถ้าเผลอใช้ 12% จะได้โอกาสต่ำเกินจริง</p>
@@ -289,9 +318,14 @@ P(S_1\lt100)&=\Phi(-0.2886)=0.386=38.6\%\end{aligned}
   <h4>ขั้นที่ 15 — volatility drag: ความเหวี่ยงกัดการโตของจุดกึ่งกลาง</h4>
   <p>ตรึง drift ของราคาไว้ที่ 12% แล้วเปลี่ยน volatility อัตราโตของจุดกึ่งกลางคือ drift ลบครึ่งหนึ่งของ σ²</p>
   <div class="math">\[
-\begin{aligned}g(\sigma)&=0.12-\tfrac12\sigma^2\\
-\sigma=0.10&:\ 0.12-0.005=0.115\qquad \sigma=0.28:\ 0.0808\qquad \sigma=0.50:\ 0.12-0.125=-0.005\\
-g(\sigma)=0&\ \Rightarrow\ \sigma=\sqrt{2(0.12)}=\sqrt{0.24}=0.490\end{aligned}
+\begin{aligned}
+g(\sigma)&=0.12-\tfrac12\sigma^2\\
+&\sigma=0.10:\ 0.12-0.005=0.115\\
+&\sigma=0.28:\ 0.0808\\
+&\sigma=0.50:\ 0.12-0.125=-0.005\\
+&g(\sigma)=0\\
+&\Rightarrow\ \sigma=\sqrt{2(0.12)}=\sqrt{0.24}=0.490
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ที่ volatility 49% จุดกึ่งกลางไม่โตเลย ทั้งที่ค่าเฉลี่ยยังโต 12% ต่อปี นี่เป็นผลของแบบจำลอง ไม่ใช่ค่าธรรมเนียมที่ถูกหักจริง แต่มันอธิบายว่าทำไมพอร์ตที่เหวี่ยงแรงมักโตช้ากว่าที่ค่าเฉลี่ยบอก</p>
@@ -310,9 +344,15 @@ g(\sigma)=0&\ \Rightarrow\ \sigma=\sqrt{2(0.12)}=\sqrt{0.24}=0.490\end{aligned}
   <h4>ขั้นที่ 16 — ทั้งบทนี้คือพจน์เดียวที่ไม่ยอมหาย</h4>
   <p>สรุปความต่างระหว่าง chain rule สองแบบในที่เดียว พจน์ความโค้งนี้จะกลายเป็น gamma บนโต๊ะ option ในบทที่ 13</p>
   <div class="math">\[
-\begin{aligned}df&=f'(x)\,dx+\tfrac12 f''(x)\,(dx)^{2}+\cdots\\
-\text{smooth path}:\ (dx)^{2}&\ \text{has size}\ (dt)^2\ \Rightarrow\ df=f'(x)\,dx\\
-\text{Brownian path}:\ (dW)^{2}&=dt\ \Rightarrow\ df=f'(W)\,dW+\tfrac12 f''(W)\,dt\end{aligned}
+\begin{aligned}
+df&=f'(x)\,dx+\tfrac12 f''(x)\,(dx)^{2}+\cdots\\
+&\text{smooth path}:\\
+&\quad(dx)^{2}\ \text{has size}\ (dt)^2\\
+&\quad\Rightarrow\ df=f'(x)\,dx\\
+&\text{Brownian path}:\\
+&\quad(dW)^{2}=dt\\
+&\quad\Rightarrow\ df=f'(W)\,dW+\tfrac12 f''(W)\,dt
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทุกอย่างในอนุกรมเหมือนที่เคยเรียน ต่างกันที่ขนาดของกำลังสองของการขยับ เส้นเรียบทิ้งได้ เส้นสุ่มทิ้งไม่ได้ ทุกอย่างที่เหลือในบทนี้คือการลากพจน์นั้นผ่านสูตรต่าง ๆ ไม่ใช่กฎใหม่</p>

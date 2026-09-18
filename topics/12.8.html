@@ -113,13 +113,20 @@ X_{k+1}=X_k+a(X_k)\,\Delta t+b(X_k)\,\Delta W_k
   <h4>ขั้นที่ 3 — พจน์แก้ของ Milstein: ขนาดแรงสุ่มเปลี่ยนระหว่างก้าว</h4>
   <p>Euler ละเลยว่าขนาดแรงสุ่มเปลี่ยนตามค่าที่ขยับระหว่างก้าว กระจาย Taylor หนึ่งพจน์ แทนส่วนสุ่มของการขยับ แล้วใช้ integral ที่หัวข้อ 12.3 คำนวณไว้</p>
   <div class="math">\[
-\begin{aligned}b(X_s)&\approx b(X_k)+b'(X_k)\big(X_s-X_k\big),\qquad X_s-X_k\approx b(X_k)\big(W_s-W_k\big)\\
-\int_{t_k}^{t_{k+1}}b(X_s)\,dW_s&\approx b(X_k)\Delta W_k+b(X_k)b'(X_k)\!\int_{t_k}^{t_{k+1}}\!(W_s-W_k)\,dW_s\\
-\int_{t_k}^{t_{k+1}}(W_s-W_k)\,dW_s&=\tfrac12\big[(\Delta W_k)^{2}-\Delta t\big]\\
-X_{k+1}&=X_k+a(X_k)\Delta t+b(X_k)\Delta W_k+\tfrac12b(X_k)b'(X_k)\big[(\Delta W_k)^{2}-\Delta t\big]\end{aligned}
+\begin{aligned}
+b(X_s)&\approx b(X_k)+b'(X_k)\big(X_s-X_k\big)\\
+&X_s-X_k\approx b(X_k)\big(W_s-W_k\big)\\
+&\int_{t_k}^{t_{k+1}}b(X_s)\,dW_s\\
+&\approx b(X_k)\Delta W_k\\
+&\quad+b(X_k)b'(X_k)\!\int_{t_k}^{t_{k+1}}\!(W_s-W_k)\,dW_s\\
+&\int_{t_k}^{t_{k+1}}(W_s-W_k)\,dW_s\\
+&=\tfrac12\big[(\Delta W_k)^{2}-\Delta t\big]\\
+X_{k+1}&=X_k+a(X_k)\Delta t+b(X_k)\Delta W_k\\
+&\quad+\tfrac12b(X_k)b'(X_k)\big[(\Delta W_k)^{2}-\Delta t\big]
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ส่วน drift ของการขยับระหว่างก้าวเล็กกว่าอีกขั้นจึงทิ้งได้ integral บรรทัดสามคือ ½(W² − T) ของหัวข้อ 12.3 ในก้าวเดียว พจน์ที่หักความยาวก้าวออกทำให้ค่าเฉลี่ยของพจน์แก้เป็นศูนย์ พจน์นี้ทำให้เส้นทางตรงขึ้นโดยไม่ย้ายค่าเฉลี่ย</p>
+    <p>ส่วน drift ของการขยับระหว่างก้าวเล็กกว่าอีกขั้นจึงทิ้งได้ integral บรรทัดที่หกถึงเจ็ดคือ ½(W² − T) ของหัวข้อ 12.3 ในก้าวเดียว พจน์ที่หักความยาวก้าวออกทำให้ค่าเฉลี่ยของพจน์แก้เป็นศูนย์ พจน์นี้ทำให้เส้นทางตรงขึ้นโดยไม่ย้ายค่าเฉลี่ย</p>
   </div>
 </section>
 
@@ -141,10 +148,17 @@ S_{k+1}^{X}&=S_k\,e^{(\mu-\frac12\sigma^2)\Delta t+\sigma\Delta W_k}\\[4pt]
   <h4>ขั้นที่ 5 — สามสูตรคือ Taylor ของสูตรจริงที่ตัดคนละที่</h4>
   <p>ตั้งชื่อเลขชี้กำลังของสูตรจริงว่า u แล้วกระจาย $e^u$ ถึงพจน์กำลังสอง กำลังสองของการขยับมีขนาดเท่าความยาวก้าว จึงเก็บไว้</p>
   <div class="math">\[
-\begin{aligned}u&=(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k,\qquad e^u\approx1+u+\tfrac12u^2\\
-u^2&=\sigma^2(\Delta W_k)^2+(\text{terms of size }\Delta t^{3/2}\ \text{or smaller})\\
-S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfrac12\sigma^2(\Delta W_k)^2\Big]=S_{k+1}^M\\
-\text{drop }\tfrac12\sigma^2\big((\Delta W_k)^2-\Delta t\big)&\ \Rightarrow\ S_{k+1}^E\end{aligned}
+\begin{aligned}
+u&=(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k\\
+e^u&\approx1+u+\tfrac12u^2\\
+u^2&=\sigma^2(\Delta W_k)^2\\
+&\quad+(\text{terms of size }\Delta t^{3/2}\ \text{or smaller})\\
+S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t\\
+&\qquad+\sigma\Delta W_k+\tfrac12\sigma^2(\Delta W_k)^2\Big]\\
+&=S_{k+1}^M\\
+&\text{drop }\tfrac12\sigma^2\big((\Delta W_k)^2-\Delta t\big)\\
+&\ \Rightarrow\ S_{k+1}^E
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>−½σ²Δt จาก drift ของ log รวมกับ +½σ²ΔW² จากกำลังสอง ได้พจน์แก้ของ Milstein พอดี Euler คือการตัดพจน์นี้ทิ้ง Milstein จึงเป็นสูตรจริงที่ตัดช้ากว่าหนึ่งขั้น</p>
@@ -193,10 +207,19 @@ S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfr
   <h4>ขั้นที่ 7 — ทำไม Euler สูงไป 1.24%: ผลรวมกำลังสองของเส้นทางนี้น้อยกว่าหนึ่งปี</h4>
   <p>เทียบ log ของผลคูณตัวคูณ Euler กับ log ของสูตรจริง แล้วใช้ ln(1 + x) ≈ x − x²/2 ดูว่าส่วนต่างมาจากไหน</p>
   <div class="math">\[
-\begin{aligned}\sum\ln(\text{Euler multipliers})&=\ln1.100+\ln0.862+\ln1.142+\ln1.072=0.14911\\
-\ln\frac{S_1^X}{100}&=0.0808+0.28(0.25-0.60+0.40+0.15)=0.0808+0.056=0.1368\\
-0.14911-0.1368&=0.01231\ \Rightarrow\ e^{0.01231}=1.01239\\[4pt]
-\text{second order}&:\ \tfrac12\sigma^2\Big(T-\sum(\Delta W_k)^2\Big)=0.0392\,(1-0.605)=0.0155\end{aligned}
+\begin{aligned}
+&\sum\ln(\text{Euler multipliers})\\
+&=\ln1.100+\ln0.862+\ln1.142+\ln1.072\\
+&=0.14911\\
+&\ln\frac{S_1^X}{100}\\
+&=0.0808+0.28(0.25-0.60+0.40+0.15)\\
+&=0.0808+0.056=0.1368\\
+&0.14911-0.1368=0.01231\\
+&\Rightarrow\ e^{0.01231}=1.01239\\[4pt]
+&\text{second order}:\\
+&\quad\tfrac12\sigma^2\Big(T-\sum(\Delta W_k)^2\Big)\\
+&\quad=0.0392\,(1-0.605)=0.0155
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>log ของตัวคูณ Euler หัก ½σ² คูณกำลังสองของการขยับที่เกิดจริง แต่สูตรจริงหัก ½σ² คูณเวลาเต็ม เส้นทางนี้มีผลรวมกำลังสอง 0.605 น้อยกว่าหนึ่งปี Euler จึงหักน้อยไป ค่าประมาณอันดับสองได้ 0.0155 พจน์ที่เหลือหักลงจนเหลือ 0.0123 พอดี</p>
@@ -218,10 +241,15 @@ S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfr
   <h4>ขั้นที่ 9 — ทำไม Euler แม่นแบบค่าเฉลี่ยดีกว่าแบบเส้นทาง</h4>
   <p>พจน์ที่ Euler ทิ้งไปคือพจน์แก้ของ Milstein ดูค่าเฉลี่ยของมันเมื่อรู้ทุกอย่างถึงต้นก้าว และขนาดของมันบนเส้นทางเดี่ยว</p>
   <div class="math">\[
-\begin{aligned}\epsilon_k&=\tfrac12 b(X_k)b'(X_k)\big[(\Delta W_k)^2-\Delta t\big]\\
-\mathbb E_k[\epsilon_k]&=\tfrac12 b\,b'\big(\mathbb E_k[(\Delta W_k)^2]-\Delta t\big)=\tfrac12 b\,b'(\Delta t-\Delta t)=0\\
-\operatorname{SD}\big((\Delta W_k)^2-\Delta t\big)&=\Delta t\sqrt{\operatorname{Var}(Z^2)}=\sqrt2\,\Delta t\\
-\text{path}&:\ \sqrt{T/\Delta t}\,\cdot\,\Delta t=\sqrt{T\,\Delta t}\ \propto\ \Delta t^{1/2}\qquad\text{mean}:\ \textstyle\sum\mathbb E_k[\epsilon_k]=0\end{aligned}
+\begin{aligned}
+\epsilon_k&=\tfrac12 b(X_k)b'(X_k)\big[(\Delta W_k)^2-\Delta t\big]\\
+\mathbb E_k[\epsilon_k]&=\tfrac12 b\,b'\big(\mathbb E_k[(\Delta W_k)^2]-\Delta t\big)\\
+&=\tfrac12 b\,b'(\Delta t-\Delta t)=0\\
+&\operatorname{SD}\big((\Delta W_k)^2-\Delta t\big)\\
+&=\Delta t\sqrt{\operatorname{Var}(Z^2)}=\sqrt2\,\Delta t\\
+&\text{path}:\ \sqrt{T/\Delta t}\,\cdot\,\Delta t=\sqrt{T\,\Delta t}\ \propto\ \Delta t^{1/2}\\
+&\text{mean}:\ \textstyle\sum\mathbb E_k[\epsilon_k]=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์ที่ทิ้งไปเฉลี่ยศูนย์ทุกก้าว ความคลาดเหล่านี้จึงหักล้างกันเมื่อเฉลี่ยหลายเส้นทาง แต่บนเส้นทางเดียวมันสะสมแบบรากที่สองของจำนวนก้าว ได้ความคลาดขนาดรากของ Δt ความคลาดของค่าเฉลี่ยที่เหลือมาจากพจน์ที่เล็กกว่า จึงหดตาม Δt</p>
@@ -251,8 +279,13 @@ S_{k+1}^X&\approx S_k\Big[1+(\mu-\tfrac12\sigma^2)\Delta t+\sigma\Delta W_k+\tfr
   <h4>ขั้นที่ 11 — เมื่อไร Euler ให้ราคาติดลบ</h4>
   <p>ตัวคูณของ Euler เป็นเส้นตรงของการขยับ จึงติดลบได้เมื่อการขยับลบมากพอ แก้หาเกณฑ์ แล้วแทนตัวเลขของโจทย์</p>
   <div class="math">\[
-\begin{aligned}1+\mu\Delta t+\sigma\sqrt{\Delta t}\,Z\lt0\ &\Rightarrow\ Z\lt-\frac{1+\mu\Delta t}{\sigma\sqrt{\Delta t}}\\
-\mu=0.12,\ \sigma=0.28,\ \Delta t=0.25&:\ Z\lt-\frac{1.03}{0.28(0.5)}=-7.36\ \Rightarrow\ \text{practically never}\end{aligned}
+\begin{aligned}
+&1+\mu\Delta t+\sigma\sqrt{\Delta t}\,Z\lt0\\
+&\Rightarrow\ Z\lt-\frac{1+\mu\Delta t}{\sigma\sqrt{\Delta t}}\\
+&\mu=0.12,\ \sigma=0.28,\ \Delta t=0.25:\\
+&\quad Z\lt-\frac{1.03}{0.28(0.5)}=-7.36\\
+&\quad\Rightarrow\ \text{practically never}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>σ√Δt เป็นบวก จึงหารได้โดยไม่กลับทิศ ในโจทย์นี้ต้องได้ก้อนมาตรฐานต่ำกว่า −7.36 ซึ่งแทบไม่เกิด สูตรจริงไม่มีปัญหานี้เลยเพราะ exponential เป็นบวกเสมอ</p>

@@ -112,9 +112,14 @@
   <h4>ขั้นที่ 2 — แรงดึงกลับด้วยตัวเลข: เหมือนสปริง</h4>
   <p>ก่อนแก้สมการ ดูส่วนที่คาดได้ของ Vasicek ที่ระดับต่าง ๆ ด้วยตัวเลขของโจทย์ κ = 0.8 และ θ = 3%</p>
   <div class="math">\[
-\begin{aligned}r=1.5\%&:\quad \kappa(\theta-r)=0.8(0.03-0.015)=+0.012\ \text{per year}\\
-r=3.0\%&:\quad 0.8(0.03-0.03)=0\\
-r=4.5\%&:\quad 0.8(0.03-0.045)=-0.012\ \text{per year}\end{aligned}
+\begin{aligned}
+&r=1.5\%:\\
+&\quad \kappa(\theta-r)=0.8(0.03-0.015)\\
+&\quad=+0.012\ \text{per year}\\
+&r=3.0\%:\quad 0.8(0.03-0.03)=0\\
+&r=4.5\%:\\
+&\quad 0.8(0.03-0.045)=-0.012\ \text{per year}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ต่ำกว่าเป้า 1.5 จุด ถูกดันขึ้นด้วยอัตรา 1.2 จุดต่อปี สูงกว่าเป้าเท่ากัน ถูกดึงลงเท่ากัน อยู่ที่เป้าพอดี แรงเป็นศูนย์ แรงแปรตามระยะห่างเหมือนสปริง แต่เมื่อเข้าใกล้เป้า แรงก็อ่อนลง ระยะห่างจึงหดแบบ exponential ไม่ใช่เป็นเส้นตรง</p>
@@ -150,9 +155,14 @@ d\big(e^{\kappa t}r_t\big)&=\kappa e^{\kappa t}r_t\,dt+e^{\kappa t}\,dr_t+\tfrac
   <h4>ขั้นที่ 5 — รวมตลอดช่วงเวลาแล้วหารกลับ</h4>
   <p>รวมสองข้างตั้งแต่ 0 ถึง t แล้วเอา $e^{\kappa t}$ หารออก จะได้คำตอบที่ยังมี integral ของก้อนสุ่มเหลืออยู่</p>
   <div class="math">\[
-\begin{aligned}e^{\kappa t}r_t-r_0&=\theta\big(e^{\kappa t}-1\big)+\sigma_V\int_0^{t}e^{\kappa s}\,dW_s\\
-r_t&=e^{-\kappa t}r_0+\theta\big(1-e^{-\kappa t}\big)+\sigma_V\int_0^{t}e^{-\kappa(t-s)}\,dW_s\\
-&=\theta+(r_0-\theta)e^{-\kappa t}+\sigma_V\int_0^{t}e^{-\kappa(t-s)}\,dW_s\end{aligned}
+\begin{aligned}
+&e^{\kappa t}r_t-r_0\\
+&=\theta\big(e^{\kappa t}-1\big)+\sigma_V\int_0^{t}e^{\kappa s}\,dW_s\\
+r_t&=e^{-\kappa t}r_0+\theta\big(1-e^{-\kappa t}\big)\\
+&\quad+\sigma_V\int_0^{t}e^{-\kappa(t-s)}\,dW_s\\
+&=\theta+(r_0-\theta)e^{-\kappa t}\\
+&\quad+\sigma_V\int_0^{t}e^{-\kappa(t-s)}\,dW_s
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>integral ของ $\kappa\theta e^{\kappa s}$ จาก 0 ถึง t คือ $\theta(e^{\kappa t}-1)$ ระยะห่างจากระดับระยะยาวจางลงแบบ exponential และ shock ที่เกิดนานแล้วมีน้ำหนักน้อยกว่า shock ที่เพิ่งเกิด ระบบนี้ลืมอดีตไปเรื่อย ๆ ไม่สะสมไม่สิ้นสุดแบบราคาหุ้น</p>
@@ -190,9 +200,16 @@ v_1&=0.00009(0.798103)=0.0000718293,\qquad \sqrt{v_1}=0.008475=0.8475\%\end{alig
   <h4>ขั้นที่ 8 — โอกาสที่ดอกเบี้ยจะติดลบในหนึ่งปี</h4>
   <p>คำตอบของ Vasicek เป็นรูประฆัง จึงวัดว่าศูนย์ห่างจากค่าเฉลี่ยกี่เท่าของความเหวี่ยง แล้วอ่านพื้นที่หางซ้าย</p>
   <div class="math">\[
-\begin{aligned}z&=\frac{0-0.023260}{0.008475}=-2.745,\qquad P(r_1\lt0)=\Phi(-2.745)=0.0030=0.30\%\\
-t=5&:\ m_5=0.0300-0.0150\,e^{-4}=0.0300-0.000275=0.029725,\qquad \sqrt{v_5}=0.009485\\
-z&=\frac{0-0.029725}{0.009485}=-3.134,\qquad P(r_5\lt0)=\Phi(-3.134)=0.086\%\end{aligned}
+\begin{aligned}
+z&=\frac{0-0.023260}{0.008475}=-2.745\\
+&P(r_1\lt0)=\Phi(-2.745)=0.0030=0.30\%\\
+&t=5:\\
+m_5&=0.0300-0.0150\,e^{-4}\\
+&=0.0300-0.000275=0.029725\\
+&\sqrt{v_5}=0.009485\\
+z&=\frac{0-0.029725}{0.009485}=-3.134\\
+&P(r_5\lt0)=\Phi(-3.134)=0.086\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ศูนย์ห่างจากค่าเฉลี่ย 2.7 เท่าของความเหวี่ยง โอกาสติดลบราว 3 ใน 1,000 เส้นทาง นี่คือจุดอ่อนของ Vasicek ที่เห็นเป็นตัวเลข desk ต้องตัดสินว่ารับได้หรือต้องใช้ CIR</p>
@@ -204,8 +221,13 @@ z&=\frac{0-0.029725}{0.009485}=-3.134,\qquad P(r_5\lt0)=\Phi(-3.134)=0.086\%\end
   <h4>ขั้นที่ 9 — ครึ่งชีวิต และความเหวี่ยงระยะยาว</h4>
   <p>สองตัวเลขนี้สรุปพฤติกรรมระยะยาว คือดึงกลับเร็วแค่ไหน และสุดท้ายแกว่งกว้างเท่าไร</p>
   <div class="math">\[
-\begin{aligned}e^{-\kappa t_{1/2}}=0.5\ &\Rightarrow\ t_{1/2}=\frac{\ln2}{\kappa}=\frac{0.693147}{0.80}=0.8664\ \text{year}\approx10.4\ \text{months}\\
-\operatorname{SD}(r_\infty)&=\sqrt{\frac{\sigma_V^2}{2\kappa}}=\frac{0.0120}{\sqrt{1.6}}=\frac{0.0120}{1.264911}=0.009487=0.9487\%\end{aligned}
+\begin{aligned}
+&e^{-\kappa t_{1/2}}=0.5\\
+&\Rightarrow\ t_{1/2}=\frac{\ln2}{\kappa}=\frac{0.693147}{0.80}\\
+&=0.8664\ \text{year}\approx10.4\ \text{months}\\
+&\operatorname{SD}(r_\infty)=\sqrt{\frac{\sigma_V^2}{2\kappa}}=\frac{0.0120}{\sqrt{1.6}}\\
+&=\frac{0.0120}{1.264911}=0.009487=0.9487\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ครึ่งชีวิตคือภาษาที่คุยกับคนได้ κ = 0.8 ไม่สื่ออะไร แต่ระยะห่างหายครึ่งหนึ่งในราว 10 เดือนเข้าใจทันที ความเหวี่ยงระยะยาวคือจุดที่แรงดึงกลับสมดุลกับแรงสุ่มพอดี</p>
@@ -216,9 +238,14 @@ z&=\frac{0-0.029725}{0.009485}=-3.134,\qquad P(r_5\lt0)=\Phi(-3.134)=0.086\%\end
   <h4>ขั้นที่ 10 — ความเหวี่ยงอิ่มตัว เทียบกับเส้นสุ่มที่ไม่มีแรงดึงกลับ</h4>
   <p>คำนวณความเหวี่ยงที่ 1, 5 และ 25 ปี เทียบกับ Brownian motion ธรรมดา ซึ่งคือกรณี κ = 0 ที่ความเหวี่ยงเท่ากับ σ คูณรากของเวลา</p>
   <div class="math">\[
-\begin{aligned}t=1&:\quad 0.8475\%\ (89.3\%\ \text{of cap})\qquad\text{vs}\qquad 0.012\sqrt1=1.20\%\\
-t=5&:\quad 0.9485\%\ (99.98\%\ \text{of cap})\qquad\text{vs}\qquad 0.012\sqrt5=2.68\%\\
-t=25&:\quad 0.9487\%\qquad\text{vs}\qquad 0.012\sqrt{25}=6.00\%\end{aligned}
+\begin{aligned}
+&t=1:\quad 0.8475\%\ (89.3\%\ \text{of cap})\\
+&\quad\text{vs}\qquad 0.012\sqrt1=1.20\%\\
+&t=5:\quad 0.9485\%\ (99.98\%\ \text{of cap})\\
+&\quad\text{vs}\qquad 0.012\sqrt5=2.68\%\\
+&t=25:\quad 0.9487\%\\
+&\quad\text{vs}\qquad 0.012\sqrt{25}=6.00\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ที่ห้าปี Vasicek ถึงเพดานแล้วเกือบเต็ม ส่วนเส้นสุ่มธรรมดาโตไม่หยุด ถ้าใช้แบบจำลองราคาหุ้นกับดอกเบี้ย จะได้ช่วงของดอกเบี้ย 25 ปีกว้างเกินจริงหกเท่า ซึ่งทำให้ราคาตราสารหนี้ระยะยาวผิดไปมาก</p>
@@ -237,10 +264,14 @@ t=25&:\quad 0.9487\%\qquad\text{vs}\qquad 0.012\sqrt{25}=6.00\%\end{aligned}
   <h4>ขั้นที่ 11 — แก้ GBM ด้วย Itô's lemma</h4>
   <p>ใช้วิธีของหัวข้อ 12.2 กับ log ราคา แล้วลองตัวเลข S₀ = 100, μ = 5%, σ_S = 20% ที่หนึ่งปี</p>
   <div class="math">\[
-\begin{aligned}d(\ln S_t)&=\frac{1}{S_t}\,dS_t+\frac{1}{2}\left(-\frac{1}{S_t^2}\right)(dS_t)^2=\left(\mu-\tfrac{1}{2}\sigma_S^2\right)dt+\sigma_S\,dW_t\\
+\begin{aligned}
+d(\ln S_t)&=\frac{1}{S_t}\,dS_t+\frac{1}{2}\left(-\frac{1}{S_t^2}\right)(dS_t)^2\\
+&=\left(\mu-\tfrac{1}{2}\sigma_S^2\right)dt+\sigma_S\,dW_t\\
 S_t&=S_0\exp\!\left(\left(\mu-\tfrac{1}{2}\sigma_S^2\right)t+\sigma_S W_t\right)\\[4pt]
-\mu-\tfrac12\sigma_S^2&=0.05-\tfrac12(0.04)=0.03\\
-W_1=0&:\ 100\,e^{0.03}=103.05,\qquad \mathbb E[S_1]=100\,e^{0.05}=105.13\end{aligned}
+&\mu-\tfrac12\sigma_S^2=0.05-\tfrac12(0.04)=0.03\\
+&W_1=0:\ 100\,e^{0.03}=103.05\\
+&\mathbb E[S_1]=100\,e^{0.05}=105.13
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>log ตัด S ที่เกาะอยู่หน้าทั้งสองพจน์ ความโค้งของ log ให้พจน์ −½σ² ใส่ exponential กลับ ราคาจึงไม่ติดลบ ต่างจากดอกเบี้ย Vasicek หุ้นไม่มีระดับให้กลับหา ความเหวี่ยงของ log ราคาจึงโตตามรากของเวลาไปเรื่อย ๆ</p>
@@ -251,14 +282,23 @@ W_1=0&:\ 100\,e^{0.03}=103.05,\qquad \mathbb E[S_1]=100\,e^{0.05}=105.13\end{ali
   <h4>ขั้นที่ 12 — CIR: ทำไมศูนย์เป็นพื้น</h4>
   <p>ดูสองส่วนของ CIR เมื่อดอกเบี้ยลงไปใกล้ศูนย์มาก ใช้ κ = 0.8, θ = 3% และ σ_C = 0.10 ที่ระดับ 0.01%</p>
   <div class="math">\[
-\begin{aligned}r\to0&:\quad \kappa(\theta-r)\to\kappa\theta=0.8(0.03)=0.024\ \text{per year}\gt0\\
-r\to0&:\quad \sigma_C\sqrt r\to0\\[4pt]
-r=0.0001&:\quad \sigma_C\sqrt r=0.10(0.01)=0.001\quad\text{vs}\quad \sigma_V=0.012\\
-\text{same }0.012\ \text{in front},\ r=0.015&:\quad 0.012\sqrt{0.015}=0.012(0.12247)=0.00147=\frac{0.012}{8.2}\end{aligned}
+\begin{aligned}
+&r\to0:\\
+&\quad \kappa(\theta-r)\to\kappa\theta=0.8(0.03)\\
+&\quad=0.024\ \text{per year}\gt0\\
+&r\to0:\quad \sigma_C\sqrt r\to0\\[4pt]
+&r=0.0001:\\
+&\quad \sigma_C\sqrt r=0.10(0.01)=0.001\\
+&\quad\text{vs}\quad \sigma_V=0.012\\
+&\text{same }0.012\ \text{in front},\\
+&r=0.015:\\
+&\quad 0.012\sqrt{0.015}=0.012(0.12247)\\
+&\quad=0.00147=\frac{0.012}{8.2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใกล้ศูนย์ แรงดันขึ้นเหลือ κθ เต็ม ๆ ส่วนแรงสุ่มเหือดหายไป ที่ 0.01% แรงสุ่มของ CIR เล็กกว่าของ Vasicek 12 เท่า แรงดันจึงชนะและผลักกลับขึ้น คำตอบต่อเนื่องของ CIR จึงไม่ติดลบ</p>
-    <p>บรรทัดล่างใส่ตัวคูณ 0.012 เท่ากันหน้าราก ที่ดอกเบี้ย 1.5% ของโจทย์ แรงสุ่มหดเหลือ 0.00147 เล็กลง 8.2 เท่า CIR แก้ปัญหาติดลบที่ต้นเหตุ คือทำให้แรงสุ่มอ่อนลงเองเมื่อเข้าใกล้ศูนย์</p>
+    <p>สี่บรรทัดล่างใส่ตัวคูณ 0.012 เท่ากันหน้าราก ที่ดอกเบี้ย 1.5% ของโจทย์ แรงสุ่มหดเหลือ 0.00147 เล็กลง 8.2 เท่า CIR แก้ปัญหาติดลบที่ต้นเหตุ คือทำให้แรงสุ่มอ่อนลงเองเมื่อเข้าใกล้ศูนย์</p>
   </div>
 </section>
 
@@ -266,9 +306,12 @@ r=0.0001&:\quad \sigma_C\sqrt r=0.10(0.01)=0.001\quad\text{vs}\quad \sigma_V=0.0
   <h4>ขั้นที่ 13 — นิยามของตัวเลข Feller: แตะศูนย์ได้หรือไม่</h4>
   <p>ไม่ติดลบยังไม่ได้แปลว่าไม่แตะศูนย์ ตัวเลขที่ตัดสินคือแรงดันเทียบกับความสั่นที่ขอบ ใช้ค่าเดิมแล้วเปลี่ยน σ_C สองค่า</p>
   <div class="math">\[
-\begin{aligned}\text{Feller ratio}&=\frac{2\kappa\theta}{\sigma_C^2},\qquad 2\kappa\theta=2(0.8)(0.03)=0.048\\
+\begin{aligned}
+&\text{Feller ratio}=\frac{2\kappa\theta}{\sigma_C^2}\\
+&2\kappa\theta=2(0.8)(0.03)=0.048\\
 \sigma_C=0.10&:\quad \frac{0.048}{0.01}=4.8\ \ge1\\
-\sigma_C=0.25&:\quad \frac{0.048}{0.0625}=0.77\ \lt1\end{aligned}
+\sigma_C=0.25&:\quad \frac{0.048}{0.0625}=0.77\ \lt1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลที่ยกมาจากตำราคือ ถ้าอัตราส่วนไม่ต่ำกว่า 1 ดอกเบี้ยไม่แตะศูนย์เลย ถ้าต่ำกว่า 1 แตะศูนย์ได้แล้วเด้งกลับ จำลอง 2,000 เส้นทางห้าปียืนยัน: อัตราส่วน 4.8 ไม่มีเส้นไหนแตะศูนย์ อัตราส่วน 0.77 แตะศูนย์ 73.3% ของเส้นทาง</p>

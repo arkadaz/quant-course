@@ -82,10 +82,17 @@
   <h4>ขั้นที่ 1 — หนึ่งก้าวด้วยมือ: ผลคูณของสองตัวที่ไม่มี drift เลย</h4>
   <p>สองตัวเริ่มที่ 1 แต่ละตัวขึ้นหรือลง 10% อย่างละครึ่ง ค่าเฉลี่ยของแต่ละตัวจึงไม่ขยับ ดูค่าเฉลี่ยของผลคูณในสามกรณี</p>
   <div class="math">\[
-\begin{aligned}\text{always together}&:\ \tfrac12(1.1)(1.1)+\tfrac12(0.9)(0.9)=\tfrac12(1.21+0.81)=1.01\\
-\text{always opposite}&:\ \tfrac12(1.1)(0.9)+\tfrac12(0.9)(1.1)=0.99\\
-\text{unrelated}&:\ \tfrac14(1.21+0.99+0.99+0.81)=1.00\\[4pt]
-\text{cross term}&=\rho\,(0.1)(0.1)=+0.01,\ -0.01,\ 0\end{aligned}
+\begin{aligned}
+&\text{always together}:\\
+&\quad\tfrac12(1.1)(1.1)+\tfrac12(0.9)(0.9)\\
+&\quad=\tfrac12(1.21+0.81)=1.01\\
+&\text{always opposite}:\\
+&\quad\tfrac12(1.1)(0.9)+\tfrac12(0.9)(1.1)=0.99\\
+&\text{unrelated}:\\
+&\quad\tfrac14(1.21+0.99+0.99+0.81)=1.00\\[4pt]
+&\text{cross term}\\
+&=\rho\,(0.1)(0.1)=+0.01,\ -0.01,\ 0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แต่ละตัวเฉลี่ยไม่ขยับ แต่ผลคูณขยับได้ ขึ้นพร้อมกันได้ 1.21 ลงพร้อมกันได้ 0.81 ค่าเฉลี่ยจึงเกินหนึ่ง 1% ส่วนสวนทางกันเสียเสมอ 1% พจน์ที่เกินมาคือ correlation คูณความเหวี่ยงของทั้งสองตัวพอดี</p>
@@ -107,9 +114,12 @@
   <h4>ขั้นที่ 3 — กระจายผลคูณ: พจน์ที่สามทิ้งไม่ได้</h4>
   <p>เขียนค่าใหม่ลบค่าเก่าของผลคูณแล้วกระจายวงเล็บ ขั้นนี้ยังไม่ใช้สมบัติอะไรของ Brownian motion ไม่มีการประมาณเลย</p>
   <div class="math">\[
-\begin{aligned}V_t&=X_tY_t\\
-(X+dX)(Y+dY)-XY&=X\,dY+Y\,dX+dX\,dY\\
-dV_t&=X_t\,dY_t+Y_t\,dX_t+dX_t\,dY_t\end{aligned}
+\begin{aligned}
+V_t&=X_tY_t\\
+&(X+dX)(Y+dY)-XY\\
+&=X\,dY+Y\,dX+dX\,dY\\
+dV_t&=X_t\,dY_t+Y_t\,dX_t+dX_t\,dY_t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใน calculus ปกติ พจน์ที่สามถูกทิ้งเพราะเป็นของเล็กคูณของเล็ก แต่การขยับแบบสุ่มมีขนาดรากของเวลา ผลคูณของสองอันจึงมีขนาดเท่าเวลา ซึ่งทิ้งไม่ได้</p>
@@ -120,9 +130,14 @@ dV_t&=X_t\,dY_t+Y_t\,dX_t+dX_t\,dY_t\end{aligned}
   <h4>ขั้นที่ 4 — คำนวณพจน์ไขว้</h4>
   <p>คูณสองสมการของขั้นที่ 2 ได้สี่พจน์ แล้วใช้ตารางคูณของหัวข้อ 12.2 ตัดสามพจน์ที่เล็กเกินไป</p>
   <div class="math">\[
-\begin{aligned}dX_t\,dY_t&=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big)\\
-(dt)^{2}=0,\quad dt\,dW&=0,\qquad dW_t^{X}dW_t^{Y}=\rho\,dt\\
-dX_t\,dY_t&=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt\end{aligned}
+\begin{aligned}
+&dX_t\,dY_t\\
+&=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\\
+&\quad\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big)\\
+&(dt)^{2}=0,\quad dt\,dW=0\\
+&dW_t^{X}dW_t^{Y}=\rho\,dt\\
+&dX_t\,dY_t=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เหลือพจน์เดียวที่เป็นผลคูณของสองแรงสุ่ม และเป็นสัดส่วนกับ correlation ตรง ๆ ถ้าสองตัวไม่เกาะกัน พจน์นี้หายไป ตรงกับกรณีไม่เกี่ยวกันของขั้นที่ 1</p>
@@ -133,8 +148,12 @@ dX_t\,dY_t&=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt\end{aligned}
   <h4>ขั้นที่ 5 — การเคลื่อนที่ของผลคูณ</h4>
   <p>แทนทุกพจน์ลงในกฎของขั้นที่ 3 ให้มี $X_tY_t$ เป็นตัวร่วม แล้วเอามันหารทั้งสมการ</p>
   <div class="math">\[
-\begin{aligned}X_t\,dY_t&=X_tY_t\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big),\qquad Y_t\,dX_t=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\\
-\frac{dV_t}{V_t}&=\underbrace{\big(\mu_X+\mu_Y+\rho\sigma_X\sigma_Y\big)}_{\mu_V}dt+\sigma_X\,dW_t^{X}+\sigma_Y\,dW_t^{Y}\end{aligned}
+\begin{aligned}
+X_t\,dY_t&=X_tY_t\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big)\\
+Y_t\,dX_t&=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\\
+\frac{dV_t}{V_t}&=\underbrace{\big(\mu_X+\mu_Y+\rho\sigma_X\sigma_Y\big)}_{\mu_V}dt\\
+&\quad+\sigma_X\,dW_t^{X}+\sigma_Y\,dW_t^{Y}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลคูณก็เป็น GBM อีกตัว แต่ drift ไม่ใช่แค่ผลบวก มีพจน์ covariance เพิ่มเข้ามา ซึ่งไม่มีใครใส่เข้าไป มันงอกออกมาจากพจน์ที่ calculus ปกติทิ้ง</p>
@@ -145,8 +164,11 @@ dX_t\,dY_t&=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt\end{aligned}
   <h4>ขั้นที่ 6 — รวมสองแรงสุ่มเป็นความเหวี่ยงเดียว</h4>
   <p>สองแรงสุ่มรวมเป็นแรงเดียวได้ แต่ขนาดต้องรวมแบบ variance ไม่ใช่บวกตรง ๆ เป็นเรื่องเดียวกับความเสี่ยงพอร์ตในหัวข้อ 6.8</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\big(\sigma_XdW^{X}+\sigma_YdW^{Y}\big)&=\sigma_X^{2}\,dt+\sigma_Y^{2}\,dt+2\sigma_X\sigma_Y\,\rho\,dt\\
-\sigma_V^{2}&=\sigma_X^{2}+\sigma_Y^{2}+2\rho\sigma_X\sigma_Y\end{aligned}
+\begin{aligned}
+&\operatorname{Var}\big(\sigma_XdW^{X}+\sigma_YdW^{Y}\big)\\
+&=\sigma_X^{2}\,dt+\sigma_Y^{2}\,dt+2\sigma_X\sigma_Y\,\rho\,dt\\
+\sigma_V^{2}&=\sigma_X^{2}+\sigma_Y^{2}+2\rho\sigma_X\sigma_Y
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แต่ละแรงมี variance เท่ากับเวลา และคู่ของมันมี covariance เท่ากับ correlation คูณเวลา ตัดเวลาทิ้งทั้งสองข้าง ถ้าสองแรงสวนกัน ขนาดรวมอาจเล็กกว่าแต่ละตัว นั่นคือเหตุที่พอร์ตซึ่งถือของสวนทางกันเหวี่ยงน้อยกว่า</p>
@@ -170,9 +192,14 @@ dX_t\,dY_t&=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt\end{aligned}
   <h4>ขั้นที่ 8 — ค่าเฉลี่ยของเงินที่ note จ่าย เทียบกับการบวก drift ตรง ๆ</h4>
   <p>ผลคูณเป็น GBM ที่ drift 21% ค่าเฉลี่ยของ GBM โตด้วย drift เต็มตามหัวข้อ 12.2 คูณ notional แล้วเทียบกับคำตอบที่ลืมพจน์ไขว้</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[NV_1]&=1{,}000{,}000\,e^{0.21}=1{,}000{,}000(1.233678)=1{,}233{,}678\ \text{USD}\\
-\text{no cross term}&:\ 1{,}000{,}000\,e^{0.18}=1{,}197{,}217\ \text{USD}\\
-\text{difference}&=36{,}461\ \text{USD}\end{aligned}
+\begin{aligned}
+\mathbb E[NV_1]&=1{,}000{,}000\,e^{0.21}\\
+&=1{,}000{,}000(1.233678)\\
+&=1{,}233{,}678\ \text{USD}\\
+&\text{no cross term}:\\
+&\quad 1{,}000{,}000\,e^{0.18}=1{,}197{,}217\ \text{USD}\\
+&\text{difference}=36{,}461\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ลืมพจน์ไขว้เพียงตัวเดียว ค่าเฉลี่ยของเงินที่จ่ายต่ำไปกว่าสามหมื่นหกพันดอลลาร์ต่อ note หนึ่งล้าน ตัวเลขนี้ยังไม่ได้คิดลด และใช้ drift ของโลกจริง ซึ่งยังไม่ใช่ราคา</p>
@@ -199,9 +226,15 @@ dX_t\,dY_t&=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt\end{aligned}
   <h4>ขั้นที่ 9 — ที่มาจาก Taylor สองตัวแปร</h4>
   <p>กฎผลคูณเป็นกรณีหนึ่งของ Itô หลายมิติ กระจาย Taylor สองตัวแปรถึงอันดับสอง แล้วแทน $f=X,Y$</p>
   <div class="math">\[
-\begin{aligned}df&=f_t\,dt+f_X\,dX+f_Y\,dY+\tfrac12f_{XX}(dX)^2+\tfrac12f_{YY}(dY)^2+f_{XY}\,dX\,dY\\
-f=XY&:\quad f_X=Y,\quad f_Y=X,\quad f_t=0,\quad f_{XX}=0,\quad f_{YY}=0,\quad f_{XY}=1\\
-dV_t&=Y_t\,dX_t+X_t\,dY_t+0+0+1\cdot dX_t\,dY_t\end{aligned}
+\begin{aligned}
+df&=f_t\,dt+f_X\,dX+f_Y\,dY\\
+&\quad+\tfrac12f_{XX}(dX)^2+\tfrac12f_{YY}(dY)^2\\
+&\quad+f_{XY}\,dX\,dY\\
+&f=XY:\\
+&\quad f_X=Y,\quad f_Y=X,\quad f_t=0\\
+&\quad f_{XX}=0,\quad f_{YY}=0,\quad f_{XY}=1\\
+dV_t&=Y_t\,dX_t+X_t\,dY_t+0+0+1\cdot dX_t\,dY_t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผลคูณเป็นเส้นตรงตามแต่ละแกน ความโค้งตามแกนเดียวจึงเป็นศูนย์ เหลือเพียงความโค้งไขว้ซึ่งเท่ากับ 1 ได้พจน์ dX dY ออกมาเองโดยไม่ต้องจำสูตรลัด</p>
@@ -212,11 +245,18 @@ dV_t&=Y_t\,dX_t+X_t\,dY_t+0+0+1\cdot dX_t\,dY_t\end{aligned}
   <h4>ขั้นที่ 10 — อัตราส่วนสองสินทรัพย์: หนึ่งส่วน Y เพิ่ม drift</h4>
   <p>relative performance หรืออัตราแลกเปลี่ยนคือ X หาร Y ใช้สูตรเดียวกัน ความชันและความโค้งของ X/Y มีดังนี้ แล้วเอา Z หารทั้งสมการ</p>
   <div class="math">\[
-\begin{aligned}Z=\frac XY&:\quad Z_X=\frac1Y,\quad Z_Y=-\frac{X}{Y^2},\quad Z_{XX}=0,\quad Z_{YY}=\frac{2X}{Y^3},\quad Z_{XY}=-\frac{1}{Y^2}\\
+\begin{aligned}
+&Z=\frac XY:\\
+&\quad Z_X=\frac1Y,\quad Z_Y=-\frac{X}{Y^2},\quad Z_{XX}=0\\
+&\quad Z_{YY}=\frac{2X}{Y^3},\quad Z_{XY}=-\frac{1}{Y^2}\\
 \frac{dZ_t}{Z_t}&=\frac{dX_t}{X_t}-\frac{dY_t}{Y_t}+\frac{(dY_t)^2}{Y_t^2}-\frac{dX_t\,dY_t}{X_tY_t}\\
-&=\big(\mu_X-\mu_Y+\sigma_Y^2-\rho\sigma_X\sigma_Y\big)dt+\sigma_X\,dW_t^X-\sigma_Y\,dW_t^Y\\[4pt]
-\mu_Z&=0.08-0.10+0.0625-0.030=+0.0125=1.25\%\\
-\sigma_Z^2&=0.0400+0.0625-0.060=0.0425,\qquad \sigma_Z=20.6\%\end{aligned}
+&=\big(\mu_X-\mu_Y+\sigma_Y^2-\rho\sigma_X\sigma_Y\big)dt\\
+&\quad+\sigma_X\,dW_t^X-\sigma_Y\,dW_t^Y\\[4pt]
+\mu_Z&=0.08-0.10+0.0625-0.030\\
+&=+0.0125=1.25\%\\
+\sigma_Z^2&=0.0400+0.0625-0.060=0.0425\\
+\sigma_Z&=20.6\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หนึ่งส่วน Y โค้งหงาย ตาม Jensen's inequality จึงเพิ่ม σ_Y² เข้าไปใน drift ส่วน correlation ดึงลง calculus ปกติทำนายว่าอัตราส่วนโต −2% แต่คำตอบจริงคือ +1.25% เพราะความโค้งเพิ่ม 6.25 จุด</p>

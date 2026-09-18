@@ -81,9 +81,12 @@
   <h4>ขั้นที่ 1 — สี่ก้าวด้วยมือ: ตั้งสถานะก่อน ราคาค่อยขยับ</h4>
   <p>ใช้เส้นทางเดียวกับหัวข้อ 12.2: W เดิน 0, 0.5, 0, 0.5, 1.0 และถือสถานะเท่ากับ W ณ ต้นแต่ละช่วง ตัวอย่างหยาบนี้ใช้สาธิตการคิด ไม่ได้อ้างว่าเป็นเส้นทางสุ่มทั่วไป</p>
   <div class="math">\[
-\begin{aligned}H_{t_i}=W_{t_i}&:\ 0,\ 0.5,\ 0,\ 0.5\\
-\Delta W&:\ +0.5,\ -0.5,\ +0.5,\ +0.5\\
-I_1&=0(0.5)+0.5(-0.5)+0(0.5)+0.5(0.5)=0\end{aligned}
+\begin{aligned}
+&H_{t_i}=W_{t_i}:\ 0,\ 0.5,\ 0,\ 0.5\\
+&\Delta W:\ +0.5,\ -0.5,\ +0.5,\ +0.5\\
+I_1&=0(0.5)+0.5(-0.5)+0(0.5)+0.5(0.5)\\
+&=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวคูณคือระดับที่รู้แล้วก่อนช่วงเริ่ม ตัวเลขในวงเล็บคือการขยับที่ตามมา นี่คือสิ่งที่ทำได้จริงในตลาด ได้กำไรสะสมศูนย์</p>
@@ -105,9 +108,14 @@ R_1=0.5(0.5)+0(-0.5)+0.5(0.5)+1.0(0.5)=1.0
   <h4>ขั้นที่ 3 — กำไรปลอมเท่ากับผลรวมกำลังสองพอดี</h4>
   <p>ลบสองผลรวมกันแบบทั่วไป เพื่อดูว่าส่วนต่างขึ้นกับอะไร ส่วนต่างที่คำนวณได้แปลว่าตรวจได้ว่า backtest รั่วไปเท่าไร</p>
   <div class="math">\[
-\begin{aligned}I_T&=\sum_i W_{t_i}\,\Delta W_i,\qquad R_T=\sum_i W_{t_{i+1}}\,\Delta W_i\\
-R_T-I_T&=\sum_i\big(W_{t_{i+1}}-W_{t_i}\big)\Delta W_i=\sum_i(\Delta W_i)^{2}=Q_n\ \to\ T\\[4pt]
-\text{four steps}&:\ 1.0-0=1.0=4(0.5)^2\end{aligned}
+\begin{aligned}
+I_T&=\sum_i W_{t_i}\,\Delta W_i\\
+R_T&=\sum_i W_{t_{i+1}}\,\Delta W_i\\
+&R_T-I_T\\
+&=\sum_i\big(W_{t_{i+1}}-W_{t_i}\big)\Delta W_i\\
+&=\sum_i(\Delta W_i)^{2}=Q_n\ \to\ T\\[4pt]
+&\text{four steps}:\ 1.0-0=1.0=4(0.5)^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ระดับปลายช่วงลบระดับต้นช่วงก็คือการขยับนั่นเอง ส่วนต่างจึงเป็นผลรวมกำลังสอง ซึ่งไม่หายเมื่อซอยถี่ แต่ไปหาเวลาทั้งหมด ในวิชา calculus ปกติสองวิธีนี้ให้คำตอบเดียวกัน แต่กับเส้นสุ่มต่างกันหนึ่งปีต่อปี</p>
@@ -129,10 +137,15 @@ I_T=\int_0^T H_t\,dW_t=\lim_{\max_i\Delta t_i\to0}\ \sum_{i=0}^{n-1}H_{t_i}\big(
   <h4>ขั้นที่ 5 — คำตอบแบบปิดจาก Itô's lemma</h4>
   <p>ใช้กฎของหัวข้อ 12.2 กับ f = x² บน W ซึ่งมี drift ศูนย์และขนาดส่วนสุ่มหนึ่ง แล้วรวมทั้งสองข้าง</p>
   <div class="math">\[
-\begin{aligned}f=x^{2}&:\quad f_x=2x,\qquad f_{xx}=2,\qquad a=0,\qquad b=1\\
-d(W_t^{2})&=\big(0+0+\tfrac12(1)^{2}(2)\big)dt+2W_t\,dW_t=dt+2W_t\,dW_t\\
-W_T^{2}-0&=T+2\int_0^{T}W_t\,dW_t\\
-\int_0^{T}W_t\,dW_t&=\tfrac12\big(W_T^{2}-T\big)\end{aligned}
+\begin{aligned}
+&f=x^{2}:\\
+&\quad f_x=2x,\qquad f_{xx}=2,\qquad a=0,\qquad b=1\\
+&d(W_t^{2})\\
+&=\big(0+0+\tfrac12(1)^{2}(2)\big)dt+2W_t\,dW_t\\
+&=dt+2W_t\,dW_t\\
+&W_T^{2}-0=T+2\int_0^{T}W_t\,dW_t\\
+&\int_0^{T}W_t\,dW_t=\tfrac12\big(W_T^{2}-T\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พจน์ dt คือพจน์ความโค้ง ถ้าเป็นเส้นเรียบ คำตอบจะเป็นครึ่งหนึ่งของ W² เฉย ๆ ตรวจกับสี่ก้าว: ครึ่งหนึ่งของ 1 − 1 เท่ากับ 0 ตรงกับขั้นที่ 1 ส่วนผลรวมปลายช่วงให้ครึ่งหนึ่งของ W² + T คือ 1.0 ตรงกับขั้นที่ 2</p>
@@ -143,9 +156,15 @@ W_T^{2}-0&=T+2\int_0^{T}W_t\,dW_t\\
   <h4>ขั้นที่ 6 — ทำไมกำไรเฉลี่ยเป็นศูนย์: ถือก่อน ขยับทีหลัง</h4>
   <p>ดูทีละช่วง ขนาดสถานะรู้แล้วที่ต้นช่วง จึงออกมานอกค่าเฉลี่ยได้ ส่วนการขยับที่ตามมาเฉลี่ยศูนย์ไม่ว่าอดีตเป็นอย่างไร</p>
   <div class="math">\[
-\begin{aligned}\mathbb E\big[H_{t_i}\,\Delta W_i\big]&=\mathbb E\big[\mathbb E_{t_i}[H_{t_i}\,\Delta W_i]\big]=\mathbb E\big[H_{t_i}\,\mathbb E_{t_i}[\Delta W_i]\big]=\mathbb E[H_{t_i}\cdot0]=0\\
+\begin{aligned}
+&\mathbb E\big[H_{t_i}\,\Delta W_i\big]\\
+&=\mathbb E\big[\mathbb E_{t_i}[H_{t_i}\,\Delta W_i]\big]\\
+&=\mathbb E\big[H_{t_i}\,\mathbb E_{t_i}[\Delta W_i]\big]=\mathbb E[H_{t_i}\cdot0]=0\\
 \mathbb E[I_T]&=\sum_i0=0\\[4pt]
-\text{right point}&:\ \mathbb E\big[W_{t_{i+1}}\Delta W_i\big]=\mathbb E\big[(W_{t_i}+\Delta W_i)\Delta W_i\big]=0+\Delta t_i\end{aligned}
+&\text{right point}:\\
+&\quad\mathbb E\big[W_{t_{i+1}}\Delta W_i\big]=\mathbb E\big[(W_{t_i}+\Delta W_i)\Delta W_i\big]\\
+&\quad=0+\Delta t_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กฎเฉลี่ยสองชั้นของหัวข้อ 9.1 แยกค่าเฉลี่ยเป็นมุมมอง ณ ต้นช่วง ถ้าอ่านที่ปลายช่วง ขนาดสถานะมีการขยับของช่วงนั้นปนอยู่ จึงได้ Δt เพิ่มมาทุกช่วง รวมกันเป็น T</p>
@@ -159,11 +178,14 @@ W_T^{2}-0&=T+2\int_0^{T}W_t\,dW_t\\
 \begin{aligned}
 I_n^2&=\sum_{i}H_{t_i}^2(\Delta W_i)^2\\
 &\quad+2\sum_{i\lt j}H_{t_i}H_{t_j}\,\Delta W_i\,\Delta W_j\\
-\mathbb E[H_{t_i}H_{t_j}\Delta W_i\Delta W_j]&=\mathbb E\big[H_{t_i}H_{t_j}\Delta W_i\,\mathbb E_{t_j}[\Delta W_j]\big]\\
+&\mathbb E[H_{t_i}H_{t_j}\Delta W_i\Delta W_j]\\
+&=\mathbb E\big[H_{t_i}H_{t_j}\Delta W_i\,\mathbb E_{t_j}[\Delta W_j]\big]\\
 &=0\\
-\mathbb E[H_{t_i}^2(\Delta W_i)^2]&=\mathbb E\big[H_{t_i}^2\,\mathbb E_{t_i}[(\Delta W_i)^2]\big]\\
+&\mathbb E[H_{t_i}^2(\Delta W_i)^2]\\
+&=\mathbb E\big[H_{t_i}^2\,\mathbb E_{t_i}[(\Delta W_i)^2]\big]\\
 &=\mathbb E[H_{t_i}^2]\,\Delta t_i\\
-\mathbb E[I_n^2]&=\sum_{i}\mathbb E[H_{t_i}^2]\,\Delta t_i\ \to\ \int_0^T\mathbb E[H_t^2]\,dt
+\mathbb E[I_n^2]&=\sum_{i}\mathbb E[H_{t_i}^2]\,\Delta t_i\\
+&\to\ \int_0^T\mathbb E[H_t^2]\,dt
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -175,8 +197,13 @@ I_n^2&=\sum_{i}H_{t_i}^2(\Delta W_i)^2\\
   <h4>ขั้นที่ 8 — แทน H = W: ความเหวี่ยง 0.7071 ต่อปี และตรวจสองทาง</h4>
   <p>ค่าเฉลี่ยของ W² ณ เวลา t คือ variance ของมัน เท่ากับ t แทนในสูตรของขั้นที่ 7 แล้วตรวจกับคำตอบแบบปิดของขั้นที่ 5</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[I_T^2]&=\int_0^T t\,dt=\frac{T^2}{2}\qquad T=1:\ 0.5,\qquad \operatorname{SD}=\sqrt{0.5}=0.7071\\
-\text{check}:\ \operatorname{Var}\!\big(\tfrac12(W_1^2-1)\big)&=\tfrac14\operatorname{Var}(W_1^2)=\tfrac14\big(\mathbb E[W_1^4]-1\big)=\tfrac14(3-1)=0.5\end{aligned}
+\begin{aligned}
+\mathbb E[I_T^2]&=\int_0^T t\,dt=\frac{T^2}{2}\\
+&T=1:\ 0.5,\qquad \operatorname{SD}=\sqrt{0.5}=0.7071\\
+&\text{check}:\ \operatorname{Var}\!\big(\tfrac12(W_1^2-1)\big)\\
+&=\tfrac14\operatorname{Var}(W_1^2)=\tfrac14\big(\mathbb E[W_1^4]-1\big)\\
+&=\tfrac14(3-1)=0.5
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของกำลังสี่ของก้อนมาตรฐานคือ 3 จากหัวข้อ 10.5 สองทางได้ 0.5 ตรงกัน กำไรสะสมของกลยุทธ์นี้เฉลี่ยศูนย์ แต่เหวี่ยง 0.7071 ต่อปี และขาดทุนได้มากสุดแค่ 0.5 เพราะ W² ติดลบไม่ได้</p>
@@ -217,9 +244,17 @@ R-I&=Q\ \ \text{on every path}\end{aligned}
   <h4>ขั้นที่ 10 — เปลี่ยนตัวคูณเป็นเวลาล้วน: ส่วนต่างหายไป</h4>
   <p>ใช้การขยับชุดเดิม แต่ให้ขนาดสถานะเท่ากับเวลา ณ จุดนั้นแทนระดับของ W ดูว่าส่วนต่างระหว่างต้นช่วงกับปลายช่วงยังอยู่ไหม</p>
   <div class="math">\[
-\begin{aligned}\text{left}:\ \sum_i t_{i}\,\Delta W_i&=0(0.5)+0.25(-0.5)+0.5(0.5)+0.75(0.5)=0.5\\
-\text{right}:\ \sum_i t_{i+1}\,\Delta W_i&=0.25(0.5)+0.5(-0.5)+0.75(0.5)+1(0.5)=0.75\\
-R_T-I_T&=\sum_i\big(t_{i+1}-t_i\big)\Delta W_i=\Delta t\sum_i\Delta W_i=\Delta t\,W_T=0.25(1.0)=0.25\to0\end{aligned}
+\begin{aligned}
+&\text{left}:\ \sum_i t_{i}\,\Delta W_i\\
+&=0(0.5)+0.25(-0.5)+0.5(0.5)+0.75(0.5)\\
+&=0.5\\
+&\text{right}:\ \sum_i t_{i+1}\,\Delta W_i\\
+&=0.25(0.5)+0.5(-0.5)+0.75(0.5)+1(0.5)\\
+&=0.75\\
+&R_T-I_T=\sum_i\big(t_{i+1}-t_i\big)\Delta W_i\\
+&=\Delta t\sum_i\Delta W_i=\Delta t\,W_T\\
+&=0.25(1.0)=0.25\to0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ส่วนต่างของเวลาเท่ากับ Δt ทุกช่วง จึงดึงออกได้ เหลือผลรวมของการขยับ ซึ่งคือ W ปลายทาง ส่วนต่างเป็น Δt คูณ W จึงหายเมื่อซอยถี่ ต่างจากกรณี H = W ที่ส่วนต่างเป็นผลรวมกำลังสองและไม่หาย</p>
@@ -231,10 +266,14 @@ R_T-I_T&=\sum_i\big(t_{i+1}-t_i\big)\Delta W_i=\Delta t\sum_i\Delta W_i=\Delta t
   <h4>ขั้นที่ 11 — ความเสี่ยงของกรณีเวลาล้วน และกับดักของการซอยหยาบ</h4>
   <p>ค่าเฉลี่ยเป็นศูนย์ตามขั้นที่ 6 ความเสี่ยงใช้สูตรของขั้นที่ 7 แล้วเทียบกับการคำนวณแบบซอยหยาบ</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}\Bigl(\int_{0}^{1}t\,dW_t\Bigr)&=\int_{0}^{1}t^{2}\,dt=\frac{1}{3}=0.3333\\
-\text{4 steps}:\ \sum_i t_i^{2}\,\Delta t&=\left(0+\tfrac{1}{16}+\tfrac14+\tfrac{9}{16}\right)\tfrac14=\tfrac{7}{32}=0.21875\\
-\frac{0.21875}{0.3333}&=0.656\\
-8\ \text{steps}&:\ 0.2734,\qquad 64\ \text{steps}:\ 0.3256\end{aligned}
+\begin{aligned}
+&\operatorname{Var}\Bigl(\int_{0}^{1}t\,dW_t\Bigr)\\
+&=\int_{0}^{1}t^{2}\,dt=\frac{1}{3}=0.3333\\
+&\text{4 steps}:\ \sum_i t_i^{2}\,\Delta t\\
+&=\left(0+\tfrac{1}{16}+\tfrac14+\tfrac{9}{16}\right)\tfrac14=\tfrac{7}{32}=0.21875\\
+&\frac{0.21875}{0.3333}=0.656\\
+&8\ \text{steps}:\ 0.2734,\qquad 64\ \text{steps}:\ 0.3256
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ซอยสี่ช่วงได้แค่สองในสามของค่าจริง เพราะใช้จุดซ้ายบน function ที่เพิ่มขึ้น ได้พื้นที่ต่ำกว่าจริงเสมอ ซอยถี่ขึ้นตัวเลขขยับเข้าหาหนึ่งในสาม แบบจำลองที่ซอยหยาบจึงรายงานความเสี่ยงต่ำกว่าจริงอย่างเป็นระบบ ตรวจพบได้และแก้ได้</p>
@@ -245,9 +284,15 @@ R_T-I_T&=\sum_i\big(t_{i+1}-t_i\big)\Delta W_i=\Delta t\sum_i\Delta W_i=\Delta t
   <h4>ขั้นที่ 12 — งานจริง: กำไรสะสมของการ hedge คือ Itô integral</h4>
   <p>desk ที่ขาย option แล้วถือหุ้นไว้หักล้าง ต้องตัดสินจำนวนหุ้นก่อนราคาวันนั้นขยับ ลองสี่วันด้วยจำนวนหุ้นที่ตั้งตอนเช้า</p>
   <div class="math">\[
-\begin{aligned}V_T&=V_0+\int_0^T\Delta_t\,dS_t\\
-\Delta&:\ 0.50,\ 0.60,\ 0.40,\ 0.55\qquad \Delta S:\ +1.0,\ -2.0,\ +1.5,\ +0.5\\
-\sum\Delta_{t_i}\,\Delta S_i&=0.50(1.0)+0.60(-2.0)+0.40(1.5)+0.55(0.5)=0.5-1.2+0.6+0.275=0.175\end{aligned}
+\begin{aligned}
+V_T&=V_0+\int_0^T\Delta_t\,dS_t\\
+\Delta&:\ 0.50,\ 0.60,\ 0.40,\ 0.55\\
+&\Delta S:\ +1.0,\ -2.0,\ +1.5,\ +0.5\\
+&\sum\Delta_{t_i}\,\Delta S_i\\
+&=0.50(1.0)+0.60(-2.0)\\
+&\quad+0.40(1.5)+0.55(0.5)\\
+&=0.5-1.2+0.6+0.275=0.175
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สูตรตั้งราคา derivative ทุกตัวเขียนได้ในรูปนี้ มูลค่าปลายทางเท่ากับราคาวันนี้ บวกกำไรสะสมของการถือหุ้นตามแผน จำนวนหุ้นตั้งตอนเช้าก่อนเห็นราคา นี่คือ Itô integral ที่ซอยเป็นรายวัน บทที่ 13 ใช้รูปนี้พิสูจน์สูตร Black–Scholes</p>

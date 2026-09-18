@@ -91,13 +91,16 @@
   <div class="math">\[
 \begin{aligned}
 S_2&:\ 121,\ 99,\ 81\\
-g=S_2^2/100&:\ 146.41,\ 98.01,\ 65.61\\[4pt]
-\text{forward}&=\tfrac14(146.41)+\tfrac12(98.01)+\tfrac14(65.61)\\
+&g=S_2^2/100:\\
+&\quad 146.41,\ 98.01,\ 65.61\\[4pt]
+&\text{forward}\\
+&=\tfrac14(146.41)+\tfrac12(98.01)+\tfrac14(65.61)\\
 &=36.6025+49.005+16.4025=102.01\\[4pt]
-S_1=110&\to\tfrac12(146.41+98.01)=122.21\\
-S_1=90&\to\tfrac12(98.01+65.61)=81.81\\
-\text{root}&\to\tfrac12(122.21+81.81)=102.01\\[4pt]
-\text{plug-in}&:\ (\mathbb E[S_2])^2/100=100^2/100=100\lt102.01
+&S_1=110\to\tfrac12(146.41+98.01)=122.21\\
+&S_1=90\to\tfrac12(98.01+65.61)=81.81\\
+&\text{root}\to\tfrac12(122.21+81.81)=102.01\\[4pt]
+&\text{plug-in}:\\
+&\quad(\mathbb E[S_2])^2/100=100^2/100=100\lt102.01
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -131,14 +134,23 @@ f(t,S)=e^{-r(T-t)}\,\mathbb E^Q\big[g(S_T)\mid S_t=S\big]
   <h4>ขั้นที่ 4 — พิสูจน์สะพาน: มูลค่าคิดลดเป็น martingale แล้วใช้ Itô</h4>
   <p>คูณมูลค่าด้วยตัวคิดลดให้ได้ของที่เป็น martingale ตามกฎเฉลี่ยสองชั้น แล้วใช้ Itô's lemma หาการเปลี่ยนของมัน ส่วนที่คาดได้ต้องเป็นศูนย์</p>
   <div class="math">\[
-\begin{aligned}M_u&=e^{-ru}f(u,S_u)=e^{-rT}\,\mathbb E^Q_u\big[g(S_T)\big]\\
-\mathbb E^Q_{u_1}\big[M_{u_2}\big]&=\mathbb E^Q_{u_1}\Big[\mathbb E^Q_{u_2}\big[e^{-rT}g(S_T)\big]\Big]=M_{u_1}\qquad(u_1\le u_2)\\
-dM_u&=-r e^{-ru}f\,du+e^{-ru}\Big[f_t\,du+f_S\big(rS_u\,du+\sigma S_u\,dW_u^Q\big)+\tfrac12\sigma^2S_u^2f_{SS}\,du\Big]\\
-&=e^{-ru}\Big[f_t+rS_u f_S+\tfrac12\sigma^2S_u^2f_{SS}-rf\Big]du+e^{-ru}\sigma S_u f_S\,dW_u^Q\\
-\mathbb E^Q_u\big[dM_u\big]&=0\ \Rightarrow\ f_t+rSf_S+\tfrac12\sigma^2S^2f_{SS}-rf=0\end{aligned}
+\begin{aligned}
+M_u&=e^{-ru}f(u,S_u)\\
+&=e^{-rT}\,\mathbb E^Q_u\big[g(S_T)\big]\\
+&\mathbb E^Q_{u_1}\big[M_{u_2}\big]\\
+&=\mathbb E^Q_{u_1}\Big[\mathbb E^Q_{u_2}\big[e^{-rT}g(S_T)\big]\Big]=M_{u_1}\\
+&\quad(u_1\le u_2)\\
+dM_u&=-r e^{-ru}f\,du\\
+&\quad+e^{-ru}\Big[f_t\,du+f_S\big(rS_u\,du+\sigma S_u\,dW_u^Q\big)\\
+&\qquad+\tfrac12\sigma^2S_u^2f_{SS}\,du\Big]\\
+&=e^{-ru}\Big[f_t+rS_u f_S+\tfrac12\sigma^2S_u^2f_{SS}-rf\Big]du\\
+&\quad+e^{-ru}\sigma S_u f_S\,dW_u^Q\\
+&\mathbb E^Q_u\big[dM_u\big]=0\\
+&\Rightarrow\ f_t+rSf_S+\tfrac12\sigma^2S^2f_{SS}-rf=0
+\end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดสองคือกฎเฉลี่ยสองชั้น ค่าเฉลี่ยซ้อนค่าเฉลี่ยยุบเหลือค่าเฉลี่ย ณ เวลาแรก ตัวคิดลดมีแต่เวลา ไม่มีแรงสุ่ม จึงไม่มีพจน์ไขว้กับ df</p>
+    <p>บรรทัดที่สามถึงห้าคือกฎเฉลี่ยสองชั้น ค่าเฉลี่ยซ้อนค่าเฉลี่ยยุบเหลือค่าเฉลี่ย ณ เวลาแรก ตัวคิดลดมีแต่เวลา ไม่มีแรงสุ่ม จึงไม่มีพจน์ไขว้กับ df</p>
     <p>ก้อนที่คูณแรงสุ่มเฉลี่ยศูนย์เสมอ ก้อนที่คูณ du จึงต้องเป็นศูนย์ทุกเวลาและทุกราคา ไม่อย่างนั้นมูลค่าคิดลดจะเพิ่มหรือลดโดยคาดได้ ซึ่งขัดกับ martingale</p>
   </div>
 </section>
@@ -164,10 +176,16 @@ f_t+rSf_S+\frac12\sigma^2S^2f_{SS}-rf=0,\qquad f(T,S)=g(S)
   <h4>ขั้นที่ 6 — ด้านค่าเฉลี่ย: ค่าเฉลี่ยของราคากำลังสองใต้ Q</h4>
   <p>ใช้คำตอบของ Geometric Brownian Motion (GBM) จากหัวข้อ 12.2 ใต้ Q ที่ drift เป็น r หากำลังสองของมัน แล้วใช้สูตร $\mathbb E[e^{cZ}]=e^{c^2/2}$ ของหัวข้อ 12.2</p>
   <div class="math">\[
-\begin{aligned}S_T&=S\,e^{(r-\frac12\sigma^{2})(T-t)+\sigma\sqrt{T-t}\,Z}\\
+\begin{aligned}
+S_T&=S\,e^{(r-\frac12\sigma^{2})(T-t)+\sigma\sqrt{T-t}\,Z}\\
 S_T^{2}&=S^{2}e^{(2r-\sigma^{2})(T-t)+2\sigma\sqrt{T-t}\,Z}\\
-\mathbb E\big[e^{cZ}\big]&=e^{c^{2}/2},\qquad c=2\sigma\sqrt{T-t},\qquad \frac{c^{2}}{2}=2\sigma^{2}(T-t)\\
-\mathbb E^Q\big[S_T^{2}\mid S_t=S\big]&=S^{2}e^{(2r-\sigma^{2})(T-t)}e^{2\sigma^{2}(T-t)}=S^{2}e^{(2r+\sigma^{2})(T-t)}\end{aligned}
+\mathbb E\big[e^{cZ}\big]&=e^{c^{2}/2}\\
+c&=2\sigma\sqrt{T-t}\\
+\frac{c^{2}}{2}&=2\sigma^{2}(T-t)\\
+&\mathbb E^Q\big[S_T^{2}\mid S_t=S\big]\\
+&=S^{2}e^{(2r-\sigma^{2})(T-t)}e^{2\sigma^{2}(T-t)}\\
+&=S^{2}e^{(2r+\sigma^{2})(T-t)}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>หากำลังสองแล้วเลขชี้กำลังคูณสองทั้งก้อน ตัวคูณของก้อนสุ่มใหญ่ขึ้นสองเท่า กำลังสองของมันจึงใหญ่สี่เท่า หารสองเหลือสองเท่า −σ² กับ +2σ² รวมเป็น +σ² ความเหวี่ยงโผล่มาเป็นบวก เพราะของที่เป็นกำลังสองได้ประโยชน์จากความเหวี่ยง</p>
@@ -178,8 +196,12 @@ S_T^{2}&=S^{2}e^{(2r-\sigma^{2})(T-t)+2\sigma\sqrt{T-t}\,Z}\\
   <h4>ขั้นที่ 7 — คิดลดเป็นมูลค่าแบบปิด</h4>
   <p>ดึงค่าคงที่ K ออกนอกค่าเฉลี่ย แทนผลของขั้นที่ 6 แล้วคิดลดตามนิยามของขั้นที่ 3</p>
   <div class="math">\[
-\begin{aligned}f(t,S)&=e^{-r(T-t)}\cdot\frac{S^{2}}{K}e^{(2r+\sigma^{2})(T-t)}=\frac{S^{2}}{K}e^{(r+\sigma^{2})(T-t)}\\
-f(0,200)&=\frac{200^2}{200}\,e^{(0.04+0.09)(1)}=200(1.138828)=227.77\ \text{USD}\end{aligned}
+\begin{aligned}
+f(t,S)&=e^{-r(T-t)}\cdot\frac{S^{2}}{K}e^{(2r+\sigma^{2})(T-t)}\\
+&=\frac{S^{2}}{K}e^{(r+\sigma^{2})(T-t)}\\
+f(0,200)&=\frac{200^2}{200}\,e^{(0.04+0.09)(1)}\\
+&=200(1.138828)=227.77\ \text{USD}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวคิดลดหัก r ออกไปหนึ่งตัว เหลือ r บวก σ² นี่คือคำตอบจากทางเดินหน้า ขั้นถัดไปเดินอีกทางจากสมการ การได้คำตอบเดียวกันจากสองทางที่ไม่เกี่ยวกัน คือวิธีตรวจที่แข็งแรงที่สุดที่เรามี</p>
@@ -227,8 +249,12 @@ f_{SS}&=\frac{2}{K}e^{(r+\sigma^{2})(T-t)}=\frac{2f}{S^{2}}\end{aligned}
   <h4>ขั้นที่ 11 — ทางลัดที่ผิด: ใส่ราคาเฉลี่ยเข้าสูตร</h4>
   <p>เอาค่าเฉลี่ยของราคาใต้ Q ไปหากำลังสองก่อน แล้วคิดลด เทียบกับคำตอบที่ถูก</p>
   <div class="math">\[
-\begin{aligned}e^{-0.04}\,\frac{(\mathbb E^Q[S_1])^2}{200}&=e^{-0.04}\,\frac{(200e^{0.04})^2}{200}=200\,e^{0.04}=208.16\ \text{USD}\\
-\frac{227.77}{208.16}-1&=e^{0.09}-1=9.42\%\end{aligned}
+\begin{aligned}
+&e^{-0.04}\,\frac{(\mathbb E^Q[S_1])^2}{200}\\
+&=e^{-0.04}\,\frac{(200e^{0.04})^2}{200}\\
+&=200\,e^{0.04}=208.16\ \text{USD}\\
+&\frac{227.77}{208.16}-1=e^{0.09}-1=9.42\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทางลัดตัดความเหวี่ยงของราคาปลายทางทิ้ง จึงต่ำไป \$19.60 หรือ 9.42% ซึ่งเท่ากับ $e^{\sigma^2}-1$ พอดี เป็นเรื่องเดียวกับ 102.01 กับ 100 ในต้นไม้ของขั้นที่ 1</p>
