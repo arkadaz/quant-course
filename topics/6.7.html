@@ -164,10 +164,15 @@ E[r_3]\end{bmatrix}
   <h4>ขั้นที่ 5 — ตรวจสอบคุณสมบัติความสมมาตร (symmetry check)</h4>
   <p>ตารางนี้ต้องสมมาตรเสมอ และเหตุผลสั้นกว่าที่คิด คือการคูณสลับที่ได้ นี่เป็นการตรวจที่เร็วที่สุดว่าคำนวณถูก และเป็นสมบัติที่หัวข้อ 4.6 ต้องการ ก่อนจะพูดเรื่อง eigenvalue ได้เลย</p>
   <div class="math">\[
-\begin{aligned}\Sigma_{ij}&=\operatorname{Cov}(r_i,r_j)=\mathbb E\big[(r_i-\mu_i)(r_j-\mu_j)\big]\\
-(r_i-\mu_i)(r_j-\mu_j)&=(r_j-\mu_j)(r_i-\mu_i)\\
-\Sigma_{ij}&=\mathbb E\big[(r_j-\mu_j)(r_i-\mu_i)\big]=\Sigma_{ji}\\
-\Longrightarrow\;\Sigma&=\Sigma^{\mathsf T}\end{aligned}
+\begin{aligned}
+\Sigma_{ij}&=\operatorname{Cov}(r_i,r_j)\\
+&=\mathbb E\big[(r_i-\mu_i)(r_j-\mu_j)\big]\\
+&(r_i-\mu_i)(r_j-\mu_j)\\
+&=(r_j-\mu_j)(r_i-\mu_i)\\
+\Sigma_{ij}&=\mathbb E\big[(r_j-\mu_j)(r_i-\mu_i)\big]\\
+&=\Sigma_{ji}\\
+&\Longrightarrow\;\Sigma=\Sigma^{\mathsf T}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตารางนี้ต้องสมมาตรเสมอ และเหตุผลสั้นกว่าที่คิด อยู่บรรทัดสอง: การคูณเลขสองตัวสลับที่กันได้ ไม่ว่าสองตัวนั้นจะเป็นอะไร ช่อง $ij$ กับช่อง $ji$ จึงคำนวณจากของชิ้นเดียวกัน ย่อมเท่ากันเสมอ</p>
@@ -180,15 +185,19 @@ E[r_3]\end{bmatrix}
   <p>matrix ใด ๆ ที่จะเป็น covariance matrix ได้ จะต้องมีคุณสมบัติ positive semi-definite เสมอ เพราะค่า $x^{\mathsf T}\Sigma x$ คือ variance ของพอร์ตที่มีสัดส่วนการลงทุน $x$ หากค่านี้ติดลบ จะทำให้ standard deviation ของพอร์ตกลายเป็นจำนวนจินตภาพซึ่งเป็นไปไม่ได้ในความเป็นจริง</p>
   <div class="math">\[
 \begin{aligned}
-x^{\mathsf T}\Sigma x&=x^{\mathsf T}\,\mathbb E\big[(r-\mu)(r-\mu)^{\mathsf T}\big]x\\[4pt]
+&x^{\mathsf T}\Sigma x\\
+&=x^{\mathsf T}\,\mathbb E\big[(r-\mu)(r-\mu)^{\mathsf T}\big]x\\[4pt]
 &=\mathbb E\big[x^{\mathsf T}(r-\mu)(r-\mu)^{\mathsf T}x\big]\\[4pt]
 &=\mathbb E\Big[\big(x^{\mathsf T}(r-\mu)\big)\big(x^{\mathsf T}(r-\mu)\big)^{\mathsf T}\Big]\\[4pt]
 &=\mathbb E\Big[\big(x^{\mathsf T}(r-\mu)\big)^2\Big]\\[4pt]
-&=\operatorname{Var}(x^{\mathsf T}r)\ge 0\qquad\text{for any weights }x\\[4pt]
-x=\begin{bmatrix}0.5\\
-0.5\end{bmatrix}:&\quad x^{\mathsf T}\hat\Sigma x=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1&amp;1.5\\
+&=\operatorname{Var}(x^{\mathsf T}r)\ge 0\\
+&\quad\text{for any weights }x\\[4pt]
+&x=\begin{bmatrix}0.5\\
+0.5\end{bmatrix}:\\
+&x^{\mathsf T}\hat\Sigma x=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1&amp;1.5\\
 1.5&amp;3\end{bmatrix}\begin{bmatrix}0.5\\
-0.5\end{bmatrix}=1.75\;\mathrm{bp}^{2}\ge 0
+0.5\end{bmatrix}\\
+&=1.75\;\mathrm{bp}^{2}\ge 0
 \end{aligned}
 \]</div>
   <div class="reading">

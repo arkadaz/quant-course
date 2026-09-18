@@ -98,10 +98,14 @@
   <h4>ขั้นที่ 1 — จุดเริ่มต้นเดียวที่รับมาโดยไม่พิสูจน์: ค่าเฉลี่ยคือผลรวมถ่วงน้ำหนัก</h4>
   <p>ก่อนจะมีสูตรลัดสักข้อ ต้องมีจุดเริ่มต้นที่ทุกข้อใช้ร่วมกัน บรรทัดบนคือจุดนั้น และเป็นสิ่งเดียวในหัวข้อนี้ที่เรารับมาโดยไม่พิสูจน์ เพราะมันคือนิยามของคำว่าค่าเฉลี่ย ที่เหลือทั้งหมดข้างล่างจะถูกคำนวณออกมาจากบรรทัดนี้ ไม่มีสูตรไหนโผล่มาลอย ๆ</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[g(X,Y)]&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}\underbrace{g(x,y)}_{\text{what we average}}\;\underbrace{f_{X,Y}(x,y)}_{\text{weight}}\,dx\,dy\\[4pt]
+\begin{aligned}
+&\mathbb E[g(X,Y)]\\
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}\underbrace{g(x,y)}_{\text{what we average}}\\
+&\qquad\;\underbrace{f_{X,Y}(x,y)}_{\text{weight}}\,dx\,dy\\[4pt]
 g(x,y)=x+y\;&\Longrightarrow\;\mathbb E[X+Y]\\
 g(x,y)=xy\;&\Longrightarrow\;\mathbb E[XY]\\
-g(x,y)=x\,e^{y}\;&\Longrightarrow\;\mathbb E[Xe^{Y}]\end{aligned}
+g(x,y)=x\,e^{y}\;&\Longrightarrow\;\mathbb E[Xe^{Y}]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$f_{X,Y}(x,y)$ คือน้ำหนักของช่องที่ $X$ ออกมาราว ๆ $x$ และ $Y$ ออกมาราว ๆ $y$ ส่วนก้อนหน้าคือสิ่งที่เราอยากเฉลี่ย เอาสองอย่างคูณกันแล้วรวมให้ครบทุกช่อง</p>
@@ -114,11 +118,17 @@ g(x,y)=x\,e^{y}\;&\Longrightarrow\;\mathbb E[Xe^{Y}]\end{aligned}
   <h4>ขั้นที่ 2 — ค่าเฉลี่ยของผลรวม: ทำไมบวกกันได้โดยไม่ต้องขออนุญาตใคร</h4>
   <p>ข้อแรกที่ต้องพิสูจน์คือข้อที่คนใช้บ่อยจนลืมถามว่าทำไมมันจริง สังเกตตลอดห้าบรรทัดว่า ไม่มีที่ไหนต้องสมมติว่าสองตัวไม่เกี่ยวกัน นั่นคือเหตุผลที่กฎนี้ยังใช้ได้แม้ในวันที่ทุกอย่างล้มพร้อมกัน</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[X+Y]&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}(x+y)\,f_{X,Y}(x,y)\,dx\,dy\\
-&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}x\,f_{X,Y}\,dx\,dy+\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}y\,f_{X,Y}\,dx\,dy\\
-&=\int_{-\infty}^{\infty}x\Big[\int_{-\infty}^{\infty}f_{X,Y}\,dy\Big]dx+\int_{-\infty}^{\infty}y\Big[\int_{-\infty}^{\infty}f_{X,Y}\,dx\Big]dy\\
-&=\int_{-\infty}^{\infty}x\,f_X(x)\,dx+\int_{-\infty}^{\infty}y\,f_Y(y)\,dy\\
-&=\mathbb E[X]+\mathbb E[Y]\end{aligned}
+\begin{aligned}
+&\mathbb E[X+Y]\\
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}(x+y)\,f_{X,Y}(x,y)\,dx\,dy\\
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}x\,f_{X,Y}\,dx\,dy\\
+&\quad+\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}y\,f_{X,Y}\,dx\,dy\\
+&=\int_{-\infty}^{\infty}x\Big[\int_{-\infty}^{\infty}f_{X,Y}\,dy\Big]dx\\
+&\quad+\int_{-\infty}^{\infty}y\Big[\int_{-\infty}^{\infty}f_{X,Y}\,dx\Big]dy\\
+&=\int_{-\infty}^{\infty}x\,f_X(x)\,dx\\
+&\quad+\int_{-\infty}^{\infty}y\,f_Y(y)\,dy\\
+&=\mathbb E[X]+\mathbb E[Y]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คำถามคือทำไมค่าเฉลี่ยของผลบวกถึงเท่ากับผลบวกของค่าเฉลี่ย โดยไม่ต้องขอเงื่อนไขอะไรเลย คำตอบอยู่ในโครงสร้างของ integral เอง</p>
@@ -132,10 +142,15 @@ g(x,y)=x\,e^{y}\;&\Longrightarrow\;\mathbb E[Xe^{Y}]\end{aligned}
   <h4>ขั้นที่ 3 — ขนาดการลงทุนดึงออกนอกค่าเฉลี่ยได้ เพราะมันไม่ได้สุ่ม</h4>
   <p>พอร์ตจริงไม่ได้ถือหนึ่งหน่วยเท่ากันทุกตัว จึงต้องมีตัวคูณขนาดอยู่ในสูตร ขั้นนี้บอกว่าตัวคูณผ่านเครื่องหมายค่าเฉลี่ยออกมาได้เฉย ๆ และจะกลายเป็นเลขยกกำลังสอง เมื่อไปโผล่ในฝั่งความเสี่ยง ซึ่งเป็นคนละเรื่องกันโดยสิ้นเชิง</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[aX+bY]&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}(ax+by)\,f_{X,Y}\,dx\,dy\\
-&=a\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}x\,f_{X,Y}\,dx\,dy+b\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}y\,f_{X,Y}\,dx\,dy\\
+\begin{aligned}
+&\mathbb E[aX+bY]\\
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}(ax+by)\,f_{X,Y}\,dx\,dy\\
+&=a\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}x\,f_{X,Y}\,dx\,dy\\
+&\quad+b\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}y\,f_{X,Y}\,dx\,dy\\
 &=a\,\mathbb E[X]+b\,\mathbb E[Y]\\[4pt]
-a=b=1\;&\Longrightarrow\;\mathbb E[X+Y]=\mathbb E[X]+\mathbb E[Y]\end{aligned}
+&a=b=1\\
+&\;\Longrightarrow\;\mathbb E[X+Y]=\mathbb E[X]+\mathbb E[Y]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$a$ กับ $b$ เป็นเลขที่เราเลือกเอง ไม่ได้ขึ้นกับ $x$ หรือ $y$ จึงเป็นตัวคูณคงที่ เมื่อเทียบกับ integral และดึงออกไปข้างนอกได้ตรง ๆ</p>
@@ -148,10 +163,16 @@ a=b=1\;&\Longrightarrow\;\mathbb E[X+Y]=\mathbb E[X]+\mathbb E[Y]\end{aligned}
   <h4>ขั้นที่ 4 — independence แปลว่าอะไรในภาษาของ density</h4>
   <p>จนถึงตรงนี้เรายังไม่ได้ใช้ independence เลย ขั้นนี้คือจุดที่มันเข้ามา และเข้ามาในรูปเดียวคือการแยก density ออกเป็นผลคูณ เขียนมันไว้ตรงนี้ให้ชัด จะได้ชี้ได้ทุกครั้งว่าสูตรข้างล่างพังตรงไหนเมื่อสมมติฐานนี้หลุด</p>
   <div class="math">\[
-\begin{aligned}f_{X,Y}(x,y)&=f_X(x)\,f_Y(y)\qquad\text{(independence)}\\[4pt]
-2\times2\ \text{table}:\quad P(\text{up},\text{up})&=P(\text{up})\,P(\text{up})=0.5\times0.5=0.25\\
-P(\text{up},\text{down})&=0.5\times0.5=0.25\\
-0.25+0.25+0.25+0.25&=1\end{aligned}
+\begin{aligned}
+f_{X,Y}(x,y)&=f_X(x)\,f_Y(y)\\
+&\quad\text{(independence)}\\[4pt]
+&2\times2\ \text{table}:\\
+&P(\text{up},\text{up})\\
+&=P(\text{up})\,P(\text{up})\\
+&=0.5\times0.5=0.25\\
+&P(\text{up},\text{down})=0.5\times0.5=0.25\\
+&0.25+0.25+0.25+0.25=1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือนิยามของ independence ที่หัวข้อ 6.4 ตั้งไว้ อ่านว่าน้ำหนักของช่องร่วม หาได้จากการคูณน้ำหนักของสองแกนเข้าด้วยกัน ไม่ต้องรู้ค่าของอีกตัวก่อน</p>
@@ -182,11 +203,18 @@ P(\text{up},\text{down})&=0.5\times0.5=0.25\\
   <h4>ขั้นที่ 6 — กฎเดียวกันใช้ได้กับของที่ผ่าน function แล้ว ไม่ใช่แค่ตัวเปล่า ๆ</h4>
   <p>กฎในขั้นที่ 5 ดูแคบเพราะเขียนไว้กับ $X$ กับ $Y$ เปล่า ๆ แต่ของที่ต้องเฉลี่ยจริงบนโต๊ะ มักผ่าน function มาก่อน เช่นราคาที่เป็น exponential ของ log return ขั้นนี้จึงยืดกฎเดิมให้ครอบของพวกนั้น โดยไม่ต้องเพิ่มสมมติฐานใหม่แม้แต่ข้อเดียว</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[g(X)h(Y)]&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}g(x)h(y)\,f_X(x)f_Y(y)\,dx\,dy\\
-&=\Big[\int_{-\infty}^{\infty}g(x)f_X(x)\,dx\Big]\Big[\int_{-\infty}^{\infty}h(y)f_Y(y)\,dy\Big]\\
+\begin{aligned}
+&\mathbb E[g(X)h(Y)]\\
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}g(x)h(y)\\
+&\qquad f_X(x)f_Y(y)\,dx\,dy\\
+&=\Big[\int_{-\infty}^{\infty}g(x)f_X(x)\,dx\Big]\\
+&\qquad\Big[\int_{-\infty}^{\infty}h(y)f_Y(y)\,dy\Big]\\
 &=\mathbb E[g(X)]\,\mathbb E[h(Y)]\\[4pt]
-g(x)=x,\;h(y)=e^{y}\;&\Longrightarrow\;\mathbb E[Xe^{Y}]=\mathbb E[X]\,\mathbb E[e^{Y}]\\
-g(x)=x^{2},\;h(y)=e^{2y}\;&\Longrightarrow\;\mathbb E[X^{2}e^{2Y}]=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]\end{aligned}
+&g(x)=x,\;h(y)=e^{y}\\
+&\;\Longrightarrow\;\mathbb E[Xe^{Y}]=\mathbb E[X]\,\mathbb E[e^{Y}]\\
+&g(x)=x^{2},\;h(y)=e^{2y}\\
+&\;\Longrightarrow\;\mathbb E[X^{2}e^{2Y}]=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สามบรรทัดบนเดินซ้ำขั้นที่ 5 ทุกตัวอักษร เปลี่ยนแค่ $x$ เป็น $g(x)$ และ $y$ เป็น $h(y)$ เหตุผลที่ยังใช้ได้คือ $g(x)$ ไม่มี $y$ และ $h(y)$ ไม่มี $x$ การจัดวงเล็บจึงเหมือนเดิมทุกขั้น</p>
@@ -215,9 +243,15 @@ Y&\sim\mathcal N(0,1),\qquad X,\,Y\ \text{independent}\\[4pt]
   <h4>ขั้นที่ 8 — คำนวณค่าเฉลี่ยของตัวคูณราคาเอง ไม่ยืมสูตรจากใคร</h4>
   <p>ตรงนี้คือจุดที่หนังสือหลายเล่มเขียนว่า ‘จากสูตร’ แล้วโยนเลขมาให้ เราไม่ทำแบบนั้น เพราะเลข $e^{0.5}$ ไม่ได้มาจากธรรมเนียม มันมาจากการเติมและลบเลข 1 หนึ่งครั้ง แล้วเหลือ density ที่พื้นที่รวมเป็น 1 ซึ่งตรวจได้เองทุกบรรทัด</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[e^{Y}]&=\int_{-\infty}^{\infty}e^{y}\,\frac{1}{\sqrt{2\pi}}e^{-y^{2}/2}\,dy=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{\,y-y^{2}/2}\,dy\\[4pt]
-y-\frac{y^{2}}{2}&=-\frac12\big(y^{2}-2y\big)=-\frac12\big[(y-1)^{2}-1\big]=-\frac{(y-1)^{2}}{2}+\frac12\\[4pt]
-\mathbb E[e^{Y}]&=e^{1/2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(y-1)^{2}/2}\,dy=e^{1/2}(1)=e^{0.5}\end{aligned}
+\begin{aligned}
+\mathbb E[e^{Y}]&=\int_{-\infty}^{\infty}e^{y}\,\frac{1}{\sqrt{2\pi}}e^{-y^{2}/2}\,dy\\
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{\,y-y^{2}/2}\,dy\\[4pt]
+y-\frac{y^{2}}{2}&=-\frac12\big(y^{2}-2y\big)\\
+&=-\frac12\big[(y-1)^{2}-1\big]\\
+&=-\frac{(y-1)^{2}}{2}+\frac12\\[4pt]
+\mathbb E[e^{Y}]&=e^{1/2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(y-1)^{2}/2}\,dy\\
+&=e^{1/2}(1)=e^{0.5}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกเลือก $h(y)=e^{y}$ ในนิยามขั้นที่ 1 แล้วรวมฐาน $e$ สองก้อนเข้าด้วยกัน ตามกฎที่ว่าฐานเดียวกันคูณกันให้เอาเลขชี้กำลังมาบวก</p>
@@ -265,10 +299,19 @@ P_0&=100\ \mathrm{USD/share}\\
   <h4>ขั้นที่ 11 — เปิดกำลังสองของผลรวม: พจน์ไขว้คือของที่สูตรลัดทิ้งไป</h4>
   <p>สูตร ‘ความเสี่ยงบวกกันได้’ ถูกท่องกันจนเหมือนเป็นกฎธรรมชาติ ทั้งที่มันเป็นแค่กรณีที่พจน์ไขว้กลายเป็นศูนย์ เปิดกำลังสองดูครั้งเดียวก็เห็นว่าอะไรถูกทิ้ง และเห็นว่ามันไม่ยอมหายไปเมื่อสองขารู้จักกัน</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(X+Y)&=\mathbb E\Big[\big((X-\mu_X)+(Y-\mu_Y)\big)^{2}\Big]\\
-&=\underbrace{\mathbb E[(X-\mu_X)^{2}]}_{\operatorname{Var}(X)}+\underbrace{\mathbb E[(Y-\mu_Y)^{2}]}_{\operatorname{Var}(Y)}+2\underbrace{\mathbb E[(X-\mu_X)(Y-\mu_Y)]}_{\operatorname{Cov}(X,Y)}\\[4pt]
-\operatorname{Cov}(X,Y)&=\mathbb E[XY]-\mu_X\mu_Y\overset{\text{independent}}{=}\mu_X\mu_Y-\mu_X\mu_Y=0\\[4pt]
-\Rightarrow\;\operatorname{Var}(X+Y)&=\operatorname{Var}(X)+\operatorname{Var}(Y)\qquad\text{when }X,\,Y\text{ independent}\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(X+Y)\\
+&=\mathbb E\Big[\big((X-\mu_X)+(Y-\mu_Y)\big)^{2}\Big]\\
+&=\underbrace{\mathbb E[(X-\mu_X)^{2}]}_{\operatorname{Var}(X)}\\
+&\quad+\underbrace{\mathbb E[(Y-\mu_Y)^{2}]}_{\operatorname{Var}(Y)}\\
+&\quad+2\underbrace{\mathbb E[(X-\mu_X)(Y-\mu_Y)]}_{\operatorname{Cov}(X,Y)}\\[4pt]
+&\operatorname{Cov}(X,Y)\\
+&=\mathbb E[XY]-\mu_X\mu_Y\\
+&\overset{\text{independent}}{=}\mu_X\mu_Y-\mu_X\mu_Y=0\\[4pt]
+&\Rightarrow\;\operatorname{Var}(X+Y)\\
+&=\operatorname{Var}(X)+\operatorname{Var}(Y)\\
+&\quad\text{when }X,\,Y\text{ independent}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้นิยามของขั้นที่ 10 กับ $V=X+Y$ แล้วจับคู่ระยะจากค่าเฉลี่ยของสองตัวไว้ในวงเล็บเดียว จากนั้นกระจายด้วย $(a+b)^{2}=a^{2}+b^{2}+2ab$ แล้วเฉลี่ยทีละพจน์ตามกฎขั้นที่ 2</p>
@@ -282,12 +325,24 @@ P_0&=100\ \mathrm{USD/share}\\
   <h4>ขั้นที่ 12 — ใส่ขนาดการลงทุน: ทำไมตัวคูณถึงกลายเป็นกำลังสอง</h4>
   <p>พอร์ตจริงไม่เคยถือหน่วยละหนึ่ง ขั้นนี้จึงเป็นรูปที่ใช้งานจริง และสามบรรทัดล่างเตือนว่าเลข 50 ที่ได้จากสูตรลัดนั้นถูกอยู่กรณีเดียวจากสามกรณีที่ยกมา</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(aX+bY)&=\mathbb E\Big[\big(a(X-\mu_X)+b(Y-\mu_Y)\big)^{2}\Big]\\
-&=a^{2}\mathbb E[(X-\mu_X)^{2}]+b^{2}\mathbb E[(Y-\mu_Y)^{2}]+2ab\,\operatorname{Cov}(X,Y)\\
-&=a^{2}\sigma_X^{2}+b^{2}\sigma_Y^{2}\qquad\text{when }\operatorname{Cov}(X,Y)=0\\[4pt]
-\sigma_X=30,\ \sigma_Y=40:&\quad 900+1{,}600=2{,}500,\qquad\sqrt{2{,}500}=50\\
-\rho=0.5:&\quad 2{,}500+2(0.5)(30)(40)=3{,}700,\qquad\sqrt{3{,}700}\approx60.8\\
-\rho=-0.5:&\quad 2{,}500-1{,}200=1{,}300,\qquad\sqrt{1{,}300}\approx36.1\end{aligned}
+\begin{aligned}
+&\operatorname{Var}(aX+bY)\\
+&=\mathbb E\Big[\big(a(X-\mu_X)+b(Y-\mu_Y)\big)^{2}\Big]\\
+&=a^{2}\mathbb E[(X-\mu_X)^{2}]\\
+&\quad+b^{2}\mathbb E[(Y-\mu_Y)^{2}]\\
+&\quad+2ab\,\operatorname{Cov}(X,Y)\\
+&=a^{2}\sigma_X^{2}+b^{2}\sigma_Y^{2}\\
+&\quad\text{when }\operatorname{Cov}(X,Y)=0\\[4pt]
+&\sigma_X=30,\ \sigma_Y=40:\\
+&\quad 900+1{,}600=2{,}500\\
+&\quad\sqrt{2{,}500}=50\\
+&\rho=0.5:\\
+&\quad 2{,}500+2(0.5)(30)(40)=3{,}700\\
+&\quad\sqrt{3{,}700}\approx60.8\\
+&\rho=-0.5:\\
+&\quad 2{,}500-1{,}200=1{,}300\\
+&\quad\sqrt{1{,}300}\approx36.1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เอา $a$ กับ $b$ เข้าไปคูณระยะจากค่าเฉลี่ยของแต่ละตัวก่อน ทำได้เพราะค่าเฉลี่ยของ $aX$ คือ $a\mu_X$ ตามขั้นที่ 3 ระยะจึงถูกขยายด้วย $a$ ไปด้วย</p>
@@ -301,11 +356,17 @@ P_0&=100\ \mathrm{USD/share}\\
   <h4>ขั้นที่ 13 — ความเหวี่ยงของผลคูณ: ยกกำลังสองก่อน แล้วค่อยแยกสองก้อน</h4>
   <p>คนที่รีบมักเดาว่าความเหวี่ยงของผลคูณคือผลคูณของความเหวี่ยง ซึ่งผิด ทางที่ถูกคือกลับไปที่นิยามในขั้นที่ 10 ซึ่งขอแค่สองอย่าง คือค่าเฉลี่ยของกำลังสอง และค่าเฉลี่ยธรรมดา ขั้นนี้เตรียมอย่างแรก ส่วนอย่างที่สองได้มาแล้วในขั้นที่ 9</p>
   <div class="math">\[
-\begin{aligned}V&=Xe^{Y},\qquad V^{2}=X^{2}e^{2Y}\\[4pt]
-\mathbb E[V^{2}]&=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]\qquad\text{(step 6)}\\[4pt]
+\begin{aligned}
+V&=Xe^{Y},\qquad V^{2}=X^{2}e^{2Y}\\[4pt]
+\mathbb E[V^{2}]&=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]\\
+&\quad\text{(step 6)}\\[4pt]
 \mathbb E[e^{2Y}]&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{\,2y-y^{2}/2}\,dy\\
-2y-\frac{y^{2}}{2}&=-\frac12\big(y^{2}-4y\big)=-\frac12\big[(y-2)^{2}-4\big]=-\frac{(y-2)^{2}}{2}+2\\
-\mathbb E[e^{2Y}]&=e^{2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(y-2)^{2}/2}\,dy=e^{2}\end{aligned}
+2y-\frac{y^{2}}{2}&=-\frac12\big(y^{2}-4y\big)\\
+&=-\frac12\big[(y-2)^{2}-4\big]\\
+&=-\frac{(y-2)^{2}}{2}+2\\
+\mathbb E[e^{2Y}]&=e^{2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(y-2)^{2}/2}\,dy\\
+&=e^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ยกกำลังสองทั้งก้อนก่อน ตัวคูณสองตัวต่างก็ถูกยกกำลังสอง และ $(e^{y})^{2}=e^{2y}$ เพราะยกกำลังซ้อนกันให้เอาเลขชี้กำลังมาคูณ</p>
@@ -319,13 +380,19 @@ P_0&=100\ \mathrm{USD/share}\\
   <h4>ขั้นที่ 14 — แทนตัวเลขลงในสูตรลัดที่สร้างเองในขั้นที่ 10</h4>
   <p>ความเหวี่ยงออกมาใหญ่กว่าค่าเฉลี่ยหลายเท่า ซึ่งไม่ใช่ความผิดพลาดของการคำนวณ มันมาจากการที่ $X$ เองมี variance 4 บนค่าเฉลี่ยแค่ 1 แปลว่าความไม่แน่นอนของขนาดคำสั่ง ครองความเสี่ยงไว้มากกว่าความไม่แน่นอนของราคาเสียอีก</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[V^{2}]&=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]=5\times e^{2}=5e^{2}\\
+\begin{aligned}
+\mathbb E[V^{2}]&=\mathbb E[X^{2}]\,\mathbb E[e^{2Y}]\\
+&=5\times e^{2}=5e^{2}\\
 M^{2}&=\big(e^{0.5}\big)^{2}=e^{1}=e\\[4pt]
 \operatorname{Var}(V)&=\mathbb E[V^{2}]-M^{2}=5e^{2}-e\\[4pt]
-e^{2}&\approx7.389056\;\Rightarrow\;5e^{2}\approx36.945280\\
+e^{2}&\approx7.389056\\
+&\;\Rightarrow\;5e^{2}\approx36.945280\\
 e&\approx2.718282\\
-\operatorname{Var}(V)&\approx36.945280-2.718282=34.226998\;\Rightarrow\;34.23\ \text{(2 dp)}\\
-\operatorname{SD}(V)&=\sqrt{34.226998}\approx5.850384\end{aligned}
+\operatorname{Var}(V)&\approx36.945280-2.718282\\
+&=34.226998\\
+&\;\Rightarrow\;34.23\ \text{(2 dp)}\\
+\operatorname{SD}(V)&=\sqrt{34.226998}\approx5.850384
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ประกอบสองเลขจากขั้นที่ 7 และ 13 แล้วยกกำลังสองค่าเฉลี่ยของขั้นที่ 9 ซึ่ง $e^{0.5}$ ยกกำลังสองได้ $e$ พอดี เพราะเลขชี้กำลังคูณกัน</p>
@@ -340,10 +407,14 @@ e&\approx2.718282\\
   <p>การคำนวณความน่าจะเป็นของสองเหตุการณ์ร่วมสามารถมองเป็นกรณีพิเศษของ expected value ของผลคูณได้ทันที โดยเลือก function เป็น indicator function ซึ่งยืนยันว่ากฎการคูณของความน่าจะเป็นและกฎการคูณของ expected value คือเรื่องเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-P(X\ \text{in}\ A,\ Y\ \text{in}\ B)&=\mathbb E\big[I_A(X)\,I_B(Y)\big]\\[4pt]
-&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\,f_{X,Y}(x,y)\,dx\,dy\\[4pt]
-&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\,f_X(x)f_Y(y)\,dx\,dy\\[4pt]
-&=\Big[\int_{-\infty}^{\infty}I_A(x)f_X(x)\,dx\Big]\Big[\int_{-\infty}^{\infty}I_B(y)f_Y(y)\,dy\Big]\\[4pt]
+&P(X\ \text{in}\ A,\ Y\ \text{in}\ B)\\
+&=\mathbb E\big[I_A(X)\,I_B(Y)\big]\\[4pt]
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\\
+&\qquad f_{X,Y}(x,y)\,dx\,dy\\[4pt]
+&=\int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty}I_A(x)\,I_B(y)\\
+&\qquad f_X(x)f_Y(y)\,dx\,dy\\[4pt]
+&=\Big[\int_{-\infty}^{\infty}I_A(x)f_X(x)\,dx\Big]\\
+&\qquad\Big[\int_{-\infty}^{\infty}I_B(y)f_Y(y)\,dy\Big]\\[4pt]
 &=\mathbb E\big[I_A(X)\big]\,\mathbb E\big[I_B(Y)\big]\\[4pt]
 &=P(X\ \text{in}\ A)\,P(Y\ \text{in}\ B)
 \end{aligned}
@@ -407,10 +478,15 @@ P(X\ \text{in}\ A,\ Y\ \text{in}\ B)&=\mathbb E\big[I_A(X)\,I_B(Y)\big]\\[4pt]
   <h4>ตัวอย่างที่สอง — หุ้น 250 วันที่ผลตอบแทนรายวันไม่เกี่ยวกัน</h4>
   <p>โจทย์ให้อะไรมาบ้าง: หุ้นราคา 100 log return รายวัน 250 วันไม่เกี่ยวกันและมาจากระฆังเดียวกัน ค่าเฉลี่ย 0.04% ความเหวี่ยง 1.1% ราคาปลายปีคือ 100 คูณตัวคูณรายวัน 250 ตัว ถามราคาเฉลี่ยปลายปีและราคาที่แบ่งครึ่งผลลัพธ์</p>
   <div class="math">\[
-\begin{aligned}S_T&=100\,e^{r_1}e^{r_2}\cdots e^{r_{250}}\\
-\mathbb E[S_T]&=100\,\mathbb E[e^{r_1}]\,\mathbb E[e^{r_2}]\cdots\mathbb E[e^{r_{250}}]=100\,\big(e^{0.0004+0.011^{2}/2}\big)^{250}\\
+\begin{aligned}
+S_T&=100\,e^{r_1}e^{r_2}\cdots e^{r_{250}}\\
+\mathbb E[S_T]&=100\,\mathbb E[e^{r_1}]\,\mathbb E[e^{r_2}]\\
+&\qquad\cdots\mathbb E[e^{r_{250}}]\\
+&=100\,\big(e^{0.0004+0.011^{2}/2}\big)^{250}\\
 &=100\,e^{0.115125}=112.20\\
-\text{median}&=100\,e^{250\times0.0004}=100\,e^{0.1}=110.52\end{aligned}
+\text{median}&=100\,e^{250\times0.0004}\\
+&=100\,e^{0.1}=110.52
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดที่สองคือกฎของขั้นที่ 6 ค่าเฉลี่ยของผลคูณแยกเป็นผลคูณของค่าเฉลี่ยได้เพราะแต่ละวันไม่เกี่ยวกัน ค่าเฉลี่ยของแต่ละตัวคูณคือ $e^{\mu+\sigma^2/2}$ แบบเดียวกับขั้นที่ 8 และหัวข้อ 1.10</p>

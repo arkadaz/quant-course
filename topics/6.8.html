@@ -117,13 +117,21 @@ r_p=w^{\mathsf{T}}r=\sum_{i=1}^{N}w_ir_i,\qquad \mathbf 1^{\mathsf{T}}w=1
   <h4>ขั้นที่ 3 — กาง $w^{\mathsf T}\Sigma w$ ออกสำหรับสองสินทรัพย์ แล้วใส่ตัวเลขจากหัวข้อ 6.7</h4>
   <p>ก่อนใช้สูตร matrix ลองสองสินทรัพย์ด้วยมือ ใช้ covariance matrix ที่เพิ่งสร้างจากสามวันในหัวข้อ 6.7</p>
   <div class="math">\[
-\begin{aligned}\sigma_p^{2}&=w_1^{2}\Sigma_{11}+w_2^{2}\Sigma_{22}+2w_1w_2\Sigma_{12}\\
-w=(0.5,0.5),\ \Sigma&=\begin{bmatrix}1&amp;1.5\\
+\begin{aligned}
+\sigma_p^{2}&=w_1^{2}\Sigma_{11}+w_2^{2}\Sigma_{22}\\
+&\quad+2w_1w_2\Sigma_{12}\\
+&w=(0.5,0.5)\\
+\Sigma&=\begin{bmatrix}1&amp;1.5\\
 1.5&amp;3\end{bmatrix}\mathrm{bp}^{2}\\
-\sigma_p^{2}&=0.25(1)+0.25(3)+2(0.5)(0.5)(1.5)\\
-&=0.25+0.75+0.75=1.75\ \mathrm{bp}^{2}\;\Rightarrow\;\sigma_p=1.32\ \mathrm{bp}\\[4pt]
-\Sigma_{12}=0:\quad\sigma_p^{2}&=0.25+0.75=1.00\;\Rightarrow\;\sigma_p=1.00\ \mathrm{bp}\\[4pt]
-0.5(1)+0.5(1.73)&=1.37\ \mathrm{bp}\end{aligned}
+\sigma_p^{2}&=0.25(1)+0.25(3)\\
+&\quad+2(0.5)(0.5)(1.5)\\
+&=0.25+0.75+0.75=1.75\ \mathrm{bp}^{2}\\
+&\;\Rightarrow\;\sigma_p=1.32\ \mathrm{bp}\\[4pt]
+&\Sigma_{12}=0:\\
+\sigma_p^{2}&=0.25+0.75=1.00\\
+&\;\Rightarrow\;\sigma_p=1.00\ \mathrm{bp}\\[4pt]
+&0.5(1)+0.5(1.73)=1.37\ \mathrm{bp}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สองพจน์แรกคือความเสี่ยงของแต่ละตัวถ่วงด้วยน้ำหนัก *กำลังสอง* พจน์ที่สามคือพจน์ไขว้จากหัวข้อ 6.5 ที่มีเลข 2 เพราะ $\Sigma_{12}$ กับ $\Sigma_{21}$ นับทั้งคู่</p>
@@ -137,11 +145,17 @@ w=(0.5,0.5),\ \Sigma&=\begin{bmatrix}1&amp;1.5\\
   <h4>ขั้นที่ 4 — กรณีที่สินทรัพย์ไม่มีความสัมพันธ์ต่อกันเลย</h4>
   <p>ดูกรณีในอุดมคติก่อน เพื่อเห็นพลังของการกระจายความเสี่ยงแบบเต็มที่ จุดสำคัญคือ $N$ โผล่มาตอนบรรทัดสี่เท่านั้น ไม่ได้อยู่ในสูตรตั้งแต่ต้น และมันมาจากการบวก $N$ พจน์ที่เล็กลงตาม $N^{2}$</p>
   <div class="math">\[
-\begin{aligned}\sigma_p^{2}&=w^{\mathsf T}\Sigma w=\sum_{i}\sum_{j}w_iw_j\Sigma_{ij}\\
-\Sigma_{ij}&=\sigma^{2}\;(i=j),\qquad \Sigma_{ij}=0\;(i\ne j)\\
+\begin{aligned}
+\sigma_p^{2}&=w^{\mathsf T}\Sigma w=\sum_{i}\sum_{j}w_iw_j\Sigma_{ij}\\
+\Sigma_{ij}&=\sigma^{2}\;(i=j)\\
+\Sigma_{ij}&=0\;(i\ne j)\\
 \sigma_p^{2}&=\sum_{i}w_i^{2}\sigma^{2}\\
-w_i=\frac1N:\qquad\sigma_p^{2}&=\sigma^{2}\sum_{i=1}^{N}\frac{1}{N^{2}}=\sigma^{2}\cdot N\cdot\frac{1}{N^{2}}=\frac{\sigma^{2}}{N}\\[4pt]
-\sigma=20\%,\ N=25:\qquad\sigma_p&=\frac{20\%}{\sqrt{25}}=4\%\end{aligned}
+&w_i=\frac1N:\\
+\sigma_p^{2}&=\sigma^{2}\sum_{i=1}^{N}\frac{1}{N^{2}}\\
+&=\sigma^{2}\cdot N\cdot\frac{1}{N^{2}}=\frac{\sigma^{2}}{N}\\[4pt]
+&\sigma=20\%,\ N=25:\\
+\sigma_p&=\frac{20\%}{\sqrt{25}}=4\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากสูตรความเสี่ยงพอร์ตของขั้นที่ 3 กางออกเป็นผลรวมทุกคู่ แล้วใส่เงื่อนไขของกรณีในอุดมคติ คือทุกตัวเสี่ยงเท่ากัน และไม่มีคู่ไหนเกี่ยวกันเลย ผลรวมทุกคู่จึงยุบเหลือเฉพาะคู่ที่ $i$ เท่ากับ $j$</p>
@@ -151,16 +165,22 @@ w_i=\frac1N:\qquad\sigma_p^{2}&=\sigma^{2}\sum_{i=1}^{N}\frac{1}{N^{2}}=\sigma^{
 
 <section class="formula">
   <h4>ขั้นที่ 5 — กรณีสินทรัพย์มีความสัมพันธ์ร่วมกันตามสภาพตลาดจริง</h4>
-  <p>แล้วดูกรณีจริงที่ทุกอย่างเกาะกันบ้าง แปดบรรทัดนี้แสดงว่าการกระจายช่วยได้จริง แต่ช่วยเฉพาะก้อนที่ส่วนด้วย $N$ ได้ ส่วนก้อนที่เหลือคือพื้นความเสี่ยงที่ไม่มีวันหายไป และเป็นเหตุผลว่าทำไมพอร์ตที่กระจายดีแล้วยังขาดทุนพร้อมกันทั้งตลาดได้</p>
+  <p>แล้วดูกรณีจริงที่ทุกอย่างเกาะกันบ้าง สูตรข้างล่างแสดงว่าการกระจายช่วยได้จริง แต่ช่วยเฉพาะก้อนที่ส่วนด้วย $N$ ได้ ส่วนก้อนที่เหลือคือพื้นความเสี่ยงที่ไม่มีวันหายไป และเป็นเหตุผลว่าทำไมพอร์ตที่กระจายดีแล้วยังขาดทุนพร้อมกันทั้งตลาดได้</p>
   <div class="math">\[
-\begin{aligned}\sigma_p^{2}&=\sum_i w_i^{2}\Sigma_{ii}+\sum_{i\ne j}w_iw_j\Sigma_{ij}\\
-\Sigma_{ii}=\sigma^{2},&\qquad \Sigma_{ij}=\rho\sigma^{2}\;(i\ne j)\\
-\text{pairs with }i=j&:\ N,\qquad\text{pairs with }i\ne j:\ N(N-1)\\
-w_i=\frac1N:\qquad\sigma_p^{2}&=N\cdot\frac{\sigma^{2}}{N^{2}}+N(N-1)\cdot\frac{\rho\sigma^{2}}{N^{2}}\\
+\begin{aligned}
+\sigma_p^{2}&=\sum_i w_i^{2}\Sigma_{ii}+\sum_{i\ne j}w_iw_j\Sigma_{ij}\\
+\Sigma_{ii}&=\sigma^{2}\\
+\Sigma_{ij}&=\rho\sigma^{2}\;(i\ne j)\\
+&\text{pairs with }i=j:\ N\\
+&\text{pairs with }i\ne j:\ N(N-1)\\
+&w_i=\frac1N:\\
+\sigma_p^{2}&=N\cdot\frac{\sigma^{2}}{N^{2}}+N(N-1)\cdot\frac{\rho\sigma^{2}}{N^{2}}\\
 &=\frac{\sigma^{2}}{N}+\frac{N-1}{N}\rho\sigma^{2}\\
 &=\sigma^{2}\left(\frac1N+\rho-\frac{\rho}{N}\right)\\
 &=\sigma^{2}\left(\rho+\frac{1-\rho}{N}\right)\\[4pt]
-N\to\infty:\qquad\sigma_p^{2}&\to\rho\sigma^{2}\end{aligned}
+&N\to\infty:\\
+\sigma_p^{2}&\to\rho\sigma^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คราวนี้แยกผลรวมทุกคู่เป็นสองกอง คือคู่ที่เป็นตัวเดียวกัน กับคู่ที่ต่างกัน แล้วใส่เงื่อนไขว่าทุกคู่ที่ต่างกันเกี่ยวพันเท่ากันหมดที่ $\rho$ จากนั้นนับจำนวนพจน์ กองแรกมี $N$ พจน์ ส่วนกองที่สองเลือกตัวแรกได้ $N$ ทาง ตัวหลังเหลือ $N-1$ ทาง</p>
@@ -172,8 +192,18 @@ N\to\infty:\qquad\sigma_p^{2}&\to\rho\sigma^{2}\end{aligned}
   <h4>ขั้นที่ 6 — พิสูจน์สูตร $N$ สินทรัพย์ด้วยการนับพจน์</h4>
   <p>สูตรในขั้นก่อนหน้าไม่ได้มาจากไหน แค่นับว่าตารางมีกี่ช่องแต่ละแบบ</p>
   <div class="math">\[
-\begin{aligned}w_i=\tfrac1N:\quad \sigma_p^{2}&=\underbrace{N\cdot\tfrac{1}{N^{2}}\sigma^{2}}_{N\text{ diagonal terms}}+\underbrace{N(N-1)\cdot\tfrac{1}{N^{2}}\rho\sigma^{2}}_{N(N-1)\text{ off-diagonal terms}}=\frac{\sigma^{2}}{N}+\frac{N-1}{N}\rho\sigma^{2}=\sigma^{2}\Big(\rho+\frac{1-\rho}{N}\Big)\\[4pt]
-\sigma=1,\ \rho=0.35:&\quad N=1\Rightarrow1.000,\quad N=10\Rightarrow0.35+0.065=0.415,\quad N=100\Rightarrow0.3565,\quad N\to\infty\Rightarrow0.35\end{aligned}
+\begin{aligned}
+&w_i=\tfrac1N:\\
+\sigma_p^{2}&=\underbrace{N\cdot\tfrac{1}{N^{2}}\sigma^{2}}_{N\text{ diagonal terms}}\\
+&\quad+\underbrace{N(N-1)\cdot\tfrac{1}{N^{2}}\rho\sigma^{2}}_{N(N-1)\text{ off-diagonal terms}}\\
+&=\frac{\sigma^{2}}{N}+\frac{N-1}{N}\rho\sigma^{2}\\
+&=\sigma^{2}\Big(\rho+\frac{1-\rho}{N}\Big)\\[4pt]
+&\sigma=1,\ \rho=0.35:\\
+&\quad N=1\Rightarrow1.000\\
+&\quad N=10\Rightarrow0.35+0.065=0.415\\
+&\quad N=100\Rightarrow0.3565\\
+&\quad N\to\infty\Rightarrow0.35
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตาราง $\Sigma$ ขนาด $N\times N$ มีช่องแนวทแยง $N$ ช่อง (ค่า $\sigma^2$) และช่องนอกแนวทแยง $N^2-N$ ช่อง (ค่า $\rho\sigma^2$) แต่ละช่องถูกคูณด้วย $w_iw_j=1/N^2$ นับแล้วบวกก็จบ</p>
@@ -186,10 +216,15 @@ N\to\infty:\qquad\sigma_p^{2}&\to\rho\sigma^{2}\end{aligned}
   <p>การแปลงเชิงเส้นในรูป matrix $Y = A r + a$ ช่วยให้เราคำนวณผลตอบแทนและความเสี่ยงของหลายพอร์ตโฟลิโอหรือหลายกลยุทธ์พร้อมกันได้ โดย covariance matrix ของผลลัพธ์จะถูกประกบด้วย matrix น้ำหนัก $A\operatorname{Cov}(r)A^{\mathsf T}$ เสมอ ขณะที่ส่วนบวกคงที่ $a$ จะไม่ส่งผลต่อความเสี่ยง</p>
   <div class="math">\[
 \begin{aligned}
-Y&=A r+a,\qquad A:\ k\times n\ \text{weights},\quad a:\ k\ \text{constants}\\[4pt]
-\mathbb E[Y]&=\mathbb E[A r+a]=A\,\mathbb E[r]+a=A\mu_r+a\\[4pt]
-\operatorname{Cov}(Y)&=\mathbb E\Big[\big(Y-\mathbb E[Y]\big)\big(Y-\mathbb E[Y]\big)^{\mathsf T}\Big]\\[4pt]
-&=\mathbb E\Big[\big((A r+a)-(A\mu_r+a)\big)\big((A r+a)-(A\mu_r+a)\big)^{\mathsf T}\Big]\\[4pt]
+Y&=A r+a\\
+&\quad A:\ k\times n\ \text{weights}\\
+&\quad a:\ k\ \text{constants}\\[4pt]
+\mathbb E[Y]&=\mathbb E[A r+a]=A\,\mathbb E[r]+a\\
+&=A\mu_r+a\\[4pt]
+&\operatorname{Cov}(Y)\\
+&=\mathbb E\Big[\big(Y-\mathbb E[Y]\big)\big(Y-\mathbb E[Y]\big)^{\mathsf T}\Big]\\[4pt]
+&=\mathbb E\Big[\big((A r+a)-(A\mu_r+a)\big)\\
+&\qquad\big((A r+a)-(A\mu_r+a)\big)^{\mathsf T}\Big]\\[4pt]
 &=\mathbb E\Big[\big(A(r-\mu_r)\big)\big(A(r-\mu_r)\big)^{\mathsf T}\Big]\\[4pt]
 &=\mathbb E\Big[A(r-\mu_r)(r-\mu_r)^{\mathsf T}A^{\mathsf T}\Big]\\[4pt]
 &=A\,\mathbb E\Big[(r-\mu_r)(r-\mu_r)^{\mathsf T}\Big]A^{\mathsf T}\\[4pt]
@@ -282,12 +317,25 @@ A\Sigma A^{\mathsf T}&=\begin{bmatrix}-0.25&-0.75\\
   <h4>ตัวอย่างที่สอง — พอร์ตหุ้น 60% หุ้นกู้ 40%: สองทางต้องได้เลขเดียวกัน</h4>
   <p>โจทย์ให้อะไรมาบ้าง: หุ้นเหวี่ยงปีละ 18% หุ้นกู้ 6% correlation −0.20 จึงมี covariance −0.00216 ถือหุ้น 0.6 หุ้นกู้ 0.4 ถามความเหวี่ยงของพอร์ต แล้วดูว่าถ้า correlation เปลี่ยน คำตอบเปลี่ยนแค่ไหน</p>
   <div class="math">\[
-\begin{aligned}\text{term by term}&:\ 0.36(0.0324)+0.16(0.0036)+2(0.6)(0.4)(-0.00216)\\
-&=0.011664+0.000576-0.0010368=0.0112032\\
-w^{\mathsf T}\Sigma w&:\ \Sigma w=\begin{bmatrix}0.018576\\0.000144\end{bmatrix},\quad 0.6(0.018576)+0.4(0.000144)=0.0112032\\[4pt]
-\sigma_p&=\sqrt{0.0112032}=10.58\%\quad\text{vs}\quad0.6(18\%)+0.4(6\%)=13.2\%\\[4pt]
-\rho=-1,\,-0.2,\,0,\,+0.5,\,+1&:\ \sigma_p=8.40\%,\ 10.58\%,\ 11.06\%,\ 12.18\%,\ 13.20\%\\[4pt]
-\text{least-risk mix}&:\ a^{*}=\frac{0.0036+0.00216}{0.0324+0.0036+2(0.00216)}=\frac17,\qquad\sigma_p=5.27\%\end{aligned}
+\begin{aligned}
+&\text{term by term}:\\
+&\quad 0.36(0.0324)+0.16(0.0036)\\
+&\quad+2(0.6)(0.4)(-0.00216)\\
+&=0.011664+0.000576-0.0010368\\
+&=0.0112032\\
+&w^{\mathsf T}\Sigma w:\\
+&\quad\Sigma w=\begin{bmatrix}0.018576\\0.000144\end{bmatrix}\\
+&\quad 0.6(0.018576)+0.4(0.000144)\\
+&\quad=0.0112032\\[4pt]
+\sigma_p&=\sqrt{0.0112032}=10.58\%\\
+&\quad\text{vs}\quad0.6(18\%)+0.4(6\%)=13.2\%\\[4pt]
+&\rho=-1,\,-0.2,\,0,\,+0.5,\,+1:\\
+&\quad\sigma_p=8.40\%,\ 10.58\%,\ 11.06\%,\\
+&\qquad 12.18\%,\ 13.20\%\\[4pt]
+&\text{least-risk mix}:\\
+&\quad a^{*}=\frac{0.0036+0.00216}{0.0324+0.0036+2(0.00216)}=\frac17\\
+&\quad\sigma_p=5.27\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สองทางให้ 0.0112032 ทุกหลัก เพราะกาง $w^{\mathsf T}\Sigma w$ ออกมาก็คือสามก้อนเดิม ความเหวี่ยง 10.58% ต่ำกว่าการเฉลี่ยความเหวี่ยงตรง ๆ 13.2% อยู่ 19.8% โดยไม่ลดผลตอบแทนเฉลี่ยเลย ก้อนที่สามที่ติดลบคือของฟรีของการกระจาย</p>

@@ -190,12 +190,20 @@ f_{X\mid Y}(x\mid y) &= \frac{f_{X,Y}(x,y)}{f_Y(y)} \\[6pt]
   <h4>ขั้นที่ 6 — ช่องเดียวที่ลงตัว ยังไม่ใช่ independence</h4>
   <p>กับดักนี้อันตรายกว่าการสับสนกับ correlation เพราะการตรวจที่จุดเดียวให้คำตอบว่าผ่าน และคำว่าผ่านทำให้หยุดตรวจ ในทางปฏิบัติมันคือการสุ่มดู scatter plot ตรงกลางกอง แล้วสรุปว่าสองสินทรัพย์ไม่เกี่ยวกัน ทั้งที่หางทั้งสองข้างผูกกันแน่น</p>
   <div class="math">\[
-\begin{aligned}P(X=i,\,Y=j)&=\frac{1}{9}\begin{bmatrix}1&amp;2&amp;0\\
+\begin{aligned}
+&P(X=i,\,Y=j)\\
+&=\frac{1}{9}\begin{bmatrix}1&amp;2&amp;0\\
 2&amp;0&amp;1\\
-0&amp;1&amp;2\end{bmatrix},\qquad i,\,j=0,\,1,\,2\\[4pt]
-P(X=i)&=\tfrac{3}{9}=\tfrac13,\qquad P(Y=j)=\tfrac{3}{9}=\tfrac13\\[4pt]
-P(X\le 0,\,Y\le 0)&=\tfrac19=\tfrac13\times\tfrac13=P(X\le 0)\,P(Y\le 0)\ \checkmark\\[4pt]
-P(X=0,\,Y=1)&=\tfrac29\ \ne\ \tfrac19=P(X=0)\,P(Y=1)\end{aligned}
+0&amp;1&amp;2\end{bmatrix}\\
+&\quad i,\,j=0,\,1,\,2\\[4pt]
+P(X=i)&=\tfrac{3}{9}=\tfrac13\\
+P(Y=j)&=\tfrac{3}{9}=\tfrac13\\[4pt]
+&P(X\le 0,\,Y\le 0)\\
+&=\tfrac19=\tfrac13\times\tfrac13\\
+&=P(X\le 0)\,P(Y\le 0)\ \checkmark\\[4pt]
+&P(X=0,\,Y=1)\\
+&=\tfrac29\ \ne\ \tfrac19=P(X=0)\,P(Y=1)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตารางนี้ถูกสร้างขึ้นมาเพื่อดักคนใจร้อนโดยเฉพาะ ขอบทั้งสองด้านเท่ากันหมดคือหนึ่งส่วนสาม ซึ่งทำให้ผลคูณของขอบเป็นหนึ่งส่วนเก้าทุกช่อง</p>
@@ -210,9 +218,14 @@ P(X=0,\,Y=1)&=\tfrac29\ \ne\ \tfrac19=P(X=0)\,P(Y=1)\end{aligned}
   <p>นี่คือนิยามทั่วไปของ independence สำหรับชุดของ random variable $n$ ตัวและกลุ่มตัวแปรย่อยตามตำรามาตรฐาน</p>
   <div class="math">\[
 \begin{aligned}
-F_X(x_1, \dots, x_n) &= \prod_{i=1}^n F_{X_i}(x_i) = F_{X_1}(x_1) \dots F_{X_n}(x_n) \\[6pt]
-f_X(x_1, \dots, x_n) &= \prod_{i=1}^n f_{X_i}(x_i) = f_{X_1}(x_1) \dots f_{X_n}(x_n) \\[6pt]
-f_{X_2\mid X_1}(x_2\mid x_1) &= \frac{f_{X_1}(x_1)\,f_{X_2}(x_2)}{f_{X_1}(x_1)} = f_{X_2}(x_2)
+&F_X(x_1, \dots, x_n)\\
+&= \prod_{i=1}^n F_{X_i}(x_i)\\
+&= F_{X_1}(x_1) \dots F_{X_n}(x_n) \\[6pt]
+&f_X(x_1, \dots, x_n)\\
+&= \prod_{i=1}^n f_{X_i}(x_i)\\
+&= f_{X_1}(x_1) \dots f_{X_n}(x_n) \\[6pt]
+&f_{X_2\mid X_1}(x_2\mid x_1)\\
+&= \frac{f_{X_1}(x_1)\,f_{X_2}(x_2)}{f_{X_1}(x_1)} = f_{X_2}(x_2)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -227,13 +240,20 @@ f_{X_2\mid X_1}(x_2\mid x_1) &= \frac{f_{X_1}(x_1)\,f_{X_2}(x_2)}{f_{X_1}(x_1)} 
   <p>การตรวจ independence บน density ไม่ต้องใช้อะไรใหม่: คูณ marginal สองตัวเข้าด้วยกัน แล้วเทียบกับ joint ถ้าตรงกันทุกจุดคืออิสระ ถ้าหาจุดที่ไม่ตรงแม้จุดเดียวก็จบ</p>
   <p>สองผืนข้างล่างต่างกันแค่ขอบเขต แต่ให้คำตอบคนละอย่าง</p>
   <div class="math">\[
-\begin{aligned}f_{X,Y}(x,y)&=2\qquad 0\le y\le x\le1\\[4pt]
+\begin{aligned}
+f_{X,Y}(x,y)&=2\\
+&\quad 0\le y\le x\le1\\[4pt]
 f_{X}(x)&=2x,\qquad f_{Y}(y)=2(1-y)\\
-f_{X}(x)f_{Y}(y)&=4x(1-y)\\
-\text{at }(0.5,\,0.25):\quad f_{X,Y}&=2\ne4(0.5)(0.75)=1.5\\[6pt]
-g(x,y)&=4xy\qquad 0\le x\le1,\ 0\le y\le1\\[4pt]
-g_{X}(x)&=\int_{0}^{1}4xy\,dy=2x,\qquad g_{Y}(y)=2y\\
-g_{X}(x)g_{Y}(y)&=4xy=g(x,y)\quad\text{everywhere}\end{aligned}
+&f_{X}(x)f_{Y}(y)=4x(1-y)\\
+&\text{at }(0.5,\,0.25):\\
+f_{X,Y}&=2\ne4(0.5)(0.75)=1.5\\[6pt]
+g(x,y)&=4xy\\
+&\quad 0\le x\le1,\ 0\le y\le1\\[4pt]
+g_{X}(x)&=\int_{0}^{1}4xy\,dy=2x\\
+g_{Y}(y)&=2y\\
+&g_{X}(x)g_{Y}(y)=4xy=g(x,y)\\
+&\quad\text{everywhere}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ผืนแรกคือผืนสามเหลี่ยมจากหัวข้อ 6.2 คูณ marginal สองตัวได้ $4x(1-y)$ แล้วลองแทนค่าตัวเลขลงไปครั้งเดียว ได้ $1.5$ ขณะที่ joint ให้ $2$ ไม่ตรงกัน จึงสรุปได้ทันทีว่าไม่อิสระ</p>
@@ -247,10 +267,18 @@ g_{X}(x)g_{Y}(y)&=4xy=g(x,y)\quad\text{everywhere}\end{aligned}
   <p>มีข้อสรุปที่แรงกว่าการลองแทนจุด นั่นคือถ้าสองตัวเป็นอิสระ บริเวณที่ density ไม่เป็นศูนย์ ต้องเป็นผลคูณของช่วงของแต่ละตัว คือต้องเป็นรูปสี่เหลี่ยม</p>
   <p>เหตุผลสั้นมาก: ถ้า marginal ของทั้งสองเป็นบวกที่จุดใด ผลคูณก็ต้องเป็นบวก joint จึงต้องเป็นบวกที่จุดนั้นด้วย สรุปว่าบริเวณต้องเป็นสี่เหลี่ยม</p>
   <div class="math">\[
-\begin{aligned}f_{X,Y}(x,y)&=f_{X}(x)f_{Y}(y)\\[4pt]
-f_{X}(x)>0\ \text{and}\ f_{Y}(y)>0&\ \Longrightarrow\ f_{X,Y}(x,y)>0\\[6pt]
-\text{nonzero region}&=\big(\text{every }x\text{ with }f_X(x)>0\big)\ \text{paired with}\ \big(\text{every }y\text{ with }f_Y(y)>0\big)\\[4pt]
-\text{triangle }0\le y\le x\le1&\ \ne\ \text{square }0\le x\le1,\ 0\le y\le1\ \Rightarrow\ \text{not independent}\end{aligned}
+\begin{aligned}
+f_{X,Y}(x,y)&=f_{X}(x)f_{Y}(y)\\[4pt]
+&f_{X}(x)>0\ \text{and}\ f_{Y}(y)>0\\
+&\ \Longrightarrow\ f_{X,Y}(x,y)>0\\[6pt]
+&\text{nonzero region}\\
+&=\big(\text{every }x\text{ with }f_X(x)>0\big)\\
+&\quad\text{paired with}\\
+&\quad\big(\text{every }y\text{ with }f_Y(y)>0\big)\\[4pt]
+&\text{triangle }0\le y\le x\le1\\
+&\ \ne\ \text{square }0\le x\le1,\ 0\le y\le1\\
+&\Rightarrow\ \text{not independent}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สมมติว่าแยกตัวประกอบได้ ถ้า marginal ของ $X$ เป็นบวกที่ $x$ และของ $Y$ เป็นบวกที่ $y$ ผลคูณต้องเป็นบวก ดังนั้น joint ก็ต้องเป็นบวกที่คู่นั้น</p>

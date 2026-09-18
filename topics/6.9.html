@@ -87,13 +87,18 @@
   <p>ก่อนใช้ระฆังคว่ำ ลองกับห้าจุดที่นับนิ้วได้ ผลลัพธ์เดียวกันเป๊ะ</p>
   <div class="math">\[
 \begin{aligned}
-X&=-2,\,-1,\,0,\,1,\,2\quad(\text{each }\tfrac15)\\
+X&=-2,\,-1,\,0,\,1,\,2\\
+&\quad(\text{each }\tfrac15)\\
 Y=X^{2}&=4,\,1,\,0,\,1,\,4\\
 \mathbb{E}[X]&=(-2-1+0+1+2)/5=0\\
 \mathbb{E}[Y]&=(4+1+0+1+4)/5=2\\
-\mathbb{E}[XY]&=\mathbb{E}[X^{3}]=(-8-1+0+1+8)/5=0\\
-\mathrm{Cov}(X,Y)&=\mathbb{E}[XY]-\mathbb{E}[X]\,\mathbb{E}[Y]=0-0(2)=0\\
-P(Y=4\mid X=2)&=1\ne P(Y=4)=\tfrac25
+\mathbb{E}[XY]&=\mathbb{E}[X^{3}]\\
+&=(-8-1+0+1+8)/5=0\\
+&\mathrm{Cov}(X,Y)\\
+&=\mathbb{E}[XY]-\mathbb{E}[X]\,\mathbb{E}[Y]\\
+&=0-0(2)=0\\
+&P(Y=4\mid X=2)=1\\
+&\ne P(Y=4)=\tfrac25
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -151,16 +156,24 @@ Y=X^2+\varepsilon,\qquad E[\varepsilon]=0,\quad \varepsilon\ \text{independent o
   <p>ข้อยกเว้นเพียงหนึ่งเดียวที่ covariance เท่ากับศูนย์จะรับประกัน independence (independence) คือเมื่อ random variables ทั้งคู่มี joint Normal distribution ร่วมกัน โครงสร้างทางพีชคณิตของ density ระฆังคว่ำจะตัดพจน์เชื่อมโยงข้ามตัวแปรออกจนหมด ทำให้ joint density แยกตัวเป็นผลคูณของ density เดี่ยวสองตัวได้พอดี</p>
   <div class="math">\[
 \begin{aligned}
-(X,Y)&\sim\mathcal N_2(\boldsymbol\mu,\,\boldsymbol\Sigma),\qquad \boldsymbol\Sigma=\begin{bmatrix}\sigma_X^2&\operatorname{Cov}(X,Y)\\
+(X,Y)&\sim\mathcal N_2(\boldsymbol\mu,\,\boldsymbol\Sigma)\\
+\boldsymbol\Sigma&=\begin{bmatrix}\sigma_X^2&\operatorname{Cov}(X,Y)\\
 \operatorname{Cov}(X,Y)&\sigma_Y^2\end{bmatrix}\\[4pt]
-\operatorname{Cov}(X,Y)=0\;&\Longrightarrow\;\boldsymbol\Sigma=\begin{bmatrix}\sigma_X^2&amp;0\\
-0&\sigma_Y^2\end{bmatrix},\quad \det(\boldsymbol\Sigma)=\sigma_X^2\sigma_Y^2\\[4pt]
+&\operatorname{Cov}(X,Y)=0\\
+&\;\Longrightarrow\;\boldsymbol\Sigma=\begin{bmatrix}\sigma_X^2&amp;0\\
+0&\sigma_Y^2\end{bmatrix}\\
+&\quad \det(\boldsymbol\Sigma)=\sigma_X^2\sigma_Y^2\\[4pt]
 \boldsymbol\Sigma^{-1}&=\begin{bmatrix}1/\sigma_X^2&amp;0\\
 0&amp;1/\sigma_Y^2\end{bmatrix}\\[4pt]
-(x-\mu)^{\mathsf T}\boldsymbol\Sigma^{-1}(x-\mu)&=\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\\[4pt]
-f_{X,Y}(x,y)&=\frac{1}{2\pi\sqrt{\sigma_X^2\sigma_Y^2}}\exp\left(-\frac12\left[\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\right]\right)\\[4pt]
-&=\left(\frac{1}{\sqrt{2\pi\sigma_X^2}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\right)\left(\frac{1}{\sqrt{2\pi\sigma_Y^2}}e^{-\frac{(y-\mu_Y)^2}{2\sigma_Y^2}}\right)\\[4pt]
-&=f_X(x)\,f_Y(y)\quad\Longrightarrow\quad X,\,Y\ \text{independent}
+&(x-\mu)^{\mathsf T}\boldsymbol\Sigma^{-1}(x-\mu)\\
+&=\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\\[4pt]
+&f_{X,Y}(x,y)\\
+&=\frac{1}{2\pi\sqrt{\sigma_X^2\sigma_Y^2}}\\
+&\quad\exp\left(-\frac12\left[\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\right]\right)\\[4pt]
+&=\left(\frac{1}{\sqrt{2\pi\sigma_X^2}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\right)\\
+&\quad\left(\frac{1}{\sqrt{2\pi\sigma_Y^2}}e^{-\frac{(y-\mu_Y)^2}{2\sigma_Y^2}}\right)\\[4pt]
+&=f_X(x)\,f_Y(y)\\
+&\quad\Longrightarrow\quad X,\,Y\ \text{independent}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -175,11 +188,19 @@ f_{X,Y}(x,y)&=\frac{1}{2\pi\sqrt{\sigma_X^2\sigma_Y^2}}\exp\left(-\frac12\left[\
   <p>แม้ตัวแปรทั้งสองจะมี marginal distribution เป็น Normal ทั้งคู่ และมี covariance เป็นศูนย์ แต่หากไม่ได้มี joint Normal distribution ร่วมกัน ตัวแปรทั้งสองอาจผูกพันกันอย่างสมบูรณ์แบบไม่เป็นเส้นตรง ดังเช่นกรณี $Y = W\,X$ ที่ขนาดกำลังสองของทั้งคู่เท่ากันเสมอ</p>
   <div class="math">\[
 \begin{aligned}
-X&\sim\mathcal N(0,1),\qquad W=+1\ \text{or}\ -1,\ \ P(W=1)=P(W=-1)=\tfrac12,\ \ W\ \text{separate from}\ X\\[4pt]
-Y&=W\cdot X\quad\Longrightarrow\quad Y\sim\mathcal N(0,1)\\[4pt]
-\mathbb E[XY]&=\mathbb E[W X^{2}]=\mathbb E[W]\,\mathbb E[X^{2}]=0\times 1=0\\[4pt]
-\operatorname{Cov}(X,Y)&=\mathbb E[XY]-\mathbb E[X]\mathbb E[Y]=0-0(0)=0\\[4pt]
-P(Y^{2}=X^{2})&=P(W^{2}X^{2}=X^{2})=1\quad\Longrightarrow\quad X,\,Y\ \text{not independent}
+X&\sim\mathcal N(0,1)\\
+&W=+1\ \text{or}\ -1\\
+&P(W=1)=P(W=-1)=\tfrac12\\
+&W\ \text{separate from}\ X\\[4pt]
+Y&=W\cdot X\\
+&\quad\Longrightarrow\quad Y\sim\mathcal N(0,1)\\[4pt]
+\mathbb E[XY]&=\mathbb E[W X^{2}]=\mathbb E[W]\,\mathbb E[X^{2}]\\
+&=0\times 1=0\\[4pt]
+&\operatorname{Cov}(X,Y)\\
+&=\mathbb E[XY]-\mathbb E[X]\mathbb E[Y]\\
+&=0-0(0)=0\\[4pt]
+&P(Y^{2}=X^{2})=P(W^{2}X^{2}=X^{2})=1\\
+&\quad\Longrightarrow\quad X,\,Y\ \text{not independent}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -194,10 +215,16 @@ P(Y^{2}=X^{2})&=P(W^{2}X^{2}=X^{2})=1\quad\Longrightarrow\quad X,\,Y\ \text{not 
   <p>การบอกว่าเป็นศูนย์เพราะสมมาตรเป็นคำตอบที่ถูก แต่ยังไม่ใช่คำอธิบาย บรรทัดข้างล่างเขียนเหตุผลนั้นออกมาเป็นสมการ</p>
   <p>ตัวที่ถูกยกกำลังสามทำให้เครื่องหมายพลิก ส่วน Normal density สมมาตรจึงไม่พลิกตาม สองอย่างรวมกันแล้วได้ function คี่ ซึ่งพื้นที่สองฝั่งหักล้างกันเสมอ</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}[X^{3}]&=\int_{-\infty}^{\infty}x^{3}\,\varphi(x)\,dx\qquad\varphi(x)=\tfrac{1}{\sqrt{2\pi}}e^{-x^{2}/2}\\[4pt]
-g(-x)&=(-x)^{3}\varphi(-x)=-x^{3}\varphi(x)=-g(x)\\[4pt]
-\int_{-\infty}^{0}g+\int_{0}^{\infty}g&=-\int_{0}^{\infty}g+\int_{0}^{\infty}g=0\\[6pt]
-\text{five points: }(-8)+(-1)+0+1+8&=0\end{aligned}
+\begin{aligned}
+\mathbb{E}[X^{3}]&=\int_{-\infty}^{\infty}x^{3}\,\varphi(x)\,dx\\
+\varphi(x)&=\tfrac{1}{\sqrt{2\pi}}e^{-x^{2}/2}\\[4pt]
+g(-x)&=(-x)^{3}\varphi(-x)=-x^{3}\varphi(x)\\
+&=-g(x)\\[4pt]
+&\int_{-\infty}^{0}g+\int_{0}^{\infty}g\\
+&=-\int_{0}^{\infty}g+\int_{0}^{\infty}g=0\\[6pt]
+&\text{five points: }\\
+&(-8)+(-1)+0+1+8=0
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เขียนค่าเฉลี่ยของ $X^3$ ออกมาเป็น integral ตามนิยาม แล้วดูที่ integrand เมื่อแทน $-x$ จะได้ค่าติดลบของเดิม เพราะ $(-x)^3=-x^3$ และ density ของ Normal สมมาตร</p>
@@ -212,10 +239,17 @@ g(-x)&=(-x)^{3}\varphi(-x)=-x^{3}\varphi(x)=-g(x)\\[4pt]
   <p>หัวข้อนี้เตือนว่าห้ามคูณความน่าจะเป็นเมื่อ covariance เป็นศูนย์ ตัวเลขข้างล่างคือราคาของการไม่เชื่อคำเตือนนั้น</p>
   <p>โจทย์ข้อนี้มีห้าจุดเท่านั้น จึงนับด้วยมือได้ว่าเหตุการณ์ร่วมเกิดขึ้นจริงบ่อยกว่าที่การสมมติอิสระบอกไว้เท่าไร</p>
   <div class="math">\[
-\begin{aligned}P(X\le-1)&=\tfrac{2}{5}=0.40,\qquad P(Y\ge4)=\tfrac{2}{5}=0.40\\[4pt]
-\text{if independent: }P(X\le-1,\,Y\ge4)&=0.40\times0.40=0.16\\[4pt]
-\text{actually: }P(X\le-1,\,Y\ge4)&=P(X=-2)=\tfrac{1}{5}=0.20\\[6pt]
-\frac{0.20}{0.16}&=1.25\end{aligned}
+\begin{aligned}
+P(X\le-1)&=\tfrac{2}{5}=0.40\\
+P(Y\ge4)&=\tfrac{2}{5}=0.40\\[4pt]
+&\text{if independent: }\\
+&P(X\le-1,\,Y\ge4)\\
+&=0.40\times0.40=0.16\\[4pt]
+&\text{actually: }\\
+&P(X\le-1,\,Y\ge4)\\
+&=P(X=-2)=\tfrac{1}{5}=0.20\\[6pt]
+&\frac{0.20}{0.16}=1.25
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เหตุการณ์ฝั่งซ้ายคือ $X$ ต่ำกว่าหรือเท่ากับ $-1$ เกิดกับสองค่าในห้า คิดเป็น $0.40$ ส่วนเหตุการณ์ฝั่งขวาคือ $Y$ อย่างน้อย $4$ ก็เกิดกับสองค่าในห้าเท่ากัน</p>

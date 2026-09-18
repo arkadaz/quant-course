@@ -115,8 +115,17 @@ P(D_A=1)=0.7(0.02)+0.3(0.20)=0.014+0.060=0.074\qquad(\text{same for }B)
   <h4>ขั้นที่ 2 — โอกาสผิดนัดพร้อมกัน: คูณได้เฉพาะ *ภายใน* ภาวะ แล้วค่อยถ่วงน้ำหนัก</h4>
   <p>ตอนนี้คูณได้ไหม สองบริษัทอิสระกันก็ต่อเมื่อรู้ภาวะแล้ว ถ้ายังไม่รู้ ต้องทำทีละภาวะ</p>
   <div class="math">\[
-\begin{aligned}P(D_A=1,D_B=1)&=0.7\,(0.02\times0.02)+0.3\,(0.20\times0.20)=0.7(0.0004)+0.3(0.04)=0.00028+0.01200=0.01228\\[4pt]
-\text{naive product: }&amp;P(D_A=1)P(D_B=1)=0.074^{2}=0.005476\qquad\frac{0.01228}{0.005476}=2.24\end{aligned}
+\begin{aligned}
+&P(D_A=1,D_B=1)\\
+&=0.7\,(0.02\times0.02)\\
+&\quad+0.3\,(0.20\times0.20)\\
+&=0.7(0.0004)+0.3(0.04)\\
+&=0.00028+0.01200=0.01228\\[4pt]
+&\text{naive product: }\\
+&P(D_A=1)P(D_B=1)\\
+&=0.074^{2}=0.005476\\
+&\frac{0.01228}{0.005476}=2.24
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรก: ในภาวะดีทั้งคู่ผิดนัดพร้อมกันด้วยโอกาส $0.02^2$ (อิสระกัน จึงคูณได้) ในภาวะแย่ $0.20^2$ แล้วถ่วงน้ำหนักสองภาวะ ได้ 1.228%</p>
@@ -130,7 +139,8 @@ P(D_A=1)=0.7(0.02)+0.3(0.20)=0.014+0.060=0.074\qquad(\text{same for }B)
   <p>หุ้นสองตัวดูเกี่ยวกันเพราะทั้งคู่เกาะตลาด แต่พอตรึงตลาดไว้แล้ว อาจไม่เกี่ยวกันเลย แนวคิดนี้คือฐานของ factor model ทั้งหมด</p>
   <div class="math">\[
 \begin{aligned}
-P(D_1=1,D_2=1\mid Z)&=P(D_1=1\mid Z)\,P(D_2=1\mid Z)\\
+&P(D_1=1,D_2=1\mid Z)\\
+&=P(D_1=1\mid Z)\,P(D_2=1\mid Z)\\
 Z=\text{bad}&:\ 0.20\times0.20=0.04\\
 Z=\text{good}&:\ 0.02\times0.02=0.0004
 \end{aligned}
@@ -183,12 +193,16 @@ F_{X,Y}(x,y)=C_\rho\!\left(F_X(x),F_Y(y)\right)
   <p>แบบจำลองปัจจัยเดี่ยว (one-factor model) แปลงแนวคิดเชิงนามธรรมให้เป็นตัวเลขที่คำนวณได้จริง: สุขภาพทางการเงินถูกขับเคลื่อนด้วยภาวะเศรษฐกิจร่วม $Z$ และความเสี่ยงเฉพาะตัว $\epsilon_i$ เมื่อตรึงค่า $Z=z$ ไว้แล้ว โอกาสผิดนัดของแต่ละบริษัทจะขึ้นกับตัวแปรเฉพาะตัวที่แยกจากกันอย่างเด็ดขาด</p>
   <div class="math">\[
 \begin{aligned}
-X_i&=\sqrt{\rho}\,Z+\sqrt{1-\rho}\,\epsilon_i,\qquad Z\sim\mathcal N(0,1),\;\;\epsilon_i\sim\mathcal N(0,1)\\[4pt]
-P(D_i=1\mid Z=z)&=P\Big(\sqrt{\rho}\,z+\sqrt{1-\rho}\,\epsilon_i\le \Phi^{-1}(p_i)\Big)\\[4pt]
+X_i&=\sqrt{\rho}\,Z+\sqrt{1-\rho}\,\epsilon_i\\
+&\quad Z\sim\mathcal N(0,1),\;\;\epsilon_i\sim\mathcal N(0,1)\\[4pt]
+&P(D_i=1\mid Z=z)\\
+&=P\Big(\sqrt{\rho}\,z+\sqrt{1-\rho}\,\epsilon_i\le \Phi^{-1}(p_i)\Big)\\[4pt]
 &=P\left(\epsilon_i\le \frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
 &=\Phi\!\left(\frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
-P(D_1=1,D_2=1\mid Z=z)&=\prod_{i=1}^2 \Phi\!\left(\frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
-P(D_1=1,D_2=1)&=\int_{-\infty}^{\infty}\prod_{i=1}^2 \Phi\!\left(\frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\phi(z)\,dz
+&P(D_1=1,D_2=1\mid Z=z)\\
+&=\prod_{i=1}^2 \Phi\!\left(\frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
+&P(D_1=1,D_2=1)\\
+&=\int_{-\infty}^{\infty}\prod_{i=1}^2 \Phi\!\left(\frac{\Phi^{-1}(p_i)-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\phi(z)\,dz
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -203,9 +217,12 @@ P(D_1=1,D_2=1)&=\int_{-\infty}^{\infty}\prod_{i=1}^2 \Phi\!\left(\frac{\Phi^{-1}
   <p>การแปลง cumulative probability ของตัวแปรใด ๆ ให้เป็นตัวแปรแบบสม่ำเสมอ แล้วดึงเข้าสู่แกนระฆังคว่ำด้วย function ผกผัน $\Phi^{-1}$ ทำให้เราสามารถนำโครงสร้าง correlation ของ bivariate Normal มาประสานความสัมพันธ์ของตัวแปรใดก็ได้ในตลาด</p>
   <div class="math">\[
 \begin{aligned}
-U&=F_X(X)\sim\operatorname{Uniform}(0,1),\qquad V=F_Y(Y)\sim\operatorname{Uniform}(0,1)\\[4pt]
-Z_1&=\Phi^{-1}(U),\quad Z_2=\Phi^{-1}(V)\quad\Longrightarrow\quad (Z_1,Z_2)\sim\mathcal N_2(\mathbf 0,\boldsymbol\Sigma_\rho)\\[4pt]
-C_\rho(u,v)&=P(U\le u,\,V\le v)\\[4pt]
+U&=F_X(X)\sim\operatorname{Uniform}(0,1)\\
+V&=F_Y(Y)\sim\operatorname{Uniform}(0,1)\\[4pt]
+Z_1&=\Phi^{-1}(U),\quad Z_2=\Phi^{-1}(V)\\
+&\quad\Longrightarrow\quad (Z_1,Z_2)\sim\mathcal N_2(\mathbf 0,\boldsymbol\Sigma_\rho)\\[4pt]
+&C_\rho(u,v)\\
+&=P(U\le u,\,V\le v)\\[4pt]
 &=P\big(\Phi(Z_1)\le u,\,\Phi(Z_2)\le v\big)\\[4pt]
 &=P\big(Z_1\le \Phi^{-1}(u),\,Z_2\le \Phi^{-1}(v)\big)\\[4pt]
 &=\Phi_\rho\!\left(\Phi^{-1}(u),\,\Phi^{-1}(v)\right)
@@ -270,11 +287,18 @@ C_\rho(u,v)&=P(U\le u,\,V\le v)\\[4pt]
   <h4>ขั้นที่ 9 — ใส่ตัวเลข: หุ้นกู้ 100 ตัว ผิดนัดเฉลี่ย 2% ต่อปี</h4>
   <p>ใช้แบบจำลองปัจจัยเดียวของขั้นที่ 7 เกณฑ์ผิดนัดตั้งให้ค่าเฉลี่ยทุกภาวะเป็น 2% แล้วดูว่าในปีดีกับปีแย่ แต่ละบริษัทผิดนัดกี่เปอร์เซ็นต์ เทียบสองค่าของ $\rho$</p>
   <div class="math">\[
-\begin{aligned}c&=\Phi^{-1}(0.02)=-2.054\\[4pt]
+\begin{aligned}
+c&=\Phi^{-1}(0.02)=-2.054\\[4pt]
 p(z)&=\Phi\!\left(\frac{c-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
-\rho=0.15&:\ p(0)=1.30\%,\quad p(-2)=8.27\%,\quad p(-3)=16.67\%\\
-\rho=0.30&:\ p(0)=0.71\%,\quad p(-2)=12.60\%,\quad p(-3)=31.18\%\\[4pt]
-\text{average over }z&:\ 2.000\%\ \text{for both}\end{aligned}
+&\rho=0.15:\\
+&\quad p(0)=1.30\%,\quad p(-2)=8.27\%\\
+&\quad p(-3)=16.67\%\\
+&\rho=0.30:\\
+&\quad p(0)=0.71\%,\quad p(-2)=12.60\%\\
+&\quad p(-3)=31.18\%\\[4pt]
+&\text{average over }z:\\
+&\quad 2.000\%\ \text{for both}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ปีปกติที่ $z=0$ ให้ 1.30% ไม่ใช่ 2% เพราะ 2% คือค่าเฉลี่ยทุกภาวะ ซึ่งถูกดันขึ้นด้วยปีแย่ไม่กี่ปี ปีปกติจึงดูดีกว่าที่โฆษณาเสมอ แล้วชดใช้ทีเดียวตอนหางซ้าย</p>
@@ -286,10 +310,17 @@ p(z)&=\Phi\!\left(\frac{c-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
   <h4>ขั้นที่ 10 — ชั้นของ CDO ที่รับได้ 9 ราย จะโดนเจาะบ่อยแค่ไหน</h4>
   <p>ในปีหนึ่ง เมื่อรู้ภาวะ $z$ จำนวนผิดนัดจาก 100 ตัวเป็น Binomial ของหัวข้อ 1.5 แล้วเฉลี่ยตามทุกภาวะแบบหัวข้อ 2.1</p>
   <div class="math">\[
-\begin{aligned}P(N\ge10)&=\int_{-\infty}^{\infty}P\big(N\ge10\mid z\big)\,\varphi(z)\,dz,\qquad N\mid z\ \text{is Binomial}\big(100,\,p(z)\big)\\[4pt]
-\text{independent},\ p=2\%&:\ 0.00344\%\quad(1\ \text{in}\ 29{,}000\ \text{years})\\
-\rho=0.15&:\ 2.14\%\quad(1\ \text{in}\ 47\ \text{years})\\
-\rho=0.30&:\ 4.50\%\quad(1\ \text{in}\ 22\ \text{years})\end{aligned}
+\begin{aligned}
+&P(N\ge10)\\
+&=\int_{-\infty}^{\infty}P\big(N\ge10\mid z\big)\,\varphi(z)\,dz\\
+&N\mid z\ \text{is Binomial}\big(100,\,p(z)\big)\\[4pt]
+&\text{independent},\ p=2\%:\\
+&\quad 0.00344\%\quad(1\ \text{in}\ 29{,}000\ \text{years})\\
+&\rho=0.15:\\
+&\quad 2.14\%\quad(1\ \text{in}\ 47\ \text{years})\\
+&\rho=0.30:\\
+&\quad 4.50\%\quad(1\ \text{in}\ 22\ \text{years})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้าสมมติว่าหุ้นกู้ผิดนัดแยกกัน ชั้นนี้จะโดนเจาะครั้งเดียวในราว 29,000 ปี ได้อันดับความน่าเชื่อถือสูงสุดสบาย ๆ แต่พอมีปัจจัยร่วม โอกาสกลายเป็นหนึ่งใน 47 หรือหนึ่งใน 22 ปี แย่ลง 622 และ 1,308 เท่า ทั้งที่อัตราผิดนัดของหุ้นกู้ทุกตัวยังเป็น 2% เท่าเดิม</p>

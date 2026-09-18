@@ -107,8 +107,15 @@
   <h4>ขั้นที่ 1 — ตัดคอลัมน์ ‘down’ ออกมา แล้วหารด้วยขนาดของมัน</h4>
   <p>ยังไม่ต้อง integral: ถ้ารู้แล้วว่าวันนี้ MSFT ลง เราสนใจแค่คอลัมน์ down ของตาราง แต่คอลัมน์นั้นรวมไม่ได้ 1</p>
   <div class="math">\[
-\begin{aligned}P(X=-2\%\mid Y=\text{down})&=\frac{0.15}{0.40}=0.375,\qquad P(X=0\%\mid\text{down})=\frac{0.20}{0.40}=0.500,\qquad P(X=+2\%\mid\text{down})=\frac{0.05}{0.40}=0.125\\
-\text{check: }&amp;0.375+0.500+0.125=1\qquad\text{compare unconditional: }0.20,\;0.50,\;0.30\end{aligned}
+\begin{aligned}
+&P(X=-2\%\mid Y=\text{down})\\
+&=\frac{0.15}{0.40}=0.375\\
+&P(X=0\%\mid\text{down})=\frac{0.20}{0.40}=0.500\\
+&P(X=+2\%\mid\text{down})=\frac{0.05}{0.40}=0.125\\
+&\text{check: }0.375+0.500+0.125=1\\
+&\text{compare unconditional: }\\
+&\quad 0.20,\;0.50,\;0.30
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คอลัมน์ down มีสามช่อง 0.15, 0.20, 0.05 รวมได้ 0.40 ซึ่งไม่ใช่ 1 เพราะมันคือแค่ 40% ของวันทั้งหมด พอหารทุกช่องด้วย 0.40 ผลรวมกลับเป็น 1 นี่คือการ ‘ปรับสเกลแผ่นตัด’ ในสูตรข้างล่าง</p>
@@ -120,8 +127,15 @@
   <h4>ขั้นที่ 2 — ค่าเฉลี่ยใหม่หลังรู้ข่าว เทียบกับค่าเฉลี่ยเดิม</h4>
   <p>พอมี distribution ใหม่แล้ว ค่าเฉลี่ยใหม่ก็คำนวณแบบหัวข้อ 1.3 ได้ทันที ค่า × น้ำหนัก แล้วรวม</p>
   <div class="math">\[
-\begin{aligned}E[X\mid\text{down}]&=(-2\%)(0.375)+(0\%)(0.500)+(+2\%)(0.125)=-0.75\%+0+0.25\%=-0.50\%\\
-E[X]&=(-2\%)(0.20)+(0\%)(0.50)+(+2\%)(0.30)=-0.40\%+0.60\%=+0.20\%\end{aligned}
+\begin{aligned}
+&E[X\mid\text{down}]\\
+&=(-2\%)(0.375)+(0\%)(0.500)\\
+&\quad+(+2\%)(0.125)\\
+&=-0.75\%+0+0.25\%=-0.50\%\\
+E[X]&=(-2\%)(0.20)+(0\%)(0.50)\\
+&\quad+(+2\%)(0.30)\\
+&=-0.40\%+0.60\%=+0.20\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของ AAPL ในวันที่ MSFT ลง คือ $-0.5\%$ ขณะที่ค่าเฉลี่ยรวมทุกวันคือ $+0.2\%$ ข่าวหนึ่งชิ้นเลื่อนคำทายไป 0.7 จุด นี่คือสิ่งที่ conditional expectation ในขั้นที่ 5 ทำในกรณีต่อเนื่อง</p>
@@ -134,11 +148,14 @@ E[X]&=(-2\%)(0.20)+(0\%)(0.50)+(+2\%)(0.30)=-0.40\%+0.60\%=+0.20\%\end{aligned}
   <p>ที่มาของสูตร conditional density จากการบีบแถบความน่าจะเป็นแคบ ๆ เข้าสู่ศูนย์ จนได้แผ่นตัดสองมิติที่ปรับสเกลด้วย marginal density</p>
   <div class="math">\[
 \begin{aligned}
-P(X \le x \mid y \le Y \le y+\Delta y) &= \frac{P(X \le x,\; y \le Y \le y+\Delta y)}{P(y \le Y \le y+\Delta y)} \\
+&P(X \le x \mid y \le Y \le y+\Delta y)\\
+&= \frac{P(X \le x,\; y \le Y \le y+\Delta y)}{P(y \le Y \le y+\Delta y)} \\
 &= \frac{\int_{-\infty}^x \int_y^{y+\Delta y} f_{X,Y}(u,v)\,dv\,du}{\int_y^{y+\Delta y} f_Y(v)\,dv} \\[6pt]
 &= \frac{\int_{-\infty}^x \left[ \frac{1}{\Delta y} \int_y^{y+\Delta y} f_{X,Y}(u,v)\,dv \right] du}{\frac{1}{\Delta y} \int_y^{y+\Delta y} f_Y(v)\,dv} \\[6pt]
-F_{X\mid Y}(x\mid y) = \lim_{\Delta y \to 0} P(\dots) &= \int_{-\infty}^x \frac{f_{X,Y}(u,y)}{f_Y(y)}\,du \\[6pt]
-f_{X\mid Y}(x\mid y) = \frac{d}{dx} F_{X\mid Y}(x\mid y) &= \frac{f_{X,Y}(x,y)}{f_Y(y)}\qquad\text{if } f_Y(y) > 0
+&F_{X\mid Y}(x\mid y) = \lim_{\Delta y \to 0} P(\dots)\\
+&= \int_{-\infty}^x \frac{f_{X,Y}(u,y)}{f_Y(y)}\,du \\[6pt]
+&f_{X\mid Y}(x\mid y) = \frac{d}{dx} F_{X\mid Y}(x\mid y)\\
+&= \frac{f_{X,Y}(x,y)}{f_Y(y)}\qquad\text{if } f_Y(y) > 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -192,10 +209,13 @@ E[X\mid Y=y]=\int_{-\infty}^{\infty}u\,f_{X\mid Y}(u\mid y)\,du
   <p>นี่คือสูตรที่ใช้ปรับมุมมองความเสี่ยงของพอร์ต เมื่อตลาดสังเกตเห็นราคาของกลุ่มสินทรัพย์นำตลาด $X_1$ แล้วต้องการประเมินกลุ่มสินทรัพย์ตาม $X_2$</p>
   <div class="math">\[
 \begin{aligned}
-f_{X_2\mid X_1}(x_2\mid x_1)&=\frac{f_X(x)}{f_{X_1}(x_1)}\\
+&f_{X_2\mid X_1}(x_2\mid x_1)\\
+&=\frac{f_X(x)}{f_{X_1}(x_1)}\\
 &=\frac{f_{X_1\mid X_2}(x_1\mid x_2)\,f_{X_2}(x_2)}{f_{X_1}(x_1)}\\[6pt]
-F_{X_2\mid X_1}(x_2\mid x_1)&=\frac{1}{f_{X_1}(x_1)}\int_{-\infty}^{x_{k+1}}\!\!\cdots\int_{-\infty}^{x_n}\\
-&\quad f_X(x_1,\dots,x_k,u_{k+1},\dots,u_n)\,du_{k+1}\cdots du_n
+&F_{X_2\mid X_1}(x_2\mid x_1)\\
+&=\frac{1}{f_{X_1}(x_1)}\int_{-\infty}^{x_{k+1}}\!\!\cdots\int_{-\infty}^{x_n}\\
+&\quad f_X(x_1,\dots,x_k,\\
+&\qquad u_{k+1},\dots,u_n)\,du_{k+1}\cdots du_n
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -229,9 +249,16 @@ X\mid Y=y&\sim\mathrm{Uniform}(y,1)\end{aligned}
   <p>conditional mean ออกมาเป็นสูตรที่ยังติด $y$ อยู่ ซึ่งไม่ใช่ความผิดพลาด แต่นี่คือคำตอบจริง: ค่าเฉลี่ยใหม่ขึ้นกับว่าเราเห็นค่าอะไร</p>
   <p>เมื่อเอาสูตรนี้ไปเฉลี่ยทับ $Y$ ด้วย marginal ของมันเอง จะได้ค่าเฉลี่ยเดิมกลับคืนมา นี่คือ tower property ที่หัวข้อ 2.1 พิสูจน์ไว้ และที่นี่ตรวจด้วยเลข</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}[X\mid Y=y]&=\int_{y}^{1}x\cdot\frac{1}{1-y}\,dx=\frac{1}{1-y}\Bigl[\frac{x^{2}}{2}\Bigr]_{y}^{1}=\frac{1-y^{2}}{2(1-y)}=\frac{1+y}{2}\\[6pt]
-\mathbb{E}\bigl[\mathbb{E}[X\mid Y]\bigr]&=\mathbb{E}\Bigl[\frac{1+Y}{2}\Bigr]=\frac{1+\mathbb{E}[Y]}{2}=\frac{1+\frac{1}{3}}{2}=\frac{2}{3}\\[4pt]
-\mathbb{E}[X]&=\int_{0}^{1}x\cdot2x\,dx=\frac{2}{3}\end{aligned}
+\begin{aligned}
+&\mathbb{E}[X\mid Y=y]\\
+&=\int_{y}^{1}x\cdot\frac{1}{1-y}\,dx\\
+&=\frac{1}{1-y}\Bigl[\frac{x^{2}}{2}\Bigr]_{y}^{1}\\
+&=\frac{1-y^{2}}{2(1-y)}=\frac{1+y}{2}\\[6pt]
+&\mathbb{E}\bigl[\mathbb{E}[X\mid Y]\bigr]\\
+&=\mathbb{E}\Bigl[\frac{1+Y}{2}\Bigr]=\frac{1+\mathbb{E}[Y]}{2}\\
+&=\frac{1+\frac{1}{3}}{2}=\frac{2}{3}\\[4pt]
+\mathbb{E}[X]&=\int_{0}^{1}x\cdot2x\,dx=\frac{2}{3}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อินทิเกรต $x$ คูณ conditional density ตามช่วงที่เหลืออยู่ ตัวส่วนตัดกับตัวเศษได้ผลสวยคือ $(1+y)/2$ ซึ่งเป็นเส้นตรงใน $y$ ไม่ใช่ตัวเลขคงที่</p>
@@ -246,10 +273,15 @@ X\mid Y=y&\sim\mathrm{Uniform}(y,1)\end{aligned}
   <p>หัวข้อ 2.2 บอกว่า variance แยกได้เป็นสองก้อน: ก้อนที่อธิบายได้ด้วยข้อมูลที่รู้ กับก้อนที่ยังเหลืออยู่แม้รู้แล้ว ที่นี่แทนเลขลงไปทั้งสองก้อน</p>
   <p>ถ้าแนวคิดถูก สองก้อนต้องบวกกันได้ variance รวมพอดี และตัวเลขข้างล่างยืนยันว่าได้</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(X)&=\mathbb{E}[X^{2}]-(\mathbb{E}[X])^{2}=\frac{1}{2}-\frac{4}{9}=\frac{1}{18}\\[6pt]
-\mathrm{Var}\bigl(\mathbb{E}[X\mid Y]\bigr)&=\mathrm{Var}\Bigl(\frac{1+Y}{2}\Bigr)=\frac{1}{4}\cdot\frac{1}{18}=\frac{1}{72}\\[4pt]
-\mathbb{E}\bigl[\mathrm{Var}(X\mid Y)\bigr]&=\mathbb{E}\Bigl[\frac{(1-Y)^{2}}{12}\Bigr]=\frac{1}{12}\cdot\frac{1}{2}=\frac{1}{24}\\[6pt]
-\frac{1}{72}+\frac{1}{24}&=\frac{1+3}{72}=\frac{4}{72}=\frac{1}{18}\end{aligned}
+\begin{aligned}
+\mathrm{Var}(X)&=\mathbb{E}[X^{2}]-(\mathbb{E}[X])^{2}\\
+&=\frac{1}{2}-\frac{4}{9}=\frac{1}{18}\\[6pt]
+&\mathrm{Var}\bigl(\mathbb{E}[X\mid Y]\bigr)\\
+&=\mathrm{Var}\Bigl(\frac{1+Y}{2}\Bigr)=\frac{1}{4}\cdot\frac{1}{18}=\frac{1}{72}\\[4pt]
+&\mathbb{E}\bigl[\mathrm{Var}(X\mid Y)\bigr]\\
+&=\mathbb{E}\Bigl[\frac{(1-Y)^{2}}{12}\Bigr]=\frac{1}{12}\cdot\frac{1}{2}=\frac{1}{24}\\[6pt]
+&\frac{1}{72}+\frac{1}{24}=\frac{1+3}{72}=\frac{4}{72}=\frac{1}{18}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>variance รวมคำนวณจาก marginal ของ $X$ ได้หนึ่งส่วนสิบแปด ส่วน conditional variance ของ uniform บนช่วงยาว $1-y$ คือกำลังสองของความยาวหารสิบสอง จึงเหลือรูป $(1-y)^2/12$</p>

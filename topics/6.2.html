@@ -108,9 +108,12 @@
 P(X=-2\%)&=0.05+0.15=0.20\\
 P(X=0\%)&=0.30+0.20=0.50\\
 P(X=+2\%)&=0.25+0.05=0.30\\
-P(Y=\text{up})&=0.05+0.30+0.25=0.60\\
-P(Y=\text{down})&=0.15+0.20+0.05=0.40\\
-\text{check}&:\ 0.20+0.50+0.30=1,\quad0.60+0.40=1
+P(Y=\text{up})&=0.05+0.30+0.25\\
+&=0.60\\
+P(Y=\text{down})&=0.15+0.20+0.05\\
+&=0.40\\
+\text{check}&:\ 0.20+0.50+0.30=1\\
+&\quad0.60+0.40=1
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -180,9 +183,13 @@ P(X=-2\%)&=0.05+0.15=0.20\end{aligned}
   <p>ในพอร์ตโฟลิโอขนาดใหญ่ เรามักแบ่งสินทรัพย์ออกเป็นกลุ่ม เช่น หุ้นเทคโนโลยีกับตราสารหนี้ การหา joint marginal distribution ของกลุ่มย่อยช่วยให้วิเคราะห์ความเสี่ยงเฉพาะกลุ่มได้โดยไม่ต้องละทิ้งโครงสร้างร่วม</p>
   <div class="math">\[
 \begin{aligned}
-F_{X_i}(x_i) &= P(X_i \le x_i) = F_X(\infty, \dots, \infty, x_i, \infty, \dots, \infty) \\[6pt]
-f_{X_1}(x_1, \dots, x_k) &= \int_{-\infty}^\infty \dots \int_{-\infty}^\infty f_X(x_1, \dots, x_k, u_{k+1}, \dots, u_n)\,du_{k+1} \dots du_n \\[6pt]
-F_{X_1}(x_1, \dots, x_k) &= F_X(x_1, \dots, x_k, \infty, \dots, \infty)
+F_{X_i}(x_i) &= P(X_i \le x_i)\\
+&= F_X(\infty, \dots, \infty, x_i, \infty, \dots, \infty) \\[6pt]
+&f_{X_1}(x_1, \dots, x_k)\\
+&= \int_{-\infty}^\infty \dots \int_{-\infty}^\infty f_X(x_1, \dots, x_k,\\
+&\qquad u_{k+1}, \dots, u_n)\,du_{k+1} \dots du_n \\[6pt]
+&F_{X_1}(x_1, \dots, x_k)\\
+&= F_X(x_1, \dots, x_k, \infty, \dots, \infty)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -197,11 +204,17 @@ F_{X_1}(x_1, \dots, x_k) &= F_X(x_1, \dots, x_k, \infty, \dots, \infty)
   <p>density ก้อนนี้เป็นของเล่นที่เลือกมาให้อินทิเกรตด้วยมือได้ ไม่ใช่ model ราคาจริง แต่ขอบเขตของมันคือของจริง: $Y$ ถูกบังคับให้ไม่เกิน $X$ เหมือนขายที่ผูกกันด้วยข้อจำกัด</p>
   <p>เพราะขอบเขตผูกกัน ขีดจำกัดของการอินทิเกรตจึงไม่ใช่ตัวเลขคงที่ แต่เป็นตัวแปรอีกตัวหนึ่ง นี่คือจุดที่คนส่วนใหญ่พลาด</p>
   <div class="math">\[
-\begin{aligned}f_{X,Y}(x,y)&=2\qquad\text{on }0\le y\le x\le1\\[4pt]
+\begin{aligned}
+f_{X,Y}(x,y)&=2\\
+&\quad\text{on }0\le y\le x\le1\\[4pt]
 \text{area}&=\tfrac{1}{2}\ \Rightarrow\ 2\cdot\tfrac{1}{2}=1\\[6pt]
-f_{X}(x)&=\int_{0}^{x}2\,dy=\Bigl[2y\Bigr]_{0}^{x}=2x\qquad 0\le x\le1\\[4pt]
-f_{Y}(y)&=\int_{y}^{1}2\,dx=\Bigl[2x\Bigr]_{y}^{1}=2(1-y)\qquad 0\le y\le1\\[6pt]
-\int_{0}^{1}2x\,dx&=\Bigl[x^{2}\Bigr]_{0}^{1}=1,\qquad\int_{0}^{1}2(1-y)\,dy=1\end{aligned}
+f_{X}(x)&=\int_{0}^{x}2\,dy=\Bigl[2y\Bigr]_{0}^{x}=2x\\
+&\quad 0\le x\le1\\[4pt]
+f_{Y}(y)&=\int_{y}^{1}2\,dx=\Bigl[2x\Bigr]_{y}^{1}\\
+&=2(1-y)\qquad 0\le y\le1\\[6pt]
+&\int_{0}^{1}2x\,dx=\Bigl[x^{2}\Bigr]_{0}^{1}=1\\
+&\int_{0}^{1}2(1-y)\,dy=1
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>พื้นที่ที่ density ไม่เป็นศูนย์คือสามเหลี่ยมมุม $(0,0)$ กับ $(1,0)$ กับ $(1,1)$ ซึ่งมีพื้นที่ครึ่งหนึ่ง คูณกับความสูง $2$ จึงได้พื้นที่ใต้ density รวมเป็น $1$ พอดี</p>
@@ -216,10 +229,17 @@ f_{Y}(y)&=\int_{y}^{1}2\,dx=\Bigl[2x\Bigr]_{y}^{1}=2(1-y)\qquad 0\le y\le1\\[6pt
   <p>joint density มีค่าเท่ากันคือ $2$ ทุกจุดบนบริเวณ ถ้ามองแค่ตัว density จะรู้สึกว่าทุกอย่างสมมาตร แต่ marginal ทั้งสองตัวไม่สมมาตรเลย</p>
   <p>สาเหตุไม่ได้อยู่ที่ค่าของ density แต่อยู่ที่รูปร่างของบริเวณ นี่คือบทเรียนที่โอนไปใช้กับพอร์ตได้ตรง ๆ</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}[X]&=\int_{0}^{1}x\cdot2x\,dx=2\Bigl[\tfrac{x^{3}}{3}\Bigr]_{0}^{1}=\tfrac{2}{3}\approx0.667\\[4pt]
-\mathbb{E}[Y]&=\int_{0}^{1}y\cdot2(1-y)\,dy=2\Bigl[\tfrac{y^{2}}{2}-\tfrac{y^{3}}{3}\Bigr]_{0}^{1}=2\Bigl(\tfrac{1}{2}-\tfrac{1}{3}\Bigr)=\tfrac{1}{3}\approx0.333\\[6pt]
-\mathbb{E}[X]+\mathbb{E}[Y]&=\tfrac{2}{3}+\tfrac{1}{3}=1\\[4pt]
-f_{X}(x)&\ne f_{X}(1-x)\ \Rightarrow\ \text{skewed}\end{aligned}
+\begin{aligned}
+\mathbb{E}[X]&=\int_{0}^{1}x\cdot2x\,dx=2\Bigl[\tfrac{x^{3}}{3}\Bigr]_{0}^{1}\\
+&=\tfrac{2}{3}\approx0.667\\[4pt]
+\mathbb{E}[Y]&=\int_{0}^{1}y\cdot2(1-y)\,dy\\
+&=2\Bigl[\tfrac{y^{2}}{2}-\tfrac{y^{3}}{3}\Bigr]_{0}^{1}\\
+&=2\Bigl(\tfrac{1}{2}-\tfrac{1}{3}\Bigr)=\tfrac{1}{3}\approx0.333\\[6pt]
+&\mathbb{E}[X]+\mathbb{E}[Y]\\
+&=\tfrac{2}{3}+\tfrac{1}{3}=1\\[4pt]
+f_{X}(x)&\ne f_{X}(1-x)\\
+&\Rightarrow\ \text{skewed}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของ $X$ ได้จากการคูณ $x$ เข้ากับ marginal แล้วอินทิเกรต ได้ $2/3$ ส่วนของ $Y$ ได้ $1/3$ ตัวหนึ่งเป็นสองเท่าของอีกตัว</p>

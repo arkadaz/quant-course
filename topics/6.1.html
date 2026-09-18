@@ -139,13 +139,19 @@ F_{X,Y}(x,y)=\int_{-\infty}^{x}\int_{-\infty}^{y}f_{X,Y}(u,v)\,dv\,du
 
 <section class="formula">
   <h4>ขั้นที่ 4 — ความน่าจะเป็นในกรอบสี่เหลี่ยม: อ่านจากสี่มุมของ joint CDF</h4>
-  <p>คำถามที่ถามจริงมักเป็นกรอบ เช่นทั้งสองตัวอยู่ในช่วงนี้พร้อมกัน คนที่รีบมักลบ CDF สองค่าเหมือนกรณีตัวเดียว ซึ่งผิด เพราะมุมหนึ่งถูกหักสองรอบ ห้าบรรทัดนี้แสดงว่าทำไมต้องมีสี่พจน์ ไม่ใช่สอง</p>
+  <p>คำถามที่ถามจริงมักเป็นกรอบ เช่นทั้งสองตัวอยู่ในช่วงนี้พร้อมกัน คนที่รีบมักลบ CDF สองค่าเหมือนกรณีตัวเดียว ซึ่งผิด เพราะมุมหนึ่งถูกหักสองรอบ สูตรข้างล่างแสดงว่าทำไมต้องมีสี่พจน์ ไม่ใช่สอง</p>
   <div class="math">\[
-\begin{aligned}P(a \lt X\le b,\;c \lt Y\le d)&=\int_a^b\!\!\int_c^d f_{X,Y}(u,v)\,dv\,du\\
-\int_a^b f(u)\,du&=\int_{-\infty}^{b} f(u)\,du-\int_{-\infty}^{a} f(u)\,du\\
-\int_c^d f(v)\,dv&=\int_{-\infty}^{d} f(v)\,dv-\int_{-\infty}^{c} f(v)\,dv\\
-P(a \lt X\le b,\;c \lt Y\le d)&=F_{X,Y}(b,d)-F_{X,Y}(a,d)\\
-&\quad-F_{X,Y}(b,c)+F_{X,Y}(a,c)\end{aligned}
+\begin{aligned}
+&P(a \lt X\le b,\;c \lt Y\le d)\\
+&=\int_a^b\!\!\int_c^d f_{X,Y}(u,v)\,dv\,du\\
+&\int_a^b f(u)\,du\\
+&=\int_{-\infty}^{b} f(u)\,du-\int_{-\infty}^{a} f(u)\,du\\
+&\int_c^d f(v)\,dv\\
+&=\int_{-\infty}^{d} f(v)\,dv-\int_{-\infty}^{c} f(v)\,dv\\
+&P(a \lt X\le b,\;c \lt Y\le d)\\
+&=F_{X,Y}(b,d)-F_{X,Y}(a,d)\\
+&\quad-F_{X,Y}(b,c)+F_{X,Y}(a,c)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือนิยามในขั้นที่ 2 โดยเลือกบริเวณ $A$ เป็นกรอบสี่เหลี่ยม</p>
@@ -160,9 +166,16 @@ P(a \lt X\le b,\;c \lt Y\le d)&=F_{X,Y}(b,d)-F_{X,Y}(a,d)\\
   <h4>ขั้นที่ 5 — กรอบสี่เหลี่ยมจากสี่มุมของ CDF: บวกลบสลับกัน ไม่ใช่ลบตรง ๆ</h4>
   <p>ขั้นที่ 4 บอกว่าโอกาสในกรอบคือปริมาตรใต้ผิว แต่ถ้ามีแค่ตาราง CDF ก็ยังตอบได้ ด้วยการบวกลบสี่มุม ลองกับตาราง 100 วัน</p>
   <div class="math">\[
-\begin{aligned}P(a \lt X\le b,\;c \lt Y\le d)&=F(b,d)-F(a,d)-F(b,c)+F(a,c)\\[4pt]
-P(X>-1\%,\;Y>-1\%)&=1-F_X(-1\%)-F_Y(-1\%)+F_{X,Y}(-1\%,-1\%)\\
-&=1-0.20-0.20+0.10=0.70\quad(70\text{ days, the bottom-right cell})\end{aligned}
+\begin{aligned}
+&P(a \lt X\le b,\;c \lt Y\le d)\\
+&=F(b,d)-F(a,d)\\
+&\quad-F(b,c)+F(a,c)\\[4pt]
+&P(X>-1\%,\;Y>-1\%)\\
+&=1-F_X(-1\%)-F_Y(-1\%)\\
+&\quad+F_{X,Y}(-1\%,-1\%)\\
+&=1-0.20-0.20+0.10=0.70\\
+&\quad(70\text{ days, the bottom-right cell})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ทำไมต้องบวกมุมสุดท้ายกลับ: พอลบ ‘AAPL ลง’ (20 วัน) และลบ ‘MSFT ลง’ (20 วัน) ออกจาก 100 วัน วันที่ลงพร้อมกัน 10 วันถูกลบไปสองครั้ง จึงต้องบวกคืนหนึ่งครั้ง ได้ 70 วันตรงกับช่องขวาล่างของตาราง</p>
@@ -175,12 +188,20 @@ P(X>-1\%,\;Y>-1\%)&=1-F_X(-1\%)-F_Y(-1\%)+F_{X,Y}(-1\%,-1\%)\\
   <p>ความสัมพันธ์นี้คือสะพานเชื่อมสองทาง: joint CDF หาได้จากการคำนวณ integral ซ้อนสองชั้นของ joint PDF ในทางกลับกัน joint PDF หาได้จากการหา partial derivative สองครั้งเทียบกับแต่ละแกน</p>
   <div class="math">\[
 \begin{aligned}
-P(x \lt X \le x+\Delta x,\; y \lt Y \le y+\Delta y) &= F_{X,Y}(x+\Delta x, y+\Delta y) - F_{X,Y}(x, y+\Delta y) \\
+&P(x \lt X \le x+\Delta x,\\
+&\qquad y \lt Y \le y+\Delta y)\\
+&= F_{X,Y}(x+\Delta x, y+\Delta y)\\
+&\quad - F_{X,Y}(x, y+\Delta y) \\
 &\quad - F_{X,Y}(x+\Delta x, y) + F_{X,Y}(x, y) \\[6pt]
-\frac{P(x \lt X \le x+\Delta x,\; y \lt Y \le y+\Delta y)}{\Delta x\,\Delta y} &= \frac{1}{\Delta y} \left[ \frac{F_{X,Y}(x+\Delta x, y+\Delta y) - F_{X,Y}(x, y+\Delta y)}{\Delta x} \right. \\
+&\frac{P(x \lt X \le x+\Delta x,\; y \lt Y \le y+\Delta y)}{\Delta x\,\Delta y}\\
+&= \frac{1}{\Delta y} \left[ \frac{F_{X,Y}(x+\Delta x, y+\Delta y) - F_{X,Y}(x, y+\Delta y)}{\Delta x} \right. \\
 &\quad \left. - \frac{F_{X,Y}(x+\Delta x, y) - F_{X,Y}(x, y)}{\Delta x} \right] \\[6pt]
-\lim_{\Delta x \to 0} \frac{P(\dots)}{\Delta x\,\Delta y} &= \frac{1}{\Delta y} \left[ \frac{\partial F_{X,Y}(x, y+\Delta y)}{\partial x} - \frac{\partial F_{X,Y}(x, y)}{\partial x} \right] \\[6pt]
-f_{X,Y}(x, y) = \lim_{\Delta y \to 0} \lim_{\Delta x \to 0} \frac{P(\dots)}{\Delta x\,\Delta y} &= \frac{\partial}{\partial y} \left( \frac{\partial F_{X,Y}(x, y)}{\partial x} \right) = \frac{\partial^2 F_{X,Y}(x, y)}{\partial x\,\partial y}
+&\lim_{\Delta x \to 0} \frac{P(\dots)}{\Delta x\,\Delta y}\\
+&= \frac{1}{\Delta y} \left[ \frac{\partial F_{X,Y}(x, y+\Delta y)}{\partial x} - \frac{\partial F_{X,Y}(x, y)}{\partial x} \right] \\[6pt]
+&f_{X,Y}(x, y)\\
+&= \lim_{\Delta y \to 0} \lim_{\Delta x \to 0} \frac{P(\dots)}{\Delta x\,\Delta y}\\
+&= \frac{\partial}{\partial y} \left( \frac{\partial F_{X,Y}(x, y)}{\partial x} \right)\\
+&= \frac{\partial^2 F_{X,Y}(x, y)}{\partial x\,\partial y}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -195,10 +216,14 @@ f_{X,Y}(x, y) = \lim_{\Delta y \to 0} \lim_{\Delta x \to 0} \frac{P(\dots)}{\Del
   <p>นี่คือรูปทั่วไปสำหรับพอร์ตที่มีสินทรัพย์ $n$ ตัว ปริมาตรรวมใต้ผิว joint PDF เหนือทุกค่าของ $n$ ผลตอบแทนต้องเท่ากับ 1 เสมอ</p>
   <div class="math">\[
 \begin{aligned}
-F_X(x_1,\dots,x_n)&=P(X_1\le x_1,\dots,X_n\le x_n)\\
-&=\int_{-\infty}^{x_1}\!\!\cdots\int_{-\infty}^{x_n}f_X(u_1,\dots,u_n)\,du_1\cdots du_n\\[6pt]
-f_X(x_1,\dots,x_n)&=\frac{\partial^nF_X(x_1,\dots,x_n)}{\partial x_1\cdots\partial x_n}\ge0\\[6pt]
-1&=\int_{-\infty}^{\infty}\!\!\cdots\int_{-\infty}^{\infty}f_X(u_1,\dots,u_n)\,du_1\cdots du_n
+&F_X(x_1,\dots,x_n)\\
+&=P(X_1\le x_1,\dots,X_n\le x_n)\\
+&=\int_{-\infty}^{x_1}\!\!\cdots\int_{-\infty}^{x_n}\\
+&\qquad f_X(u_1,\dots,u_n)\,du_1\cdots du_n\\[6pt]
+&f_X(x_1,\dots,x_n)\\
+&=\frac{\partial^nF_X(x_1,\dots,x_n)}{\partial x_1\cdots\partial x_n}\ge0\\[6pt]
+1&=\int_{-\infty}^{\infty}\!\!\cdots\int_{-\infty}^{\infty}\\
+&\qquad f_X(u_1,\dots,u_n)\,du_1\cdots du_n
 \end{aligned}
 \]</div>
   <div class="reading">
