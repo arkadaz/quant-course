@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>วันนี้คุณรู้ราคาบัตรรับเงินในอนาคต แต่ปีหน้าดอกเบี้ยอาจขึ้นหรือลง. ถ้ามีสิทธิ์เลือกซื้อบัตรนั้นปีหน้า ราคาเฉลี่ยเพียงตัวเดียวพอไหม?</p>
-  <p>ลองวาดสองทาง: ดอกเบี้ยสูงทำให้บัตรราคาต่ำ, ดอกเบี้ยต่ำทำให้บัตรราคาแพง. เราให้ทุกทางรวมกันยังให้ราคาเท่ากับตลาดวันนี้ แล้วค่อยคิดค่าของสิทธิ์ย้อนกลับ.</p>
-  <p>เฉลย: ไม่พอ เพราะ option ได้ใช้ประโยชน์ไม่เท่ากันในแต่ละทาง. ภาพทางเลือกนี้เรียก rate lattice และการคิดจากปลายกลับมาต้นเรียก backward induction. ค่าเฉลี่ยบอกอุณหภูมิห้อง แต่ option สนใจว่าประตูไหนร้อนจัด.</p>
+  <p>นักลงทุนถือสัญญาสิทธิซื้อ (European call) อายุ 1 ปี บน zero-coupon bond อายุ 1.5 ปี หน้าตั๋ว \$1,000,000 ที่ strike 0.975 หากดอกเบี้ยเริ่มต้น 5% แล้วแยกเป็น 3% ถึง 7% สิทธินี้มีมูลค่าเท่าใด?</p>
+  <p>เฉลย: \$2,564.15 คำนวณผ่าน rate lattice สองก้าวที่นำ Arrow-Debreu state prices ไปคูณกับ payoff ปลายทาง หากใช้อัตราเฉลี่ยเพียงตัวเดียวคำนวณจะมองข้ามความไม่สมมาตรของสิทธิในภาวะดอกเบี้ยต่ำไปทั้งหมด</p>
 </div>
 
 <details class="jargon" open>
@@ -76,12 +75,17 @@
       <tr><td>$X$</td><td>strike price ของ bond option ต่อหนึ่ง USD face</td><td>USD</td></tr>
       <tr><td>$V_{n,j}$</td><td>derivative value ที่ node $(n,j)$ ต่อ notional ที่ระบุ</td><td>USD</td></tr>
       <tr><td>$N$</td><td>face amount ของ bond option</td><td>USD</td></tr>
+      <tr><td>$B_t$</td><td>cash account ที่เริ่ม 1 USD แล้วทบด้วย short rate ทีละงวด</td><td>USD</td></tr>
+      <tr><td>$C_{t}$</td><td>เงินที่ security จ่ายตอนงวด $t$ เช่น coupon</td><td>USD</td></tr>
+      <tr><td>$F_k,\ G_0,\ S_n$</td><td>ราคา futures ณ งวด $k$ ราคา forward ที่ตกลงวันนี้ และราคาของสินทรัพย์ตอนส่งมอบ</td><td>USD</td></tr>
+      <tr><td>$a_i,\ b_i$</td><td>ระดับและระยะห่างของ short rate ในงวด $i$ ของ Ho-Lee ตามสไลด์</td><td>ต่องวด</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
   <h4>ที่มาที่ไป: แบบจำลองที่ต้องตรงกับราคาตลาดวันนี้เป๊ะ ๆ</h4>
+  <p>ตลาดพันธบัตรสหรัฐฯ เพียงแห่งเดียวมีมูลค่ากว่า 35.3 ล้านล้าน USD ซึ่งเต็มไปด้วยตราสารหนี้แฝงสิทธิ์และ derivative ที่ต้องการการประเมินมูลค่าอย่างแม่นยำ</p>
   <p>แบบจำลองอัตราดอกเบี้ยในหัวข้อ 12.4 มีข้อจำกัดเมื่อใช้ parameter คงที่ คือไม่สามารถ fit ราคา bond ทุกอายุของ curve ใด ๆ ได้พอดี จึงต้องตรวจ residual ก่อนนำไปใช้งาน</p>
   <p>นั่นเป็นปัญหาร้ายแรง เพราะถ้าแบบจำลองตั้งราคาของที่มีอยู่แล้วยังผิด ก็ไม่มีเหตุผลให้เชื่อว่ามันจะตั้งราคาของที่ซับซ้อนกว่าได้ถูก</p>
   <p>Thomas Ho กับ Sang Bin Lee เสนอทางแก้ในปี 1986 โดยปล่อยให้แบบจำลองมีตัวปรับที่ต่างกันในแต่ละช่วงเวลา แล้วเลือกค่าเหล่านั้นให้ราคาตรงกับตลาดพอดี</p>
@@ -89,9 +93,17 @@
 </section>
 
 <section class="prose">
+  <h4>ทำไมตลาดดอกเบี้ยต้องมีต้นไม้ของตัวเอง</h4>
+  <p>สไลด์เปิดด้วยขนาดตลาด ปลายปี 2012 ไตรมาสที่สาม ตาม Securities Industry and Financial Markets Association พันธบัตรสหรัฐมีมูลค่า 35.3 ล้านล้าน USD รัฐบาล 10.7 ล้านล้าน (30.4%) บริษัท 8.6 (24.3%) mortgage 8.2 (23.3%) ท้องถิ่น 3.7 (10.5%) agency 2.4 (6.7%) และ asset-backed 1.7 (4.8%) ขณะที่ตลาดหุ้นสหรัฐราว 26 ล้านล้าน</p>
+  <p>derivative บนตลาดนี้ก็ใหญ่ ทั้ง bond futures, cap, floor, swap และ swaption แต่ยากกว่าหุ้นเพราะต้องจำลองทั้ง curve ตัวแปรที่ใช้จึงเป็น short rate คืออัตราที่ใช้หนึ่งงวดข้างหน้า สุ่มตามเวลาแต่รู้ค่าตั้งแต่ต้นงวด</p>
+  <p>ต้นไม้หุ้นเริ่มจากโอกาสจริงแล้วหาโอกาสใต้ Q จากการลอกหุ้น แต่ short rate ไม่ใช่ของที่ซื้อขายได้ จึงกำหนดโอกาสใต้ Q ตรง ๆ ค่าใดก็ได้ระหว่าง 0 กับ 1 ไม่มี arbitrage คอร์สใช้ครึ่งต่อครึ่ง งานยากจึงย้ายไปที่การ calibrate ดอกเบี้ยทุก node ให้ตรงราคาของที่ซื้อขายคล่อง แล้วใช้ต่อกับของที่ไม่คล่อง</p>
+</section>
+
+<section class="prose">
   <h4>ประกาศ convention ของ tree ก่อนคำนวณ</h4>
   <p>ให้เวลาขยับทีละ 6 เดือน และเงินทุกก้อนเป็น USD. ที่แต่ละจุดของ tree เรารู้ short rate ของช่วงถัดไป จึงลดเงินอนาคตกลับมาได้หนึ่งก้าว.</p>
   <p>เริ่มด้วยทางขึ้นและลงที่โอกาส 0.5 เท่ากัน. สองทางกลับมาจุดกลางเดียวกันได้ จึงเรียก recombining tree.</p>
+  <p>ต่างจาก tree ของหุ้นที่เริ่มจากความผันผวนแล้วคำนวณความน่าจะเป็น ใน rate lattice เรากลับทิศ: กำหนดให้โอกาสขึ้นและลงเท่ากับ 0.5 เสมอ แล้ว calibrate ค่า short rate ในแต่ละ node ให้ราคา bond บนต้นไม้ตรงกับ discount curve วันนี้เป๊ะ ๆ</p>
   <p>คำว่า continuously compounded บอกแค่ว่าแปลงเงินอนาคตกลับวันนี้แบบไหน. ตอนนี้ยังไม่ใส่ default, transaction cost หรือ rate ที่แกว่งในงวด เพราะต้องทำ toy tree ให้จบก่อน. งานจริงค่อย calibrate ทุกชั้นให้ตรงกับราคาตลาด.</p>
 </section>
 
@@ -106,6 +118,26 @@ B_{n,j}=e^{-r_{n,j}\Delta t}
   </div>
 </section>
 
+<section class="formula">
+  <h4>security ที่จ่าย coupon และ cash account</h4>
+  <p>ขั้นที่ 1 คิดลดเงินหนึ่งก้าว ถ้า security จ่ายเงิน $C$ ในงวดหน้าด้วยก็บวกเข้าไปก่อนคิดลด และถ้าทบ short rate ไปเรื่อย ๆ จะได้บัญชีเงินสดที่ใช้เป็นตัวหารของทุกราคา</p>
+  <div class="math">\[
+\begin{aligned}
+Z_{t,j}&=\frac{q_u(Z_{t+1,j+1}+C_{t+1,j+1})}{1+r_{t,j}}\\
+&\quad+\frac{q_d(Z_{t+1,j}+C_{t+1,j})}{1+r_{t,j}}\\[4pt]
+B_t&=(1+r_0)(1+r_1)\cdots(1+r_{t-1})\\
+\frac{Z_t}{B_t}&=\mathbb E^{\mathbb Q}_t\Big[\frac{Z_{t+1}+C_{t+1}}{B_{t+1}}\Big]\\[4pt]
+B_2&=1.06(1.075)=1.1395\\
+B_2&=1.06(1.054)=1.11724\\
+\frac{77.22}{1}&=\frac{\tfrac12(79.27+84.43)}{1.06}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$B_t$ ปลอดภัยทีละงวด เพราะรู้ $B_{t+1}$ ตั้งแต่ $t$ แต่ไม่ปลอดภัยเมื่อมองหลายงวด สองแถวที่มี $B_2$ คือบัญชีเดียวกันบนต้นไม้ของคอร์สที่ต่างกันตามว่างวดแรกดอกเบี้ยขึ้นหรือลง</p>
+    <p>หารราคาด้วย $B_t$ แล้วค่าเฉลี่ยใต้ $\mathbb Q$ ของงวดหน้าเท่ากับค่าวันนี้ ราคาที่หารแล้วจึงเป็น martingale แถวสุดท้ายตรวจกับ bond อายุ 4 งวด: ค่าเฉลี่ยของ 79.27 กับ 84.43 หาร 1.06 ได้ 77.22 พอดี</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
   <p>การสร้างต้นไม้อัตราดอกเบี้ยที่ตรงกับราคาตลาดวันนี้ เป็นฐานของการตั้งราคา derivative อัตราดอกเบี้ย</p>
@@ -115,8 +147,8 @@ B_{n,j}=e^{-r_{n,j}\Delta t}
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — short-rate lattice สองก้าว</h4>
-  <img src="../figures/20.3-1.svg" alt="ภาพที่ 1 — short-rate lattice สองก้าว" loading="lazy">
+  <h4>Figure 20.3a — short-rate lattice สองก้าว</h4>
+  <img src="../figures/20.3-1.svg" alt="Figure 20.3a — short-rate lattice สองก้าว" loading="lazy">
   <figcaption>
     <p>rate เริ่ม 5% แล้วแยกเป็น 6% หรือ 4% ในครึ่งปีแรก ก่อน recombine เป็นสาม states ที่ 7%, 5% และ 3% ณ ปีที่ 1 ระยะห่างคงที่สะท้อน additive shock ของ Ho-Lee-style tree</p>
   </figcaption>
@@ -147,13 +179,14 @@ Q_{1,u}=Q_{1,d}=0.5\,e^{-0.05(0.5)}=0.5(0.975309912)=0.487654956
 
 <section class="formula">
   <h4>ขั้นที่ 4 — state price ของ middle node ต้องรวมสองเส้นทาง</h4>
-  <p>ตั้งแต่ก้าวที่สองเป็นต้นไป บาง node มาถึงได้หลายทาง ต้องบวกทุกทางเข้าด้วยกัน ห้าบรรทัดนี้อธิบายว่าทำไมถึงบวก และทำไมตัวคิดลดของสองทางถึงไม่เท่ากัน สองข้อนี้คือสิ่งที่ทำให้โค้ดที่เขียนผิดยังให้ตัวเลขที่ดูสมเหตุสมผล</p>
+  <p>ตั้งแต่ก้าวที่สองเป็นต้นไป บาง node มาถึงได้หลายทาง ต้องบวกทุกทางเข้าด้วยกัน สูตรข้างล่างอธิบายว่าทำไมถึงบวก และทำไมตัวคิดลดของสองทางถึงไม่เท่ากัน สองข้อนี้คือสิ่งที่ทำให้โค้ดที่เขียนผิดยังให้ตัวเลขที่ดูสมเหตุสมผล</p>
   <div class="math">\[
-\begin{aligned}\text{paths into the middle node}&:\ \text{up-then-down},\ \text{down-then-up}\\
-\text{value today of 1 USD via up-then-down}&=Q_{1,u}\,(1-q)\,e^{-r_{1,u}\Delta t}\\
-\text{via down-then-up}&=Q_{1,d}\,q\,e^{-r_{1,d}\Delta t}\\
-\text{disjoint paths}\;&\Longrightarrow\;\text{values add}\\
-Q_{2,m}&=Q_{1,u}(1-q)e^{-0.06(0.5)}+Q_{1,d}\,q\,e^{-0.04(0.5)}\end{aligned}
+\begin{aligned}
+Q_{2,m}&=Q_{1,u}(1-q)\,e^{-r_{1,u}\Delta t}\\
+&\quad+Q_{1,d}\,q\,e^{-r_{1,d}\Delta t}\\
+&=Q_{1,u}(0.5)\,e^{-0.06(0.5)}\\
+&\quad+Q_{1,d}(0.5)\,e^{-0.04(0.5)}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>โครงตาข่ายถูกออกแบบให้ขึ้นแล้วลงมาบรรจบกับลงแล้วขึ้นพอดี node กลางจึงมีสองเส้นทางเข้ามาถึง ไม่ใช่ทางเดียว</p>
@@ -169,17 +202,22 @@ Q_{2,m}&=Q_{1,u}(1-q)e^{-0.06(0.5)}+Q_{1,d}\,q\,e^{-0.04(0.5)}\end{aligned}
   <p>การคำนวณเดินหน้าช่วยให้เราสามารถหา state prices ของทั้ง tree ได้ในรอบเดียว ซึ่งเร็วกว่าการคิดย้อนกลับทีละ cash flow อย่างมากเมื่อต้อง calibrate กับพันธบัตรหลายช่วงอายุ</p>
   <div class="math">\[
 \begin{aligned}
-V_{n,s-1} &= \frac{q_u \cdot 1 + (1-q_u) \cdot 0}{1 + r_{n,s-1}} = \frac{q_u}{1 + r_{n,s-1}} \\
-V_{n,s} &= \frac{q_d \cdot 0 + (1-q_d) \cdot 1}{1 + r_{n,s}} = \frac{1-q_d}{1 + r_{n,s}} \\
-Q_{n+1,s} &= \sum_j Q_{n,j}\,V_{n,j} \\
-Q_{n+1,s} &= Q_{n,s-1}\,\frac{q_u}{1 + r_{n,s-1}} + Q_{n,s}\,\frac{1-q_d}{1 + r_{n,s}} \\
-q_u = 1-q_d = \frac{1}{2} \implies Q_{n+1,s} &= \frac{Q_{n,s-1}}{2(1 + r_{n,s-1})} + \frac{Q_{n,s}}{2(1 + r_{n,s})}
+V_{n,s-1}&=\frac{q_u(1)+(1-q_u)(0)}{1+r_{n,s-1}}\\
+&=\frac{q_u}{1+r_{n,s-1}}\\
+V_{n,s}&=\frac{q_d(0)+(1-q_d)(1)}{1+r_{n,s}}\\
+&=\frac{1-q_d}{1+r_{n,s}}\\
+Q_{n+1,s}&=\sum_jQ_{n,j}V_{n,j}\\
+&=Q_{n,s-1}\frac{q_u}{1+r_{n,s-1}}\\
+&\quad+Q_{n,s}\frac{1-q_d}{1+r_{n,s}}\\[4pt]
+q_u=1-q_d&=\tfrac12\\
+Q_{n+1,s}&=\frac{Q_{n,s-1}}{2(1+r_{n,s-1})}\\
+&\quad+\frac{Q_{n,s}}{2(1+r_{n,s})}
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>สมมติเราถือตั๋วสัญญาที่จ่ายเงินหนึ่งดอลลาร์เฉพาะที่ node $(n+1, s)$ และจ่ายศูนย์ในจุดอื่นทั้งหมด หากคิดย้อนกลับไปที่ layer $n$ ตราสารนี้จะมีมูลค่าเป็นบวกเฉพาะสอง node ก่อนหน้าเท่านั้น</p>
     <p>ที่ node $(n, s-1)$ การก้าวขึ้นให้เงินหนึ่งหน่วย จึงมีมูลค่าคิดลด $\frac{q_u}{1 + r_{n,s-1}}$ ส่วนที่ node $(n, s)$ การก้าวจมลงให้เงินหนึ่งหน่วย จึงมีมูลค่าคิดลด $\frac{1-q_d}{1 + r_{n,s}}$</p>
-    <p>ตามนิยามของ state price มูลค่าวันนี้คือผลรวมถ่วงน้ำหนักของมูลค่าในแต่ละ node ด้วย $Q_{n,j}$ เมื่อแทนค่าและกำหนดความน่าจะเป็นเสี่ยงเป็นกลางเท่ากับครึ่งหนึ่ง จึงได้สมการเดินหน้าทันที</p>
+    <p>มูลค่าวันนี้ของสัญญาจึงเป็นผลรวมถ่วงน้ำหนักของมูลค่าในแต่ละ node ด้วย $Q_{n,j}$ เมื่อแทนค่าและกำหนดความน่าจะเป็นเสี่ยงเป็นกลางเท่ากับครึ่งหนึ่ง จึงได้สมการเดินหน้าทันที</p>
   </div>
 </section>
 
@@ -187,10 +225,17 @@ q_u = 1-q_d = \frac{1}{2} \implies Q_{n+1,s} &= \frac{Q_{n,s-1}}{2(1 + r_{n,s-1}
   <h4>ขั้นที่ 5 — ค่าที่ครบหนึ่งปีและ discount-factor check</h4>
   <p>เดิน recursion ต่ออีกหนึ่งก้าว โดยใช้ short rate ที่ครึ่งปีซึ่งเป็น 6% ทางบน และ 4% ทางล่าง node กลางรับมาจากสองทางจึงต้องบวกกัน</p>
   <div class="math">\[
-\begin{aligned}Q_{2,uu}&=Q_{1,u}(0.5)e^{-0.06(0.5)}=0.487654956(0.5)(0.970446)=0.236621287\\
-Q_{2,dd}&=Q_{1,d}(0.5)e^{-0.04(0.5)}=0.487654956(0.5)(0.980199)=0.238999370\\
-Q_{2,m}&=0.236621287+0.238999370=0.475620657\\[4pt]
-D(0,1)&=0.236621287+0.475620657+0.238999370=0.951241315\end{aligned}
+\begin{aligned}
+Q_{2,uu}&=0.487654956(0.5)(0.970446)\\
+&=0.236621287\\
+Q_{2,dd}&=0.487654956(0.5)(0.980199)\\
+&=0.238999370\\
+Q_{2,m}&=0.236621287+0.238999370\\
+&=0.475620657\\[4pt]
+D(0,1)&=0.236621287+0.475620657\\
+&\quad+0.238999370\\
+&=0.951241315
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>node กลางมาถึงได้สองทาง คือขึ้นแล้วลง กับลงแล้วขึ้น ค่าของสองทางนี้เท่ากับ $Q_{2,uu}$ และ $Q_{2,dd}$ พอดี จึงบวกกันได้ตรง ๆ</p>
@@ -199,19 +244,22 @@ D(0,1)&=0.236621287+0.475620657+0.238999370=0.951241315\end{aligned}
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — Arrow-Debreu prices ไหลและรวมบน tree</h4>
-  <img src="../figures/20.3-2.svg" alt="ภาพที่ 2 — Arrow-Debreu prices ไหลและรวมบน tree" loading="lazy">
+  <h4>Figure 20.3b — Arrow-Debreu prices ไหลและรวมบน tree</h4>
+  <img src="../figures/20.3-2.svg" alt="Figure 20.3b — Arrow-Debreu prices ไหลและรวมบน tree" loading="lazy">
   <figcaption>
     <p>middle state มีราคามากกว่าสองปลายเพราะรับเงินจากสองเส้นทาง ผลรวมชั้นปีที่ 1 เท่ากับ 0.951241 จึงเชื่อม state model กลับสู่ discount curve วันนี้</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>ตัวอย่าง USD — European call บน zero-coupon bond</h4>
-  <p>ของที่มี: option ใช้สิทธิปี 1 บน zero-coupon bond ที่จ่าย 1 USD ปี 1.5, strike $X=0.975$ ต่อ face 1 USD และ notional \$1,000,000. ที่ exercise สมมติ short rate คงที่หนึ่งก้าว จึงหา $P(1,1.5)$ ในทุก node ได้.</p>
-  <p>คำตอบ: รวม state prices กับ payoff ได้มูลค่า option วันนี้ \$2,564.15.</p>
-  <p>ตรวจเองใน 10 วินาที: payoff node ต่ำสุดต้องเป็นศูนย์ และ payoff node สูงสุดคือ \$10,111.94 ก่อนถ่วงน้ำหนัก.</p>
-  <p>เอาไปใช้จริง: lattice ทำให้ desk price สิทธิ์ที่ payoff ขึ้นกับ path ของ rate ได้โดยยัง fit curve วันนี้.</p>
+  <h4>คำตอบ — European call บน zero-coupon bond</h4>
+  <p>คำถาม: นักลงทุนถือสัญญาสิทธิซื้อ (European call) อายุ 1 ปี บน zero-coupon bond อายุ 1.5 ปี หน้าตั๋ว \$1,000,000 ที่ strike 0.975 หากดอกเบี้ยเริ่มต้น 5% แล้วแยกเป็น 3% ถึง 7% สิทธินี้มีมูลค่าเท่าใด?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 8 option ใช้สิทธิ์ปีที่ 1 strike 0.975 ต่อหน้าตั๋ว 1 USD ที่วันใช้สิทธิ์ short rate คงที่อีกครึ่งปี จึงหาราคา bond ได้ทุก node</p>
+  <p>1. ราคา bond ที่วันใช้สิทธิ์คือ 0.965605, 0.975310 และ 0.985112 ตามดอกเบี้ย 7, 5 และ 3%</p>
+  <p>2. payoff มีแค่สอง node ล่าง node บนสุด bond ต่ำกว่า strike จึงเป็นศูนย์</p>
+  <p>3. รวม payoff คูณ state price ได้มูลค่าวันนี้ 2,564.15 USD</p>
+  <p>ตรวจเองใน 10 วินาที: payoff ของ node ดอกเบี้ย 3% คือ (0.985112 − 0.975) คูณหนึ่งล้าน ได้ 10,111.94 USD ก่อนถ่วงด้วย state price</p>
+  <p>แปลว่าอะไร: call บน bond คือการเดิมพันว่าดอกเบี้ยจะลง มูลค่ามาจาก node ดอกเบี้ยต่ำล้วน ๆ ถ้าใช้ดอกเบี้ยเฉลี่ยตัวเดียว bond จะไม่ถึง strike และจะตีราคา option เป็นเกือบศูนย์</p>
 </section>
 
 <section class="formula">
@@ -239,10 +287,15 @@ N(P-X)^+=\{\$0,\ \$309.91,\ \$10{,}111.94\}
 <section class="formula">
   <h4>คูณทีละ state โดยไม่คิดลดซ้ำ</h4>
   <div class="math">\[
-\begin{aligned}&amp;V_u=0.236621287(0)=0\\
-&amp;V_m=0.475620657(309.912028)=147.400563\\
-&amp;V_d=0.238999370(10{,}111.939603)=2{,}416.747199\\
-&amp;V_0=0+147.400563+2{,}416.747199=2{,}564.147762\end{aligned}
+\begin{aligned}
+V_u&=0.236621287(0)=0\\
+V_m&=0.475620657(309.912028)\\
+&=147.400563\\
+V_d&=0.238999370(10{,}111.939603)\\
+&=2{,}416.747199\\
+V_0&=147.400563+2{,}416.747199\\
+&=2{,}564.147762
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>payoff ทุกตัวเป็น USD ที่ปี 1 แม้ underlying bond จะจ่ายปี 1.5 เพราะเราเปรียบเทียบราคาของ bond ณ วันใช้สิทธิแล้ว state price จึงย้ายเงินจากปี 1 กลับวันนี้ได้ทันที</p>
@@ -262,8 +315,8 @@ V_0=\sum_jQ_{2,j}N(P_j-X)^+=\$2{,}564.15
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 3 — bond call มีค่าใน low-rate states</h4>
-  <img src="../figures/20.3-3.svg" alt="ภาพที่ 3 — bond call มีค่าใน low-rate states" loading="lazy">
+  <h4>Figure 20.3c — bond call มีค่าใน low-rate states</h4>
+  <img src="../figures/20.3-3.svg" alt="Figure 20.3c — bond call มีค่าใน low-rate states" loading="lazy">
   <figcaption>
     <p>เมื่อ exercise rate ลดต่ำกว่าเกือบ 5% bond price ข้าม strike และ call payoff เริ่มเป็นบวก เส้น payoff ไม่สมมาตรจึงต้องรู้ทั้ง distribution ไม่ใช่เพียง expected rate</p>
   </figcaption>
@@ -299,13 +352,35 @@ r_{n,j}=\alpha_n+(n-2j)\sigma_r\sqrt{\Delta t},\qquad j=0,1,\ldots,n
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 10 — สมการ calibration ของแต่ละ layer</h4>
-  <p>โครงตาข่ายต้องคายราคาที่ตลาดบอกออกมาให้ตรงเป๊ะ ไม่งั้นมันก็ไม่ใช่แบบจำลองของตลาดนี้ สี่บรรทัดนี้แปลงข้อเรียกร้องนั้นเป็นสมการหนึ่งสมการต่อหนึ่งชั้น และเพราะมีตัวไม่รู้ค่าตัวเดียวต่อชั้น มันจึงแก้ได้เสมอ</p>
+  <h4>Ho-Lee ในรูปของสไลด์ และการ calibrate ด้วย Solver</h4>
+  <p>ต้นไม้ที่ไม่มีข้อจำกัดมี $r_{i,j}$ และ $q_{i,j}$ ทุก node มากเกินกว่าข้อมูลจะบอกได้ สไลด์จึงตรึง $q=1/2$ แล้วให้ $r_{i,j}$ มีรูปตายตัว</p>
   <div class="math">\[
-\begin{aligned}\sum_{j=0}^{n}Q_{n,j}\,e^{-r_{n,j}\Delta t}&=D(0,t_{n+1})\\[4pt]
+\begin{aligned}
+r_{i,j}&=a_i+b_i\,j\\
+r_{i+1,j+1}-r_{i+1,j}&=b_{i+1}\\
+\mathrm{sd}(r_{i+1})&=\tfrac12\,b_{i+1}\\[4pt]
+b_{i+1}=0.01&\ \Rightarrow\ \mathrm{sd}=0.5\%\\[4pt]
+r_{i,j}&=a_i\,e^{b_i j}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>จาก node หนึ่ง งวดหน้าไปได้สองค่าห่างกัน $b_{i+1}$ ด้วยโอกาสครึ่งต่อครึ่ง ส่วนเบี่ยงเบนจึงเป็นครึ่งหนึ่งของระยะห่าง Ho-Lee มี parameter $2n$ ตัว ไม่ค่อยเหมือนจริงแต่มีอิทธิพลมาก ขั้นที่ 9 เขียนแบบเดียวกันโดยวางศูนย์กลางไว้กลางชั้น ระยะห่าง $b$ จึงเท่ากับ $2\sigma_r\sqrt{\Delta t}$</p>
+    <p>แถวสุดท้ายคือ BDT $\log a_i$ คือระดับของ log ดอกเบี้ย และ $b_i$ คือความแกว่งของ log ถ้างวดไม่มากคอร์ส calibrate ใน Excel ด้วย Solver ส่วนงานจริงใช้ optimizer ที่เร็วกว่า</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — สมการ calibration ของแต่ละ layer</h4>
+  <p>โครงตาข่ายต้องคายราคาที่ตลาดบอกออกมาให้ตรงเป๊ะ ไม่งั้นมันก็ไม่ใช่แบบจำลองของตลาดนี้ สูตรข้างล่างแปลงข้อเรียกร้องนั้นเป็นสมการหนึ่งสมการต่อหนึ่งชั้น และเพราะมีตัวไม่รู้ค่าตัวเดียวต่อชั้น มันจึงแก้ได้เสมอ</p>
+  <div class="math">\[
+\begin{aligned}
+D(0,t_{n+1})&=\sum_{j=0}^{n}Q_{n,j}\,e^{-r_{n,j}\Delta t}\\[4pt]
 r_{n,j}&=\alpha_n+(n-2j)\sigma_r\sqrt{\Delta t}\\
-r_{n,j}\Delta t&=\alpha_n\Delta t+(n-2j)\sigma_r\Delta t^{3/2}\\[4pt]
-e^{-\alpha_n\Delta t}\sum_{j=0}^{n}Q_{n,j}e^{-(n-2j)\sigma_r\Delta t^{3/2}}&=D(0,t_{n+1})\end{aligned}
+r_{n,j}\Delta t&=\alpha_n\Delta t\\
+&\quad+(n-2j)\sigma_r\Delta t^{3/2}\\[4pt]
+D(0,t_{n+1})&=e^{-\alpha_n\Delta t}\sum_{j=0}^{n}Q_{n,j}\\
+&\qquad\times e^{-(n-2j)\sigma_r\Delta t^{3/2}}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บังคับให้ราคาที่โครงตาข่ายคายออกมา เท่ากับราคาที่อ่านจากตลาดผ่าน curve ของหัวข้อ 20.1 เหตุผลไม่ใช่ความสวยงาม ถ้าแบบจำลองให้ราคาต่างจากตลาด มันกำลังบอกว่ามีเงินฟรีอยู่ในของที่ซื้อขายกันทุกวัน</p>
@@ -334,42 +409,188 @@ r_{n,j}=a_ne^{(n-2j)\sigma_n\sqrt{\Delta t}},\qquad a_n>0
 <section class="formula">
   <h4>การ calibrate model BDT — การันตีคำตอบของระดับอัตราดอกเบี้ยในแต่ละชั้น</h4>
   <p>การ calibrate model BDT อาศัยคุณสมบัติที่ผลรวมคิดลดเป็น function ทางเดียวแท้จริง (strictly monotonic) เมื่อเทียบกับ parameter $a_n$ ผู้ใช้งานจึงสามารถใช้วิธีหาค่ารากมิติเดียวอย่าง bisection หรือ Newton-Raphson เพื่อหาคำตอบ $a_n$ ที่แน่นอนได้ในเวลาไม่กี่มิลลิวินาที</p>
-  <p>ต่างจากmodelทั่วไปที่ต้องแก้ optimization หลายมิติพร้อมกันและอาจติดใน local minima โครงสร้างแบบชั้นต่อชั้นของ BDT ทำให้การ calibrate กับ yield curve ของตลาดมีความเสถียรและได้คำตอบชุดเดียวเสมอ</p>
+  <p>ต่างจาก model ทั่วไปที่ต้องแก้ optimization หลายมิติพร้อมกันและอาจติดใน local minima โครงสร้างแบบชั้นต่อชั้นของ BDT ทำให้การ calibrate กับ yield curve ของตลาดมีความเสถียรและได้คำตอบชุดเดียวเสมอ</p>
   <div class="math">\[
 \begin{aligned}
-D(0, t_{n+1}) &= \sum_{j=0}^{n+1} Q_{n+1,j} = \sum_{j=0}^{n} Q_{n,j}\,e^{-r_{n,j}\Delta t} \\
-r_{n,j} &= a_n\,e^{(n-2j)\sigma_n\sqrt{\Delta t}} \\
-f(a_n) &:= \sum_{j=0}^{n} Q_{n,j}\,\exp\Big(-a_n\,e^{(n-2j)\sigma_n\sqrt{\Delta t}}\Delta t\Big) \\
-f(a_n) &= D(0, t_{n+1}) \\
-\lim_{a_n \to 0} f(a_n) &= D(0, t_n) > D(0, t_{n+1}), \quad \lim_{a_n \to \infty} f(a_n) = 0
+D(0,t_{n+1})&=\sum_{j=0}^{n+1}Q_{n+1,j}\\
+&=\sum_{j=0}^{n}Q_{n,j}\,e^{-r_{n,j}\Delta t}\\
+r_{n,j}&=a_n\,e^{(n-2j)\sigma_n\sqrt{\Delta t}}\\[4pt]
+f(a_n)&=\sum_{j=0}^{n}Q_{n,j}\,e^{-r_{n,j}\Delta t}\\
+f(a_n)&=D(0,t_{n+1})\\[4pt]
+a_n\to0&:\ f\to D(0,t_n)\gt D(0,t_{n+1})\\
+a_n\to\infty&:\ f\to0
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>การหา parameter $a_n$ ในmodel BDT ทำได้ทีละชั้น โดยผลรวมของ state prices ใน layer ถัดไปต้องเท่ากับ discount factor ของตลาด $D(0, t_{n+1})$ พอดี</p>
+    <p>การหา parameter $a_n$ ใน model BDT ทำได้ทีละชั้น โดยผลรวมของ state prices ใน layer ถัดไปต้องเท่ากับ discount factor ของตลาด $D(0, t_{n+1})$ พอดี</p>
     <p>ด้านขวาของสมการเป็น function ลดลงแท้จริงของ $a_n$ เสมอ เพราะเมื่อ $a_n$ เพิ่มขึ้น อัตราดอกเบี้ยทุก node จะสูงขึ้น ทำให้ตัวคิดลดมีค่าน้อยลง</p>
     <p>เมื่อ $a_n$ เข้าใกล้ศูนย์ ค่าผลรวมจะลู่ไปหา $D(0, t_n)$ ซึ่งมากกว่าเป้าหมาย และเมื่อ $a_n$ เพิ่มขึ้นไร้ขีดจำกัด ค่าผลรวมจะลู่เข้าหาศูนย์ จึงการันตีว่ามีคำตอบบวกเพียงหนึ่งเดียวเสมอ</p>
   </div>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 12 — ต้นไม้ของคอร์ส: ดอกเบี้ยเริ่ม 6% ขึ้นคูณ 1.25 ลงคูณ 0.9</h4>
+  <p>สไลด์ของคอร์สใช้ต้นไม้ short rate ห้าก้าว ดอกเบี้ยต่องวดเริ่มที่ 6% งวดถัดไปคูณ 1.25 หรือ 0.9 โอกาสใต้ $\mathbb Q$ ครึ่งต่อครึ่ง แล้วตั้งราคา zero-coupon bond หน้าตั๋ว 100 ที่ครบกำหนดงวดที่ 4</p>
+  <div class="math">\[
+\begin{aligned}
+r_{i,j}&=0.06(1.25)^j(0.9)^{i-j}\\
+r_1&:\ 7.50\%,\ 5.40\%\\
+r_2&:\ 9.38\%,\ 6.75\%,\ 4.86\%\\
+r_3&:\ 11.72\%,\ 8.44\%,\ 6.08\%,\ 4.37\%\\[4pt]
+Z_{i,j}&=\frac{\tfrac12Z_{i+1,j+1}+\tfrac12Z_{i+1,j}}{1+r_{i,j}}\\
+Z_{3,\cdot}&=\frac{100}{1.1172},\ \dots=89.51,\ 92.22,\ 94.27,\ 95.81\\
+Z_{2,\cdot}&=83.08,\ 87.35,\ 90.64\\
+Z_{1,\cdot}&=79.27,\ 84.43\\
+Z_{0,0}&=\frac{\tfrac12(79.27)+\tfrac12(84.43)}{1.06}=77.22\\[4pt]
+s_4&=\Big(\frac{100}{77.22}\Big)^{1/4}-1=6.68\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ต้นไม้นี้กลับมาพบกันเพราะ 1.25 คูณ 0.9 เท่ากับ 0.9 คูณ 1.25 ขึ้นแล้วลงกับลงแล้วขึ้นจึงได้ดอกเบี้ยเดียวกัน แต่ละ node ของราคาคือค่าเฉลี่ยของสองลูกคิดลดด้วยดอกเบี้ยของ node นั้นเอง</p>
+    <p>ตั้งราคา zero-coupon bond ทุกอายุ 1 ถึง 4 แล้วถอด spot rate ออกมา ก็ได้ term structure ทั้งเส้นของวันนี้ แบบจำลอง short rate ตัวเดียวจึงให้แบบจำลองของเส้นอัตราทั้งเส้น สไลด์เตือนว่าต้นไม้คูณแบบนี้ไม่ดึงกลับค่าเฉลี่ย ดอกเบี้ยจึงลอยไปถึง 18.31% ได้ ใช้สอนวิธีคิด ไม่ใช่ใช้งานจริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — state prices ของต้นไม้เดียวกัน</h4>
+  <p>เดินหน้าด้วยสมการในขั้นที่ 2 ถึง 4 จาก $P^e_{0,0}=1$ ได้ราคาวันนี้ของเงิน 1 USD ที่จ่ายเฉพาะ node หนึ่ง</p>
+  <div class="math">\[
+\begin{aligned}
+P^e_{1,\cdot}&=\frac{1}{2(1.06)}=0.4717,\ 0.4717\\
+P^e_{2,\cdot}&=0.2194,\ 0.4432,\ 0.2238\\
+P^e_{3,2}&=\frac{0.4432}{2(1.0675)}+\frac{0.2194}{2(1.0938)}\\
+&=0.3079\\
+P^e_{4,\cdot}&=0.0449,\ 0.1868,\ 0.2901,\ 0.1992,\ 0.0511\\[4pt]
+Z_0^4&=100\sum_jP^e_{4,j}\\
+&=100(0.7722)=77.22
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>node ตรงกลางรับเงินจากสองพ่อแม่ node บนสุดและล่างสุดรับจากพ่อแม่เดียว เมื่อมี state prices แล้ว หลักทรัพย์ใดก็ตามคือผลบวกของเงินที่จ่ายในแต่ละ node คูณ state price ของ node นั้น ไม่ต้องเดินถอยหลังใหม่ทุกครั้ง ราคา 77.22 ออกมาตรงกับขั้นก่อน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — option บน zero-coupon bond: European call กับ American put</h4>
+  <p>สไลด์ตั้งราคา European call บน bond ข้างบน strike 84 หมดอายุงวดที่ 2 และ American put strike 88 หมดอายุงวดที่ 3</p>
+  <div class="math">\[
+\begin{aligned}
+C_{2,\cdot}&=\max(Z_{2,\cdot}-84,\ 0)=0,\ 3.35,\ 6.64\\
+C_{1,1}&=\frac{\tfrac12(0)+\tfrac12(3.35)}{1.075}=1.56\\
+C_{1,0}&=\frac{\tfrac12(3.35)+\tfrac12(6.64)}{1.054}=4.74\\
+C_{0,0}&=\frac{\tfrac12(1.56)+\tfrac12(4.74)}{1.06}=2.97\\[4pt]
+P_{t,j}&=\max\big(88-Z_{t,j},\ H_{t,j}\big)\\
+H_{t,j}&=\frac{\tfrac12P_{t+1,j+1}+\tfrac12P_{t+1,j}}{1+r_{t,j}}\\
+P_{2,\cdot}&=4.92,\ 0.65,\ 0\\
+P_{1,1}&=\max(8.73,\ 2.59)=8.73\\
+P_{1,0}&=\max(3.57,\ 0.31)=3.57\\
+P_{0,0}&=\max(10.78,\ 5.80)=10.78
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$H_{t,j}$ คือค่าของการถือต่อ call มีค่าเฉพาะ node ที่ดอกเบี้ยต่ำ เพราะดอกเบี้ยต่ำทำให้ bond แพง ส่วน put ใช้สิทธิ์ทันทีตั้งแต่วันนี้ เพราะ 88 ลบ 77.22 ได้ 10.78 มากกว่าค่าของการรอ 5.80 สไลด์ระบุว่านี่เป็นผลจากตัวเลขที่เลือก ไม่ใช่พฤติกรรมที่พบบ่อยในตลาด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — forward กับ futures บน bond coupon 10% ไม่เท่ากัน</h4>
+  <p>bond coupon 10% ต่องวด ครบกำหนดงวดที่ 6 สัญญาส่งมอบงวดที่ 4 หลังจ่ายคูปองงวดที่ 4 แล้ว ราคา forward กับราคา futures ต่างกันแค่การถ่วงด้วยเงินคิดลด</p>
+  <div class="math">\[
+\begin{aligned}
+Z^6_{4,\cdot}&=111.16,\ 108.00,\ 103.83,\ 98.44,\ 91.66\\[4pt]
+G_0&=\frac{\mathbb E^{\mathbb Q}_0[Z^6_4/B_4]}{\mathbb E^{\mathbb Q}_0[1/B_4]}=\frac{79.83}{0.7722}\\
+&=103.38\\[4pt]
+F_k&=\mathbb E^{\mathbb Q}_k[F_{k+1}]\\
+F_{3,\cdot}&=95.05,\ 101.14,\ 105.91,\ 109.58\\
+F_0&=\tfrac12(100.81+105.64)=103.22
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>forward มีมูลค่าศูนย์วันทำสัญญา จึงต้องหาร bond ที่คิดลดแล้ว 79.83 ด้วยราคา zero-coupon ของงวดที่ 4 คือ 0.7722 ส่วน futures ปรับกำไรขาดทุนทุกงวด จึงเป็นค่าเฉลี่ยตรง ๆ ใต้ $\mathbb Q$ โดยไม่คิดลด คือเฉลี่ยสองลูกย้อนไปทีละชั้น</p>
+    <p>สองตัวต่างกัน 0.16 เพราะดอกเบี้ยกับราคา bond เคลื่อนสวนกัน วันที่ bond ขึ้นคือวันที่ดอกเบี้ยลง กำไรจาก futures จึงถูกนำไปลงทุนในวันที่ดอกเบี้ยต่ำ ถ้าดอกเบี้ยไม่สุ่ม สองราคานี้จะเท่ากัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ทำไม futures เป็น martingale แต่ forward ไม่ใช่</h4>
+  <p>ขั้นที่ 15 ใช้สองสูตรโดยยังไม่บอกที่มา futures ปรับกำไรขาดทุนทุกงวด การเข้าสัญญาไม่มีต้นทุน ส่วน forward จ่ายครั้งเดียวตอนส่งมอบ</p>
+  <div class="math">\[
+\begin{aligned}
+0&=\mathbb E^{\mathbb Q}_{n-1}\Big[\frac{F_n-F_{n-1}}{B_n}\Big]\\
+\frac{F_{n-1}}{B_n}&=\mathbb E^{\mathbb Q}_{n-1}\Big[\frac{F_n}{B_n}\Big]\\
+F_{n-1}&=\mathbb E^{\mathbb Q}_{n-1}[F_n],\qquad F_0=\mathbb E^{\mathbb Q}_0[S_n]\\[4pt]
+0&=\mathbb E^{\mathbb Q}_0\Big[\frac{S_n-G_0}{B_n}\Big]\\
+G_0&=\frac{\mathbb E^{\mathbb Q}_0[S_n/B_n]}{\mathbb E^{\mathbb Q}_0[1/B_n]}\\[4pt]
+F_{3,3}&=\tfrac12(91.66+98.44)=95.05
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$B_n=B_{n-1}(1+r_{n-1})$ รู้ค่าตั้งแต่งวด $n-1$ จึงดึงออกจากค่าเฉลี่ยแล้วตัดทิ้งได้ ราคา futures จึงเป็นค่าเฉลี่ยธรรมดาของงวดหน้า ไม่ต้องคิดลด และที่วันส่งมอบ $F_n=S_n$ ใช้ได้ทั้ง bond ที่มีและไม่มี coupon</p>
+    <p>forward มีค่าศูนย์ตอนทำสัญญาเหมือนกันแต่เงินไหลครั้งเดียวตอน $n$ ตัวถ่วง $1/B_n$ จึงยังอยู่ และตัวหารคือราคา zero-coupon bond แถวสุดท้ายคือหนึ่งก้าวของการเดินถอยหลังแบบไม่คิดลดใน futures</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — calibrate BDT กับเส้น spot ของคอร์ส</h4>
+  <p>สไลด์ BDT ของคอร์สใช้ $r_{i,j}=a_ie^{b\,j}$ สิบงวด งวดละหนึ่งปี ตรึง $b=0.005$ แล้วหา $a_i$ ทีละงวดให้ราคา zero-coupon ตรงกับ spot 7.30, 7.62, 8.10, 8.45, 9.20, 9.64, 10.12, 10.45, 10.75 และ 11.22%</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{1}{(1+s_i)^i}&=\sum_jP^e_{i,j}\\
+a_0&=s_1=7.30\%\\
+P^e_{1,\cdot}&=\frac{1}{2(1.073)}=0.465983\\
+\frac{1}{1.0762^2}&=0.465983\Big[\frac{1}{1+a_1}\\
+&\qquad+\frac{1}{1+a_1e^{0.005}}\Big]\\
+a_1&=7.9211\%\\
+a_2,\ a_3&=9.0212,\ 9.4357\%\\
+a_4&=12.1302\%\\[4pt]
+b=0.01&:\ a_1=7.9013\%\\
+&\quad\ a_2=8.9760\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>งวดแรกมี node เดียว $a_0$ จึงเป็น spot ปีแรกพอดี งวดที่สองมีตัวไม่รู้ตัวเดียว แก้สมการได้ 7.9211% แล้วเดิน state prices ต่อ งวดถัดไปก็มีตัวไม่รู้ตัวเดียวอีก ในไฟล์ Excel ใช้ Solver แก้ทีละงวดหรือพร้อมกันทั้งหมด</p>
+    <p>เปลี่ยน $b$ เป็น 0.01 แล้ว calibrate ใหม่ $a_i$ ขยับเล็กน้อย ราคา zero-coupon ยังตรงตลาดทุกตัวเหมือนเดิม แต่ราคา option เปลี่ยนมาก หัวข้อ 20.4 จะเห็นเป็นตัวเลข ราคา zero-coupon ไม่มีข้อมูลเรื่องความผันผวนเลย</p>
+  </div>
+</section>
+
 <figure class="plot">
-  <h4>ภาพที่ 4 — additive กับ multiplicative shock</h4>
-  <img src="../figures/20.3-4.svg" alt="ภาพที่ 4 — additive กับ multiplicative shock" loading="lazy">
+  <h4>Figure 20.3d — additive กับ multiplicative shock</h4>
+  <img src="../figures/20.3-4.svg" alt="Figure 20.3d — additive กับ multiplicative shock" loading="lazy">
   <figcaption>
     <p>Ho-Lee เลื่อน rate ด้วยจำนวน percentage points เท่ากันทุกระดับ ส่วน BDT คูณ rate ด้วยสัดส่วนเท่ากัน ความต่างนี้มีผลมากเมื่อ curve ต่ำหรือสูงและเป็น modeling choice ไม่ใช่แค่ชื่อ model</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — curve fit กับ option fit เป็นคนละเงื่อนไข</h4>
-  <img src="../figures/20.3-5.svg" alt="ภาพที่ 5 — curve fit กับ option fit เป็นคนละเงื่อนไข" loading="lazy">
+  <h4>Figure 20.3e — curve fit กับ option fit เป็นคนละเงื่อนไข</h4>
+  <img src="../figures/20.3-5.svg" alt="Figure 20.3e — curve fit กับ option fit เป็นคนละเงื่อนไข" loading="lazy">
   <figcaption>
     <p>level shifts สามารถทำให้ discount factors ตรงตลาดแทบทุก maturity แม้ volatility ผิด แต่ option error จะเผย distribution ที่ผิด จึงต้องตรวจทั้ง curve instruments และ volatility instruments</p>
   </figcaption>
 </figure>
 
 <section class="prose">
+  <h4>สร้างต้นไม้ใน Excel ที่ยืดหดตามจำนวนงวด</h4>
+  <p>เอกสารประกอบของคอร์สสอนทำต้นไม้ short rate ที่เปลี่ยนขนาดเองสูงสุด 25 งวด ช่อง B2 เก็บ short rate เริ่มต้น B3 เก็บตัวคูณขึ้น u B4 เก็บตัวคูณลง d และ B5 เก็บจำนวนงวด ตั้งชื่อช่อง B3 ว่า u และ B4 ว่า d ให้สูตรอ่านง่าย</p>
+  <p>แถว 8 เป็นเลขงวด 0 ถึง 25 โดย C8 คือ B8 บวก 1 แล้วลากไปทางขวา แถว 35 เป็นป้าย T=0 ถึง T=25 ต้นไม้เริ่มที่ช่อง B34 ซึ่งดึงค่าจาก B2</p>
+  <p>สูตรในช่อง C34 ถามสามข้อแล้วลากไปทั้งตาราง ข้อแรก งวดของคอลัมน์นี้เกินจำนวนงวดหรือยัง ถ้าเกินให้เว้นว่าง ข้อสอง ช่องทางซ้ายมีตัวเลขไหม ถ้ามีแปลว่ามาจากการลง ใช้ d คูณช่องซ้าย</p>
+  <p>ข้อสาม ถ้าช่องซ้ายว่างแต่ช่องซ้ายล่างมีตัวเลข แปลว่าเป็นยอดบนสุดที่มาจากการขึ้น ใช้ u คูณช่องซ้ายล่าง นอกนั้นเว้นว่าง เปลี่ยนจำนวนงวดจาก 6 เป็น 15 ต้นไม้ก็ขยายเอง code ข้างล่างทำกฎเดียวกันใน Python</p>
+</section>
+
+<section class="prose">
   <h4>implementation และ risk interpretation</h4>
   <p>สร้าง lattice layer-by-layer: รับ market discount factors, เลือก $\Delta t$ และ volatility convention, propagate state prices, root-solve level shift ของ layer ใหม่ แล้ว assert ว่าผลรวม state prices เท่ากับ curve จากนั้นวาง terminal payoff และทำ backward induction สำหรับ American feature ให้เปรียบเทียบ exercise กับ continuation ทุก node Risk ต้องรายงาน curve-node delta, volatility sensitivity, time-step convergence และ model comparison เพราะ tree ที่ fit ราคาเดียวกันอาจ hedge ต่างกัน</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — ต้นไม้ของคอร์ส</h4>
+  <p>คำถาม: ดอกเบี้ยต่องวดเริ่ม 6% ขึ้นคูณ 1.25 ลงคูณ 0.9 zero-coupon bond หน้าตั๋ว 100 ครบงวดที่ 4 ราคาเท่าไร call strike 84 หมดอายุงวดที่ 2 และ American put strike 88 หมดอายุงวดที่ 3 ราคาเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 12 ถึง 15</p>
+  <p>1. zero-coupon bond ราคา 77.22 spot rate 4 งวด 6.68% ต่องวด</p>
+  <p>2. call ราคา 2.97 put ราคา 10.78 และควรใช้สิทธิ์ทันที</p>
+  <p>3. forward บน bond coupon 10% ส่งมอบงวดที่ 4 ราคา 103.38 futures ราคา 103.22</p>
+  <p>ตรวจเองใน 10 วินาที: 100 คูณผลบวก state prices งวดที่ 4 คือ 0.0449 + 0.1868 + 0.2901 + 0.1992 + 0.0511 ได้ 77.22</p>
+  <p>แปลว่าอะไร: เมื่อมีต้นไม้ของ short rate ทุกอย่างที่ขึ้นกับดอกเบี้ยตั้งราคาได้ด้วยวิธีเดียว คือเดินถอยหลังหรือคูณ state prices ความต่างของ forward กับ futures บอกว่าดอกเบี้ยสุ่มจริงมีผลต่อราคา</p>
 </section>
 
 <section class="pitfall">
@@ -408,10 +629,55 @@ P = np.exp(-r_ex*dt)
 payoff = 1_000_000*np.maximum(P-0.975, 0)
 V0 = Q2 @ payoff
 assert abs(Q2.sum()-0.9512413148932919) &lt; 1e-12
-assert abs(V0-2564.1477619102694) &lt; 1e-8</code></pre>
+assert abs(V0-2564.1477619102694) &lt; 1e-8
+r = [[0.06 * 1.25**j * 0.9**(i - j) for j in range(i + 1)] for i in range(6)]   # course tree
+back = lambda V, i: [(0.5 * V[j + 1] + 0.5 * V[j]) / (1 + r[i][j]) for j in range(i + 1)]
+Z = {4: [100.0] * 5}
+for i in range(3, -1, -1): Z[i] = back(Z[i + 1], i)
+assert abs(Z[0][0] - 77.22) &lt; 0.005 and abs((100 / Z[0][0])**0.25 - 1 - 0.0668) &lt; 1e-4
+C = [max(0, z - 84) for z in Z[2]]
+for i in (1, 0): C = back(C, i)
+assert abs(C[0] - 2.97) &lt; 0.005
+Pt = [max(0, 88 - z) for z in Z[3]]
+for i in (2, 1, 0): Pt = [max(c, 88 - z) for c, z in zip(back(Pt, i), Z[i])]
+assert abs(Pt[0] - 10.78) &lt; 0.005
+B = back([110.0] * 7, 5); B = back([b + 10 for b in B], 4)             # ex-coupon at t = 4
+G = B
+for i in (3, 2, 1, 0): G = back(G, i)
+Fu = B
+for i in (3, 2, 1, 0): Fu = [0.5 * (Fu[j + 1] + Fu[j]) for j in range(i + 1)]
+assert abs(G[0] / (Z[0][0] / 100) - 103.38) &lt; 0.005 and abs(Fu[0] - 103.22) &lt; 0.005
+E = [[1.0]]
+for k in range(4):
+    nx = [0.0] * (k + 2)
+    for j in range(k + 1):
+        nx[j] += E[k][j] / (2 * (1 + r[k][j])); nx[j + 1] += E[k][j] / (2 * (1 + r[k][j]))
+    E.append(nx)
+assert abs(E[3][2] - 0.3079) &lt; 1e-4 and abs(100 * sum(E[4]) - 77.22) &lt; 0.005</code></pre>
   </details>
   <div class="note">
     <p>ในระบบจริงให้แทน rates ที่กำหนดมือด้วย layer calibration และทดสอบราคาเมื่อแบ่ง time step ให้ละเอียดขึ้นจนผลต่างต่ำกว่า tolerance</p>
+    <p>สำหรับการสร้าง dynamic lattice บน spreadsheet หรือ Excel ในทางปฏิบัติ นิยมใช้สูตรเลื่อนตำแหน่งและนับจำนวนเซลล์ เพื่ออ้างอิง node จากชั้นก่อนหน้าแบบอัตโนมัติ</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>ต้นไม้แบบ Excel ของคอร์ส cash account และ futures</summary>
+    <pre><code>def lattice(r00, u, d, n):
+    cols = [[r00]]                       # column t holds states j = 0..t (number of up moves)
+    for _ in range(n):
+        prev = cols[-1]
+        cols.append([d * x for x in prev] + [u * prev[-1]])   # left cell times d, top from lower-left times u
+    return cols
+r = lattice(0.06, 1.25, 0.9, 5)
+assert [round(100 * x, 2) for x in r[5]] == [3.54, 4.92, 6.83, 9.49, 13.18, 18.31]
+assert round(1.06 * 1.075, 4) == 1.1395 and round(1.06 * 1.054, 5) == 1.11724
+assert abs(0.5 * (79.27 + 84.43) / 1.06 - 77.22) &lt; 0.005
+assert round(0.5 * (91.66 + 98.44), 2) == 95.05</code></pre>
+  </details>
+  <div class="note">
+    <p>คอลัมน์ใหม่แต่ละคอลัมน์คือคอลัมน์เก่าคูณ $d$ ทุกช่อง บวกยอดบนสุดที่เป็นช่องบนสุดเดิมคูณ $u$ เหมือนสูตรในช่อง C34</p>
   </div>
 </section>
 
@@ -428,6 +694,7 @@ assert abs(V0-2564.1477619102694) &lt; 1e-8</code></pre>
     <li>ตัวอย่าง bond call notional \$1,000,000 ให้ราคา \$2,564.15 จาก state-contingent payoffs</li>
     <li>Ho-Lee ใช้ additive absolute shocks และยอม rate ติดลบ ส่วน BDT ใช้ multiplicative shocks และรักษา positivity</li>
     <li>curve fit, option fit, time-step convergence และ model risk ต้องตรวจแยกกัน</li>
+    <li>ราคาที่หารด้วย cash account เป็น martingale ราคา futures เป็น martingale โดยไม่ต้องหาร ส่วน forward ต้องถ่วงด้วย $1/B_n$ สองราคาจึงต่างกัน</li>
   </ul>
 </section>
 </article>

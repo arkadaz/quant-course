@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คนหนึ่งสัญญาว่าจะคืน 100 USD ทุกปี แต่บางปีเขาอาจหยุดจ่าย. คุณจะตีราคาเงินงวดที่ 5 เหมือนเงินจากคนที่จ่ายแน่ ๆ ได้ไหม?</p>
-  <p>แยกก่อนว่าเงินมีค่าน้อยลงเพราะรอเวลาเท่าไร และมีโอกาสหายไปเพราะคนจ่ายผิดนัดเท่าไร. โอกาสที่ยังจ่ายอยู่เรียก survival; ความเร็วที่เหตุผิดนัดเกิดเรียก hazard rate.</p>
-  <p>เฉลย: ไม่ได้ เพราะเงินงวดที่ 5 ต้องผ่านทั้ง discounting และโอกาสรอดก่อน. ถ้าผิดนัดอาจได้เงินคืนบางส่วนเป็น recovery. credit risk ไม่ใช่ดอกเบี้ยเพิ่มหนึ่งก้อน มันคือเก้าอี้ที่อาจหายไปจากตารางเวลา.</p>
+  <p>นักลงทุนพิจารณาซื้อหุ้นกู้เอกชนอายุ 5 ปี หน้าตั๋ว \$10,000,000 คูปอง 5% ต่อปี หากอัตราไร้ความเสี่ยงคือ 4.5% อัตราผิดนัด (hazard rate) คงที่ 1.8% และคาดว่าจะได้เงินคืน 40% เมื่อผิดนัด หุ้นกู้นี้มีมูลค่าเท่าใด?</p>
+  <p>เฉลย: \$9,684,390.68 โดยแยกคิดลดเป็นสามส่วน: มูลค่าคูปองที่ได้เมื่อรอด \$2,077,689.22 เงินต้นปีสุดท้าย \$7,297,888.74 และเงินชดเชยกรณีผิดนัด \$308,812.72 ต่ำกว่าพันธบัตรไร้ความเสี่ยงที่ \$10,173,877.69</p>
 </div>
 
 <details class="jargon" open>
@@ -90,6 +89,13 @@
       <tr><td>$PV_{recovery}$</td><td>present value ของ recovery ที่จ่ายใน default states</td><td>USD</td></tr>
       <tr><td>$s_{credit}$</td><td>first-order credit-spread approximation</td><td>ต่อปี</td></tr>
       <tr><td>$y$</td><td>annual effective yield-to-maturity ที่แก้จากราคา</td><td>ต่อปี</td></tr>
+      <tr><td>$h_k,\ h_{ij}$</td><td>โอกาสเจ๊งในงวดถัดไปเมื่อรอดมาถึงต้นงวด ตัวที่มี $ij$ ขึ้นกับ node ของต้นไม้</td><td>ความน่าจะเป็นต่องวด</td></tr>
+      <tr><td>$p_{\rm def}(t)$</td><td>โอกาสเจ๊งในงวดที่ $t$ มองจากวันนี้</td><td>ความน่าจะเป็น</td></tr>
+      <tr><td>$r_{ij},\ q_u,\ q_d$</td><td>short rate ของ node และโอกาสขึ้นหรือลงของต้นไม้ดอกเบี้ย</td><td>ต่องวด และความน่าจะเป็น</td></tr>
+      <tr><td>$\bar Z_{ij0}$</td><td>ราคาของ zero-coupon bond ที่เจ๊งได้ ณ node $(i,j)$ ที่ยังไม่เจ๊ง</td><td>USD ต่อหน้าตั๋ว 1 USD</td></tr>
+      <tr><td>$I(t)$</td><td>ตัวบอกสถานะ มีค่า 1 ถ้ายังไม่เจ๊ง ณ เวลา $t$ และ 0 ถ้าเจ๊งแล้ว</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$d(0,t),\ F,\ \bar P(0)$</td><td>discount factor แบบงวด หน้าตั๋ว และราคา bond ในไฟล์ของคอร์ส</td><td>ไม่มีหน่วย, USD, USD</td></tr>
+      <tr><td>$f(h)$</td><td>ผลรวมกำลังสองของราคาตลาดลบราคา model ของทุก bond</td><td>USD กำลังสอง</td></tr>
     </tbody>
   </table>
 </details>
@@ -99,6 +105,7 @@
   <p>การตั้งราคาหุ้นกู้ที่มีความเสี่ยงผิดนัดชำระ มีสองแนวทางที่ต่างกันตั้งแต่ราก</p>
   <p>แนวทางแรกซึ่ง Robert Merton เสนอในปี 1974 มองว่าบริษัทจะเจ๊งเมื่อมูลค่าสินทรัพย์ตกต่ำกว่าหนี้ ซึ่งมีเหตุผลทางเศรษฐกิจสวยงาม แต่ต้องรู้มูลค่าสินทรัพย์ของบริษัท ซึ่งมองไม่เห็น</p>
   <p>แนวทางที่สองซึ่งพัฒนาขึ้นในทศวรรษ 1990 เลิกถามว่าทำไมถึงเจ๊ง แล้วมองการเจ๊งเป็นเหตุการณ์ที่โผล่มาแบบสุ่ม ด้วยอัตราที่แกะได้จากราคาตลาด</p>
+  <p>หากมองผ่านโครงสร้างต้นไม้ แต่ละ node จะแตกแขนงออกเป็นสถานะรอดและสถานะผิดนัดที่ไม่ฟื้นกลับมาอีก หากไม่มีเงินคืนเลย (zero recovery) ราคาพันธบัตรจะคิดลดด้วยอัตรา $r + h$ เสมือนว่า hazard rate $h$ ทำหน้าที่เป็น credit spread บวกเพิ่มบนดอกเบี้ยไร้ความเสี่ยงโดยตรง</p>
   <p>แนวทางที่สองใช้งานง่ายกว่ามากและเป็นที่นิยมในโต๊ะเทรด ส่วนแนวทางแรกยังใช้ในงานวิเคราะห์เครดิตที่ต้องการเข้าใจสาเหตุ</p>
 </section>
 
@@ -146,13 +153,16 @@ Q(T)=\Pr(\tau_d>T)=e^{-\int_0^T\lambda(u)du}
 
 <section class="formula">
   <h4>ขั้นที่ 3 — constant hazard ทำให้คำนวณตรง</h4>
-  <p>ถ้าอัตราคงที่ตลอด สูตรจะยุบเหลือรูปง่ายที่กดเครื่องคิดเลขตามได้ทันที ห้าบรรทัดนี้ยังตรวจตัวเองด้วยการอินทิเกรตย้อนกลับ ซึ่งเป็นนิสัยที่ควรทำทุกครั้ง ที่เขียนสามอย่างนี้คู่กัน เพราะมันพลาดกันบ่อยเรื่องเครื่องหมาย</p>
+  <p>ถ้าอัตราคงที่ตลอด สูตรจะยุบเหลือรูปง่ายที่กดเครื่องคิดเลขตามได้ทันที สูตรข้างล่างยังตรวจตัวเองด้วยการอินทิเกรตย้อนกลับ ซึ่งเป็นนิสัยที่ควรทำทุกครั้ง ที่เขียนสามอย่างนี้คู่กัน เพราะมันพลาดกันบ่อยเรื่องเครื่องหมาย</p>
   <div class="math">\[
-\begin{aligned}\lambda(u)=\lambda\ \text{constant}:\quad\int_0^{T}\lambda(u)\,du&=\lambda T\\
+\begin{aligned}
+\lambda(u)=\lambda&:\ \int_0^{T}\lambda(u)\,du=\lambda T\\
 Q(T)&=e^{-\lambda T}\\
 F(T)&=1-Q(T)=1-e^{-\lambda T}\\
 q(t)&=\frac{dF(t)}{dt}=\lambda e^{-\lambda t}\\[4pt]
-\int_0^{T}q(t)\,dt&=\Big[-e^{-\lambda t}\Big]_0^{T}=1-e^{-\lambda T}=F(T)\ \checkmark\end{aligned}
+\int_0^{T}q(t)\,dt&=\Big[-e^{-\lambda t}\Big]_0^{T}\\
+&=1-e^{-\lambda T}=F(T)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แทนอัตราคงที่ลงใน integral ของขั้นที่ 2 ได้ผลคูณธรรมดา โอกาสรอดจึงอยู่ในรูปที่กดเครื่องคิดเลขตามได้</p>
@@ -160,15 +170,6 @@ q(t)&=\frac{dF(t)}{dt}=\lambda e^{-\lambda t}\\[4pt]
     <p>บรรทัดสุดท้ายเป็นการตรวจย้อนกลับ อินทิเกรต density ตั้งแต่ศูนย์ถึงเวลาหนึ่ง ต้องได้โอกาสเจ๊งสะสมกลับมาพอดี ซึ่งยืนยันว่าสามบรรทัดบนสอดคล้องกัน</p>
     <p>รูปนี้เป็นตัวเดียวกับที่หัวข้อ 1.11 เรียกว่า exponential distribution และสมบัติที่ว่ารอมาแล้วเท่าไรก็ไม่มีผล ก็ยังใช้ได้ที่นี่ ซึ่งเป็นทั้งข้อดีและข้อจำกัดของการเลือกอัตราคงที่</p>
   </div>
-</section>
-
-<section class="example">
-  <h4>แปลง hazard 1.8% เป็นความเสี่ยง 5 ปี</h4>
-  <p>ของที่มี: constant hazard rate 1.8% ต่อปี และ horizon 5 ปี.</p>
-  <p>ถามว่า probability ที่ยังรอดและที่ default ภายใน 5 ปีเท่าไร?</p>
-  <p>คำตอบ: survival คือ 0.913931 และ default probability คือ 0.086069; bond ตัวอย่างมีราคา \$9,684,390.68.</p>
-  <p>ตรวจเองใน 10 วินาที: สอง probability ต้องบวกเป็น 1.000000.</p>
-  <p>เอาไปใช้จริง: credit desk แยก survival, recovery และ discounting ก่อน price bond หรือสัญญาประกันผิดนัดที่เรียก credit default swap (CDS); ห้ามคูณ 1.8% ด้วย 5 แล้วเรียก probability โดยไม่บอก approximation.</p>
 </section>
 
 <section class="formula">
@@ -188,16 +189,20 @@ Q(5)=e^{-0.018(5)}=0.913931,\qquad F(5)=1-0.913931=0.086069
   <p>แต่ในความเป็นจริง โอกาสผิดนัดในงวดที่สองคิดเป็น 1.96% บนเงินต้นเริ่มต้น เพราะมีลูกหนี้ 2% ได้ผิดนัดชำระหนี้ไปแล้วตั้งแต่งวดแรก การติดตามตัวเลขบน spreadsheet จึงช่วยป้องกันความสับสนระหว่าง marginal probability กับ conditional hazard rate ได้อย่างแม่นยำ</p>
   <div class="math">\[
 \begin{aligned}
-q(t) &= q(t-1)\,(1 - h_{t-1}) = \prod_{k=0}^{t-1} (1 - h_k) \\
-p_{\text{def}}(t) &= q(t-1) - q(t) = q(t-1)\,h_{t-1} \\
-h &= 0.02 \implies q(1) = 0.9800,\quad p_{\text{def}}(1) = 0.0200 \\
-q(2) &= 0.9800(1 - 0.02) = 0.9604,\quad p_{\text{def}}(2) = 0.9800(0.02) = 0.0196 \\
-q(3) &= 0.9604(1 - 0.02) = 0.9412,\quad p_{\text{def}}(3) = 0.9604(0.02) = 0.0192
+Q(t)&=Q(t-1)\,(1-h_{t-1})\\
+&=\prod_{k=0}^{t-1}(1-h_k)\\
+p_{\rm def}(t)&=Q(t-1)-Q(t)\\
+&=Q(t-1)\,h_{t-1}\\[4pt]
+h=0.02&:\ Q(1)=0.9800,\ p_{\rm def}(1)=0.0200\\
+Q(2)&=0.9800(0.98)=0.9604\\
+p_{\rm def}(2)&=0.9800(0.02)=0.0196\\
+Q(3)&=0.9604(0.98)=0.9412\\
+p_{\rm def}(3)&=0.9604(0.02)=0.0192
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ในระบบงานจริงและแบบจำลองตารางคำนวณ เวลาถูกแบ่งเป็นงวดไม่ต่อเนื่อง โอกาสรอดสะสม $q(t)$ จึงคำนวณแบบคูณทบต้นด้วยสัดส่วนผู้รอด $1 - h_{t-1}$ ในแต่ละงวด</p>
-    <p>โอกาสเกิดการผิดนัดชำระในงวด $t$ คือผลต่างระหว่างผู้ที่รอดมาถึงต้นงวดกับผู้ที่รอดไปจนจบงวด ซึ่งเท่ากับ $q(t-1) h_{t-1}$ พอดี</p>
+    <p>ในระบบงานจริงและแบบจำลองตารางคำนวณ เวลาถูกแบ่งเป็นงวดไม่ต่อเนื่อง โอกาสรอดสะสม $Q(t)$ จึงคำนวณแบบคูณทบต้นด้วยสัดส่วนผู้รอด $1 - h_{t-1}$ ในแต่ละงวด</p>
+    <p>โอกาสเกิดการผิดนัดชำระในงวด $t$ คือผลต่างระหว่างผู้ที่รอดมาถึงต้นงวดกับผู้ที่รอดไปจนจบงวด ซึ่งเท่ากับ $Q(t-1) h_{t-1}$ พอดี</p>
     <p>ตัวเลขจริงจาก spreadsheet แสดงให้เห็นว่าแม้ hazard rate จะคงที่ 2% ต่องวด แต่ default probability แต่ละงวดจะลดลงเรื่อย ๆ เพราะฐานผู้รอดชีวิตหดตัวลงทุกงวด</p>
   </div>
 </section>
@@ -211,8 +216,8 @@ q(3) &= 0.9604(1 - 0.02) = 0.9412,\quad p_{\text{def}}(3) = 0.9604(0.02) = 0.019
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — survival ลดลงและ cumulative default เพิ่มขึ้น</h4>
-  <img src="../figures/20.6-1.svg" alt="ภาพที่ 1 — survival ลดลงและ cumulative default เพิ่มขึ้น" loading="lazy">
+  <h4>Figure 20.6a — survival ลดลงและ cumulative default เพิ่มขึ้น</h4>
+  <img src="../figures/20.6-1.svg" alt="Figure 20.6a — survival ลดลงและ cumulative default เพิ่มขึ้น" loading="lazy">
   <figcaption>
     <p>สองเส้นรวมเป็นหนึ่งทุก horizon และความชันเริ่มต้นของ cumulative default ใกล้ hazard 1.8% ต่อปี แต่ชะลอลงเพราะ probability mass ที่ยังรอดลดลง</p>
   </figcaption>
@@ -256,14 +261,18 @@ P_{\rm def}&=PV_{\rm coupon}+PV_{\rm principal}+PV_{\rm recovery}\end{aligned}
 
 <section class="formula">
   <h4>ขั้นที่ 6 — แทน deterministic rate กับ constant hazard</h4>
-  <p>แทนสมมติฐานที่ง่ายที่สุดลงในสามก้อนนั้น จะได้สูตรที่คำนวณได้ทันที หกบรรทัดนี้มีข้อสังเกตที่ควรจำอยู่บรรทัดเดียว คือคิดลดกับโอกาสรอดรวมกันเป็นอัตราเดียว ซึ่งเป็นเหตุผลที่ bond ที่เสี่ยงเจ๊งซื้อขายกันด้วยส่วนต่างอัตรา ไม่ใช่ด้วยโอกาสเจ๊งโดยตรง</p>
+  <p>แทนสมมติฐานที่ง่ายที่สุดลงในสามก้อนนั้น จะได้สูตรที่คำนวณได้ทันที สูตรข้างล่างมีข้อสังเกตที่ควรจำอยู่บรรทัดเดียว คือคิดลดกับโอกาสรอดรวมกันเป็นอัตราเดียว ซึ่งเป็นเหตุผลที่ bond ที่เสี่ยงเจ๊งซื้อขายกันด้วยส่วนต่างอัตรา ไม่ใช่ด้วยโอกาสเจ๊งโดยตรง</p>
   <div class="math">\[
-\begin{aligned}D(0,t)Q(t)&=e^{-rt}e^{-\lambda t}=e^{-(r+\lambda)t}\\[4pt]
-\text{coupons}&:\ \sum_{i=1}^{5}Nc\,e^{-(r+\lambda)i}\\
-\text{principal}&:\ N\,e^{-(r+\lambda)5}\\[4pt]
-\text{recovery}&:\ RN\int_0^{5}e^{-rt}\lambda e^{-\lambda t}dt=RN\lambda\int_0^{5}e^{-(r+\lambda)t}dt\\
+\begin{aligned}
+D(0,t)Q(t)&=e^{-rt}e^{-\lambda t}\\
+&=e^{-(r+\lambda)t}\\[4pt]
+PV_{\rm coupon}&=\sum_{i=1}^{5}Nc\,e^{-(r+\lambda)i}\\
+PV_{\rm principal}&=N\,e^{-(r+\lambda)5}\\[4pt]
+PV_{\rm recovery}&=RN\int_0^{5}e^{-rt}\lambda e^{-\lambda t}dt\\
+&=RN\lambda\int_0^{5}e^{-(r+\lambda)t}dt\\
 &=RN\lambda\left[\frac{-e^{-(r+\lambda)t}}{r+\lambda}\right]_0^{5}\\
-&=RN\frac{\lambda}{r+\lambda}\Big(1-e^{-(r+\lambda)5}\Big)\end{aligned}
+&=RN\frac{\lambda}{r+\lambda}\Big(1-e^{-(r+\lambda)5}\Big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือจุดที่ทุกอย่างง่ายลง ตัวคิดลดคูณโอกาสรอด เป็นเลขยกกำลังสองก้อนที่รวมเลขชี้กำลังกันได้ ผลคือคิดลดด้วยอัตราที่เป็นผลบวกของสองอัตรา</p>
@@ -295,11 +304,19 @@ P_{\rm def}&=PV_{\rm coupon}+PV_{\rm principal}+PV_{\rm recovery}\end{aligned}
   <h4>ขั้นที่ 7 — คำนวณสามองค์ประกอบเป็น USD</h4>
   <p>อ่านผลรวม coupon จากตารางข้างบน แล้วคิดสองก้อนที่เหลือ คือเงินต้นปีที่ห้า และเงินที่ได้คืนถ้าเกิด default ระหว่างทาง</p>
   <div class="math">\[
-\begin{aligned}PV_{coupon}&=\$2{,}077{,}689.22\\[4pt]
-PV_{principal}&=\$10{,}000{,}000(0.729788874)=\$7{,}297{,}888.74\\[4pt]
-PV_{recovery}&=0.40(\$10{,}000{,}000)\frac{0.018}{0.063}\bigl(1-0.729788874\bigr)\\
-&=\$4{,}000{,}000(0.285714)(0.270211)=\$308{,}812.72\\[4pt]
-P_{def}&=\$2{,}077{,}689.22+\$7{,}297{,}888.74+\$308{,}812.72=\$9{,}684{,}390.68\end{aligned}
+\begin{aligned}
+PV_{coupon}&=2{,}077{,}689.22\\[4pt]
+PV_{principal}&=10^7(0.729788874)\\
+&=7{,}297{,}888.74\\[4pt]
+PV_{recovery}&=0.40(10^7)\frac{0.018}{0.063}\\
+&\quad\times\bigl(1-0.729788874\bigr)\\
+&=4{,}000{,}000(0.285714)\\
+&\quad\times(0.270211)\\
+&=308{,}812.72\\[4pt]
+P_{def}&=2{,}077{,}689.22+7{,}297{,}888.74\\
+&\quad+308{,}812.72\\
+&=9{,}684{,}390.68
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เงินต้นใช้ตัวคิดลดของปีที่ห้าตัวเดียวกับแถวสุดท้ายในตาราง</p>
@@ -319,8 +336,8 @@ P_{def}=\$2{,}077{,}689.22+\$7{,}297{,}888.74+\$308{,}812.72=\$9{,}684{,}390.68
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — price decomposition แสดงบทบาทของ recovery</h4>
-  <img src="../figures/20.6-2.svg" alt="ภาพที่ 2 — price decomposition แสดงบทบาทของ recovery" loading="lazy">
+  <h4>Figure 20.6b — price decomposition แสดงบทบาทของ recovery</h4>
+  <img src="../figures/20.6-2.svg" alt="Figure 20.6b — price decomposition แสดงบทบาทของ recovery" loading="lazy">
   <figcaption>
     <p>principal ที่รอดเป็นองค์ประกอบใหญ่ที่สุด Recovery ไม่ได้ลบ expected loss ทั้งหมด แต่เพิ่ม value เฉพาะ default states และขึ้นกับเวลาที่จ่าย</p>
   </figcaption>
@@ -330,9 +347,13 @@ P_{def}=\$2{,}077{,}689.22+\$7{,}297{,}888.74+\$308{,}812.72=\$9{,}684{,}390.68
   <h4>ขั้นที่ 9 — เทียบกับ bond ที่ไม่มี default</h4>
   <p>bond ที่ไม่มีความเสี่ยง default ใช้สูตรเดียวกันแต่คิดลดด้วย $r$ อย่างเดียว</p>
   <div class="math">\[
-\begin{aligned}\sum_{i=1}^{5}Nc\,e^{-ri}&=\$2{,}188{,}715.50\\
-Ne^{-rT}&=\$10{,}000{,}000\,e^{-0.225}=\$7{,}985{,}162.19\\[4pt]
-P_{rf}&=\$2{,}188{,}715.50+\$7{,}985{,}162.19=\$10{,}173{,}877.69\end{aligned}
+\begin{aligned}
+\sum_{i=1}^{5}Nc\,e^{-ri}&=\$2{,}188{,}715.50\\
+Ne^{-rT}&=\$10{,}000{,}000\,e^{-0.225}\\
+&=\$7{,}985{,}162.19\\[4pt]
+P_{rf}&=\$2{,}188{,}715.50+\$7{,}985{,}162.19\\
+&=\$10{,}173{,}877.69
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ต่างจากก่อนหน้าตรงที่ตัวคิดลดใช้ 0.045 แทน 0.063</p>
@@ -368,11 +389,14 @@ s_{credit}\approx\lambda(1-R)=0.018(0.60)=0.0108=108\ \text{basis points}
   <p>อย่างไรก็ตาม หากพันธบัตรมีอายุยาวนานหรือมีโครงสร้างคูปองที่ซับซ้อน ผลของการคิดลดข้ามเวลาและฐานผู้รอดชีวิตที่ลดทอนลง จะทำให้ credit spread ที่แท้จริงเบี่ยงเบนออกจากค่าประมาณนี้ การคำนวณกระแสเงินสดเต็มรูปแบบจึงยังคงจำเป็นเสมอ</p>
   <div class="math">\[
 \begin{aligned}
-\tilde{P} &= e^{-r}\Big[e^{-\lambda}\cdot 1 + (1 - e^{-\lambda})\cdot R\Big] \\
-e^{-\lambda} &\approx 1 - \lambda \qquad\text{(Taylor expansion)} \\
-\tilde{P} &\approx e^{-r}\Big[(1 - \lambda) + \lambda R\Big] = e^{-r}\Big[1 - \lambda(1 - R)\Big] \\
-1 - x &\approx e^{-x} \implies \tilde{P} \approx e^{-r}\,e^{-\lambda(1 - R)} = e^{-\big(r + \lambda(1 - R)\big)} \\
-y_{\text{def}} &= -\ln\tilde{P} \approx r + \lambda(1 - R) \implies s_{\text{credit}} = y_{\text{def}} - r \approx \lambda(1 - R)
+\tilde{P}&=e^{-r}\Big[e^{-\lambda}\cdot1+(1-e^{-\lambda})\cdot R\Big]\\
+e^{-\lambda}&\approx1-\lambda\\
+\tilde{P}&\approx e^{-r}\Big[(1-\lambda)+\lambda R\Big]\\
+&=e^{-r}\Big[1-\lambda(1-R)\Big]\\
+1-x\approx e^{-x}&\ \Rightarrow\ \tilde{P}\approx e^{-r}\,e^{-\lambda(1-R)}\\
+&=e^{-(r+\lambda(1-R))}\\
+y_{\rm def}&=-\ln\tilde{P}\approx r+\lambda(1-R)\\
+s_{\rm credit}&=y_{\rm def}-r\approx\lambda(1-R)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -383,16 +407,16 @@ y_{\text{def}} &= -\ln\tilde{P} \approx r + \lambda(1 - R) \implies s_{\text{cre
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 3 — recovery ลดความชันของ price ต่อ hazard</h4>
-  <img src="../figures/20.6-3.svg" alt="ภาพที่ 3 — recovery ลดความชันของ price ต่อ hazard" loading="lazy">
+  <h4>Figure 20.6c — recovery ลดความชันของ price ต่อ hazard</h4>
+  <img src="../figures/20.6-3.svg" alt="Figure 20.6c — recovery ลดความชันของ price ต่อ hazard" loading="lazy">
   <figcaption>
     <p>เมื่อ hazard สูงขึ้นราคา bond ลด แต่ recovery สูงช่วยพยุง default-state cash flow เส้นยังไม่เป็นเส้นตรงเพราะ survival probability กับ recovery timing เป็น exponential</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 4 — hazard-times-loss เป็น local approximation ไม่ใช่ pricing engine</h4>
-  <img src="../figures/20.6-4.svg" alt="ภาพที่ 4 — hazard-times-loss เป็น local approximation ไม่ใช่ pricing engine" loading="lazy">
+  <h4>Figure 20.6d — hazard-times-loss เป็น local approximation ไม่ใช่ pricing engine</h4>
+  <img src="../figures/20.6-4.svg" alt="Figure 20.6d — hazard-times-loss เป็น local approximation ไม่ใช่ pricing engine" loading="lazy">
   <figcaption>
     <p>เส้นตรงแสดง first-order credit spread ที่ recovery 40% ขณะที่ cumulative default probability โค้งตาม horizon นักวิเคราะห์ต้องไม่สลับ annual spread กับ multi-year probability</p>
   </figcaption>
@@ -410,16 +434,179 @@ P(\lambda+0.0001)-P(\lambda)=\$9{,}681{,}787.65-\$9{,}684{,}390.68=-\$2{,}603.02
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — credit01 โตตาม maturity ก่อนถูก survival ลดน้ำหนัก</h4>
-  <img src="../figures/20.6-5.svg" alt="ภาพที่ 5 — credit01 โตตาม maturity ก่อนถูก survival ลดน้ำหนัก" loading="lazy">
+  <h4>Figure 20.6e — credit01 โตตาม maturity ก่อนถูก survival ลดน้ำหนัก</h4>
+  <img src="../figures/20.6-5.svg" alt="Figure 20.6e — credit01 โตตาม maturity ก่อนถูก survival ลดน้ำหนัก" loading="lazy">
   <figcaption>
     <p>bond อายุยาวมีเวลารับ hazard exposure มากกว่า แต่ sensitivity ไม่โตเป็นเส้นตรงตลอดเพราะ distant cash flows ถูก discount และมีโอกาสรอดต่ำลง</p>
+  </figcaption>
+</figure>
+
+<details class="jargon" open>
+  <summary>ศัพท์ชุดที่สอง: ต้นไม้ที่มีสถานะเจ๊งและการ calibrate จาก bond หลายตัว</summary>
+  <dl>
+    <dt>absorbing state</dt>
+    <dd>สถานะที่เข้าแล้วออกไม่ได้ ในที่นี้คือสถานะเจ๊ง ใช้บอกว่าเมื่อเจ๊งแล้วต้นไม้ไม่ย้อนกลับมารอด</dd>
+    <dt>state-independent hazard</dt>
+    <dd>โอกาสเจ๊งต่องวดที่ขึ้นกับวันที่อย่างเดียว ไม่ขึ้นกับ node ของดอกเบี้ย ใช้แยกค่าเฉลี่ยของการรอดออกจากค่าเฉลี่ยของตัวคิดลด</dd>
+    <dt>indicator variable</dt>
+    <dd>ตัวแปรที่เป็น 1 หรือ 0 ตามว่าเหตุการณ์เกิดหรือไม่ ใช้เขียนเงินที่จ่ายเฉพาะบางสถานะเป็นสูตรเดียว</dd>
+    <dt>bootstrap</dt>
+    <dd>การแก้ค่าทีละช่วงอายุจากสั้นไปยาว โดยใช้ค่าของช่วงที่แก้แล้ว ใช้เมื่อจำนวน bond เท่ากับจำนวนช่วง</dd>
+  </dl>
+</details>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — ต้นไม้ short rate ที่มีสถานะเจ๊ง</h4>
+  <p>คอร์สต่อยอดต้นไม้ดอกเบี้ยของหัวข้อ 20.3 โดยแยกทุก node $(i,j)$ เป็นสองสถานะ $\eta=0$ ยังไม่เจ๊ง และ $\eta=1$ เจ๊งไปแล้ว แต่ละกิ่งขึ้นหรือลงถูกแบ่งอีกทีด้วยโอกาสเจ๊ง $h_{ij}$</p>
+  <div class="math">\[
+\begin{aligned}
+(i,j,0)\to(j{+}1,1)&:\ q_u\,h_{ij}\\
+(i,j,0)\to(j{+}1,0)&:\ q_u(1-h_{ij})\\
+(i,j,0)\to(j,1)&:\ q_d\,h_{ij}\\
+(i,j,0)\to(j,0)&:\ q_d(1-h_{ij})\\[4pt]
+(i,j,1)\to(j{+}1,1)&:\ q_u\\
+(i,j,1)\to(j,1)&:\ q_d
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สี่แถวบนรวมกันได้ $q_u+q_d=1$ ดอกเบี้ยยังขึ้นลงเหมือนเดิม แค่แต่ละทางมีสองผล คือรอดกับเจ๊ง ส่วนสองแถวล่างบอกว่าเจ๊งแล้วอยู่ในสถานะเจ๊งตลอด เป็น absorbing state</p>
+    <p>$h_{ij}$ ขึ้นกับ node ได้ แปลว่าโอกาสเจ๊งเปลี่ยนตามระดับดอกเบี้ยได้ bond ที่ไม่มีทางเจ๊งมีราคาเท่ากันทั้งสองสถานะ จึงใช้ต้นไม้เดิม calibrate ดอกเบี้ยได้เหมือนเดิม</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — zero-coupon bond ที่เจ๊งได้บนต้นไม้</h4>
+  <p>bond จ่าย 1 USD ถ้ารอดถึงวันครบกำหนด ถ้าเจ๊งก่อนได้ $R$ ต่อหน้าตั๋ว ใช้กฎเดิมของต้นไม้: ค่าเฉลี่ยของงวดหน้าภายใต้ $Q$ คิดลดด้วย $r_{ij}$</p>
+  <div class="math">\[
+\begin{aligned}
+\bar Z_{ij0}&=\frac{1-h_{ij}}{1+r_{ij}}\big[q_u\bar Z_{i+1,j+1,0}\\
+&\qquad+q_d\bar Z_{i+1,j,0}\big]\\
+&\quad+\frac{h_{ij}}{1+r_{ij}}\,R\\[4pt]
+R=0&:\ \bar Z_{ij0}\approx e^{-(r_{ij}+h_{ij})}\\
+&\qquad\times\mathbb E_i^{\bar Q}\big[\bar Z_{i+1,\cdot,0}\big]\\[4pt]
+\bar Z^{R=0}&=\frac{1-0.02}{1+0.05}=0.933333\\
+e^{-(0.05+0.02)}&=0.932394\\
+\bar Z^{R=0.4}&=0.933333+\frac{0.02(0.40)}{1.05}\\
+&=0.940952
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ก้อนแรกคือทางรอด ต้องรอดก่อนด้วยโอกาส $1-h_{ij}$ จึงได้ค่าของ bond งวดหน้า ก้อนที่สองคือทางเจ๊ง ได้ $R$ ตอนสิ้นงวด ทั้งสองทางคิดลดด้วย $1+r_{ij}$</p>
+    <p>ถ้าไม่มี recovery ตัวคูณ $(1-h)/(1+r)$ ใกล้ $e^{-(r+h)}$ bond ที่เจ๊งได้จึงเหมือนคิดลดด้วยดอกเบี้ยบวก $h$ คอร์สจึงเรียก $h_{ij}$ ว่า credit spread หนึ่งงวด ส่วน $\bar Q$ คือ $Q$ ของต้นไม้ดอกเบี้ยที่ไม่มีการเจ๊ง แถวที่มีตัวเลขเป็นตัวอย่างหนึ่งงวดที่ $r=5\%$, $h=2\%$ และ $R=40\%$ สูตรประมาณต่างจากของจริงเพียง 0.0009</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — ราคา bond แบบรายงวดเมื่อ hazard ไม่ขึ้นกับ node</h4>
+  <p>ถ้า $h_{ij}=h_i$ การเจ๊งไม่เกี่ยวกับดอกเบี้ย ใช้ตัวบอกสถานะ $I(t)$ เขียนเงินทุกก้อนของ bond แล้วค่าเฉลี่ยของผลคูณแยกเป็นผลคูณของค่าเฉลี่ยได้</p>
+  <div class="math">\[
+\begin{aligned}
+Q(t+1)&=(1-h_t)\,Q(t)\\
+\mathbb E^Q_0[I(t)]&=Q(t)\\[4pt]
+\bar P(0)&=\sum_{k=1}^{n}c\,Q(t_k)\,d(0,t_k)\\
+&\quad+F\,Q(t_n)\,d(0,t_n)\\
+&\quad+R\,F\sum_{k=1}^{n}\big(Q(t_{k-1})-Q(t_k)\big)\\
+&\qquad\times d(0,t_k)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>coupon งวดที่ $k$ คือ $c\,I(t_k)$ หน้าตั๋วคือ $F\,I(t_n)$ และ recovery คือ $R\,F$ คูณ $I(t_{k-1})-I(t_k)$ ซึ่งเป็น 1 เฉพาะงวดที่เจ๊ง ค่าเฉลี่ยของ $I$ คือโอกาสรอด และค่าเฉลี่ยของตัวคิดลดคือ $d(0,t)$</p>
+    <p>นี่คือขั้นที่ 5 ในรูปรายงวด integral ของ recovery กลายเป็นผลรวมของโอกาสเจ๊งรายงวด ไฟล์ Excel ของคอร์สคำนวณตามสูตรนี้ทุก cell</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>bond ห้าตัวในไฟล์ของคอร์ส: หน้าตั๋ว 100 จ่ายทุกครึ่งปี ดอกเบี้ย 5%</h4>
+  <table>
+    <thead><tr><th>อายุ</th><th>coupon ต่อครึ่งปี</th><th>recovery</th><th>ราคาที่ h 2%</th><th>ราคาตลาดในไฟล์</th><th>h ที่ bootstrap ได้</th></tr></thead>
+    <tbody>
+      <tr><td>1 ปี</td><td>5</td><td>10</td><td>101.145033</td><td>101.188179</td><td>1.9763%</td></tr>
+      <tr><td>2 ปี</td><td>2</td><td>25</td><td>92.548108</td><td>92.549107</td><td>2.0239%</td></tr>
+      <tr><td>3 ปี</td><td>5</td><td>50</td><td>107.346606</td><td>107.443597</td><td>1.8944%</td></tr>
+      <tr><td>4 ปี</td><td>5</td><td>10</td><td>104.023189</td><td>104.080671</td><td>2.0782%</td></tr>
+      <tr><td>5 ปี</td><td>10</td><td>20</td><td>145.815844</td><td>145.883771</td><td>2.0102%</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>หัวตารางในไฟล์เขียน c = 5% แต่ cell จ่าย 5 ทุกครึ่งปี และ bond สองปีเขียน c = 2% ในแผ่นหนึ่งกับ c = 8% อีกแผ่น ทั้งที่ cell จ่าย 2 หน้านี้ใช้ตัวเลขใน cell ส่วนราคาตลาดคือราคาที่ h 2% บวกสัญญาณรบกวนไม่เกิน 0.1</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — ราคา bond 1 ปีของไฟล์ทีละ cell</h4>
+  <p>ดอกเบี้ย 5% ทบทุกครึ่งปี hazard 2% ต่อครึ่งปี coupon 5 ทุกครึ่งปี และถ้าเจ๊งได้คืน 10 ตอนสิ้นงวดที่เจ๊ง</p>
+  <div class="math">\[
+\begin{aligned}
+d(0,0.5)&=\frac{1}{1.025}=0.975610\\
+d(0,1)&=\frac{1}{1.025^2}=0.951814\\
+Q(0.5)&=0.98,\qquad Q(1)=0.9604\\[4pt]
+\bar P(0)&=0.975610\big[5(0.98)+10(0.02)\big]\\
+&\quad+0.951814\big[105(0.9604)\\
+&\qquad+10(0.0196)\big]\\
+&=4.975610+96.169423\\
+&=101.145033
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ในวงเล็บแรกคือเงินงวดแรก รอดได้ coupon 5 เจ๊งได้ 10 ในวงเล็บที่สองคืองวดสุดท้าย รอดได้ 105 ส่วนโอกาสเจ๊งในงวดนี้คือ $0.98(0.02)=0.0196$ ไม่ใช่ 0.02 เพราะต้องรอดงวดแรกมาก่อน</p>
+    <p>bond อีกสี่ตัวใช้สูตรเดียวกันแค่ยาวขึ้น ราคาเกิน 100 เพราะ coupon 5 ต่อครึ่งปีสูงกว่าดอกเบี้ย 2.5% ต่อครึ่งปีมาก</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 17 — calibrate hazard จากราคา bond ห้าตัว</h4>
+  <p>ถ้า bond ทุกตัวออกโดยบริษัทเดียว การเจ๊งครั้งเดียวทำให้ทุกตัวเจ๊งพร้อมกัน จึงใช้ hazard ชุดเดียว ให้ hazard คงที่ในแต่ละปี แล้วหาชุดที่ทำให้ราคา model ใกล้ราคาตลาดที่สุด</p>
+  <div class="math">\[
+\begin{aligned}
+f(h)&=\sum_{i=1}^{5}\big(P_i^{mkt}-P_i(h)\big)^2\\
+h&\ge0\\[4pt]
+P_1(h_1)&=101.188179\\
+h_1&=1.9763\%\\
+P_2(h_1,h_2)&=92.549107\\
+h_2&=2.0239\%\\
+h_3&=1.8944\%,\quad h_4=2.0782\%\\
+h_5&=2.0102\%,\quad f=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>bond ห้าตัวกับ hazard ห้าปีพอดี จึงแก้ได้ตรงทีละตัว bond 1 ปีขึ้นกับ $h_1$ อย่างเดียว bond 2 ปีใช้ $h_1$ ที่ได้แล้วแก้ $h_2$ ต่อไปเรื่อย ๆ สัญญาณรบกวนไม่เกิน 0.1 ในราคาทำให้ hazard ห่างจาก 2% ได้ถึง 0.11 จุด</p>
+    <p>ไฟล์ของคอร์สเก็บคำตอบของ Solver ไว้ที่ 2.0141, 1.9443, 1.9977, 2.0124 และ 1.9476% แต่ $f$ ในไฟล์เป็น 0.01495 ไม่ใช่ศูนย์ เพราะราคาตลาดสร้างด้วยคำสั่งสุ่มของ Excel ซึ่งสุ่มใหม่ทุกครั้งที่ไฟล์คำนวณ ราคาที่เก็บไว้จึงไม่ใช่ชุดที่ Solver เห็น บทเรียนคือต้องตรึงสัญญาณรบกวนก่อน calibrate</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 20.6f — hazard ที่ calibrate ได้กระจายรอบค่าจริง 2%</h4>
+  <img src="../figures/20.6-6.svg" alt="Figure 20.6f — hazard ที่ calibrate ได้กระจายรอบค่าจริง 2%" loading="lazy">
+  <figcaption>
+    <p>แท่งสีน้ำเงินคือ bootstrap บนราคาที่เก็บในไฟล์ซึ่ง fit พอดี แท่งสีส้มคือคำตอบของ Solver ที่ไฟล์เก็บไว้จากการสุ่มอีกครั้ง ทั้งสองชุดอยู่ห่างเส้นประ 2% ไม่เกิน 0.11 จุด</p>
   </figcaption>
 </figure>
 
 <section class="prose">
   <h4>calibrate hazard curve จาก bond prices</h4>
   <p>ใช้ risk-free discount curve กับ recovery convention ที่ freeze แล้ว แก้ piecewise-constant hazard buckets จาก bonds หรือ credit swaps เรียง maturity คล้าย bootstrapping แต่ corporate bonds ต่างกันด้าน coupon, seniority, liquidity, tax และ embedded options จึงอาจต้อง weighted global fit หลัง calibration ต้อง reprice ทุก instrument, ตรวจ survival ไม่เพิ่มตามเวลา, bump quotes เพื่อหา bucketed credit01 และแยก rate DV01 จาก credit risk</p>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — หุ้นกู้ 5 ปีที่ hazard 1.8%</h4>
+  <p>คำถาม: นักลงทุนพิจารณาซื้อหุ้นกู้เอกชน 5 ปี หน้าตั๋ว 10,000,000 USD coupon 5% ต่อปี ดอกเบี้ยไร้ความเสี่ยง 4.5% hazard คงที่ 1.8% และ recovery 40% หุ้นกู้นี้มีมูลค่าเท่าใด และถ้า hazard เพิ่มหนึ่ง basis point จะเสียเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 12</p>
+  <p>1. โอกาสรอด 5 ปี 0.913931 โอกาสเจ๊ง 0.086069</p>
+  <p>2. coupon 2,077,689.22 เงินต้น 7,297,888.74 และ recovery 308,812.72 รวมเป็น 9,684,390.68 USD</p>
+  <p>3. ต่ำกว่า bond ไร้ความเสี่ยง 489,487.01 USD yield 5.744035% และ credit01 คือ −2,603.02 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 0.913931 + 0.086069 = 1.000000 และ 2,077,689.22 + 7,297,888.74 + 308,812.72 = 9,684,390.68</p>
+  <p>แปลว่าอะไร: ราคา bond ที่เจ๊งได้คือสามบัญชีแยกกัน การคูณ 1.8% ด้วย 5 ปีแล้วเรียกเป็นโอกาสเจ๊งเป็นการประมาณที่หยาบ</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — bond ห้าตัวในไฟล์ของคอร์ส</h4>
+  <p>คำถาม: bond ห้าตัวของบริษัทเดียวอายุ 1 ถึง 5 ปี มีราคาตลาดในตาราง ดอกเบี้ย 5% ทบทุกครึ่งปี hazard ต่อครึ่งปีของแต่ละปีเป็นเท่าไร และ fit ได้ดีแค่ไหน?</p>
+  <p>ของที่มี: ขั้นที่ 15 ถึง 17 และตาราง bond ห้าตัว</p>
+  <p>1. ที่ hazard 2% ทุกงวด ราคาคือ 101.145033, 92.548108, 107.346606, 104.023189 และ 145.815844</p>
+  <p>2. bootstrap บนราคาตลาดได้ hazard 1.9763, 2.0239, 1.8944, 2.0782 และ 2.0102% ต่อครึ่งปี ราคาตรงทุกตัว</p>
+  <p>3. hazard ทุกปีห่างจาก 2% ไม่เกิน 0.11 จุด ทั้งที่ราคาคลาดไม่เกิน 0.1</p>
+  <p>ตรวจเองใน 10 วินาที: bond 1 ปีคือ 0.975610 × 5.1 + 0.951814 × 101.038 = 101.145033</p>
+  <p>แปลว่าอะไร: ราคาที่คลาดเล็กน้อยทำให้ hazard รายปีแกว่ง ถ้าจะใช้ hazard รายปีต้องดูว่าราคาตลาดแม่นแค่ไหน</p>
 </section>
 
 <section class="pitfall">
@@ -463,6 +650,33 @@ assert abs(price(lam+1e-4)-price(lam)+2603.023611159995) &lt; 1e-8</code></pre>
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>bond ห้าตัวของไฟล์คอร์ส และ bootstrap hazard</summary>
+    <pre><code>import numpy as np
+from scipy.optimize import brentq
+bonds = [(2, 5, 10), (4, 2, 25), (6, 5, 50), (8, 5, 10), (10, 10, 20)]  # half-years, coupon, recovery
+def price(h, n, c, R, rf=0.05):
+    Q = np.r_[1, np.cumprod(1 - np.asarray(h[:n]))]
+    d = 1 / (1 + rf / 2) ** np.arange(1, n + 1)
+    cf = np.full(n, float(c)); cf[-1] += 100
+    return float(np.sum(d * (cf * Q[1:] + R * (Q[:-1] - Q[1:]))))
+flat = [price([0.02] * 10, *b) for b in bonds]
+assert np.allclose(flat, [101.145033, 92.548108, 107.346606, 104.023189, 145.815844], atol=1e-6)
+mkt = [101.188179, 92.549107, 107.443597, 104.080671, 145.883771]
+h = []
+for b, m in zip(bonds, mkt):
+    x = brentq(lambda v: price(list(np.repeat(h + [v], 2)), *b) - m, 0, 0.5)
+    h.append(x)
+assert np.allclose(h, [0.019763, 0.020239, 0.018944, 0.020782, 0.020102], atol=1e-6)
+assert max(abs(np.array(h) - 0.02)) &lt; 0.0011
+assert abs((1 - 0.02) / 1.05 + 0.02 * 0.40 / 1.05 - 0.940952) &lt; 1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>bond ตัวที่ $k$ ใช้ hazard สองงวดต่อปีของปีที่ 1 ถึง $k$ จึงแก้จากสั้นไปยาวได้ทีละตัว</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>สิ่งที่ยังไม่ได้พูดถึง: credit default swap</h4>
   <p>defaultable bond ผสม rate, coupon, liquidity และ credit ไว้ในราคาเดียว Credit default swap แยกการซื้อ protection ออกเป็น premium leg กับ default leg ชัดกว่า หัวข้อถัดไปจะใช้ survival curve เดิมตั้ง par spread และ mark-to-market ของ protection contract</p>
@@ -476,6 +690,8 @@ assert abs(price(lam+1e-4)-price(lam)+2603.023611159995) &lt; 1e-8</code></pre>
     <li>ตัวอย่าง face \$10,000,000 ให้ five-year default probability 8.6069%, ราคา \$9,684,390.68 และ credit01 ประมาณ -\$2,603 ต่อ hazard basis point</li>
     <li>spread approximation $\lambda(1-R)$ มีประโยชน์เพื่อ intuition แต่ไม่แทน full cash-flow valuation</li>
     <li>risk-neutral hazard ใช้ pricing ส่วน physical hazard ใช้ forecasting และต้องไม่สลับกันโดยไม่ระบุ risk premium</li>
+    <li>บนต้นไม้ดอกเบี้ย ทุก node แยกเป็นรอดกับเจ๊ง และ zero-coupon bond ที่เจ๊งได้เหมือนคิดลดด้วยดอกเบี้ยบวก hazard</li>
+    <li>bond ห้าตัวกับ hazard ห้าปีแก้ได้ตรงทีละตัว ราคาคลาดไม่เกิน 0.1 ทำให้ hazard แกว่งรอบ 2% ได้ถึง 0.11 จุด</li>
   </ul>
 </section>
 </article>

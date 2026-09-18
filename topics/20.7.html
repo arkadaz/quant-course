@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คุณซื้อประกันหนี้ 100 USD: จ่ายเบี้ยทีละงวด แต่ถ้าคนออกหนี้หยุดจ่าย ผู้ขายประกันต้องชดเชย. เบี้ยต่อปีควรเท่าไรจึงไม่มีฝ่ายใดได้เปรียบตอนเริ่ม?</p>
-  <p>คิดสองกองเงิน: เบี้ยที่จ่ายตราบใดที่ยังไม่เกิดเหตุ และเงินชดเชยเมื่อเหตุเกิด. ให้มูลค่าเงินวันนี้ของสองกองเท่ากัน เราได้ par spread ของ credit default swap (CDS).</p>
-  <p>เฉลย: ตั้ง present value ของเบี้ยให้เท่ากับ present value ของเงินชดเชย. CDS คือประกันที่ใบเสร็จหยุดวิ่งเมื่อเหตุเคลมเกิดขึ้น; ศูนย์ในวันแรกไม่ได้แปลว่าความเสี่ยงหายไป.</p>
+  <p>นักลงทุนเข้าทำสัญญา credit default swap (CDS) อายุ 5 ปี บนหนี้ \$10,000,000 จ่ายเบี้ยรายไตรมาส หากอัตราดอกเบี้ย 4.5% อัตราเสี่ยงผิดนัดคงที่ 2.0% ต่อปี และ recovery 40% อัตราเบี้ยยุติธรรม (par spread) ควรเป็นเท่าใด?</p>
+  <p>เฉลย: 119.99975 basis points (เกือบ 1.20% ต่อปี) คิดเป็นมูลค่าขาชดเชย \$509,378.76 เท่ากับมูลค่าขาเบี้ยพอดี ทำให้สัญญาในวันแรกมีมูลค่าสุทธิเป็นศูนย์โดยไม่ต้องจ่ายเงินก้อนล่วงหน้า (upfront)</p>
 </div>
 
 <details class="jargon" open>
@@ -88,6 +87,10 @@
       <tr><td>$PV_{prem}$</td><td>present value ของ premium leg</td><td>USD</td></tr>
       <tr><td>$PV_{def}$</td><td>present value ของ default leg</td><td>USD</td></tr>
       <tr><td>$V_{buy}$</td><td>contract value จากมุม protection buyer</td><td>USD</td></tr>
+      <tr><td>$S$</td><td>spread ของสัญญาในตัวอย่างของคอร์ส</td><td>ต่อปี</td></tr>
+      <tr><td>$X_{buy}$</td><td>เงินสุทธิที่ protection buyer ได้ในเส้นทางเดียว ยังไม่คิดลด</td><td>USD</td></tr>
+      <tr><td>$h_k$</td><td>โอกาสเจ๊งในไตรมาสที่ $k$ เมื่อรอดมาถึงต้นไตรมาส</td><td>ความน่าจะเป็นต่อไตรมาส</td></tr>
+      <tr><td>$a,\ G,\ \Sigma_D$</td><td>ตัวคูณต่อไตรมาสของ discount กับ survival ผลรวมของ $a^i$ และผลรวมของโอกาสเจ๊งที่คิดลดแล้ว</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
@@ -122,8 +125,8 @@
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — สอง legs หยุดและเริ่มจาก credit event คนละแบบ</h4>
-  <img src="../figures/20.7-1.svg" alt="ภาพที่ 1 — สอง legs หยุดและเริ่มจาก credit event คนละแบบ" loading="lazy">
+  <h4>Figure 20.7a — สอง legs หยุดและเริ่มจาก credit event คนละแบบ</h4>
+  <img src="../figures/20.7-1.svg" alt="Figure 20.7a — สอง legs หยุดและเริ่มจาก credit event คนละแบบ" loading="lazy">
   <figcaption>
     <p>buyer จ่าย premium ตาม schedule ตราบใดที่ reference entity รอด เมื่อ credit event เกิด scheduled premiums หลังจากนั้นหยุดและ default payment ถูก trigger พร้อม accrued premium ถึงวันเกิดเหตุ</p>
   </figcaption>
@@ -156,11 +159,12 @@ PV_{prem}=Ns\left[\sum_{i=1}^{n}\delta D_iQ_i+\frac{\delta}{2}\sum_{i=1}^{n}D_i\
   <p>สูตรนี้แปลงการคำนวณที่ต้องแยกสองก้อน (เบี้ยปกติบวกเบี้ยค้างจ่าย) ให้เหลือเพียงการถ่วงน้ำหนักด้วยค่าเฉลี่ยโอกาสรอดต้นงวดและปลายงวดก้อนเดียว ในทางปฏิบัติที่งวดการจ่ายเป็นรายไตรมาส การประมาณจุดกึ่งกลางนี้มีความแม่นยำสูงมาก และเป็นมาตรฐานที่ International Swaps and Derivatives Association (ISDA) นำมาใช้ใน standard model ทางการ</p>
   <div class="math">\[
 \begin{aligned}
-PV_{\text{prem}} &= s\,N\sum_{i=1}^{n}\left[\delta D_i Q_i + \frac{\delta}{2} D_i (Q_{i-1} - Q_i)\right] \\
-&= s\,N\,\frac{\delta}{2}\sum_{i=1}^{n} D_i\big[2Q_i + Q_{i-1} - Q_i\big] \\
-&= s\,N\,\frac{\delta}{2}\sum_{i=1}^{n} D_i\big[Q_{i-1} + Q_i\big] \\
-A_{\text{CDS}} &= \frac{\delta}{2}\sum_{i=1}^{n} D_i\big[Q_{i-1} + Q_i\big] \\
-PV_{\text{prem}} &= s\,N\,A_{\text{CDS}}
+PV_{\rm prem}&=s\,N\sum_{i=1}^{n}\Big[\delta D_iQ_i\\
+&\qquad+\frac{\delta}{2}D_i(Q_{i-1}-Q_i)\Big]\\
+&=s\,N\,\frac{\delta}{2}\sum_{i=1}^{n}D_i\big[2Q_i+Q_{i-1}-Q_i\big]\\
+&=s\,N\,\frac{\delta}{2}\sum_{i=1}^{n}D_i\big[Q_{i-1}+Q_i\big]\\
+A_{\rm CDS}&=\frac{\delta}{2}\sum_{i=1}^{n}D_i\big[Q_{i-1}+Q_i\big]\\
+PV_{\rm prem}&=s\,N\,A_{\rm CDS}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -183,13 +187,16 @@ PV_{def}=N(1-R)\sum_{i=1}^{n}D_i\Delta Q_i
 
 <section class="formula">
   <h4>ขั้นที่ 4 — derive par spread จากมูลค่าเริ่มต้นศูนย์</h4>
-  <p>สำหรับสัญญาที่ไม่มีเงินจ่ายล่วงหน้า เราเลือกอัตราเบี้ยให้มูลค่าตอนเปิดเป็นศูนย์ ห้าบรรทัดนี้ใช้เงื่อนไขเดียวกับอัตรา swap ในหัวข้อ 20.2 ทุกประการ ต่างแค่สิ่งที่แลกกันเป็นความเสี่ยงเจ๊ง ไม่ใช่ความเสี่ยงอัตราดอกเบี้ย</p>
+  <p>สำหรับสัญญาที่ไม่มีเงินจ่ายล่วงหน้า เราเลือกอัตราเบี้ยให้มูลค่าตอนเปิดเป็นศูนย์ สูตรข้างล่างใช้เงื่อนไขเดียวกับอัตรา swap ในหัวข้อ 20.2 ทุกประการ ต่างแค่สิ่งที่แลกกันเป็นความเสี่ยงเจ๊ง ไม่ใช่ความเสี่ยงอัตราดอกเบี้ย</p>
   <div class="math">\[
-\begin{aligned}\text{value at inception}&=PV_{\rm def}-PV_{\rm prem}=0\\
-N(1-R)\sum_{i}D_i\Delta Q_i&=N\,s^{*}A_{CDS}\\
+\begin{aligned}
+PV_{\rm def}&=N(1-R)\sum_{i}D_i\Delta Q_i\\
+PV_{\rm prem}&=N\,s^{*}A_{CDS}\\
+V_{buy}&=PV_{\rm def}-PV_{\rm prem}=0\\[4pt]
 s^{*}&=\frac{(1-R)\sum_{i}D_i\Delta Q_i}{A_{CDS}}\\
-A_{CDS}&=\sum_{i=1}^{n}\delta D_iQ_i+\frac{\delta}{2}\sum_{i=1}^{n}D_i\Delta Q_i\\
-s^{*}&=\frac{(1-R)\sum_{i=1}^{n}D_i\Delta Q_i}{\sum_{i=1}^{n}\delta D_iQ_i+\frac{\delta}{2}\sum_{i=1}^{n}D_i\Delta Q_i}\end{aligned}
+A_{CDS}&=\sum_{i=1}^{n}\delta D_iQ_i\\
+&\quad+\frac{\delta}{2}\sum_{i=1}^{n}D_i\Delta Q_i
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อัตราเบี้ยมาตรฐานนิยามจากเงื่อนไขข้อเดียว สัญญาต้องมีมูลค่าศูนย์ตอนเซ็น ไม่อย่างนั้นฝ่ายหนึ่งต้องจ่ายอีกฝ่ายล่วงหน้า</p>
@@ -205,11 +212,13 @@ s^{*}&=\frac{(1-R)\sum_{i=1}^{n}D_i\Delta Q_i}{\sum_{i=1}^{n}\delta D_iQ_i+\frac
   <p>การมีตัวหาร $1 - h/2$ ทำให้ par spread ขยับกว้างกว่า expected loss ธรรมดาเล็กน้อย เพื่อชดเชยข้อเท็จจริงที่ว่าผู้ซื้อประกันจ่ายเบี้ยไม่เต็มงวดเมื่อเกิดเหตุผิดนัดชำระหนี้ขึ้นระหว่างทาง</p>
   <div class="math">\[
 \begin{aligned}
-Q_i &\approx (1 - h)\,Q_{i-1} \implies \Delta Q_i = h\,Q_{i-1} \\
-Q_{i-1} + Q_i &\approx (2 - h)\,Q_{i-1} \\
-s^* &= \frac{(1 - R)\sum_{i=1}^n D_i\,(h\,Q_{i-1})}{\frac{\delta}{2}\sum_{i=1}^n D_i\,(2 - h)\,Q_{i-1}} \\
-s^* &= \frac{(1 - R)\,h}{\frac{\delta}{2}\,(2 - h)} = \frac{(1 - R)\,h}{\delta\big(1 - h/2\big)} \\
-\delta = 1 &\implies s^* \approx \frac{(1 - R)\,h}{1 - h/2}
+Q_i&\approx(1-h)\,Q_{i-1}\\
+\Delta Q_i&=h\,Q_{i-1}\\
+Q_{i-1}+Q_i&\approx(2-h)\,Q_{i-1}\\[4pt]
+s^*&=\frac{(1-R)\sum_{i=1}^nD_i\,h\,Q_{i-1}}{\frac{\delta}{2}\sum_{i=1}^nD_i\,(2-h)\,Q_{i-1}}\\
+&=\frac{(1-R)\,h}{\frac{\delta}{2}(2-h)}\\
+&=\frac{(1-R)\,h}{\delta(1-h/2)}\\
+\delta=1&\ \Rightarrow\ s^*\approx\frac{(1-R)\,h}{1-h/2}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -219,27 +228,24 @@ s^* &= \frac{(1 - R)\,h}{\frac{\delta}{2}\,(2 - h)} = \frac{(1 - R)\,h}{\delta\b
   </div>
 </section>
 
-<section class="example">
-  <h4>ตัวอย่าง 5-year CDS notional \$10,000,000</h4>
-  <p>ของที่มี: 20 quarters, discounted default-probability sum 0.0848964603, risky annuity 4.2448318563 ปี, recovery 40% และ notional \$10,000,000.</p>
-  <p>ถามว่า CDS premium ที่ทำให้เริ่มต้นเสมอกันเท่าไร?</p>
-  <p>คำตอบ: par spread คือ 119.99975 basis points หรือเกือบ 120 bp.</p>
-  <p>ตรวจเองใน 10 วินาที: $0.60×0.0848964603/4.2448318563$ ต้องได้ประมาณ 0.012.</p>
-  <p>เอาไปใช้จริง: ใช้ spread นี้ quote และ hedge default protection โดยให้ premium leg กับ default leg เท่ากันจริง.</p>
-</section>
-
 <section class="formula">
   <h4>แกะผลรวม 20 งวดก่อนแทนราคา</h4>
   <div class="math">\[
-\begin{aligned}&amp;Q_1=e^{-0.02(0.25)}=0.995012479\\
-&\Delta Q_1=1-Q_1=0.004987521,\quad D_1=e^{-0.045(0.25)}=0.988813045\\
-&amp;D_1\Delta Q_1=0.004931726\\
-&amp;a=e^{-(0.045+0.02)0.25}=0.983881319\\
-&amp;G=\sum_{i=1}^{20}a^i=\frac{a(1-a^{20})}{1-a}=16.936879\\
-&\sum D_i\Delta Q_i=(e^{0.005}-1)G=0.0848964603\\
-&amp;A_{CDS}=0.25G+0.125(0.0848964603)=4.2448318563\end{aligned}
+\begin{aligned}
+Q_1&=e^{-0.005}=0.995012479\\
+\Delta Q_1&=1-Q_1=0.004987521\\
+D_1&=e^{-0.01125}=0.988813045\\
+D_1\Delta Q_1&=0.004931726\\
+a&=e^{-0.01625}=0.983881319\\
+G&=\frac{a(1-a^{20})}{1-a}=16.936879\\
+\Sigma_D&=(e^{0.005}-1)G\\
+&=0.0848964603\\
+A_{CDS}&=0.25G+0.125\,\Sigma_D\\
+&=4.2448318563
+\end{aligned}
 \]</div>
   <div class="reading">
+    <p>เลขชี้กำลังมาจากหนึ่งไตรมาส: $0.02(0.25)=0.005$, $0.045(0.25)=0.01125$ และ $(0.045+0.02)(0.25)=0.01625$ ส่วน $G$ คือ $\sum_{i=1}^{20}a^i$ และ $\Sigma_D$ ย่อจาก $\sum_{i=1}^{20}D_i\Delta Q_i$</p>
     <p>งวดแรกมีโอกาสผิดนัดราว 0.00499 ไม่ใช่โอกาสรอด 0.99501 จึงใช้คนละคอลัมน์ใน premium leg กับ default leg คูณค่าคิดลดของ quarter แรกได้ contribution ราว 0.00493</p>
     <p>เพราะ rate กับ hazard คงที่ ผลคูณ discount กับ survival ในแต่ละ quarter เป็น $a^i$ ใช้ผลรวม geometric จากบทที่ 1 รวม 20 งวดได้ G งวดผิดนัดต่างจากงวดรอดด้วยตัวคูณ exponential ของ hazard หนึ่ง quarter ลบหนึ่ง จึงได้ผลรวม 0.0848964603</p>
     <p>annuity ประกอบด้วยเบี้ยที่จ่ายเมื่อรอด 0.25 คูณ G และเบี้ยค้างครึ่งงวดเมื่อผิดนัด 0.125 คูณผลรวม default ทั้งสองก้อนมีหน่วยปี ต่อไปจึงคูณ notional และ spread ได้ USD ใช้เลขเต็มก่อนปัด</p>
@@ -269,8 +275,8 @@ s^*=\frac{0.60(0.0848964603)}{4.2448318563}=0.011999975=119.99975\ \text{basis p
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — ที่ par สอง legs มี present value เท่ากัน</h4>
-  <img src="../figures/20.7-2.svg" alt="ภาพที่ 2 — ที่ par สอง legs มี present value เท่ากัน" loading="lazy">
+  <h4>Figure 20.7b — ที่ par สอง legs มี present value เท่ากัน</h4>
+  <img src="../figures/20.7-2.svg" alt="Figure 20.7b — ที่ par สอง legs มี present value เท่ากัน" loading="lazy">
   <figcaption>
     <p>default leg กับ premium leg ที่ 119.99975 basis points สมดุลกัน Contract ใหม่จึงไม่มี upfront value แม้แต่ละ leg มี present value มากกว่าครึ่งล้าน USD</p>
   </figcaption>
@@ -280,8 +286,13 @@ s^*=\frac{0.60(0.0848964603)}{4.2448318563}=0.011999975=119.99975\ \text{basis p
   <h4>ขั้นที่ 7 — mark-to-market ของ contract coupon 125 basis points</h4>
   <p>ตัวอย่างต่อไปกำหนด contract coupon 125 basis points เพื่อแสดง mark-to-market ตัวเลขนี้เป็นสมมติฐาน ไม่ใช่การระบุ standard coupon ของตลาด ส่วนต่างนั้นคือกำไรขาดทุนที่ต้องบันทึก</p>
   <div class="math">\[
-\begin{aligned}PV_{prem}(125\text{ bp})&=\$10{,}000{,}000(0.0125)(4.2448318563)=\$530{,}603.98,\\
-V_{buy}&=PV_{def}-PV_{prem}=-\$21{,}225.22.\end{aligned}
+\begin{aligned}
+PV_{prem}&=10^7(0.0125)(4.2448318563)\\
+&=530{,}603.98\\
+V_{buy}&=PV_{def}-PV_{prem}\\
+&=509{,}378.76-530{,}603.98\\
+&=-21{,}225.22
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>buyer ตกลงจ่าย coupon สูงกว่า fair rate จึงต้องได้รับ upfront 21,225.22 USD เพื่อทำให้ trade fair; หากจ่าย upfront แทน เครื่องหมายเป็นลบจากมุม buyer</p>
@@ -291,19 +302,20 @@ V_{buy}&=PV_{def}-PV_{prem}=-\$21{,}225.22.\end{aligned}
 <section class="prose">
   <h4>standard coupon กับ upfront แยก quote ออกจาก economics</h4>
   <p>ตลาดอาจกำหนด standard running coupon แล้วชำระส่วนต่าง fair value เป็น upfront ค่า upfront จากมุม protection buyer ก่อน settlement convention คือ $PV_{def}-PV_{prem}$ Contract coupon ไม่ใช่ current market spread หลัง trade และการ mark-to-market ต้องใช้ remaining schedule, current curve, current survival และ accrued amount ไม่ใช่คูณ spread difference ด้วย original maturity แบบตรง ๆ</p>
+  <p>หลังการปฏิรูป ISDA Big Bang ปี 2009 ตลาด CDS ได้เปลี่ยนมาใช้คูปองมาตรฐานคงที่ (เช่น 100 bps สำหรับ investment grade และ 500 bps สำหรับ high yield) และกำหนดวันครบกำหนดมาตรฐาน 4 วันต่อปี (20 มีนาคม, มิถุนายน, กันยายน และธันวาคม) โดยส่วนต่างระหว่าง par spread กับ standard coupon จะถูกชำระเป็นเงินก้อน upfront ณ วันเริ่มสัญญา</p>
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 3 — par spread เกือบเป็น hazard คูณ loss แต่ recovery เปลี่ยนความชัน</h4>
-  <img src="../figures/20.7-3.svg" alt="ภาพที่ 3 — par spread เกือบเป็น hazard คูณ loss แต่ recovery เปลี่ยนความชัน" loading="lazy">
+  <h4>Figure 20.7c — par spread เกือบเป็น hazard คูณ loss แต่ recovery เปลี่ยนความชัน</h4>
+  <img src="../figures/20.7-3.svg" alt="Figure 20.7c — par spread เกือบเป็น hazard คูณ loss แต่ recovery เปลี่ยนความชัน" loading="lazy">
   <figcaption>
     <p>ภายใต้ constant hazard และ quarterly grid เส้นเกือบตรง Recovery ต่ำทำให้ protection payout สูงและ par spread สูงขึ้น ความใกล้กับ $\lambda(1-R)$ เป็น approximation จาก convention นี้ ไม่ใช่ identity สากล</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 4 — buyer value เพิ่มเมื่อ market spread กว้างขึ้น</h4>
-  <img src="../figures/20.7-4.svg" alt="ภาพที่ 4 — buyer value เพิ่มเมื่อ market spread กว้างขึ้น" loading="lazy">
+  <h4>Figure 20.7d — buyer value เพิ่มเมื่อ market spread กว้างขึ้น</h4>
+  <img src="../figures/20.7-4.svg" alt="Figure 20.7d — buyer value เพิ่มเมื่อ market spread กว้างขึ้น" loading="lazy">
   <figcaption>
     <p>สำหรับ contract coupon 125 basis points protection buyer มี negative value เมื่อ market par spread ต่ำกว่า coupon และ positive value เมื่อสูงกว่า ความชันใกล้จุดนี้คือ risky annuity คูณ notional</p>
   </figcaption>
@@ -321,12 +333,84 @@ V_{buy}(2.01\%)-V_{buy}(2.00\%)=\$2{,}551.30
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — premium และ default probability ถูกถ่วงคนละเหตุการณ์ทุก quarter</h4>
-  <img src="../figures/20.7-5.svg" alt="ภาพที่ 5 — premium และ default probability ถูกถ่วงคนละเหตุการณ์ทุก quarter" loading="lazy">
+  <h4>Figure 20.7e — premium และ default probability ถูกถ่วงคนละเหตุการณ์ทุก quarter</h4>
+  <img src="../figures/20.7-5.svg" alt="Figure 20.7e — premium และ default probability ถูกถ่วงคนละเหตุการณ์ทุก quarter" loading="lazy">
   <figcaption>
     <p>scheduled premium contribution ลดตาม discount และ survival ส่วน default-leg contribution ต่อ quarter ลดช้ากว่าในช่วงสั้น การแยก arrays สองชุดนี้ช่วยจับ bug ที่นำ $Q_i$ ไปใช้แทน $\Delta Q_i$</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — เงินที่ไหลจริงเมื่อเจ๊งในเดือนที่ 16</h4>
+  <p>ตัวอย่างของคอร์ส: CDS 2 ปี notional 1,000,000 USD spread 160 basis points จ่ายรายไตรมาส recovery 45% และบริษัทเจ๊งในเดือนที่ 16 ของ 24 เดือน</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{S\,N}{4}&=\frac{0.016(10^6)}{4}=4{,}000\\
+5\times4{,}000&=20{,}000\\
+\frac{S\,N}{12}&=\frac{0.016(10^6)}{12}=1{,}333.33\\
+(1-R)N&=0.55(10^6)=550{,}000\\[4pt]
+X_{buy}&=550{,}000-20{,}000\\
+&\quad-1{,}333.33=528{,}666.67
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>buyer จ่ายเบี้ยงวดละ $S\,N\,\delta$ กับ $\delta=1/4$ ในเดือน 3, 6, 9, 12 และ 15 เมื่อเจ๊งในเดือน 16 สัญญาจบที่วันจ่ายถัดไปคือเดือน 18 buyer จ่ายเบี้ยค้างของเดือน 15 ถึง 16 หนึ่งเดือน และรับ $(1-R)N$ ในวันเดียวกัน</p>
+    <p>สไลด์เขียนเบี้ยค้างเป็น $(t_k-\tau)\,S\,N$ ซึ่งกลับด้าน ช่วงที่คุ้มครองแล้วแต่ยังไม่จ่ายคือ $\tau-t_{k-1}$ และตัวอย่างในสไลด์เองก็คิดหนึ่งเดือนจากเดือน 15 ถึง 16 วันจ่ายจริงของตลาดคือ 20 มี.ค. 20 มิ.ย. 20 ก.ย. และ 20 ธ.ค.</p>
+    <p>นี่คือเงินของเส้นทางเดียว ยังไม่คิดลดและไม่ถ่วงโอกาส ขั้นที่ 2 และ 3 คือค่าเฉลี่ยของทุกเส้นทาง โดยสมมติว่าเจ๊งกลางงวดโดยเฉลี่ย จึงคิดเบี้ยค้างครึ่งงวด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — CDS 2 ปีในไฟล์ Excel ของคอร์ส</h4>
+  <p>ไฟล์เดียวกับหัวข้อ 20.6 เอา hazard ต่อครึ่งปีที่ calibrate ได้มาหารสองเป็นต่อไตรมาส ใช้ดอกเบี้ย 1% ทบทุกไตรมาส recovery 45% และ notional 1,000,000 USD</p>
+  <div class="math">\[
+\begin{aligned}
+h_1,\dots,h_4&=\tfrac12(0.020141)\\
+&=0.010070\\
+h_5,\dots,h_8&=\tfrac12(0.019443)\\
+&=0.009722\\
+D_k&=(1+0.01/4)^{-k}\\[4pt]
+PV_{prem}&=41{,}396.31+206.97\\
+&=41{,}603.28\\
+PV_{def}&=41{,}603.28\\
+s^*&=218.8895\ \text{basis points}\\[4pt]
+s^*_{1}&\approx\frac{0.55(0.010070)}{0.25(0.994965)}\\
+&=2.2267\%\\
+s^*_{2}&\approx\frac{0.55(0.009722)}{0.25(0.995139)}\\
+&=2.1492\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ขาเบี้ยมีสองก้อน เบี้ยตามกำหนด 41,396.31 และเบี้ยค้างครึ่งงวด 206.97 ก้อนหลังเล็กเพราะโอกาสเจ๊งต่อไตรมาสราว 1% และค้างเพียงครึ่งไตรมาส spread 218.8895 basis points คือค่าที่ไฟล์เก็บไว้ในช่อง Spread และทำให้สองขาเท่ากันพอดี</p>
+    <p>สองแถวล่างคือสูตรประมาณ $(1-R)h/(\delta(1-h/2))$ ของหัวข้อนี้ ใช้ hazard ปีแรกได้ 222.67 และปีที่สองได้ 214.92 basis points ค่าจริงอยู่ระหว่างสองค่านี้</p>
+    <p>สไลด์ใช้ความสัมพันธ์ $S\approx(1-R)h$ อ่านกราฟ CDS 5 ปีของ Ford, General Motors และ American International Group (AIG) ในเก้าเดือนแรกของปี 2008 ถ้า recovery คงที่ spread ที่พุ่งขึ้นก็คือ hazard ที่ตลาดคิดพุ่งขึ้นในสัดส่วนเดียวกัน</p>
+  </div>
+</section>
+
+<details class="jargon" open>
+  <summary>ศัพท์ชุดที่สอง: CDS ในตลาดจริง</summary>
+  <dl>
+    <dt>American International Group (AIG)</dt>
+    <dd>บริษัทประกันรายใหญ่ของสหรัฐที่ขาย CDS จำนวนมากก่อนปี 2008 ใช้เป็นตัวอย่างของผู้ขาย protection ที่ล้มเสียเองตอนที่ protection ต้องจ่าย</dd>
+    <dt>naked CDS</dt>
+    <dd>การซื้อ protection โดยไม่ได้ถือหนี้ของบริษัทนั้น ใช้เดิมพันว่าเครดิตจะแย่ลง</dd>
+    <dt>over-the-counter</dt>
+    <dd>การซื้อขายตกลงกันเองระหว่างสองฝ่ายนอกตลาดกลาง ทำให้คนนอกไม่เห็น position ทั้งหมด</dd>
+    <dt>contagion</dt>
+    <dd>การที่ความเสียหายของผู้เล่นรายหนึ่งลามไปถึงรายอื่นผ่านสัญญาที่ผูกกัน ใช้อธิบายว่าทำไมการล้มรายเดียวกลายเป็นวิกฤต</dd>
+  </dl>
+</details>
+
+<section class="prose">
+  <h4>CDS ไม่ใช่ประกัน และบทเรียนจากปี 2008</h4>
+  <p>CDS ใช้ป้องกันความเสี่ยงได้ แต่ต่างจากกรมธรรม์ประกันมาก ประกันต้องมีส่วนได้เสียในสิ่งที่เอาประกัน แต่ CDS ซื้อ protection ได้แม้ไม่ได้ถือหนี้ของบริษัทนั้น และสร้างได้ง่าย ช่วงแรกแทบไม่มีการกำกับ</p>
+  <p>เดิม CDS มีไว้ hedge ลดความเสี่ยงที่กระจุกกับลูกค้ารายใหญ่โดยไม่ต้องขายหนี้ให้ลูกค้ารู้ และ hedge บริษัทที่ไม่มีหุ้นกู้ซื้อขายในตลาด แต่การเก็งกำไรกลายเป็นการใช้งานหลักอย่างรวดเร็ว</p>
+  <p>เหตุผลคือขาย protection ได้เบี้ยโดยไม่ต้องลงเงินก้อนแรก จึงใช้ leverage ได้ ปรับ exposure ได้ตามต้องการ แสดงมุมมองว่าเครดิตจะแย่ลงได้ง่ายกว่า short หุ้นกู้ และเล่นส่วนต่างระหว่าง coupon ของหุ้นกู้กับ CDS spread</p>
+  <p>ตลาดโตจน notional รวมปลายปี 2007 อยู่ที่ 62 ล้านล้าน USD ส่วน Depository Trust and Clearing Corporation ประเมิน gross notional ปี 2012 ที่ 25 ล้านล้าน USD</p>
+  <p>ในวิกฤต 2008 CDS ซื้อขายแบบ over-the-counter ไม่มีใครเห็น position ทั้งหมด จึงประเมินไม่ได้ว่าสถาบันไหนเสี่ยง และไม่มีใครไว้ใจคู่สัญญา AIG ใช้อันดับเครดิตสูงของตัวเองขาย CDS ราว 500,000 ล้าน USD</p>
+  <p>dealer ไม่กี่รายจึงแบกความเสี่ยงมหาศาลที่ผูกกันไปมา จนกลัว contagion และ naked CDS ย้อนกลับมาทำร้ายบริษัทได้ คนซื้อ protection มาก spread ก็กว้าง บริษัทดูเสี่ยงขึ้น ต้นทุนกู้เงินแพงขึ้น และอาจล้มจริง</p>
+  <p>ISDA ทำสัญญาเป็นมาตรฐานตั้งแต่ปี 1999 แก้ในปี 2003 และ 2009 แต่คำถามยากยังอยู่ อะไรนับเป็น credit event ใครกำหนด recovery spread ตั้งอย่างไรสำหรับ junk bond, investment grade และ sovereign จ่ายเบี้ยล่วงหน้าหรือตามหลัง และ quote spread อย่างไร</p>
+</section>
 
 <section class="prose">
   <h4>risk interpretation ที่ spread DV01 ตัวเดียวไม่พอ</h4>
@@ -337,6 +421,28 @@ V_{buy}(2.01\%)-V_{buy}(2.00\%)=\$2{,}551.30
   <h4>implementation และ calibration recipe</h4>
   <p>สร้าง exact quarterly schedule และ accrual fractions, bootstrap piecewise hazard จาก par spreads โดยใช้ discount curve และ recovery ที่ freeze, คำนวณ premium กับ default legs จาก arrays คนละชุด, รวม accrued-on-default integration และ reprice input quotes กลับเป็นศูนย์ ทดสอบ zero hazard, zero recovery, maturity boundary,</p>
   <p>premium-default equality, monotonicity ต่อ hazard และ sign จากทั้ง buyer กับ seller สำหรับ market quote bumps ให้ rebuild hazard curve ก่อน revalue เพื่อได้ bucketed spread sensitivity</p>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — CDS 5 ปีบนหนี้ 10 ล้าน USD</h4>
+  <p>คำถาม: นักลงทุนเข้าทำ CDS 5 ปีบนหนี้ 10,000,000 USD จ่ายเบี้ยรายไตรมาส ดอกเบี้ย 4.5% hazard คงที่ 2.0% ต่อปี และ recovery 40% par spread ควรเป็นเท่าใด และถ้าสัญญาใช้ coupon 125 basis points ใครต้องจ่ายใครเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 8</p>
+  <p>1. ผลรวมโอกาสเจ๊งที่คิดลดแล้วคือ 0.0848964603 และ risky annuity คือ 4.2448318563 ปี</p>
+  <p>2. default leg 509,378.76 USD และ par spread 119.99975 basis points</p>
+  <p>3. ที่ coupon 125 basis points buyer ต้องได้ upfront 21,225.22 USD และถ้า hazard เพิ่มหนึ่ง basis point มูลค่าของ buyer เพิ่ม 2,551.30 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 0.60 × 0.0848964603 / 4.2448318563 = 0.0120 เท่ากับ 0.60 × 0.02 ตามสูตรประมาณ</p>
+  <p>แปลว่าอะไร: par spread คือความเสียหายที่คาดต่อปีที่ตลาดคิด สัญญาที่ coupon ต่างจาก par ต้องชดเชยกันด้วยเงินก้อนตอนเริ่ม</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — CDS 2 ปีของคอร์ส</h4>
+  <p>คำถาม: CDS 2 ปี notional 1,000,000 USD spread 160 basis points จ่ายรายไตรมาส recovery 45% ถ้าบริษัทเจ๊งในเดือนที่ 16 เงินไหลอย่างไร และถ้าใช้ hazard ของไฟล์ Excel กับดอกเบี้ย 1% par spread ควรเป็นเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 9 และ 10</p>
+  <p>1. buyer จ่ายเบี้ย 4,000 USD ห้างวดในเดือน 3 ถึง 15 และเบี้ยค้าง 1,333.33 USD ในเดือน 18</p>
+  <p>2. seller จ่าย 550,000 USD ในเดือน 18 buyer ได้สุทธิ 528,666.67 USD ก่อนคิดลด</p>
+  <p>3. par spread ในไฟล์คือ 218.8895 basis points ทั้งสองขามีค่า 41,603.28 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 0.55 × 4 × 1.007% = 2.22% ใกล้ 218.89 basis points</p>
+  <p>แปลว่าอะไร: เส้นทางเดียวให้ผลสุดขั้ว buyer จ่าย 21,333.33 แต่ได้ 550,000 ราคาที่ยุติธรรมมาจากการเฉลี่ยทุกเส้นทางด้วยโอกาสรอดและโอกาสเจ๊ง</p>
 </section>
 
 <section class="pitfall">
@@ -384,6 +490,33 @@ assert abs(buyer_value+21_225.220487033486) &lt; 1e-8</code></pre>
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>ตัวอย่าง CDS 2 ปีของคอร์ส และไฟล์ Excel</summary>
+    <pre><code>import numpy as np
+S, N, R = 0.016, 1_000_000, 0.45
+premiums = [S * N / 4] * 5          # months 3, 6, 9, 12, 15
+accrued = S * N / 12                # month 15 to 16, paid in month 18
+protection = (1 - R) * N
+assert premiums[0] == 4000 and round(accrued, 2) == 1333.33 and protection == 550_000
+assert round(protection - sum(premiums) - accrued, 2) == 528_666.67
+hq = np.r_[[0.02014057304019802 / 2] * 4, [0.01944310333866298 / 2] * 4]
+Q = np.r_[1, np.cumprod(1 - hq)]
+D = (1 + 0.01 / 4) ** -np.arange(1, 9)
+dq = Q[:-1] - Q[1:]
+scheduled = np.sum(0.25 * Q[1:] * D)
+annuity = scheduled + np.sum(0.125 * dq * D)
+default_sum = np.sum(dq * D)
+par = (1 - R) * default_sum / annuity
+assert abs(par * 1e4 - 218.8895) &lt; 1e-4
+assert abs(N * (1 - R) * default_sum - 41_603.28) &lt; 0.01
+assert abs(N * par * scheduled - 41_396.31) &lt; 0.01</code></pre>
+  </details>
+  <div class="note">
+    <p>ตัวแปร scheduled คือเบี้ยตามกำหนด ส่วน annuity รวมเบี้ยค้างครึ่งงวดแล้ว เหมือนสองคอลัมน์ในไฟล์</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>จาก credit pricing ไป numerical calibration</h4>
   <p>ตอนนี้ curve, rate options, short-rate parameters, hazard และ CDS legs ถูกเขียนเป็น pricing functions แล้ว ขั้นต่อไปคือทำให้ solver เสถียรและตรวจ convergence หัวข้อถัดไปของหนังสือจึงเข้าสู่ numerical methods สำหรับ pricing กับ calibration โดยเริ่มจาก grids และ finite differences</p>
@@ -397,6 +530,8 @@ assert abs(buyer_value+21_225.220487033486) &lt; 1e-8</code></pre>
     <li>ตัวอย่าง 5 ปีให้ par spread 119.99975 basis points, default leg \$509,378.76 และ contract coupon 125 basis points มี buyer value -\$21,225.22 ก่อน upfront</li>
     <li>hazard bump หนึ่ง basis point เพิ่ม buyer value ประมาณ \$2,551 แต่ jump-to-default exposure ใหญ่กว่ามาก</li>
     <li>survival $Q_i$ ใช้กับ premium ส่วน period default mass $Q_{i-1}-Q_i$ ใช้กับ protection payment</li>
+    <li>ตัวอย่าง 2 ปีของคอร์ส: เจ๊งเดือนที่ 16 buyer จ่าย 4,000 ห้างวดกับเบี้ยค้าง 1,333.33 และรับ 550,000 ส่วนไฟล์ Excel ให้ par spread 218.8895 basis points</li>
+    <li>CDS ต่างจากประกันเพราะซื้อได้โดยไม่ถือหนี้ และการซื้อขายแบบ over-the-counter ที่มองไม่เห็นคือต้นเหตุหนึ่งของวิกฤต 2008</li>
   </ul>
 </section>
 </article>

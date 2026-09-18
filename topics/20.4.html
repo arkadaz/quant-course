@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คุณกู้เงินและดอกเบี้ยถูกรีเซ็ตทุก 6 เดือน. ถ้าอัตราเกิน 5% คุณอยากมีคนช่วยจ่ายเฉพาะส่วนเกิน; ถ้าไม่เกินก็ไม่อยากจ่ายค่าเคลม. สิทธิ์นี้ควรมีราคาเท่าไร?</p>
-  <p>เริ่มจากงวดเดียว: ดูอัตราในแต่ละทางของ tree แล้วนับเงินเฉพาะส่วนที่เกินเส้น. สิทธิ์กันดอกเบี้ยพุ่งนี้เรียก caplet; สิทธิ์กันดอกเบี้ยตกเรียก floorlet.</p>
-  <p>เฉลย: ไม่ได้จ่ายตามอัตราเฉลี่ย แต่จ่ายเฉพาะ node ที่เกิน strike แล้ว discount กลับมา. สิทธิ์เลือกเริ่ม swap ในอนาคตเรียก swaption. cap คือร่มที่กางเมื่อฝนเกินระดับ ไม่ใช่การหยุดเมฆ.</p>
+  <p>ผู้กู้เงินต้องการซื้อสัญญา caplet อายุ 1 ปี เพื่อจำกัดดอกเบี้ยงวดถัดไปไม่ให้เกิน strike 5.25% บนเงินต้น \$10,000,000 หากอัตราดอกเบี้ยในตลาดแยกเป็น 7%, 5% หรือ 3% สัญญาประกันดอกเบี้ยพุ่งนี้มีมูลค่าเท่าใด?</p>
+  <p>เฉลย: \$19,992.24 คำนวณโดยนำ payoff เฉพาะในสภาวะที่ดอกเบี้ยแตะ 7% คิดลดสองทอดกลับมาด้วยอัตราของ node นั้นและ Arrow-Debreu state price ส่วนสภาวะที่เหลือมีมูลค่าเป็นศูนย์เพราะอัตราไม่เกิน strike</p>
 </div>
 
 <details class="jargon" open>
@@ -59,6 +58,8 @@
     <dd>รูปแบบที่ implied volatility เปลี่ยนตาม strike ใช้สะท้อนว่าการกระจายตลาดไม่ตรงกับ one-factor lognormal หรือ normal assumption เดียว</dd>
     <dt>positive part</dt>
     <dd>function ที่เลือกค่ามากกว่าระหว่างตัวแปรกับศูนย์ ใช้ทำให้ option payoff ไม่ติดลบแก่ผู้ถือ</dd>
+    <dt>Black-Derman-Toy (BDT)</dt>
+    <dd>แบบจำลอง short rate แบบ lognormal บน lattice ใช้ตั้งราคา option และ calibrate ความผันผวน</dd>
   </dl>
 </details>
 
@@ -82,6 +83,8 @@
       <tr><td>$V_0^{pay}$</td><td>payer swaption present value วันนี้</td><td>USD</td></tr>
       <tr><td>$\Pi_j$</td><td>option payoff ใน state $j$ ณ payment หรือ exercise date</td><td>USD</td></tr>
       <tr><td>$x^+$</td><td>positive part เท่ากับค่ามากกว่าระหว่าง $x$ กับศูนย์</td><td>ตามหน่วยของ $x$</td></tr>
+      <tr><td>$\theta,\ \theta_{\rm prev},\ \theta^*$</td><td>parameter ของ model ค่าจากการ calibrate รอบก่อน และค่าที่ดีที่สุดรอบนี้</td><td>ตามหน่วยของ model</td></tr>
+      <tr><td>$w_i,\ \lambda,\ J(\theta)$</td><td>น้ำหนักของเครื่องมือที่ $i$ น้ำหนักของการห้ามขยับจากรอบก่อน และคะแนนรวมที่ต้องทำให้ต่ำสุด</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
@@ -92,6 +95,7 @@
   <p>ความต้องการนั้นตรงกับนิยามของสิทธิ์พอดี คือจ่ายเงินก้อนหนึ่งวันนี้ เพื่อได้รับการชดเชยเฉพาะเมื่ออัตราขึ้นเกินเกณฑ์</p>
   <p>ผลิตภัณฑ์ที่ตอบความต้องการนี้กลายเป็นสินค้ามาตรฐานของธนาคารทุกแห่ง</p>
   <p>การตั้งราคามันมีรายละเอียดที่พลาดง่ายกว่าสิทธิ์บนหุ้น คืออัตราถูกกำหนดวันหนึ่งแต่จ่ายเงินอีกวันหนึ่ง การลืมคิดลดช่วงที่คั่นกลางเป็นความผิดพลาดที่พบบ่อยที่สุดในเรื่องนี้</p>
+  <p>นอกจากนี้ ในตราสารหนี้ สัญญา forward กับ futures มีราคาต่างกันเมื่ออัตราดอกเบี้ยผันผวน เพราะ futures มีการชำระกำไรขาดทุนรายวัน (marking-to-market) ทำให้กระแสเงินสดเกิดก่อนและถูกคิดลดด้วยอัตราที่ต่างไป สัญญา forward จึงไม่เท่ากับ futures เสมอไป</p>
 </section>
 
 <section class="prose">
@@ -104,12 +108,18 @@
 <section class="formula">
   <h4>แยกอัตราบน tree ออกจากอัตราบนใบเสร็จ</h4>
   <div class="math">\[
-\begin{aligned}&amp;r=0.07,\quad\delta=0.5:\quad P=e^{-r\delta}=e^{-0.035}=0.965605416\\
-&\text{simple forward: }L=\frac{1/P-1}{\delta}=\frac{e^{0.035}-1}{0.5}=0.071239418\\
-&\text{toy coupon using }r:\quad10^7(0.5)(0.07-0.0525)=87{,}500\\
-&\text{coupon using }L:\quad10^7(0.5)(0.071239418-0.0525)=93{,}697.088\end{aligned}
+\begin{aligned}
+r&=0.07,\qquad\delta=0.5\\
+P&=e^{-r\delta}=e^{-0.035}=0.965605\\
+L&=\frac{1/P-1}{\delta}=\frac{e^{0.035}-1}{0.5}\\
+&=0.071239\\[4pt]
+c_r&=10^7(0.5)(0.07-0.0525)=87{,}500\\
+c_L&=10^7(0.5)(0.071239-0.0525)\\
+&=93{,}697
+\end{aligned}
 \]</div>
   <div class="reading">
+    <p>$L$ คืออัตราแบบ simple ที่ใบเสร็จของ caplet ใช้จริง ซึ่งแปลงจากราคา bond ของ node $c_r$ คือเงินที่ได้ถ้าเผลอใช้อัตราต่อเนื่องของต้นไม้แทน และ $c_L$ คือเงินที่ถูก ต่างกัน 6,197 USD</p>
     <p>ตัวอย่าง caplet ต่อไปกำหนดสัญญาจำลองให้ coupon อ้าง rate บน tree โดยตรง คือ L เท่ากับ r และจ่าย notional คูณอัตราคูณครึ่งปี ส่วน discount ใช้ exponential นี่เป็นกติกาที่ตั้งขึ้นเพื่อแยกสองเวลาของเงิน ไม่ใช่ caplet ตลาดที่อ้าง simple forward</p>
     <p>หากสัญญาอ้าง simple forward ที่สอดคล้องกับ curve เดียว ต้องแปลงจากราคาของหนึ่ง USD ตามสองบรรทัดแรกก่อน ที่ node 7% จะได้อัตรา 7.12394% และ payoff 93,697.09 USD ซึ่งต่างจาก 87,500 ต้องเปลี่ยนทุก node พร้อมกัน ไม่ใช่เปลี่ยนเฉพาะตัวเลขที่ดูใกล้กัน</p>
     <p>swaption ด้านล่างใช้ par swap rate จากราคาของ cash flows จึงได้ 7.12394% ที่ node บนตามกติกาของ swap อยู่แล้ว แยกอัตราที่สัญญาใช้จ่ายจากอัตราที่ใช้คิดลดทุกครั้ง</p>
@@ -147,8 +157,8 @@
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — caplet กับ floorlet ประกบกันที่ strike</h4>
-  <img src="../figures/20.4-1.svg" alt="ภาพที่ 1 — caplet กับ floorlet ประกบกันที่ strike" loading="lazy">
+  <h4>Figure 20.4a — caplet กับ floorlet ประกบกันที่ strike</h4>
+  <img src="../figures/20.4-1.svg" alt="Figure 20.4a — caplet กับ floorlet ประกบกันที่ strike" loading="lazy">
   <figcaption>
     <p>caplet เริ่มจ่ายเหนือ 5.25% ส่วน floorlet เริ่มจ่ายต่ำกว่า 5.25% ความชันเท่ากันคนละทิศเพราะ notional กับ accrual เหมือนกัน</p>
   </figcaption>
@@ -171,11 +181,14 @@ V_0&=\sum_j Q_{2,j}\,V_{T_1}(j)\\
 </section>
 
 <section class="example">
-  <h4>ตัวอย่าง caplet และ floorlet บนสาม exercise states</h4>
-  <p>ของที่มี: notional \$10,000,000, accrual 0.5 ปี, strike 5.25% และ rate nodes 7%, 5%, 3%; เงินจ่ายจริงปี 1.5. เริ่ม node 7%: อัตราเกิน strike 1.75% จึงได้ caplet payoff 87,500 USD.</p>
-  <p>คำตอบ: caplet วันนี้มีมูลค่า \$19,992.24 และ floorlet วันนี้ \$32,285.60.</p>
-  <p>ตรวจเองใน 10 วินาที: node 5% และ 3% ของ caplet ต้องจ่ายศูนย์ เพราะไม่เกิน strike.</p>
-  <p>เอาไปใช้จริง: ใช้ราคา cap/floor แยกความเสี่ยง rate reset ของเงินกู้ ก่อนรวมหลายงวดเป็น cap ทั้งสัญญา.</p>
+  <h4>คำตอบ — caplet และ floorlet บนสาม exercise states</h4>
+  <p>คำถาม: ผู้กู้เงินต้องการซื้อสัญญา caplet อายุ 1 ปี เพื่อจำกัดดอกเบี้ยงวดถัดไปไม่ให้เกิน strike 5.25% บนเงินต้น \$10,000,000 หากอัตราดอกเบี้ยในตลาดแยกเป็น 7%, 5% หรือ 3% สัญญาประกันดอกเบี้ยพุ่งนี้มีมูลค่าเท่าใด?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 5 notional 10,000,000 USD งวดยาว 0.5 ปี strike 5.25% ดอกเบี้ยของ node คือ 7, 5 และ 3% เงินจ่ายจริงที่ปี 1.5</p>
+  <p>1. node 7% เกิน strike 1.75% caplet จ่าย 87,500 USD node อื่นจ่ายศูนย์</p>
+  <p>2. คิดลดกลับด้วยดอกเบี้ยของ node และคูณ state price ได้ caplet วันนี้ 19,992.24 USD</p>
+  <p>3. floorlet ด้านตรงข้ามจ่ายใน node 5 และ 3% มีมูลค่า 32,285.60 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 10,000,000 × 0.5 × (0.07 − 0.0525) = 87,500</p>
+  <p>แปลว่าอะไร: ราคา cap และ floor แยกความเสี่ยงของดอกเบี้ยแต่ละงวดของเงินกู้ออกมาทีละชิ้น ก่อนรวมหลายงวดเป็นทั้งสัญญา</p>
   <p>ตัวเลข caplet และ floorlet ชุดนี้เป็นสัญญาจำลองที่กำหนด coupon rate ให้เท่ากับ short-rate node โดยตรง ถ้าสัญญาจ่ายตาม simple forward ที่อนุมานจาก discount factor ต้องใช้ L ที่คำนวณในตัวอย่างเปิดเรื่อง และจะได้ราคาอีกชุดหนึ่ง</p>
 </section>
 
@@ -194,11 +207,15 @@ V_0^{caplet}=0.236621287e^{-0.07(0.5)}(\$87{,}500)=\$19{,}992.24
   <h4>ขั้นที่ 5 — floorlet present value จากสอง states</h4>
   <p>floorlet จ่ายเมื่ออัตราต่ำกว่า strike สร้าง payoff ของแต่ละ node ก่อน แล้วค่อยคูณ state price กับตัวคิดลดจาก reset date ไปถึง payment date</p>
   <div class="math">\[
-\begin{aligned}\Pi_u&=N\delta(K-L_u)^+=10^7(0.5)(0.0525-0.0700)^+=0\\
-\Pi_m&=10^7(0.5)(0.0525-0.0500)=10^7(0.5)(0.0025)=\$12{,}500\\
-\Pi_d&=10^7(0.5)(0.0525-0.0300)=10^7(0.5)(0.0225)=\$112{,}500\\[6pt]
-V_0^{floorlet}&=0.475620657\,e^{-0.05(0.5)}(\$12{,}500)+0.238999370\,e^{-0.03(0.5)}(\$112{,}500)\\
-&=\$5{,}798.47+\$26{,}487.13=\$32{,}285.60\end{aligned}
+\begin{aligned}
+\Pi_u&=10^7(0.5)(0.0525-0.07)^+=0\\
+\Pi_m&=10^7(0.5)(0.0025)=12{,}500\\
+\Pi_d&=10^7(0.5)(0.0225)=112{,}500\\[6pt]
+V_0&=0.475621\,e^{-0.025}(12{,}500)\\
+&\quad+0.238999\,e^{-0.015}(112{,}500)\\
+&=5{,}798.47+26{,}487.13\\
+&=32{,}285.60
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>node บนไม่จ่ายอะไรเลย เพราะอัตรา 7% สูงกว่า strike 5.25% floorlet จึงหมดค่าในสถานะนั้น</p>
@@ -207,8 +224,8 @@ V_0^{floorlet}&=0.475620657\,e^{-0.05(0.5)}(\$12{,}500)+0.238999370\,e^{-0.03(0.
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — node contribution บอกว่า option value มาจาก state ไหน</h4>
-  <img src="../figures/20.4-2.svg" alt="ภาพที่ 2 — node contribution บอกว่า option value มาจาก state ไหน" loading="lazy">
+  <h4>Figure 20.4b — node contribution บอกว่า option value มาจาก state ไหน</h4>
+  <img src="../figures/20.4-2.svg" alt="Figure 20.4b — node contribution บอกว่า option value มาจาก state ไหน" loading="lazy">
   <figcaption>
     <p>caplet ทั้งหมดมาจาก 7% state ขณะที่ floorlet ส่วนใหญ่จาก 3% state การรายงานเพียงราคาเดียวซ่อน tail state ที่เป็นต้นกำเนิดของ risk</p>
   </figcaption>
@@ -229,13 +246,16 @@ V_0^{floorlet}&=0.475620657\,e^{-0.05(0.5)}(\$12{,}500)+0.238999370\,e^{-0.03(0.
 
 <section class="formula">
   <h4>ขั้นที่ 6 — cap-floor parity ของหนึ่งงวด</h4>
-  <p>มีความสัมพันธ์ที่ตรวจงานได้ฟรี คือสองสัญญานี้ลบกันแล้วเหลือสัญญาธรรมดา ห้าบรรทัดนี้เป็นกลวิธีเดียวกับหัวข้อ 13.4 ทุกประการ คือไล่สองกรณีตอนจบ และเพราะไม่ใช้แบบจำลอง มันจึงยังจริงแม้แบบจำลองจะผิด</p>
+  <p>มีความสัมพันธ์ที่ตรวจงานได้ฟรี คือสองสัญญานี้ลบกันแล้วเหลือสัญญาธรรมดา สูตรข้างล่างเป็นกลวิธีเดียวกับหัวข้อ 13.4 ทุกประการ คือไล่สองกรณีตอนจบ และเพราะไม่ใช้แบบจำลอง มันจึงยังจริงแม้แบบจำลองจะผิด</p>
   <div class="math">\[
-\begin{aligned}\Pi^{\rm caplet}-\Pi^{\rm floorlet}&=N\delta\Big[(L_i-K)^{+}-(K-L_i)^{+}\Big]\\[4pt]
-L_i>K:&\quad(L_i-K)-0=L_i-K\\
-L_i\le K:&\quad0-(K-L_i)=L_i-K\\[4pt]
-\text{both cases}:\quad(L_i-K)^{+}-(K-L_i)^{+}&=L_i-K\\
-\Pi^{\rm caplet}-\Pi^{\rm floorlet}&=N\delta\,(L_i-K)\end{aligned}
+\begin{aligned}
+\Delta\Pi&:=\Pi^{\rm cap}-\Pi^{\rm floor}\\
+\Delta\Pi&=N\delta\big[(L_i-K)^+-(K-L_i)^+\big]\\
+L_i\gt K&:\ \Delta\Pi=N\delta(L_i-K)\\
+L_i\le K&:\ \Delta\Pi=-N\delta(K-L_i)\\
+&\qquad\ =N\delta(L_i-K)\\[4pt]
+\Delta\Pi&=N\delta\,(L_i-K)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ลบสอง payoff ของขั้นที่ 1 และ 2 แล้วดึงตัวร่วมออกมา จากนั้นไล่ทุกกรณีที่เป็นไปได้ ซึ่งมีแค่สองกรณี</p>
@@ -251,14 +271,17 @@ L_i\le K:&\quad0-(K-L_i)=L_i-K\\[4pt]
   <p>เงื่อนไขนี้จึงเป็นเกณฑ์ตรวจสอบพื้นฐาน (sanity check) ที่ model บน lattice ทุกตัวต้องผ่านก่อนนำไปใช้ตั้งราคาตราสารที่ซับซ้อนขึ้น</p>
   <div class="math">\[
 \begin{aligned}
-\text{Cap}_0 - \text{Floor}_0 &= \sum_{i=1}^{n} PV\big(\Pi_i^{\text{caplet}} - \Pi_i^{\text{floorlet}}\big) \\
-&= \sum_{i=1}^{n} N\,\delta_i\,\big(F_p(0;T_{i-1},T_i) - K\big)\,D_d(0,T_i) \\
-&= \sum_{i=1}^{n} N\,\delta_i\,F_p(0;T_{i-1},T_i)\,D_d(0,T_i) - K\,N\sum_{i=1}^{n}\delta_i\,D_d(0,T_i) \\
-&= PV_{\text{flt}} - PV_{\text{fix}} = V_{\text{swap}}^{\text{pay}}(0) \\
-K = S_{0,n} &\implies \text{Cap}_0 - \text{Floor}_0 = 0 \iff \text{Cap}_0 = \text{Floor}_0
+\Delta_0&:=\mathrm{Cap}_0-\mathrm{Floor}_0\\
+&=\sum_{i=1}^{n}PV\big(\Pi_i^{\rm cap}-\Pi_i^{\rm floor}\big)\\
+&=\sum_{i=1}^{n}N\delta_i\,(F_i-K)\,D_i\\
+&=\sum_{i=1}^{n}N\delta_iF_iD_i\\
+&\quad-K\,N\sum_{i=1}^{n}\delta_iD_i\\
+&=PV_{\rm flt}-PV_{\rm fix}=V^{\rm pay}_{\rm swap}\\[4pt]
+K=S_{0,n}&\ \Rightarrow\ \mathrm{Cap}_0=\mathrm{Floor}_0
 \end{aligned}
 \]</div>
   <div class="reading">
+    <p>$F_i$ คือ forward rate ของงวดที่ $i$ ที่อ่านจาก curve วันนี้ และ $D_i$ คือ discount factor ถึงวันจ่ายของงวดนั้น</p>
     <p>เมื่อรวม caplet และ floorlet ทุกงวดเข้าด้วยกัน ผลต่างของมูลค่า cap และ floor ทั้งฉบับจะเท่ากับผลรวมของกระแสเงินสด forward rate ลบด้วยอัตราคงที่คิดลดกลับมาวันนี้</p>
     <p>ผลรวมนี้ตรงกับมูลค่าของสัญญา swap ฝั่งจ่ายคงที่รับลอยตัว (pay-fixed swap) พอดี แปลว่าการซื้อ cap ควบคู่กับการขาย floor ที่ strike เดียวกัน ให้สถานะเทียบเท่ากับการทำ swap ทุกประการ</p>
     <p>หากเลือก strike เท่ากับ par swap rate มูลค่าเริ่มต้นของ swap จะเป็นศูนย์พอดี ส่งผลให้ราคาของ cap และ floor ต้องเท่ากันเป๊ะ นี่คือบททดสอบความถูกต้องของ model ที่ห้ามละเลย</p>
@@ -285,18 +308,20 @@ K = S_{0,n} &\implies \text{Cap}_0 - \text{Floor}_0 = 0 \iff \text{Cap}_0 = \tex
 
 <section class="formula">
   <h4>ขั้นที่ 8 — สร้าง annuity และ par rate เมื่อ curve หลัง exercise แบน</h4>
-  <p>จะรู้ว่าใช้สิทธิ์คุ้มไหม ต้องรู้ก่อนว่า ณ วันนั้น อัตราของ swap เป็นเท่าไรในแต่ละ state หกบรรทัดนี้นำสูตรของหัวข้อ 20.2 มาใช้ซ้ำทั้งดุ้น ไม่มีอะไรใหม่ เพิ่มมาแค่ข้อสมมติเรื่องเส้นแบนในบรรทัดแรก ซึ่งต้องจำไว้ว่าเป็นการทำให้ง่าย</p>
+  <p>จะรู้ว่าใช้สิทธิ์คุ้มไหม ต้องรู้ก่อนว่า ณ วันนั้น อัตราของ swap เป็นเท่าไรในแต่ละ state สูตรข้างล่างนำสูตรของหัวข้อ 20.2 มาใช้ซ้ำทั้งดุ้น ไม่มีอะไรใหม่ เพิ่มมาแค่ข้อสมมติเรื่องเส้นแบนในบรรทัดแรก ซึ่งต้องจำไว้ว่าเป็นการทำให้ง่าย</p>
   <div class="math">\[
-\begin{aligned}\text{flat curve after exercise}:\quad D(T_e,T_e+t)&=e^{-r_jt}\\
-\text{payments at }0.5\ \text{and}\ 1.0,\quad\delta&=0.5\\
+\begin{aligned}
+D(T_e,T_e+t)&=e^{-r_jt}\\
 A_j&=0.5\,e^{-0.5r_j}+0.5\,e^{-r_j}\\[4pt]
-\text{par rate}:\quad PV_{\rm fix}&=PV_{\rm flt}\qquad\text{(topic 20.2)}\\
+PV_{\rm fix}&=PV_{\rm flt}\\
 S_jA_j&=1-e^{-r_j}\\
-S_j&=\frac{1-e^{-r_j}}{A_j}\end{aligned}
+S_j&=\frac{1-e^{-r_j}}{A_j}
+\end{aligned}
 \]</div>
   <div class="reading">
+    <p>หลังใช้สิทธิ์สมมติว่า curve แบนที่ดอกเบี้ยของ node นั้น swap จ่ายสองงวดที่ครึ่งปีและหนึ่งปี $\delta=0.5$ par rate จึงหาได้จากขาคงที่เท่ากับขาลอยตัวแบบในหัวข้อ 20.2</p>
     <p>ข้อสมมติที่ทำให้คำนวณด้วยมือได้อยู่บรรทัดแรก หลังวันใช้สิทธิ์ ถือว่าอัตราแบนที่ค่าของ state นั้น ของจริงไม่แบน แต่สำหรับตัวอย่างนี้พอ</p>
-    <p>มีสองงวดห่างกันครึ่งปี บวกสองงวดตามนิยามของ annuity ในหัวข้อ 20.2 แต่ละงวดคือสัดส่วนของปีคูณตัวคิดลดของงวดนั้น</p>
+    <p>มีสองงวดห่างกันครึ่งปี บวกสองงวดตามสูตรของ annuity ในหัวข้อ 20.2 แต่ละงวดคือสัดส่วนของปีคูณตัวคิดลดของงวดนั้น</p>
     <p>จากนั้นยกเงื่อนไขของหัวข้อ 20.2 มาใช้ คืออัตราที่ทำให้สองขาเท่ากัน แล้วแทนผลของขั้นที่ 3 ของหัวข้อนั้น ซึ่งบอกว่าขาลอยตัวเท่ากับหนึ่งลบตัวคิดลดสุดท้าย</p>
     <p>หารออกมาได้อัตราที่จะเอาไปเทียบกับราคาใช้สิทธิ์ในขั้นที่ 7 สังเกตว่าไม่มีอะไรใหม่ในขั้นนี้เลย ทุกชิ้นส่วนมาจากหัวข้อ 20.2 ทั้งหมด</p>
   </div>
@@ -306,12 +331,113 @@ S_j&=\frac{1-e^{-r_j}}{A_j}\end{aligned}
   <h4>ขั้นที่ 9 — ค่าของสาม states และ payer swaption</h4>
   <p>รวม payoff ของทุก state ด้วย state prices ได้ราคาวันนี้</p>
   <div class="math">\[
-\begin{aligned}(S_u,S_m,S_d)&=(7.12394\%,5.06302\%,3.02261\%),\\
-(\Pi_u^{pay},\Pi_m^{pay},\Pi_d^{pay})&=(\$177{,}837.00,0,0),\\
-V_0^{pay}&=0.236621287(\$177{,}837.00)=\$42{,}080.02.\end{aligned}
+\begin{aligned}
+S_u&=7.12394\%\\
+S_m&=5.06302\%,\quad S_d=3.02261\%\\
+\Pi^{\rm pay}_u&=177{,}837.00\\
+\Pi^{\rm pay}_m&=\Pi^{\rm pay}_d=0\\
+V_0^{\rm pay}&=0.236621287(177{,}837.00)\\
+&=42{,}080.02
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เฉพาะ high-rate state ใช้สิทธิ payer swaption และ payoff อยู่ที่ exercise date แล้วจึงไม่ต้อง node-discount อีกครั้ง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — caplet ของคอร์ส: strike 2% จ่ายงวดที่ 6</h4>
+  <p>ใช้ต้นไม้ของคอร์สในหัวข้อ 20.3 ดอกเบี้ยเริ่ม 6% ขึ้นคูณ 1.25 ลงคูณ 0.9 caplet จ่าย $(r_5-c)^+$ ที่งวดที่ 6 โดย $r_5$ รู้ค่าตั้งแต่งวดที่ 5 ต่อ notional 1 USD</p>
+  <div class="math">\[
+\begin{aligned}
+V_{5,j}&=\frac{(r_{5,j}-0.02)^+}{1+r_{5,j}}\\
+V_{5,0}&=\frac{0.0354-0.02}{1.0354}=0.015\\
+V_{5,5..0}&=0.138,\ 0.099,\ 0.068\\
+&\quad\ 0.045,\ 0.028,\ 0.015\\[4pt]
+V_{4,0}&=\frac{\tfrac12(0.028)+\tfrac12(0.015)}{1.0394}\\
+&=0.021\\
+V_{1,\cdot}&=0.052,\ 0.038\\
+V_0&=0.042
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เงินของงวดที่ 6 รู้ค่าตั้งแต่งวดที่ 5 จึงคิดลดกลับมาที่ node ของงวดที่ 5 ด้วยดอกเบี้ยของ node นั้นเลย แล้วเดินถอยหลังตามปกติ ได้ 0.042 ต่อ notional 1 USD หรือ 42,000 USD ต่อหนึ่งล้าน strike 2% ต่ำกว่าดอกเบี้ยทุก node ของงวดที่ 5 caplet นี้จึงจ่ายทุกกรณี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — swap ของคอร์ส: จ่าย fixed 5% รับ floating หกงวด</h4>
+  <p>swap หกงวด งวดที่ $i+1$ รับ $r_{i,j}-0.05$ ที่รู้ค่าตั้งแต่งวด $i$ คิดลดกลับมาที่ node ของงวด $i$ แล้วบวกค่าเฉลี่ยของสองลูก</p>
+  <div class="math">\[
+\begin{aligned}
+V_{5,j}&=\frac{r_{5,j}-0.05}{1+r_{5,j}}\\
+V_{5,5}&=\frac{0.1831-0.05}{1.1831}=0.1125\\
+V_{t,j}&=\frac{r_{t,j}-0.05+\bar V_{t+1}}{1+r_{t,j}}\\
+V_{2,2}&=\frac{0.0438+\tfrac12(0.1793+0.1021)}{1.0938}\\
+&=0.1686\\
+V_{3,\cdot}&=0.1793,\ 0.1021,\ 0.0400,\ -0.0085\\
+V_0&=0.0990
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$\bar V_{t+1}$ คือค่าเฉลี่ยของสองลูก ใต้ $\mathbb Q$ ดอกเบี้ยของต้นไม้นี้ลอยสูงกว่า 5% เป็นส่วนใหญ่ ฝั่งที่รับ floating จึงได้เปรียบ มูลค่าวันนี้ 0.0990 ต่อ notional 1 USD ที่ node ล่างสุดของงวดที่ 3 swap ติดลบ เพราะดอกเบี้ย 4.37% ต่ำกว่า 5%</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — swaption ของคอร์ส: สิทธิ์เข้า swap เดิมที่งวดที่ 3</h4>
+  <p>สิทธิ์เข้า swap ในขั้นที่ 11 ที่งวดที่ 3 โดยไม่ต้องจ่ายอะไรตอนเข้า ก่อนใช้สิทธิ์ ผู้ถือยังไม่ได้รับเงินของ swap จึงไม่บวกเงินรายงวดตอนเดินถอยหลัง</p>
+  <div class="math">\[
+\begin{aligned}
+W_{3,\cdot}&=\max(0,\ V_{3,\cdot})\\
+&=0.1793,\ 0.1021,\ 0.0400,\ 0\\
+W_{2,2}&=\frac{\tfrac12(0.1793)+\tfrac12(0.1021)}{1.0938}\\
+&=0.1286\\
+W_{2,\cdot}&=0.1286,\ 0.0665,\ 0.0191\\
+W_{1,\cdot}&=0.0908,\ 0.0406\\
+W_0&=\frac{\tfrac12(0.0908)+\tfrac12(0.0406)}{1.06}\\
+&=0.0620
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ที่งวดที่ 3 ผู้ถือเลือกเข้าเฉพาะ node ที่ swap มีค่าเป็นบวก จึงตัด −0.0085 ทิ้ง ราคาสิทธิ์ 0.0620 ต่ำกว่า swap 0.0990 เพราะสิทธิ์ไม่ได้เงินงวดที่ 1 ถึง 3 แต่ได้ประกันว่าจะไม่ต้องเข้า swap ที่ติดลบ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — forward-start swap จาก state prices โดยไม่ต้องเดินถอยหลัง</h4>
+  <p>swap เริ่มงวดที่ 1 จบงวดที่ 3 notional 1,000,000 USD รับ fixed 7% จ่าย floating เงินงวดที่ 2 และ 3 ใช้ดอกเบี้ยของงวด 1 และ 2 ใช้ state prices ของต้นไม้เดียวกันในหัวข้อ 20.3 คูณได้เลย</p>
+  <div class="math">\[
+\begin{aligned}
+c_{1,u}&=\frac{-0.005}{1.075}(0.4717)=-0.002194\\
+c_{1,d}&=\frac{0.016}{1.054}(0.4717)=0.007161\\
+c_{2,uu}&=\frac{-0.02375}{1.09375}(0.2194)=-0.004764\\
+c_{2,m}&=\frac{0.0025}{1.0675}(0.4432)=0.001038\\
+c_{2,dd}&=\frac{0.0214}{1.0486}(0.2238)=0.004567\\[4pt]
+V_0&=1{,}000{,}000(0.005807)=5{,}807
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$c$ แต่ละตัวคือเงินของ node หนึ่ง ตัวเศษคือ 0.07 ลบดอกเบี้ยของ node นั้น หารหนึ่งบวกดอกเบี้ยเพื่อคิดลดหนึ่งงวด แล้วคูณ state price ของ node</p>
+    <p>เงินที่จ่ายงวด $i+1$ รู้ค่าตั้งแต่งวด $i$ จึงคิดลดหนึ่งงวดด้วยดอกเบี้ยของ node นั้น แล้วคูณ state price ของ node นั้น ไม่ต้องเดินต้นไม้ย้อนเลย สไลด์ปัดคำตอบเป็น 5,800 USD ถ้าใช้ดอกเบี้ย 9.38% ที่ปัดแล้วแทน 9.375% จะได้ 5,797</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — payer swaption 2 ต่อ 8 ปีใน BDT: ราคาขึ้นกับ $b$</h4>
+  <p>สไลด์ BDT ของคอร์สตั้งราคาสิทธิ์ที่ปีที่ 2 จะเข้า swap 8 ปี จ่าย fixed 11.65% รับ floating บนต้นไม้ BDT ที่ calibrate แล้วในหัวข้อ 20.3 คิดต่อ notional 1 USD แล้วคูณหนึ่งล้าน</p>
+  <div class="math">\[
+\begin{aligned}
+V_{i,j}&=\frac{r_{i,j}-0.1165+\bar V_{i+1}}{1+r_{i,j}},\quad i=2..9\\
+W_{2,\cdot}&=\max(0,\ V_{2,\cdot})\\[4pt]
+b=0.005&:\ W_0=0.001339\ \to\ 1{,}339\\
+b=0.01&:\ W_0=0.001962\ \to\ 1{,}962\\
+\frac{1{,}962}{1{,}339}&=1.465
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทั้งสองต้นไม้ให้ราคา zero-coupon ตรงตลาดทุกตัว แต่ราคา swaption ต่างกัน 46.5% เพราะ option ขึ้นกับความผันผวนของดอกเบี้ย ซึ่งราคา zero-coupon ไม่บอกเลย สไลด์สรุปว่าเครื่องมือที่ใช้ calibrate ต้องหน้าตาใกล้กับของที่จะตั้งราคา ถ้าจะตั้งราคา swaption ต้อง calibrate กับ cap, floor หรือ swaption</p>
+    <p>ข้อความที่ดึงออกจากไฟล์สไลด์นี้เพี้ยนเป็น 13,339 กับ 19,497 แต่ตัวเลขที่แสดงบนสไลด์คือ 1,339 กับ 1,962 และการคำนวณซ้ำด้วยเส้น spot ของคอร์สได้ 1,339.08 กับ 1,961.44 ตรงกับที่แสดง</p>
   </div>
 </section>
 
@@ -321,11 +447,13 @@ V_0^{pay}&=0.236621287(\$177{,}837.00)=\$42{,}080.02.\end{aligned}
   <p>เนื่องจาก swaption เป็นการตัดสินใจแบบมัดรวมครั้งเดียว อสมการคณิตศาสตร์จึงบังคับให้ราคา swaption ถูกกว่าผลรวมของ caplets เสมอ ผู้กู้เงินที่ต้องการเพียงป้องกันความเสี่ยงระยะยาวจึงเลือก swaption เพื่อประหยัดต้นทุนได้อย่างมีนัยสำคัญ</p>
   <div class="math">\[
 \begin{aligned}
-\text{Cap} &= \sum_{i=1}^{n} \mathbb{E}^Q\left[\frac{N\delta_i(L_{i-1}-K)^+}{B(T_i)}\right] \\
-\text{Swaption} &= \mathbb{E}^Q\left[\frac{\big(\sum_{i=1}^{n} N\delta_i(L_{i-1}-K)D(T_e,T_i)\big)^+}{B(T_e)}\right] \\
-\big(\sum X_i\big)^+ &\le \sum (X_i)^+ \\
-\text{Swaption} &\le \sum_{i=1}^{n} \text{Caplet}_i = \text{Cap} \\
-\Delta V &= \text{Cap} - \text{Swaption} \ge 0
+\mathrm{Cap}&=\sum_{i=1}^{n}\mathrm{Caplet}_i\\
+\mathrm{Caplet}_i&=\mathbb E^Q\Big[\frac{N\delta_i(L_{i-1}-K)^+}{B(T_i)}\Big]\\
+X_i&=N\delta_i(L_{i-1}-K)\,D(T_e,T_i)\\
+\mathrm{Swaption}&=\mathbb E^Q\Big[\frac{(\sum_iX_i)^{+}}{B(T_e)}\Big]\\
+\Big(\sum X_i\Big)^+&\le\sum X_i^+\\
+\mathrm{Swaption}&\le\sum_{i=1}^{n}\mathrm{Caplet}_i=\mathrm{Cap}\\
+\Delta V&=\mathrm{Cap}-\mathrm{Swaption}\ge0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -335,25 +463,47 @@ V_0^{pay}&=0.236621287(\$177{,}837.00)=\$42{,}080.02.\end{aligned}
   </div>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 15 — ตั้งราคาในงานจริง: สามขั้นและ least squares ที่มีตัวถ่วง</h4>
+  <p>ตัวอย่าง swaption ในขั้นที่ 14 บอกว่าต้อง calibrate กับของที่คล้ายสิ่งที่จะตั้งราคา งานจริงใช้ model ที่ซับซ้อนกว่าต้นไม้ แต่เดินสามขั้นเหมือนเดิม: กำหนด dynamics ใต้ $\mathbb Q(\theta)$ ตั้งราคาทุกตัวด้วยสูตรเดียว แล้วเลือก $\theta$ ให้ตรงราคาตลาด</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{Z_t}{B_t}&=\mathbb E_t^{\mathbb Q(\theta)}\Big[\sum_{j=t+1}^{t+s}\frac{C_j}{B_j}\\
+&\qquad+\frac{Z_{t+s}}{B_{t+s}}\Big]\\[4pt]
+J(\theta)&=\sum_iw_i\big(P_i^{\rm mdl}(\theta)-P_i^{\rm mkt}\big)^2\\
+&\quad+\lambda\,\|\theta-\theta_{\rm prev}\|^2\\[4pt]
+P_1^{\rm mkt}&=1.10,\quad P_2^{\rm mkt}=1.20\\
+\theta_{\rm prev}&=1.00,\quad P_i^{\rm mdl}(\theta)=\theta\\
+\lambda=0&:\ \theta^*=\frac{1.10+1.20}{2}=1.15\\
+\lambda=1&:\ \theta^*=\frac{1.10+1.20+1.00}{3}=1.10
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$w_i$ ให้น้ำหนักตามสภาพคล่องหรือความแคบของ bid-ask ส่วน $\lambda$ ลงโทษการขยับห่างจากค่าของรอบก่อน เพื่อไม่ให้ parameter กระโดดจน hedge ต้องปรับไปมา ตัวอย่างของเล่นมี parameter ตัวเดียว ไม่มีตัวถ่วงได้ 1.15 ใส่ตัวถ่วงแล้วถูกดึงกลับหาเมื่อวานเหลือ 1.10</p>
+    <p>ปัญหานี้ไม่ convex มีจุดต่ำสุดเฉพาะที่หลายจุด และต้อง calibrate ใหม่หลายครั้งต่อวัน สไลด์ตั้งข้อสังเกตว่าถ้า model ถูกจริงก็ calibrate ครั้งเดียวพอ</p>
+    <p>ในทางปฏิบัติการตั้งราคา derivative คือการเติมราคาจากของที่ซื้อขายคล่องไปหาของที่ไม่คล่อง โดยไม่เปิด arbitrage และโอกาสจริงกับความกลัวความเสี่ยงของนักลงทุนเข้ามาทางราคาตลาดของเครื่องมือที่ใช้ calibrate</p>
+  </div>
+</section>
+
 <figure class="plot">
-  <h4>ภาพที่ 3 — exercise decision ของ payer swaption</h4>
-  <img src="../figures/20.4-3.svg" alt="ภาพที่ 3 — exercise decision ของ payer swaption" loading="lazy">
+  <h4>Figure 20.4c — exercise decision ของ payer swaption</h4>
+  <img src="../figures/20.4-3.svg" alt="Figure 20.4c — exercise decision ของ payer swaption" loading="lazy">
   <figcaption>
     <p>top state มี swap rate 7.1239% สูงกว่า strike จึง exercise ส่วนอีกสอง states ปล่อยสิทธิหมดค่า หากเป็น American-style ต้องทำการเปรียบเทียบนี้ย้อนกลับทุก eligible layer</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 4 — strike กับ expiry เปลี่ยน payer value พร้อมกัน</h4>
-  <img src="../figures/20.4-4.svg" alt="ภาพที่ 4 — strike กับ expiry เปลี่ยน payer value พร้อมกัน" loading="lazy">
+  <h4>Figure 20.4d — strike กับ expiry เปลี่ยน payer value พร้อมกัน</h4>
+  <img src="../figures/20.4-4.svg" alt="Figure 20.4d — strike กับ expiry เปลี่ยน payer value พร้อมกัน" loading="lazy">
   <figcaption>
     <p>one-step lattice proxy นี้ขยาย dispersion ตามรากของ expiry และ revalue ทุก strike อายุยาวหรือ strike ต่ำเพิ่มพื้นที่ state ที่ payer option จ่าย ภาพใช้กลไกเชิงกำหนดเพื่อสอน sensitivity ไม่ใช่ market volatility surface</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — cap และ floor เคลื่อนสวนกันเมื่อ strike เปลี่ยน</h4>
-  <img src="../figures/20.4-5.svg" alt="ภาพที่ 5 — cap และ floor เคลื่อนสวนกันเมื่อ strike เปลี่ยน" loading="lazy">
+  <h4>Figure 20.4e — cap และ floor เคลื่อนสวนกันเมื่อ strike เปลี่ยน</h4>
+  <img src="../figures/20.4-5.svg" alt="Figure 20.4e — cap และ floor เคลื่อนสวนกันเมื่อ strike เปลี่ยน" loading="lazy">
   <figcaption>
     <p>เพิ่ม strike ทำให้ caplet ถูกลงและ floorlet แพงขึ้น ส่วนต่างของสองเส้นยังถูกผูกด้วย linear forward value จึงเป็น diagnostic ที่ใช้จับ sign หรือ settlement bug ได้</p>
   </figcaption>
@@ -364,6 +514,18 @@ V_0^{pay}&=0.236621287(\$177{,}837.00)=\$42{,}080.02.\end{aligned}
   <p>เก็บ reset date, payment date และ exercise date แยกกัน. นี่คือ input ที่กันระบบจ่ายเงินผิดวัน.</p>
   <p>สร้าง cap จาก caplet ตาม schedule. ที่ exercise node ให้รวม cash flow ที่เหลือเป็นมูลค่า swap แล้วค่อยเลือก exercise หรือถือรอด้วย backward induction.</p>
   <p>ตรวจ parity, positivity และราคาเมื่อ time step ถี่ขึ้นก่อนเชื่อ premium. แล้วค่อยรายงาน sensitivity ต่อ curve, volatility และ strike; ราคาเดียวไม่บอกว่าปุ่มไหนทำให้ผลลัพธ์ขยับ.</p>
+  <p>การ calibrate แบบจำลอง BDT กับ yield curve เพียงอย่างเดียวไม่เพียงพอสำหรับการซื้อขาย option เพราะราคา swaption มีความอ่อนไหวต่อ parameter ความผันผวน $b$ สูงมาก เช่น สัญญา 2-8 payer swaption เมื่อปรับ $b$ จาก 0.005 เป็น 0.010 ราคา swaption ต่อ notional หนึ่งล้าน USD จะพุ่งขึ้นจาก 1,339 เป็น 1,962 USD (เพิ่มขึ้น 46.5%) ตามขั้นที่ 14 โต๊ะเทรดจึงต้อง calibrate ความผันผวนกับราคา cap และ swaption ในตลาดจริงเสมอ</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — caplet, swap และ swaption บนต้นไม้ของคอร์ส</h4>
+  <p>คำถาม: ดอกเบี้ยต่องวดเริ่ม 6% ขึ้นคูณ 1.25 ลงคูณ 0.9 caplet strike 2% จ่ายงวดที่ 6, swap จ่าย fixed 5% หกงวด และสิทธิ์เข้า swap นั้นที่งวดที่ 3 ราคาเท่าไรต่อ notional 1 USD?</p>
+  <p>ของที่มี: ขั้นที่ 10 ถึง 14</p>
+  <p>1. caplet 0.042 swap 0.0990 swaption 0.0620</p>
+  <p>2. forward-start swap รับ fixed 7% งวดที่ 2 และ 3 บนหนึ่งล้าน USD ราคา 5,807 USD</p>
+  <p>3. payer swaption 2 ต่อ 8 ปีใน BDT ราคา 1,339 USD ต่อหนึ่งล้านที่ $b=0.005$ และ 1,962 ที่ $b=0.01$</p>
+  <p>ตรวจเองใน 10 วินาที: swaption ต้องไม่เกิน swap ในทุก node ที่ใช้สิทธิ์ และ 0.0620 น้อยกว่า 0.0990</p>
+  <p>แปลว่าอะไร: เครื่องมือเดียวตั้งราคาได้ทั้ง cap, swap และ swaption แต่ราคา option ขึ้นกับความผันผวนที่ calibrate มา ต้องเทียบกับ option ในตลาดก่อนใช้</p>
 </section>
 
 <section class="pitfall">
@@ -402,10 +564,60 @@ S = (1-np.exp(-r))/A
 payer = np.sum(Q*N*A*np.maximum(S-K, 0))
 assert abs(caplet-19_992.244677808125) &lt; 1e-8
 assert abs(floorlet-32_285.596776721308) &lt; 1e-8
-assert abs(payer-42_080.020156682636) &lt; 1e-8</code></pre>
+assert abs(payer-42_080.020156682636) &lt; 1e-8
+import numpy as np
+r = [[0.06 * 1.25**j * 0.9**(i - j) for j in range(i + 1)] for i in range(6)]    # course tree
+V = [max(0, x - 0.02) / (1 + x) for x in r[5]]
+for i in range(4, -1, -1): V = [(V[j + 1] + V[j]) / 2 / (1 + r[i][j]) for j in range(i + 1)]
+assert abs(V[0] - 0.042) &lt; 5e-4                                     # caplet
+S = [(x - 0.05) / (1 + x) for x in r[5]]; S3 = None
+for i in range(4, -1, -1):
+    S = [(r[i][j] - 0.05 + (S[j + 1] + S[j]) / 2) / (1 + r[i][j]) for j in range(i + 1)]
+    if i == 3: S3 = S
+assert abs(S[0] - 0.0990) &lt; 5e-5                                     # swap
+W = [max(0, s) for s in S3]
+for i in (2, 1, 0): W = [(W[j + 1] + W[j]) / 2 / (1 + r[i][j]) for j in range(i + 1)]
+assert abs(W[0] - 0.0620) &lt; 5e-5                                     # swaption
+E1 = [1 / 2.12] * 2
+E2 = [E1[0] / (2 * (1 + r[1][0])), E1[0] / (2 * (1 + r[1][0])) + E1[1] / (2 * (1 + r[1][1])), E1[1] / (2 * (1 + r[1][1]))]
+fs = sum((0.07 - x) / (1 + x) * e for x, e in zip(r[1], E1)) + sum((0.07 - x) / (1 + x) * e for x, e in zip(r[2], E2))
+assert abs(1e6 * fs - 5807) &lt; 1                                     # forward-start swap
+spot = np.array([7.3, 7.62, 8.1, 8.45, 9.2, 9.64, 10.12, 10.45, 10.75, 11.22]) / 100
+def bdt_swaption(b):
+    Es, a = [np.array([1.0])], []
+    for i in range(10):
+        lo, hi = 1e-6, 1.0                                          # bisection for a_i
+        for _ in range(80):
+            m = (lo + hi) / 2
+            f = (Es[i] / (1 + m * np.exp(b * np.arange(i + 1)))).sum() - (1 + spot[i])**-(i + 1)
+            lo, hi = (m, hi) if f &gt; 0 else (lo, m)
+        a.append(lo); rr = lo * np.exp(b * np.arange(i + 1))
+        nx = np.zeros(i + 2); nx[:-1] += Es[i] / (2 * (1 + rr)); nx[1:] += Es[i] / (2 * (1 + rr)); Es.append(nx)
+    R = [a[i] * np.exp(b * np.arange(i + 1)) for i in range(10)]
+    v = (R[9] - 0.1165) / (1 + R[9])
+    for i in range(8, 1, -1): v = (R[i] - 0.1165 + (v[1:] + v[:-1]) / 2) / (1 + R[i])
+    w = np.maximum(v, 0)
+    for i in (1, 0): w = (w[1:] + w[:-1]) / 2 / (1 + R[i])
+    return 1e6 * w[0]
+assert abs(bdt_swaption(0.005) - 1339) &lt; 1 and abs(bdt_swaption(0.01) - 1962) &lt; 1</code></pre>
   </details>
   <div class="note">
     <p>production code ต้องรับ curves, calendars, settlement terms และ volatility calibration จาก market data แล้ว revalue ด้วย bumped inputs เพื่อสร้าง Greeks ที่สอดคล้องกับราคา</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>least squares ที่มีตัวถ่วงของขั้นที่ 15</summary>
+    <pre><code>from scipy.optimize import minimize_scalar
+mkt, prev = [1.10, 1.20], 1.00
+def J(theta, lam):
+    return sum((theta - m) ** 2 for m in mkt) + lam * (theta - prev) ** 2
+assert abs(minimize_scalar(lambda t: J(t, 0.0)).x - 1.15) &lt; 1e-6
+assert abs(minimize_scalar(lambda t: J(t, 1.0)).x - 1.10) &lt; 1e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>ตัวถ่วง $\lambda$ เพิ่มจุดยึดที่ค่าเมื่อวาน คำตอบจึงเป็นค่าเฉลี่ยของราคาตลาดสองตัวกับค่าเมื่อวาน</p>
   </div>
 </section>
 
@@ -422,6 +634,7 @@ assert abs(payer-42_080.020156682636) &lt; 1e-8</code></pre>
     <li>ตัวอย่างสัญญาจำลองที่ coupon อ้าง rate บน tree โดยตรงให้ caplet \$19,992.24, floorlet \$32,285.60 และ payer swaption \$42,080.02 บน notional \$10,000,000</li>
     <li>parity, strike monotonicity, zero-vol limit และ lattice convergence เป็น implementation tests ที่ต้องมี</li>
     <li>one-factor lattice ที่ fit curve ยังต้อง calibrate volatility และยอมรับ smile กับ basis model risk</li>
+    <li>งานจริงเดินสามขั้น: กำหนด dynamics ใต้ Q ตั้งราคาด้วยสูตรเดียว แล้ว calibrate ด้วย least squares ที่ถ่วงน้ำหนักและห้ามขยับจากเมื่อวานมากเกินไป</li>
   </ul>
 </section>
 </article>

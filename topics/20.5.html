@@ -23,9 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>มีจุดตลาด 3 จุด แต่มีปุ่ม model 3 ปุ่ม. หมุนปุ่มจนจุดแรกพอดีอาจทำให้จุดสุดท้ายเพี้ยน—จะเรียกว่าดีขึ้นได้อย่างไร?</p>
-  <p>เราเลือกก่อนว่าจะวัดความพลาดเป็นอะไร แล้วรวมความพลาดของทุกจุดให้เป็นคะแนนเดียว. จากนั้นให้ optimizer ลดคะแนนนั้น. การปรับปุ่มให้ model ใกล้ราคาตลาดเรียก calibration.</p>
-  <p>เฉลย: คะแนนรวมต้องลดลง ไม่ใช่ดูจุดเดียวสวยขึ้น. fit ดีแปลว่า model เลียนแบบข้อมูลที่ป้อนเข้าได้ ไม่ได้แปลว่ามันทายอนาคตได้. calibration คือปรับเลนส์ให้ภาพชัด ไม่ใช่ประกาศว่ากล้องเข้าใจโลก.</p>
+  <p>โต๊ะเทรดต้องการปรับเทียบแบบจำลอง Vasicek กับข้อมูลอัตราดอกเบี้ย 5 ช่วงอายุด้วย short rate เริ่มต้น 5.20% โดยปรับ speed ดึงกลับ 0.65 และอัตราเฉลี่ยระยะยาว 4.50% ช็อกดอกเบี้ยจะสลายตัวลงครึ่งหนึ่งในเวลากี่ปี?</p>
+  <p>เฉลย: 1.0664 ปี คำนวณจากค่า half-life ซึ่งเท่ากับ natural log ของ 2 หารด้วยความเร็วการดึงกลับ 0.65 บ่งชี้ว่าหากดอกเบี้ยกระโดดหนีค่าเฉลี่ยระยะยาว แรงดึงกลับจะปิดช่องว่างลงได้ครึ่งหนึ่งในเวลาประมาณหนึ่งปีเศษ</p>
 </div>
 
 <details class="jargon" open>
@@ -52,7 +51,7 @@
     <dt>residual</dt>
     <dd>model value ลบ market value ของ quote หนึ่งตัว ใช้ตรวจรูปแบบของ misfit แทนการดูเพียง loss รวม</dd>
     <dt>least squares</dt>
-    <dd>วิธีลดผลรวมกำลังสองของ residuals ใช้ calibrate เมื่อ error ถูกตีความบน scale ที่เลือกอย่างชัดเจน</dd>
+    <dd>วิธีลดผลรวมกำลังสองของ residuals ใช้ calibrate เมื่อต้องการวัด error บน scale เดียวกันทุกจุด</dd>
     <dt>parameter bound</dt>
     <dd>ช่วงค่าที่ optimizer ได้รับอนุญาตให้ค้นหา ใช้บังคับ positivity หรือความสมเหตุผลและป้องกัน numerical explosion</dd>
     <dt>regularization</dt>
@@ -77,14 +76,19 @@
       <tr><td>$\sigma_C$</td><td>square-root volatility coefficient ของ CIR</td><td>รากของ rate ต่อรากปี</td></tr>
       <tr><td>$W_t^Q$</td><td>Brownian motion ภายใต้ risk-neutral measure</td><td>รากปี</td></tr>
       <tr><td>$t,dt$</td><td>เวลาและช่วงเวลาเล็กใน short-rate dynamics</td><td>ปี</td></tr>
-      <tr><td>$P(0,T)$</td><td>model price ของ zero-coupon bond ที่จ่ายหนึ่ง USD ที่ $T$</td><td>USD</td></tr>
-      <tr><td>$A(0,T),B(0,T)$</td><td>deterministic affine bond-pricing functions</td><td>$A$ ไม่มีหน่วย, $B$ เป็นปี</td></tr>
+      <tr><td>$P(t,T)$</td><td>model price ณ เวลา $t$ ของ zero-coupon bond ที่จ่ายหนึ่ง USD ที่ $T$</td><td>USD</td></tr>
+      <tr><td>$A(t,T),B(t,T)$</td><td>deterministic affine bond-pricing functions</td><td>$A$ ไม่มีหน่วย, $B$ เป็นปี</td></tr>
       <tr><td>$\gamma$</td><td>CIR auxiliary decay parameter เท่ากับรากของ $\kappa^2+2\sigma_C^2$</td><td>ต่อปี</td></tr>
       <tr><td>$y_i^{mkt}$</td><td>อัตราผลตอบแทนแบบทบต้นต่อเนื่องที่อ่านจากตลาดจริง สำหรับเงินก้อนเดียวที่ครบกำหนดตอน $T_i$</td><td>ต่อปี</td></tr>
       <tr><td>$y_i^{mdl}$</td><td>model zero yield ที่ maturity $T_i$</td><td>ต่อปี</td></tr>
       <tr><td>$w_i$</td><td>น้ำหนักของ quote ลำดับที่ $i$ ใน objective</td><td>ผกผันกำลังสองของหน่วย residual</td></tr>
       <tr><td>$J$</td><td>objective function รวม</td><td>ไม่มีหน่วยเมื่อ normalize residual แล้ว</td></tr>
       <tr><td>$T_i$</td><td>maturity ของ curve target</td><td>ปี</td></tr>
+      <tr><td>$L(T)$</td><td>อัตรา LIBOR อายุ $T$ แบบ simple interest</td><td>ต่อปี</td></tr>
+      <tr><td>$s(T)$</td><td>par swap rate อายุ $T$ ที่ขาคงที่จ่ายทุกครึ่งปี</td><td>ต่อปี</td></tr>
+      <tr><td>$\mathrm{SSRE}$</td><td>ผลรวมกำลังสองของ error แบบสัดส่วนของ LIBOR และ swap</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$P_t,P_r,P_{rr}$</td><td>ความชันของราคา bond เทียบเวลา ความชันเทียบ short rate และความโค้งเทียบ short rate</td><td>ตามหน่วยของ $P$ ต่อหน่วยของตัวที่เทียบ</td></tr>
+      <tr><td>$e_L,e_s$</td><td>error แบบสัดส่วนของ LIBOR และ swap คือค่า model หารค่าตลาดแล้วลบหนึ่ง</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
@@ -95,6 +99,32 @@
   <p>ทั้งสองแบบมีสูตรราคาพันธบัตรแบบปิด ซึ่งเป็นสมบัติที่หายากและมีค่ามาก เพราะทำให้คำนวณเร็วพอใช้งานได้</p>
   <p>แต่สูตรจะใช้ไม่ได้เลยจนกว่าจะรู้ค่า parameter และค่าเหล่านั้นไม่ได้มาจากไหน ต้องหาเอาจากราคาตลาด</p>
   <p>งานหานั้นเรียกว่าการปรับเทียบ และมันไม่ใช่งานเชิงกลไกอย่างที่คิด เพราะต้องตัดสินใจก่อนว่าจะวัดความใกล้เคียงเป็นราคาหรือเป็น yield ซึ่งเป็นการเลือกที่เปลี่ยนคำตอบ และควรระบุไว้ในเอกสารเสมอ</p>
+</section>
+
+<details class="jargon" open>
+  <summary>ศัพท์ชุดที่สอง: ตระกูลของ model และการวัด error บนข้อมูลจริง</summary>
+  <dl>
+    <dt>Heath-Jarrow-Morton (HJM) framework</dt>
+    <dd>กรอบที่ให้ instantaneous forward rate ทุกอายุเป็นตัวสุ่มพร้อมกัน ใช้เริ่มจาก curve วันนี้ได้พอดีเพราะ curve ทั้งเส้นเป็น input</dd>
+    <dt>LIBOR Market Model (LMM)</dt>
+    <dd>market model ที่ให้ LIBOR แต่ละช่วงซึ่งเห็นและซื้อขายได้ในตลาดเป็นตัวสุ่ม ใช้ตั้งราคา cap และ floor</dd>
+    <dt>Swap Market Model (SMM)</dt>
+    <dd>market model ที่ให้ swap rate เป็นตัวสุ่ม ใช้ตั้งราคา swaption</dd>
+    <dt>parsimony</dt>
+    <dd>การมี parameter น้อย ข้อดีคือเสถียรและคำนวณเร็ว ข้อเสียคือ fit curve ของตลาดได้ไม่พอดีทุกจุด</dd>
+    <dt>time-homogeneous</dt>
+    <dd>สูตรที่ขึ้นกับเวลาที่เหลือ $T-t$ อย่างเดียว ไม่ขึ้นกับวันที่ในปฏิทิน เกิดเมื่อ $\kappa$, $\theta$ และ $\sigma$ คงที่</dd>
+    <dt>sum of squared relative errors (SSRE)</dt>
+    <dd>ผลรวมกำลังสองของ error แบบสัดส่วน ใช้ให้ quote ระดับ 1.5% กับ 3% ที่พลาดเป็นสัดส่วนเท่ากันได้คะแนนเท่ากัน</dd>
+  </dl>
+</details>
+
+<section class="prose">
+  <h4>สี่ตระกูลของ model ดอกเบี้ย และทำไมหัวข้อนี้เลือก short rate</h4>
+  <p>ก่อนตั้งราคา derivative ของดอกเบี้ยสักตัว ต้องเลือกก่อนว่าจะให้อะไรเป็นตัวสุ่ม คอร์สแยกไว้สี่ทาง ตัวสุ่มต่างกัน แต่ปลายทางเดียวกันคือราคา zero-coupon bond ทุกอายุ แล้วใช้ราคาชุดนั้นตั้งราคาของอื่นต่อ</p>
+  <p>short-rate model ให้อัตราทบต้นต่อเนื่องชั่วขณะ $r_t$ เป็นตัวสุ่มตัวเดียว แล้ว derive bond ทุกอายุจากมัน ส่วน Heath-Jarrow-Morton (HJM) ให้ forward rate ทุกอายุเป็นตัวสุ่มพร้อมกัน ราคา zero-coupon จึงได้ตรง ๆ จาก forward</p>
+  <p>ทั้ง $r_t$ และ instantaneous forward rate ไม่มีใครซื้อขายได้จริง market model จึงให้ของที่เห็นในตลาดเป็นตัวสุ่มแทน LIBOR Market Model (LMM) ให้ LIBOR เป็นตัวสุ่ม และ Swap Market Model (SMM) ให้ swap rate เป็นตัวสุ่ม</p>
+  <p>short rate ยังนิยมเพราะมี parameter น้อยและ implement ง่าย เหมาะเมื่อสิ่งที่สำคัญคือระดับของดอกเบี้ย ไม่ใช่รูปร่างของ curve ราคาที่ต้องจ่ายคือ fit curve จริงได้ไม่พอดี ซึ่งขั้นที่ 13 จะแสดงเป็นตัวเลข</p>
 </section>
 
 <section class="prose">
@@ -127,23 +157,34 @@ dr_t=\kappa(\theta-r_t)dt+\sigma_C\sqrt{r_t}\,dW_t^Q
 
 <section class="formula">
   <h4>ขั้นที่ 3 — ของที่ให้มา: ราคา bond ของสองแบบจำลองนี้เขียนเป็นสูตรปิดได้</h4>
-  <p>บรรทัดแรกเป็น ของที่ให้มา ซึ่งพิสูจน์ได้ด้วยการแทนรูปนี้ลงในสมการตั้งราคา แล้วพบว่ามันใช้ได้เมื่อสองก้อนในสูตรแก้สมการที่ตามมา การพิสูจน์เต็มยาวเกินกว่าจะใส่ไว้ที่นี่ สิ่งที่ต้องรู้คือเหตุผลที่ทางลัดนี้มีอยู่ คือ drift กับความแกว่งกำลังสองของสองแบบจำลองนี้ เป็นเส้นตรงในตัวแปรสถานะ ซึ่งเป็นสมบัติเดียวกับที่หัวข้อ 13.7 ใช้ บรรทัดที่สองคือการแปลงราคาเป็นอัตราตามหัวข้อ 20.1 เพื่อให้เทียบกับเป้าหมายในหน่วยเดียวกัน และความเร็วของสูตรปิดนี้คือเหตุผลเดียวที่ calibrate ได้ทันใช้งานจริง</p>
+  <p>บรรทัดแรกคือความหมายของราคา bond ใน short-rate model: ทบต้นด้วย $r$ ตลอดทางจาก $t$ ถึง $T$ แล้วกลับด้านเป็นตัวคิดลด เฉลี่ยทุกเส้นทางภายใต้ $Q$ บรรทัดที่สองเป็น ของที่ให้มา คือค่าเฉลี่ยนี้เขียนเป็นสูตรปิดได้ ซึ่งตรวจได้ด้วยการแทนรูปนี้ลงในสมการตั้งราคา</p>
+  <p>ทางลัดนี้มีอยู่เพราะ drift กับความแกว่งกำลังสองของสองแบบจำลองเป็นเส้นตรงในตัวแปรสถานะ สมบัติเดียวกับที่หัวข้อ 13.7 ใช้ บรรทัดที่สามแปลงราคาเป็นอัตราตามหัวข้อ 20.1 ให้เทียบกับเป้าหมายในหน่วยเดียวกัน และความเร็วของสูตรปิดคือเหตุผลที่ calibrate ได้ทันใช้งาน</p>
   <div class="math">\[
-P(0,T)=A(0,T)e^{-B(0,T)r_0},\qquad y^{mdl}(T)=-\frac{\ln P(0,T)}{T}
+\begin{aligned}
+P(t,T)&=\mathbb E^Q_t\Big[e^{-\int_t^T r_s\,ds}\Big]\\
+&=A(t,T)\,e^{-B(t,T)\,r_t}\\
+y^{mdl}(T)&=-\frac{\ln P(0,T)}{T}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>closed-form bond price ถูกแปลงเป็น zero yield ภายใต้ compounding เดียวกับ market target ก่อนสร้าง residual</p>
+    <p>$A$ และ $B$ ขึ้นกับ $t$ และ $T$ ผ่าน $T-t$ อย่างเดียว เรียกว่า time-homogeneous เพราะ $\kappa$, $\theta$ และ $\sigma$ ไม่เปลี่ยนตามวันที่ bond อายุ 5 ปีวันนี้กับ bond อายุ 5 ปีในปีหน้าใช้สูตรเดียวกัน ต่างกันแค่ $r_t$ ที่ใส่</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ที่มาของ A และ B: ใส่รูปคำตอบกลับในสมการราคา</h4>
   <div class="math">\[
-\begin{aligned}&amp;P(\tau,r)=e^{a(\tau)-B(\tau)r},\quad a(0)=B(0)=0\\
-&amp;P_r/P=-B,\qquad P_{rr}/P=B^2\\
-&amp;P_\tau/P=a^{\prime}-B^{\prime}r\\
-&amp;a^{\prime}-B^{\prime}r=-\kappa\theta B+\kappa rB+\tfrac12\sigma_V^2B^2-r\\
-&amp;B^{\prime}=1-\kappa B,\qquad a^{\prime}=-\kappa\theta B+\tfrac12\sigma_V^2B^2\end{aligned}
+\begin{aligned}
+P(\tau,r)&=e^{a(\tau)-B(\tau)r}\\
+a(0)&=B(0)=0\\
+P_r/P&=-B,\qquad P_{rr}/P=B^2\\
+P_\tau/P&=a^{\prime}-B^{\prime}r\\
+a^{\prime}-B^{\prime}r&=-\kappa\theta B+\kappa rB\\
+&\quad+\tfrac12\sigma_V^2B^2-r\\
+B^{\prime}&=1-\kappa B\\
+a^{\prime}&=-\kappa\theta B+\tfrac12\sigma_V^2B^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้เวลาที่เหลือ tau และให้ a เป็น log ของ A ตอนครบกำหนด bond จ่ายหนึ่งแน่นอน ราคาจึงเป็นหนึ่งทุก rate ทำให้ a และ B เริ่มที่ศูนย์</p>
@@ -200,6 +241,7 @@ A_C(0,T)&=\left[\frac{2\gamma e^{(\kappa+\gamma)T/2}}{(\gamma+\kappa)(e^{\gamma 
     <p>ให้ $b_+=(-\kappa+\gamma)/\sigma_C^2$ และ $b_-=(-\kappa-\gamma)/\sigma_C^2$ ซึ่งได้จากสูตรรากสมการกำลังสอง จึงเขียน $B^{\prime}=-\sigma_C^2(B-b_+)(B-b_-)/2$ แยกตัวแปรแล้วใช้เศษส่วนย่อย $1/[(B-b_+)(B-b_-)]=[1/(B-b_+)-1/(B-b_-)]/(b_+-b_-)$</p>
     <p>Integrate และใช้ $B(0)=0$ ได้ $(B-b_+)/(B-b_-)=(b_+/b_-)e^{-\gamma T}$ ถ้าเรียกด้านขวาว่า $h$ จัดเป็น $B(1-h)=b_+-hb_-$ แล้วหาร $1-h$ แทนรากทั้งสองและคูณด้วย $e^{\gamma T}$ จึงได้สูตร $B_C$</p>
     <p>สำหรับตัวคูณ $A$ มี $a(T)=-\kappa\theta\int_0^T B_C(s)ds$ ให้ $D(s)=(\gamma+\kappa)(e^{\gamma s}-1)+2\gamma$ จะตรวจได้ว่า $B_C(s)=2[ D^{\prime}(s)/D(s)-(\kappa+\gamma)/2]/\sigma_C^2$ ดังนั้น integral ใช้ $\ln D(s)$ กับพจน์เส้นตรง เมื่อแทนขอบ $D(0)=2\gamma$ แล้วใช้ $A=e^a$ จะได้สูตร $A_C$ ที่แสดง</p>
+    <p>สไลด์ของคอร์สเขียน $B_C=2/(\kappa+\gamma\coth(\gamma T/2))$ และเขียน $A_C$ ด้วย $\cosh$ กับ $\sinh$ เป็นสูตรเดียวกับข้างบน ตรวจได้จาก $\gamma\coth(\gamma T/2)=\gamma+2\gamma/(e^{\gamma T}-1)$</p>
   </div>
 </section>
 
@@ -220,21 +262,17 @@ J(\kappa,\theta,\sigma)=\sum_{i=1}^{5}w_i\left[10^4\left(y_i^{mdl}-y_i^{mkt}\rig
   </div>
 </section>
 
-<section class="example">
-  <h4>ตัวอย่าง calibration ของ USD curve</h4>
-  <p>ของที่มี: target curve ใน code, ค่าเริ่ม mean reversion 0.40 ต่อปี, long-run level 4.00% และ volatility ที่ต้องเป็นบวก.</p>
-  <p>ถามว่า optimizer ลดคะแนนรวมแล้วได้ parameter ไหน?</p>
-  <p>คำตอบ: Vasicek fit ได้ $\kappa=0.650000$, $\theta=0.045000$, $\sigma_V=0.012000$.</p>
-  <p>ตรวจเองใน 10 วินาที: ใส่สามค่านี้กลับเข้า objective แล้วคะแนนต้องต่ำกว่าเริ่มต้น.</p>
-  <p>เอาไปใช้จริง: ก่อน deploy curve model ให้ใช้ชุด target ที่มีคำตอบรู้ล่วงหน้าเช็ก pipeline; มันเช็กโค้ด ไม่ได้พิสูจน์ว่า model ทายโลกได้.</p>
-</section>
-
 <section class="formula">
   <h4>ให้คะแนนก่อนและหลังหมุนปุ่ม</h4>
   <div class="math">\[
-\begin{aligned}&\text{residuals in bp: }(2,-1,3)\quad\Longrightarrow\quad J=2^2+(-1)^2+3^2=14\\
-&\text{new residuals: }(1,-1,1)\quad\Longrightarrow\quad J=1+1+1=3\\
-&\text{one-point fit: }(0,0,4)\quad\Longrightarrow\quad J=16>14\end{aligned}
+\begin{aligned}
+e&=(2,-1,3)\ \text{bp}\\
+J&=2^2+(-1)^2+3^2=14\\[4pt]
+e&=(1,-1,1)\ \text{bp}\\
+J&=1+1+1=3\\[4pt]
+e&=(0,0,4)\ \text{bp}\\
+J&=16\gt14
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวเลขสามจุดนี้เป็นแบบฝึกเล็กสำหรับ objective เดิม ให้น้ำหนักทุกจุดหนึ่งเท่ากัน เริ่มจาก residual ที่เป็น basis points แล้วค่อยยกกำลังสอง เครื่องหมายต่างกันจึงไม่หักล้างความผิดพลาด</p>
@@ -274,16 +312,16 @@ J(\kappa,\theta,\sigma)=\sum_{i=1}^{5}w_i\left[10^4\left(y_i^{mdl}-y_i^{mkt}\rig
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — model curves ซ้อนตลาดได้แต่ไม่ได้เหมือนกันเชิง dynamics</h4>
-  <img src="../figures/20.5-1.svg" alt="ภาพที่ 1 — model curves ซ้อนตลาดได้แต่ไม่ได้เหมือนกันเชิง dynamics" loading="lazy">
+  <h4>Figure 20.5a — model curves ซ้อนตลาดได้แต่ไม่ได้เหมือนกันเชิง dynamics</h4>
+  <img src="../figures/20.5-1.svg" alt="Figure 20.5a — model curves ซ้อนตลาดได้แต่ไม่ได้เหมือนกันเชิง dynamics" loading="lazy">
   <figcaption>
     <p>Vasicek fit target ที่สร้างจากตัวมันเองแทบพอดี ส่วน CIR คลาดเพียงเศษ basis point เส้นที่มองไม่แยกบนกราฟยังให้ rate distribution และ option prices ต่างกันได้</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — residual plot ขยายสิ่งที่ curve plot ซ่อน</h4>
-  <img src="../figures/20.5-2.svg" alt="ภาพที่ 2 — residual plot ขยายสิ่งที่ curve plot ซ่อน" loading="lazy">
+  <h4>Figure 20.5b — residual plot ขยายสิ่งที่ curve plot ซ่อน</h4>
+  <img src="../figures/20.5-2.svg" alt="Figure 20.5b — residual plot ขยายสิ่งที่ curve plot ซ่อน" loading="lazy">
   <figcaption>
     <p>CIR residuals อยู่ระหว่างประมาณ -0.031 ถึง 0.038 basis point และสลับเครื่องหมายตาม maturity การดู residual pattern ช่วยแยก rounding noise จาก systematic misspecification</p>
   </figcaption>
@@ -306,31 +344,40 @@ J(\kappa,\theta,\sigma)=\sum_{i=1}^{5}w_i\left[10^4\left(y_i^{mdl}-y_i^{mkt}\rig
   <p>ในระยะยาวเมื่อเวลา $t \to \infty$ ระดับ variance จะลู่เข้าสู่ค่าคงที่ $\frac{\sigma_V^2}{2\kappa}$ ไม่ได้กระจายกว้างขึ้นเรื่อย ๆ แบบ Brownian motion ทั่วไป แสดงให้เห็นว่าแรงดึงกลับทำหน้าที่ตีกรอบไม่ให้อัตราดอกเบี้ยลอยเตลิดอย่างไร้ขอบเขต</p>
   <div class="math">\[
 \begin{aligned}
-d\big(e^{\kappa t}r_t\big) &= \kappa e^{\kappa t}r_t\,dt + e^{\kappa t}\big[\kappa(\theta-r_t)dt + \sigma_V dW_t^Q\big] = \kappa\theta e^{\kappa t}dt + \sigma_V e^{\kappa t}dW_t^Q \\
-e^{\kappa t}r_t - r_0 &= \kappa\theta\int_0^t e^{\kappa s}ds + \sigma_V\int_0^t e^{\kappa s}dW_s^Q = \theta\big(e^{\kappa t}-1\big) + \sigma_V\int_0^t e^{\kappa s}dW_s^Q \\
-r_t &= r_0 e^{-\kappa t} + \theta\big(1 - e^{-\kappa t}\big) + \sigma_V\int_0^t e^{-\kappa(t-s)}dW_s^Q \\
-\mathbb{E}^Q[r_t \mid r_0] &= \theta + (r_0 - \theta)e^{-\kappa t} \\
-\text{Var}^Q(r_t \mid r_0) &= \sigma_V^2\int_0^t e^{-2\kappa(t-s)}ds = \frac{\sigma_V^2}{2\kappa}\big(1 - e^{-2\kappa t}\big)
+d\big(e^{\kappa t}r_t\big)&=\kappa e^{\kappa t}r_t\,dt+e^{\kappa t}dr_t\\
+&=\kappa e^{\kappa t}r_t\,dt\\
+&\quad+e^{\kappa t}\big[\kappa(\theta-r_t)dt+\sigma_VdW_t^Q\big]\\
+&=\kappa\theta e^{\kappa t}dt+\sigma_Ve^{\kappa t}dW_t^Q\\[4pt]
+e^{\kappa t}r_t-r_0&=\kappa\theta\int_0^te^{\kappa s}ds\\
+&\quad+\sigma_V\int_0^te^{\kappa s}dW_s^Q\\
+&=\theta\big(e^{\kappa t}-1\big)\\
+&\quad+\sigma_V\int_0^te^{\kappa s}dW_s^Q\\[4pt]
+r_t&=r_0e^{-\kappa t}+\theta\big(1-e^{-\kappa t}\big)\\
+&\quad+\sigma_V\int_0^te^{-\kappa(t-s)}dW_s^Q\\[4pt]
+\mathbb E^Q[r_t\mid r_0]&=\theta+(r_0-\theta)e^{-\kappa t}\\
+\mathrm{Var}^Q(r_t\mid r_0)&=\sigma_V^2\int_0^te^{-2\kappa(t-s)}ds\\
+&=\frac{\sigma_V^2}{2\kappa}\big(1-e^{-2\kappa t}\big)
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>ใช้ Itô's lemma กับผลคูณ $e^{\kappa t}r_t$ พจน์ drift $\kappa r_t$ จะหักล้างกันพอดี เหลือเฉพาะแรงดึงคงที่ $\kappa\theta$ และ stochastic shock เท่านั้น</p>
     <p>integrate ทั้งสองข้างจากศูนย์ถึง $t$ แล้วคูณด้วย $e^{-\kappa t}$ จะได้รูปผลเฉลยแม่นตรงของ short rate ที่แยกส่วนกำหนดได้ออกจากส่วนสุ่มอย่างสมบูรณ์</p>
     <p>เมื่อหา expected value พจน์ stochastic integral จะหายไปเป็นศูนย์ เหลือเพียง conditional mean ส่วน variance ได้มาจากการ integrate กำลังสองของ deterministic kernel ตามคุณสมบัติของ Brownian motion</p>
+    <p>สไลด์ของคอร์สพิมพ์พจน์แรกเป็น $e^{\kappa t}r_0$ ซึ่งตกเครื่องหมายลบ ถ้าเป็นบวกจริงอัตราเริ่มต้นจะโตขึ้นเรื่อย ๆ แทนที่จะจางหาย แถวที่เริ่มด้วย $r_t$ ข้างบนคือรูปที่ถูก</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 3 — mean-reversion pull แยก speed ออกจาก level</h4>
-  <img src="../figures/20.5-3.svg" alt="ภาพที่ 3 — mean-reversion pull แยก speed ออกจาก level" loading="lazy">
+  <h4>Figure 20.5c — mean-reversion pull แยก speed ออกจาก level</h4>
+  <img src="../figures/20.5-3.svg" alt="Figure 20.5c — mean-reversion pull แยก speed ออกจาก level" loading="lazy">
   <figcaption>
     <p>เส้นที่เริ่มเหนือและใต้ 4.5% เคลื่อนกลับหาระดับเดียวกัน ความเร็วการเข้าใกล้ถูกกำหนดโดย 0.65 ต่อปี ไม่ใช่โดย volatility</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 4 — objective valley แสดง parameter trade-off</h4>
-  <img src="../figures/20.5-4.svg" alt="ภาพที่ 4 — objective valley แสดง parameter trade-off" loading="lazy">
+  <h4>Figure 20.5d — objective valley แสดง parameter trade-off</h4>
+  <img src="../figures/20.5-4.svg" alt="Figure 20.5d — objective valley แสดง parameter trade-off" loading="lazy">
   <figcaption>
     <p>หลายคู่ของ mean-reversion speed กับ long-run level ให้ curve ใกล้กัน เกิด valley ยาวใน loss surface จึงควรรายงาน optimizer diagnostics และ parameter uncertainty ไม่ใช่เพียงจุดต่ำสุดหกตำแหน่งทศนิยม</p>
   </figcaption>
@@ -348,16 +395,140 @@ r_t &= r_0 e^{-\kappa t} + \theta\big(1 - e^{-\kappa t}\big) + \sigma_V\int_0^t 
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — diffusion ของ CIR หดเมื่อ rate เข้าใกล้ศูนย์</h4>
-  <img src="../figures/20.5-5.svg" alt="ภาพที่ 5 — diffusion ของ CIR หดเมื่อ rate เข้าใกล้ศูนย์" loading="lazy">
+  <h4>Figure 20.5e — diffusion ของ CIR หดเมื่อ rate เข้าใกล้ศูนย์</h4>
+  <img src="../figures/20.5-5.svg" alt="Figure 20.5e — diffusion ของ CIR หดเมื่อ rate เข้าใกล้ศูนย์" loading="lazy">
   <figcaption>
     <p>Vasicek absolute diffusion คงที่ 1.2 percentage points ต่อรากปี ส่วน CIR diffusion coefficient เพิ่มตามรากของ rate พฤติกรรม boundary จึงเป็นผลของ functional form ไม่ใช่ Feller check เพียงบรรทัดเดียว</p>
   </figcaption>
 </figure>
 
+<section class="formula">
+  <h4>ขั้นที่ 11 — ราคา bond ขยับอย่างไรเมื่อ short rate ขยับ</h4>
+  <p>สูตรปิดบอกราคาวันนี้ แต่ถ้าจะ hedge ต้องรู้ว่าราคาแกว่งแค่ไหน ใช้ Itô's lemma กับ $P(t,r_t)$ แล้วให้สมการราคาในส่วนที่มาของ A และ B ทำงานแทน</p>
+  <div class="math">\[
+\begin{aligned}
+dP&=P_t\,dt+P_r\,dr_t\\
+&\quad+\tfrac12P_{rr}\,(dr_t)^2\\
+&=\big[P_t+\kappa(\theta-r_t)P_r\\
+&\qquad+\tfrac12\sigma_V^2P_{rr}\big]dt\\
+&\quad+\sigma_VP_r\,dW_t^Q\\
+&=r_tP\,dt-\sigma_VB(t,T)\,P\,dW_t^Q\\[4pt]
+\sigma_VB(t,t+1)&=0.88\%\\
+\sigma_VB(t,t+10)&=1.84\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แทน $dr_t$ จากขั้นที่ 1 และใช้ $(dr_t)^2=\sigma_V^2dt$ ก้อนในวงเล็บคือด้านซ้ายของสมการราคา ซึ่งต้องเท่ากับ $r_tP$ พอดี ส่วน $P_r=-B\,P$ มาจากการดิฟ exponent ในขั้นที่ 3</p>
+    <p>ภายใต้ $Q$ bond ทุกอายุโตเฉลี่ยด้วย $r_t$ เท่ากัน ต่างกันแค่ความแกว่ง $\sigma_VB$ สองแถวล่างใช้ $\kappa=0.65$ และ $\sigma_V=0.012$ ของตัวอย่าง ซึ่งให้ $B(t,t+1)=0.735314$ และ $B(t,t+10)=1.536149$ bond ยาวแกว่งมากกว่า แต่ $B$ ตันที่ $1/\kappa=1.54$ ปี ความแกว่งจึงไม่เกิน 1.85% ต่อปีไม่ว่าอายุจะยาวแค่ไหน</p>
+  </div>
+</section>
+
+<section class="table">
+  <h4>ข้อมูลตลาดที่คอร์สใช้ calibrate: LIBOR และ swap สองวัน</h4>
+  <table>
+    <thead><tr><th>เครื่องมือ</th><th>อายุ</th><th>14 ธ.ค. 2017 (%)</th><th>11 ต.ค. 2018 (%)</th></tr></thead>
+    <tbody>
+      <tr><td>LIBOR</td><td>1 เดือน</td><td>1.49078</td><td>2.27950</td></tr>
+      <tr><td>LIBOR</td><td>2 เดือน</td><td>1.52997</td><td>2.33075</td></tr>
+      <tr><td>LIBOR</td><td>3 เดือน</td><td>1.60042</td><td>2.43631</td></tr>
+      <tr><td>LIBOR</td><td>6 เดือน</td><td>1.76769</td><td>2.63525</td></tr>
+      <tr><td>LIBOR</td><td>12 เดือน</td><td>2.04263</td><td>2.95425</td></tr>
+      <tr><td>swap</td><td>2 ปี</td><td>2.0130</td><td>3.0408</td></tr>
+      <tr><td>swap</td><td>3 ปี</td><td>2.1025</td><td>3.1054</td></tr>
+      <tr><td>swap</td><td>5 ปี</td><td>2.1950</td><td>3.1332</td></tr>
+      <tr><td>swap</td><td>7 ปี</td><td>2.2585</td><td>3.1562</td></tr>
+      <tr><td>swap</td><td>10 ปี</td><td>2.3457</td><td>3.1990</td></tr>
+      <tr><td>swap</td><td>15 ปี</td><td>2.4447</td><td>3.2437</td></tr>
+      <tr><td>swap</td><td>30 ปี</td><td>2.5055</td><td>3.2270</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>ประโยคนำตารางในสไลด์เขียนวันแรกว่า Oct 18, 2016 แต่หัวคอลัมน์และกราฟใช้ Dec 14, 2017 หน้านี้ใช้ตามหัวคอลัมน์ ในสิบเดือนนี้ดอกเบี้ย USD ขึ้นราว 0.7 ถึง 1 จุดทั้ง curve</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — แปลงราคา bond ของ model เป็น LIBOR และ swap แล้ววัด error แบบสัดส่วน</h4>
+  <p>ตลาดไม่ได้ quote zero yield ตรง ๆ มีแต่ LIBOR ช่วงสั้นกับ swap ช่วงยาว จึงต้องแปลงราคา bond ของ model ให้อยู่ในภาษาเดียวกับ quote ก่อนเทียบ</p>
+  <div class="math">\[
+\begin{aligned}
+L(T)&=\frac{1}{T}\Big(\frac{1}{P(0,T)}-1\Big)\\
+s(T)&=\frac{1-P(0,T)}{0.5\sum_{j=1}^{2T}P(0,0.5j)}\\[4pt]
+\mathrm{SSRE}&=\sum_{i=1}^{5}\Big(\frac{L_i^{mdl}-L_i^{mkt}}{L_i^{mkt}}\Big)^2\\
+&\quad+\sum_{j=1}^{7}\Big(\frac{s_j^{mdl}-s_j^{mkt}}{s_j^{mkt}}\Big)^2
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$L$ มาจากการฝากแบบ simple interest: วาง $P$ วันนี้ได้หนึ่ง USD ตอน $T$ ดอกเบี้ยทั้งช่วงคือ $1/P-1$ แล้วเฉลี่ยเป็นต่อปี ส่วน $s$ คือ par swap rate ของหัวข้อ 20.2 ขาคงที่จ่ายทุกครึ่งปีบน annuity และขาลอยตัวมีค่า $1-P(0,T)$</p>
+    <p>error แบบสัดส่วนทำให้ LIBOR 1.5% ที่พลาด 0.015 จุด กับ swap 3% ที่พลาด 0.03 จุด นับเป็นพลาด 1% เท่ากัน ผลรวมแรกมี LIBOR 5 ตัว ผลรวมที่สองมี swap 7 ตัว</p>
+    <p>model มี parameter สี่ตัว $\kappa,\theta,\sigma_V,r_0$ แต่มี quote สิบสองตัว จึงไม่มีทางผ่านทุกจุด ต้องยอมหาจุดที่ SSRE ต่ำสุด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — Vasicek ที่ fit ได้บนสองวัน</h4>
+  <p>ตรึง $\sigma_V=1\%$ ไว้ก่อน เหตุผลอยู่ในขั้นที่ 14 แล้วให้ optimizer หา $\kappa,\theta,r_0$ ที่ทำให้ SSRE ต่ำสุด</p>
+  <div class="math">\[
+\begin{aligned}
+2017&:\ \kappa=1.3806,\ \theta=2.406\%\\
+&\quad\ r_0=1.451\%\\
+&\quad\ \mathrm{SSRE}=0.013671\\
+2018&:\ \kappa=2.8194,\ \theta=3.218\%\\
+&\quad\ r_0=2.133\%\\
+&\quad\ \mathrm{SSRE}=0.000948\\[4pt]
+P(0,30)&=0.4896,\ 0.3824\\[4pt]
+e_L(1)&=\frac{1.9053}{2.04263}-1=-6.73\%\\
+e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$e$ คือค่าของ model หารค่าตลาดแล้วลบหนึ่ง แถวล่างเป็น LIBOR 12 เดือนและ swap 30 ปีของปี 2017 ส่วน $P(0,30)$ เรียงปี 2017 แล้วปี 2018</p>
+    <p>สไลด์แสดงผลเป็นกราฟอย่างเดียวไม่ได้พิมพ์ parameter ตัวเลขชุดนี้จึงมาจากการ fit ซ้ำด้วยข้อมูลในตาราง ราคา bond 30 ปีตรงกับกราฟในสไลด์ที่ราว 0.49 และ 0.38</p>
+    <p>ปี 2018 fit ดีกว่าราว 14 เท่า เพราะ curve แบนตั้งแต่ 5 ปีขึ้นไป ซึ่งเป็นรูปที่ Vasicek ทำได้ ปี 2017 curve ชันต่อถึง 30 ปี model ต้องใช้ $\kappa$ สูงให้ช่วงสั้นโค้งตาม ปลายยาวจึงแบนเร็วเกิน swap 30 ปีต่ำไป 4.77% ส่วน swap 2 ถึง 7 ปีสูงไป 2.4 ถึง 3.9%</p>
+    <p>speed 1.38 และ 2.82 ต่อปีแปลว่า half-life ราว 0.50 และ 0.25 ปี เร็วกว่าตัวอย่างสังเคราะห์ที่ 1.07 ปีมาก</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 20.5f — Vasicek บนข้อมูลจริง: ใกล้ แต่งอตาม curve ไม่ได้ทุกจุด</h4>
+  <img src="../figures/20.5-6.svg" alt="Figure 20.5f — Vasicek บนข้อมูลจริง: ใกล้ แต่งอตาม curve ไม่ได้ทุกจุด" loading="lazy">
+  <figcaption>
+    <p>จุดวงกลมคือ LIBOR สี่เหลี่ยมคือ swap เส้นทึบและเส้นประคือ model ปี 2017 model ต่ำกว่าตลาดที่ LIBOR 12 เดือนและ swap 30 ปี แต่สูงกว่าที่ swap 2 ถึง 7 ปี ส่วนปี 2018 เส้นแทบทับทุกจุด</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — curve บอกค่า $\sigma$ ไม่ได้: ตรึงทีละค่าแล้วดู SSRE</h4>
+  <p>ทำไมต้องตรึง $\sigma_V$? ลองตรึงหลายค่าแล้ว fit อีกสามตัวใหม่ทุกครั้ง ถ้า SSRE แทบไม่เปลี่ยน แปลว่าข้อมูลชุดนี้ไม่รู้จัก $\sigma_V$</p>
+  <div class="math">\[
+\begin{aligned}
+\sigma_V&=0,\ 1,\ 2,\ 5\%\\
+\mathrm{SSRE}_{2017}&=0.013680,\ 0.013671,\\
+&\quad\ 0.013643,\ 0.013424\\
+\mathrm{SSRE}_{2018}&=0.000948,\ 0.000948,\\
+&\quad\ 0.000949,\ 0.000955\\[4pt]
+\sigma_V=10\%&:\ \mathrm{SSRE}_{2017}=0.012690\\
+\sigma_V=20\%&:\ \mathrm{SSRE}_{2017}=0.018614
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>จาก 0 ถึง 2% ซึ่งเป็นช่วงที่ดอกเบี้ยจริงแกว่ง SSRE ขยับไม่ถึง 0.3% เพราะ $\kappa$ และ $\theta$ ปรับตัวชดเชย ถ้าปล่อย $\sigma_V$ อิสระบนปี 2017 optimizer จะไปจบที่ราว 9.5% ต่อปีเพื่อลด SSRE อีกราว 7% ซึ่งเป็นความแกว่งที่ไม่มีใครเชื่อ</p>
+    <p>CIR ก็เหมือนกัน ตรึง $\sigma_C=0.05$ ซึ่งที่ $r=2.4\%$ เท่ากับแกว่ง $0.05\sqrt{0.024}=0.77\%$ ต่อปี ได้ SSRE 0.013679 และ 0.000948 และราคา bond 30 ปี 0.4896 และ 0.3824 เท่า Vasicek กราฟ Vasicek กับ CIR ในสไลด์จึงทับกัน</p>
+    <p>ข้อสรุป: $\sigma$ ต้องเอามาจากราคา option เช่น caplet หรือ swaption ในหัวข้อ 20.4 ไม่ใช่จาก curve ของ bond</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>CIR แก้ดอกเบี้ยติดลบ แต่ต้องจ่ายด้วยอะไร</h4>
+  <p>Vasicek เป็น Gaussian อัตราจึงติดลบได้ CIR คูณความแกว่งด้วย $\sqrt{r_t}$ เมื่ออัตราเข้าใกล้ศูนย์ความแกว่งก็หายไป อัตราจึงไม่ติดลบ</p>
+  <p>ราคาที่ต้องจ่ายคือ CIR ไม่เป็น Gaussian แล้ว zero-coupon bond ยังมีสูตรปิด แต่ derivative ส่วนใหญ่ไม่มี ต้องใช้ Monte Carlo simulation หรือแก้ partial differential equation (PDE) เชิงตัวเลขเช่น finite difference</p>
+  <p>และ CIR ยังมี parameter สี่ตัวเท่าเดิม จึง fit curve วันนี้ได้ไม่พอดีเหมือน Vasicek สไลด์เขียนว่ามี parameter สามตัว แต่รายการที่ให้มีสี่ตัวคือ $\kappa,\theta,\sigma,r_0$</p>
+</section>
+
 <section class="prose">
   <h4>curve-only calibration ระบุ volatility ได้น้อยกว่าที่คิด</h4>
-  <p>bond curve มี information เกี่ยวกับ combination ของ mean reversion, long-run level และ convexity แต่ $\sigma$ มักเปลี่ยนได้พร้อม $\theta$ แล้วรักษา fit ใกล้เดิม หาก model ใช้ราคา options ต้อง calibrate volatility และอาจรวม mean reversion กับ caplet หรือ swaption surface มิฉะนั้น curve fit ดีแต่ option vega และ exercise distribution ผิด Historical time series estimate อยู่ภายใต้ physical measure และไม่สามารถแทน risk-neutral parameter โดยไม่ระบุ market price of risk</p>
+  <p>bond curve มี information เกี่ยวกับ combination ของ mean reversion, long-run level และ convexity แต่ volatility มักเปลี่ยนได้พร้อม long-run level แล้วรักษา fit ใกล้เดิม หาก model ใช้ราคา options ต้อง calibrate volatility และอาจรวม mean reversion กับ caplet หรือ swaption surface มิฉะนั้น curve fit ดีแต่ option vega และ exercise distribution ผิด Historical time series estimate อยู่ภายใต้ physical measure และไม่สามารถแทน risk-neutral parameter โดยไม่ระบุ market price of risk</p>
+  <p>ในเชิงสถิติ อัตราดอกเบี้ยในแบบจำลอง CIR มี transition density เป็น non-central chi-squared ที่มี degrees of freedom $4\kappa\theta/\sigma_C^2$ ซึ่งยืนยันว่าอัตราจะไม่ติดลบเมื่อผ่าน Feller condition แต่ทั้ง Vasicek และ CIR ต่างเป็น one-factor model ที่มี parameter คงที่เพียง 4 ตัว (speed, level, volatility และ short rate เริ่มต้น) จึงสร้างรูปร่างของ yield curve ได้เพียง 3 แบบเท่านั้น (ชันขึ้น ชันลง หรือโค้งหลังเต่าจุดเดียว) ไม่สามารถ fit เส้นผลตอบแทนตลาดจริงที่มีการบิดงอหลายจุดได้อย่างสมบูรณ์</p>
 </section>
 
 <section class="prose">
@@ -365,6 +536,28 @@ r_t &= r_0 e^{-\kappa t} + \theta\big(1 - e^{-\kappa t}\big) + \sigma_V\int_0^t 
   <p>เริ่มจาก freeze วันคิดราคาและแหล่ง curve. แปลง quote เป็น discount factor แล้ว reprice กลับให้ได้ราคาเดิมก่อน.</p>
   <p>ค่อยลอง optimizer จากหลายจุดเริ่มและเก็บ parameter version. ถ้าค่ากระโดดทุกวัน ให้ถามก่อนว่าข้อมูลแยก parameter ได้จริงไหม ไม่ใช่รีบเรียกว่า market event.</p>
   <p>งาน risk จึงแยก quote bump, parameter sensitivity และการเปลี่ยน model ไว้คนละรายงาน.</p>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — หา parameter กลับจาก curve ที่รู้คำตอบ</h4>
+  <p>คำถาม: ทีม model risk สร้าง USD zero curve ห้าจุดจาก Vasicek ที่ short rate 5.20% แล้วให้ optimizer เริ่มจาก speed 0.40 ต่อปี long-run level 4.00% และ volatility 2% โดยไม่บอกค่าจริง optimizer หาค่ากลับได้หรือไม่ และ CIR บน curve เดียวกันผ่าน Feller หรือไม่?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 10 yields 5.097160, 5.013204, 4.887677, 4.697454 และ 4.594414% ที่อายุ 0.5, 1, 2, 5 และ 10 ปี</p>
+  <p>1. Vasicek ได้ speed 0.650000 ต่อปี long-run level 4.5000% และ volatility 1.2000% ตรงกับค่าที่ใช้สร้าง curve</p>
+  <p>2. CIR ได้ speed 0.636905 ต่อปี long-run level 4.4816% และ volatility coefficient 0.002887 yield พลาดเฉลี่ยราว 0.027 basis point</p>
+  <p>3. CIR ผ่าน Feller เพราะสองเท่าของ speed คูณ level ได้ 0.057083 มากกว่า volatility coefficient กำลังสองที่ 0.0000083</p>
+  <p>ตรวจเองใน 10 วินาที: half-life คือ 0.6931 / 0.65 = 1.066 ปี ตรงกับเฉลยตอนต้นหน้า</p>
+  <p>แปลว่าอะไร: การหาค่ากลับจาก curve สังเคราะห์ตรวจว่า pipeline ถูก แต่ไม่ได้พิสูจน์ว่า model อธิบายตลาดได้ ข้อนั้นต้องดูจากข้อมูลจริงในตัวอย่างที่สอง</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างที่สอง — Vasicek บน LIBOR และ swap จริง</h4>
+  <p>คำถาม: ธนาคารต้องการให้ Vasicek ตั้งราคาตามตลาด USD วันที่ 14 ธ.ค. 2017 และ 11 ต.ค. 2018 ด้วย LIBOR ห้าอายุกับ swap เจ็ดอายุ model พลาดตรงไหนมากที่สุด และ volatility ที่ fit ได้เชื่อได้ไหม?</p>
+  <p>ของที่มี: ขั้นที่ 12 ถึง 14 และตารางข้อมูลตลาด</p>
+  <p>1. ปี 2017 ได้ speed 1.3806 ต่อปี long-run level 2.406% short rate 1.451% และ SSRE 0.013671 พลาดมากสุดที่ LIBOR 12 เดือน −6.73% และ swap 30 ปี −4.77%</p>
+  <p>2. ปี 2018 ได้ speed 2.8194 ต่อปี long-run level 3.218% short rate 2.133% และ SSRE 0.000948 ทุกจุดพลาดไม่เกิน 2%</p>
+  <p>3. volatility จาก 0 ถึง 2% ให้ SSRE ต่างกันไม่ถึง 0.3% curve จึงบอก volatility ไม่ได้</p>
+  <p>ตรวจเองใน 10 วินาที: ราคา bond 30 ปีของปี 2018 คือ 0.3824 ต่ำกว่า 0.4896 ของปี 2017 เพราะดอกเบี้ยทั้ง curve สูงขึ้นราว 0.7 ถึง 1 จุด</p>
+  <p>แปลว่าอะไร: parameter น้อยทำให้ model เสถียรแต่งอตาม curve ไม่ได้ทุกจุด ถ้าจะตั้งราคา option ต้องเอา volatility มาจากราคา option ไม่ใช่จาก curve</p>
 </section>
 
 <section class="pitfall">
@@ -409,6 +602,46 @@ assert np.sqrt(np.mean(residual(fit.x)**2)) &lt; 1e-8</code></pre>
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>Vasicek บน LIBOR และ swap ของคอร์ส</summary>
+    <pre><code>import numpy as np
+from scipy.optimize import least_squares
+Lm = np.array([1, 2, 3, 6, 12]) / 12
+St = np.array([2, 3, 5, 7, 10, 15, 30])
+mkt = {2017: ([1.49078, 1.52997, 1.60042, 1.76769, 2.04263],
+              [2.0130, 2.1025, 2.1950, 2.2585, 2.3457, 2.4447, 2.5055]),
+       2018: ([2.27950, 2.33075, 2.43631, 2.63525, 2.95425],
+              [3.0408, 3.1054, 3.1332, 3.1562, 3.1990, 3.2437, 3.2270])}
+def P(T, k, th, r0, s):
+    B = (1 - np.exp(-k * T)) / k
+    lnA = (th - s**2 / (2 * k**2)) * (B - T) - s**2 * B**2 / (4 * k)
+    return np.exp(lnA - B * r0)
+def rel_err(x, y, s):
+    L = (1 / P(Lm, *x, s) - 1) / Lm
+    S = [(1 - P(T, *x, s)) / (0.5 * P(np.arange(0.5, T + 0.25, 0.5), *x, s).sum()) for T in St]
+    Lk, Sk = (np.array(v) / 100 for v in mkt[y])
+    return np.r_[L / Lk - 1, np.array(S) / Sk - 1]
+def calibrate(y, s):
+    fits = [least_squares(rel_err, [k0, 0.03, 0.015], args=(y, s),
+                          bounds=([1e-3, -0.2, -0.05], [20, 0.5, 0.1])) for k0 in (0.3, 1.5, 5)]
+    best = min(fits, key=lambda f: f.cost)
+    return best.x, 2 * best.cost
+x17, f17 = calibrate(2017, 0.01)
+x18, f18 = calibrate(2018, 0.01)
+assert np.allclose(x17, [1.3806, 0.02406, 0.01451], atol=2e-4) and abs(f17 - 0.013671) &lt; 2e-6
+assert np.allclose(x18, [2.8194, 0.03218, 0.02133], atol=2e-4) and abs(f18 - 0.000948) &lt; 2e-6
+assert abs(P(30, *x17, 0.01) - 0.4896) &lt; 1e-4 and abs(P(30, *x18, 0.01) - 0.3824) &lt; 1e-4
+e = rel_err(x17, 2017, 0.01)
+assert round(100 * e[4], 2) == -6.73 and round(100 * e[-1], 2) == -4.77
+flat = [calibrate(2017, s)[1] for s in (1e-6, 0.02)]
+assert abs(flat[0] - 0.013680) &lt; 2e-6 and abs(flat[1] - 0.013643) &lt; 2e-6</code></pre>
+  </details>
+  <div class="note">
+    <p>assert ชุดสุดท้ายคือบทเรียนของขั้นที่ 14: $\sigma_V$ จากศูนย์ถึง 2% เปลี่ยน SSRE ไม่ถึง 0.3%</p>
+  </div>
+</section>
+
 <section class="prose">
   <h4>จุดเปลี่ยนผ่าน: จาก risk-free dynamics สู่ defaultable cash flows</h4>
   <p>Vasicek และ CIR อธิบาย discounting ของ cash flows ที่ไม่มี default แต่ corporate bond ต้องมี state ที่ issuer หยุดจ่าย หัวข้อถัดไปจะแยก risk-free discount factor ออกจาก survival probability และ recovery convention เพื่อให้ credit spread มีที่มาเป็น cash flows</p>
@@ -422,6 +655,8 @@ assert np.sqrt(np.mean(residual(fit.x)**2)) &lt; 1e-8</code></pre>
     <li>ตัวอย่าง recover Vasicek $\kappa=0.65$, $\theta=4.5\%$, $\sigma_V=1.2\%$ ต่อรากปี และ CIR มี yield error ประมาณ 0.02745 basis point</li>
     <li>curve fit อย่างเดียวระบุ volatility ไม่แข็งแรง จึงต้องใช้ caplet หรือ swaption data เมื่อ model ใช้ราคา optionality</li>
     <li>UST curve กับ SOFR discount curve มี economic content ต่างกันและห้ามสลับชื่อโดยไม่ประกาศ</li>
+    <li>บนข้อมูลจริงปี 2017 Vasicek พลาด LIBOR 12 เดือน 6.73% และ swap 30 ปี 4.77% ส่วนปี 2018 พลาดไม่เกิน 2% เพราะมี parameter แค่สี่ตัว</li>
+    <li>short rate, HJM, LMM และ SMM ต่างกันที่ตัวสุ่ม short rate เลือกเพราะ parameter น้อยและ implement ง่าย</li>
   </ul>
 </section>
 </article>

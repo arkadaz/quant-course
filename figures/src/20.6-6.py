@@ -1,0 +1,10 @@
+yrs=np.arange(1,6);w=0.36
+boot=np.array([1.9763,2.0239,1.8944,2.0782,2.0102]);solver=np.array([2.0141,1.9443,1.9977,2.0124,1.9476])
+ax.bar(yrs-w/2,boot,w,color=ACCENT,label='Bootstrap on the prices saved in the file (exact fit)')
+ax.bar(yrs+w/2,solver,w,color=WARM,label='Solver result saved in the file (other noise draw)')
+ax.axhline(2.0,color='0.35',ls='--',lw=1.2,label='Hazard used to make the prices: 2% per half-year')
+for x,v in zip(yrs-w/2,boot): ax.text(x,v+0.01,f'{v:.2f}',ha='center',va='bottom',fontsize=7,bbox=dict(boxstyle='round,pad=0.1',fc='white',ec='none',alpha=0.8))
+for x,v in zip(yrs+w/2,solver): ax.text(x,v+0.01,f'{v:.2f}',ha='center',va='bottom',fontsize=7,bbox=dict(boxstyle='round,pad=0.1',fc='white',ec='none',alpha=0.8))
+ax.set_ylim(1.8,2.16);ax.set_xticks(yrs);ax.set_xticklabels([f'Year {k}' for k in yrs])
+ax.set_ylabel('Hazard per half-year (%)');ax.set_title('Price noise of at most 0.1 moves each bucket by up to 0.11 points',loc='left')
+ax.legend(fontsize=7,loc='upper left',ncol=1);ax.grid(axis='y',alpha=.2)
