@@ -1,2 +1,6 @@
 p=np.linspace(.45,.65,300);f=np.maximum(0,2*p-1)
-ax.plot(100*p,100*f,color=ACCENT,lw=2);ax.scatter([51,55],[2,10],color=[BAD,WARM]);ax.axvline(50,color=MUTED,ls='--');ax.set_xlabel('Assumed win probability (%)');ax.set_ylabel('Full-Kelly fraction at risk (%)');ax.grid(alpha=.25)
+ax.plot(100*p,100*f,color=ACCENT,lw=2);ax.scatter([52,55],[4,10],color=[BAD,WARM],zorder=3)
+ax.annotate('true 52%: 4%',(52,4),xytext=(46.5,10),fontsize=7.5,arrowprops=dict(arrowstyle='->',lw=.8))
+ax.annotate('believed 55%: 10%',(55,10),xytext=(56.5,6),fontsize=7.5,arrowprops=dict(arrowstyle='->',lw=.8))
+ax.axvline(50,color=MUTED,ls='--');ax.set_xlabel('Win probability at a 1:1 payoff (%)');ax.set_ylabel('Full-Kelly fraction 2p - 1 (%)')
+ax.set_title('A 3-point error in p is a 2.5x error in size',loc='left');ax.grid(alpha=.25)

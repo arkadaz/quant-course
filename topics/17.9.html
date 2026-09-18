@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>คุณมีส่วนผสมอ้างอิงและความเห็นใหม่ที่ยังไม่แน่นอน; ควรโยนส่วนผสมเดิมทิ้งทันทีหรือไม่?</p>
-  <p>เฉลย: ไม่ควร—ความเห็นใหม่ควรปรับน้ำหนักตามความน่าเชื่อถือ ไม่ใช่ยึดทั้งพอร์ต. Black-Litterman ผสม prior กับ view ตามความแม่นของแต่ละฝั่ง.</p>
+  <p>พอร์ตอ้างอิงถือหุ้น 60% พันธบัตร 40% ทุน 10 ล้าน USD ทีมวิจัยคิดว่าหุ้นจะชนะพันธบัตร 3 จุดต่อปี แต่ไม่มั่นใจเต็มร้อย ควรเพิ่มหุ้นหรือลดหุ้น และเท่าไร?</p>
+  <p>เฉลย: ลดหุ้นเหลือ 51.43% ย้าย 857,143 USD ไปพันธบัตร เพราะน้ำหนัก 60/40 บอกเป็นนัยว่าตลาดคาดส่วนต่าง 4.8 จุดอยู่แล้ว มุมมอง 3 จุดจึงมองหุ้นแย่กว่าตลาด ผสมตามความมั่นใจแล้วได้ 3.9 จุด</p>
 </div>
 
 <details class="jargon" open>
@@ -90,6 +90,7 @@
   <h4>เบื้องหลังแนวคิด: ทำไม Markowitz ถึงขยายความผิดพลาดและทางออกในทางปฏิบัติ</h4>
   <p>ในช่วงทศวรรษ 1980 วงการจัดการลงทุนพยายามนำทฤษฎี Mean-Variance ของ Harry Markowitz มาใช้งานจริง แต่พบอุปสรรคสำคัญทางสถิติ Richard Michaud (1989) ถึงกับขนานนามตัว optimizer แบบดั้งเดิมว่าเป็น error maximizer เพราะเมื่อใส่ค่าเฉลี่ยที่ประมาณจากข้อมูลย้อนหลัง ตัวแบบจะขยายความผิดพลาดให้รุนแรงขึ้นหลายเท่า</p>
   <p>สาเหตุเกิดจากการคูณด้วย matrix ผกผัน $\Sigma^{-1}$ หากสินทรัพย์คู่ใดมีความเสี่ยงใกล้เคียงกัน ตัวแบบจะเทน้ำหนักมหาศาลไปยังสินทรัพย์ที่ผลตอบแทนประมาณการสูงเกินจริงเพียงเล็กน้อย และ short สินทรัพย์ข้างเคียงอย่างรุนแรง ผลลัพธ์ที่ได้คือพอร์ตสุดโต่งที่เสี่ยงสูงและไม่มีคณะกรรมการลงทุนคนใดยอมอนุมัติ</p>
+  <p>สไลด์ของคอร์สวางวิธีนี้ไว้เป็นทางแก้ที่สามของ estimation error ต่อจากการดึงค่าเฉลี่ยเข้าหาค่ากลาง และการใส่ข้อจำกัดในหัวข้อ 17.8 คือเริ่มจากดุลยภาพของตลาด แล้วใส่ความเห็นพร้อมความไม่แน่นอนของมัน</p>
   <p>ในยุคนั้น ผู้จัดการกองทุนแก้ปัญหาเฉพาะหน้าด้วยการตั้งกรอบบังคับ เช่น ห้าม short หรือล็อกน้ำหนักไม่ให้เกิน 10% ซึ่งเป็นการฝืนกลไกทางคณิตศาสตร์ จนกระทั่ง Fischer Black และ Robert Litterman (1991, 1992) เสนอให้ใช้หลักการ Bayesian ผสมพอร์ตดุลยภาพตลาดเป็น prior แล้วเปิดให้ใส่มุมมองเฉพาะจุด ผลลัพธ์จึงมีเสถียรภาพและอธิบายได้</p>
 </section>
 
@@ -116,12 +117,15 @@
   <p>ตัวคูณ $\delta = 2.5$ ในโจทย์ไม่ได้ถูกกำหนดขึ้นลอย ๆ แต่สอดคล้องกับพอร์ตผสมที่มีผลตอบแทนส่วนเกิน $4.48\%$ ต่อปีและความผันผวนราว $13.39\%$ ต่อปี ซึ่งสะท้อนระดับราคาของความเสี่ยงในตลาดจริง</p>
   <div class="math">\[
 \begin{aligned}
-U(w) &= w^\top\Pi - \frac{\delta}{2}w^\top\Sigma w \\
-\nabla_w U(w) &= \Pi - \delta\Sigma w = 0 \quad\Longrightarrow\quad w^* = \frac{1}{\delta}\Sigma^{-1}\Pi \\
-w^* &= w_m \quad\Longrightarrow\quad \Pi = \delta\Sigma w_m \\
-w_m^\top\Pi &= \delta\,(w_m^\top\Sigma w_m) = \delta\,\sigma_m^2 \quad\Longrightarrow\quad \delta = \frac{r_m - r_f}{\sigma_m^2} \\
-\sigma_m^2 &= 0.6(0.0256) + 0.4(0.0064) = 0.01792 \\
-\delta &= \frac{0.0448}{0.01792} = 2.5
+U(w)&=w^\top\Pi-\frac{\delta}{2}w^\top\Sigma w\\
+\nabla_wU&=\Pi-\delta\Sigma w=0\\
+w^*&=\frac1\delta\Sigma^{-1}\Pi\\
+w^*=w_m&\ \Rightarrow\ \Pi=\delta\Sigma w_m\\[4pt]
+w_m^\top\Pi&=\delta\,w_m^\top\Sigma w_m=\delta\sigma_m^2\\
+\delta&=\frac{r_m-r_f}{\sigma_m^2}\\
+\sigma_m^2&=0.6(0.0256)+0.4(0.0064)\\
+&=0.01792\\
+\delta&=\frac{0.0448}{0.01792}=2.5
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -157,8 +161,8 @@ w_m^\top\Pi &= \delta\,(w_m^\top\Sigma w_m) = \delta\,\sigma_m^2 \quad\Longright
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 1 — ผลตอบแทนที่ย้อนมาจากจุดอ้างอิง</h4>
-  <img src="../figures/17.9-1.svg" alt="ภาพที่ 1 — ผลตอบแทนที่ย้อนมาจากจุดอ้างอิง" loading="lazy">
+  <h4>Figure 17.9a — ผลตอบแทนที่ย้อนมาจากจุดอ้างอิง</h4>
+  <img src="../figures/17.9-1.svg" alt="Figure 17.9a — ผลตอบแทนที่ย้อนมาจากจุดอ้างอิง" loading="lazy">
   <figcaption>
     <p>แท่ง 6.4% และ 1.6% ทำให้น้ำหนัก 60/40 เป็นคำตอบตาม covariance และ coefficient ที่กำหนด การเปลี่ยนสมมติฐานเหล่านี้เปลี่ยนทั้งสองแท่งได้</p>
   </figcaption>
@@ -185,14 +189,13 @@ w_m^\top\Pi &= \delta\,(w_m^\top\Sigma w_m) = \delta\,\sigma_m^2 \quad\Longright
   <h4>ขั้นที่ 4 — รวมข้อมูลด้วยความแม่นของแต่ละฝั่ง</h4>
   <p>คำตอบสุดท้ายคือ ผลตอบแทนที่ตลาดบอกเป็นนัย บวกกับการปรับตามน้ำหนักความเชื่อ ตัวปรับคือส่วนต่างของ view ส่วนด้วยความไม่แน่นอนรวม</p>
   <div class="math">\[
-\begin{aligned}P\tau\Sigma P^\top+\Omega&=0.0021+0.0021=0.0042\\[4pt]
+\begin{aligned}
+P\tau\Sigma P^\top+\Omega&=0.0021+0.0021=0.0042\\
 \frac{q-P\Pi}{0.0042}&=\frac{-0.018}{0.0042}=-4.285714\\[4pt]
-\mu_{\mathrm{post}}&=\begin{bmatrix}0.064\\
-0.016\end{bmatrix}+(-4.285714)\begin{bmatrix}0.0018\\
--0.0003\end{bmatrix}\\
-&=\begin{bmatrix}0.064-0.007714\\
-0.016+0.001286\end{bmatrix}=\begin{bmatrix}0.056285714\\
-0.017285714\end{bmatrix}\end{aligned}
+\mu_{\mathrm{post}}&=\Pi-4.285714\begin{bmatrix}0.0018\\-0.0003\end{bmatrix}\\
+&=\begin{bmatrix}0.064-0.007714\\0.016+0.001286\end{bmatrix}\\
+&=\begin{bmatrix}0.056286\\0.017286\end{bmatrix}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวคูณ $-4.285714$ เป็นลบเพราะ view มองส่วนต่างต่ำกว่าที่ตลาดบอก จึงกดผลตอบแทนของหุ้นลงและดันของ bond ขึ้น</p>
@@ -210,7 +213,7 @@ w_m^\top\Pi &= \delta\,(w_m^\top\Sigma w_m) = \delta\,\sigma_m^2 \quad\Longright
   <div class="reading">
     <p>รูปนี้คำนวณโดยแก้ระบบขนาดเท่าจำนวนมุมมอง ลดการกลับ matrix ขนาดสินทรัพย์โดยตรง และแสดงชัดว่าหากมุมมองตรงกับ prior ค่าเฉลี่ยไม่ขยับ</p>
     <p>ให้ $A=\tau\Sigma$ เป็น covariance ของความไม่แน่นอนใน mean และให้ error ของ view เป็นอิสระจาก mean ภายใต้แบบจำลอง Gaussian ค่าเฉลี่ยหลังเห็น view เป็นจุดต่ำสุดของ $J(m)=(m-\Pi)^\mathsf{T}A^{-1}(m-\Pi)/2+(q-Pm)^\mathsf{T}\Omega^{-1}(q-Pm)/2$ เพราะ posterior density แปรตาม $e^{-J(m)}$ และเป็น Normal</p>
-    <p>หาderivativeแล้วตั้งศูนย์ได้ $A^{-1}(m-\Pi)-P^\mathsf{T}\Omega^{-1}(q-Pm)=0$ ตรวจคำตอบโดยให้ $h=(P\,A\,P^\mathsf{T}+\Omega)^{-1}(q-P\Pi)$ และ $m=\Pi+A\,P^\mathsf{T}h$ จะได้ $A^{-1}(m-\Pi)=P^\mathsf{T}h$</p>
+    <p>หา derivative แล้วตั้งศูนย์ได้ $A^{-1}(m-\Pi)-P^\mathsf{T}\Omega^{-1}(q-Pm)=0$ ตรวจคำตอบโดยให้ $h=(P\,A\,P^\mathsf{T}+\Omega)^{-1}(q-P\Pi)$ และ $m=\Pi+A\,P^\mathsf{T}h$ จะได้ $A^{-1}(m-\Pi)=P^\mathsf{T}h$</p>
     <p>อีกข้างมี $q-Pm=(q-P\Pi)-P\,A\,P^\mathsf{T}h=(P\,A\,P^\mathsf{T}+\Omega)h-P\,A\,P^\mathsf{T}h=\Omega h$ จึงให้ $P^\mathsf{T}\Omega^{-1}(q-Pm)=P^\mathsf{T}h$ เท่ากันพอดี และ curvature เป็น positive definite เมื่อ $A,\Omega$ positive definite จึงเป็นคำตอบต่ำสุดหนึ่งเดียว</p>
   </div>
 </section>
@@ -221,15 +224,15 @@ w_m^\top\Pi &= \delta\,(w_m^\top\Sigma w_m) = \delta\,\sigma_m^2 \quad\Longright
   <p>ส่วนก้อนกลาง $(P\tau\Sigma P^\top + \Omega)^{-1}$ ทำหน้าที่เป็นตัวกรองความเชื่อมั่น หากเราไม่มั่นใจในมุมมองเลยจน $\Omega \to \infty$ ตัวคูณนี้จะลดลงจนกลายเป็นศูนย์ ทำให้แบบจำลองกลับไปถือพอร์ตตลาดโดยอัตโนมัติ ไม่เกิดการเหวี่ยงของน้ำหนักเหมือนวิธีดั้งเดิม</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb{E}[q] &= \mathbb{E}[P\mu + \epsilon] = P\Pi \\
-\operatorname{Cov}(\mu, q) &= \operatorname{Cov}(\mu, P\mu + \epsilon) = (\tau\Sigma)P^\top \\
-\operatorname{Var}(q) &= P(\tau\Sigma)P^\top + \Omega \\
-\begin{bmatrix} \mu \\
-q \end{bmatrix} &\sim \mathcal{N}\left( \begin{bmatrix} \Pi \\
-P\Pi \end{bmatrix}, \begin{bmatrix} \tau\Sigma & \tau\Sigma P^\top \\
-P\tau\Sigma & P\tau\Sigma P^\top + \Omega \end{bmatrix} \right) \\
-\mu_{\mathrm{post}} = \mathbb{E}[\mu \mid q] &= \mathbb{E}[\mu] + \operatorname{Cov}(\mu, q)\left[\operatorname{Var}(q)\right]^{-1}(q - \mathbb{E}[q]) \\
-&= \Pi + \tau\Sigma P^\top(P\tau\Sigma P^\top + \Omega)^{-1}(q - P\Pi)
+\mathbb E[q]&=\mathbb E[P\mu+\epsilon]=P\Pi\\
+\operatorname{Cov}(\mu,q)&=\operatorname{Cov}(\mu,P\mu+\epsilon)\\
+&=\tau\Sigma P^\top\\
+\operatorname{Var}(q)&=P\tau\Sigma P^\top+\Omega\\[4pt]
+\mu_{\mathrm{post}}&=\mathbb E[\mu\mid q]\\
+&=\mathbb E[\mu]+\operatorname{Cov}(\mu,q)\operatorname{Var}(q)^{-1}\\
+&\qquad\times(q-\mathbb E[q])\\
+&=\Pi+\tau\Sigma P^\top(P\tau\Sigma P^\top+\Omega)^{-1}\\
+&\qquad\times(q-P\Pi)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -243,14 +246,16 @@ P\tau\Sigma & P\tau\Sigma P^\top + \Omega \end{bmatrix} \right) \\
   <h4>ขั้นที่ 6 — แทนความเชื่อมั่นที่ระบุเป็น variance</h4>
   <p>view หนึ่งข้อคือ ส่วนต่างของสองสินทรัพย์จะเท่ากับ 3% จึงต้องคำนวณว่า view นี้แตะ covariance อย่างไร</p>
   <div class="math">\[
-\begin{aligned}\tau\Sigma&=0.05\begin{bmatrix}0.04&amp;0.004\\
-0.004&amp;0.01\end{bmatrix}=\begin{bmatrix}0.0020&amp;0.0002\\
-0.0002&amp;0.0005\end{bmatrix}\\[4pt]
-\tau\Sigma P^\top&=\begin{bmatrix}0.0020-0.0002\\
-0.0002-0.0005\end{bmatrix}=\begin{bmatrix}0.0018\\
--0.0003\end{bmatrix}\\[4pt]
-P\tau\Sigma P^\top&=0.0018-(-0.0003)=0.0021,\qquad \Omega=0.0021\\[4pt]
-P\Pi&=0.064-0.016=0.048,\qquad q-P\Pi=0.03-0.048=-0.018\end{aligned}
+\begin{aligned}
+\tau\Sigma&=0.05\begin{bmatrix}0.04&0.004\\0.004&0.01\end{bmatrix}\\
+&=\begin{bmatrix}0.0020&0.0002\\0.0002&0.0005\end{bmatrix}\\
+\tau\Sigma P^\top&=\begin{bmatrix}0.0020-0.0002\\0.0002-0.0005\end{bmatrix}\\
+&=\begin{bmatrix}0.0018\\-0.0003\end{bmatrix}\\
+P\tau\Sigma P^\top&=0.0018+0.0003=0.0021\\
+\Omega&=0.0021\\
+P\Pi&=0.064-0.016=0.048\\
+q-P\Pi&=0.03-0.048=-0.018
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$P=\begin{bmatrix}1&-1\end{bmatrix}$ แปลว่า view พูดถึงผลต่างของสองตัว การคูณด้วย $P^\top$ จึงเป็นการเอาคอลัมน์แรกลบคอลัมน์ที่สอง</p>
@@ -282,17 +287,13 @@ P\Pi&=0.064-0.016=0.048,\qquad q-P\Pi=0.03-0.048=-0.018\end{aligned}
   <p>ผลรวมของ active tilt เป็นศูนย์เสมอ ทำให้การปรับพอร์ตไม่กระทบงบประมาณรวม และ matrix $M$ ยืนยันว่าการรับฟังข้อมูลใหม่ช่วยลด parameter uncertainty ในระบบลงอย่างเป็นระบบ</p>
   <div class="math">\[
 \begin{aligned}
-w^* &= \frac{1}{\delta}\Sigma^{-1}\mu_{\mathrm{post}} = \frac{1}{\delta}\Sigma^{-1}\left[\Pi + \tau\Sigma P^\top(P\tau\Sigma P^\top + \Omega)^{-1}(q - P\Pi)\right] \\
-&= w_m + P^\top \Lambda, \quad \Lambda = \frac{\tau}{\delta}(P\tau\Sigma P^\top + \Omega)^{-1}(q - P\Pi) \\
-\Lambda &= \frac{0.05}{2.5}\left(\frac{-0.018}{0.0042}\right) = 0.02(-4.285714) = -0.085714 \\
-w^* &= \begin{bmatrix} 0.600000 \\
-0.400000 \end{bmatrix} + \begin{bmatrix} -0.085714 \\
-+0.085714 \end{bmatrix} = \begin{bmatrix} 0.514286 \\
-0.485714 \end{bmatrix} \\
-M &= \tau\Sigma - \tau\Sigma P^\top(P\tau\Sigma P^\top + \Omega)^{-1}P\tau\Sigma = \begin{bmatrix} 0.001229 & 0.000329 \\
-0.000329 & 0.000479 \end{bmatrix} \\
-\Sigma_{\text{pred}} &= \Sigma + M = \begin{bmatrix} 0.041229 & 0.004329 \\
-0.004329 & 0.010479 \end{bmatrix}
+w^*&=\frac1\delta\Sigma^{-1}\mu_{\mathrm{post}}=w_m+P^\top\Lambda\\
+\Lambda&=\frac{\tau}{\delta}(P\tau\Sigma P^\top+\Omega)^{-1}(q-P\Pi)\\
+&=0.02(-4.285714)=-0.085714\\
+w^*&=\begin{bmatrix}0.6-0.085714\\0.4+0.085714\end{bmatrix}=\begin{bmatrix}0.514286\\0.485714\end{bmatrix}\\[4pt]
+M&=\tau\Sigma-\frac{(\tau\Sigma P^\top)(P\tau\Sigma)}{0.0042}\\
+&=\begin{bmatrix}0.001229&0.000329\\0.000329&0.000479\end{bmatrix}\\
+\Sigma+M&=\begin{bmatrix}0.041229&0.004329\\0.004329&0.010479\end{bmatrix}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -303,32 +304,32 @@ M &= \tau\Sigma - \tau\Sigma P^\top(P\tau\Sigma P^\top + \Omega)^{-1}P\tau\Sigma
 </section>
 
 <figure class="plot">
-  <h4>ภาพที่ 2 — ความเห็นใหม่อยู่ห่างจากสิ่งที่เชื่อเดิม</h4>
-  <img src="../figures/17.9-2.svg" alt="ภาพที่ 2 — ความเห็นใหม่อยู่ห่างจากสิ่งที่เชื่อเดิม" loading="lazy">
+  <h4>Figure 17.9b — ความเห็นใหม่อยู่ห่างจากสิ่งที่เชื่อเดิม</h4>
+  <img src="../figures/17.9-2.svg" alt="Figure 17.9b — ความเห็นใหม่อยู่ห่างจากสิ่งที่เชื่อเดิม" loading="lazy">
   <figcaption>
     <p>ส่วนต่างหลังปรับ 3.9 จุดเปอร์เซ็นต์อยู่กึ่งกลาง 4.8 และ 3.0 เพราะ variance ของสองแหล่งเท่ากันสำหรับมุมมองนี้ ไม่ใช่เพราะ Black-Litterman ต้องเฉลี่ยครึ่งหนึ่งเสมอ</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 3 — จาก prior ผ่าน view ไปยังน้ำหนัก</h4>
-  <img src="../figures/17.9-3.svg" alt="ภาพที่ 3 — จาก prior ผ่าน view ไปยังน้ำหนัก" loading="lazy">
+  <h4>Figure 17.9c — จาก prior ผ่าน view ไปยังน้ำหนัก</h4>
+  <img src="../figures/17.9-3.svg" alt="Figure 17.9c — จาก prior ผ่าน view ไปยังน้ำหนัก" loading="lazy">
   <figcaption>
     <p>น้ำหนักฝั่ง view-only ในภาพคือขีดจำกัดที่บังคับส่วนต่าง 3% แน่นอนพร้อมคงโครงสร้าง prior ส่วนที่ไม่ถูกมอง ไม่ใช่น้ำหนักที่ view เดี่ยวระบุได้ลำพัง น้ำหนักหลังผสมจึงอยู่ระหว่างกรณีอ้างอิงกับขีดจำกัดนี้</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 4 — ความไม่แน่นอนมากทำให้กลับหาจุดอ้างอิง</h4>
-  <img src="../figures/17.9-4.svg" alt="ภาพที่ 4 — ความไม่แน่นอนมากทำให้กลับหาจุดอ้างอิง" loading="lazy">
+  <h4>Figure 17.9d — ความไม่แน่นอนมากทำให้กลับหาจุดอ้างอิง</h4>
+  <img src="../figures/17.9-4.svg" alt="Figure 17.9d — ความไม่แน่นอนมากทำให้กลับหาจุดอ้างอิง" loading="lazy">
   <figcaption>
     <p>เพิ่มอัตราส่วน view variance ต่อ prior แล้วน้ำหนักหุ้นกลับใกล้ 60% เส้นนี้แสดงความไวต่อสมมติฐานความมั่นใจ ไม่ใช่ความน่าจะเป็นว่าความเห็นถูก</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>ภาพที่ 5 — มุมมองซ้ำไม่ควรถูกนับเป็นพยานอิสระ</h4>
-  <img src="../figures/17.9-5.svg" alt="ภาพที่ 5 — มุมมองซ้ำไม่ควรถูกนับเป็นพยานอิสระ" loading="lazy">
+  <h4>Figure 17.9e — มุมมองซ้ำไม่ควรถูกนับเป็นพยานอิสระ</h4>
+  <img src="../figures/17.9-5.svg" alt="Figure 17.9e — มุมมองซ้ำไม่ควรถูกนับเป็นพยานอิสระ" loading="lazy">
   <figcaption>
     <p>ใช้มุมมองส่วนต่างหุ้นกับพันธบัตร 3% ซ้ำสองบรรทัด หากถือว่าความผิดพลาดเป็นอิสระ posterior จะเคลื่อนมากเกินกรณีที่ความผิดพลาดของสองบรรทัดมี correlation 0.9 ตัวอย่างนี้ชี้ว่าช่องนอกแนวทแยงของ Omega เป็นข้อมูลทางเศรษฐศาสตร์ ไม่ใช่รายละเอียดตกแต่งของ matrix</p>
   </figcaption>
@@ -340,10 +341,14 @@ M &= \tau\Sigma - \tau\Sigma P^\top(P\tau\Sigma P^\top + \Omega)^{-1}P\tau\Sigma
 </section>
 
 <section class="example">
-  <h4>คำตอบ → ตรวจเอง → ใช้ตัดสินใจ</h4>
-  <p>หุ้นเป้าหมายประมาณ 5,142,857 USD และ Treasury 4,857,143 USD จึงย้ายราว 857,143 USD จากหุ้นไป Treasury ก่อนต้นทุน</p>
-  <p>ตรวจเร็ว: สองยอดรวม 10 ล้าน USD และหุ้นลดจาก 6 ล้านลงมาราว 857,143 USD เท่ากับเงินที่อีกฝั่งเพิ่ม</p>
-  <p>กรณีนี้ weights รวมหนึ่งเพราะมุมมองเป็นแบบ relative และปรับสองฝั่งเท่ากัน โดยทั่วไปห้าม normalize เงียบ ๆ ถ้านโยบายบังคับลงทุนเต็มหรือห้าม short ต้องแก้ optimization พร้อม constraints ใหม่</p>
+  <h4>คำตอบ — มุมมองว่าหุ้นดีกว่า แต่ลดหุ้น</h4>
+  <p>คำถาม: พอร์ตอ้างอิงถือหุ้น 60% พันธบัตร 40% ทุน 10 ล้าน USD ทีมวิจัยคิดว่าหุ้นจะชนะพันธบัตร 3 จุดต่อปี แต่ไม่มั่นใจเต็มร้อย ควรเพิ่มหุ้นหรือลดหุ้น และเท่าไร?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 7</p>
+  <p>1. ย้อนจากน้ำหนัก 60/40 ด้วย $\delta=2.5$ ได้ผลตอบแทนส่วนเกินที่ตลาดบอกเป็นนัย 6.4% และ 1.6% ส่วนต่าง 4.8 จุด</p>
+  <p>2. มุมมองบอก 3 จุด ความไม่แน่นอนของมุมมองเท่ากับของตลาด ผสมได้ส่วนต่าง 3.9 จุด คือ 5.63% และ 1.73%</p>
+  <p>3. น้ำหนักใหม่คือหุ้น 51.43% พันธบัตร 48.57% หุ้นเหลือ 5,142,857 USD พันธบัตร 4,857,143 USD</p>
+  <p>ตรวจเองใน 10 วินาที: 4.8 + (3.0 − 4.8)(0.5) = 3.9 และ 0.6 − 0.0857 = 0.5143</p>
+  <p>แปลว่าอะไร: มุมมองต้องเทียบกับสิ่งที่ราคาสะท้อนอยู่แล้ว ไม่ใช่เทียบกับศูนย์ คำว่าหุ้นจะดีกว่าจึงอาจแปลว่าลดหุ้น และการเบนจากพอร์ตอ้างอิงถูกจำกัดด้วยความมั่นใจที่ประกาศ อธิบายต่อคณะกรรมการได้ทีละบรรทัด</p>
 </section>
 
 <section class="pitfall">

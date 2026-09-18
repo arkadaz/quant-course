@@ -1,1 +1,1 @@
-x=np.arange(3);e=np.array([1/7,.5,13/27]);ax.bar(x,100*e,label='US equities');ax.bar(x,100*(1-e),bottom=100*e,label='US Treasuries');ax.set_xticks(x,['Min variance','50 / 50','Tangency']);ax.set_ylabel('Portfolio weight (%)');ax.legend(loc='lower right')
+x=np.arange(3);e=np.array([.045,.5,.3219]);ax.bar(x,100*e,label='US equities');ax.bar(x,100*(1-e),bottom=100*e,label='US Treasuries');ax.set_xticks(x,['Min variance','50 / 50','Tangency']);ax.set_ylabel('Portfolio weight (%)');ax.legend(loc='lower right')

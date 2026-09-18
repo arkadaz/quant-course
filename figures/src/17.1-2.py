@@ -1,3 +1,10 @@
-rng=np.random.default_rng(171);a=-20e6*rng.normal(.0002,.011,250);b=-20e6*rng.normal(.0002,.011,100000)
-vals=[np.quantile(a,.99,method='inverted_cdf'),np.quantile(b,.99,method='inverted_cdf'),20e6*(.011*stats.norm.ppf(.99)-.0002)]
-ax.bar(['Synthetic history','Monte Carlo','Analytic'],np.array(vals)/1000,color=[WARM,ACCENT,GOOD]);ax.set_ylabel('VaR 99% (USD thousand)')
+L=np.array([-1.1168,-1.3565,1.3754,-1.0396,0.5662,-0.005,-1.9092,1.1039,-0.2332,-0.6678,-1.3045,0.8229,0.9616,-0.9685,1.0631,-2.8888,0.6022,1.1204,-0.9511,0.081,-0.8619,0.0685,-0.2053,0.9565,0.1795,-2.4565,-0.0656,-0.1942,0.3471,-0.2564,1.2923,-0.3045,0.4619,-1.8819,-1.1397,1.9877,-0.096,1.044,-0.2722,-0.0218,0.814,1.9191,2.145,-0.3924,0.8846,-2.0569,-0.8699,-0.4551,-0.5114,-0.0412,0.2515,-0.6077,1.8807,-0.2756,-1.2639,-1.4916,-0.9395,2.3707,-0.2759,-0.736])
+s=np.sort(L)
+ax.hist(L,bins=np.arange(-3.2,2.81,0.4),color=MUTED,alpha=.55,edgecolor='white',label='60 monthly losses')
+ax.scatter(s[-4:],[0.4]*4,color=[WARM,BAD,BAD,BAD],zorder=3,s=36)
+ax.axvline(1.9191,color=WARM,ls='--',lw=1.4,label='VaR 95%: 57th of 60 = 1.919%')
+ax.axvline(2.1678,color=BAD,ls='--',lw=1.4,label='ES 95%: mean of top 3 = 2.168%')
+ax.axvline(1.7907,color=ACCENT,ls=':',lw=1.4,label='normal fit VaR 1.791%')
+ax.axvline(2.2702,color=ACCENT,ls='-.',lw=1.2,label='normal fit ES 2.270%')
+ax.set_xlabel('Monthly loss of the equal-weight portfolio (%)');ax.set_ylabel('Months')
+ax.set_title('Assignment 2: only three months sit in the 5% tail',loc='left');ax.legend(fontsize=6.8,loc='upper left');ax.grid(alpha=.2)
