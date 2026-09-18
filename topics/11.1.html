@@ -199,11 +199,16 @@ dS_t &= S_t\!\left[\left(\mu-\tfrac12\sigma^{2}\right)dt+\sigma\,dW_t\right]+\tf
   <p>สูตรนี้คือ exact transition ของ GBM ไม่ใช่ approximation — ไม่ว่า $\Delta t$ จะใหญ่หรือเล็ก</p>
   <p>การ simulate ต้องการแค่สองอย่าง: ราคาปัจจุบัน $S_t$ กับตัวสุ่ม $Z$ ที่ดึงจาก standard normal ไม่ต้องเก็บเส้นทางทั้งหมด — นี่คือสมบัติ Markov ที่สืบทอดมาจาก Brownian motion</p>
   <div class="math">\[
-\begin{aligned}S_{t+\Delta t}&= S_0\,e^{\left(\mu-\frac12\sigma^{2}\right)(t+\Delta t)+\sigma W_{t+\Delta t}}\\
-&= S_0\,e^{\left(\mu-\frac12\sigma^{2}\right)t+\sigma W_t}\;\cdot\; e^{\left(\mu-\frac12\sigma^{2}\right)\Delta t+\sigma(W_{t+\Delta t}-W_t)}\\
+\begin{aligned}
+S_{t+\Delta t}&= S_0\,e^{\left(\mu-\frac12\sigma^{2}\right)(t+\Delta t)+\sigma W_{t+\Delta t}}\\
+&= S_0\,e^{\left(\mu-\frac12\sigma^{2}\right)t+\sigma W_t}\\
+&\quad\;\cdot\; e^{\left(\mu-\frac12\sigma^{2}\right)\Delta t+\sigma(W_{t+\Delta t}-W_t)}\\
 &= S_t\;\cdot\; e^{\left(\mu-\frac12\sigma^{2}\right)\Delta t+\sigma\sqrt{\Delta t}\,Z_{t+\Delta t}}\\
-W_{t+\Delta t}-W_t &\sim \mathcal N(0,\Delta t)\;=\;\sqrt{\Delta t}\,Z,\quad Z\sim\mathcal N(0,1)\\
-\Longrightarrow\quad S_{t+\Delta t}&= S_t\,e^{\left(\mu-\frac12\sigma^{2}\right)\Delta t+\sigma\sqrt{\Delta t}\,Z}\end{aligned}
+&W_{t+\Delta t}-W_t \sim \mathcal N(0,\Delta t)\\
+&\;=\;\sqrt{\Delta t}\,Z,\quad Z\sim\mathcal N(0,1)\\
+&\Longrightarrow\quad S_{t+\Delta t}\\
+&= S_t\,e^{\left(\mu-\frac12\sigma^{2}\right)\Delta t+\sigma\sqrt{\Delta t}\,Z}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากสูตร exponential ของขั้นที่ 1 ที่เวลา $t+\Delta t$ แล้วแยก exponent เป็นสองก้อน: ก้อนแรกคือส่วนที่เกิดไปแล้วถึงเวลา $t$ ก้อนที่สองคือส่วนที่จะเกิดในอนาคตอีก $\Delta t$</p>
@@ -262,10 +267,14 @@ S_3 &= 99.03\,\exp(0.00032063 + 0.0176383 \times 0.05)\\
   <p>เมื่อจำลองครบหนึ่งปีหรือ 252 วันทำการ ผลตอบแทนล็อกจะมี distribution ปกติรอบ 0.0808 ด้วย variance 0.0784</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb{E}[S_{252}] &= 100\,\exp(0.12 \times 1) = 112.75\text{ USD}\\
-\text{Median}(S_{252}) &= 100\,\exp(0.0808 \times 1) = 108.42\text{ USD}\\
-q_{0.05} &= 100\,\exp(0.0808 - 1.6449 \times 0.28) = 68.40\text{ USD}\\
-q_{0.95} &= 100\,\exp(0.0808 + 1.6449 \times 0.28) = 171.83\text{ USD}\\
+\mathbb{E}[S_{252}] &= 100\,\exp(0.12 \times 1)\\
+&= 112.75\text{ USD}\\
+&\text{Median}(S_{252})\\
+&= 100\,\exp(0.0808 \times 1) = 108.42\text{ USD}\\
+q_{0.05} &= 100\,\exp(0.0808 - 1.6449 \times 0.28)\\
+&= 68.40\text{ USD}\\
+q_{0.95} &= 100\,\exp(0.0808 + 1.6449 \times 0.28)\\
+&= 171.83\text{ USD}\\
 \text{gap} &= 112.75 - 108.42 = 4.33\text{ USD}
 \end{aligned}
 \]</div>

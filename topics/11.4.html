@@ -122,13 +122,18 @@ S_t&=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}\gt0\\
   <p>ลองตรวจด้วยตัวเลขจริงของการเทรด 252 วันในหนึ่งปี ($T=1$): ถ้าหุ้นมี drift 10% และความผันผวน $\sigma=0.20$ ต่อปี ในแต่ละวันการแกว่งตัวจะสร้างแรงฉุดขนาดเล็ก เมื่อสะสมครบ 252 วัน ผลรวมของแรงฉุดจะเท่ากับ $-0.5 \times (0.20)^2 = -0.02$ หรือลดลง 2% ต่อปีเต็มพอดี</p>
   <div class="math">\[
 \begin{aligned}
-\frac{S_T}{S_0}&=\prod_{k=1}^n(1+R_k),\qquad R_k\approx\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
+\frac{S_T}{S_0}&=\prod_{k=1}^n(1+R_k)\\
+R_k&\approx\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
 \log\frac{S_T}{S_0}&=\sum_{k=1}^n\log(1+R_k)\\
-\log(1+u)&=u-\tfrac12u^2+\cdots\qquad(\text{Taylor})\\
-\log\frac{S_T}{S_0}&\approx\sum_{k=1}^n\Big(\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k-\tfrac12\sigma^2\Delta t\,Z_k^2\Big)\\
-&\approx\mu T-\tfrac12\sigma^2T+\sigma\sqrt T\,Z\qquad(n\Delta t=T)\\
+\log(1+u)&=u-\tfrac12u^2+\cdots\\
+&\quad(\text{Taylor})\\
+\log\frac{S_T}{S_0}&\approx\sum_{k=1}^n\Big(\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
+&\qquad-\tfrac12\sigma^2\Delta t\,Z_k^2\Big)\\
+&\approx\mu T-\tfrac12\sigma^2T+\sigma\sqrt T\,Z\\
+&\quad(n\Delta t=T)\\
 S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
-\mu=10\%,\ \sigma=20\%&:\ -\tfrac12(0.20)^2=-0.02\ \text{per year}
+&\mu=10\%,\ \sigma=20\%:\\
+&\quad-\tfrac12(0.20)^2=-0.02\ \text{per year}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -172,13 +177,18 @@ S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
   <p>แต่ต้องซื่อสัตย์ด้วยว่าแบบจำลองนี้ผิดตรงไหน ขั้นนี้ให้ตัวเลขที่แบบจำลองทำนาย เพื่อเอาไปเทียบกับความถี่ที่เกิดขึ้นจริง การเทียบนั้นคือเนื้อหาของหัวข้อ 17.7 และมักจบด้วยการที่แบบจำลองแพ้</p>
   <div class="math">\[
 \begin{aligned}
-r&=\log\frac{S_{t+\Delta t}}{S_t}\sim\mathcal N\Big(\big(\mu-\tfrac12\sigma^2\big)\Delta t,\ \sigma^2\Delta t\Big)\\
-\mathbb P(r\le-x)&=\Phi\Big(\frac{-x-(\mu-\sigma^2/2)\Delta t}{\sigma\sqrt{\Delta t}}\Big)\\[4pt]
-(\mu-\sigma^2/2)\Delta t&=0.08/252=0.000317\\
-\sigma\sqrt{\Delta t}&=0.20/15.8745=0.012599\\
-x=5\%&:\ z=\frac{-0.05-0.000317}{0.012599}=-3.994\\
-\mathbb P(r\le-5\%)&=\Phi(-3.994)=0.0000325\\
-1/0.0000325&=30{,}762\ \text{days}=122\ \text{years}
+r&=\log\frac{S_{t+\Delta t}}{S_t}\\
+&\sim\mathcal N\Big(\big(\mu-\tfrac12\sigma^2\big)\Delta t,\ \sigma^2\Delta t\Big)\\
+&\mathbb P(r\le-x)\\
+&=\Phi\Big(\frac{-x-(\mu-\sigma^2/2)\Delta t}{\sigma\sqrt{\Delta t}}\Big)\\[4pt]
+&(\mu-\sigma^2/2)\Delta t=0.08/252=0.000317\\
+&\sigma\sqrt{\Delta t}=0.20/15.8745=0.012599\\
+&x=5\%:\\
+z&=\frac{-0.05-0.000317}{0.012599}=-3.994\\
+&\mathbb P(r\le-5\%)\\
+&=\Phi(-3.994)=0.0000325\\
+&1/0.0000325=30{,}762\ \text{days}\\
+&=122\ \text{years}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -216,7 +226,8 @@ x=5\%&:\ z=\frac{-0.05-0.000317}{0.012599}=-3.994\\
   <p>บรรทัดนี้ไม่ใช่ผลที่พิสูจน์ มันเป็น เงื่อนไขที่กำหนดขึ้น เพื่อใช้ตรวจ ตรรกะมีข้อเดียว: ถ้าแบบจำลองที่มีความเหวี่ยงค่าเดียวอธิบายตลาดได้จริง ค่าความเหวี่ยงที่ย้อนกลับมาจากราคา option ทุกตัวต้องเท่ากันหมด ของจริงไม่เท่า และรูปที่ไม่เท่านั้นมีชื่อว่า smile ซึ่งเป็นหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
   <div class="math">\[
 \begin{aligned}
-\sigma_{\mathrm{imp}}(K,T)&=\sigma\qquad(\text{every strike }K\text{ and maturity }T)
+&\sigma_{\mathrm{imp}}(K,T)=\sigma\\
+&\quad(\text{every strike }K\text{ and maturity }T)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -261,10 +272,12 @@ x=5\%&:\ z=\frac{-0.05-0.000317}{0.012599}=-3.994\\
 \begin{aligned}
 \text{mean}&=S_0\,e^{\mu T}\\
 \text{median}&=S_0\,e^{(\mu-\sigma^{2}/2)T}\\[4pt]
-\mu=0.10,\ \sigma=0.20&:\ \mu-\sigma^2/2=0.10-0.02=0.08\\
-T=10&:\ \text{mean}=100e^{1.0}=271.83\\
+&\mu=0.10,\ \sigma=0.20:\\
+&\quad\mu-\sigma^2/2=0.10-0.02=0.08\\
+&T=10:\\
+&\quad\text{mean}=100e^{1.0}=271.83\\
 &\quad\text{median}=100e^{0.8}=222.55\\
-271.83/222.55&=e^{0.2}=1.2214
+&271.83/222.55=e^{0.2}=1.2214
 \end{aligned}
 \]</div>
   <div class="reading">
