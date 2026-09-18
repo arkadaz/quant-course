@@ -93,9 +93,17 @@
   <h4>ขั้นที่ 1 — นับ 100 วันด้วยมือก่อน ยังไม่ต้องมีชื่อกฎ</h4>
   <p>ลืมสัญลักษณ์ก่อน สมมติ 100 วันเทรด แล้วนับว่าแต่ละแบบเกิดกี่วัน ได้เงินรวมเท่าไร ทำเสร็จแล้วค่อยดูว่ากฎที่มีชื่อพูดอะไร</p>
   <div class="math">\[
-\begin{aligned}\text{normal days}&=0.8\times100=80,\qquad \text{P\&amp;L}=80\times\$100=\$8{,}000\\
-\text{event-stress days}&=0.2\times100=20,\qquad \text{P\&amp;L}=20\times(-\$600)=-\$12{,}000\\
-\text{total over 100 days}&=8{,}000-12{,}000=-\$4{,}000\quad\Longrightarrow\quad \frac{-4{,}000}{100}=-\$40\text{ per day}\end{aligned}
+\begin{aligned}
+&\text{normal days}\\
+&=0.8\times100=80\\
+\text{P\&amp;L}&=80\times\$100=\$8{,}000\\
+&\text{event-stress days}\\
+&=0.2\times100=20\\
+\text{P\&amp;L}&=20\times(-\$600)=-\$12{,}000\\
+&\text{total over 100 days}\\
+&=8{,}000-12{,}000=-\$4{,}000\\
+&\Longrightarrow\quad \frac{-4{,}000}{100}=-\$40\text{ per day}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>แต่ละบรรทัดคือการนับ: วันปกติ 80 วัน ได้วันละ 100 รวม 8,000 วันข่าวแรง 20 วัน เสียวันละ 600 รวม 12,000 เอามาลบกันแล้วหารจำนวนวัน ได้ค่าเฉลี่ยต่อวัน −40 USD</p>
@@ -119,11 +127,19 @@
   <h4>ขั้นที่ 3 — $\mathbb{E}[Y\mid X]$ เป็น random variable ไม่ใช่ตัวเลข</h4>
   <p>จุดที่คนพลาดคือมอง $\mathbb{E}[Y\mid X]$ เป็นเลขตัวเดียว ถ้ามองแบบนั้น ค่าเฉลี่ยซ้อนสองชั้นในขั้นถัดไปจะอ่านไม่ออกเลย เพราะไม่รู้ว่ากำลังเฉลี่ยอะไรอยู่</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}[Y\mid X=\text{calm}]&=\$100,\qquad P(X=\text{calm})=0.8\\
-\mathbb{E}[Y\mid X=\text{stress}]&=-\$600,\qquad P(X=\text{stress})=0.2\\[4pt]
+\begin{aligned}
+&\mathbb{E}[Y\mid X=\text{calm}]\\
+&=\$100\\
+&P(X=\text{calm})=0.8\\
+&\mathbb{E}[Y\mid X=\text{stress}]\\
+&=-\$600\\
+&P(X=\text{stress})=0.2\\[4pt]
 M&=\mathbb{E}[Y\mid X]\\
-M&=\$100\ \ (p=0.8),\qquad M=-\$600\ \ (p=0.2)\\[4pt]
-\mathbb{E}[M]&=0.8(\$100)+0.2(-\$600)=-\$40\end{aligned}
+M&=\$100\ \ (p=0.8)\\
+M&=-\$600\ \ (p=0.2)\\[4pt]
+\mathbb{E}[M]&=0.8(\$100)+0.2(-\$600)\\
+&=-\$40
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ขั้นที่ 2 ให้ตัวเลขมาสองตัว แต่สองตัวนั้นไม่ได้ลอยอยู่เฉย ๆ มันผูกอยู่กับสภาวะที่ยังไม่รู้ว่าจะออกอันไหน ของแบบนั้นมีชื่อเรียกอยู่แล้วตั้งแต่หัวข้อ 1.1 คือ random variable</p>
@@ -136,10 +152,14 @@ M&=\$100\ \ (p=0.8),\qquad M=-\$600\ \ (p=0.2)\\[4pt]
   <h4>ขั้นที่ 4 — เฉลี่ย conditional forecast</h4>
   <p>เมื่อได้คำตอบของแต่ละสภาวะแล้ว ก็ถ่วงด้วยโอกาสที่แต่ละสภาวะจะเกิด แล้วรวมกัน</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]&=\mathbb{E}[Y\mid X=\text{calm}]\,P(X=\text{calm})+\mathbb{E}[Y\mid X=\text{stress}]\,P(X=\text{stress})\\
+\begin{aligned}
+&\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\\
+&=\mathbb{E}[Y\mid X=\text{calm}]\,P(X=\text{calm})\\
+&\quad+\mathbb{E}[Y\mid X=\text{stress}]\,P(X=\text{stress})\\
 &=(\$100)(0.8)+(-\$600)(0.2)\\
 &=\$80-\$120\\
-&=-\$40\;\text{USD/day}\end{aligned}
+&=-\$40\;\text{USD/day}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>นำ conditional expectation ของแต่ละ regime มาถ่วงน้ำหนักด้วย probability ของสภาวะนั้น</p>
@@ -150,15 +170,20 @@ M&=\$100\ \ (p=0.8),\qquad M=-\$600\ \ (p=0.2)\\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 5 — Tower Property: พิสูจน์ว่าการตอบทีละสภาวะให้คำตอบเดียวกันเสมอ</h4>
-  <p>สิ่งที่เพิ่งทำในสามขั้นแรกมีชื่อเรียก แต่ชื่อไม่ใช่เหตุผล เจ็ดบรรทัดนี้คือเหตุผล และมันบอกด้วยว่ากฎนี้ไม่ได้ขอ independence เลย ขอแค่ค่าเฉลี่ยทุกตัวมีค่าจำกัด ลองเทียบบรรทัดแรกกับเลข −40 USD ต่อวันในขั้นที่ 4 จะเห็นว่าเป็นสมการเดียวกัน</p>
+  <p>สิ่งที่เพิ่งทำในสามขั้นแรกมีชื่อเรียก แต่ชื่อไม่ใช่เหตุผล สูตรข้างล่างคือเหตุผล และมันบอกด้วยว่ากฎนี้ไม่ได้ขอ independence เลย ขอแค่ค่าเฉลี่ยทุกตัวมีค่าจำกัด ลองเทียบบรรทัดแรกกับเลข −40 USD ต่อวันในขั้นที่ 4 จะเห็นว่าเป็นสมการเดียวกัน</p>
   <div class="math">\[
-\begin{aligned}E\big[E[Y\mid X]\big]&=\sum_x E[Y\mid X=x]\,P(X=x)\\
-&=\sum_x\Big(\sum_y y\,P(Y=y\mid X=x)\Big)P(X=x)\\
-&=\sum_x\sum_y y\,P(Y=y\mid X=x)\,P(X=x)\\
+\begin{aligned}
+&E\big[E[Y\mid X]\big]\\
+&=\sum_x E[Y\mid X=x]\,P(X=x)\\
+&=\sum_x\Big(\sum_y y\,P(Y=y\mid X=x)\Big)\\
+&\quad P(X=x)\\
+&=\sum_x\sum_y y\,P(Y=y\mid X=x)\\
+&\quad P(X=x)\\
 &=\sum_x\sum_y y\,P(X=x,\,Y=y)\\
 &=\sum_y y\sum_x P(X=x,\,Y=y)\\
 &=\sum_y y\,P(Y=y)\\
-&=E[Y]\end{aligned}
+&=E[Y]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สิ่งที่ต้องพิสูจน์คือ การตอบทีละสภาวะแล้วถ่วงน้ำหนัก ให้คำตอบเดียวกับการตอบทั้งก้อนเสมอ บรรทัดแรกเขียนฝั่งซ้ายด้วยสัญลักษณ์ แล้วแทนคำตอบของแต่ละสภาวะด้วยนิยามของมัน คือค่าเฉลี่ยของ $Y$ ภายในสภาวะนั้น จากนั้นคูณ $P(X=x)$ เข้าไปข้างในได้ เพราะมันไม่ขึ้นกับตัวนับ $y$</p>
@@ -170,11 +195,16 @@ M&=\$100\ \ (p=0.8),\qquad M=-\$600\ \ (p=0.2)\\[4pt]
   <h4>ขั้นที่ 6 — ดึงของที่รู้แล้วออกมาข้างหน้า</h4>
   <p>กฎนี้คือเครื่องมือที่หายไปถ้าไม่พูดถึงให้ชัด เพราะทุกครั้งที่บทหลัง ๆ ดึงราคาวันนี้ออกมาไว้หน้า conditional expectation มันกำลังใช้บรรทัดนี้อยู่ ไม่ใช่สัญชาตญาณ</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}\big[g(X)\,Y\mid X=x\big]&=\sum_y g(x)\,y\,P(Y=y\mid X=x)\\
+\begin{aligned}
+&\mathbb{E}\big[g(X)\,Y\mid X=x\big]\\
+&=\sum_y g(x)\,y\,P(Y=y\mid X=x)\\
 &=g(x)\sum_y y\,P(Y=y\mid X=x)\\
 &=g(x)\,\mathbb{E}[Y\mid X=x]\\[4pt]
-\Longrightarrow\quad\mathbb{E}\big[g(X)\,Y\mid X\big]&=g(X)\,\mathbb{E}[Y\mid X]\\[4pt]
-g(X)=X:\qquad\mathbb{E}[X\mid X]&=X\end{aligned}
+&\Longrightarrow\quad\mathbb{E}\big[g(X)\,Y\mid X\big]\\
+&=g(X)\,\mathbb{E}[Y\mid X]\\[4pt]
+&g(X)=X:\\
+&\quad\mathbb{E}[X\mid X]=X
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>กุญแจอยู่ที่คำว่าเมื่อรู้ $X$ แล้ว พอตรึงค่าที่แน่นอน ก้อน $g(x)$ ก็ไม่ใช่ของสุ่มอีกต่อไป มันเป็นเลขคงที่ตัวหนึ่ง และดึงออกนอกผลรวมได้เสมอ ที่เหลือในผลรวมคือค่าเฉลี่ยของ $Y$ ในสภาวะนั้นพอดี</p>
@@ -187,13 +217,20 @@ g(X)=X:\qquad\mathbb{E}[X\mid X]&=X\end{aligned}
   <h4>Drill — สองกฎนี้ตอบโจทย์แบบนี้ได้ใน 20 วินาที</h4>
   <p>โจทย์ระดับข้อสอบมักไม่ถามกฎตรง ๆ แต่ถามผลคูณที่ต้องใช้สองกฎต่อกัน ถ้าอ่านออกว่าอะไรรู้แล้วและอะไรยังไม่รู้ ก็ตอบได้ในบรรทัดเดียวโดยไม่ต้องคำนวณ integral อะไรเลย</p>
   <div class="math">\[
-\begin{aligned}\text{given}:\quad\mathbb{E}[Y\mid X]&=3X,\qquad\mathbb{E}[X]=2,\qquad\operatorname{Var}(X)=1\\[4pt]
-\mathbb{E}[Y]&=\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]=\mathbb{E}[3X]=3(2)=6\\[4pt]
+\begin{aligned}
+&\text{given}:\\
+\mathbb{E}[Y\mid X]&=3X\\
+\mathbb{E}[X]&=2\\
+\operatorname{Var}(X)&=1\\[4pt]
+\mathbb{E}[Y]&=\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\\
+&=\mathbb{E}[3X]=3(2)=6\\[4pt]
 \mathbb{E}[XY]&=\mathbb{E}\big[\mathbb{E}[XY\mid X]\big]\\
 &=\mathbb{E}\big[X\,\mathbb{E}[Y\mid X]\big]\\
 &=\mathbb{E}\big[3X^{2}\big]=3\,\mathbb{E}\big[X^{2}\big]\\
-\mathbb{E}\big[X^{2}\big]&=\operatorname{Var}(X)+\big(\mathbb{E}[X]\big)^{2}=1+4=5\\
-\mathbb{E}[XY]&=3(5)=15\end{aligned}
+\mathbb{E}\big[X^{2}\big]&=\operatorname{Var}(X)+\big(\mathbb{E}[X]\big)^{2}\\
+&=1+4=5\\
+\mathbb{E}[XY]&=3(5)=15
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อแรกใช้ Tower Property อย่างเดียว แทนของที่โจทย์ให้ลงไปแล้วเฉลี่ย ได้ 6 ตรง ๆ</p>
@@ -293,13 +330,17 @@ g(X)=X:\qquad\mathbb{E}[X\mid X]&=X\end{aligned}
   <p>ในแบบจำลองการเงินอย่าง Black-Scholes (ซึ่งจะสร้างในบทที่ 13) หรือแบบจำลองอัตราดอกเบี้ย ตัวแปรส่วนใหญ่เป็น continuous variables การพิสูจน์ผ่าน integral จึงเป็นรากฐานสำคัญ</p>
   <p>เงื่อนไขชี้ขาดคือ $\mathbb{E}[|Y|] \lt \infty$ หาก random variable ไม่มี finite mean เช่น Cauchy distribution การสลับลำดับ integral จะผิดทันที และ Tower Property จะพังทลายลง</p>
   <div class="math">\[
-\begin{aligned}\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]&=\int_{-\infty}^{\infty}\mathbb{E}[Y\mid X=x]\,f_X(x)\,dx\\
-&=\int_{-\infty}^{\infty}\left(\int_{-\infty}^{\infty}y\,f_{Y\mid X}(y\mid x)\,dy\right)f_X(x)\,dx\\
+\begin{aligned}
+&\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\\
+&=\int_{-\infty}^{\infty}\mathbb{E}[Y\mid X=x]\,f_X(x)\,dx\\
+&=\int_{-\infty}^{\infty}\left(\int_{-\infty}^{\infty}y\,f_{Y\mid X}(y\mid x)\,dy\right)\\
+&\quad f_X(x)\,dx\\
 &=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}y\,\frac{f_{X,Y}(x,y)}{f_X(x)}\,f_X(x)\,dy\,dx\\
 &=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}y\,f_{X,Y}(x,y)\,dy\,dx\\
 &=\int_{-\infty}^{\infty}y\left(\int_{-\infty}^{\infty}f_{X,Y}(x,y)\,dx\right)dy\\
 &=\int_{-\infty}^{\infty}y\,f_Y(y)\,dy\\
-&=\mathbb{E}[Y]\end{aligned}
+&=\mathbb{E}[Y]
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เปลี่ยนจากผลรวม discrete มาเป็น integral ของ probability density สองชั้นสำหรับ continuous variables</p>
@@ -315,12 +356,19 @@ g(X)=X:\qquad\mathbb{E}[X\mid X]&=X\end{aligned}
   <p>สูตรลัดนี้สร้างขึ้นจากการกระจายกำลังสองและดึงของที่รู้แล้วออกมาทีละขั้น ไม่ใช่สูตรที่หยิบมาอ้างลอย ๆ</p>
   <p>ตรวจสูตรลัดนี้กับตัวเลขของหัวข้อนี้ได้ทันที ในสภาวะ calm ค่าเฉลี่ยคือ 100 และ variance คือ 160,000 ดังนั้นกำลังสองของค่าเฉลี่ยคือ 10,000 บวกกลับเข้าไปได้ $E[Y^2]=170{,}000$ และเมื่อหัก 10,000 ออก ก็ได้ 160,000 เท่าเดิม ซึ่งยืนยันว่าสูตรลัดไม่ได้ให้ค่าที่ต่างออกไป</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(Y\mid X)&=\mathbb{E}\big[\big(Y-\mathbb{E}[Y\mid X]\big)^2\mid X\big]\\
-&=\mathbb{E}\big[Y^2-2Y\,\mathbb{E}[Y\mid X]+\big(\mathbb{E}[Y\mid X]\big)^2\mid X\big]\\
-&=\mathbb{E}[Y^2\mid X]-2\,\mathbb{E}[Y\mid X]\,\mathbb{E}[Y\mid X]+\big(\mathbb{E}[Y\mid X]\big)^2\\
-&=\mathbb{E}[Y^2\mid X]-2\big(\mathbb{E}[Y\mid X]\big)^2+\big(\mathbb{E}[Y\mid X]\big)^2\\
+\begin{aligned}
+&\mathrm{Var}(Y\mid X)\\
+&=\mathbb{E}\big[\big(Y-\mathbb{E}[Y\mid X]\big)^2\mid X\big]\\
+&=\mathbb{E}\big[Y^2-2Y\,\mathbb{E}[Y\mid X]\\
+&\quad+\big(\mathbb{E}[Y\mid X]\big)^2\mid X\big]\\
+&=\mathbb{E}[Y^2\mid X]-2\,\mathbb{E}[Y\mid X]\,\mathbb{E}[Y\mid X]\\
+&\quad+\big(\mathbb{E}[Y\mid X]\big)^2\\
+&=\mathbb{E}[Y^2\mid X]-2\big(\mathbb{E}[Y\mid X]\big)^2\\
+&\quad+\big(\mathbb{E}[Y\mid X]\big)^2\\
 &=\mathbb{E}[Y^2\mid X]-\big(\mathbb{E}[Y\mid X]\big)^2\\[4pt]
-\Longrightarrow\quad \mathbb{E}[Y^2\mid X]&=\mathrm{Var}(Y\mid X)+\big(\mathbb{E}[Y\mid X]\big)^2\end{aligned}
+&\Longrightarrow\quad\mathbb{E}[Y^2\mid X]\\
+&=\mathrm{Var}(Y\mid X)+\big(\mathbb{E}[Y\mid X]\big)^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากนิยามรากฐานของ conditional variance คือ expected value ของกำลังสองของระยะห่างจากค่าเฉลี่ย</p>

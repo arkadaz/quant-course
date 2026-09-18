@@ -157,9 +157,16 @@
   <h4>ขั้นที่ 2 — โรงเบียร์ด้วยตัวเลข: เกณฑ์ 5% ต้องขยับจาก 1.96 เป็น 4.30</h4>
   <p>ข้อมูล 3 แปลงเหลือ 2 ชิ้นอิสระไว้ประมาณความเหวี่ยง เพราะหนึ่งชิ้นถูกใช้หาค่าเฉลี่ยไปแล้ว จึงใช้ $\nu=2$</p>
   <div class="math">\[
-\begin{aligned}\text{ratio}&=\frac{0.6}{0.1/\sqrt3}=10.39\\[4pt]
-P(|Z|\gt1.96)&=5\%\qquad\text{but}\qquad P(|\tau_2|\gt1.96)=18.9\%\\
-P(|\tau_2|\gt4.303)&=5\%\end{aligned}
+\begin{aligned}
+\text{ratio}&=\frac{0.6}{0.1/\sqrt3}=10.39\\[4pt]
+&P(|Z|\gt1.96)\\
+&=5\%\\
+&\quad\text{but}\\
+&P(|\tau_2|\gt1.96)\\
+&=18.9\%\\
+&P(|\tau_2|\gt4.303)\\
+&=5\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้าใช้เกณฑ์ของระฆังคือ 1.96 กับข้อมูลสามแปลง จะเตือนผิดเกือบหนึ่งในห้าครั้ง ไม่ใช่หนึ่งในยี่สิบ เกณฑ์ที่ถูกของ Student-t ที่ $\nu=2$ คือ 4.303 อัตราส่วน 10.39 ยังผ่านเกณฑ์นี้ ข้อมูลสามแปลงที่บังเอิญเกาะกลุ่มจึงหลอกได้ แม้ใช้เกณฑ์ที่ถูก</p>
@@ -170,9 +177,16 @@ P(|\tau_2|\gt4.303)&=5\%\end{aligned}
   <h4>ขั้นที่ 3 — เตรียมเครื่องมือ: gamma คือชื่อย่อของ integral หนึ่งแบบ</h4>
   <p>ให้ $a$ เป็นจำนวนบวก gamma เป็นแค่ชื่อของ integral นี้ และมีกฎหนึ่งข้อที่จะใช้ตัดทอนในขั้นถัดไป</p>
   <div class="math">\[
-\begin{aligned}\Gamma(a)&=\int_0^\infty u^{a-1}e^{-u}\,du\\
-\Gamma(a+1)&=\big[-u^{a}e^{-u}\big]_0^\infty+a\int_0^\infty u^{a-1}e^{-u}\,du=a\,\Gamma(a)\\
-\Gamma(1)&=1,\quad\Gamma(2)=1,\quad\Gamma(3)=2,\quad\Gamma(4)=6\end{aligned}
+\begin{aligned}
+\Gamma(a)&=\int_0^\infty u^{a-1}e^{-u}\,du\\
+\Gamma(a+1)&=\big[-u^{a}e^{-u}\big]_0^\infty\\
+&\quad+a\int_0^\infty u^{a-1}e^{-u}\,du\\
+&=a\,\Gamma(a)\\
+\Gamma(1)&=1\\
+\Gamma(2)&=1\\
+\Gamma(3)&=2\\
+\Gamma(4)&=6
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดที่สอง integrate ทีละส่วน ก้อนขอบเป็นศูนย์เพราะที่ศูนย์มีตัวคูณ $u^a$ และที่ปลายไกล $e^{-u}$ ตายเร็วกว่า บรรทัดล่างใช้กฎนี้ซ้ำจาก $\Gamma(1)=1$ ได้แฟกทอเรียล gamma จึงเป็นแฟกทอเรียลที่ใช้กับเลขไม่เต็มได้</p>
@@ -244,11 +258,17 @@ f_V(v)&=\frac{v^{\nu/2-1}e^{-v/2}}{2^{\nu/2}\,\Gamma(\nu/2)},\qquad v\gt0\end{al
   <h4>ขั้นที่ 8 — density ของ Student-t: ตรึงตัวหารก่อน แล้วเฉลี่ย</h4>
   <p>ถ้ารู้ $V=v$ แล้ว $\tau$ ก็เป็นแค่ Normal ที่ variance เท่ากับ $\nu/v$ จากนั้นเฉลี่ย density นี้ตามทุกค่าของ $V$</p>
   <div class="math">\[
-\begin{aligned}f_{\tau\mid V=v}(x)&=\sqrt{\frac{v}{2\pi\nu}}\,e^{-vx^2/(2\nu)}\\
+\begin{aligned}
+&f_{\tau\mid V=v}(x)\\
+&=\sqrt{\frac{v}{2\pi\nu}}\,e^{-vx^2/(2\nu)}\\
 f_\tau(x)&=\int_0^\infty f_{\tau\mid V=v}(x)\,f_V(v)\,dv\\
-a&=(\nu+1)/2,\qquad b=(1+x^2/\nu)/2\\
-\int_0^\infty v^{a-1}e^{-bv}\,dv&=b^{-a}\,\Gamma(a)\\
-f_\tau(x)&=\frac{\Gamma\big((\nu+1)/2\big)}{\sqrt{\nu\pi}\;\Gamma(\nu/2)}\Big(1+\frac{x^2}{\nu}\Big)^{-(\nu+1)/2}\end{aligned}
+a&=(\nu+1)/2\\
+b&=(1+x^2/\nu)/2\\
+&\int_0^\infty v^{a-1}e^{-bv}\,dv\\
+&=b^{-a}\,\Gamma(a)\\
+f_\tau(x)&=\frac{\Gamma\big((\nu+1)/2\big)}{\sqrt{\nu\pi}\;\Gamma(\nu/2)}\\
+&\quad\Big(1+\frac{x^2}{\nu}\Big)^{-(\nu+1)/2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>คูณ density สองตัว กำลังของ $v$ รวมเป็น $(\nu-1)/2$ และเลขชี้กำลังรวมเป็น $-v(1+x^2/\nu)/2$ ตั้งชื่อ $a$ กับ $b$ แล้วจะเห็นว่าเป็น integral gamma เดิม แทน $u=bv$ ได้ตัวคูณ $b^{-a}$</p>
@@ -278,9 +298,15 @@ f_\tau(x)&=\frac{\Gamma\big((\nu+1)/2\big)}{\sqrt{\nu\pi}\;\Gamma(\nu/2)}\Big(1+
   <h4>ขั้นที่ 10 — วันขาดทุน 2% ทั่วไป: Normal เทียบ Student-t</h4>
   <p>แปลงเกณฑ์กลับเป็นสเกลของ Student-t ดิบ แล้วอ่านพื้นที่หาง</p>
   <div class="math">\[
-\begin{aligned}\tau&=\frac{-1.855}{s}=-1.855\sqrt3=-3.213\\
-P(T\lt-1.855)&=P(\tau_3\lt-3.213)=2.44\%\\
-P(Z\lt-1.855)&=3.18\%\end{aligned}
+\begin{aligned}
+\tau&=\frac{-1.855}{s}=-1.855\sqrt3\\
+&=-3.213\\
+&P(T\lt-1.855)\\
+&=P(\tau_3\lt-3.213)\\
+&=2.44\%\\
+&P(Z\lt-1.855)\\
+&=3.18\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตาราง Student-t ที่ 3 degrees of freedom ให้หาง 2.5% ที่ 3.182 จุด 3.213 ไกลกว่าเล็กน้อยจึงได้ 2.44% ต่ำกว่าระฆัง เพราะเมื่อ variance เท่ากัน Student-t กองพื้นที่ไว้ตรงกลางกับหางไกล และเอามาจากไหล่ ซึ่งเป็นย่านของวันขาดทุน 2%</p>
@@ -291,11 +317,19 @@ P(Z\lt-1.855)&=3.18\%\end{aligned}
   <h4>ขั้นที่ 11 — วันหายนะที่ระยะ 4 เท่า: Normal เทียบ Student-t</h4>
   <p>ระยะ 4 เท่าของความเหวี่ยงคือขาดทุนราว 4.4% ในพอร์ตนี้ ทำแบบเดิมแล้วแปลงเป็นความถี่ต่อปี 250 วัน</p>
   <div class="math">\[
-\begin{aligned}\tau&=-4\sqrt3=-6.928\\
-P(\tau_3\lt-6.928)&=0.308\%,\qquad P(Z\lt-4)=0.00317\%\\
-\frac{0.308\%}{0.00317\%}&=97.3\\[4pt]
-\text{Normal}&:\ \frac{1}{0.0000317\times250}=126\ \text{years}\\
-\text{Student-t}&:\ \frac{1}{0.00308\times250}=1.3\ \text{years}\end{aligned}
+\begin{aligned}
+\tau&=-4\sqrt3=-6.928\\
+&P(\tau_3\lt-6.928)\\
+&=0.308\%\\
+&P(Z\lt-4)\\
+&=0.00317\%\\
+&\frac{0.308\%}{0.00317\%}\\
+&=97.3\\[4pt]
+&\text{Normal}:\\
+&\quad\frac{1}{0.0000317\times250}=126\ \text{years}\\
+&\text{Student-t}:\\
+&\quad\frac{1}{0.00308\times250}=1.3\ \text{years}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ระฆังบอกว่าวันแบบนี้เกิดราวครั้งเดียวใน 126 ปี Student-t บอกว่าเกิดราวทุก 1.3 ปี ข้อมูลกับค่าเฉลี่ยและ variance ชุดเดียวกัน แต่ความถี่ของวันหายนะต่างกันเกือบร้อยเท่า</p>
@@ -331,11 +365,19 @@ P(\tau_3\lt-6.928)&=0.308\%,\qquad P(Z\lt-4)=0.00317\%\\
   <h4>ขั้นที่ 12 — จาก Poisson ที่นับศูนย์ครั้ง สู่เวลารอ</h4>
   <p>รอเกิน $t$ วินาทีแปลว่าในช่วง $t$ วินาทีนั้นไม่มีคำสั่งเข้าเลย ใช้ Poisson ที่ $r=0$ แล้วได้ CDF, density และค่าเฉลี่ย</p>
   <div class="math">\[
-\begin{aligned}P(X\gt t)&=P(\text{no order in }t)=\frac{(\lambda t)^0e^{-\lambda t}}{0!}=e^{-\lambda t}\\
+\begin{aligned}
+P(X\gt t)&=P(\text{no order in }t)\\
+&=\frac{(\lambda t)^0e^{-\lambda t}}{0!}\\
+&=e^{-\lambda t}\\
 F(t)&=1-e^{-\lambda t}\\
-f(t)&=\frac{d}{dt}\big(1-e^{-\lambda t}\big)=\lambda e^{-\lambda t}\\
-\mathbb E[X]&=\int_0^\infty t\,\lambda e^{-\lambda t}\,dt=\big[-te^{-\lambda t}\big]_0^\infty+\int_0^\infty e^{-\lambda t}\,dt\\
-&=0+\Big[-\frac{e^{-\lambda t}}{\lambda}\Big]_0^\infty=\frac1\lambda\end{aligned}
+f(t)&=\frac{d}{dt}\big(1-e^{-\lambda t}\big)\\
+&=\lambda e^{-\lambda t}\\
+\mathbb E[X]&=\int_0^\infty t\,\lambda e^{-\lambda t}\,dt\\
+&=\big[-te^{-\lambda t}\big]_0^\infty\\
+&\quad+\int_0^\infty e^{-\lambda t}\,dt\\
+&=0+\Big[-\frac{e^{-\lambda t}}{\lambda}\Big]_0^\infty\\
+&=\frac1\lambda
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใน $t$ วินาที จำนวนคำสั่งเป็น Poisson ที่มีค่าเฉลี่ย $\lambda t$ โอกาสได้ศูนย์ครั้งคือ $e^{-\lambda t}$ เอา 1 ลบได้ CDF แล้ว differentiate ได้ density ตามหัวข้อ 1.8</p>
@@ -347,10 +389,20 @@ f(t)&=\frac{d}{dt}\big(1-e^{-\lambda t}\big)=\lambda e^{-\lambda t}\\
   <h4>ขั้นที่ 13 — variance ของ Exponential: ความเหวี่ยงเท่ากับค่าเฉลี่ยพอดี</h4>
   <p>integrate ทีละส่วนอีกครั้งเพื่อหาค่าเฉลี่ยของ $X^2$ แล้วใช้สูตรลัดของหัวข้อ 1.4</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[X^2]&=\int_0^\infty t^2\lambda e^{-\lambda t}\,dt=\big[-t^2e^{-\lambda t}\big]_0^\infty+\int_0^\infty 2t\,e^{-\lambda t}\,dt\\
-&=0+\frac{2}{\lambda}\int_0^\infty t\,\lambda e^{-\lambda t}\,dt=\frac{2}{\lambda}\cdot\frac{1}{\lambda}=\frac{2}{\lambda^2}\\
-\mathrm{Var}(X)&=\frac{2}{\lambda^2}-\Big(\frac1\lambda\Big)^2=\frac{1}{\lambda^2},\qquad\sigma_X=\frac1\lambda\\
-\lambda=0.2&:\ \mathrm{Var}(X)=25\ \text{s}^2,\qquad\sigma_X=5\ \text{s}\end{aligned}
+\begin{aligned}
+\mathbb E[X^2]&=\int_0^\infty t^2\lambda e^{-\lambda t}\,dt\\
+&=\big[-t^2e^{-\lambda t}\big]_0^\infty\\
+&\quad+\int_0^\infty 2t\,e^{-\lambda t}\,dt\\
+&=0+\frac{2}{\lambda}\int_0^\infty t\,\lambda e^{-\lambda t}\,dt\\
+&=\frac{2}{\lambda}\cdot\frac{1}{\lambda}\\
+&=\frac{2}{\lambda^2}\\
+\mathrm{Var}(X)&=\frac{2}{\lambda^2}-\Big(\frac1\lambda\Big)^2\\
+&=\frac{1}{\lambda^2}\\
+\sigma_X&=\frac1\lambda\\
+&\lambda=0.2:\\
+&\quad\mathrm{Var}(X)=25\ \text{s}^2\\
+&\quad\sigma_X=5\ \text{s}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดที่สองคือค่าเฉลี่ยของขั้นที่ 12 ที่คูณ $2/\lambda$ ไม่ต้อง integrate ใหม่ ความเหวี่ยง 5 วินาทีเท่ากับค่าเฉลี่ย 5 วินาทีพอดี</p>
@@ -362,9 +414,16 @@ f(t)&=\frac{d}{dt}\big(1-e^{-\lambda t}\big)=\lambda e^{-\lambda t}\\
   <h4>ขั้นที่ 14 — memoryless: เวลาที่รอมาแล้วหายไปจากสมการ</h4>
   <p>รอมาแล้ว $s$ วินาทียังไม่มีคำสั่ง โอกาสที่ต้องรอต่ออีกเกิน $t$ วินาทีเป็นเท่าไร ใช้นิยาม conditional probability ของหัวข้อ 1.7 แล้วลองกับตัวเลข</p>
   <div class="math">\[
-\begin{aligned}P(X\gt s+t\mid X\gt s)&=\frac{P(X\gt s+t\ \text{and}\ X\gt s)}{P(X\gt s)}=\frac{P(X\gt s+t)}{P(X\gt s)}\\
-&=\frac{e^{-\lambda(s+t)}}{e^{-\lambda s}}=e^{-\lambda(s+t)+\lambda s}=e^{-\lambda t}=P(X\gt t)\\[4pt]
-s=10,\ t=10&:\ \frac{e^{-4}}{e^{-2}}=e^{-2}=13.53\%\end{aligned}
+\begin{aligned}
+&P(X\gt s+t\mid X\gt s)\\
+&=\frac{P(X\gt s+t\ \text{and}\ X\gt s)}{P(X\gt s)}\\
+&=\frac{P(X\gt s+t)}{P(X\gt s)}\\
+&=\frac{e^{-\lambda(s+t)}}{e^{-\lambda s}}\\
+&=e^{-\lambda(s+t)+\lambda s}\\
+&=e^{-\lambda t}=P(X\gt t)\\[4pt]
+&s=10,\ t=10:\\
+&\quad\frac{e^{-4}}{e^{-2}}=e^{-2}=13.53\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวบนยุบเหลือก้อนเดียว เพราะรอเกิน $s+t$ ก็แปลว่ารอเกิน $s$ อยู่แล้ว จุดชี้ขาดคือตอนรวมเลขชี้กำลัง ก้อน $\lambda s$ หักกันหมด เวลาที่รอมาแล้วไม่เหลืออยู่ในคำตอบ</p>
@@ -406,9 +465,16 @@ P(X\gt10)=e^{-0.2\times10}=e^{-2}=13.53\%
   <h4>ขั้นที่ 17 — median กับค่าเฉลี่ย: ครึ่งหนึ่งของคำสั่งมาก่อน 3.5 วินาที</h4>
   <p>หาเวลาที่ครึ่งหนึ่งของคำสั่งมาถึงแล้ว โดยแก้ CDF เท่ากับ 0.5 แล้วดูว่าที่ค่าเฉลี่ยมีคำสั่งมาแล้วกี่เปอร์เซ็นต์</p>
   <div class="math">\[
-\begin{aligned}1-e^{-\lambda m}&=0.5\ \Rightarrow\ e^{-\lambda m}=0.5\ \Rightarrow\ m=\frac{\ln2}{\lambda}\\
-\lambda=0.2&:\ m=\frac{0.6931}{0.2}=3.47\ \text{s}\\
-P\big(X\le\mathbb E[X]\big)&=1-e^{-\lambda\cdot(1/\lambda)}=1-e^{-1}=63.2\%\end{aligned}
+\begin{aligned}
+1-e^{-\lambda m}&=0.5\\
+&\quad\Rightarrow\ e^{-\lambda m}=0.5\\
+&\quad\Rightarrow\ m=\frac{\ln2}{\lambda}\\
+&\lambda=0.2:\\
+&\quad m=\frac{0.6931}{0.2}=3.47\ \text{s}\\
+&P\big(X\le\mathbb E[X]\big)\\
+&=1-e^{-\lambda\cdot(1/\lambda)}\\
+&=1-e^{-1}=63.2\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ครึ่งหนึ่งของคำสั่งมาภายใน 3.47 วินาที และเกือบสองในสามมาก่อนค่าเฉลี่ย 5 วินาที ค่าเฉลี่ยไม่ได้แบ่งครึ่ง เพราะหางขวายาวของการรอนาน ๆ ดึงค่าเฉลี่ยขึ้น เหมือน mean กับ median ของราคาในหัวข้อ 1.10</p>
@@ -438,9 +504,15 @@ P\big(X\le\mathbb E[X]\big)&=1-e^{-\lambda\cdot(1/\lambda)}=1-e^{-1}=63.2\%\end{
   <h4>ขั้นที่ 18 — Inverse Transform Sampling: ทำไมย้อนผ่าน CDF แล้วได้รูปทรงที่ต้องการ</h4>
   <p>ให้ $F$ เป็น CDF ของเป้าหมาย สุ่ม $U$ แล้วตั้ง $X=F^{-1}(U)$ ต้องตรวจว่า CDF ของ $X$ คือ $F$ จริง</p>
   <div class="math">\[
-\begin{aligned}X&=F^{-1}(U)\\
-F^{-1}(U)\le x\quad&\text{exactly when}\quad U\le F(x)\qquad(F\ \text{never decreases})\\
-P(X\le x)&=P\big(U\le F(x)\big)=F(x)\end{aligned}
+\begin{aligned}
+X&=F^{-1}(U)\\
+&F^{-1}(U)\le x\\
+&\quad\text{exactly when}\\
+&\quad U\le F(x)\\
+&\quad(F\ \text{never decreases})\\
+P(X\le x)&=P\big(U\le F(x)\big)\\
+&=F(x)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดที่สองคือหัวใจ: เพราะ $F$ ไม่เคยลดลง การถามว่าผลที่ย้อนกลับไม่เกิน $x$ เป็นคำถามเดียวกับการถามว่าเลขสุ่มไม่เกิน $F(x)$ เช่นเวลารอไม่เกิน 4.97 วินาทีก็ต่อเมื่อเลขสุ่มไม่เกิน 0.63</p>
@@ -510,11 +582,23 @@ Z_2&=1.6651\sin3.7699=-0.9787
   <h4>ขั้นที่ 22 — Pareto: เมื่อขนาดของเหตุการณ์มีหางแบบ power law</h4>
   <p>ขนาดคำสั่งซื้อขายมักมีหางยาวมาก สมมติคำสั่งเล็กสุด 100 หุ้น และโอกาสเกินขนาด $x$ ลดลงแบบ $(x_m/x)^{k}$ โดย $k=1.5$ หาค่าเฉลี่ย แล้วเทียบหางกับ Exponential ที่ค่าเฉลี่ยเท่ากัน</p>
   <div class="math">\[
-\begin{aligned}P(X\gt x)&=\Big(\frac{x_m}{x}\Big)^{k},\qquad f(x)=\frac{k\,x_m^{k}}{x^{k+1}},\qquad x\ge x_m\\
-\mathbb E[X]&=\int_{x_m}^\infty x\,\frac{k\,x_m^{k}}{x^{k+1}}\,dx=k\,x_m^{k}\Big[\frac{x^{1-k}}{1-k}\Big]_{x_m}^{\infty}=\frac{k\,x_m}{k-1}\qquad(k\gt1)\\[4pt]
-x_m=100,\ k=1.5&:\ \mathbb E[X]=\frac{1.5\times100}{0.5}=300\ \text{shares}\\
-P(X\gt10{,}000)&=\Big(\frac{100}{10{,}000}\Big)^{1.5}=0.001\\
-\text{Exponential, mean }300&:\ P(X\gt10{,}000)=e^{-10{,}000/300}\approx3\times10^{-15}\end{aligned}
+\begin{aligned}
+P(X\gt x)&=\Big(\frac{x_m}{x}\Big)^{k}\\
+f(x)&=\frac{k\,x_m^{k}}{x^{k+1}},\qquad x\ge x_m\\
+\mathbb E[X]&=\int_{x_m}^\infty x\,\frac{k\,x_m^{k}}{x^{k+1}}\,dx\\
+&=k\,x_m^{k}\Big[\frac{x^{1-k}}{1-k}\Big]_{x_m}^{\infty}\\
+&=\frac{k\,x_m}{k-1}\qquad(k\gt1)\\[4pt]
+&x_m=100,\ k=1.5:\\
+&\quad\mathbb E[X]=\frac{1.5\times100}{0.5}\\
+&\qquad=300\ \text{shares}\\
+&P(X\gt10{,}000)\\
+&=\Big(\frac{100}{10{,}000}\Big)^{1.5}\\
+&=0.001\\
+&\text{Exponential, mean }300:\\
+&\quad P(X\gt10{,}000)\\
+&\qquad=e^{-10{,}000/300}\\
+&\qquad\approx3\times10^{-15}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>density คือความชันของ CDF ตามหัวข้อ 1.8 ค่าเฉลี่ยมีได้เฉพาะเมื่อ $k\gt1$ เพราะไม่งั้น $x^{1-k}$ ไม่ลดลงที่ปลายไกล ทำนองเดียวกัน variance มีได้เฉพาะเมื่อ $k\gt2$ ที่ $k=1.5$ จึงมีค่าเฉลี่ยแต่ไม่มี variance</p>

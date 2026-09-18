@@ -167,10 +167,16 @@ P(\underbrace{\text{W}\cdots\text{W}}_{8}\,\text{L}\,\text{L})&=0.5^{8}\times0.5
   <h4>ขั้นที่ 4 — ตรวจว่านับครบทุกลำดับ</h4>
   <p>สิบปี ปีละสองผล มีลำดับทั้งหมดกี่แบบ แล้วจำนวนแบบของทุก $r$ ตั้งแต่ 0 ถึง 10 รวมกันต้องได้เท่านั้นพอดี</p>
   <div class="math">\[
-\begin{aligned}\underbrace{2\times2\times\cdots\times2}_{10}&=2^{10}=1024\\[4pt]
-1+10+45+120+210&=386\\
-252+210+120+45+10+1&=638\\
-386+638&=1024\end{aligned}
+\begin{aligned}
+&\underbrace{2\times2\times\cdots\times2}_{10}\\
+&=2^{10}=1024\\[4pt]
+&1+10+45+120+210\\
+&=386\\
+&252+210+120+45+10+1\\
+&=638\\
+&386+638\\
+&=1024
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ปีแรกมีสองทาง แต่ละทางแตกเป็นสองทางในปีที่สอง ไปจนปีที่สิบ ได้ 1,024 ลำดับ นี่คือ sample space ทั้งหมด</p>
@@ -187,9 +193,16 @@ P(\underbrace{\text{W}\cdots\text{W}}_{8}\,\text{L}\,\text{L})&=0.5^{8}\times0.5
   <h4>ขั้นที่ 5 — ประกอบเป็นสูตร Binomial PMF</h4>
   <p>ตอนนี้มีครบสองชิ้น คือโอกาสของหนึ่งลำดับจากขั้นที่ 1 และจำนวนลำดับจากขั้นที่ 3 ขั้นนี้คูณสองชิ้นเข้าด้วยกัน โดยให้โอกาสชนะเป็น $p$ ใด ๆ ไม่ใช่แค่ 0.5</p>
   <div class="math">\[
-\begin{aligned}P(\text{one given sequence})&=\underbrace{p\cdots p}_{r}\times\underbrace{(1-p)\cdots(1-p)}_{n-r}=p^{r}(1-p)^{n-r}\\[4pt]
-P(X=r)&=\binom{n}{r}\,p^{r}(1-p)^{n-r},\qquad r=0,1,\dots,n\\[4pt]
-P(X=8)&=45\times0.5^{8}\times0.5^{2}=\frac{45}{1024}\end{aligned}
+\begin{aligned}
+&P(\text{one given sequence})\\
+&=\underbrace{p\cdots p}_{r}\\
+&\qquad\times\underbrace{(1-p)\cdots(1-p)}_{n-r}\\
+&=p^{r}(1-p)^{n-r}\\[4pt]
+P(X=r)&=\binom{n}{r}\,p^{r}(1-p)^{n-r},\\
+&\quad r=0,1,\dots,n\\[4pt]
+P(X=8)&=45\times0.5^{8}\times0.5^{2}\\
+&=\frac{45}{1024}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือขั้นที่ 1 แบบทั่วไป ชนะ $r$ ครั้งได้ $p$ ทุกครั้ง แพ้ที่เหลือได้ $1-p$ ทุกครั้ง แล้วคูณกันทั้งแถว</p>

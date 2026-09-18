@@ -137,8 +137,15 @@ a\begin{bmatrix}1\\
   <p>กลับไปที่โจทย์เปิดเรื่อง แต่ละกองทุนบอกว่าเงินหนึ่งดอลลาร์ถูกแบ่งไปธนาคาร พลังงาน และเทคอย่างละเท่าไร เรียงสามช่องตามลำดับนี้ทุกตัว แล้วเช็กก่อนว่าแต่ละกองลงเงินครบ 100%</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf{A}&=\begin{bmatrix}0.6\\ 0.4\\ 0.0\end{bmatrix},\quad \mathbf{B}=\begin{bmatrix}0.2\\ 0.0\\ 0.8\end{bmatrix},\quad \mathbf{C}=\begin{bmatrix}0.4\\ 0.2\\ 0.4\end{bmatrix}\\[4pt]
-0.6+0.4+0.0&=1.0,\qquad 0.2+0.0+0.8=1.0,\qquad 0.4+0.2+0.4=1.0
+\mathbf{A}&=\begin{bmatrix}0.6\\ 0.4\\ 0.0\end{bmatrix}\\
+\mathbf{B}&=\begin{bmatrix}0.2\\ 0.0\\ 0.8\end{bmatrix}\\
+\mathbf{C}&=\begin{bmatrix}0.4\\ 0.2\\ 0.4\end{bmatrix}\\[4pt]
+&0.6+0.4+0.0\\
+&=1.0\\
+&0.2+0.0+0.8\\
+&=1.0\\
+&0.4+0.2+0.4\\
+&=1.0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -184,9 +191,15 @@ a\begin{bmatrix}1\\
   <p>แทน α = 0.5 และ β = 0.5 ลงในแถวธนาคาร ถ้าตรง C ซ้ำจริง ถ้าไม่ตรง C ให้ของใหม่</p>
   <div class="math">\[
 \begin{aligned}
-(1):\quad 0.6(0.5)+0.2(0.5)&=0.30+0.10=0.40=C_{\text{bank}}\\[4pt]
-0.5\mathbf{A}+0.5\mathbf{B}&=\begin{bmatrix}0.30+0.10\\ 0.20+0.00\\ 0.00+0.40\end{bmatrix}=\begin{bmatrix}0.4\\ 0.2\\ 0.4\end{bmatrix}=\mathbf{C}\\[4pt]
-C_{\text{bank}}=0.45:\quad 0.40&\ne0.45
+&(1):\\
+&0.6(0.5)+0.2(0.5)\\
+&=0.30+0.10\\
+&=0.40=C_{\text{bank}}\\[4pt]
+&0.5\mathbf{A}+0.5\mathbf{B}\\
+&=\begin{bmatrix}0.30+0.10\\ 0.20+0.00\\ 0.00+0.40\end{bmatrix}\\
+&=\begin{bmatrix}0.4\\ 0.2\\ 0.4\end{bmatrix}=\mathbf{C}\\[4pt]
+&C_{\text{bank}}=0.45:\\
+&0.40\ne0.45
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -225,9 +238,13 @@ a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
   <div class="math">\[
 \begin{aligned}
 \mathbf{v}_k &= c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_{k-1}\mathbf{v}_{k-1} \\
-\mathbf{0} &= c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_{k-1}\mathbf{v}_{k-1} + (-1)\mathbf{v}_k \\
-\sum_{j=1}^{k} a_j \mathbf{v}_j &= \mathbf{0} \quad\text{with}\quad a_k = -1 \ne 0 \\
-\text{independent:}\quad\sum_{j=1}^{k} a_j \mathbf{v}_j = \mathbf{0} &\Longrightarrow a_1 = a_2 = \cdots = a_k = 0
+\mathbf{0} &= c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \cdots + c_{k-1}\mathbf{v}_{k-1} \\
+&\quad+ (-1)\mathbf{v}_k \\
+&\sum_{j=1}^{k} a_j \mathbf{v}_j = \mathbf{0} \\
+&\quad\text{with}\quad a_k = -1 \ne 0 \\
+&\text{independent:}\\
+&\sum_{j=1}^{k} a_j \mathbf{v}_j = \mathbf{0} \\
+&\quad\Longrightarrow a_1 = a_2 = \cdots = a_k = 0
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -242,11 +259,20 @@ a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
   <p>ย้าย C จากขั้นที่ 5 ไปฝั่งเดียวกับ A และ B แล้วดูว่าได้ชุดตัวคูณที่ไม่เป็นศูนย์ทั้งหมดตามนิยามหรือไม่</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf{C}=0.5\mathbf{A}+0.5\mathbf{B}\quad&\Longrightarrow\quad 0.5\mathbf{A}+0.5\mathbf{B}-1\cdot\mathbf{C}=\mathbf{0}\\[4pt]
-\text{bank:}\quad 0.5(0.6)+0.5(0.2)-0.4&=0.3+0.1-0.4=0\\
-\text{energy:}\quad 0.5(0.4)+0.5(0.0)-0.2&=0.2+0.0-0.2=0\\
-\text{tech:}\quad 0.5(0.0)+0.5(0.8)-0.4&=0.0+0.4-0.4=0\\[4pt]
-\mathbf{A}+\mathbf{B}=2\mathbf{C}\quad&\Longrightarrow\quad \mathbf{A}=2\mathbf{C}-\mathbf{B},\qquad \mathbf{B}=2\mathbf{C}-\mathbf{A}
+&\mathbf{C}=0.5\mathbf{A}+0.5\mathbf{B}\\
+&\quad\Longrightarrow 0.5\mathbf{A}+0.5\mathbf{B}-1\cdot\mathbf{C}=\mathbf{0}\\[4pt]
+&\text{bank:}\\
+&0.5(0.6)+0.5(0.2)-0.4\\
+&=0.3+0.1-0.4=0\\
+&\text{energy:}\\
+&0.5(0.4)+0.5(0.0)-0.2\\
+&=0.2+0.0-0.2=0\\
+&\text{tech:}\\
+&0.5(0.0)+0.5(0.8)-0.4\\
+&=0.0+0.4-0.4=0\\[4pt]
+&\mathbf{A}+\mathbf{B}=2\mathbf{C}\\
+&\quad\Longrightarrow \mathbf{A}=2\mathbf{C}-\mathbf{B}\\
+&\qquad \mathbf{B}=2\mathbf{C}-\mathbf{A}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -332,12 +358,18 @@ a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
   <p>C ไม่เพิ่มอะไร ของที่สร้างได้ทั้งหมดจึงมาจาก A กับ B เท่านั้น เขียนพอร์ตเป้าหมายเป็น (ธนาคาร, พลังงาน, เทค) = (x, y, z) แล้วถามว่าต้องผสมเท่าไร</p>
   <div class="math">\[
 \begin{aligned}
-\alpha\mathbf{A}+\beta\mathbf{B}&=\begin{bmatrix}0.6\alpha+0.2\beta\\ 0.4\alpha\\ 0.8\beta\end{bmatrix}=\begin{bmatrix}x\\ y\\ z\end{bmatrix}\\[4pt]
+\alpha\mathbf{A}+\beta\mathbf{B}&=\begin{bmatrix}0.6\alpha+0.2\beta\\ 0.4\alpha\\ 0.8\beta\end{bmatrix}\\
+&=\begin{bmatrix}x\\ y\\ z\end{bmatrix}\\[4pt]
 \alpha&=\frac{y}{0.4}=2.5y\\
 \beta&=\frac{z}{0.8}=1.25z\\[4pt]
-x&=0.6(2.5y)+0.2(1.25z)=1.5y+0.25z\\[4pt]
-\mathbf{C}:\quad x&=1.5(0.2)+0.25(0.4)=0.3+0.1=0.4\\
-(1,0,0):\quad x&=1.5(0)+0.25(0)=0\ne1
+x&=0.6(2.5y)+0.2(1.25z)\\
+&=1.5y+0.25z\\[4pt]
+&\mathbf{C}:\\
+x&=1.5(0.2)+0.25(0.4)\\
+&=0.3+0.1=0.4\\
+&(1,0,0):\\
+x&=1.5(0)+0.25(0)\\
+&=0\ne1
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -380,11 +412,14 @@ x&=0.6(2.5y)+0.2(1.25z)=1.5y+0.25z\\[4pt]
   <p>บรรทัดล่างคือทางลัดที่หัวข้อ 4.5 จะอธิบายเต็ม: determinant ไม่เป็นศูนย์ก็ต่อเมื่อคอลัมน์ทั้งสามเป็นอิสระกัน คิดจากแถวบนด้วยการกระจายทีละคอลัมน์</p>
   <div class="math">\[
 \begin{aligned}
-a\mathbf{u}+b\mathbf{v}+c\mathbf{w}&=\mathbf{0}\\
-&\Longrightarrow\ a+c=0,\ \ b+c=0,\ \ a+b=0\\
-&\Longrightarrow\ a=-c,\ \ b=-c,\ \ -2c=0\\
+&a\mathbf{u}+b\mathbf{v}+c\mathbf{w}=\mathbf{0}\\
+&\Longrightarrow\ a+c=0,\ \ b+c=0\\
+&\qquad\ \ a+b=0\\
+&\Longrightarrow\ a=-c,\ \ b=-c\\
+&\qquad\ \ -2c=0\\
 &\Longrightarrow\ c=0,\ \ a=b=0\\[6pt]
-\det\begin{bmatrix}1&0&1\\0&1&1\\1&1&0\end{bmatrix}&=1(0-1)-0(0-1)+1(0-1)\\
+&\det\begin{bmatrix}1&0&1\\0&1&1\\1&1&0\end{bmatrix}\\
+&=1(0-1)-0(0-1)+1(0-1)\\
 &=-1+0-1=-2\ne0
 \end{aligned}
 \]</div>

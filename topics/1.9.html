@@ -134,9 +134,14 @@ K=10&:\ 0.136\ \text{exact},\quad e^{-2}=0.135
   <h4>ขั้นที่ 2 — ตั้งชื่อรูปทรงนี้: สูตรของ Normal</h4>
   <p>ขั้นที่ 1 ได้รูป $e^{-K^2/(2\sigma^2)}$ โดย $\sigma=5$ ถ้าเลื่อนจุดกลางไปที่ $\mu$ ใด ๆ และให้ความกว้างเป็น $\sigma$ ใด ๆ ได้สูตรทั่วไป ตัวคูณหน้าทำให้พื้นที่รวมเป็น 1 ซึ่งขั้นที่ 3 จะหามา</p>
   <div class="math">\[
-\begin{aligned}f(x)&=\frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}\\[4pt]
-\frac{f(\mu\pm\sigma)}{f(\mu)}&=e^{-1/2}=0.6065,\qquad \frac{f(\mu\pm2\sigma)}{f(\mu)}=e^{-2}=0.1353\\[4pt]
-\text{100 coins}&:\ f(50)=\frac{1}{5\times2.5066}=0.0798\ \text{vs exact}\ 0.0796\end{aligned}
+\begin{aligned}
+f(x)&=\frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}\\[4pt]
+\frac{f(\mu\pm\sigma)}{f(\mu)}&=e^{-1/2}=0.6065\\
+\frac{f(\mu\pm2\sigma)}{f(\mu)}&=e^{-2}=0.1353\\[4pt]
+&\text{100 coins}:\\
+f(50)&=\frac{1}{5\times2.5066}=0.0798\\
+&\quad\text{vs exact}\ 0.0796
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อ่านจากข้างใน: $x-\mu$ คือระยะจากจุดกลาง หาร $\sigma$ เพื่อวัดเป็นหน่วยความกว้าง แล้วคูณกับตัวเอง เครื่องหมายลบทำให้ยิ่งห่างยิ่งเตี้ย และเพราะระยะถูกคูณกับตัวเอง ความเตี้ยจึงมาเร็วมาก</p>
@@ -164,12 +169,21 @@ I&=\sqrt{2\pi}=2.5066\end{aligned}
   <h4>ขั้นที่ 4 — ค่าเฉลี่ยคือ $\mu$ และ variance คือ $\sigma^{2}$: คำนวณออกมา ไม่ใช่ประกาศ</h4>
   <p>เปลี่ยนทุกระฆังเป็นระฆังมาตรฐานด้วย z-score แล้วหาสองค่าของระฆังมาตรฐาน เครื่องมือมีแค่ความสมมาตรกับการ integrate ทีละส่วน</p>
   <div class="math">\[
-\begin{aligned}\varphi(z)&=\frac{1}{\sqrt{2\pi}}e^{-z^{2}/2},\qquad Z=\frac{X-\mu}{\sigma},\qquad X=\mu+\sigma Z\\[4pt]
-\mathbb{E}[Z]&=\int_{-\infty}^{\infty}z\,\varphi(z)\,dz=0\qquad(\varphi(-z)=\varphi(z))\\[4pt]
+\begin{aligned}
+\varphi(z)&=\frac{1}{\sqrt{2\pi}}e^{-z^{2}/2}\\
+Z&=\frac{X-\mu}{\sigma}\\
+X&=\mu+\sigma Z\\[4pt]
+\mathbb{E}[Z]&=\int_{-\infty}^{\infty}z\,\varphi(z)\,dz=0\\
+&\quad(\varphi(-z)=\varphi(z))\\[4pt]
 \varphi'(z)&=-z\,\varphi(z)\\
-\mathbb{E}[Z^{2}]&=\int_{-\infty}^{\infty}z\big(z\varphi(z)\big)dz=\Big[-z\varphi(z)\Big]_{-\infty}^{\infty}+\int_{-\infty}^{\infty}\varphi(z)\,dz=0+1=1\\[4pt]
+\mathbb{E}[Z^{2}]&=\int_{-\infty}^{\infty}z\big(z\varphi(z)\big)dz\\
+&=\Big[-z\varphi(z)\Big]_{-\infty}^{\infty}\\
+&\quad+\int_{-\infty}^{\infty}\varphi(z)\,dz\\
+&=0+1=1\\[4pt]
 \mathbb{E}[X]&=\mu+\sigma\,\mathbb{E}[Z]=\mu\\
-\mathrm{Var}(X)&=\mathbb{E}\big[(\sigma Z)^{2}\big]=\sigma^{2}\,\mathbb{E}[Z^{2}]=\sigma^{2}\end{aligned}
+\mathrm{Var}(X)&=\mathbb{E}\big[(\sigma Z)^{2}\big]\\
+&=\sigma^{2}\,\mathbb{E}[Z^{2}]=\sigma^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของ $Z$ ได้ฟรีจากความสมมาตร ครึ่งขวาดึงขึ้นเท่าที่ครึ่งซ้ายดึงลงพอดี ส่วนค่าเฉลี่ยของ $Z^2$ ใช้กล: ความชันของ $\varphi$ คือ $-z\varphi$ พอดี จึง integrate ทีละส่วนได้</p>
@@ -187,12 +201,23 @@ I&=\sqrt{2\pi}=2.5066\end{aligned}
   <h4>ขั้นที่ 5 — MGF ของระฆังมาตรฐาน และ moment กำลัง 1 ถึง 10</h4>
   <p>รวม $tz$ เข้ากับ $-z^2/2$ ให้เป็นกำลังสองของ $z-t$ แล้วระฆังที่เลื่อนไป $t$ ยังมีพื้นที่ 1 เท่าเดิม</p>
   <div class="math">\[
-\begin{aligned}M_Z(t)&=\mathbb{E}[e^{tZ}]=\int_{-\infty}^{\infty}e^{tz}\,\frac{1}{\sqrt{2\pi}}e^{-z^{2}/2}\,dz\\
-&=e^{t^{2}/2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(z-t)^{2}/2}\,dz=e^{t^{2}/2}\\[6pt]
-e^{t^{2}/2}&=\sum_{k=0}^{\infty}\frac{t^{2k}}{2^{k}k!}=\sum_{n=0}^{\infty}\mathbb{E}[Z^{n}]\,\frac{t^{n}}{n!}\\[4pt]
-\mathbb{E}[Z^{1}]&=\mathbb{E}[Z^{3}]=\mathbb{E}[Z^{5}]=\mathbb{E}[Z^{7}]=\mathbb{E}[Z^{9}]=0\\[4pt]
-\mathbb{E}[Z^{2k}]&=\frac{(2k)!}{2^{k}k!}=(2k-1)!!=1\times3\times5\times\cdots\times(2k-1)\\[4pt]
-\mathbb{E}[Z^{2}]&=1,\quad\mathbb{E}[Z^{4}]=3,\quad\mathbb{E}[Z^{6}]=15,\quad\mathbb{E}[Z^{8}]=105,\quad\mathbb{E}[Z^{10}]=945\end{aligned}
+\begin{aligned}
+M_Z(t)&=\mathbb{E}[e^{tZ}]\\
+&=\int_{-\infty}^{\infty}e^{tz}\,\frac{1}{\sqrt{2\pi}}e^{-z^{2}/2}\,dz\\
+&=e^{t^{2}/2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-(z-t)^{2}/2}\,dz\\
+&=e^{t^{2}/2}\\[6pt]
+e^{t^{2}/2}&=\sum_{k=0}^{\infty}\frac{t^{2k}}{2^{k}k!}\\
+&=\sum_{n=0}^{\infty}\mathbb{E}[Z^{n}]\,\frac{t^{n}}{n!}\\[4pt]
+\mathbb{E}[Z^{1}]&=\mathbb{E}[Z^{3}]=\mathbb{E}[Z^{5}]\\
+&=\mathbb{E}[Z^{7}]=\mathbb{E}[Z^{9}]=0\\[4pt]
+\mathbb{E}[Z^{2k}]&=\frac{(2k)!}{2^{k}k!}=(2k-1)!!\\
+&=1\times3\times5\times\cdots\times(2k-1)\\[4pt]
+\mathbb{E}[Z^{2}]&=1\\
+\mathbb{E}[Z^{4}]&=3\\
+\mathbb{E}[Z^{6}]&=15\\
+\mathbb{E}[Z^{8}]&=105\\
+\mathbb{E}[Z^{10}]&=945
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>$tz-z^2/2$ เท่ากับ $-(z-t)^2/2+t^2/2$ ตรวจได้ด้วยการกางวงเล็บ ก้อน $e^{t^2/2}$ ไม่มี $z$ จึงออกมานอก integral ที่เหลือคือระฆังที่เลื่อนไป ซึ่งมีพื้นที่ 1</p>

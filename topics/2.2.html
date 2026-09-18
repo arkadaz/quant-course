@@ -86,10 +86,14 @@
   <h4>ขั้นที่ 1 — ลองนับตรง ๆ ก่อน: แปดวันที่ตรงกับตัวเลขโจทย์</h4>
   <p>สร้างแปดวันที่มีโอกาส ค่าเฉลี่ย และความเหวี่ยงตรงกับโจทย์พอดี: วันสงบหกวัน เป็น 600 กับ −200 สลับกัน วันตึงเครียดสองวัน เป็น 500 กับ −1,500 แล้วหา variance แบบหัวข้อ 1.4</p>
   <div class="math">\[
-\begin{aligned}\bar{Y}&=\frac{3(600)+3(-200)+500+(-1{,}500)}{8}=\frac{200}{8}=25\\
-575^{2}&=330{,}625\ (\times3),\qquad 225^{2}=50{,}625\ (\times3)\\
-475^{2}&=225{,}625,\qquad 1{,}525^{2}=2{,}325{,}625\\
-\mathrm{Var}(Y)&=\frac{991{,}875+151{,}875+225{,}625+2{,}325{,}625}{8}=\frac{3{,}695{,}000}{8}=461{,}875\end{aligned}
+\begin{aligned}\bar{Y}&=\frac{3(600)+3(-200)+500+(-1{,}500)}{8}\\
+&=\frac{200}{8}=25\\
+575^{2}&=330{,}625\ (\times3)\\
+225^{2}&=50{,}625\ (\times3)\\
+475^{2}&=225{,}625\\
+1{,}525^{2}&=2{,}325{,}625\\
+\mathrm{Var}(Y)&=\frac{991{,}875+151{,}875+225{,}625+2{,}325{,}625}{8}\\
+&=\frac{3{,}695{,}000}{8}=461{,}875\end{aligned}
 \]</div>
   <div class="reading">
     <p>วันสงบ 600 กับ −200 มีค่าเฉลี่ย 200 และห่างจากค่าเฉลี่ยข้างละ 400 วันตึงเครียด 500 กับ −1,500 มีค่าเฉลี่ย −500 และห่างข้างละ 1,000 หกวันจากแปดคือ 75% ตรงโจทย์</p>
@@ -112,8 +116,14 @@
   <h4>ขั้นที่ 3 — ก้อนภายในสภาวะ: ความเหวี่ยงที่ยังอยู่แม้รู้สภาวะแล้ว</h4>
   <p>ถ้ารู้แล้วว่าวันนี้สงบ ผลก็ยังเหวี่ยง 400 USD ถ้ารู้ว่าตึงเครียด ก็ยังเหวี่ยง 1,000 USD เอา variance ของแต่ละสภาวะมาเฉลี่ยตามโอกาส</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(Y\mid\text{calm})&=400^{2}=160{,}000,\qquad \mathrm{Var}(Y\mid\text{stress})=1{,}000^{2}=1{,}000{,}000\\
-\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]&=0.75(160{,}000)+0.25(1{,}000{,}000)=120{,}000+250{,}000=370{,}000\end{aligned}
+\begin{aligned}&\mathrm{Var}(Y\mid\text{calm})\\
+&=400^{2}=160{,}000\\
+&\mathrm{Var}(Y\mid\text{stress})\\
+&=1{,}000^{2}=1{,}000{,}000\\
+&\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]\\
+&=0.75(160{,}000)\\
+&\quad+0.25(1{,}000{,}000)\\
+&=120{,}000+250{,}000=370{,}000\end{aligned}
 \]</div>
   <div class="reading">
     <p>ต้องคูณความเหวี่ยงแต่ละสภาวะกับตัวเองก่อนเฉลี่ย เพราะสิ่งที่บวกกันได้คือ variance ไม่ใช่ standard deviation ตามหัวข้อ 1.4 ก้อนนี้คือ 370,000 USD² ต่อวัน²</p>
@@ -124,8 +134,14 @@
   <h4>ขั้นที่ 4 — ก้อนระหว่างสภาวะ: ความเหวี่ยงจากการไม่รู้ว่าวันนี้เป็นสภาวะไหน</h4>
   <p>สมมติว่าในแต่ละสภาวะผลออกมาเท่ากับค่าเฉลี่ยของสภาวะนั้นพอดี ไม่มีความเหวี่ยงเลย ผลยังกระโดดระหว่าง 200 กับ −500 ได้ วัดความเหวี่ยงของการกระโดดนี้รอบค่าเฉลี่ยรวม 25</p>
   <div class="math">\[
-\begin{aligned}(200-25)^{2}&=175^{2}=30{,}625,\qquad(-500-25)^{2}=525^{2}=275{,}625\\
-\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)&=0.75(30{,}625)+0.25(275{,}625)=22{,}968.75+68{,}906.25=91{,}875\end{aligned}
+\begin{aligned}&(200-25)^{2}\\
+&=175^{2}=30{,}625\\
+&(-500-25)^{2}\\
+&=525^{2}=275{,}625\\
+&\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)\\
+&=0.75(30{,}625)\\
+&\quad+0.25(275{,}625)\\
+&=22{,}968.75+68{,}906.25=91{,}875\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของวันสงบอยู่เหนือค่าเฉลี่ยรวม 175 ค่าเฉลี่ยของวันตึงเครียดอยู่ใต้ 525 คูณตัวเองแล้วเฉลี่ยตามโอกาสได้ 91,875 นี่คือความเสี่ยงที่หายไปได้ถ้ารู้ล่วงหน้าว่าพรุ่งนี้เป็นสภาวะไหน</p>
@@ -169,11 +185,17 @@
   <h4>ขั้นที่ 8 — พิสูจน์ว่าสองก้อนรวมกันได้พอดีเสมอ</h4>
   <p>ใช้สูตรลัดของ variance จากหัวข้อ 1.4 กับกฎเฉลี่ยสองชั้นของหัวข้อ 2.1 และต้องการแค่ให้ค่าเฉลี่ยของ $Y^2$ มีค่าจำกัด</p>
   <div class="math">\[
-\begin{aligned}\mathrm{Var}(Y)&=\mathbb{E}\big[Y^2\big]-\big(\mathbb{E}[Y]\big)^2\\[4pt]
-&=\mathbb{E}\Big[\mathbb{E}[Y^2\mid X]\Big]-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\\[4pt]
-&=\mathbb{E}\Big[\mathrm{Var}(Y\mid X)+\big(\mathbb{E}[Y\mid X]\big)^2\Big]-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\\[4pt]
-&=\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]+\Big\{\mathbb{E}\Big[\big(\mathbb{E}[Y\mid X]\big)^2\Big]-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\Big\}\\[4pt]
-&=\underbrace{\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]}_{\text{within}}+\underbrace{\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)}_{\text{between}}\end{aligned}
+\begin{aligned}&\mathrm{Var}(Y)\\
+&=\mathbb{E}\big[Y^2\big]-\big(\mathbb{E}[Y]\big)^2\\[4pt]
+&=\mathbb{E}\Big[\mathbb{E}[Y^2\mid X]\Big]\\
+&\quad-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\\[4pt]
+&=\mathbb{E}\Big[\mathrm{Var}(Y\mid X)+\big(\mathbb{E}[Y\mid X]\big)^2\Big]\\
+&\quad-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\\[4pt]
+&=\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]\\
+&\quad+\Big\{\mathbb{E}\Big[\big(\mathbb{E}[Y\mid X]\big)^2\Big]\\
+&\qquad-\Big(\mathbb{E}\big[\mathbb{E}[Y\mid X]\big]\Big)^2\Big\}\\[4pt]
+&=\underbrace{\mathbb{E}\big[\mathrm{Var}(Y\mid X)\big]}_{\text{within}}\\
+&\quad+\underbrace{\mathrm{Var}\big(\mathbb{E}[Y\mid X]\big)}_{\text{between}}\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดที่สองใส่กฎของหัวข้อ 2.1 ทั้งกับ $Y^2$ และกับ $Y$ บรรทัดที่สามใช้สูตรลัดของ variance ภายในสภาวะที่ย้ายข้างแล้ว ซึ่งทำไว้แล้วในหัวข้อ 2.1</p>

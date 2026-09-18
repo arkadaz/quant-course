@@ -474,7 +474,9 @@ m&=0.15-0.15125=-0.00125\\
   <p>mean ใช้เลขชี้กำลัง $\mu T$ ส่วน median ใช้ $m$ อย่าสลับสองจำนวนนี้</p>
   <div class="math">\[
 \begin{aligned}\mathbb E[S_T]&=120e^{0.15}\approx139.420109\\
-\mathbb E[S_T]-\operatorname{median}(S_T)&\approx139.420109-119.850094\\
+&\mathbb E[S_T]-\operatorname{median}(S_T)\\
+&\approx139.420109\\
+&\quad-119.850094\\
 &=19.570015\ \mathrm{USD}\end{aligned}
 \]</div>
   <div class="reading">
@@ -608,10 +610,17 @@ Z&>-m/s\\
   <h4>ลองเอง: +30% กับ −30% ห่างเท่ากันเป็นเงิน แต่โอกาสไม่เท่ากัน</h4>
   <p>ของที่มี: หุ้นราคา 100 มีอัตรา μ = 10% ต่อปีตามความหมายของขั้นที่ 17 และ σ = 25% ถามโอกาสที่ปีหน้าราคาเกิน 130 และโอกาสที่ต่ำกว่า 70 ลองคิดเองก่อนดูบรรทัดล่าง</p>
   <div class="math">\[
-\begin{aligned}m&=0.10-\frac{0.25^{2}}{2}=0.10-0.03125=0.06875,\qquad s=0.25\\
-P(S_1\gt130)&=1-\Phi\Big(\frac{\ln1.30-0.06875}{0.25}\Big)=1-\Phi(0.7745)=21.9\%\\
-P(S_1\lt70)&=\Phi\Big(\frac{\ln0.70-0.06875}{0.25}\Big)=\Phi(-1.7017)=4.4\%\\
-P(70\le S_1\le130)&=1-0.219-0.044=73.6\%\end{aligned}
+\begin{aligned}m&=0.10-\frac{0.25^{2}}{2}\\
+&=0.10-0.03125=0.06875\\
+s&=0.25\\
+&P(S_1\gt130)\\
+&=1-\Phi\Big(\frac{\ln1.30-0.06875}{0.25}\Big)\\
+&=1-\Phi(0.7745)=21.9\%\\
+&P(S_1\lt70)\\
+&=\Phi\Big(\frac{\ln0.70-0.06875}{0.25}\Big)\\
+&=\Phi(-1.7017)=4.4\%\\
+&P(70\le S_1\le130)\\
+&=1-0.219-0.044=73.6\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>ln 1.30 คือ 0.2624 แต่ ln 0.70 คือ −0.3567 ขาลง 30% ไกลกว่าขาขึ้น 30% ในหน่วย log ฝั่งขึ้นจึงเกิดบ่อยกว่าราวห้าเท่า ทั้งที่ห่างจาก 100 เท่ากันเป็นเงิน</p>
@@ -624,14 +633,27 @@ P(70\le S_1\le130)&=1-0.219-0.044=73.6\%\end{aligned}
   <p>ใช้ตัวเลขชุดเดิม $S_0=120$, $m=-0.00125$, $s=0.55$ แปลงเงื่อนไขราคาเป็นเงื่อนไขของ $Z$ แบบขั้นที่ 29 ได้ Cumulative Distribution Function (CDF) ของราคา แล้ว differentiate เป็น PDF ตามหัวข้อ 1.8 จากนั้นหาจุดที่เส้นสูงที่สุด</p>
   <div class="math">\[
 \begin{aligned}
-F_{S_T}(x) &= \mathbb{P}(S_T \le x) = \mathbb{P}(S_0 e^{m+sZ} \le x) = \Phi\left(\frac{\ln(x/S_0)-m}{s}\right) \\[4pt]
-f_{S_T}(x) &= \frac{d}{dx} F_{S_T}(x) = \phi\left(\frac{\ln(x/S_0)-m}{s}\right) \cdot \frac{d}{dx}\left(\frac{\ln(x/S_0)-m}{s}\right) \\
-&= \frac{1}{x s \sqrt{2\pi}} \exp\left(-\frac{(\ln(x/S_0)-m)^2}{2s^2}\right),\quad x > 0 \\[6pt]
-\frac{d}{dx}\ln f_{S_T}(x) &= -\frac{1}{x} - \frac{\ln(x/S_0)-m}{s^2 x} = 0 \implies \ln(x/S_0) = m - s^2 \\[4pt]
-\operatorname{mode}(S_T) &= S_0 e^{m-s^2} \lt \operatorname{median}(S_T) = S_0 e^m \lt \mathbb{E}[S_T] = S_0 e^{m+s^2/2} \\[6pt]
-\operatorname{mode}(S_T) &= 120 e^{-0.00125 - 0.3025} = 120 e^{-0.30375} \approx \boxed{88.57\ \mathrm{USD}} \\
-\operatorname{median}(S_T) &= 120 e^{-0.00125} \approx \boxed{119.85\ \mathrm{USD}} \\
-\mathbb{E}[S_T] &= 120 e^{0.15} \approx \boxed{139.42\ \mathrm{USD}}
+F_{S_T}(x) &= \mathbb{P}(S_T \le x)\\
+&= \mathbb{P}(S_0 e^{m+sZ} \le x)\\
+&= \Phi\left(\frac{\ln(x/S_0)-m}{s}\right) \\[4pt]
+f_{S_T}(x) &= \frac{d}{dx} F_{S_T}(x)\\
+&= \phi\left(\frac{\ln(x/S_0)-m}{s}\right)\\
+&\quad\cdot \frac{d}{dx}\left(\frac{\ln(x/S_0)-m}{s}\right) \\
+&= \frac{1}{x s \sqrt{2\pi}} \exp\left(-\frac{(\ln(x/S_0)-m)^2}{2s^2}\right), \\
+&\quad x > 0 \\[6pt]
+&\frac{d}{dx}\ln f_{S_T}(x)\\
+&= -\frac{1}{x} - \frac{\ln(x/S_0)-m}{s^2 x} = 0\\
+&\implies \ln(x/S_0) = m - s^2 \\[4pt]
+\operatorname{mode}(S_T) &= S_0 e^{m-s^2}\\
+&\quad\lt \operatorname{median}(S_T) = S_0 e^m\\
+&\quad\lt \mathbb{E}[S_T] = S_0 e^{m+s^2/2} \\[6pt]
+\operatorname{mode}(S_T) &= 120 e^{-0.00125 - 0.3025}\\
+&= 120 e^{-0.30375}\\
+&\approx \boxed{88.57\ \mathrm{USD}} \\
+\operatorname{median}(S_T) &= 120 e^{-0.00125}\\
+&\approx \boxed{119.85\ \mathrm{USD}} \\
+\mathbb{E}[S_T] &= 120 e^{0.15}\\
+&\approx \boxed{139.42\ \mathrm{USD}}
 \end{aligned}
 \]</div>
   <div class="reading">

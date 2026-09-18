@@ -134,10 +134,15 @@ F(9)&=\tfrac{4}{4}=1
   <p>แยกคนที่ลงไม่เกินชั้น 5 เป็นสองกลุ่ม คือกลุ่มที่ลงไม่เกินชั้น 2 กับกลุ่มที่ลงระหว่างชั้น 3 ถึง 5 แล้วทำแบบเดียวกันกับเกณฑ์ใด ๆ</p>
   <div class="math">\[
 \begin{aligned}
-P(X\le 5)&=P(X\le 2)+P(2\lt X\le 5)\\
+P(X\le 5)&=P(X\le 2)\\
+&\quad+P(2\lt X\le 5)\\
 \tfrac34&=\tfrac24+\tfrac14\\[4pt]
-P(X\le x_2)&=P(X\le x_1)+P(x_1\lt X\le x_2)\quad\text{when } x_1\lt x_2\\
-F(x_2)&=F(x_1)+\underbrace{P(x_1\lt X\le x_2)}_{\ge 0}\;\ge\;F(x_1)
+P(X\le x_2)&=P(X\le x_1)\\
+&\quad+P(x_1\lt X\le x_2)\\
+&\quad\text{when } x_1\lt x_2\\
+F(x_2)&=F(x_1)\\
+&\quad+\underbrace{P(x_1\lt X\le x_2)}_{\ge 0}\\
+&\quad\ge\;F(x_1)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -158,8 +163,12 @@ F(x_2)&=F(x_1)+\underbrace{P(x_1\lt X\le x_2)}_{\ge 0}\;\ge\;F(x_1)
   <p>ลองสองกรณีที่นับมือได้ก่อน แล้วค่อยเขียนสิ่งที่เกิดเมื่อเลื่อนเกณฑ์ไปไกลมาก ๆ</p>
   <div class="math">\[
 \begin{aligned}
-\text{die: }F(0)&=\tfrac{0}{6}=0,\qquad F(6)=\tfrac{6}{6}=1\\[4pt]
-\text{SPY 2024: }F(-10\%)&=\tfrac{0}{251}=0,\qquad F(+10\%)=\tfrac{251}{251}=1\\[4pt]
+&\text{die: }\\
+F(0)&=\tfrac{0}{6}=0\\
+F(6)&=\tfrac{6}{6}=1\\[4pt]
+&\text{SPY 2024: }\\
+F(-10\%)&=\tfrac{0}{251}=0\\
+F(+10\%)&=\tfrac{251}{251}=1\\[4pt]
 \lim_{x\to-\infty}F(x)&=0\\
 \lim_{x\to+\infty}F(x)&=1
 \end{aligned}
@@ -204,10 +213,14 @@ P(X=2)&=\tfrac24-0=0.50
   <p>แยกคนที่ลงไม่เกินชั้น 9 เป็นสองกลุ่มที่ไม่ซ้ำกันอีกครั้ง แล้วแก้หากลุ่มกลาง</p>
   <div class="math">\[
 \begin{aligned}
-P(X\le 9)&=P(X\le 2)+P(2\lt X\le 9)\\
-\tfrac44&=\tfrac24+P(2\lt X\le 9)\;\Rightarrow\;P(2\lt X\le 9)=\tfrac24\\[4pt]
-P(X\le b)&=P(X\le a)+P(a\lt X\le b)\\
-P(a\lt X\le b)&=F(b)-F(a)
+P(X\le 9)&=P(X\le 2)\\
+&\quad+P(2\lt X\le 9)\\
+\tfrac44&=\tfrac24+P(2\lt X\le 9)\\
+&\quad\Rightarrow\;P(2\lt X\le 9)=\tfrac24\\[4pt]
+P(X\le b)&=P(X\le a)\\
+&\quad+P(a\lt X\le b)\\
+&P(a\lt X\le b)\\
+&=F(b)-F(a)
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -296,14 +309,20 @@ P(X>2\%)=1-\frac{248}{251}=\frac{3}{251}=0.01195,\qquad 0.01195(250)\approx\boxe
   <h4>ขั้นที่ 8 — ตรวจสูตรคูณจำนวนวันด้วยโลกสองวัน</h4>
   <p>ให้เหตุการณ์หนึ่งเกิดได้วันละ 30% และแต่ละวันไม่เกี่ยวกัน ไล่ทุกกรณีของสองวันออกมาให้ครบ แล้วเทียบกับสูตรสั้น</p>
   <div class="math">\[
-\begin{aligned}2\ \text{days},\ p=0.3:\quad P(0)&=0.7\times0.7=0.49\\
+\begin{aligned}
+&2\ \text{days},\ p=0.3:\\
+P(0)&=0.7\times0.7=0.49\\
 P(1)&=2\times0.3\times0.7=0.42\\
 P(2)&=0.3\times0.3=0.09\\
-\text{average count}&=0(0.49)+1(0.42)+2(0.09)\\
+&\text{average count}\\
+&=0(0.49)+1(0.42)+2(0.09)\\
 &=0.42+0.18=0.60\\
 2p&=2(0.3)=0.60\\[4pt]
-n\ \text{days}:\quad\text{average count}&=np\\
-n=250:\quad\text{average count}&=250\,P(\text{event})\end{aligned}
+&n\ \text{days}:\\
+&\quad\text{average count}=np\\
+&n=250:\\
+&\quad\text{average count}=250\,P(\text{event})
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ไม่เกิดเลยคือพลาดทั้งสองวัน เกิดครั้งเดียวเกิดได้สองแบบคือวันแรกหรือวันที่สอง จึงคูณสอง ส่วนเกิดทั้งสองวันคือคูณกันตรง ๆ สามกรณีรวมกันได้ 1.00 พอดี แปลว่าไม่มีกรณีตกหล่น</p>

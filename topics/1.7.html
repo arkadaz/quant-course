@@ -211,7 +211,9 @@ P(\text{Crash}\mid\text{Flag})=\frac{\text{flagged crash days}}{\text{all flagge
   <p>ตัวบนของขั้นที่ 3 หามาจากไหน ในตารางเราคูณ 0.90 กับ 10 วัน สูตรทำแบบเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}P(B\mid A)&=\frac{P(A\ \text{and}\ B)}{P(A)}\\[4pt]
-P(A\ \text{and}\ B)&=P(B\mid A)\,P(A)=0.90\times0.001=0.0009\end{aligned}
+&P(A\ \text{and}\ B)\\
+&=P(B\mid A)\,P(A)\\
+&=0.90\times0.001=0.0009\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดบนคือนิยามเดิม แค่ให้ $A$ เป็นเงื่อนไข: ในโลกของวัน crash เครื่องดังกี่ส่วน ซึ่งคือ sensitivity 90% คูณสองข้างด้วย $P(A)$ ได้บรรทัดล่าง</p>
@@ -237,8 +239,10 @@ P(A\ \text{and}\ B)&=P(B\mid A)\,P(A)=0.90\times0.001=0.0009\end{aligned}
   <h4>ขั้นที่ 6 — Bayes' theorem: ประกอบสามบรรทัดเป็นสูตรเดียว</h4>
   <p>เอาตัวบนจากขั้นที่ 4 กับตัวล่างจากขั้นที่ 5 ใส่ในนิยามของขั้นที่ 3 ได้สูตรที่มีชื่อ ผลที่ได้คือ 0.0009 หาร 0.1008 เท่ากับการนับวันในขั้นที่ 2 เป๊ะ</p>
   <div class="math">\[
-\begin{aligned}P(A\mid B)&=\frac{P(B\mid A)\,P(A)}{P(B\mid A)\,P(A)+P(B\mid\text{not }A)\,P(\text{not }A)}\\[4pt]
-&=\frac{0.90\times0.001}{0.90\times0.001+0.10\times0.999}=\frac{0.0009}{0.1008}=0.89\%\end{aligned}
+\begin{aligned}&P(A\mid B)\\
+&=\frac{P(B\mid A)\,P(A)}{P(B\mid A)\,P(A)+P(B\mid\text{not }A)\,P(\text{not }A)}\\[4pt]
+&=\frac{0.90\times0.001}{0.90\times0.001+0.10\times0.999}\\
+&=\frac{0.0009}{0.1008}=0.89\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวบนคือเส้นทาง ‘crash แล้วดัง’ ตัวล่างคือทุกเส้นทางที่ทำให้ดัง ทั้งผ่านวัน crash และผ่านวันปกติ อ่านเป็นภาษาคน: posterior เท่ากับ likelihood คูณ prior แล้วหารด้วยโอกาสที่จะเห็นสัญญาณนั้นเลย</p>
@@ -250,9 +254,12 @@ P(A\ \text{and}\ B)&=P(B\mid A)\,P(A)=0.90\times0.001=0.0009\end{aligned}
   <h4>ขั้นที่ 7 — ทำเครื่องให้เก่งขึ้น: ต้องแก้ตัวไหน</h4>
   <p>ถ้ามีงบปรับปรุงเครื่อง จะเพิ่มการจับ crash ให้ครบขึ้น หรือจะลดการดังหลอก ใช้สูตรขั้นที่ 6 เดิม เปลี่ยนแค่สองตัวเลขของเครื่อง</p>
   <div class="math">\[
-\begin{aligned}\text{catch }99\%,\ \text{false }10\%&:\ \frac{0.00099}{0.00099+0.0999}=0.98\%\\[4pt]
-\text{catch }90\%,\ \text{false }1\%&:\ \frac{0.0009}{0.0009+0.00999}=8.3\%\\[4pt]
-\text{catch }90\%,\ \text{false }0.1\%&:\ \frac{0.0009}{0.0009+0.000999}=47.4\%\end{aligned}
+\begin{aligned}&\text{catch }99\%,\ \text{false }10\%:\\
+&\quad\frac{0.00099}{0.00099+0.0999}=0.98\%\\[4pt]
+&\text{catch }90\%,\ \text{false }1\%:\\
+&\quad\frac{0.0009}{0.0009+0.00999}=8.3\%\\[4pt]
+&\text{catch }90\%,\ \text{false }0.1\%:\\
+&\quad\frac{0.0009}{0.0009+0.000999}=47.4\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>จับ crash ได้ครบขึ้นจาก 90% เป็น 99% แทบไม่ช่วย คำตอบขยับจาก 0.89% เป็น 0.98% เพราะมันแตะแค่กองเล็ก 9 วัน</p>
@@ -482,9 +489,12 @@ LR=\frac{0.90}{0.10}=9,\qquad \text{Odds}(\text{Crash})=\frac{0.001}{0.999}=0.00
   <h4>ขั้นที่ 18 — คูณ แล้วแปลง odds กลับเป็นโอกาส</h4>
   <p>คูณ odds เดิมด้วย 9 แล้วแปลงกลับเป็นเปอร์เซ็นต์ โดยใช้ $o$ แทน odds และ $p$ แทนโอกาส</p>
   <div class="math">\[
-\begin{aligned}\text{Odds}(\text{Crash}\mid\text{Flag})&=0.001001\times9=0.009009\\[4pt]
-o=\frac{p}{1-p}\ \Rightarrow\ o-op=p\ \Rightarrow\ p&=\frac{o}{1+o}\\[4pt]
-P(\text{Crash}\mid\text{Flag})&=\frac{0.009009}{1.009009}=0.89\%\end{aligned}
+\begin{aligned}&\text{Odds}(\text{Crash}\mid\text{Flag})\\
+&=0.001001\times9=0.009009\\[4pt]
+&o=\frac{p}{1-p}\ \Rightarrow\ o-op=p\\
+&\quad\Rightarrow\ p=\frac{o}{1+o}\\[4pt]
+&P(\text{Crash}\mid\text{Flag})\\
+&=\frac{0.009009}{1.009009}=0.89\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>บรรทัดกลางแก้สมการหา $p$: คูณสองข้างด้วย $1-p$ แล้วย้าย $op$ ไปรวมกับ $p$ ได้ $p$ คูณ 1+o เท่ากับ o ผลลัพธ์ 0.89% ตรงกับตาราง 10,000 วัน</p>
@@ -547,11 +557,19 @@ P(A\mid B)=\frac{12}{15}=0.80\qquad\text{but}\qquad P(B\mid A)=\frac{12}{18}=0.6
   <h4>ขั้นที่ 23 — นับหนึ่งหมื่นวันอีกครั้ง: วันที่สัญญาณติด และวันที่เงียบ</h4>
   <p>ใช้ตาราง 10,000 วันแบบเดียวกับโจทย์ crash แล้วตอบทั้งสองกิ่ง</p>
   <div class="math">\[
-\begin{aligned}\text{up days}&=0.52\times10{,}000=5{,}200,\qquad\text{down days}=4{,}800\\
-\text{signal on up days}&=0.60\times5{,}200=3{,}120\\
-\text{signal on down days}&=0.40\times4{,}800=1{,}920\\
-P(\text{up}\mid\text{signal})&=\frac{3{,}120}{3{,}120+1{,}920}=\frac{3{,}120}{5{,}040}=\frac{13}{21}=61.90\%\\[4pt]
-P(\text{up}\mid\text{silent})&=\frac{5{,}200-3{,}120}{10{,}000-5{,}040}=\frac{2{,}080}{4{,}960}=\frac{13}{31}=41.94\%\end{aligned}
+\begin{aligned}&\text{up days}\\
+&=0.52\times10{,}000=5{,}200\\
+&\text{down days}=4{,}800\\
+&\text{signal on up days}\\
+&=0.60\times5{,}200=3{,}120\\
+&\text{signal on down days}\\
+&=0.40\times4{,}800=1{,}920\\
+&P(\text{up}\mid\text{signal})\\
+&=\frac{3{,}120}{3{,}120+1{,}920}\\
+&=\frac{3{,}120}{5{,}040}=\frac{13}{21}=61.90\%\\[4pt]
+&P(\text{up}\mid\text{silent})\\
+&=\frac{5{,}200-3{,}120}{10{,}000-5{,}040}\\
+&=\frac{2{,}080}{4{,}960}=\frac{13}{31}=41.94\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>สัญญาณติดดันโอกาสปิดบวกจาก 52% เป็น 61.90% ตรวจด้วยรูป odds ของขั้นที่ 16 ได้: LR คือ 0.60 หาร 0.40 เท่ากับ 1.5 odds เดิม 52 ต่อ 48 คูณ 1.5 ได้ 1.625 แปลงกลับได้ 61.90% เท่ากัน</p>
@@ -575,11 +593,17 @@ P(\text{up}\mid\text{silent})&=\frac{5{,}200-3{,}120}{10{,}000-5{,}040}=\frac{2{
   <h4>ขั้นที่ 25 — จาก edge เป็นขนาดเงิน: Kelly ของการเดิมพันหนึ่งต่อหนึ่ง</h4>
   <p>edge คือ 61.90 ลบ 52.00 เท่ากับ 9.90 percentage points ไม่ใช่ 60% สมมติเดิมพันที่ชนะได้เท่าที่ลง แพ้เสียเท่าที่ลง ลงสัดส่วน $f$ ของทุน ทุนจึงคูณ $1+f$ เมื่อชนะ และ $1-f$ เมื่อแพ้ เล่นซ้ำหลายครั้ง log ของทุนคือผลบวก จึงเลือก $f$ ที่ทำให้ค่าเฉลี่ยของ log ต่อครั้งสูงสุด</p>
   <div class="math">\[
-\begin{aligned}g(f)&=p\ln(1+f)+q\ln(1-f),\qquad q=1-p\\
+\begin{aligned}g(f)&=p\ln(1+f)+q\ln(1-f)\\
+q&=1-p\\
 g'(f)&=\frac{p}{1+f}-\frac{q}{1-f}=0\\
-p(1-f)&=q(1+f)\ \Rightarrow\ f^{*}=p-q\\[4pt]
-p=0.61905&:\ f^{*}=0.61905-0.38095=0.2381\\
-g(0.2381)&=0.0286,\qquad g(0.119)=0.0213,\qquad g(0.476)=-0.0052\end{aligned}
+p(1-f)&=q(1+f)\\
+&\quad\Rightarrow\ f^{*}=p-q\\[4pt]
+&p=0.61905:\\
+&\quad f^{*}=0.61905-0.38095\\
+&\qquad=0.2381\\
+g(0.2381)&=0.0286\\
+g(0.119)&=0.0213\\
+g(0.476)&=-0.0052\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตั้งความชันของ $g$ เป็นศูนย์ คูณไขว้แล้วย้ายข้าง $p-q=f(p+q)=f$ ได้ Kelly เต็ม 23.8% ของทุน บรรทัดล่างวัดการเติบโตต่อครั้งที่สามขนาด ลงครึ่ง Kelly 11.9% ยังได้การเติบโตราวสามในสี่</p>
@@ -591,9 +615,15 @@ g(0.2381)&=0.0286,\qquad g(0.119)=0.0213,\qquad g(0.476)=-0.0052\end{aligned}
   <h4>ขั้นที่ 26 — สัญญาณเดิม prior ต่างกัน: ค่าของสัญญาณไม่เท่ากัน</h4>
   <p>คงคุณภาพของสัญญาณไว้ที่ 60% กับ 40% เปลี่ยนแค่ความถี่ของเหตุการณ์ที่ต้องการจับ</p>
   <div class="math">\[
-\begin{aligned}P(\text{up})=0.52&:\ \frac{0.60\times0.52}{0.504}=\frac{0.312}{0.504}=61.90\%\quad(+9.9)\\
-P(\text{up})=0.30&:\ \frac{0.60\times0.30}{0.460}=\frac{0.180}{0.460}=39.13\%\quad(+9.1)\\
-P(\text{up})=0.10&:\ \frac{0.60\times0.10}{0.420}=\frac{0.060}{0.420}=14.29\%\quad(+4.3)\end{aligned}
+\begin{aligned}&P(\text{up})=0.52:\\
+&\quad\frac{0.60\times0.52}{0.504}=\frac{0.312}{0.504}\\
+&\qquad=61.90\%\quad(+9.9)\\
+&P(\text{up})=0.30:\\
+&\quad\frac{0.60\times0.30}{0.460}=\frac{0.180}{0.460}\\
+&\qquad=39.13\%\quad(+9.1)\\
+&P(\text{up})=0.10:\\
+&\quad\frac{0.60\times0.10}{0.420}=\frac{0.060}{0.420}\\
+&\qquad=14.29\%\quad(+4.3)\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตัวล่างแต่ละแถวคือ 0.60 คูณ prior บวก 0.40 คูณส่วนที่เหลือ indicator ตัวเดียวกันคุณภาพเท่าเดิม แต่ใช้กับเหตุการณ์ที่หายาก มันแทบไม่ขยับความเชื่อ นี่คือเหตุผลที่ทายวิกฤติยากกว่าทายว่าพรุ่งนี้ขึ้นหรือลงหลายเท่า ทั้งที่ใช้แบบจำลองเดียวกัน</p>

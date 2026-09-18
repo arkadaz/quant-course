@@ -179,13 +179,18 @@ s_y&=\sqrt{\frac{(1.0)^{2}+0^{2}+(-1.0)^{2}}{2}}=1\\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 4 — เห็น correlation เป็น cosine ของ centered vectors</h4>
-  <p>จุดที่ทำให้ทั้งบทคุ้มค่า คือ correlation ที่เรียนกันมาคือ cosine ของมุมนั้นพอดี ไม่ใช่สูตรคนละเรื่อง ห้าบรรทัดนี้คือการเดินจากนิยามหนึ่งไปอีกนิยามหนึ่ง และสิ่งเดียวที่เกิดขึ้นระหว่างทางคือตัวหาร $n-1$ ตัดกันทิ้ง</p>
+  <p>จุดที่ทำให้ทั้งบทคุ้มค่า คือ correlation ที่เรียนกันมาคือ cosine ของมุมนั้นพอดี ไม่ใช่สูตรคนละเรื่อง สูตรข้างล่างคือการเดินจากนิยามหนึ่งไปอีกนิยามหนึ่ง และสิ่งเดียวที่เกิดขึ้นระหว่างทางคือตัวหาร $n-1$ ตัดกันทิ้ง</p>
   <div class="math">\[
-\begin{aligned}\operatorname{cov}(x,y)&=\frac{1}{n-1}\sum_i(x_i-\bar x)(y_i-\bar y)=\frac{\langle\mathbf{x},\mathbf{y}\rangle}{n-1}\\[4pt]
-s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-1}}\\[4pt]
-\rho_{xy}&=\frac{\operatorname{cov}(x,y)}{s_x\,s_y}=\frac{\langle\mathbf{x},\mathbf{y}\rangle/(n-1)}{\dfrac{\|\mathbf{x}\|_2}{\sqrt{n-1}}\cdot\dfrac{\|\mathbf{y}\|_2}{\sqrt{n-1}}}\\[4pt]
+\begin{aligned}&\operatorname{cov}(x,y)\\
+&=\frac{1}{n-1}\sum_i(x_i-\bar x)(y_i-\bar y)\\
+&=\frac{\langle\mathbf{x},\mathbf{y}\rangle}{n-1}\\[4pt]
+s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}\\
+&=\frac{\|\mathbf{x}\|_2}{\sqrt{n-1}}\\[4pt]
+\rho_{xy}&=\frac{\operatorname{cov}(x,y)}{s_x\,s_y}\\
+&=\frac{\langle\mathbf{x},\mathbf{y}\rangle/(n-1)}{\dfrac{\|\mathbf{x}\|_2}{\sqrt{n-1}}\cdot\dfrac{\|\mathbf{y}\|_2}{\sqrt{n-1}}}\\[4pt]
 &=\frac{\langle\mathbf{x},\mathbf{y}\rangle}{\|\mathbf{x}\|_2\,\|\mathbf{y}\|_2}=\cos\theta\\[4pt]
-\text{check}:\quad\rho_{xy}&=\frac{1}{\sqrt2\cdot\sqrt2}=0.5=\cos 60^\circ\end{aligned}
+&\text{check}:\\
+\rho_{xy}&=\frac{1}{\sqrt2\cdot\sqrt2}=0.5=\cos 60^\circ\end{aligned}
 \]</div>
   <div class="reading">
     <p>$\mathbf{x}$ กับ $\mathbf{y}$ ที่นี่คือข้อมูลที่หักค่าเฉลี่ยออกแล้วตามขั้นที่ 2 พอหักแล้ว sample covariance ก็คือ inner product ส่วนด้วย $n-1$ ส่วน standard deviation ก็คือความยาวส่วนด้วยรากของ $n-1$ เพราะผลรวมกำลังสองก็คือความยาวยกกำลังสองนั่นเอง</p>
@@ -197,12 +202,15 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
   <h4>ขั้นที่ 5 — ทำไม correlation ออกนอกช่วง $-1$ ถึง $1$ ไม่ได้</h4>
   <p>ขั้นที่ 4 บอกว่า correlation คือ cosine แต่ยังไม่ได้บอกว่าทำไม cosine ตัวนี้ถึงเกิน 1 ไม่ได้ ขั้นนี้ปิดช่องนั้น และผลของมันถูกใช้ต่อในหัวข้อ 4.6, 6.5 และ 12.5 ทุกครั้งที่อ้างว่า correlation อยู่ในช่วงจำกัด</p>
   <div class="math">\[
-\begin{aligned}\|\mathbf{a}-t\mathbf{b}\|^{2}&\ \ge\ 0\qquad(\text{any number }t)\\
-\|\mathbf{a}\|^{2}-2t\,\langle\mathbf{a},\mathbf{b}\rangle+t^{2}\|\mathbf{b}\|^{2}&\ \ge\ 0\\[4pt]
-\big(2\langle\mathbf{a},\mathbf{b}\rangle\big)^{2}-4\|\mathbf{b}\|^{2}\|\mathbf{a}\|^{2}&\ \le\ 0\\
+\begin{aligned}&\|\mathbf{a}-t\mathbf{b}\|^{2}\ \ge\ 0\\
+&\quad(\text{any number }t)\\
+&\|\mathbf{a}\|^{2}-2t\,\langle\mathbf{a},\mathbf{b}\rangle\\
+&\quad+t^{2}\|\mathbf{b}\|^{2}\ \ge\ 0\\[4pt]
+&\big(2\langle\mathbf{a},\mathbf{b}\rangle\big)^{2}\\
+&\quad-4\|\mathbf{b}\|^{2}\|\mathbf{a}\|^{2}\ \le\ 0\\
 \langle\mathbf{a},\mathbf{b}\rangle^{2}&\ \le\ \|\mathbf{a}\|^{2}\,\|\mathbf{b}\|^{2}\\
 \big|\langle\mathbf{a},\mathbf{b}\rangle\big|&\ \le\ \|\mathbf{a}\|\,\|\mathbf{b}\|\\[4pt]
--1\ \le\ \rho=\frac{\langle\mathbf{a},\mathbf{b}\rangle}{\|\mathbf{a}\|\,\|\mathbf{b}\|}&\ \le\ 1\end{aligned}
+-1&\ \le\ \rho=\frac{\langle\mathbf{a},\mathbf{b}\rangle}{\|\mathbf{a}\|\,\|\mathbf{b}\|}\ \le\ 1\end{aligned}
 \]</div>
   <div class="reading">
     <p>ข้อเท็จจริงเดียวที่ใช้ทั้งการพิสูจน์คือ ผลบวกของกำลังสองติดลบไม่ได้ ความยาวยกกำลังสองของอะไรก็ตามจึงไม่ต่ำกว่าศูนย์ ไม่ว่าจะเลือก $t$ เป็นเท่าไรก็ตาม</p>
@@ -239,10 +247,19 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
   <p>คูณวันเดียวกันเป็นคู่แล้วบวก ได้ inner product ส่วนความยาวคือรากของ inner product ของลูกศรกับตัวเอง</p>
   <div class="math">\[
 \begin{aligned}
-\langle\mathbf{a},\mathbf{b}\rangle&=1.2(0.9)+(-0.8)(-0.3)+0.5(1.1)+(-1.5)(-1.2)+0.6(-0.5)\\
-&=1.08+0.24+0.55+1.80-0.30=3.37\\[4pt]
-\|\mathbf{a}\|^2&=1.44+0.64+0.25+2.25+0.36=4.94,\qquad \|\mathbf{a}\|=\sqrt{4.94}=2.2226\\
-\|\mathbf{b}\|^2&=0.81+0.09+1.21+1.44+0.25=3.80,\qquad \|\mathbf{b}\|=\sqrt{3.80}=1.9494
+\langle\mathbf{a},\mathbf{b}\rangle&=1.2(0.9)\\
+&\quad+(-0.8)(-0.3)\\
+&\quad+0.5(1.1)\\
+&\quad+(-1.5)(-1.2)\\
+&\quad+0.6(-0.5)\\
+&=1.08+0.24+0.55\\
+&\quad+1.80-0.30=3.37\\[4pt]
+\|\mathbf{a}\|^2&=1.44+0.64+0.25\\
+&\quad+2.25+0.36=4.94\\
+\|\mathbf{a}\|&=\sqrt{4.94}=2.2226\\
+\|\mathbf{b}\|^2&=0.81+0.09+1.21\\
+&\quad+1.44+0.25=3.80\\
+\|\mathbf{b}\|&=\sqrt{3.80}=1.9494
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -256,11 +273,15 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}=\frac{\|\mathbf{x}\|_2}{\sqrt{n-
   <p>หาร inner product ด้วยผลคูณความยาวตามขั้นที่ 3 แล้วคิด correlation อีกทางด้วยสูตรสถิติ ถ้าขั้นที่ 4 ถูก สองทางต้องได้เลขเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-\cos\theta&=\frac{3.37}{2.2226\times1.9494}=\frac{3.37}{4.3327}=0.778\\
+\cos\theta&=\frac{3.37}{2.2226\times1.9494}\\
+&=\frac{3.37}{4.3327}=0.778\\
 \theta&=\arccos(0.778)=38.9^\circ\\[6pt]
-\widehat{\operatorname{cov}}(a,b)&=\frac{3.37}{5-1}=0.8425\\
-s_a&=\sqrt{\frac{4.94}{4}}=1.1113,\qquad s_b=\sqrt{\frac{3.80}{4}}=0.9747\\
-\rho_{ab}&=\frac{0.8425}{1.1113\times0.9747}=\frac{0.8425}{1.0832}=0.778
+&\widehat{\operatorname{cov}}(a,b)\\
+&=\frac{3.37}{5-1}=0.8425\\
+s_a&=\sqrt{\frac{4.94}{4}}=1.1113\\
+s_b&=\sqrt{\frac{3.80}{4}}=0.9747\\
+\rho_{ab}&=\frac{0.8425}{1.1113\times0.9747}\\
+&=\frac{0.8425}{1.0832}=0.778
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -275,14 +296,23 @@ s_a&=\sqrt{\frac{4.94}{4}}=1.1113,\qquad s_b=\sqrt{\frac{3.80}{4}}=0.9747\\
   <div class="math">\[
 \begin{aligned}
 \|\mathbf{p}\|^2&=\|0.6\mathbf{a}+0.4\mathbf{b}\|^2\\
-&=0.6^2\|\mathbf{a}\|^2+0.4^2\|\mathbf{b}\|^2+2(0.6)(0.4)\langle\mathbf{a},\mathbf{b}\rangle\\
-&=0.36(4.94)+0.16(3.80)+0.48(3.37)\\
-&=1.7784+0.6080+1.6176=4.0040\\
-s_p&=\sqrt{4.0040/4}=\sqrt{1.0010}=1.0005\%\\[6pt]
-\langle\mathbf{a},\mathbf{b}\rangle=0:\quad\|\mathbf{p}\|^2&=1.7784+0.6080=2.3864\\
-s_p&=\sqrt{2.3864/4}=0.7724\%\\[6pt]
+&=0.6^2\|\mathbf{a}\|^2+0.4^2\|\mathbf{b}\|^2\\
+&\quad+2(0.6)(0.4)\langle\mathbf{a},\mathbf{b}\rangle\\
+&=0.36(4.94)+0.16(3.80)\\
+&\quad+0.48(3.37)\\
+&=1.7784+0.6080\\
+&\quad+1.6176=4.0040\\
+s_p&=\sqrt{4.0040/4}\\
+&=\sqrt{1.0010}=1.0005\%\\[6pt]
+&\langle\mathbf{a},\mathbf{b}\rangle=0:\\
+\|\mathbf{p}\|^2&=1.7784+0.6080\\
+&=2.3864\\
+s_p&=\sqrt{2.3864/4}\\
+&=0.7724\%\\[6pt]
 \mathbf{p}&=(1.08,\,-0.60,\,0.74,\,-1.38,\,0.16)\\
-\|\mathbf{p}\|^2&=1.1664+0.36+0.5476+1.9044+0.0256=4.004
+\|\mathbf{p}\|^2&=1.1664+0.36\\
+&\quad+0.5476+1.9044\\
+&\quad+0.0256=4.004
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -308,10 +338,14 @@ s_p&=\sqrt{2.3864/4}=0.7724\%\\[6pt]
   <h4>ขั้นที่ 10 — derive hedge ratio จาก estimation window แยกต่างหาก</h4>
   <p>สูตร hedge ratio ไม่ได้มาจากการเดา แต่มาจากการหาจุดต่ำสุดของ variance เพื่อบีบความผันผวนรวมของพอร์ตโฟลิโอให้เหลือน้อยที่สุด</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(r_{\mathrm{portfolio}})&=\operatorname{Var}(r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}})\\[4pt]
-&=\sigma_{\mathrm{basket}}^{2}-2h\,\sigma_{\mathrm{basket},\mathrm{QQQ}}+h^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
-\frac{d}{dh}\operatorname{Var}(r_{\mathrm{portfolio}})&=-2\sigma_{\mathrm{basket},\mathrm{QQQ}}+2h\,\sigma_{\mathrm{QQQ}}^{2}=0\\[4pt]
-h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\frac{\widehat{\operatorname{Cov}}(r_{\mathrm{basket}},r_{\mathrm{QQQ}})}{\widehat{\operatorname{Var}}(r_{\mathrm{QQQ}})}\\[4pt]
+\begin{aligned}&\operatorname{Var}(r_{\mathrm{portfolio}})\\
+&=\operatorname{Var}(r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}})\\[4pt]
+&=\sigma_{\mathrm{basket}}^{2}-2h\,\sigma_{\mathrm{basket},\mathrm{QQQ}}\\
+&\quad+h^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
+&\frac{d}{dh}\operatorname{Var}(r_{\mathrm{portfolio}})\\
+&=-2\sigma_{\mathrm{basket},\mathrm{QQQ}}+2h\,\sigma_{\mathrm{QQQ}}^{2}=0\\[4pt]
+h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\\
+&=\frac{\widehat{\operatorname{Cov}}(r_{\mathrm{basket}},r_{\mathrm{QQQ}})}{\widehat{\operatorname{Var}}(r_{\mathrm{QQQ}})}\\[4pt]
 &=\frac{0.000153}{0.000180}=0.85\end{aligned}
 \]</div>
   <div class="reading">
@@ -336,11 +370,20 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\fr
   <h4>ขั้นที่ 12 — คำนวณความเสี่ยงคงเหลือ: ทำไม basis risk ถึงเท่ากับ $\sin^2\theta$</h4>
   <p>การ hedge ไม่ได้ลบความเสี่ยงทิ้งทั้งหมด แต่ลบได้เฉพาะมิติที่ฉายลงบนสินทรัพย์ที่ใช้ hedge ส่วนที่เหลือคือ basis risk ซึ่งสัมพันธ์กับมุมตั้งฉาก $\sin^2\theta$</p>
   <div class="math">\[
-\begin{aligned}\operatorname{Var}(r_{\mathrm{hedged}}^*)&=\sigma_{\mathrm{basket}}^{2}-2h^*\sigma_{\mathrm{basket},\mathrm{QQQ}}+(h^*)^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
-&=\sigma_{\mathrm{basket}}^{2}-2\left(\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\right)\sigma_{\mathrm{basket},\mathrm{QQQ}}+\left(\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\right)^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
-&=\sigma_{\mathrm{basket}}^{2}-\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}^{2}}{\sigma_{\mathrm{QQQ}}^{2}}=\sigma_{\mathrm{basket}}^{2}\left(1-\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}^{2}}{\sigma_{\mathrm{basket}}^{2}\sigma_{\mathrm{QQQ}}^{2}}\right)\\[4pt]
-&=\sigma_{\mathrm{basket}}^{2}(1-\rho^{2})=\sigma_{\mathrm{basket}}^{2}\sin^{2}\theta\\[4pt]
-\text{desk check: }&=0.000162\times(1-0.8028)=0.00003195\implies \sigma_{\mathrm{hedged}}=0.565\%\end{aligned}
+\begin{aligned}&\operatorname{Var}(r_{\mathrm{hedged}}^*)\\
+&=\sigma_{\mathrm{basket}}^{2}-2h^*\sigma_{\mathrm{basket},\mathrm{QQQ}}\\
+&\quad+(h^*)^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
+&=\sigma_{\mathrm{basket}}^{2}\\
+&\quad-2\left(\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\right)\sigma_{\mathrm{basket},\mathrm{QQQ}}\\
+&\quad+\left(\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\right)^{2}\sigma_{\mathrm{QQQ}}^{2}\\[4pt]
+&=\sigma_{\mathrm{basket}}^{2}-\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}^{2}}{\sigma_{\mathrm{QQQ}}^{2}}\\
+&=\sigma_{\mathrm{basket}}^{2}\left(1-\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}^{2}}{\sigma_{\mathrm{basket}}^{2}\sigma_{\mathrm{QQQ}}^{2}}\right)\\[4pt]
+&=\sigma_{\mathrm{basket}}^{2}(1-\rho^{2})\\
+&=\sigma_{\mathrm{basket}}^{2}\sin^{2}\theta\\[4pt]
+&\text{desk check: }\\
+&=0.000162\times(1-0.8028)\\
+&=0.00003195\\
+&\implies \sigma_{\mathrm{hedged}}=0.565\%\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อแทนสัดส่วน hedge ที่เหมาะสมที่สุดกลับลงในสมการ variance พจน์กลางและพจน์ท้ายจะยุบรวมกัน กลายเป็น variance ดั้งเดิมลบด้วยส่วนที่หักล้างได้ ดึงตัวคูณร่วมออกมาจะพบว่า variance ที่ลดลงไปคิดเป็นสัดส่วน $\rho^{2}$ หรือ $\cos^{2}\theta$ พอดิบพอดี</p>
@@ -354,10 +397,15 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}=\fr
   <p>linear regression และการ hedge ไม่ใช่คนละเรื่องกับเรขาคณิต แต่คือการฉายภาพแบบตั้งฉากลงบนแนวแกนเดียวกัน ทฤษฎีบทพีทาโกรัสจึงแปลงเป็นกฎการอนุรักษ์ความเสี่ยงในโลกการเงิน</p>
   <div class="math">\[
 \begin{aligned}\mathbf{b}&=h\mathbf{q}+\mathbf{e}\\[4pt]
-\langle\mathbf{e},\mathbf{q}\rangle&=\langle\mathbf{b}-h\mathbf{q},\mathbf{q}\rangle=\langle\mathbf{b},\mathbf{q}\rangle-h\|\mathbf{q}\|^{2}=0\\[4pt]
-h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}=\frac{\langle\mathbf{b},\mathbf{q}\rangle/(n-1)}{\|\mathbf{q}\|^{2}/(n-1)}=\frac{\widehat{\operatorname{Cov}}(r_{\mathrm{basket}},r_{\mathrm{QQQ}})}{\widehat{\operatorname{Var}}(r_{\mathrm{QQQ}})}\\[4pt]
+\langle\mathbf{e},\mathbf{q}\rangle&=\langle\mathbf{b}-h\mathbf{q},\mathbf{q}\rangle\\
+&=\langle\mathbf{b},\mathbf{q}\rangle-h\|\mathbf{q}\|^{2}=0\\[4pt]
+h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}\\
+&=\frac{\langle\mathbf{b},\mathbf{q}\rangle/(n-1)}{\|\mathbf{q}\|^{2}/(n-1)}\\
+&=\frac{\widehat{\operatorname{Cov}}(r_{\mathrm{basket}},r_{\mathrm{QQQ}})}{\widehat{\operatorname{Var}}(r_{\mathrm{QQQ}})}\\[4pt]
 \|\mathbf{b}\|^{2}&=\|h\mathbf{q}\|^{2}+\|\mathbf{e}\|^{2}\\[4pt]
-1&=\frac{\|h\mathbf{q}\|^{2}}{\|\mathbf{b}\|^{2}}+\frac{\|\mathbf{e}\|^{2}}{\|\mathbf{b}\|^{2}}=\cos^{2}\theta+\sin^{2}\theta=\rho^{2}+(1-\rho^{2})\end{aligned}
+1&=\frac{\|h\mathbf{q}\|^{2}}{\|\mathbf{b}\|^{2}}+\frac{\|\mathbf{e}\|^{2}}{\|\mathbf{b}\|^{2}}\\
+&=\cos^{2}\theta+\sin^{2}\theta\\
+&=\rho^{2}+(1-\rho^{2})\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้ามองข้อมูลเป็น vector ในปริภูมิ $n$ มิติ การหา hedge ratio หรือ regression slope ก็คือการหาเงาฉายแบบตั้งฉากของ $\mathbf{b}$ ลงบนเส้นตรงที่ขึงโดย $\mathbf{q}$ โดย vector ความคลาดเคลื่อน $\mathbf{e}$ ต้องตั้งฉากกับทิศของ $\mathbf{q}$ ทำให้ inner product ระหว่างทั้งคู่เป็นศูนย์</p>
