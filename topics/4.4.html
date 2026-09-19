@@ -371,6 +371,33 @@ g(0,5)&=3(0)+2(5)=10\\[6pt]
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจความเป็นเส้นตรง constraint และมุมของบริเวณที่ใช้ได้</summary>
+    <pre><code>import numpy as np
+from scipy.optimize import linprog
+f = lambda x: x[0] + 2 * x[1]
+p, q = np.array([4, 2]), np.array([8, 3])
+assert f(0.5 * p + 0.5 * q) == 11 == 0.5 * f(p) + 0.5 * f(q)
+g = lambda x: x[0] ** 2
+assert g(0.5 * p + 0.5 * q) == 36 and 0.5 * g(p) + 0.5 * g(q) == 40    # not linear
+G = np.array([[2, 3, 4], [1, 0, 2]])
+assert G[0] @ np.ones(3) == 9 and np.array_equal(G @ np.ones(3), [9, 3])
+a, b = np.array([1, 2]), 10
+assert a @ p == 8 and b - a @ p == 2 and a @ q == 14 and a @ q - b == 4 and b / (a @ p) == 1.25
+S = np.array([[120, 105], [100, 105], [70, 105]]); X = np.array([110, 100, 80])
+slack = S @ [0.5, 0.5] - X
+assert np.allclose(S @ [0.5, 0.5], [112.5, 102.5, 87.5]) and np.allclose(slack, [2.5, 2.5, 7.5])
+corners = np.array([[0, 0], [10, 0], [0, 5]])
+assert [f(c) for c in corners] == [0, 10, 10] and [3 * c[0] + 2 * c[1] for c in corners] == [0, 30, 10]
+res = linprog([-3, -2], A_ub=[[1, 2]], b_ub=[10], bounds=[(0, None)] * 2)
+assert np.allclose(res.x, [10, 0]) and abs(-res.fun - 30) &lt; 1e-9</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดแสดงว่าผสมก่อนหรือหลังได้ 11 เท่ากันเมื่อกฎเป็นเส้นตรง แต่ x² ให้ 36 กับ 40 ตรวจจุดที่ผ่านและตก budget คิด slack 2.5, 2.5, 7.5 และให้ linprog ยืนยันว่า 3x₁ + 2x₂ ดีที่สุดที่มุม (10, 0) ได้ 30</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

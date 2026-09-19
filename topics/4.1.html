@@ -328,6 +328,29 @@ w_{2}&=-0.35/0.2=-1.75\\[6pt]
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดคูณตารางจริงและหา hedge ที่ทำให้ exposure เป็นศูนย์</summary>
+    <pre><code>import numpy as np
+mix = np.array([[0.5, 0], [0.25, 0.5]])
+assert np.allclose(mix @ [2, 3], [1.0, 2.0])                  # orange 1.0, purple 2.0
+assert np.allclose(np.array([1.2, 0.4]) @ np.eye(2), [1.2, 0.4])
+A23 = np.array([[2, 3, 7], [1, 6, 5]])
+assert A23.shape == (2, 3) and A23[1, 2] == 5                  # a_23 counted from 1
+A = np.array([[1.2, 0.4], [0.9, 0.2], [1.5, 0.7]]); w = np.array([2, -1, 0.5])
+assert np.allclose(A.T @ w, [2.25, 0.95])
+S = np.array([[120, 105], [100, 105], [70, 105]])
+assert np.allclose(S @ [2, -1], [135, 95, 35])
+w2 = -1.5 * 0.5 / 0.9
+assert abs(w2 + 0.8333) &lt; 5e-5 and abs(A[:, 0] @ [0, w2, 0.5]) &lt; 1e-12
+w2q = -0.7 * 0.5 / 0.2
+assert abs(w2q + 1.75) &lt; 1e-12 and abs(A[:, 1] @ [0, w2q, 0.5]) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคูณเครื่องผสมสี ตรวจ identity คิด exposure 2.25 กับ 0.95 ล้าน USD และ payoff 135, 95, 35 USD แล้วแก้ hedge ที่ทำให้ exposure ตลาดและคุณภาพเป็นศูนย์ได้ −0.8333 กับ −1.75</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

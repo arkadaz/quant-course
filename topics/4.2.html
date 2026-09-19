@@ -342,6 +342,29 @@ x^{\mathsf T}Bx&=\begin{bmatrix}1&amp;2\end{bmatrix}\begin{bmatrix}4\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ transpose, กฎสลับลำดับ และ quadratic form</summary>
+    <pre><code>import numpy as np
+A = np.array([[1.2, 0.4], [0.9, 0.2], [1.5, 0.7]])
+assert A.T.shape == (2, 3) and np.array_equal(A.T.T, A) and A.T[0, 2] == A[2, 0]
+u, v = np.array([1., -2, 3]), np.array([4., 0.5, -1])
+assert u @ v == v @ u
+S = np.array([[2, 3, 7], [1, 6, 5]]); th = np.array([2, 6, 4])
+assert np.array_equal(S @ th, [50, 58]) and np.array_equal(th @ S.T, S @ th)
+rng = np.random.default_rng(0)
+P, Q = rng.random((3, 4)), rng.random((4, 2))
+assert np.allclose((P @ Q).T, Q.T @ P.T)                       # (PQ)^T = Q^T P^T
+Sig = np.array([[0.1, -0.0559], [-0.0559, 0.5]]); w = np.array([0.6, 0.4])
+assert np.allclose(Sig @ w, [0.03764, 0.16646]) and abs(w @ Sig @ w - 0.089168) &lt; 1e-9
+B = np.array([[2, 1], [0, 3]]); x = np.array([1, 2])
+assert np.array_equal(B.T.T, B) and np.array_equal(B @ x, [4, 6]) and x @ B @ x == 16</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่า transpose สองครั้งกลับที่เดิม dot product สลับข้างได้ ผลคูณต้องสลับลำดับเมื่อ transpose ได้ 50 กับ 58 ทั้งสองทาง และ portfolio variance 0.089168 ตามขั้นที่ 9</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
