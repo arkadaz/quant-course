@@ -125,13 +125,18 @@
   <p>นี่คือเหตุผลที่บล็อกประวัติข้างบนเล่าเรื่อง Gauss กับดาวเคราะห์น้อยที่หายไป เขาไม่ได้เลือกกำลังสองเพราะคำนวณง่าย เขาถามกลับด้านว่าความคลาดเคลื่อนต้องแจกแจงแบบไหน กติกากำลังสองถึงจะเป็นคำตอบที่ดีที่สุด แล้วคำตอบนั้นคือระฆังคว่ำ ซึ่งทุกวันนี้เรียกกันว่า Gaussian ตามชื่อเขา</p>
   <p>ผลที่ตามมาในงานจริง กำลังสองลงโทษค่าที่หลุดไปไกลแรงมาก ข้อมูลผิดตัวเดียว ดึงเส้นทั้งเส้นได้ ถ้าข้อมูลมีหางหนาหรือมีค่าผิดปกติ การใช้ขนาดแทนกำลังสอง จะได้เส้นที่ทนกว่า แลกกับการที่ไม่มีสูตรปิดให้กด</p>
   <div class="math">\[
-\begin{aligned}\text{(i)}\quad\frac{d}{db}\sum_i\left(y_i-a-bx_i\right)^{2}&=-2\sum_i x_i\left(y_i-a-bx_i\right)\\
-\frac{d}{db}\sum_i\left|y_i-a-bx_i\right|&\ \text{undefined at }y_i=a+bx_i\\[4pt]
-\text{(ii)}\quad\min_{c}\ \mathbb{E}\left[(Y-c)^{2}\right]&\ \Rightarrow\ c=\mathbb{E}[Y]\\
-\min_{c}\ \mathbb{E}\left|Y-c\right|&\ \Rightarrow\ c=\operatorname{median}(Y)\\[4pt]
-\text{(iii)}\quad\varepsilon_i\sim\mathcal{N}\left(0,\sigma^{2}\right):\quad L&=\prod_i\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{\left(y_i-a-bx_i\right)^{2}}{2\sigma^{2}}}\\
+\begin{aligned}
+&\text{(i)}\quad\frac{d}{db}\sum_i\left(y_i-a-bx_i\right)^{2}\\
+&=-2\sum_i x_i\left(y_i-a-bx_i\right)\\
+&\frac{d}{db}\sum_i\left|y_i-a-bx_i\right|\\
+&\ \text{undefined at }y_i=a+bx_i\\[4pt]
+&\text{(ii)}\quad\min_{c}\ \mathbb{E}\left[(Y-c)^{2}\right]\ \Rightarrow\ c=\mathbb{E}[Y]\\
+&\min_{c}\ \mathbb{E}\left|Y-c\right|\ \Rightarrow\ c=\operatorname{median}(Y)\\[4pt]
+&\text{(iii)}\quad\varepsilon_i\sim\mathcal{N}\left(0,\sigma^{2}\right):\\
+L&=\prod_i\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{\left(y_i-a-bx_i\right)^{2}}{2\sigma^{2}}}\\
 \ln L&=\text{const}-\frac{1}{2\sigma^{2}}\sum_i\left(y_i-a-bx_i\right)^{2}\\[4pt]
-\max\ \ln L&\ \Rightarrow\ \min\ \sum_i\left(y_i-a-bx_i\right)^{2}\end{aligned}
+&\max\ \ln L\ \Rightarrow\ \min\ \sum_i\left(y_i-a-bx_i\right)^{2}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เหตุผลข้อแรกเป็นเรื่องเครื่องมือล้วน ๆ กำลังสองหา derivative ได้ทุกจุด พอตั้งให้เท่าศูนย์จะได้สมการเชิงเส้นที่แก้ได้ตรง ๆ มีคำตอบเดียว ส่วนขนาดของความคลาดเคลื่อนมีมุมแหลมตรงศูนย์ ตรงนั้นหาความชันไม่ได้</p>
@@ -143,14 +148,19 @@
 
 <section class="formula">
   <h4>ขั้นที่ 3 — แก้ normal equations ทีละ coefficient</h4>
-  <p>หาจุดที่ความพลาดรวมต่ำที่สุดด้วยการให้ความชันเป็นศูนย์ หกบรรทัดนี้แสดงว่าสองสูตรที่ใช้กันทุกวัน มาจากการหา derivative สองครั้งแล้วแก้สมการ และรูปของคำตอบก็คือ covariance ส่วนด้วย variance ซึ่งเป็นตัวเดียวกับ hedge ratio ในหัวข้อ 7.4</p>
+  <p>หาจุดที่ความพลาดรวมต่ำที่สุดด้วยการให้ความชันเป็นศูนย์ สูตรข้างล่างแสดงว่าสองสูตรที่ใช้กันทุกวัน มาจากการหา derivative สองครั้งแล้วแก้สมการ และรูปของคำตอบก็คือ covariance ส่วนด้วย variance ซึ่งเป็นตัวเดียวกับ hedge ratio ในหัวข้อ 7.4</p>
   <div class="math">\[
-\begin{aligned}\frac{\partial\operatorname{SSE}}{\partial a}&=-2\sum_t\big(y_t-a-bx_t\big)=0\\
-\sum_t y_t-na-b\sum_t x_t&=0\;\Longrightarrow\;\hat a=\bar y-\hat b\,\bar x\\[4pt]
-\frac{\partial\operatorname{SSE}}{\partial b}&=-2\sum_t x_t\big(y_t-a-bx_t\big)=0\\
-\text{substitute }a=\bar y-b\bar x:\quad\sum_t x_t\big[(y_t-\bar y)-b(x_t-\bar x)\big]&=0\\
-\sum_t(x_t-\bar x)(y_t-\bar y)&=b\sum_t(x_t-\bar x)^{2}\\
-\hat b&=\frac{\sum_t(x_t-\bar x)(y_t-\bar y)}{\sum_t(x_t-\bar x)^{2}}=\frac{\operatorname{Cov}(x,y)}{\operatorname{Var}(x)}=\rho_{xy}\frac{\sigma_y}{\sigma_x}\end{aligned}
+\begin{aligned}
+&\frac{\partial\operatorname{SSE}}{\partial a}=-2\sum_t\big(y_t-a-bx_t\big)=0\\
+&\sum_t y_t-na-b\sum_t x_t=0\\
+&\;\Longrightarrow\;\hat a=\bar y-\hat b\,\bar x\\[4pt]
+&\frac{\partial\operatorname{SSE}}{\partial b}=-2\sum_t x_t\big(y_t-a-bx_t\big)=0\\
+&\text{substitute }a=\bar y-b\bar x:\\
+&\sum_t x_t\big[(y_t-\bar y)-b(x_t-\bar x)\big]=0\\
+&\sum_t(x_t-\bar x)(y_t-\bar y)=b\sum_t(x_t-\bar x)^{2}\\
+\hat b&=\frac{\sum_t(x_t-\bar x)(y_t-\bar y)}{\sum_t(x_t-\bar x)^{2}}\\
+&=\frac{\operatorname{Cov}(x,y)}{\operatorname{Var}(x)}=\rho_{xy}\frac{\sigma_y}{\sigma_x}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ความพลาดรวมเป็นชามโค้งขึ้น จุดต่ำสุดจึงอยู่ที่พื้นราบ หา derivative เทียบระดับของเส้นแล้วตั้งเป็นศูนย์ สิ่งที่ได้อ่านความหมายได้ทันที ผลรวมของความพลาดต้องเป็นศูนย์ แปลว่าเส้นต้องผ่านจุดค่าเฉลี่ยพอดี</p>

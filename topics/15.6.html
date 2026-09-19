@@ -107,10 +107,15 @@
   <div class="math">\[
 \begin{aligned}
 1+r_{i,\tau}&=\frac{P_{i,\tau}}{P_{i,\tau-1}}\\[4pt]
-\frac{P_{i,t-2}}{P_{i,t-L-1}}&=\prod_{\tau=t-L-1}^{t-2}\frac{P_{i,\tau}}{P_{i,\tau-1}}=\prod_{j=2}^{L+1}(1+r_{i,t-j})\\[4pt]
-s_{i,t}&=\frac{P_{i,t-2}-P_{i,t-L-1}}{P_{i,t-L-1}}=\frac{P_{i,t-2}}{P_{i,t-L-1}}-1=\prod_{j=2}^{L+1}(1+r_{i,t-j})-1\\[4pt]
-\ln(1+s_{i,t})&=\sum_{j=2}^{L+1}\ln(1+r_{i,t-j})\approx \sum_{j=2}^{L+1}r_{i,t-j}\\[4pt]
-s_{\mathrm{AAPL},t}&=(1+0.05)(1-0.02)(1+0.04)-1=1.07016-1=0.07016
+&\frac{P_{i,t-2}}{P_{i,t-L-1}}=\prod_{\tau=t-L-1}^{t-2}\frac{P_{i,\tau}}{P_{i,\tau-1}}\\
+&=\prod_{j=2}^{L+1}(1+r_{i,t-j})\\[4pt]
+s_{i,t}&=\frac{P_{i,t-2}-P_{i,t-L-1}}{P_{i,t-L-1}}=\frac{P_{i,t-2}}{P_{i,t-L-1}}-1\\
+&=\prod_{j=2}^{L+1}(1+r_{i,t-j})-1\\[4pt]
+&\ln(1+s_{i,t})=\sum_{j=2}^{L+1}\ln(1+r_{i,t-j})\\
+&\approx \sum_{j=2}^{L+1}r_{i,t-j}\\[4pt]
+&s_{\mathrm{AAPL},t}\\
+&=(1+0.05)(1-0.02)(1+0.04)-1\\
+&=1.07016-1=0.07016
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -146,11 +151,14 @@ r^{LS}_{t}&=\bar r_{W,t}-\bar r_{L,t}-c_t\\[4pt]
   <p>การคิดต้นทุน $c_t$ จาก one-way turnover คูณกับอัตราต้นทุนต่อรอบ $q$ จึงสะท้อนค่าธรรมเนียม, spread และ market impact ของการจัดสรรเงินใหม่ได้อย่างถูกต้อง</p>
   <div class="math">\[
 \begin{aligned}
-\sum_{i}\Delta w_{i,t}&=\sum_i (w_{i,t}-w_{i,t-1})=0\\[4pt]
-\sum_{i:\Delta w_i>0}\Delta w_{i,t}&=\sum_{i:\Delta w_i \lt 0}|\Delta w_{i,t}|\\[4pt]
-\sum_{i}|\Delta w_{i,t}|&=\sum_{\Delta w_i>0}\Delta w_{i,t}+\sum_{\Delta w_i \lt 0}|\Delta w_{i,t}|=2\sum_{\Delta w_i>0}\Delta w_{i,t}\\[4pt]
+&\sum_{i}\Delta w_{i,t}=\sum_i (w_{i,t}-w_{i,t-1})=0\\[4pt]
+&\sum_{i:\Delta w_i>0}\Delta w_{i,t}=\sum_{i:\Delta w_i \lt 0}|\Delta w_{i,t}|\\[4pt]
+&\sum_{i}|\Delta w_{i,t}|\\
+&=\sum_{\Delta w_i>0}\Delta w_{i,t}+\sum_{\Delta w_i \lt 0}|\Delta w_{i,t}|\\
+&=2\sum_{\Delta w_i>0}\Delta w_{i,t}\\[4pt]
 \tau_t&=\sum_{\Delta w_i>0}\Delta w_{i,t}=\frac12\sum_i |w_{i,t}-w_{i,t-1}|\\[4pt]
-c_t&=\tau_t q,\qquad w_{i,t-1}^+=\frac{w_{i,t-1}(1+r_{i,t-1})}{1+r_{p,t-1}}
+c_t&=\tau_t q\\
+&w_{i,t-1}^+=\frac{w_{i,t-1}(1+r_{i,t-1})}{1+r_{p,t-1}}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -182,10 +190,16 @@ r^{LS}_{t}&=0.020-(-0.015)-0.0021\\
   <p>การแปลงผลตอบแทนเป็นหน่วยดอลลาร์ช่วยให้เห็นความคุ้มค่าของการดำเนินงาน ต้นทุน 2,100 ดอลลาร์ที่หายไปคือเงินสดจริงที่ต้องจ่ายให้โบรกเกอร์และตลาด ซึ่งเตือนให้ผู้จัดการกองทุนตระหนักถึง friction ก่อนขยายขนาดเงินทุน</p>
   <div class="math">\[
 \begin{aligned}
-\text{Gross P\&amp;L}_t&=\mathrm{NAV}_t\cdot r^{LS}_{\mathrm{gross},t}=1{,}000{,}000(0.0350)=35{,}000\ \mathrm{USD}\\[4pt]
-\text{Total Cost}_t&=\mathrm{NAV}_t\cdot c_t=1{,}000{,}000(0.0021)=2{,}100\ \mathrm{USD}\\[4pt]
-\mathrm{P\&amp;L}_t&=\text{Gross P\&amp;L}_t-\text{Total Cost}_t=35{,}000-2{,}100=32{,}900\ \mathrm{USD}\\[4pt]
-\mathrm{NAV}_{t+1}&=\mathrm{NAV}_t+\mathrm{P\&amp;L}_t=1{,}000{,}000+32{,}900=1{,}032{,}900\ \mathrm{USD}
+&\text{Gross P\&amp;L}_t\\
+&=\mathrm{NAV}_t\cdot r^{LS}_{\mathrm{gross},t}=1{,}000{,}000(0.0350)\\
+&=35{,}000\ \mathrm{USD}\\[4pt]
+&\text{Total Cost}_t\\
+&=\mathrm{NAV}_t\cdot c_t=1{,}000{,}000(0.0021)\\
+&=2{,}100\ \mathrm{USD}\\[4pt]
+&\mathrm{P\&amp;L}_t=\text{Gross P\&amp;L}_t-\text{Total Cost}_t\\
+&=35{,}000-2{,}100=32{,}900\ \mathrm{USD}\\[4pt]
+&\mathrm{NAV}_{t+1}=\mathrm{NAV}_t+\mathrm{P\&amp;L}_t\\
+&=1{,}000{,}000+32{,}900=1{,}032{,}900\ \mathrm{USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -200,11 +214,21 @@ r^{LS}_{t}&=0.020-(-0.015)-0.0021\\
   <p>ทว่าในโลกความเป็นจริง นักวิจัยมักปรับจูน parameter ซ้ำแล้วซ้ำเล่า การค้นหาผ่าน 20 หรือ 100 ตัวเลือกทำให้โอกาสพบผู้ชนะจอมปลอมสูงเกินกว่าจะยอมรับได้ หากไม่ปรับเกณฑ์การทดสอบด้วยวิธีอย่าง Bonferroni</p>
   <div class="math">\[
 \begin{aligned}
-X&\sim \operatorname{Bin}(n=10, p=0.5),\qquad \mathbb P(X=r)=\binom{n}{r}p^r(1-p)^{n-r}\\[4pt]
-\mathbb P(X\ge 9)&=\binom{10}{9}(0.5)^{10}+\binom{10}{10}(0.5)^{10}=\frac{10+1}{1024}=\frac{11}{1024}\approx 0.01074\\[4pt]
-\mathbb P(V)&=1-\prod_{m=1}^M \big(1-\mathbb P(Z_m)\big)=1-\big[1-\mathbb P(Z_1)\big]^M\\[4pt]
-M=20:\quad \mathbb P(V)&=1-(1-0.01074)^{20}=1-(0.98926)^{20}\approx 1-0.8058=0.1942\\[4pt]
-M=100:\quad \mathbb P(V)&=1-(1-0.01074)^{100}=1-(0.98926)^{100}\approx 1-0.3396=0.6604
+X&\sim \operatorname{Bin}(n=10, p=0.5)\\
+&\mathbb P(X=r)=\binom{n}{r}p^r(1-p)^{n-r}\\[4pt]
+&\mathbb P(X\ge 9)\\
+&=\binom{10}{9}(0.5)^{10}+\binom{10}{10}(0.5)^{10}\\
+&=\frac{10+1}{1024}=\frac{11}{1024}\approx 0.01074\\[4pt]
+\mathbb P(V)&=1-\prod_{m=1}^M \big(1-\mathbb P(Z_m)\big)\\
+&=1-\big[1-\mathbb P(Z_1)\big]^M\\[4pt]
+&M=20:\\
+\mathbb P(V)&=1-(1-0.01074)^{20}\\
+&=1-(0.98926)^{20}\\
+&\approx 1-0.8058=0.1942\\[4pt]
+&M=100:\\
+\mathbb P(V)&=1-(1-0.01074)^{100}\\
+&=1-(0.98926)^{100}\\
+&\approx 1-0.3396=0.6604
 \end{aligned}
 \]</div>
   <div class="reading">

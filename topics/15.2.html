@@ -97,18 +97,21 @@
   <h4>ขั้นที่ 1 — ลองด้วยมือ: ผู้จัดการสองคน ใครเก่งกว่ากัน</h4>
   <p>ก่อนสูตร ลองโจทย์เล็ก ๆ ตลาดขึ้น 10% เงินสดให้ 2% ผู้จัดการสองคนรับความเสี่ยงตลาดไม่เท่ากัน</p>
   <div class="math">\[
-\begin{aligned}R_m=10\%,\quad R_f&=2\%\;\Longrightarrow\;R_m-R_f=8\%\\[4pt]
-A:\ \beta=0.5,\ R_A&=6\%\\
-2+0.5(8)&=6\%,\qquad\alpha_A=6-6=0\\[4pt]
-B:\ \beta=1.5,\ R_B&=12\%\\
-2+1.5(8)&=14\%,\qquad\alpha_B=12-14=-2\%\end{aligned}
+\begin{aligned}
+&R_m=10\%,\quad R_f=2\%\\
+&\;\Longrightarrow\;R_m-R_f=8\%\\[4pt]
+&A:\ \beta=0.5,\ R_A=6\%\\
+&2+0.5(8)=6\%,\qquad\alpha_A=6-6=0\\[4pt]
+&B:\ \beta=1.5,\ R_B=12\%\\
+&2+1.5(8)=14\%,\qquad\alpha_B=12-14=-2\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>B ทำได้ 12% ชนะ A ที่ทำได้ 6% สองเท่า แต่ B ถือของที่เกาะตลาด 1.5 เท่า ในปีที่ตลาดขึ้น 10% ใครก็ตามที่ถือ beta 1.5 ด้วยเงินกู้ราคาถูก จะได้ 14% โดยไม่ต้องคิดอะไร B จึงทำได้ *ต่ำกว่า* สิ่งที่ซื้อได้ฟรีอยู่ 2%</p>
     <p>A ได้พอดีกับที่ควรได้ ไม่มีฝีมือแต่ก็ไม่เสียหาย เกณฑ์ที่ใช้เทียบ (hurdle) เปลี่ยนตามว่าแต่ละคนรับความเสี่ยงตลาดเท่าไร นี่คือทั้งหมดของทฤษฎีในหนึ่งบรรทัด</p>
     <p>สูตรข้างล่างแค่เขียนคำว่า ‘ราคาต่อหนึ่งหน่วย beta’ ให้เป็นสัญลักษณ์ และบอกว่า beta วัดจากไหน</p>
-    <p>บรรทัดแรกคือส่วนเกินที่ตลาดจ่ายต่อหนึ่งหน่วยของการเกาะตลาด</p>
-    <p>บรรทัดที่สามและห้าคือเกณฑ์ที่แต่ละคนควรทำได้ คิดจากอัตราปลอดภัยบวกการเกาะตลาดคูณส่วนเกิน</p>
+    <p>สองบรรทัดแรกคือส่วนเกินที่ตลาดจ่ายต่อหนึ่งหน่วยของการเกาะตลาด</p>
+    <p>บรรทัดที่สี่และหกคือเกณฑ์ที่แต่ละคนควรทำได้ คิดจากอัตราปลอดภัยบวกการเกาะตลาดคูณส่วนเกิน</p>
     <p>อ่านผล: คนที่ได้ 12% แพ้คนที่ได้ 6% เพราะเขารับความเสี่ยงมากกว่าสามเท่า ตัวเลขผลตอบแทนดิบจึงเทียบกันตรง ๆ ไม่ได้</p>
   </div>
 </section>
@@ -127,18 +130,23 @@ R_{i,t}-R_{f,t}=\alpha_i+\beta_i(R_{m,t}-R_{f,t})+\epsilon_{i,t}
 
 <section class="formula">
   <h4>ขั้นที่ 3 — required return บน SML</h4>
-  <p>เมื่อรู้ว่าเกาะตลาดแค่ไหน ก็บอกได้ว่ามันควรได้ผลตอบแทนเท่าไรถึงจะยุติธรรม หกบรรทัดนี้แยกให้ชัดว่าบรรทัดไหนเป็นพีชคณิต และบรรทัดไหนเป็นความเชื่อ มีบรรทัดเดียวที่เป็นความเชื่อ คือบรรทัดที่สี่ และทั้งหัวข้อ 15.7 คือหลักฐานว่ามันไม่จริงเสมอ</p>
+  <p>เมื่อรู้ว่าเกาะตลาดแค่ไหน ก็บอกได้ว่ามันควรได้ผลตอบแทนเท่าไรถึงจะยุติธรรม สูตรข้างล่างแยกให้ชัดว่าบรรทัดไหนเป็นพีชคณิต และบรรทัดไหนเป็นความเชื่อ มีบรรทัดเดียวที่เป็นความเชื่อ คือบรรทัดที่เจ็ด และทั้งหัวข้อ 15.7 คือหลักฐานว่ามันไม่จริงเสมอ</p>
   <div class="math">\[
-\begin{aligned}R_{i}-R_{f}&=\alpha_i+\beta_i\big(R_{m}-R_{f}\big)+\epsilon_i\\
-\mathbb E[\epsilon_i]&=0\qquad\text{(OLS residual, topic 15.1)}\\
-\mathbb E[R_i]-R_f&=\alpha_i+\beta_i\big(\mathbb E[R_m]-R_f\big)\\[4pt]
-\text{equilibrium}:\quad\alpha_i&=0\\
-\mathbb E[R_i]-R_f&=\beta_i\big(\mathbb E[R_m]-R_f\big)\\
-\mathbb E[R_i]&=R_f+\beta_i\big(\mathbb E[R_m]-R_f\big)\end{aligned}
+\begin{aligned}
+&R_{i}-R_{f}\\
+&=\alpha_i+\beta_i\big(R_{m}-R_{f}\big)+\epsilon_i\\
+\mathbb E[\epsilon_i]&=0\\
+&\quad\text{(OLS residual, topic 15.1)}\\
+&\mathbb E[R_i]-R_f\\
+&=\alpha_i+\beta_i\big(\mathbb E[R_m]-R_f\big)\\[4pt]
+&\text{equilibrium}:\quad\alpha_i=0\\
+&\mathbb E[R_i]-R_f=\beta_i\big(\mathbb E[R_m]-R_f\big)\\
+\mathbb E[R_i]&=R_f+\beta_i\big(\mathbb E[R_m]-R_f\big)
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ยกสมการของขั้นที่ 2 มาแล้วหาค่าเฉลี่ยทั้งสองข้าง ความพลาดที่เหลือมีค่าเฉลี่ยศูนย์ ซึ่งเป็นผลบังคับของเงื่อนไขในหัวข้อ 15.1 ไม่ใช่ข้อสมมติที่เพิ่มเข้ามา มันจึงหายไปฟรี ๆ</p>
-    <p>บรรทัดสี่ต่างออกไป มันคือข้อสมมติเดียวที่เพิ่มเข้ามา และเป็นข้อที่ควรสงสัยที่สุดในหัวข้อนี้ มันบอกว่าในดุลยภาพจะไม่มีใครได้ผลตอบแทนเกินจากความเสี่ยงที่รับ</p>
+    <p>บรรทัดที่เจ็ดต่างออกไป มันคือข้อสมมติเดียวที่เพิ่มเข้ามา และเป็นข้อที่ควรสงสัยที่สุดในหัวข้อนี้ มันบอกว่าในดุลยภาพจะไม่มีใครได้ผลตอบแทนเกินจากความเสี่ยงที่รับ</p>
     <p>ย้ายข้างแล้วอ่านผล ผลตอบแทนที่ควรได้ขึ้นกับการเกาะตลาดอย่างเดียว ไม่ขึ้นกับความเหวี่ยงเฉพาะตัวของหุ้นเลย</p>
     <p>นี่คือข้ออ้างที่แรงที่สุดของแบบจำลองนี้ และเป็นจุดที่งานวิจัยสามสิบปีหลังใช้โจมตี เพราะข้อมูลจริงไม่ค่อยเชื่อฟัง</p>
   </div>
@@ -152,15 +160,20 @@ R_{i,t}-R_{f,t}=\alpha_i+\beta_i(R_{m,t}-R_{f,t})+\epsilon_{i,t}
   <div class="math">\[
 \begin{aligned}
 \mu_p(w)&=w\,\mathbb E[R_i]+(1-w)\,\mathbb E[R_m]\\[4pt]
-\sigma_p(w)&=\sqrt{w^2\sigma_i^2+(1-w)^2\sigma_m^2+2w(1-w)\sigma_{im}}\\[4pt]
+&\sigma_p(w)\\
+&=\sqrt{w^2\sigma_i^2+(1-w)^2\sigma_m^2+2w(1-w)\sigma_{im}}\\[4pt]
 \frac{d\mu_p}{dw}&=\mathbb E[R_i]-\mathbb E[R_m]\\[4pt]
-\left.\frac{d\sigma_p}{dw}\right|_{w=0}&=\frac{-2\sigma_m^2+2\sigma_{im}}{2\sigma_m}=\frac{\sigma_{im}-\sigma_m^2}{\sigma_m}\\[4pt]
-\left.\frac{d\mu_p}{d\sigma_p}\right|_{w=0}&=\frac{d\mu_p/dw\big|_{w=0}}{d\sigma_p/dw\big|_{w=0}}=\frac{\mathbb E[R_i]-\mathbb E[R_m]}{(\sigma_{im}-\sigma_m^2)/\sigma_m}\\[4pt]
-\text{Slope}_{\mathrm{CML}}&=\frac{\mathbb E[R_m]-R_f}{\sigma_m}\\[4pt]
-\frac{\mathbb E[R_i]-\mathbb E[R_m]}{(\sigma_{im}-\sigma_m^2)/\sigma_m}&=\frac{\mathbb E[R_m]-R_f}{\sigma_m}\\[4pt]
-\mathbb E[R_i]-\mathbb E[R_m]&=(\mathbb E[R_m]-R_f)\left(\frac{\sigma_{im}}{\sigma_m^2}-1\right)\\[4pt]
-\mathbb E[R_i]-R_f&=\frac{\sigma_{im}}{\sigma_m^2}\big(\mathbb E[R_m]-R_f\big)\\[4pt]
-\mathbb E[R_i]&=R_f+\beta_i\big(\mathbb E[R_m]-R_f\big),\qquad \beta_i\equiv\frac{\sigma_{im}}{\sigma_m^2}
+&\left.\frac{d\sigma_p}{dw}\right|_{w=0}\\
+&=\frac{-2\sigma_m^2+2\sigma_{im}}{2\sigma_m}=\frac{\sigma_{im}-\sigma_m^2}{\sigma_m}\\[4pt]
+&\left.\frac{d\mu_p}{d\sigma_p}\right|_{w=0}\\
+&=\frac{d\mu_p/dw\big|_{w=0}}{d\sigma_p/dw\big|_{w=0}}=\frac{\mathbb E[R_i]-\mathbb E[R_m]}{(\sigma_{im}-\sigma_m^2)/\sigma_m}\\[4pt]
+&\text{Slope}_{\mathrm{CML}}=\frac{\mathbb E[R_m]-R_f}{\sigma_m}\\[4pt]
+&\frac{\mathbb E[R_i]-\mathbb E[R_m]}{(\sigma_{im}-\sigma_m^2)/\sigma_m}=\frac{\mathbb E[R_m]-R_f}{\sigma_m}\\[4pt]
+&\mathbb E[R_i]-\mathbb E[R_m]\\
+&=(\mathbb E[R_m]-R_f)\left(\frac{\sigma_{im}}{\sigma_m^2}-1\right)\\[4pt]
+&\mathbb E[R_i]-R_f=\frac{\sigma_{im}}{\sigma_m^2}\big(\mathbb E[R_m]-R_f\big)\\[4pt]
+\mathbb E[R_i]&=R_f+\beta_i\big(\mathbb E[R_m]-R_f\big)\\
+\beta_i&\equiv\frac{\sigma_{im}}{\sigma_m^2}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -175,9 +188,13 @@ R_{i,t}-R_{f,t}=\alpha_i+\beta_i(R_{m,t}-R_{f,t})+\epsilon_{i,t}
   <h4>ขั้นที่ 5 — ตัวอย่าง hurdle หนึ่งเดือน</h4>
   <p>CAPM ต้องการส่วนต่างระหว่างผลตอบแทนตลาดกับเงินสดก่อน แล้วจึงคูณด้วย beta ส่วนต่างนี้คือราคาที่ตลาดจ่ายให้กับการรับความเสี่ยงหนึ่งหน่วย</p>
   <div class="math">\[
-\begin{aligned}\mathbb E[R_m]-R_f&=0.011-0.003=0.008\\
-\mathbb E[R_{NVDA}]&=R_f+\beta\bigl(\mathbb E[R_m]-R_f\bigr)\\
-&=0.003+1.40(0.008)=0.003+0.0112=0.0142\end{aligned}
+\begin{aligned}
+&\mathbb E[R_m]-R_f=0.011-0.003=0.008\\
+&\mathbb E[R_{NVDA}]\\
+&=R_f+\beta\bigl(\mathbb E[R_m]-R_f\bigr)\\
+&=0.003+1.40(0.008)\\
+&=0.003+0.0112=0.0142
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตลาดจ่ายส่วนเกิน 0.8% ต่อเดือนให้กับความเสี่ยงหนึ่งหน่วย NVDA รับความเสี่ยง 1.40 หน่วย จึงควรได้ส่วนเกิน 1.12% บวกกับเงินสด 0.3% รวมเป็น 1.42% ต่อเดือน</p>
@@ -219,10 +236,16 @@ N_h&=\beta_iV_i=1.40(1{,}000{,}000)=1{,}400{,}000\ \text{USD}
   <div class="math">\[
 \begin{aligned}
 X&\sim\operatorname{Bin}(n=10,\,p=0.5)\\[4pt]
-\mathbb P(X\ge 9)&=\binom{10}{9}(0.5)^{10}+\binom{10}{10}(0.5)^{10}=\frac{10+1}{1024}\approx 0.0107\\[4pt]
+&\mathbb P(X\ge 9)\\
+&=\binom{10}{9}(0.5)^{10}+\binom{10}{10}(0.5)^{10}\\
+&=\frac{10+1}{1024}\approx 0.0107\\[4pt]
 \mathbb P(V)&=1-\big(1-\mathbb P(Z_1)\big)^M\\[4pt]
-M=20:\quad \mathbb P(V)&=1-(1-0.0107)^{20}\approx 1-0.8058=0.1942\\[4pt]
-M=100:\quad \mathbb P(V)&=1-(1-0.0107)^{100}\approx 1-0.3411=0.6589
+&M=20:\\
+\mathbb P(V)&=1-(1-0.0107)^{20}\\
+&\approx 1-0.8058=0.1942\\[4pt]
+&M=100:\\
+\mathbb P(V)&=1-(1-0.0107)^{100}\\
+&\approx 1-0.3411=0.6589
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -256,11 +279,16 @@ r_{\text{oil}}&=14.29\%\lt r^*=45\%
   <p>คำนวณราคาซื้อที่ยุติธรรม $P$ ในวันนี้ สำหรับสินทรัพย์ที่จะจ่ายกระแสเงินสดสุ่ม $X$ ในอีก 1 ปีข้างหน้า</p>
   <div class="math">\[
 \begin{aligned}
-\frac{\mathbb E[X]-P}{P}&=r_f+\frac{\operatorname{Cov}(X/P, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
-\mathbb E[X]-P&=P r_f+\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
-P(1+r_f)&=\mathbb E[X]-\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
-P&=\frac{\mathbb E[X]}{1+r_f}-\frac{\operatorname{Cov}(X, R_m)}{(1+r_f)\operatorname{Var}(R_m)}(\mu_m-r_f)\\[4pt]
-P&=\frac{1000}{1.05}-\frac{38.4}{(1.05)(0.0144)}(0.12)=952.38-304.76=647.62\ \text{USD}
+&\frac{\mathbb E[X]-P}{P}\\
+&=r_f+\frac{\operatorname{Cov}(X/P, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+&\mathbb E[X]-P\\
+&=P r_f+\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+&P(1+r_f)\\
+&=\mathbb E[X]-\frac{\operatorname{Cov}(X, R_m)}{\sigma_m^2}(\mu_m-r_f)\\[4pt]
+P&=\frac{\mathbb E[X]}{1+r_f}\\
+&\quad-\frac{\operatorname{Cov}(X, R_m)}{(1+r_f)\operatorname{Var}(R_m)}(\mu_m-r_f)\\[4pt]
+P&=\frac{1000}{1.05}-\frac{38.4}{(1.05)(0.0144)}(0.12)\\
+&=952.38-304.76=647.62\ \text{USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -275,13 +303,16 @@ P&=\frac{1000}{1.05}-\frac{38.4}{(1.05)(0.0144)}(0.12)=952.38-304.76=647.62\ \te
   <p>ใช้ห้าเดือนของหัวข้อ 15.1 ตลาดให้ +2.0, −1.5, +0.5, +3.0, −1.0% หุ้นธนาคารให้ +3.4, −2.8, +0.2, +5.1, −1.4% หัวข้อ 15.1 หา beta ได้ 1.7075 ตรงนี้อ่านมันในภาษา CAPM โดยให้ดอกเบี้ยปลอดความเสี่ยงเป็นศูนย์ก่อน</p>
   <div class="math">\[
 \begin{aligned}
-\bar R_m&=3.0/5=0.60\%,\quad \bar R_i=4.5/5=0.90\%\\
+\bar R_m&=3.0/5=0.60\%\\
+\bar R_i&=4.5/5=0.90\%\\
 \beta&=\frac{25.10/4}{14.70/4}=\frac{6.275}{3.675}=1.7075\\[4pt]
-\text{SML}&=r_f+\beta(\bar R_m-r_f)=0+1.7075(0.60)\\
-&=1.0245\%\\
-\alpha&=0.90-1.0245=-0.1245\%\ \text{per month}\\
+\text{SML}&=r_f+\beta(\bar R_m-r_f)\\
+&=0+1.7075(0.60)=1.0245\%\\
+\alpha&=0.90-1.0245\\
+&=-0.1245\%\ \text{per month}\\
 12\alpha&=-1.49\%\ \text{per year}\\[4pt]
-r_f=0.15\%&:\ 0.15+1.7075(0.45)=0.9184\\
+&r_f=0.15\%:\\
+&\quad 0.15+1.7075(0.45)=0.9184\\
 \alpha&=0.90-0.9184=-0.0184\%
 \end{aligned}
 \]</div>
@@ -296,11 +327,12 @@ r_f=0.15\%&:\ 0.15+1.7075(0.45)=0.9184\\
   <p>variance ของหุ้นแยกเป็นสองก้อนตามบรรทัดที่สามของ CAPM ส่วนที่มาจากตลาด กับส่วนที่เป็นของหุ้นตัวนี้เอง</p>
   <div class="math">\[
 \begin{aligned}
-\sigma_i^2&=43.36/4=10.84,\quad\sigma_i=3.292\%\\
+\sigma_i^2&=43.36/4=10.84\\
+\sigma_i&=3.292\%\\
 \beta^2\sigma_m^2&=(1.7075)^2(3.675)=10.7145\\
 \sigma_\varepsilon^2&=10.84-10.7145=0.1255\\[4pt]
-10.7145/10.84&=98.84\%\ \text{systematic}\\
-0.1255/10.84&=1.16\%\ \text{idiosyncratic}\\
+&10.7145/10.84=98.84\%\ \text{systematic}\\
+&0.1255/10.84=1.16\%\ \text{idiosyncratic}\\
 R^2&=\frac{25.10^2}{14.70(43.36)}=\frac{630.01}{637.39}=0.98842
 \end{aligned}
 \]</div>
@@ -335,11 +367,15 @@ t_{0.975,\,3}&=3.182\\
   <p>ถือหุ้นธนาคาร 10,000,000 USD อยากตัดความเสี่ยงตลาดออก ขาย short กองทุนดัชนีที่ซื้อขายในตลาด หรือ exchange-traded fund (ETF) เท่าไร และหลัง hedge เหลือความแกว่งเท่าไร</p>
   <div class="math">\[
 \begin{aligned}
-\text{short}&=\beta\times10{,}000{,}000=17{,}074{,}830\ \text{USD}\\[4pt]
+\text{short}&=\beta\times10{,}000{,}000\\
+&=17{,}074{,}830\ \text{USD}\\[4pt]
 \sigma_\varepsilon&=\sqrt{0.5022/4}=0.354\%\\
-1-0.354/3.292&=89.2\%\ \text{less volatility}\\
-1-0.1255/10.84&=98.8\%\ \text{less variance}\\[4pt]
-\beta&=1.37\ \text{to}\ 2.05:\ 13.7\ \text{to}\ 20.5\ \text{million USD}
+&1-0.354/3.292=89.2\%\\
+&\quad\text{less volatility}\\
+&1-0.1255/10.84=98.8\%\\
+&\quad\text{less variance}\\[4pt]
+\beta&=1.37\ \text{to}\ 2.05:\\
+&\quad 13.7\ \text{to}\ 20.5\ \text{million USD}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -353,15 +389,17 @@ t_{0.975,\,3}&=3.182\\
   <p>หุ้นสามตัวมีมูลค่าตลาด 600, 300 และ 100 พันล้าน USD นักลงทุนสองคนใช้ mean-variance เหมือนกัน A มีเงิน 1 ล้าน ใส่ส่วนเสี่ยง 70% B มีเงิน 3 ล้าน ใส่ส่วนเสี่ยง 40% ทั้งคู่ถือส่วนเสี่ยงเป็นพอร์ต Sharpe เดียวกัน s = (0.6, 0.3, 0.1)</p>
   <div class="math">\[
 \begin{aligned}
-x^{(m)}_i&=\frac{C_i}{\sum_j C_j}=\frac{600,\ 300,\ 100}{1{,}000}=0.6,\ 0.3,\ 0.1\\[4pt]
+&x^{(m)}_i=\frac{C_i}{\sum_j C_j}\\
+&=\frac{600,\ 300,\ 100}{1{,}000}=0.6,\ 0.3,\ 0.1\\[4pt]
 \text{A}&:\ 0.7(1)=0.7\ \text{million risky}\\
 \text{B}&:\ 0.4(3)=1.2\ \text{million risky}\\
-\text{stock 1}&:\ 0.6(0.7)+0.6(1.2)=1.14\\
-1.14/1.9&=0.6=s_1\\[4pt]
+&\text{stock 1}:\ 0.6(0.7)+0.6(1.2)=1.14\\
+&1.14/1.9=0.6=s_1\\[4pt]
 \alpha_j&=(\bar\mu_j-r_f)-\beta_j(\bar\mu_m-r_f)\\
-\text{bank}&:\ \alpha=-0.1245\%,\ t=-0.64\\[4pt]
+&\text{bank}:\ \alpha=-0.1245\%,\ t=-0.64\\[4pt]
 s_j&=\frac{\mu_j-r_f}{\sigma_j}\ \text{vs}\ m_{\rm CML}=1.00\\
-\mu_j=12\%,\ \sigma_j=30\%&:\ s_j=0.07/0.30=0.23
+&\mu_j=12\%,\ \sigma_j=30\%:\\
+&\quad s_j=0.07/0.30=0.23
 \end{aligned}
 \]</div>
   <div class="reading">

@@ -121,14 +121,17 @@ r_{i,t}=a_i+b_{i,M}f_{M,t}+b_{i,S}f_{S,t}+b_{i,V}f_{V,t}+b_{i,Mo}f_{Mo,t}+u_{i,t
   <div class="math">\[
 \begin{aligned}
 r_i&=\mathbb E[r_i]+\textstyle\sum_k b_{i,k}f_k+u_i\\[4pt]
-\textstyle\sum_i w_i&=0,\qquad \textstyle\sum_i w_ib_{i,k}=0\quad(k=1,\dots,K)\\[4pt]
-r_p&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_k\big(\sum_i w_ib_{i,k}\big)f_k+\sum_i w_iu_i\\
+&\textstyle\sum_i w_i=0\\
+&\textstyle\sum_i w_ib_{i,k}=0\quad(k=1,\dots,K)\\[4pt]
+r_p&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_k\big(\sum_i w_ib_{i,k}\big)f_k\\
+&\quad+\sum_i w_iu_i\\
 &=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_i w_iu_i\\[4pt]
-w_i\approx\pm\tfrac1N&\ \Rightarrow\ \operatorname{Var}(r_p)=\textstyle\sum_i w_i^2\sigma_{u_i}^2\to0\\[4pt]
-\textstyle\sum_i w_i\,\mathbb E[r_i]&=0\\[4pt]
+&w_i\approx\pm\tfrac1N\\
+&\Rightarrow\ \operatorname{Var}(r_p)=\textstyle\sum_i w_i^2\sigma_{u_i}^2\to0\\[4pt]
+&\textstyle\sum_i w_i\,\mathbb E[r_i]=0\\[4pt]
 \mathbb E[r_i]&=\lambda_0+\textstyle\sum_k b_{i,k}\lambda_k\\
-b_{i,k}=0&\ \Rightarrow\ \lambda_0=R_f\\
-\mathbb E[r_i]-R_f&=\textstyle\sum_k b_{i,k}\lambda_k
+&b_{i,k}=0\ \Rightarrow\ \lambda_0=R_f\\
+&\mathbb E[r_i]-R_f=\textstyle\sum_k b_{i,k}\lambda_k
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -145,12 +148,15 @@ b_{i,k}=0&\ \Rightarrow\ \lambda_0=R_f\\
   <h4>ขั้นที่ 4 — ตัวอย่าง transparent attribution</h4>
   <p>ผลตอบแทนคาดหวังคือ alpha บวกกับผลรวมของ exposure คูณผลตอบแทนของแต่ละ factor กางทีละ factor จะเห็นว่าตัวไหนออกแรงเท่าไร</p>
   <div class="math">\[
-\begin{aligned}a&=0.001\\
+\begin{aligned}
+a&=0.001\\
 b_M\mathbb E[f_M]&=1.0(0.006)=0.0060\\
 b_S\mathbb E[f_S]&=0.3(0.002)=0.0006\\
 b_V\mathbb E[f_V]&=0.4(0.003)=0.0012\\
 b_{Mo}\mathbb E[f_{Mo}]&=0.2(0.004)=0.0008\\[4pt]
-\mathbb E[r]&=0.001+0.0060+0.0006+0.0012+0.0008=0.0096\end{aligned}
+\mathbb E[r]&=0.001+0.0060+0.0006\\
+&\quad+0.0012+0.0008=0.0096
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>market factor ออกแรงมากที่สุดที่ 0.60% เพราะทั้ง exposure และผลตอบแทนของมันใหญ่สุด สาม factor ที่เหลือรวมกันได้ 0.26%</p>
@@ -160,15 +166,20 @@ b_{Mo}\mathbb E[f_{Mo}]&=0.2(0.004)=0.0008\\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 5 — จาก factor exposure ไปสู่ covariance ที่ใช้บริหารพอร์ต</h4>
-  <p>ประโยชน์ที่ใหญ่กว่าการอธิบายผลตอบแทน คือมันลดจำนวนตัวเลขที่ต้องประมาณลงมหาศาล เจ็ดบรรทัดนี้ชี้ว่าการลดนั้นซื้อมาด้วยข้อสมมติสองข้อในบรรทัดที่ห้าและหก และหัวข้อ 17.8 จะกลับมาที่ราคาของข้อสมมติเหล่านี้</p>
+  <p>ประโยชน์ที่ใหญ่กว่าการอธิบายผลตอบแทน คือมันลดจำนวนตัวเลขที่ต้องประมาณลงมหาศาล สูตรข้างล่างชี้ว่าการลดนั้นซื้อมาด้วยข้อสมมติสองข้อในบรรทัดที่เจ็ดถึงเก้า และหัวข้อ 17.8 จะกลับมาที่ราคาของข้อสมมติเหล่านี้</p>
   <div class="math">\[
-\begin{aligned}r_t&=a+Bf_t+u_t\\
-r_t-\mathbb E[r_t]&=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
-\Sigma&=\mathbb E\Big[\big(B(f-\mathbb Ef)+u\big)\big(B(f-\mathbb Ef)+u\big)^{\mathsf T}\Big]\\
-&=B\,\mathbb E\big[(f-\mathbb Ef)(f-\mathbb Ef)^{\mathsf T}\big]B^{\mathsf T}+\mathbb E\big[uu^{\mathsf T}\big]+\text{cross}\\
-\operatorname{Cov}(f,u)&=0\;\Longrightarrow\;\text{cross}=0\\
-\operatorname{Cov}(u_i,u_j)&=0\ (i\ne j)\;\Longrightarrow\;\mathbb E[uu^{\mathsf T}]=D\ \text{diagonal}\\
-\Sigma&=B\Sigma_fB^{\mathsf T}+D\end{aligned}
+\begin{aligned}
+r_t&=a+Bf_t+u_t\\
+&r_t-\mathbb E[r_t]=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
+\Sigma&=\mathbb E\Big[\big(B(f-\mathbb Ef)+u\big)\\
+&\qquad\big(B(f-\mathbb Ef)+u\big)^{\mathsf T}\Big]\\
+&=B\,\mathbb E\big[(f-\mathbb Ef)(f-\mathbb Ef)^{\mathsf T}\big]B^{\mathsf T}\\
+&\quad+\mathbb E\big[uu^{\mathsf T}\big]+\text{cross}\\
+&\operatorname{Cov}(f,u)=0\;\Longrightarrow\;\text{cross}=0\\
+&\operatorname{Cov}(u_i,u_j)=0\ (i\ne j)\\
+&\;\Longrightarrow\;\mathbb E[uu^{\mathsf T}]=D\ \text{diagonal}\\
+\Sigma&=B\Sigma_fB^{\mathsf T}+D
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เขียนสมการของขั้นที่ 1 สำหรับหุ้นทุกตัวพร้อมกัน แล้วลบค่าเฉลี่ยออก พจน์คงที่หายไป จากนั้นใส่นิยามของ covariance matrix จากหัวข้อ 6.7 แล้วกระจายผลคูณ ได้สามก้อน คือก้อนแรง ก้อนที่เหลือ และพจน์ไขว้</p>
@@ -200,8 +211,13 @@ r_t-\mathbb E[r_t]&=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
   <h4>ขั้นที่ 7 — นับตัวเลขที่ต้องประมาณ: 500 หุ้น</h4>
   <p>ทำไมต้องอ้อมผ่าน factor ทั้งที่จะประมาณ covariance ตรง ๆ ก็ได้ ลองนับดูว่าแต่ละวิธีต้องประมาณกี่ตัวเลข</p>
   <div class="math">\[
-\begin{aligned}\text{direct covariance: }&\frac{N(N+1)}{2}=\frac{500(501)}{2}=125{,}250\\
-\text{five-factor model: }&\underbrace{500\times5}_{\text{loadings}}+\underbrace{\tfrac{5(6)}{2}}_{\Sigma_f}+\underbrace{500}_{D}=2{,}500+15+500=3{,}015\end{aligned}
+\begin{aligned}
+&\text{direct covariance: }\\
+&\frac{N(N+1)}{2}=\frac{500(501)}{2}=125{,}250\\
+&\text{five-factor model: }\\
+&\underbrace{500\times5}_{\text{loadings}}+\underbrace{\tfrac{5(6)}{2}}_{\Sigma_f}+\underbrace{500}_{D}\\
+&=2{,}500+15+500=3{,}015
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ตาราง covariance ของ 500 หุ้นมี 500 ช่องบนแนวทแยงและ 500×499/2 = 124,750 ช่องนอกแนวทแยง (ช่องซ้ำกันสองฝั่ง นับครั้งเดียว) รวม 125,250 ตัวเลข ขั้นที่ 9 จะนับว่าข้อมูล 250 วันมีให้แค่ 125,000 จุด</p>
