@@ -279,6 +279,27 @@
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดแยก variance ของแปดวันเป็นก้อนภายในกับก้อนระหว่างสภาวะ</summary>
+    <pre><code>import numpy as np
+y = np.array([600] * 3 + [-200] * 3 + [500, -1500])
+assert y.mean() == 25 and y.var() == 461_875
+calm, stress = y[:6], y[6:]
+assert calm.mean() == 200 and calm.std() == 400 and stress.mean() == -500 and stress.std() == 1000
+mu = 0.75 * 200 + 0.25 * (-500)
+within = 0.75 * 400 ** 2 + 0.25 * 1000 ** 2
+between = 0.75 * (200 - mu) ** 2 + 0.25 * (-500 - mu) ** 2
+assert mu == 25 and within == 370_000 and between == 91_875
+assert within + between == y.var()
+assert abs(np.sqrt(within + between) - 679.61) &lt; 5e-3
+assert abs(within / 461_875 - 0.801) &lt; 5e-4 and abs(between / 461_875 - 0.199) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิด variance ของแปดวันตรง ๆ ได้ 461,875 แล้วคิดใหม่ด้วยสองก้อน 370,000 กับ 91,875 ได้เลขเดียวกันพอดี ก้อนภายในสภาวะคือราว 80% ของความเสี่ยงทั้งหมด</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

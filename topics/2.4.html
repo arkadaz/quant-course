@@ -435,6 +435,34 @@ m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
   <p>ตอนนี้เรารู้วิธีรวม แยก และ condition ความสุ่มแล้ว ต่อไปพักเรื่อง probability ชั่วคราวเพื่อเรียน vector กับ matrix—ภาษาที่จะย่อหลาย exposure ให้ตรวจได้ในบรรทัดเดียว ก่อนกลับมาใช้กับ joint distribution, covariance และการลดความเสี่ยงหลาย position พร้อมกัน</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Poisson thinning ทั้งด้วยสูตรและด้วยการจำลอง</summary>
+    <pre><code>import numpy as np
+from math import exp, factorial, comb, sqrt
+lam, p = 20, 0.6
+assert abs(p * lam - 12) &lt; 1e-12 and abs((1 - p) * lam - 8) &lt; 1e-12
+assert abs(p ** 2 * lam + p * (1 - p) * lam - 12) &lt; 1e-12        # EVVE gives the mean back
+pois = lambda k, m: exp(-m) * m ** k / factorial(k)
+joint = lambda k, j, m, q: pois(k + j, m) * comb(k + j, k) * q ** k * (1 - q) ** j
+assert all(abs(joint(k, j, lam, p) - pois(k, p * lam) * pois(j, (1 - p) * lam)) &lt; 1e-15
+           for k in range(6) for j in range(6))
+assert abs(joint(1, 1, 2, 0.5) - exp(-2)) &lt; 1e-12 and abs(joint(2, 0, 2, 0.5) - exp(-2) / 2) &lt; 1e-12
+rng = np.random.default_rng(3)
+n = rng.poisson(lam * 5, 100_000); a = rng.binomial(n, p)
+assert abs(a.mean() - 60) &lt; 0.2 and abs(a.var() - 60) &lt; 1.5 and abs(np.corrcoef(a, n - a)[0, 1]) &lt; 0.02
+EK = 120 * 0.35
+assert abs(EK - 42) &lt; 1e-12 and abs(0.35 ** 2 * 120 + 0.35 * 0.65 * 120 - 42) &lt; 1e-12
+assert abs(45 * EK - 1890) &lt; 1e-9 and abs(45 * EK * 7 - 13_230) &lt; 1e-9 and abs(45 * sqrt(42) - 291.6) &lt; 0.05
+assert abs(1 / sqrt(42) - 0.154) &lt; 5e-4
+lost = 45 * 120 * (0.35 - 0.25)
+assert abs(lost - 540) &lt; 1e-9 and abs(lost / 1890 - 0.286) &lt; 5e-4 and abs(45 * sqrt(30) / 1350 - 0.183) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่า joint ของสองสายแยกเป็นผลคูณของ Poisson สองตัวทุกช่อง จำลองห้านาทีได้ค่าเฉลี่ยและ variance 60 และสองสายไม่เกี่ยวกัน แล้วคิดกำไร 1,890 USD ต่อชั่วโมงกับส่วนที่หายไป 28.6% เมื่ออัตราจับคู่ตกเหลือ 25%</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

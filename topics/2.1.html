@@ -419,6 +419,33 @@ M&=-\$600\ \ (p=0.2)\\[4pt]
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Tower Property ด้วย 100 วันและตาราง joint แบบสุ่ม</summary>
+    <pre><code>import numpy as np
+days = np.array([100] * 80 + [-600] * 20)
+assert days.sum() == -4_000 and days.mean() == -40
+p = {"calm": 0.8, "stress": 0.2}
+m = {"calm": 100, "stress": -600}
+assert abs(sum(p[k] * m[k] for k in p) + 40) &lt; 1e-9          # E[E[Y|X]] = E[Y]
+EX, VarX = 2, 1                                              # drill: E[Y|X] = 3X
+assert 3 * EX == 6 and 3 * (VarX + EX ** 2) == 15
+rng = np.random.default_rng(1)
+joint = rng.random((3, 4)); joint /= joint.sum()
+x = np.array([1., 2., 3.]); y = np.array([-2., 0., 1., 5.])
+px, py = joint.sum(1), joint.sum(0)
+ey_x = (joint @ y) / px
+assert abs(px @ ey_x - py @ y) &lt; 1e-12                       # tower property
+assert abs(px @ (x * ey_x) - x @ joint @ y) &lt; 1e-12          # pull out what is known
+var_y = py @ y ** 2 - (py @ y) ** 2
+var_y_x = (joint @ y ** 2) / px - ey_x ** 2
+assert abs(px @ var_y_x + (px @ ey_x ** 2 - (px @ ey_x) ** 2) - var_y) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนับ 100 วันได้ −40 USD ต่อวัน ตรวจ drill ว่าค่าเฉลี่ยของ Y คือ 6 และค่าเฉลี่ยของผลคูณคือ 15 แล้วสร้างตาราง joint แบบสุ่มเพื่อยืนยันว่า Tower Property การดึงของที่รู้แล้วออกมา และ Law of Total Variance เป็นจริงกับตารางใด ๆ ไม่ใช่เฉพาะตัวอย่างนี้</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

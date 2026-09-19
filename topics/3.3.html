@@ -270,6 +270,25 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดหาพิกัดของพอร์ตในแกน risk ชุดใหม่</summary>
+    <pre><code>import numpy as np
+E = np.eye(3)
+x = 6 * E[0] + 5 * E[1] + 4 * E[2]
+assert np.allclose(x, [6, 5, 4])
+B = np.array([[1., 1, 0], [1, -1, 0], [0, 0, 1]])
+assert abs(np.linalg.det(B) + 2) &lt; 1e-12
+c = np.linalg.solve(B, x)
+assert np.allclose(c, [5.5, 0.5, 4]) and np.allclose(B @ c, x)
+Binv = np.linalg.inv(B)
+assert np.allclose(Binv, [[0.5, 0.5, 0], [0.5, -0.5, 0], [0, 0, 1]]) and np.allclose(Binv @ x, c)</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าแกนชุดใหม่ไม่ซ้ำกัน (determinant −2) แก้พิกัดได้ 5.5, 0.5, 4 ทั้งด้วยการแก้สมการและด้วย inverse และคูณกลับได้ exposure เดิม 6, 5, 4 ล้าน USD</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

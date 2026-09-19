@@ -474,6 +474,29 @@ M&=\begin{bmatrix}0.6 & 0.2 & 0.4\\ 0.4 & 0.0 & 0.2\\ 0.0 & 0.8 & 0.4\end{bmatri
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจว่ากองทุน C ซ้ำ และ hedge ไหนสร้างได้</summary>
+    <pre><code>import numpy as np
+A = np.array([0.6, 0.4, 0.0]); B = np.array([0.2, 0.0, 0.8]); C = np.array([0.4, 0.2, 0.4])
+assert np.allclose([A.sum(), B.sum(), C.sum()], 1)
+alpha, beta = 0.2 / 0.4, 0.4 / 0.8
+assert alpha == 0.5 and beta == 0.5 and np.allclose(alpha * A + beta * B, C)
+assert abs(np.linalg.det(np.column_stack([A, B, C]))) &lt; 1e-12 and np.allclose(A + B, 2 * C)
+AB = np.column_stack([A, B])
+coef = np.linalg.lstsq(AB, np.array([1., 0, 0]), rcond=None)[0]
+assert not np.allclose(AB @ coef, [1, 0, 0])                    # pure bank exposure is out of reach
+assert abs(1.5 * 0.2 + 0.25 * 0.4 - 0.4) &lt; 1e-12
+assert np.allclose(2 * np.array([1, 1, 0]) + 4 * np.array([0, 1, 1]), [2, 6, 4])
+theta = np.linalg.solve(np.array([[120., 105], [80, 105]]), np.array([20., 0]))
+assert np.allclose(theta, [0.5, -8 / 21])
+assert abs(np.linalg.det(np.array([[1, 0, 1], [0, 1, 1], [1, 1, 0.]])) + 2) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดแก้ α = β = 0.5 และตรวจว่า C เท่ากับครึ่ง A บวกครึ่ง B ทุกแถว determinant ของสามกองทุนเป็นศูนย์ แต่ exposure ธนาคารล้วนสร้างไม่ได้ และ replicate ออปชันได้ด้วย 0.50 กับ −8/21</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
