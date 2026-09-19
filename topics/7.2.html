@@ -391,6 +391,35 @@ M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดกดปุ่ม MGF ด้วย numerical derivative และตรวจราคาเฉลี่ย</summary>
+    <pre><code>import numpy as np
+from math import exp
+M = lambda t: (np.exp(t) + np.exp(2 * t) + np.exp(3 * t)) / 3
+h = 1e-5
+assert abs((M(h) - M(-h)) / (2 * h) - 2) &lt; 1e-8 and abs((M(h) - 2 * M(0) + M(-h)) / h ** 2 - 14 / 3) &lt; 1e-4
+mu, s = 75, 300
+MN = lambda t: np.exp(mu * t + 0.5 * s ** 2 * t ** 2)
+h = 1e-6
+d1 = (MN(h) - MN(-h)) / (2 * h); d2 = (MN(h) - 2 * MN(0) + MN(-h)) / h ** 2
+assert abs(d1 - 75) &lt; 1e-4 and abs(d2 / 95_625 - 1) &lt; 1e-3 and abs((d2 - d1 ** 2) / 90_000 - 1) &lt; 1e-3
+R_mu, R_s = 0.09, 0.22
+assert abs(exp(R_mu + R_s ** 2 / 2) - 1.1210) &lt; 5e-5 and abs(exp(R_mu) - 1.0942) &lt; 5e-5
+assert abs(100 * (exp(0.1142) - exp(0.09)) - 2.68) &lt; 5e-3
+assert abs(exp(-R_mu + R_s ** 2 / 2) - 0.9363) &lt; 5e-5 and abs(exp(0.1142) * exp(-0.0658) - exp(0.0484)) &lt; 1e-12
+rng = np.random.default_rng(8)
+R = R_mu + R_s * rng.standard_normal(1_000_000)
+assert abs(np.exp(R).mean() - 1.1210) &lt; 2e-3 and abs(np.exp(-R).mean() - 0.9363) &lt; 2e-3
+S = np.array([[0.04, 0.01], [0.01, 0.09]]); m = np.array([0.05, 0.08]); sv = np.array([1.0, -0.5])
+X = rng.multivariate_normal(m, S, 1_000_000)
+assert abs(np.exp(X @ sv).mean() - np.exp(sv @ m + 0.5 * sv @ S @ sv)) &lt; 3e-3</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดหา derivative ของ MGF ด้วยตัวเลขแล้วได้ 2 กับ 14/3 ของถุงบัตร และ 75 กับ 95,625 ของ Normal ตรวจว่าราคาเฉลี่ยโต 12.10% ขณะที่ median โต 9.42% ฝั่ง short ก็เห็น 0.9363 และจำลองยืนยัน MGF แบบหลายตัวแปร</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

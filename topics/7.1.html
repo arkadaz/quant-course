@@ -352,6 +352,33 @@ q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ MVN density และ Mahalanobis distance</summary>
+    <pre><code>import numpy as np
+from scipy import stats
+mu = np.array([0.0004, 0.0003]); S = np.array([[0.0004, 0.00024], [0.00024, 0.0009]])
+det = np.linalg.det(S)
+assert abs(det - 3.024e-7) &lt; 1e-12
+Si = np.linalg.inv(S)
+assert np.allclose(Si, [[2976.19, -793.65], [-793.65, 1322.75]], atol=0.01)
+assert abs(1 / (2 * np.pi * np.sqrt(det)) - 289.4) &lt; 0.05
+assert abs(stats.multivariate_normal(mu, S).pdf(mu) - 1 / (2 * np.pi * np.sqrt(det))) &lt; 1e-9
+q = lambda z1, z2, rho: (z1 ** 2 - 2 * rho * z1 * z2 + z2 ** 2) / (1 - rho ** 2)
+assert abs(q(1, 1, 0.4) - 1.4286) &lt; 5e-5 and abs(np.exp(-q(1, 1, 0.4) / 2) - 0.4895) &lt; 5e-5
+assert abs(q(1, -1, 0.4) - 3.3333) &lt; 5e-5 and abs(np.exp(-q(1, -1, 0.4) / 2) - 0.1889) &lt; 5e-5
+assert abs(q(1.5, -1.5, 0.82) - 25.0) &lt; 1e-9 and abs(q(1.5, 1.5, 0.82) - 2.4725) &lt; 5e-5
+assert abs(np.exp(-12.5) - 3.7e-6) &lt; 5e-8 and abs(np.exp(-2.4725 / 2) - 0.29) &lt; 5e-3
+L = np.linalg.cholesky(S); r = np.array([0.03, -0.02])
+z = np.linalg.solve(L, r - mu)
+assert abs(z @ z - (r - mu) @ Si @ (r - mu)) &lt; 1e-9          # Mahalanobis = z'z
+assert abs(stats.chi2.cdf(1, 2) - 0.3935) &lt; 5e-5 and abs(stats.chi2.cdf(5.991, 2) - 0.95) &lt; 5e-5</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดกลับ matrix ได้ determinant 3.024 × 10⁻⁷ และค่าคงที่ 289.4 ตรงกับ scipy ตรวจระยะ q ของทั้งสองทิศ ยืนยันว่าวันที่ขยับสวนกัน 1.5σ อยู่ไกลถึง 5 หน่วย และวงรี 95% ใช้เกณฑ์ 5.991</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
