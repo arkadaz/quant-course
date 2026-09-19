@@ -100,11 +100,20 @@
   <h4>ขั้นที่ 1 — ลองด้วยมือ: ทิศทางคำสั่งซื้อขายกำหนดว่า trade เกิดที่ bid หรือ ask</h4>
   <p>ก่อนสูตร ลองสร้าง ‘ความจำหนึ่งก้าว’ จากกลไกที่ง่ายที่สุดในตลาด: ราคาที่เห็นคือมูลค่ากลางบวกหรือลบครึ่ง spread ตามว่าใครเป็นฝ่ายเคาะ</p>
   <div class="math">\[
-\begin{aligned}\text{mid }m=100,\ \text{spread }S=0.20:&\quad P_t=m+\tfrac S2q_t,\qquad q_t=\pm1\ \text{(คำสั่งซื้อหรือขายอิสระ)}\\
-\Delta P_t&=\tfrac S2(q_t-q_{t-1})\quad (\text{มีค่าเป็น }-0.20,\ 0,\ \text{หรือ }+0.20)\\
-\gamma_0&=\operatorname{Var}(\Delta P_t)=\big(\tfrac S2\big)^2\cdot2=0.01\times2=0.02\\
-\gamma_1&=\operatorname{Cov}(\Delta P_t,\Delta P_{t-1})=\big(\tfrac S2\big)^2\operatorname{Cov}(q_t-q_{t-1},\ q_{t-1}-q_{t-2})=0.01\times(-1)=-0.01\\
-\rho_1&=\frac{-0.01}{0.02}=-\tfrac12,\qquad S=2\sqrt{-\gamma_1}=2\sqrt{0.01}=0.20\ \checkmark\end{aligned}
+\begin{aligned}
+&\text{mid }m=100,\ \text{spread }S=0.20:\\
+&\quad P_t=m+\tfrac S2q_t,\qquad q_t=\pm1\\
+&\quad\text{(คำสั่งซื้อหรือขายอิสระ)}\\
+\Delta P_t&=\tfrac S2(q_t-q_{t-1})\\
+&\quad (\text{มีค่าเป็น }-0.20,\ 0,\ \text{หรือ }+0.20)\\
+\gamma_0&=\operatorname{Var}(\Delta P_t)=\big(\tfrac S2\big)^2\cdot2\\
+&=0.01\times2=0.02\\
+\gamma_1&=\operatorname{Cov}(\Delta P_t,\Delta P_{t-1})\\
+&=\big(\tfrac S2\big)^2\operatorname{Cov}(q_t-q_{t-1},\ q_{t-1}-q_{t-2})\\
+&=0.01\times(-1)=-0.01\\
+\rho_1&=\frac{-0.01}{0.02}=-\tfrac12\\
+S&=2\sqrt{-\gamma_1}=2\sqrt{0.01}=0.20\ \checkmark
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>มูลค่ากลางไม่ขยับเลย แต่ทุก trade ถูกกำหนดโดยทิศทางคำสั่งว่าจะเกิดที่ 99.90 หรือ 100.10 ราคาที่เห็นจึงเด้ง การเปลี่ยนราคา $\Delta P_t$ มีสามค่า: −0.20 (จาก ask ลง bid), 0 (ฝั่งเดิม), +0.20</p>
@@ -118,9 +127,12 @@
   <p>สามก้อนนี้เป็น นิยาม ของแบบจำลองสามกลุ่ม ไม่ใช่ผลที่พิสูจน์ ตัวแรกจำเฉพาะแรงกระแทก และจำได้จำกัดจำนวนงวด ตัวที่สองจำทั้งค่าเดิมและแรงกระแทกเดิม ตัวที่สามทำผลต่างก่อนหนึ่งชั้นหรือมากกว่า สำหรับข้อมูลที่ยังไม่นิ่งตามหัวข้อ 16.1 สัญลักษณ์ตัวดำเนินการเป็นแค่วิธีเขียนย่อ ไม่ได้เพิ่มเนื้อหาอะไร มันแปลว่าเลื่อนดัชนีถอยหลังหนึ่งงวด</p>
   <div class="math">\[
 \begin{aligned}
-MA(q)&:\quad X_t=\mu+\epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t-q}\\
-ARMA(p,q)&:\quad \phi(B)X_t=c+\theta(B)\epsilon_t\\
-ARIMA(p,d,q)&:\quad \phi(B)(1-B)^{d} X_t=c+\theta(B)\epsilon_t
+&MA(q):\\
+&\quad X_t=\mu+\epsilon_t+\theta_1\epsilon_{t-1}+\cdots+\theta_q\epsilon_{t-q}\\
+&ARMA(p,q):\\
+&\quad \phi(B)X_t=c+\theta(B)\epsilon_t\\
+&ARIMA(p,d,q):\\
+&\quad \phi(B)(1-B)^{d} X_t=c+\theta(B)\epsilon_t
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -150,12 +162,18 @@ ARIMA(p,d,q)&:\quad \phi(B)(1-B)^{d} X_t=c+\theta(B)\epsilon_t
   <p>ผลลัพธ์บอกความจริงทางกายภาพ: การจำ shock เก่าเพิ่ม variance ที่สังเกตได้เสมอ ไม่ว่า $\theta$ จะเป็นบวกหรือลบ เพราะกำลังสองทำให้เครื่องหมายติดลบกลายเป็นบวกทั้งสิ้น</p>
   <div class="math">\[
 \begin{aligned}
-X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma^2)\\
-\mathbb E[X_t]&=\mu+\mathbb E[\epsilon_t]+\theta\mathbb E[\epsilon_{t-1}]=\mu+0+0=\mu\\
-\gamma_0&=\operatorname{Var}(X_t)=\mathbb E\big[(X_t-\mu)^2\big]=\mathbb E\big[(\epsilon_t+\theta\epsilon_{t-1})^2\big]\\
-&=\mathbb E\big[\epsilon_t^2\big]+2\theta\mathbb E\big[\epsilon_t\epsilon_{t-1}\big]+\theta^2\mathbb E\big[(\epsilon_{t-1})^2\big]\\
+X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1}\\
+&\epsilon_t\sim\text{WN}(0,\sigma^2)\\
+\mathbb E[X_t]&=\mu+\mathbb E[\epsilon_t]+\theta\mathbb E[\epsilon_{t-1}]\\
+&=\mu+0+0=\mu\\
+\gamma_0&=\operatorname{Var}(X_t)=\mathbb E\big[(X_t-\mu)^2\big]\\
+&=\mathbb E\big[(\epsilon_t+\theta\epsilon_{t-1})^2\big]\\
+&=\mathbb E\big[\epsilon_t^2\big]+2\theta\mathbb E\big[\epsilon_t\epsilon_{t-1}\big]\\
+&\quad+\theta^2\mathbb E\big[(\epsilon_{t-1})^2\big]\\
 &=\sigma^2+2\theta(0)+\theta^2\sigma^2=\sigma^2(1+\theta^2)\\[4pt]
-\theta=-0.4,\ \sigma&=0.001:\quad \gamma_0=(0.001)^2\big(1+(-0.4)^2\big)=10^{-6}\times1.16=1.16\times10^{-6}
+&\theta=-0.4,\ \sigma=0.001:\\
+\gamma_0&=(0.001)^2\big(1+(-0.4)^2\big)\\
+&=10^{-6}\times1.16=1.16\times10^{-6}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -236,12 +254,20 @@ X_t&=\mu+\epsilon_t+\theta\epsilon_{t-1},\qquad \epsilon_t\sim\text{WN}(0,\sigma
   <p>สังเกตว่าเมื่อกำหนด $\theta=0$ สูตรทั้งหมดจะยุบกลับไปเป็น AR(1) บริสุทธิ์ และเมื่อ $\phi=0$ จะยุบกลับไปเป็น MA(1) บริสุทธิ์ นี่คือสะพานเชื่อมที่ทำให้เห็นว่าทั้งสอง model เป็นเพียงกรณีขอบของระบบเดียวกัน</p>
   <div class="math">\[
 \begin{aligned}
-X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\epsilon_t\\
-&=\epsilon_t+(\phi+\theta)\sum_{j=1}^\infty \phi^{j-1}\epsilon_{t-j},\qquad |\phi| \lt 1,\ |\theta| \lt 1\\[4pt]
-\gamma_0&=\operatorname{Var}(X_t)=\sigma^2\Big[1+(\phi+\theta)^2\sum_{k=0}^\infty\phi^{2k}\Big]=\sigma^2\frac{1+2\phi\theta+\theta^2}{1-\phi^2}\\[4pt]
-\gamma_1&=\phi\gamma_0+\theta\sigma^2=\sigma^2\frac{(1+\phi\theta)(\phi+\theta)}{1-\phi^2},\qquad \rho_1=\frac{(1+\phi\theta)(\phi+\theta)}{1+2\phi\theta+\theta^2}\\[4pt]
+X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}\\
+&=(1-\phi B)^{-1}(1+\theta B)\epsilon_t\\
+&=\epsilon_t+(\phi+\theta)\sum_{j=1}^\infty \phi^{j-1}\epsilon_{t-j}\\
+&\quad|\phi| \lt 1,\ |\theta| \lt 1\\[4pt]
+\gamma_0&=\operatorname{Var}(X_t)\\
+&=\sigma^2\Big[1+(\phi+\theta)^2\sum_{k=0}^\infty\phi^{2k}\Big]\\
+&=\sigma^2\frac{1+2\phi\theta+\theta^2}{1-\phi^2}\\[4pt]
+\gamma_1&=\phi\gamma_0+\theta\sigma^2=\sigma^2\frac{(1+\phi\theta)(\phi+\theta)}{1-\phi^2}\\
+\rho_1&=\frac{(1+\phi\theta)(\phi+\theta)}{1+2\phi\theta+\theta^2}\\[4pt]
 \rho_k&=\phi\rho_{k-1}=\phi^{k-1}\rho_1\quad(k\ge2)\\[4pt]
-\phi=0.7,\ \theta&=-0.4:\quad \gamma_0=\sigma^2\frac{0.60}{0.51}\approx1.176\sigma^2,\quad \rho_1=\frac{0.216}{0.60}=0.360,\quad \rho_2=0.7(0.36)=0.252
+&\phi=0.7,\ \theta=-0.4:\\
+\gamma_0&=\sigma^2\frac{0.60}{0.51}\approx1.176\sigma^2\\
+\rho_1&=\frac{0.216}{0.60}=0.360\\
+\rho_2&=0.7(0.36)=0.252
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -257,10 +283,15 @@ X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\ep
   <p>ผลลัพธ์นี้เชื่อมโยงทฤษฎี time series เข้ากับเครื่องมือภาคปฏิบัติอย่าง exponentially weighted moving average (EWMA) โดยน้ำหนักการลืม $\lambda$ ถูกผูกติดกับ parameter $\theta$ ของ MA โดยตรง</p>
   <div class="math">\[
 \begin{aligned}
-(1-B)X_t&=(1+\theta B)\epsilon_t,\qquad \Delta X_t=\epsilon_t+\theta\epsilon_{t-1}\\[4pt]
+(1-B)X_t&=(1+\theta B)\epsilon_t\\
+\Delta X_t&=\epsilon_t+\theta\epsilon_{t-1}\\[4pt]
 \epsilon_t&=\frac{1-B}{1+\theta B}X_t=(1-B)\sum_{j=0}^\infty(-\theta)^j B^j X_t\\[4pt]
-\hat{X}_{t+1|t}&=\mathbb E[X_{t+1}\mid X_t,\dots]=X_{t+1}-\epsilon_{t+1}=(1+\theta)\sum_{j=0}^\infty(-\theta)^j X_{t-j}\\[4pt]
-\lambda&=-\theta:\quad \hat{X}_{t+1|t}=(1-\lambda)X_t+\lambda\hat{X}_{t|t-1}\quad\text{(Exponential Smoothing)}
+\hat{X}_{t+1|t}&=\mathbb E[X_{t+1}\mid X_t,\dots]\\
+&=X_{t+1}-\epsilon_{t+1}\\
+&=(1+\theta)\sum_{j=0}^\infty(-\theta)^j X_{t-j}\\[4pt]
+&\lambda=-\theta:\\
+\hat{X}_{t+1|t}&=(1-\lambda)X_t+\lambda\hat{X}_{t|t-1}\\
+&\quad\text{(Exponential Smoothing)}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -272,14 +303,17 @@ X_t&=\phi X_{t-1}+\epsilon_t+\theta\epsilon_{t-1}=(1-\phi B)^{-1}(1+\theta B)\ep
 
 <section class="formula">
   <h4>ขั้นที่ 8 — Roll spread estimator</h4>
-  <p>ปิดท้ายด้วยการใช้งานจริงที่สวยที่สุด คือประมาณส่วนต่างราคาซื้อขาย จากความเกี่ยวพันติดลบของผลตอบแทนติดกัน โดยไม่ต้องเห็นข้อมูลคำสั่งเลย หกบรรทัดนี้เป็นแค่การย้ายข้างและถอดราก งานหนักทั้งหมดอยู่ที่ขั้นที่ 1</p>
+  <p>ปิดท้ายด้วยการใช้งานจริงที่สวยที่สุด คือประมาณส่วนต่างราคาซื้อขาย จากความเกี่ยวพันติดลบของผลตอบแทนติดกัน โดยไม่ต้องเห็นข้อมูลคำสั่งเลย สูตรข้างล่างเป็นแค่การย้ายข้างและถอดราก งานหนักทั้งหมดอยู่ที่ขั้นที่ 1</p>
   <div class="math">\[
-\begin{aligned}\gamma_1&\approx-\left(\frac{S}{2}\right)^{2}\qquad\text{(step 1)}\\
+\begin{aligned}
+\gamma_1&\approx-\left(\frac{S}{2}\right)^{2}\qquad\text{(step 1)}\\
 -\gamma_1&\approx\left(\frac{S}{2}\right)^{2}\\
 \sqrt{-\gamma_1}&\approx\frac{S}{2}\\
 S&\approx2\sqrt{-\gamma_1}\\[4pt]
-\gamma_1=-3.4483\times10^{-7}:\quad\sqrt{3.4483\times10^{-7}}&=5.872\times10^{-4}\\
-S&=2(5.872\times10^{-4})=0.001174=0.1174\%\end{aligned}
+&\gamma_1=-3.4483\times10^{-7}:\\
+&\sqrt{3.4483\times10^{-7}}=5.872\times10^{-4}\\
+S&=2(5.872\times10^{-4})=0.001174=0.1174\%
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ขั้นที่ 1 พิสูจน์ไว้แล้วว่าการเด้งระหว่างสองฝั่งราคา สร้างความเกี่ยวพันติดลบขนาดเท่ากับครึ่งหนึ่งของส่วนต่างยกกำลังสอง ถ้าอย่างนั้นก็อ่านย้อนกลับได้ วัดความเกี่ยวพันจากข้อมูล แล้วแก้หาส่วนต่าง</p>
@@ -294,16 +328,18 @@ S&=2(5.872\times10^{-4})=0.001174=0.1174\%\end{aligned}
   <p>ใส่ราคาจริงที่ขยับได้เข้าไปในกลไกของขั้นที่ 1 ผลตอบแทนที่วัดได้คือการขยับของราคาจริงบวกส่วนเด้ง แล้วดูว่า variance กับ covariance ที่วัดได้แยกสองส่วนนี้อย่างไร</p>
   <div class="math">\[
 \begin{aligned}
-X_t&=e_t+\tfrac S2(q_t-q_{t-1}),\qquad \operatorname{Var}(e_t)=\sigma_e^2\\
+X_t&=e_t+\tfrac S2(q_t-q_{t-1})\\
+&\operatorname{Var}(e_t)=\sigma_e^2\\
 \gamma_0&=\sigma_e^2+\tfrac{S^2}{2},\qquad \gamma_1=-\tfrac{S^2}{4}\\
 \sigma_e^2&=\gamma_0+2\gamma_1\\
-&=10^{-6}+2(-3.448\times10^{-7})=3.103\times10^{-7}\\
+&=10^{-6}+2(-3.448\times10^{-7})\\
+&=3.103\times10^{-7}\\
 \sigma_e&=0.0557\%\ \text{per minute}\\[4pt]
 \text{day}&:\ 0.0557\%\sqrt{300}=0.965\%\\
 \text{year}&:\ 0.0557\%\sqrt{300\times252}=15.3\%\\
 \text{naive}&:\ 0.10\%\sqrt{300\times252}=27.5\%\\[4pt]
 \sigma_\epsilon&=\sqrt{\gamma_0/(1+\theta^2)}=0.0928\%\\
-\sigma_\epsilon(1+\theta)&=0.0928\%(0.6)=0.0557\%
+&\sigma_\epsilon(1+\theta)=0.0928\%(0.6)=0.0557\%
 \end{aligned}
 \]</div>
   <div class="reading">
