@@ -356,6 +356,32 @@ n&\ge52.973^2=2{,}806.14\quad\Rightarrow\quad n_{\min}=2{,}807\end{aligned}
   <p>ใช้คำนวณว่าต้องเทรดอีกกี่ไม้ถึงจะสรุปได้ว่าฝีมือเพิ่มขึ้นจริง ซึ่งมักเป็นตัวเลขที่ใหญ่จนน่าตกใจ และใช้ตั้งเกณฑ์หยุดกลยุทธ์ เมื่อส่วนเกินติดลบเกินสองเท่าของความเหวี่ยงปกติ</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดหักแนวโน้มออกจากเส้นกำไร แล้ววัดว่าส่วนเกินมีนัยหรือไม่</summary>
+    <pre><code>import numpy as np
+from math import sqrt, ceil
+from statistics import NormalDist
+assert 0.5 * 3 + 0.5 * (-1) == 1 and 0.5 * 6 + 0.5 * 2 == 4
+assert 0.5 * (6 - 2) + 0.5 * (2 - 2) == 3 - 1                    # M stops drifting
+mu, sig, S400 = 320, 2500, 165_000
+M400 = S400 - 400 * mu
+assert 400 * mu == 128_000 and M400 == 37_000
+assert S400 + 400 * mu == 293_000 == M400 + 800 * mu
+assert np.mean([(a + b) ** 2 for a in (2, -2) for b in (2, -2)]) == 8
+assert 400 * sig ** 2 == 2.5e9 and sig * sqrt(400) == 50_000
+z = M400 / (sig * sqrt(400))
+assert abs(z - 0.74) &lt; 1e-12 and abs(1 - NormalDist().cdf(z) - 0.22965) &lt; 5e-5
+assert abs(1.96 * sig / 92.5 - 52.973) &lt; 5e-4 and ceil((1.96 * sig / (M400 / 400)) ** 2) == 2807
+X = mu + sig * np.random.default_rng(11).standard_normal((20_000, 400))
+M = X.sum(1) - 400 * mu
+assert abs(M.mean()) &lt; 1_500 and abs(M.std() / 50_000 - 1) &lt; 0.03</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าหักไม้ละ μ แล้วเส้นส่วนเกินหยุดเอียง ส่วนเกิน 37,000 USD หลัง 400 ไม้ ความเหวี่ยง 50,000 USD จึงได้ z เพียง 0.74 ต้องเทรดอย่างน้อย 2,807 ไม้ถึงจะเชื่อได้ และจำลองยืนยันความเหวี่ยง</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

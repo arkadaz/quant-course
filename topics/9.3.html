@@ -446,6 +446,36 @@ q&=\frac{19}{37}=0.51351\\[4pt]
   <p>ใช้อธิบายกับผู้ลงทุนว่าทำไมผลงานที่ดีต่อเนื่องหนึ่งปีจึงยังไม่ใช่หลักฐาน เพราะขั้นที่ 11 แสดงว่ากลยุทธ์ที่กำไรเฉลี่ยเป็นศูนย์รอดได้เกือบปีครึ่งหนึ่งของเวลา</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจบันไดเดิมพันสองเท่า ทั้งเกมเที่ยงตรงและรูเล็ต</summary>
+    <pre><code>import numpy as np
+from math import log, sqrt
+b = 1000
+L = lambda k: b * (2 ** k - 1)
+assert L(10) == 1_023_000 and all(b * 2 ** (k - 1) - L(k - 1) == b for k in range(1, 15))
+N = max(k for k in range(1, 30) if L(k) &lt;= 1_000_000)
+assert N == 9 and 1_000_000 - L(9) == 489_000 &lt; b * 2 ** 9
+p_fail = 0.5 ** 9
+assert abs(p_fail - 1 / 512) &lt; 1e-15 and (1 - p_fail) * b + p_fail * (-L(9)) == 0
+assert abs(b * sqrt(2 ** 9 - 1) - 22_605) &lt; 1
+lr = log(511 / 512)
+assert abs(lr + 0.0019550) &lt; 5e-8 and abs((511 / 512) ** 500 - 0.376) &lt; 5e-4 and abs(log(0.5) / lr - 354.54) &lt; 5e-3
+assert abs((1023 / 1024) ** 500 - 0.614) &lt; 5e-4 and abs(log(0.5) / log(1023 / 1024) - 709.4) &lt; 0.05
+q = 19 / 37
+ev = (1 - q ** 9) * b + q ** 9 * (-L(9))
+turnover = b * sum((2 * q) ** k for k in range(9))
+assert abs(q ** 9 - 0.002483) &lt; 5e-7 and abs(ev + 271.27) &lt; 5e-3
+assert abs(turnover - 10_036.89) &lt; 5e-3 and abs(turnover / 37 + ev) &lt; 1e-6
+first_win = np.random.default_rng(12).geometric(0.5, 4_000_000)
+W = np.where(first_win &lt;= 9, b, -L(9))
+assert abs(W.mean()) &lt; 50 and abs(W.std() / (b * sqrt(511)) - 1) &lt; 0.02</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าชัยชนะครั้งแรกคืนบันไดเก่าได้ 1,000 USD ทุกขั้น ทุนหนึ่งล้านรับได้ 9 ขั้น ค่าเฉลี่ยต่อรอบคือศูนย์พอดี โอกาสรอด 500 รอบเหลือ 37.6% และในรูเล็ตขาดทุนเฉลี่ย 271.27 USD เท่ากับยอดเดิมพันหาร 37</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
