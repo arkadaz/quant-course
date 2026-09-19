@@ -369,6 +369,32 @@ df&=f'(W_t)\,dW_t+\tfrac12f''(W_t)\,dt\\[4pt]
   <p>ใช้ตรวจโค้ดจำลอง ผลรวมกำลังสองของเส้นทางที่จำลองได้ต้องอยู่ใกล้ σ² คูณเวลา ภายในความเหวี่ยงที่ขั้นที่ 6 คำนวณไว้ ถ้าห่างเกินนั้น โค้ดมีปัญหา</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจผลรวมกำลังสองของเส้นเรียบกับเส้นสุ่ม</summary>
+    <pre><code>import numpy as np
+from math import sqrt, pi
+for n, want in ((50, 0.02), (200, 0.005), (1000, 0.001)):
+    assert abs(n * (1 / n) ** 2 - want) &lt; 1e-15                    # smooth path
+assert abs(4 / sqrt(2 * pi) - 1.596) &lt; 5e-4
+for n, a, b in ((50, 0.226, 0.200), (200, 0.113, 0.100), (1000, 0.050, 0.0447)):
+    assert abs(1.596 / sqrt(n) - a) &lt; 5e-4 and abs(sqrt(2 / n) - b) &lt; 5e-4
+dW = 0.5 * np.array([0.31, -1.20, 0.85, 0.47])
+assert np.allclose(dW, [0.155, -0.600, 0.425, 0.235]) and abs((dW ** 2).sum() - 0.620) &lt; 5e-4
+W = np.concatenate([[0], np.cumsum(dW)])
+ito = 2 * (W[:-1] * dW).sum()
+assert abs(ito + 0.574) &lt; 5e-4 and abs(W[-1] ** 2 - (ito + (dW ** 2).sum())) &lt; 1e-12
+assert abs(0.04 * sqrt(2 / 252) - 0.00356) &lt; 5e-6 and abs((2 * 0.20 / 0.08) ** 2 - 25) &lt; 1e-9
+rng = np.random.default_rng(14)
+for n in (50, 1000):
+    Q = ((rng.standard_normal((4000, n)) * sqrt(1 / n)) ** 2).sum(1)
+    assert abs(Q.mean() - 1) &lt; 0.02 and abs(Q.std() - sqrt(2 / n)) &lt; 0.02</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าเส้นเรียบให้ผลรวมกำลังสองหายไป แต่เส้นสุ่มให้ค่าเฉลี่ย 1 เท่ากับเวลาและเหวี่ยงน้อยลงเมื่อซอยถี่ กำลังสามหายไป ตรวจสี่ก้าวด้วยมือว่า W² = 2ΣWΔW + Q พอดี และ drift ต้องใช้ข้อมูล 25 ปี</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

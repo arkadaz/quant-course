@@ -350,6 +350,35 @@ dS_t&=\mu S_t\,dt+\sigma S_t\,dW_t=r S_t\,dt+\sigma S_t\,dW_t^{Q}\end{aligned}
   <p>ใช้อ่านตัวเลขในสูตร Black–Scholes (บทที่ 13) ให้ถูก เช่น Φ(d₂) คือโอกาสใต้ Q ไม่ใช่โอกาสจริงที่ option จะได้ใช้สิทธิ์</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดเปลี่ยนน้ำหนักจาก P เป็น Q แล้วตั้งราคา digital option</summary>
+    <pre><code>import numpy as np
+from math import exp, log
+from statistics import NormalDist
+Phi = NormalDist().cdf
+Zu, Zd = 0.50 / 0.55, 0.50 / 0.45
+assert abs(0.55 * Zu + 0.45 * Zd - 1) &lt; 1e-12 and abs(0.55 * Zu * 576 + 0.45 * Zd * 564 - 570) &lt; 1e-9
+mu, sig, r, S0 = 0.12, 0.28, 0.02, 100
+lam = (mu - r) / sig
+assert abs(lam - 0.357143) &lt; 5e-7 and abs(mu - sig * lam - r) &lt; 1e-12
+Z = lambda w: exp(-lam * w - 0.5 * lam ** 2)
+assert abs(Z(1) - 0.6564) &lt; 5e-5 and abs(Z(-1) - 1.3409) &lt; 5e-5 and abs(Z(0) - 0.9382) &lt; 5e-5
+assert abs(S0 * exp(mu - sig ** 2 / 2) - 108.42) &lt; 5e-3 and abs(S0 * exp(r - sig ** 2 / 2) - 98.10) &lt; 5e-3
+pP = 1 - Phi((log(1.1) - (mu - sig ** 2 / 2)) / sig)
+pQ = 1 - Phi((log(1.1) - (r - sig ** 2 / 2)) / sig)
+assert abs(pP - 0.4793) &lt; 5e-5 and abs(pQ - 0.3413) &lt; 5e-5 and abs(exp(-r) * pQ - 0.3345) &lt; 5e-5
+W = np.random.default_rng(19).standard_normal(2_000_000)
+wts = np.exp(-lam * W - 0.5 * lam ** 2)
+ST = S0 * np.exp(mu - sig ** 2 / 2 + sig * W)
+assert abs(wts.mean() - 1) &lt; 0.003 and abs((wts * ST).mean() - S0 * exp(r)) &lt; 0.1
+assert abs((wts * (ST &gt; 110)).mean() - pQ) &lt; 0.002 and abs((ST &gt; 110).mean() - pP) &lt; 0.002</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจว่าน้ำหนักใหม่รวมได้ 1 และทำให้หุ้นโตในอัตราดอกเบี้ย คิดโอกาสเกิน 110 USD ใต้ P 47.93% ใต้ Q 34.13% และราคา digital option 0.3345 USD แล้วถ่วงน้ำหนักเส้นทางจำลองได้ตัวเลขเดียวกัน</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

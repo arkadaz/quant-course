@@ -377,6 +377,43 @@ b(r)=\sigma_V\ \Rightarrow\ b'(r)=0\ \Rightarrow\ \tfrac12\,\sigma_V\cdot0\cdot\
   <p>ใช้ตัดสินว่าคุ้มจะเขียนสูตรที่แม่นกว่าหรือไม่ ซึ่งคุ้มเมื่อก้าวยาว volatility สูง หรือต้องการความแม่นของเส้นทางเดี่ยว</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดเทียบ Euler, Milstein และสูตรจริงบนเส้นทางเดียวกัน</summary>
+    <pre><code>import numpy as np
+from math import exp, log
+from statistics import NormalDist
+mu, sig, dt, S0 = 0.12, 0.28, 0.25, 100.0
+dW = np.sqrt(dt) * np.array([0.5, -1.2, 0.8, 0.3])
+assert np.allclose(dW, [0.25, -0.60, 0.40, 0.15])
+E = M = X = S0
+for w in dW:
+    E *= 1 + mu * dt + sig * w
+    M *= 1 + mu * dt + sig * w + 0.5 * sig ** 2 * (w * w - dt)
+    X *= exp((mu - 0.5 * sig ** 2) * dt + sig * w)
+assert abs(E - 116.0809) &lt; 5e-4 and abs(M - 114.5630) &lt; 5e-4 and abs(X - 114.6599) &lt; 5e-4
+assert abs((E - X) / X - 0.01239) &lt; 5e-5 and abs((M - X) / X + 0.00085) &lt; 1e-5
+assert abs(np.log(1 + mu * dt + sig * dW).sum() - 0.14911) &lt; 5e-5 and abs(log(X / S0) - 0.1368) &lt; 5e-5
+assert abs(0.5 * sig ** 2 * (1 - (dW ** 2).sum()) - 0.0155) &lt; 5e-5
+assert abs((1 + mu * dt) / (sig * np.sqrt(dt)) - 7.36) &lt; 5e-3 and abs(NormalDist().cdf(-1.12 / 0.80) - 0.0808) &lt; 5e-5
+rng = np.random.default_rng(21)
+def errs(n, paths=20_000):
+    inc = rng.standard_normal((paths, n)) * np.sqrt(1 / n)
+    e = m = np.full(paths, S0)
+    for k in range(n):
+        w = inc[:, k]
+        e = e * (1 + mu / n + sig * w)
+        m = m * (1 + mu / n + sig * w + 0.5 * sig ** 2 * (w * w - 1 / n))
+    x = S0 * np.exp(mu - 0.5 * sig ** 2 + sig * inc.sum(1))
+    return np.abs(e - x).mean(), np.abs(m - x).mean()
+e8, m8 = errs(8); e32, m32 = errs(32)
+assert 1.5 &lt; e8 / e32 &lt; 2.6 and 3.0 &lt; m8 / m32 &lt; 5.5       # strong orders 1/2 and 1</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดเดินสี่ก้าวด้วยเลขสุ่มชุดเดียวกันได้ Euler สูงไป 1.239% Milstein ต่ำไปเพียง 0.085% ตรวจว่าส่วนต่างมาจากผลรวมกำลังสองที่น้อยกว่าหนึ่งปี และลดขนาดก้าวลงสี่เท่าแล้ว error ของ Euler ลดราวสองเท่า ของ Milstein ลดราวสี่เท่า</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

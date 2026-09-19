@@ -314,6 +314,30 @@ dV_t&=Y_t\,dX_t+X_t\,dY_t+0+0+1\cdot dX_t\,dY_t
   <p>ใช้คำนวณความเสี่ยงของพอร์ตที่ผลลัพธ์ขึ้นกับผลคูณของสองตัว และใช้อธิบายว่าทำไม correlation โผล่ทั้งในอัตราการเติบโตและในความเสี่ยง</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ drift ของผลคูณและอัตราส่วนสองสินทรัพย์</summary>
+    <pre><code>import numpy as np
+from math import exp, sqrt
+assert abs(0.5 * 1.21 + 0.5 * 0.81 - 1.01) &lt; 1e-12 and abs(1.1 * 0.9 - 0.99) &lt; 1e-12
+assert abs((1.21 + 0.99 + 0.99 + 0.81) / 4 - 1) &lt; 1e-12
+mx, my, sx, sy, rho = 0.08, 0.10, 0.20, 0.25, 0.60
+cross = rho * sx * sy
+muV, varV = mx + my + cross, sx ** 2 + sy ** 2 + 2 * cross
+assert abs(cross - 0.030) &lt; 1e-12 and abs(muV - 0.21) &lt; 1e-12 and abs(varV - 0.1625) &lt; 1e-12 and abs(sqrt(varV) - 0.4031) &lt; 5e-5
+assert abs(1e6 * exp(muV) - 1_233_678) &lt; 1 and abs(1e6 * exp(0.18) - 1_197_217) &lt; 1 and abs(1e6 * (exp(0.21) - exp(0.18)) - 36_461) &lt; 1
+muZ, varZ = mx - my + sy ** 2 - cross, sx ** 2 + sy ** 2 - 2 * cross
+assert abs(muZ - 0.0125) &lt; 1e-12 and abs(varZ - 0.0425) &lt; 1e-12 and abs(sqrt(varZ) - 0.206) &lt; 5e-4
+rng = np.random.default_rng(18)
+z1 = rng.standard_normal(1_000_000); z2 = rho * z1 + sqrt(1 - rho ** 2) * rng.standard_normal(z1.size)
+X = np.exp(mx - sx ** 2 / 2 + sx * z1); Y = np.exp(my - sy ** 2 / 2 + sy * z2)
+assert abs((X * Y).mean() / exp(muV) - 1) &lt; 0.005 and abs((X / Y).mean() / exp(muZ) - 1) &lt; 0.005</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าพจน์ไขว้ 0.030 ทำให้ note จ่ายเฉลี่ย 1,233,678 USD มากกว่าการบวก drift ตรง ๆ 36,461 USD อัตราส่วนสองสินทรัพย์ได้ drift +1.25% และจำลองหนึ่งล้านครั้งได้ค่าเฉลี่ยตรงกันทั้งผลคูณและอัตราส่วน</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

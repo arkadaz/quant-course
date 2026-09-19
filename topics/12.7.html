@@ -319,6 +319,34 @@ f_{SS}&=\frac{2}{K}e^{(r+\sigma^{2})(T-t)}=\frac{2f}{S^{2}}\end{aligned}
   <p>ใช้ตรวจงานข้ามวิธี ซึ่งเป็นวิธีจับข้อผิดที่ดีที่สุดในงานตั้งราคา และใช้เป็นสะพานไปบทที่ 13 ที่สร้างสมการของ Black–Scholes และบทที่ 21 ที่ใช้ทั้งสองวิธี</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Feynman–Kac: เดินย้อนด้วยสมการ กับเดินหน้าด้วยค่าเฉลี่ย</summary>
+    <pre><code>import numpy as np
+from math import exp
+g = np.array([121, 99, 81]) ** 2 / 100
+assert np.allclose(g, [146.41, 98.01, 65.61])
+fwd = 0.25 * g[0] + 0.5 * g[1] + 0.25 * g[2]
+up, dn = 0.5 * (g[0] + g[1]), 0.5 * (g[1] + g[2])
+assert abs(fwd - 102.01) &lt; 1e-9 and abs(up - 122.21) &lt; 1e-9 and abs(dn - 81.81) &lt; 1e-9 and abs(0.5 * (up + dn) - fwd) &lt; 1e-9
+S0, K, r, sig, T = 200, 200, 0.04, 0.30, 1
+f = lambda t, S: S ** 2 / K * np.exp((r + sig ** 2) * (T - t))
+assert abs(f(0, S0) - 227.77) &lt; 5e-3
+h = 1e-3
+ft = (f(h, S0) - f(-h, S0)) / (2 * h); fS = (f(0, S0 + h) - f(0, S0 - h)) / (2 * h)
+fSS = (f(0, S0 + h) - 2 * f(0, S0) + f(0, S0 - h)) / h ** 2
+assert abs(ft + r * S0 * fS + 0.5 * sig ** 2 * S0 ** 2 * fSS - r * f(0, S0)) &lt; 1e-4    # the PDE holds
+assert abs(fS - 2.2777) &lt; 5e-4 and abs(fSS - 0.01139) &lt; 5e-6
+assert abs(exp(-r) * (S0 * exp(r)) ** 2 / K - 208.16) &lt; 5e-3 and abs(f(0, S0) / 208.16 - 1 - 0.0942) &lt; 5e-4
+Z = np.random.default_rng(20).standard_normal(2_000_000)
+ST = S0 * np.exp((r - sig ** 2 / 2) * T + sig * Z)
+assert abs(exp(-r * T) * (ST ** 2 / K).mean() / f(0, S0) - 1) &lt; 0.005</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าต้นไม้สองชั้นเดินหน้าและเดินย้อนได้ 102.01 เท่ากัน ราคา note 227.77 USD ทำให้สมการเดินย้อนเป็นศูนย์ delta 2.2777 หุ้น ทางลัดที่ใส่ราคาเฉลี่ยให้ต่ำไป 9.42% และจำลองสองล้านเส้นทางได้ราคาเดียวกัน</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

@@ -401,6 +401,35 @@ df&=f'(x)\,dx+\tfrac12 f''(x)\,(dx)^{2}+\cdots\\
   <p>ใช้อธิบายที่มาของพจน์ครึ่งหนึ่งของ variance ที่โผล่ในทุกสูตร และใช้ตรวจตารางคำนวณว่าใช้ drift ของราคาหรือ drift ของ log ให้ถูกที่</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Itô's lemma กับหุ้น GBM ด้วยตัวเลขและการจำลอง</summary>
+    <pre><code>import numpy as np
+from math import exp, sqrt
+from statistics import NormalDist
+W = np.array([0, 0.5, 0, 0.5, 1.0]); dW = np.diff(W)
+assert W[-1] ** 2 == 1 and 2 * (W[:-1] * dW).sum() == 0 and (dW ** 2).sum() == 1
+n = 10_000
+assert abs(n * (1 / n) ** 2 - 1e-4) &lt; 1e-15 and abs(n * (1 / n) * sqrt(1 / n) - 0.01) &lt; 1e-12
+mu, sig, S0 = 0.12, 0.28, 100
+g = mu - sig ** 2 / 2
+assert abs(g - 0.0808) &lt; 1e-12 and abs(S0 * exp(g) - 108.42) &lt; 5e-3 and abs(S0 * exp(mu) - 112.75) &lt; 5e-3
+assert abs(NormalDist().cdf(-g / sig) - 0.386) &lt; 5e-4
+assert abs(0.12 - 0.5 * 0.10 ** 2 - 0.115) &lt; 1e-12 and abs(0.12 - 0.5 * 0.5 ** 2 + 0.005) &lt; 1e-12
+assert abs(sqrt(0.24) - 0.490) &lt; 5e-4
+rng = np.random.default_rng(15)
+steps, paths = 500, 10_000
+dWs = rng.standard_normal((paths, steps)) * sqrt(1 / steps)
+S = S0 * np.prod(1 + mu / steps + sig * dWs, axis=1)            # small steps of dS = mu S dt + sigma S dW
+exact = S0 * np.exp(g + sig * dWs.sum(1))
+assert abs(np.median(S) / 108.42 - 1) &lt; 0.02 and abs(S.mean() / 112.75 - 1) &lt; 0.01
+assert np.abs(np.log(S / exact)).mean() &lt; 0.01</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจสี่ก้าวด้วยมือว่า chain rule เดิมทำหาย 1 หน่วย คิด median 108.42 mean 112.75 และโอกาสขาดทุน 38.6% แล้วเดินสมการ GBM ทีละก้าวเล็ก ๆ ได้ราคาตรงกับสูตรที่ได้จาก Itô's lemma</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

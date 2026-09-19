@@ -368,6 +368,33 @@ S_t&=S_0\exp\!\left(\left(\mu-\tfrac{1}{2}\sigma_S^2\right)t+\sigma_S W_t\right)
   <p>ใช้ตรวจโค้ดจำลอง ค่าเฉลี่ยและความเหวี่ยงของเส้นทางที่จำลองได้ต้องตรงกับสูตรของขั้นที่ 6 และสื่อสารกับคนอื่นด้วยครึ่งชีวิตแทน κ</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจสูตรปิดของ Vasicek และจำลองดอกเบี้ย</summary>
+    <pre><code>import numpy as np
+from math import exp, sqrt, log
+from statistics import NormalDist
+Phi = NormalDist().cdf
+kap, th, sv, r0 = 0.8, 0.03, 0.012, 0.015
+assert abs(kap * (th - 0.015) - 0.012) &lt; 1e-12 and abs(kap * (th - 0.045) + 0.012) &lt; 1e-12
+m = lambda t: th + (r0 - th) * exp(-kap * t)
+v = lambda t: sv ** 2 / (2 * kap) * (1 - exp(-2 * kap * t))
+assert abs(m(1) - 0.023260) &lt; 5e-7 and abs(sqrt(v(1)) - 0.008475) &lt; 5e-7 and abs(Phi(-m(1) / sqrt(v(1))) - 0.0030) &lt; 5e-5
+assert abs(m(5) - 0.029725) &lt; 5e-7 and abs(sqrt(v(5)) - 0.009485) &lt; 5e-7 and abs(Phi(-m(5) / sqrt(v(5))) - 0.00086) &lt; 5e-6
+assert abs(log(2) / kap - 0.8664) &lt; 5e-5 and abs(sv / sqrt(2 * kap) - 0.009487) &lt; 5e-7
+assert abs(100 * exp(0.05 - 0.02) - 103.05) &lt; 5e-3 and abs(100 * exp(0.05) - 105.13) &lt; 5e-3
+assert abs(2 * kap * th / 0.10 ** 2 - 4.8) &lt; 1e-9 and abs(2 * kap * th / 0.25 ** 2 - 0.77) &lt; 5e-3
+rng = np.random.default_rng(17)
+r = np.full(50_000, r0); dt = 1 / 250
+for _ in range(250):
+    r = r + kap * (th - r) * dt + sv * sqrt(dt) * rng.standard_normal(r.size)
+assert abs(r.mean() - m(1)) &lt; 2e-4 and abs(r.std() / sqrt(v(1)) - 1) &lt; 0.02</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิดค่าเฉลี่ย 2.3260% และความเหวี่ยง 0.8475% ของดอกเบี้ยปีหน้า โอกาสติดลบ 0.30% ครึ่งชีวิต 0.8664 ปี ตัวเลข Feller ของ CIR และเดินสมการ Vasicek ทีละวันห้าหมื่นเส้นทางได้ค่าตรงกับสูตรปิด</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
