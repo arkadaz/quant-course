@@ -250,7 +250,7 @@ e^{-\kappa t_{1/2}}&=\tfrac12\ \Longrightarrow\ t_{1/2}=\frac{\ln 2}{\kappa}=\fr
 &\quad -0.0250-0.5(0.032)=-0.0410\\
 s_{\text{today}}&=-0.0944\lt-0.0890\\[4pt]
 &\mathbb P(|z|\gt2)=2(0.02275)=4.55\%\\
-&250(0.0455)\approx11\ \text{signals per year}
+&252(0.0455)\approx11\ \text{signals per year}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -289,13 +289,14 @@ z&:\ -2.17\to-4.00\\
 &58{,}600/69{,}366=84\%\\[4pt]
 &\text{time stop}=40\ \text{days}\approx3\,t_{1/2}\\
 \text{size}&\le2\%\ \text{of NAV per pair}\\[4pt]
-&\tfrac{250}{29.3}(3.23\%)\approx27\%\ \text{per year}
+&\tfrac{252}{29.3}(3.23\%)\approx28\%\ \text{per year}
 \end{aligned}
 \]</div>
   <div class="reading">
     <p>ถ้า z วิ่งจาก −2.17 ไป −4 ขาดทุน 58,600 USD เท่ากับ 84% ของกำไรที่หวังไว้ ทั้งที่ยังไม่มีอะไรพัง</p>
     <p>จุดตัดราคาจับข่าวร้ายที่ทำให้ความสัมพันธ์ขาด จุดตัดเวลาจับกรณีที่ spread ไม่ไปไหนแต่กินเงินค่ายืมหุ้นไปเรื่อย ๆ ขนาดต่อคู่ไม่เกิน 2% ของมูลค่ากองทุนสุทธิ หรือ net asset value (NAV) เพื่อให้คู่หนึ่งพังแล้วกองไม่ล้ม</p>
-    <p>กำไร 3.23% ต่อรอบ คูณราว 8.5 รอบต่อปีได้ราว 27% บน gross ซึ่งฟังดีเกินจริง ตัวเลขนี้ยังไม่หัก bid–ask ค่าธรรมเนียม ค่ายืมหุ้น และรอบที่ขาดทุน และ 0.032 เป็น standard deviation ของระดับ spread ไม่ใช่ของการเปลี่ยนรายวัน ความเสี่ยงรายวันจริงจึงเล็กกว่า 32,000 USD แต่วันที่ความสัมพันธ์ขาดจะใหญ่กว่ามาก</p>
+    <p>หนึ่งปีเทรดมี 252 วัน รอบละราว 29.3 วันจึงได้ราว 8.6 รอบต่อปี กำไร 3.23% ต่อรอบ คูณ 8.6 รอบได้ราว 28% บน gross ซึ่งฟังดีเกินจริง</p>
+    <p>ตัวเลขนี้ยังไม่หัก bid–ask ค่าธรรมเนียม ค่ายืมหุ้น และรอบที่ขาดทุน และ 0.032 เป็น standard deviation ของระดับ spread ไม่ใช่ของการเปลี่ยนรายวัน ความเสี่ยงรายวันจริงจึงเล็กกว่า 32,000 USD แต่วันที่ความสัมพันธ์ขาดจะใหญ่กว่ามาก</p>
   </div>
 </section>
 
@@ -382,7 +383,8 @@ assert abs(pa*np.exp(mu-spread)-45.02)&lt;0.005 and abs(pb*np.exp(-(mu-spread)/h
 assert abs(va*(-4-z)*sd+58_634)&lt;1 and abs(profit/(va+vb)-.0323)&lt;1e-4
 assert abs(np.sqrt(.0001/(2*kappa))-.0316)&lt;1e-4
 assert abs(va/pa-23_809.5238)&lt;1e-4
-assert abs(vb/pb-41_071.4286)&lt;1e-4</code></pre>
+assert abs(vb/pb-41_071.4286)&lt;1e-4
+assert round(252*2*norm.cdf(-2))==11 and round(252/29.3,1)==8.6 and round(252/29.3*3.23)==28   # per 252-day year</code></pre>
   </details>
   <div class="note">
     <p>โค้ดผูกข้อมูลราคา, spread definition, z-score, notionals, กำไรเป้าหมาย และ half-life เข้าด้วยกัน จึงช่วยจับการสลับเครื่องหมายหรือสลับขา ก่อนยังต้องหักต้นทุนและตรวจข้อจำกัด borrow</p>
