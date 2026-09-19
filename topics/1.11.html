@@ -315,7 +315,7 @@ f_\tau(x)&=\frac{\Gamma\big((\nu+1)/2\big)}{\sqrt{\nu\pi}\;\Gamma(\nu/2)}\\
 
 <section class="formula">
   <h4>ขั้นที่ 11 — วันหายนะที่ระยะ 4 เท่า: Normal เทียบ Student-t</h4>
-  <p>ระยะ 4 เท่าของความเหวี่ยงคือขาดทุนราว 4.4% ในพอร์ตนี้ ทำแบบเดิมแล้วแปลงเป็นความถี่ต่อปี 250 วัน</p>
+  <p>ระยะ 4 เท่าของความเหวี่ยงคือขาดทุนราว 4.4% ในพอร์ตนี้ ทำแบบเดิมแล้วแปลงเป็นความถี่ต่อปีด้วย 252 วันเทรด</p>
   <div class="math">\[
 \begin{aligned}
 \tau&=-4\sqrt3=-6.928\\
@@ -326,13 +326,13 @@ f_\tau(x)&=\frac{\Gamma\big((\nu+1)/2\big)}{\sqrt{\nu\pi}\;\Gamma(\nu/2)}\\
 &\frac{0.308\%}{0.00317\%}\\
 &=97.3\\[4pt]
 &\text{Normal}:\\
-&\quad\frac{1}{0.0000317\times250}=126\ \text{years}\\
+&\quad\frac{1}{0.0000317\times252}=125\ \text{years}\\
 &\text{Student-t}:\\
-&\quad\frac{1}{0.00308\times250}=1.3\ \text{years}
+&\quad\frac{1}{0.00308\times252}=1.3\ \text{years}
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ระฆังบอกว่าวันแบบนี้เกิดราวครั้งเดียวใน 126 ปี Student-t บอกว่าเกิดราวทุก 1.3 ปี ข้อมูลกับค่าเฉลี่ยและ variance ชุดเดียวกัน แต่ความถี่ของวันหายนะต่างกันเกือบร้อยเท่า</p>
+    <p>ระฆังบอกว่าวันแบบนี้เกิดราวครั้งเดียวใน 125 ปี Student-t บอกว่าเกิดราวทุก 1.3 ปี ข้อมูลกับค่าเฉลี่ยและ variance ชุดเดียวกัน แต่ความถี่ของวันหายนะต่างกันเกือบร้อยเท่า</p>
   </div>
 </section>
 
@@ -652,6 +652,7 @@ assert abs((1 + 16 / 3) ** -2 - 0.0249) &lt; 5e-5 and abs(exp(-8) - 0.000335) &l
 assert abs(stats.t.cdf(-1.855 * sqrt(3), 3) - 0.0244) &lt; 5e-5 and abs(stats.norm.cdf(-1.855) - 0.0318) &lt; 5e-5
 t4, n4 = stats.t.cdf(-4 * sqrt(3), 3), stats.norm.cdf(-4)
 assert abs(t4 - 0.00308) &lt; 5e-6 and abs(n4 - 0.0000317) &lt; 5e-8 and abs(t4 / n4 - 97.3) &lt; 0.5
+assert round(1 / (n4 * 252)) == 125 and round(1 / (t4 * 252), 1) == 1.3   # once in how many years
 lam = 0.2
 assert abs(exp(-lam * 10) - 0.1353) &lt; 5e-5 and abs(log(2) / lam - 3.47) &lt; 5e-3 and abs(1 - exp(-1) - 0.632) &lt; 5e-4
 assert abs(-log(1 - 0.63) / lam - 4.97) &lt; 5e-3
