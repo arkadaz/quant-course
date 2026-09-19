@@ -318,6 +318,28 @@ D^{-1}&=\begin{bmatrix}1&amp;0\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดสร้าง covariance และ correlation matrix จากสามวัน</summary>
+    <pre><code>import numpy as np
+r = np.array([[4, 1], [6, 4], [5, 1]], dtype=float)     # three days: Tech, Energy in bp
+mu = r.mean(0)
+assert np.allclose(mu, [5, 2])
+S = np.cov(r, rowvar=False)                              # divides by T - 1
+dev = r - mu
+assert np.allclose(S, [[1, 1.5], [1.5, 3]]) and np.allclose(S, S.T) and np.allclose(dev.T @ dev / 2, S)
+x = np.array([0.5, 0.5])
+assert abs(x @ S @ x - 1.75) &lt; 1e-12 and abs(np.var(r @ x, ddof=1) - x @ S @ x) &lt; 1e-12
+assert np.all(np.linalg.eigvalsh(S) &gt;= -1e-12)
+D_inv = np.diag(1 / np.sqrt(np.diag(S)))
+R = D_inv @ S @ D_inv
+assert np.allclose(np.diag(R), 1) and abs(R[0, 1] - 0.866) &lt; 5e-4 and np.allclose(R, np.corrcoef(r, rowvar=False))</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดสร้าง covariance ของสามวันได้ 1, 1.5, 3 bp² ตรงกับ np.cov ตรวจว่าสมมาตร variance ของพอร์ตครึ่งต่อครึ่ง 1.75 ไม่ติดลบ และหารด้วย standard deviation ได้ correlation 0.866</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

@@ -340,6 +340,28 @@ P(Y\ge4)&=\tfrac{2}{5}=0.40\\[4pt]
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดยืนยันว่า covariance ศูนย์ไม่ได้แปลว่าอิสระ</summary>
+    <pre><code>import numpy as np
+from scipy import stats, integrate
+X = np.array([-2, -1, 0, 1, 2]); Y = X ** 2
+assert X.mean() == 0 and Y.mean() == 2 and (X * Y).mean() == 0
+assert (X * Y).mean() - X.mean() * Y.mean() == 0
+assert abs(np.mean(Y == 4) - 0.4) &lt; 1e-12                    # P(Y=4) = 0.4 but P(Y=4 | X=2) = 1
+p_joint = np.mean((X &lt;= -1) &amp; (Y &gt;= 4))
+assert np.mean(X &lt;= -1) == 0.4 and np.mean(Y &gt;= 4) == 0.4 and p_joint == 0.2 and abs(p_joint / 0.16 - 1.25) &lt; 1e-12
+assert abs(integrate.quad(lambda x: x ** 3 * stats.norm.pdf(x), -np.inf, np.inf)[0]) &lt; 1e-12
+assert abs(2 * stats.norm.cdf(1) - 1 - 0.6827) &lt; 5e-5
+rng = np.random.default_rng(6)
+x = rng.standard_normal(400_000); y = rng.choice([-1, 1], x.size) * x
+assert abs(np.corrcoef(x, y)[0, 1]) &lt; 0.01 and abs(y.std() - 1) &lt; 0.01 and np.allclose(y ** 2, x ** 2)</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนับห้าจุดได้ covariance ศูนย์แต่รู้ X แล้วรู้ Y ทันที โอกาสร่วมจริง 0.20 มากกว่า 0.16 ที่คิดแบบอิสระ 1.25 เท่า และจำลองกรณีที่แต่ละตัวเป็น Normal แต่ไม่ใช่ joint Normal</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

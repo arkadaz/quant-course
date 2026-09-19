@@ -366,6 +366,31 @@ X\mid Y=y&\sim\mathrm{Uniform}(y,1)\end{aligned}
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดคิด conditional ของตารางและของผืนสามเหลี่ยม</summary>
+    <pre><code>import numpy as np
+from scipy import integrate
+joint = np.array([[0.05, 0.15], [0.30, 0.20], [0.25, 0.05]]); x = np.array([-2, 0, 2])
+cond = joint[:, 1] / joint[:, 1].sum()
+assert np.allclose(cond, [0.375, 0.5, 0.125]) and abs(cond.sum() - 1) &lt; 1e-12
+assert abs(x @ cond + 0.5) &lt; 1e-12 and abs(x @ joint.sum(1) - 0.2) &lt; 1e-12
+y = 0.4
+f_cond = lambda t: 2 / (2 * (1 - y))                # X | Y = y is Uniform(y, 1)
+assert abs(integrate.quad(f_cond, y, 1)[0] - 1) &lt; 1e-12
+assert abs(integrate.quad(lambda t: t * f_cond(t), y, 1)[0] - (1 + y) / 2) &lt; 1e-12
+assert abs((1 + 1 / 3) / 2 - 2 / 3) &lt; 1e-12          # tower property
+varX = integrate.quad(lambda t: t ** 3 * 2, 0, 1)[0] - (2 / 3) ** 2
+varY = integrate.quad(lambda t: t * t * 2 * (1 - t), 0, 1)[0] - (1 / 3) ** 2
+assert abs(varX - 1 / 18) &lt; 1e-12 and abs(varY / 4 - 1 / 72) &lt; 1e-12
+e_var = integrate.quad(lambda t: (1 - t) ** 2 / 12 * 2 * (1 - t), 0, 1)[0]
+assert abs(e_var - 1 / 24) &lt; 1e-12 and abs(1 / 72 + e_var - varX) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตัดคอลัมน์ down ได้ 0.375, 0.500, 0.125 และค่าเฉลี่ย −0.50% เทียบกับ +0.20% ตรวจว่า density แบบมีเงื่อนไขรวมได้ 1 ค่าเฉลี่ยคือ (1 + y)/2 และ 1/72 + 1/24 = 1/18 ตาม Law of Total Variance</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

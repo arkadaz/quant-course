@@ -356,6 +356,30 @@ p(z)&=\Phi\!\left(\frac{c-\sqrt{\rho}\,z}{\sqrt{1-\rho}}\right)\\[4pt]
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดคิดการผิดนัดพร้อมกันและชั้น CDO ด้วย one-factor copula</summary>
+    <pre><code>import numpy as np
+from scipy import stats, integrate
+pA = 0.7 * 0.02 + 0.3 * 0.20
+both = 0.7 * 0.02 ** 2 + 0.3 * 0.20 ** 2
+assert abs(pA - 0.074) &lt; 1e-12 and abs(both - 0.01228) &lt; 1e-12 and abs(both / pA ** 2 - 2.24) &lt; 5e-3
+c = stats.norm.ppf(0.02)
+assert abs(c + 2.054) &lt; 5e-4
+p = lambda z, r: stats.norm.cdf((c - np.sqrt(r) * z) / np.sqrt(1 - r))
+for r, want in ((0.15, (0.0130, 0.0827, 0.1667)), (0.30, (0.0071, 0.1260, 0.3118))):
+    assert np.allclose([p(0, r), p(-2, r), p(-3, r)], want, atol=2e-4)
+    avg = integrate.quad(lambda z: p(z, r) * stats.norm.pdf(z), -np.inf, np.inf)[0]
+    assert abs(avg - 0.02) &lt; 1e-6
+tail = lambda r: integrate.quad(lambda z: stats.binom.sf(9, 100, p(z, r)) * stats.norm.pdf(z), -12, 12, limit=200)[0]
+assert abs(stats.binom.sf(9, 100, 0.02) - 0.0000344) &lt; 5e-7
+assert abs(tail(0.15) - 0.0214) &lt; 5e-4 and abs(tail(0.30) - 0.0450) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิดโอกาสผิดนัดพร้อมกัน 0.01228 ที่มากกว่าผลคูณ 2.24 เท่า ตรวจ p(z) ของทั้งสองค่า ρ และค่าเฉลี่ยของ p(z) ที่กลับมาเป็น 2% แล้วอินทิเกรตหาโอกาสที่ชั้นรับ 9 รายโดนเจาะ 2.14% และ 4.50%</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

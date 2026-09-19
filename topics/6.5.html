@@ -514,6 +514,31 @@ S_T&=100\,e^{r_1}e^{r_2}\cdots e^{r_{250}}\\
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดคิดค่าเฉลี่ยและความเหวี่ยงของผลคูณสองแหล่งที่อิสระ</summary>
+    <pre><code>import numpy as np
+from math import exp, sqrt
+from scipy import integrate, stats
+Eey = integrate.quad(lambda y: np.exp(y - y * y / 2) / sqrt(2 * np.pi), -40, 40)[0]
+Ee2y = integrate.quad(lambda y: np.exp(2 * y - y * y / 2) / sqrt(2 * np.pi), -40, 40)[0]
+assert abs(Eey - exp(0.5)) &lt; 1e-9 and abs(Ee2y - exp(2)) &lt; 1e-8
+assert abs(0.5 * 0.5 * 4 - 1) &lt; 1e-12                       # four cells of 0.25 add to 1
+M = 1 * Eey
+assert abs(M - 1.648721) &lt; 5e-7 and abs(M * 1000 * 100 - 164_872) &lt; 1
+var = (4 + 1 ** 2) * exp(2) - M ** 2
+assert abs(var - 34.226998) &lt; 1e-6 and abs(sqrt(var) - 5.850384) &lt; 1e-6
+assert abs(sqrt(900 + 1600) - 50) &lt; 1e-12 and abs(sqrt(2500 + 1200) - 60.8) &lt; 0.05 and abs(sqrt(1300) - 36.1) &lt; 0.05
+rng = np.random.default_rng(5)
+X = 1 + 2 * rng.standard_normal(1_000_000); Y = rng.standard_normal(1_000_000)
+V = X * np.exp(Y)
+assert abs(V.mean() - M) &lt; 0.03 and abs(V.var() / var - 1) &lt; 0.1</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดอินทิเกรตหาค่าเฉลี่ยของ e ยก Y ได้ e ยก 0.5 และของ e ยก 2Y ได้ e² ประกอบเป็น expected value ของมูลค่า 164,872 USD กับ variance 34.23 แล้วจำลองหนึ่งล้านครั้งดูว่าตรงกัน</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
