@@ -101,15 +101,18 @@
 
 <section class="formula">
   <h4>ขั้นที่ 1 — leverage ขยายผลตอบแทนต่อ equity</h4>
-  <p>อัตราทดขยายผลตอบแทนต่อเงินตัวเอง เจ็ดบรรทัดนี้แสดงว่าตัวคูณที่ขยายกำไร เป็นตัวเดียวกับที่ขยายขาดทุน ไม่มีทางเลือกเอาเฉพาะด้านดี และพจน์ที่สองคือเหตุผลที่จุดคุ้มทุนขยับสูงขึ้นเมื่อกู้มากขึ้น</p>
+  <p>อัตราทดขยายผลตอบแทนต่อเงินตัวเอง สูตรข้างล่างแสดงว่าตัวคูณที่ขยายกำไร เป็นตัวเดียวกับที่ขยายขาดทุน ไม่มีทางเลือกเอาเฉพาะด้านดี และพจน์ที่สองคือเหตุผลที่จุดคุ้มทุนขยับสูงขึ้นเมื่อกู้มากขึ้น</p>
   <div class="math">\[
-\begin{aligned}A&=E+L,\qquad \ell:=\frac{A}{E}\\
+\begin{aligned}
+A&=E+L,\qquad \ell:=\frac{A}{E}\\
 \text{profit}&=A\,R_A-L\,r_L\\
 R_E&=\frac{A\,R_A-L\,r_L}{E}\\
 &=\frac{A}{E}R_A-\frac{L}{E}r_L\\
 \frac{L}{E}&=\frac{A-E}{E}=\ell-1\\
 R_E&=\ell R_A-(\ell-1)r_L\\[4pt]
-\ell=4,\ R_A=0.05,\ r_L=0.02:\quad R_E&=4(0.05)-3(0.02)=0.20-0.06=0.14\end{aligned}
+&\ell=4,\ R_A=0.05,\ r_L=0.02:\\
+R_E&=4(0.05)-3(0.02)=0.20-0.06=0.14
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>สินทรัพย์มาจากเงินตัวเองบวกเงินกู้ และอัตราทดคือสัดส่วนของสองอย่าง กำไรเป็นเงินคือสินทรัพย์ทั้งก้อนสร้างผลตอบแทน แล้วหักดอกเบี้ยที่ต้องจ่ายเจ้าหนี้</p>
@@ -126,13 +129,15 @@ R_E&=\ell R_A-(\ell-1)r_L\\[4pt]
   <p>หากผู้ลงทุนกู้ยืม $90\%$ (leverage สิบเท่า) และ lender กำหนด maintenance margin ที่ $5\%$ การที่สินทรัพย์ลดลงเพียง $5.26\%$ ก็เพียงพอที่จะบีบให้ต้องหาเงินสดมาเติมทันที</p>
   <div class="math">\[
 \begin{aligned}
-A_t&=A_0(1+R_A),\qquad L=A_0\Big(1-\frac{1}{\ell_0}\Big)\\
+A_t&=A_0(1+R_A)\\
+L&=A_0\Big(1-\frac{1}{\ell_0}\Big)\\
 E_t&=A_t-L=A_0\Big(R_A+\frac{1}{\ell_0}\Big)\\
 \frac{E_t}{A_t}&=\frac{R_A+1/\ell_0}{1+R_A}\\[4pt]
-\frac{E_t}{A_t}\lt m&:\ R_A+\frac{1}{\ell_0}\lt m+mR_A\\
+&\frac{E_t}{A_t}\lt m:\ R_A+\frac{1}{\ell_0}\lt m+mR_A\\
 R_A(1-m)&\lt m-\frac{1}{\ell_0}\\
 R_A&\lt-\frac{1/\ell_0-m}{1-m}\\[4pt]
-\ell_0=10,\ m=0.05&:\ R_A\lt-\frac{0.05}{0.95}=-5.26\%
+&\ell_0=10,\ m=0.05:\\
+R_A&\lt-\frac{0.05}{0.95}=-5.26\%
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -188,13 +193,22 @@ h=0.40:\quad\ell&=2.5\end{aligned}
   <p>ตัวคูณ $1/m$ หมายความว่าหากเกณฑ์ margin คือ $5\%$ การขาดเงินหลักประกันเพียงหนึ่งส่วน จะบังคับให้เทขายสินทรัพย์ออกมาถึงยี่สิบส่วนในตลาด</p>
   <p>เมื่อสถาบันหลายแห่งต้องแก้ปัญหาเดียวกันพร้อมกัน การเทขายขนาดมหาศาลจะทุบราคาตลาดให้ดิ่งลงไปอีก เกิดเป็น feedback loop ที่กดดันสภาพคล่องทั้งระบบ</p>
   <div class="math">\[
-\begin{aligned}A&=10{,}000{,}000(1-0.08)=9{,}200{,}000\\
-E&=9{,}200{,}000-9{,}000{,}000=200{,}000\\
-mA-E&=0.05(9{,}200{,}000)-200{,}000=260{,}000\\[4pt]
-A'&=A-x,\quad L'=L-x,\quad E'=A'-L'=E\\
-\frac{E}{A-x}&=m \implies E=m(A-x)=mA-mx\\
+\begin{aligned}
+A&=10{,}000{,}000(1-0.08)\\
+&=9{,}200{,}000\\
+E&=9{,}200{,}000-9{,}000{,}000\\
+&=200{,}000\\
+mA-E&=0.05(9{,}200{,}000)\\
+&\quad-200{,}000\\
+&=260{,}000\\[4pt]
+A'&=A-x,\quad L'=L-x\\
+E'&=A'-L'=E\\
+&\frac{E}{A-x}=m\\
+&\implies E=m(A-x)=mA-mx\\
 mx&=mA-E \implies x=\frac{mA-E}{m}\\[4pt]
-x&=\frac{260{,}000}{0.05}=20\times 260{,}000=5{,}200{,}000\end{aligned}
+x&=\frac{260{,}000}{0.05}=20\times 260{,}000\\
+&=5{,}200{,}000
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เมื่อเกิด margin shortfall จำนวน 260,000 USD ทางเลือกแรกคือหาเงินสดใหม่มาคืนหนี้ ซึ่งจะทำให้ส่วนของเจ้าของกลับขึ้นไปแตะเกณฑ์ $5\%$ พอดี</p>
@@ -264,11 +278,15 @@ assert abs(np.log10(bound) + 137.514) &lt; 1e-3 and abs(norm.sf(25) / 1e-138 - 3
   <p>Stress loss จึงไม่ได้ทดสอบว่าโดยเฉลี่ยเสียเท่าไร แต่ทดสอบว่า balance sheet จะพังทลายหรือไม่เมื่อเผชิญกับสถานการณ์เลวร้ายที่สุดในระบบ</p>
   <div class="math">\[
 \begin{aligned}
-L&=D\times\mathrm{LGD}\times\mathrm{EAD},\qquad D=0\ \text{or}\ 1,\quad \mathbb{P}(D=1)=\mathrm{PD}\\
-\mathbb{E}[L]&=\mathbb{E}[D]\,\mathbb{E}[\mathrm{LGD}]\,\mathrm{EAD}=\mathrm{PD}\times\mathrm{LGD}\times\mathrm{EAD}\\[4pt]
-\mathbb{E}[L]&=0.02\times0.40\times10{,}000{,}000=80{,}000\\[4pt]
-\mathrm{StressLoss}&=\max_{s}L(s)\\
-L(s_{\text{crisis}})&=0.15\times0.70\times10{,}000{,}000=1{,}050{,}000
+L&=D\times\mathrm{LGD}\times\mathrm{EAD}\\
+&D=0\ \text{or}\ 1,\quad \mathbb{P}(D=1)=\mathrm{PD}\\
+\mathbb{E}[L]&=\mathbb{E}[D]\,\mathbb{E}[\mathrm{LGD}]\,\mathrm{EAD}\\
+&=\mathrm{PD}\times\mathrm{LGD}\times\mathrm{EAD}\\[4pt]
+\mathbb{E}[L]&=0.02\times0.40\times10{,}000{,}000\\
+&=80{,}000\\[4pt]
+&\mathrm{StressLoss}=\max_{s}L(s)\\
+&L(s_{\text{crisis}})\\
+&=0.15\times0.70\times10{,}000{,}000=1{,}050{,}000
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -302,13 +320,20 @@ L(s_{\text{crisis}})&=0.15\times0.70\times10{,}000{,}000=1{,}050{,}000
   <p>แรงขายนี้บีบให้กองทุนอื่นต้องขายตาม เกิดเป็น endogenous correlation ข้ามสินทรัพย์ที่ทำให้เกิดการร่วงลงรุนแรงพร้อมกัน</p>
   <p>วิกฤติ 2007 และ 2008 จึงไม่ได้เกิดจากความน่าจะเป็นระดับ $10^{-138}$ แต่เกิดจากการที่สมมติฐานทางสถิติของ model ละเลยผลกระทบของ liquidity และการกู้ยืมหนี้สิน</p>
   <div class="math">\[
-\begin{aligned}\mathbb{P}(Z \ge z) &\le \frac{1}{\sqrt{2\pi}\,z} e^{-z^2/2} \\[4pt]
-z = 25:\quad \frac{z^2}{2} &= \frac{25^2}{2} = 312.5 \\
-\ln \mathbb{P}(Z \ge 25) &\le -\frac{1}{2}\ln(2\pi) - \ln(25) - 312.5 \\
-&\approx -0.9189 - 3.2189 - 312.5 = -316.6378 \\
-\log_{10} \mathbb{P}(Z \ge 25) &= \frac{-316.6378}{\ln 10} \approx \frac{-316.6378}{2.302585} \approx -137.51 \\
-\mathbb{P}(Z \ge 25) &\approx 3.06 \times 10^{-138} \\[4pt]
-P_{2\ \text{days}} &= (3.06 \times 10^{-138})^2 \approx 9.36 \times 10^{-276}\end{aligned}
+\begin{aligned}
+&\mathbb{P}(Z \ge z) \le \frac{1}{\sqrt{2\pi}\,z} e^{-z^2/2} \\[4pt]
+&z = 25:\\
+\frac{z^2}{2} &= \frac{25^2}{2} = 312.5 \\
+&\ln \mathbb{P}(Z \ge 25)\\
+&\le -\frac{1}{2}\ln(2\pi) - \ln(25) - 312.5 \\
+&\approx -0.9189 - 3.2189 - 312.5\\
+&= -316.6378 \\
+&\log_{10} \mathbb{P}(Z \ge 25)\\
+&= \frac{-316.6378}{\ln 10} \approx \frac{-316.6378}{2.302585} \approx -137.51 \\
+&\mathbb{P}(Z \ge 25) \approx 3.06 \times 10^{-138} \\[4pt]
+&P_{2\ \text{days}} = (3.06 \times 10^{-138})^2\\
+&\approx 9.36 \times 10^{-276}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>เริ่มจากขอบเขตบนของหาง Gaussian distribution ซึ่งหาได้จากการ integrate ทีละส่วนของ density function</p>

@@ -235,11 +235,16 @@ for stock_T, call_T in ((Su, 5.0), (Sd, 0.0)):
   <p>ตัวแปร $x_k$ คือจำนวนหุ้นคงเหลือที่ยังไม่ได้ขายหลังจากผ่านไป $k$ ช่วงเวลา ยิ่งเราปล่อยให้ $x_k$ ค้างอยู่ในมือนาน ความเสี่ยงที่ราคาจะแกว่งตัวด้วย volatility $\sigma$ ก็จะยิ่งทวีคูณตามกำลังสองของ $x_k$</p>
   <p>การหา execution ที่เหมาะสมจึงเป็นการเลือกลำดับ $n_k$ เพื่อ minimize ผลรวมระหว่าง expected cost กับ penalty ของ variance โดยมีตัวคูณ $\lambda$ เป็นตัวกำหนดระดับความกลัวความเสี่ยง</p>
   <div class="math">\[
-\begin{aligned}\sum_{k=1}^T \hat{S}_k n_k&=\sum_{k=1}^T \left(S_k-h(n_k)\right)n_k\\
-&=\sum_{k=1}^T \left[S_1+\sum_{j=1}^{k-1}(\tilde{z}_j-g(n_j))\right]n_k-\sum_{k=1}^T h(n_k)n_k\\
-&=S_1 X+\sum_{j=1}^{T-1}(\tilde{z}_j-g(n_j))x_j-\sum_{k=1}^T h(n_k)n_k\\
-\mathbb{E}[C(n)]&=\sum_{k=1}^T g(n_k)x_k+\sum_{k=1}^T h(n_k)n_k\\
-\mathrm{Var}(C(n))&=\sigma^2 \sum_{k=1}^T x_k^2\end{aligned}
+\begin{aligned}
+&\sum_{k=1}^T \hat{S}_k n_k=\sum_{k=1}^T \left(S_k-h(n_k)\right)n_k\\
+&=\sum_{k=1}^T \left[S_1+\sum_{j=1}^{k-1}(\tilde{z}_j-g(n_j))\right]n_k\\
+&\quad-\sum_{k=1}^T h(n_k)n_k\\
+&=S_1 X+\sum_{j=1}^{T-1}(\tilde{z}_j-g(n_j))x_j\\
+&\quad-\sum_{k=1}^T h(n_k)n_k\\
+&\mathbb{E}[C(n)]\\
+&=\sum_{k=1}^T g(n_k)x_k+\sum_{k=1}^T h(n_k)n_k\\
+&\mathrm{Var}(C(n))=\sigma^2 \sum_{k=1}^T x_k^2
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>รายรับรวมจากการทยอยขายหุ้น $X$ หน่วยเท่ากับผลรวมของราคาที่จับคู่ได้จริงคูณจำนวนหุ้นแต่ละไม้</p>
@@ -356,11 +361,20 @@ c&=c_{create}+c_{trade}+c_{funding}\\
   <p>ตัวอย่างนี้ใช้สมมติฐานว่าดีลดีมีราคาพุ่งขึ้น 6 USD จากราคาจอง 20 USD ส่วนดีลแย่ราคาหล่นลง 4 USD หากโอกาสเกิดเท่ากันที่ฝั่งละ 0.5 ราคาเฉลี่ยบนหน้ากระดาษจะบวก 1 USD หรือคิดเป็นผลตอบแทน 5%</p>
   <p>แต่เมื่อนักลงทุน informed แห่จองดีลดีจนเราได้หุ้นเพียง 10% ขณะที่ดีลแย่เราถูกจัดสรรหุ้นมาเต็ม 100% ผลรวมสุทธิจึงกลายเป็นขาดทุนยับเยิน นี่คือคำอธิบายว่าทำไมวาณิชธนกิจจึงต้องตั้งราคา IPO ให้ต่ำกว่ามูลค่าจริงเพื่อจูงใจให้คนทั่วไปยอมเข้ามามีส่วนร่วม</p>
   <div class="math">\[
-\begin{aligned}\overline{\Delta}&=q(V_G-P_{IPO})+(1-q)(V_B-P_{IPO})>0\\
-p_{\mathrm{alloc}}(G)&=\frac{S}{D_{\mathrm{informed}}+D_{\mathrm{uninformed}}}\ll 1\\
-p_{\mathrm{alloc}}(B)&=\min\left(1,\frac{S}{D_{\mathrm{uninformed}}}\right)=1\\
-\mathbb{E}[\Pi]&=Q\left[q\cdot p_{\mathrm{alloc}}(G)(V_G-P_{IPO})+(1-q)\cdot 1\cdot (V_B-P_{IPO})\right]-C_{\mathrm{eval}}\\
-&=1{,}000[0.5(0.10)(6)+0.5(1.0)(-4)]-100=-1{,}800\end{aligned}
+\begin{aligned}
+&\overline{\Delta}\\
+&=q(V_G-P_{IPO})\\
+&\quad+(1-q)(V_B-P_{IPO})>0\\
+&p_{\mathrm{alloc}}(G)\\
+&=\frac{S}{D_{\mathrm{informed}}+D_{\mathrm{uninformed}}}\ll 1\\
+&p_{\mathrm{alloc}}(B)\\
+&=\min\left(1,\frac{S}{D_{\mathrm{uninformed}}}\right)=1\\
+&\mathbb{E}[\Pi]\\
+&=Q\big[q\cdot p_{\mathrm{alloc}}(G)(V_G-P_{IPO})\\
+&\qquad+(1-q)\cdot 1\cdot (V_B-P_{IPO})\big]-C_{\mathrm{eval}}\\
+&=1{,}000[0.5(0.10)(6)+0.5(1.0)(-4)]-100\\
+&=-1{,}800
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ค่าเฉลี่ยของผลต่างราคาที่บวกสวยหรูไม่ได้การันตีผลกำไร เพราะโอกาสได้รับจัดสรรขึ้นอยู่กับคุณภาพของหุ้น</p>
@@ -409,12 +423,17 @@ p_{\mathrm{alloc}}(B)&=\min\left(1,\frac{S}{D_{\mathrm{uninformed}}}\right)=1\\
   <p>เมื่อหุ้นตัวใดมีคนต้องการชอร์ตเป็นจำนวนมากจนกลายเป็นหุ้นยืมยาก (hard-to-borrow) ค่าธรรมเนียม $f_b$ จะพุ่งสูงจนเกินกว่าอัตราดอกเบี้ย $r_c$ ส่งผลให้อัตรา rebate rate ติดลบ ผู้ชอร์ตจึงต้องเป็นฝ่ายควักเงินสดจ่ายให้ผู้ให้ยืมทุกวัน</p>
   <p>นอกจากนี้ ผู้ให้ยืมมีสิทธิตามสัญญาในการเรียกหุ้นคืน (recall) ได้ทุกเมื่อ หากตลาดไม่มีหุ้นให้ยืมต่อ โบรกเกอร์จะบังคับซื้อคืน (forced buy-in) ทันทีที่ราคาตลาด ซึ่งมักเกิดขึ้นตอนเกิด short squeeze ทำให้เกิดผลขาดทุนก้อนโต $L_{recall}$</p>
   <div class="math">\[
-\begin{aligned}r_{\mathrm{rebate}}&=r_c-f_b\\
-\text{Cash Flow}_{\mathrm{sale}}&=+N P_0\\
-\text{Cash Flow}_{\mathrm{buy}}&=-N P_T\\
-\text{Cash Flow}_{\mathrm{collateral}}&=+N P_0\cdot r_{\mathrm{rebate}}\cdot T\\
-\text{Cash Flow}_{\mathrm{dividend}}&=-N\sum_{t} D_t\\
-\Pi_{\mathrm{short}}&=N(P_0-P_T)+N P_0(r_c-f_b)T-N D-N c_{\mathrm{trade}}-L_{\mathrm{recall}}\end{aligned}
+\begin{aligned}
+r_{\mathrm{rebate}}&=r_c-f_b\\
+&\text{Cash Flow}_{\mathrm{sale}}=+N P_0\\
+&\text{Cash Flow}_{\mathrm{buy}}=-N P_T\\
+&\text{Cash Flow}_{\mathrm{collateral}}\\
+&=+N P_0\cdot r_{\mathrm{rebate}}\cdot T\\
+&\text{Cash Flow}_{\mathrm{dividend}}=-N\sum_{t} D_t\\
+&\Pi_{\mathrm{short}}\\
+&=N(P_0-P_T)+N P_0(r_c-f_b)T\\
+&\quad-N D-N c_{\mathrm{trade}}-L_{\mathrm{recall}}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>อัตรา rebate rate คำนวณจากดอกเบี้ยของเงินหลักประกัน $r_c$ ลบด้วยค่าธรรมเนียมยืมหุ้น $f_b$</p>
