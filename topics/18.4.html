@@ -86,9 +86,10 @@
 N&=1{,}000,\quad\Gamma=0.020,\quad S_0=100\\[4pt]
 \Delta\Delta&=\Gamma(2)=0.04\\
 N\,\Delta\Delta&=40\\[4pt]
-40(102-100)&=+80\\
-2\big[1{,}000\cdot\tfrac12(0.020)(2)^2\big]&=2(40)=80\\[4pt]
-80-18&=+62
+&40(102-100)=+80\\
+&2\big[1{,}000\cdot\tfrac12(0.020)(2)^2\big]\\
+&=2(40)=80\\[4pt]
+&80-18=+62
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -98,7 +99,7 @@ N\,\Delta\Delta&=40\\[4pt]
     <p>ราคาที่จ่ายคือ theta: ถือ call พันใบหนึ่งวันเสียมูลค่าเวลา 18 USD ไม่ว่าจะแกว่งหรือไม่ วันนี้แกว่งพอ (ได้ 80 จ่าย 18) ถ้าราคานิ่งทั้งวัน จะเสีย 18 เปล่า ๆ นี่คือทั้งธุรกิจของโต๊ะ option ในสามบรรทัด</p>
     <p>ตัวย่อ $\Delta\Delta$ คือจำนวนที่ delta ขยับ ซึ่งเท่ากับ gamma คูณระยะที่ราคาขยับ</p>
     <p>ขาขึ้น delta ของพอร์ตโตขึ้น 40 หุ้น จึงขายออกที่ 102 ขาลง delta หดกลับเท่าเดิม จึงซื้อคืนที่ 100 ได้กำไรจากการซื้อถูกขายแพง</p>
-    <p>บรรทัดที่หกตรวจด้วยสูตรความโค้งจากหัวข้อ 13.3 ได้เลขเดียวกัน และบรรทัดสุดท้ายหักค่าเวลาหนึ่งวันออก เหลือกำไรสุทธิ 62 USD</p>
+    <p>บรรทัดที่ห้าถึงหกตรวจด้วยสูตรความโค้งจากหัวข้อ 13.3 ได้เลขเดียวกัน และบรรทัดสุดท้ายหักค่าเวลาหนึ่งวันออก เหลือกำไรสุทธิ 62 USD</p>
   </div>
 </section>
 
@@ -124,11 +125,15 @@ V_S&=\Delta,\quad V_{SS}=\Gamma,\quad V_t=\Theta\\
 
 <section class="formula">
   <h4>ขั้นที่ 3 — หัก underlying hedge</h4>
-  <p>หักส่วนที่ hedge ด้วยหุ้นออกไป พจน์อันดับหนึ่งจะหายไปพอดี สามบรรทัดนี้แปลง delta hedge จากคำพูดเป็นบัญชีที่ตรวจได้ และสองพจน์ที่เหลือคือสิ่งที่ทั้งอุตสาหกรรมเทรดกันจริง ๆ</p>
+  <p>หักส่วนที่ hedge ด้วยหุ้นออกไป พจน์อันดับหนึ่งจะหายไปพอดี สูตรข้างล่างแปลง delta hedge จากคำพูดเป็นบัญชีที่ตรวจได้ และสองพจน์ที่เหลือคือสิ่งที่ทั้งอุตสาหกรรมเทรดกันจริง ๆ</p>
   <div class="math">\[
-\begin{aligned}\text{hold }-\Delta\ \text{shares}:\quad\Delta\Pi&=\Delta V-\Delta\cdot\Delta S\\
-&=\Big(\Delta\,\Delta S+\tfrac12\Gamma(\Delta S)^{2}+\Theta\Delta t\Big)-\Delta\,\Delta S\\
-&=\tfrac12\Gamma(\Delta S)^{2}+\Theta\,\Delta t\end{aligned}
+\begin{aligned}
+&\text{hold }-\Delta\ \text{shares}:\\
+\Delta\Pi&=\Delta V-\Delta\cdot\Delta S\\
+&=\Big(\Delta\,\Delta S+\tfrac12\Gamma(\Delta S)^{2}+\Theta\Delta t\Big)\\
+&\quad-\Delta\,\Delta S\\
+&=\tfrac12\Gamma(\Delta S)^{2}+\Theta\,\Delta t
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ถือ option แล้วขายหุ้นตามจำนวนที่ delta บอก กำไรของขาหุ้นเป็นลบเพราะเป็นการขาย แล้วแทนผลของขั้นที่ 2 ลงไป</p>
@@ -358,10 +363,10 @@ V_{50}-L&=+55{,}394
 N=10&:\ \text{sd}=79{,}092\\
 N=50&:\ \text{sd}=36{,}722\\
 N=250&:\ \text{sd}=16{,}621\\
-\frac{79{,}092}{36{,}722}&=2.15\approx\sqrt5\\[4pt]
-\sigma_{\text{true}}=25\%&:\ \text{mean}=+50{,}288\\
+&\frac{79{,}092}{36{,}722}=2.15\approx\sqrt5\\[4pt]
+&\sigma_{\text{true}}=25\%:\ \text{mean}=+50{,}288\\
 \nu&=S_0\sqrt T\,\varphi(d_1)=25(0.3966)=9.915\\
-100{,}000(9.915)(0.05)&=49{,}576
+&100{,}000(9.915)(0.05)=49{,}576
 \end{aligned}
 \]</div>
   <div class="reading">

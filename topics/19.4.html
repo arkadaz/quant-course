@@ -282,15 +282,20 @@ C_0 &= e^{-rT} \mathbb{E}_0^Q\big[\max(S_T - K,\, 0)\big] \\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 7 — ที่มาของตัวแปรมาตรฐาน d1 และ d2 จากเงื่อนไขการใช้สิทธิ์</h4>
-  <p>ห้าบรรทัดนี้ลากเส้นตรงจากนิยามการใช้สิทธิ์ไปจนถึง $d_1$ และ $d_2$ โดยไม่มีการเดา</p>
+  <p>สูตรข้างล่างลากเส้นตรงจากนิยามการใช้สิทธิ์ไปจนถึง $d_1$ และ $d_2$ โดยไม่มีการเดา</p>
   <p>การมีเงินปันผล $q$ แทรกเข้ามาใน drift ทำให้จุดกึ่งกลางของ distribution ขยับไปทางซ้าย โอกาสที่ option จะจบลงแบบ in-the-money จึงลดลงเมื่อเทียบกับหุ้นที่ไม่จ่ายปันผล</p>
   <div class="math">\[
 \begin{aligned}
-S_T \ge K &\implies \ln\left(\frac{S_T}{S_0}\right) \ge \ln\left(\frac{K}{S_0}\right) \\[4pt]
-\big(r - q - \tfrac{1}{2}\sigma^2\big)T + \sigma W_T^Q &\ge -\ln\left(\frac{S_0}{K}\right) \\[4pt]
-\frac{W_T^Q}{\sqrt{T}} &\ge -\frac{\ln(S_0/K) + (r - q - \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}} = -d_2 \\[4pt]
-\mathbb{Q}\big(S_T \ge K\big) &= \mathbb{Q}(Z \ge -d_2) = N(d_2) \\[4pt]
-d_1 &= d_2 + \sigma\sqrt{T} = \frac{\ln(S_0/K) + (r - q + \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}}
+&S_T \ge K\\
+&\implies \ln\left(\frac{S_T}{S_0}\right) \ge \ln\left(\frac{K}{S_0}\right) \\[4pt]
+&\big(r - q - \tfrac{1}{2}\sigma^2\big)T + \sigma W_T^Q\\
+&\quad\ge -\ln\left(\frac{S_0}{K}\right) \\[4pt]
+&\frac{W_T^Q}{\sqrt{T}}\\
+&\ge -\frac{\ln(S_0/K) + (r - q - \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}} = -d_2 \\[4pt]
+&\mathbb{Q}\big(S_T \ge K\big)\\
+&= \mathbb{Q}(Z \ge -d_2) = N(d_2) \\[4pt]
+d_1 &= d_2 + \sigma\sqrt{T}\\
+&= \frac{\ln(S_0/K) + (r - q + \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}}
 \end{aligned}
 \]</div>
   <div class="reading">
@@ -305,12 +310,14 @@ d_1 &= d_2 + \sigma\sqrt{T} = \frac{\ln(S_0/K) + (r - q + \tfrac{1}{2}\sigma^2)T
   <h4>ขั้นที่ 8 — put-call parity พร้อม dividend</h4>
   <p>สร้างพอร์ตสองชุดที่ให้ผลจ่ายเดียวกันตอนหมดอายุ แล้วใช้เหตุผลเรื่องเงินฟรีตรวจความสัมพันธ์ หกบรรทัดนี้เดินอีกทาง คือเริ่มจากสูตรราคาแล้วลบกัน และได้คำตอบเดียวกัน สองทางที่ตรงกันคือหลักฐานว่าสูตรในขั้นที่ 5 สอดคล้องกับเหตุผลพื้นฐาน</p>
   <div class="math">\[
-\begin{aligned}C_0-P_0&=\Big[S_0e^{-qT}\Phi(d_1)-Ke^{-rT}\Phi(d_2)\Big]\\
+\begin{aligned}
+C_0-P_0&=\Big[S_0e^{-qT}\Phi(d_1)-Ke^{-rT}\Phi(d_2)\Big]\\
 &\quad-\Big[Ke^{-rT}\Phi(-d_2)-S_0e^{-qT}\Phi(-d_1)\Big]\\
 &=S_0e^{-qT}\big[\Phi(d_1)+\Phi(-d_1)\big]\\
 &\quad-Ke^{-rT}\big[\Phi(d_2)+\Phi(-d_2)\big]\\
-\Phi(x)+\Phi(-x)&=1\qquad\text{(symmetry)}\\
-C_0-P_0&=S_0e^{-qT}-Ke^{-rT}\end{aligned}
+&\Phi(x)+\Phi(-x)=1\qquad\text{(symmetry)}\\
+C_0-P_0&=S_0e^{-qT}-Ke^{-rT}
+\end{aligned}
 \]</div>
   <div class="reading">
     <p>ลบสองสูตรของขั้นที่ 6 ออกจากกันตรง ๆ แล้วจัดกลุ่มตามตัวคูณ ขาหุ้นรวมกันได้เพราะเครื่องหมายลบซ้อนลบเป็นบวก</p>
@@ -432,7 +439,8 @@ P_0&=6.3076-99.004983+97.530991\\
   <div class="math">\[
 \begin{aligned}
 C_0-P_0&=6.3076-4.8336=1.4740\\
-S_0e^{-qT}-Ke^{-rT}&=99.004983-97.530991=1.4740
+&S_0e^{-qT}-Ke^{-rT}\\
+&=99.004983-97.530991=1.4740
 \end{aligned}
 \]</div>
   <div class="reading">
