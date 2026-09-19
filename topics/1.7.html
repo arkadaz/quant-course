@@ -657,6 +657,45 @@ g(0.476)&=-0.0052\end{aligned}
   </div>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดนับวัน crash และคิด Bayes ทุกแบบในหน้า</summary>
+    <pre><code>from math import log
+crash, normal = 0.001 * 10_000, 10_000 - 10
+flag_c, flag_n = 0.90 * crash, 0.10 * normal
+assert crash == 10 and abs(flag_c - 9) &lt; 1e-9 and abs(flag_n - 999) &lt; 1e-9
+post = flag_c / (flag_c + flag_n)
+assert abs(post - 0.00893) &lt; 5e-6
+bayes = lambda prior, hit, false: hit * prior / (hit * prior + false * (1 - prior))
+assert abs(bayes(0.001, 0.90, 0.10) - post) &lt; 1e-12
+assert abs(bayes(0.001, 0.99, 0.10) - 0.0098) &lt; 5e-5
+assert abs(bayes(0.001, 0.90, 0.01) - 0.083) &lt; 5e-4 and abs(bayes(0.001, 0.90, 0.001) - 0.474) &lt; 5e-4
+pb = 0.05 * 0.90 + 0.40 * 0.09 + 0.90 * 0.01
+assert abs(pb - 0.090) &lt; 1e-12 and abs(0.045 / pb - 0.5) &lt; 1e-12 and abs(0.009 / pb - 0.1) &lt; 1e-12
+dice = [(a, b) for a in range(1, 7) for b in range(1, 7)]
+A = {d for d in dice if d[0] &gt;= 4}
+B = {d for d in dice if sum(d) &gt;= 8}
+assert (len(A), len(B), len(A &amp; B), len(B - A)) == (18, 15, 12, 3)
+assert len(A &amp; B) / len(B) == 0.8 and abs(len(A &amp; B) / len(A) - 2 / 3) &lt; 1e-12
+odds = 0.001 / 0.999 * 9
+assert abs(odds / (1 + odds) - post) &lt; 1e-12
+two = 0.001 / 0.999 * 81
+assert abs(two / (1 + two) - 0.075) &lt; 5e-4
+p = 0.60 * 5200 / (0.60 * 5200 + 0.40 * 4800)
+assert abs(p - 13 / 21) &lt; 1e-12 and abs((5200 - 3120) / (10_000 - 5040) - 13 / 31) &lt; 1e-12
+assert abs(0.504 * p + 0.496 * 13 / 31 - 0.52) &lt; 1e-12
+g = lambda f: p * log(1 + f) + (1 - p) * log(1 - f)
+f_star = p - (1 - p)
+assert abs(f_star - 0.2381) &lt; 5e-5 and abs(g(f_star) - 0.0286) &lt; 5e-5
+assert abs(g(0.119) - 0.0213) &lt; 5e-5 and abs(g(0.476) + 0.0052) &lt; 5e-5
+for prior, want in ((0.52, 0.6190), (0.30, 0.3913), (0.10, 0.1429)):
+    assert abs(bayes(prior, 0.60, 0.40) - want) &lt; 5e-5</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนับหนึ่งหมื่นวันได้ 0.89% ตรงกับ Bayes และรูป odds ตรวจว่าการลดสัญญาณหลอกช่วยมากกว่าการจับให้ครบ นับลูกเต๋าได้ 0.80 และคิด Kelly 23.8% ของสัญญาณที่ชนะ 61.90%</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

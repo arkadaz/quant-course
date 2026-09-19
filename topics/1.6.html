@@ -497,6 +497,32 @@ P(X\ge5)&=1-0.81526=0.18474\approx18.47\%\end{aligned}
   </figcaption>
 </figure>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Poisson ของพอร์ตหุ้นกู้ 200 ราย</summary>
+    <pre><code>from math import comb, exp, factorial, log, sqrt
+assert abs((1 - 2 / 60) ** 60 - 0.1308) &lt; 5e-5 and abs((1 - 2 / 3600) ** 3600 - 0.13526) &lt; 5e-6
+assert abs(exp(-2) - 0.13534) &lt; 5e-6 and abs(log(0.985) + 0.015114) &lt; 5e-7
+pois = lambda r, lam=3: lam ** r * exp(-lam) / factorial(r)
+assert abs(comb(200, 3) * 0.015 ** 3 * 0.985 ** 197 - 0.2257) &lt; 5e-5   # n = 200 pieces
+assert abs(sum(3 ** r / factorial(r) for r in range(60)) - exp(3)) &lt; 1e-9
+lam = 200 * 0.015
+assert abs(lam - 3) &lt; 1e-12
+assert abs(pois(0) - 0.04979) &lt; 5e-6 and abs(pois(3) - 0.2240) &lt; 5e-5
+p_le4 = sum(pois(r) for r in range(5))
+assert abs(p_le4 - 0.81526) &lt; 5e-6 and abs(1 - p_le4 - 0.18474) &lt; 5e-6
+mean = sum(r * pois(r) for r in range(80))
+var = sum(r * r * pois(r) for r in range(80)) - mean ** 2
+assert abs(mean - 3) &lt; 1e-9 and abs(var - 3) &lt; 1e-9
+L = (1 - 0.40) * 5_000_000
+assert abs(L - 3_000_000) &lt; 1e-6 and abs(L * lam - 9_000_000) &lt; 1e-6 and abs(L * sqrt(lam) - 5_196_000) &lt; 500
+assert abs(0.985 ** 200 - 0.04867) &lt; 1e-5</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดดูว่า Binomial ที่หั่นละเอียดขึ้นเข้าใกล้ e ยกลบสองจริง ตรวจว่าแท่งทั้งหมดรวมได้ 1 ค่าเฉลี่ยและความเหวี่ยงเท่ากับ 3 แล้วคิดคำตอบสี่ข้อของพอร์ต: 4.98%, 22.40%, 18.47% และ provision 9 ล้าน USD</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

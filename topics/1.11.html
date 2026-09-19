@@ -639,6 +639,31 @@ f(x)&=\frac{k\,x_m^{k}}{x^{k+1}},\qquad x\ge x_m\\
   </figcaption>
 </figure>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Student-t, Exponential, Box-Muller และ Pareto</summary>
+    <pre><code>from math import gamma, log, exp, sqrt, pi, cos, sin
+from scipy import stats
+assert abs(0.6 / (0.1 / sqrt(3)) - 10.39) &lt; 5e-3
+assert abs(2 * stats.t.sf(1.96, 2) - 0.189) &lt; 5e-4 and abs(stats.t.ppf(0.975, 2) - 4.303) &lt; 5e-4
+assert [gamma(a) for a in (1, 2, 3, 4)] == [1, 1, 2, 6]
+assert stats.chi2.mean(3) == 3 and stats.chi2.var(3) == 6 and stats.t.var(3) == 3
+assert abs((1 + 16 / 3) ** -2 - 0.0249) &lt; 5e-5 and abs(exp(-8) - 0.000335) &lt; 5e-7
+assert abs(stats.t.cdf(-1.855 * sqrt(3), 3) - 0.0244) &lt; 5e-5 and abs(stats.norm.cdf(-1.855) - 0.0318) &lt; 5e-5
+t4, n4 = stats.t.cdf(-4 * sqrt(3), 3), stats.norm.cdf(-4)
+assert abs(t4 - 0.00308) &lt; 5e-6 and abs(n4 - 0.0000317) &lt; 5e-8 and abs(t4 / n4 - 97.3) &lt; 0.5
+lam = 0.2
+assert abs(exp(-lam * 10) - 0.1353) &lt; 5e-5 and abs(log(2) / lam - 3.47) &lt; 5e-3 and abs(1 - exp(-1) - 0.632) &lt; 5e-4
+assert abs(-log(1 - 0.63) / lam - 4.97) &lt; 5e-3
+r, th = sqrt(-2 * log(0.25)), 2 * pi * 0.60
+assert abs(r - 1.6651) &lt; 5e-5 and abs(r * cos(th) + 1.3471) &lt; 5e-4 and abs(r * sin(th) + 0.9787) &lt; 5e-4
+assert abs(1.5 * 100 / 0.5 - 300) &lt; 1e-9 and abs((100 / 10_000) ** 1.5 - 0.001) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดใช้ scipy ยืนยันเกณฑ์ 4.303 ของ t สององศา ความเหวี่ยง 3 ของ t สามองศา หางที่ระยะ 4 ห่างจาก Normal ราว 97 เท่า เวลารอ Exponential แปลงเลขสุ่ม 0.63 เป็น 4.97 วินาที Box-Muller และค่าเฉลี่ย Pareto 300 หุ้น</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

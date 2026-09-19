@@ -438,6 +438,39 @@ q_{n+1}(k)&=0.55\,q_n(k+1)\\
   </figcaption>
 </figure>
 
+<section class="code">
+  <details>
+    <summary>โค้ดคิด variance, Sharpe และโอกาสปีขาดทุนของไม้ TSLA</summary>
+    <pre><code>import numpy as np
+from math import erf, sqrt
+Phi = lambda z: 0.5 * (1 + erf(z / sqrt(2)))
+x = np.array([2, -1, 0]); p = np.array([0.30, 0.55, 0.15])
+mu = x @ p
+assert abs((x - mu) @ p) &lt; 1e-12                    # raw distances average to zero
+ex2, var = (x**2) @ p, ((x - mu)**2) @ p
+assert abs(ex2 - 1.75) &lt; 1e-12 and abs(var - 1.7475) &lt; 1e-12 and abs(ex2 - mu**2 - var) &lt; 1e-12
+sd = sqrt(var)
+assert abs(sd - 1.322) &lt; 5e-4 and abs(sd / mu - 26.4) &lt; 0.05
+N = 1000
+s_year = sd * sqrt(N)
+assert abs(s_year - 41.80) &lt; 0.01 and abs(N * mu / s_year - 1.20) &lt; 5e-3
+assert abs(Phi(-N * mu / s_year) - 0.116) &lt; 5e-4
+assert abs(mu**2 * 100**2 + var * N - 1772.5) &lt; 1e-9 and abs(mu**2 * N + var * N - 1750) &lt; 1e-9
+q = {0: 1.0}                                        # exact count over 20 trades
+for _ in range(20):
+    nq = {}
+    for k, v in q.items():
+        for step, pr in ((-1, 0.55), (0, 0.15), (2, 0.30)):
+            nq[k + step] = nq.get(k + step, 0) + v * pr
+    q = nq
+assert abs(sum(v for k, v in q.items() if k &lt; 0) - 0.410) &lt; 5e-4
+assert abs(Phi(-20 * mu / sqrt(20 * var)) - 0.433) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิด variance สองทางให้ได้ 1.7475 R² เท่ากัน รวม 1,000 ไม้เป็น Sharpe 1.20 และโอกาสปีขาดทุน 11.6% แล้วนับจริงทีละไม้สำหรับ 20 ไม้ ได้ 0.410 เทียบกับระฆังที่ให้ 0.433</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

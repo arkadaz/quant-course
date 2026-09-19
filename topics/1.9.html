@@ -484,6 +484,33 @@ q_i&=\mu+\sigma z_i=0.089\%+0.793\%\times(-2.879)=-2.20\%\\
   <p>เครื่องมือที่รับหางอ้วนได้คือ Student-t distribution และตัวชี้วัดที่ถามว่าเข้าหางแล้วเจ็บแค่ไหนคือ Expected Shortfall ทั้งสองอย่างจะสร้างเต็มในบทที่ 17</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดเทียบเหรียญ 100 ครั้งกับระฆัง แล้วคิดหางของ SPY</summary>
+    <pre><code>from math import comb, exp, sqrt, pi, factorial
+from statistics import NormalDist
+N = NormalDist()
+P = lambda k: comb(100, k) / 2 ** 100
+assert abs(P(55) / P(50) - 0.609) &lt; 5e-4 and abs(P(60) / P(50) - 0.136) &lt; 5e-4
+assert abs(P(50) - 0.0796) &lt; 5e-5 and abs(1 / (5 * sqrt(2 * pi)) - 0.0798) &lt; 5e-5
+area = sum(exp(-(i / 10) ** 2 / 2) * 0.1 for i in range(-100, 101))
+assert abs(area - sqrt(2 * pi)) &lt; 1e-6
+assert [factorial(2 * k) // (2 ** k * factorial(k)) for k in range(1, 6)] == [1, 3, 15, 105, 945]
+assert abs(1 - N.cdf(1.9) - 0.0287) &lt; 5e-5 and abs(sum(P(k) for k in range(60, 101)) - 0.0284) &lt; 5e-5
+z2 = (-0.02 - 0.0004) / 0.011
+assert abs(z2 + 1.855) &lt; 5e-4 and abs(N.cdf(z2) - 0.0318) &lt; 5e-5 and round(250 * N.cdf(z2)) == 8
+z4 = (-0.04 - 0.0004) / 0.011
+assert abs(z4 + 3.673) &lt; 5e-4 and abs(N.cdf(z4) - 0.00012) &lt; 5e-6
+x = 0.0004 + N.inv_cdf(0.01) * 0.011
+assert abs(x + 0.02519) &lt; 5e-6 and abs(50e6 * x + 1_259_491) &lt; 50
+zi = N.inv_cdf(0.5 / 251)
+assert abs(zi + 2.879) &lt; 5e-4 and abs(0.00089 + 0.00793 * zi + 0.0220) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดเทียบแท่ง Binomial จริงกับ e ยกลบ K²/50 วัดพื้นที่ใต้ระฆังได้ราก 2π ตรวจ moment ของ Normal และคิดวันขาดทุน 2% ราว 8 วันต่อปี กับ VaR 1% ราว 1.26 ล้าน USD</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

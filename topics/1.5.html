@@ -396,6 +396,29 @@ P(\text{someone passes})&=1-(1-q)^{M}\\[4pt]
   </figcaption>
 </figure>
 
+<section class="code">
+  <details>
+    <summary>โค้ดนับลำดับ Binomial ของผู้จัดการ 10 ปี</summary>
+    <pre><code>from math import comb, sqrt
+assert comb(3, 2) == 3 and comb(3, 2) / 2**3 == 3 / 8
+assert [comb(10, r) for r in (8, 9, 10)] == [45, 10, 1]
+assert sum(comb(10, r) for r in range(11)) == 1024 == 2**10
+assert sum(comb(10, r) for r in range(5)) == 386
+p8 = sum(comb(10, r) for r in (8, 9, 10)) / 1024
+assert p8 == 56 / 1024 and abs(p8 - 0.0547) &lt; 5e-5
+skill = sum(comb(10, r) * 0.6**r * 0.4**(10 - r) for r in (8, 9, 10))
+assert abs(skill - 0.1673) &lt; 5e-5
+mean, var = 10 * 0.5, 10 * 0.5 * 0.5
+assert mean == 5 and var == 2.5 and abs((8 - mean) / sqrt(var) - 1.90) &lt; 5e-3
+assert abs(1 - (1 - 56 / 1024)**100 - 0.996) &lt; 5e-4
+assert abs(1 - (1 - 11 / 1024)**100 - 0.660) &lt; 5e-4
+assert abs(1 - (1 - 1 / 1024)**100 - 0.093) &lt; 5e-4</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนับจำนวนลำดับด้วย comb ตรวจว่ารวมได้ 1,024 คิดโอกาส 5.47% ของคนไม่มีฝีมือ 16.73% ของคนเก่งจริง และโอกาสที่ใน 100 คนจะมีอย่างน้อยหนึ่งคนผ่านเกณฑ์</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

@@ -340,6 +340,31 @@ p(2)&=1.00-0.70=0.30
   </figcaption>
 </figure>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจตาราง PMF ของคูปองและไม้ TSLA</summary>
+    <pre><code>from fractions import Fraction as Fr
+coupon = {1: Fr(3, 5), 5: Fr(1, 5), 10: Fr(1, 5)}
+assert sum(coupon.values()) == 1 and coupon[5] + coupon[10] == Fr(2, 5)
+tsla = {-1: 0.55, 0: 0.15, 2: 0.30}
+assert abs(sum(tsla.values()) - 1) &lt; 1e-12 and min(tsla.values()) &gt;= 0
+no_loss = tsla[0] + tsla[2]
+assert abs(no_loss - 0.45) &lt; 1e-12 and abs(no_loss - (1 - tsla[-1])) &lt; 1e-12
+F = {x: sum(q for t, q in tsla.items() if t &lt;= x) for x in tsla}
+assert abs(F[-1] - 0.55) &lt; 1e-12 and abs(F[0] - 0.70) &lt; 1e-12 and abs(F[2] - 1) &lt; 1e-12
+assert abs(sum(x * q for x, q in tsla.items()) - 0.05) &lt; 1e-12
+streak = 0.55 ** 5
+assert abs(streak - 0.050328) &lt; 5e-7 and abs(1 / streak - 19.87) &lt; 5e-3
+assert abs(0.55 * 0.70 ** 4 - 0.132) &lt; 5e-4     # tilted after a loss
+other = {-1: 0.40, 0: 0.20, 1: 0.40}
+assert abs(sum(other.values()) - 1) &lt; 1e-12 and abs(0.40 ** 5 - 0.01024) &lt; 1e-12
+assert abs(sum(x * q for x, q in other.items())) &lt; 1e-12</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดตรวจสองกฎของตารางน้ำหนัก รวมแถวไม่ขาดทุน สร้าง CDF จาก PMF และคิดโอกาสแพ้ห้าไม้ติดทั้งแบบไม่เกี่ยวกันและแบบเครียดหลังแพ้ ครบทุกตัวเลขในหน้านี้</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

@@ -403,6 +403,34 @@ P(X\le-0.03)&=\Phi(-1.587)=0.0562\\
   <p>ใช้ตอบคำถามแบบช่วงกับผลตอบแทน ราคา และอัตราดอกเบี้ย เช่นภายใต้ระฆังเดียวกัน โอกาสที่ผลตอบแทนพรุ่งนี้อยู่ระหว่าง −2% ถึง +2% คือราว 71% และใช้เป็นฐานของการตั้งราคา option ทุกสูตร เพราะราคาคือค่าเฉลี่ยของ payoff ซึ่งคำนวณด้วยการรวมพื้นที่ใต้เส้นแบบนี้</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ PDF ของเวลารอและระฆังผลตอบแทนรายวัน</summary>
+    <pre><code>from math import sqrt, pi, exp
+from statistics import NormalDist
+Phi = NormalDist().cdf
+f = lambda t: 0.2 - 0.02 * t
+F = lambda t: 0.2 * t - 0.01 * t ** 2
+assert abs(0.5 * 10 * f(0) - 1) &lt; 1e-12 and abs(F(10) - 1) &lt; 1e-12
+assert abs(F(3) - 0.51) &lt; 1e-12 and abs(F(4) - 0.64) &lt; 1e-12 and abs(F(4) - F(3) - 0.13) &lt; 1e-12
+assert abs((f(3) + f(4)) / 2 - 0.13) &lt; 1e-12
+assert abs((F(3.51) - F(3.49)) / 0.02 - f(3.5)) &lt; 1e-9 and abs(f(3.5) / 6 - 0.0217) &lt; 5e-5
+sig = 0.30 / sqrt(252)
+assert abs(sig - 0.0189) &lt; 5e-5
+z = 0.012345 / sig
+phi = exp(-z * z / 2) / sqrt(2 * pi)
+assert abs(z - 0.6532) &lt; 5e-4 and abs(phi - 0.3223) &lt; 5e-5 and abs(phi / sig - 17.05) &lt; 0.01
+band = Phi((0.012345 + 0.004) / sig) - Phi((0.012345 - 0.004) / sig)
+assert abs(band - 0.1359) &lt; 5e-4 and abs(0.008 * phi / sig - 0.1364) &lt; 5e-4
+assert abs(1 / (sig * sqrt(2 * pi)) - 21.11) &lt; 0.01
+tail = Phi(-0.03 / sig)
+assert abs(tail - 0.0562) &lt; 5e-4 and round(tail * 252) == 14</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าพื้นที่ใต้เส้นเวลารอคือ 1 โอกาสช่วง 3 ถึง 4 นาทีคือ 0.13 ความชันของ CDF คือ PDF และความสูงของระฆังรายวัน 17.05 ที่เกิน 1 ได้โดยไม่ผิด รวมถึงวันขาดทุนเกิน 3% ราว 14 วันต่อปี</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
