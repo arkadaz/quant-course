@@ -352,6 +352,35 @@ P\big(\bar X_4\ge3\%\ \big|\ \mu=0\big)\approx1-\Phi\Big(\frac{3\%-0}{3\%}\Big)=
   <p>หัวข้อ 14.3 ถามคำถามถัดไป: สูตรที่เราใช้ประมาณค่าเล็งเป้าถูกหรือไม่ แยก bias ออกจากความเหวี่ยง ซึ่งแก้คนละวิธี</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดนับลูกเต๋าและทดสอบ Central Limit Theorem</summary>
+    <pre><code>import numpy as np
+from itertools import product
+from math import sqrt, exp
+from statistics import NormalDist
+Phi = NormalDist().cdf
+two = np.bincount([a + b for a, b in product(range(1, 7), repeat=2)])[2:]
+assert list(two) == [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+four = np.bincount([sum(r) for r in product(range(1, 7), repeat=4)])
+assert four[14] == 146 and four[4] == four[24] == 1 and four.sum() == 1296 and four[20:].sum() == 70
+var1 = np.mean(np.arange(1, 7) ** 2) - 3.5 ** 2
+assert abs(var1 - 35 / 12) &lt; 1e-12 and abs(sqrt(4 * var1) - 3.416) &lt; 5e-4
+assert abs(1 - Phi(5.5 / sqrt(4 * var1)) - 0.0537) &lt; 5e-4 and abs(70 / 1296 - 0.0540) &lt; 5e-5
+assert abs(1.05 ** 10 - 1.6289) &lt; 5e-5 and abs((exp(0.5) - 1.05 ** 10) / exp(0.5) - 0.012) &lt; 5e-4
+assert all(abs(0.5 * sqrt(n) - t) &lt; 1e-12 for n, t in ((4, 1.0), (16, 2.0), (36, 3.0), (100, 5.0)))
+assert (2 / 0.25) ** 2 == 64 and abs(1 - Phi(1) - 0.1587) &lt; 5e-5
+assert abs(sqrt(1.5 / 0.5) - 1.73) &lt; 5e-3 and abs(3 / (1.5 * sqrt(3)) - 1.15) &lt; 5e-3
+means = np.random.default_rng(23).exponential(1, (100_000, 30)).mean(1)   # skewed input, n = 30
+z = (means - 1) * sqrt(30)
+skew = np.mean(z ** 3) / np.std(z) ** 3
+assert abs(z.mean()) &lt; 0.01 and abs(z.std() - 1) &lt; 0.01 and abs(skew - 2 / sqrt(30)) &lt; 0.05</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนับทุกผลของลูกเต๋าสองและสี่ลูก ระฆังทาย 5.37% เทียบกับนับจริง 5.40% ตรวจ t = IR√n ของผู้จัดการ 3%/6% และจำลองค่าเฉลี่ย 30 ค่าจากข้อมูลเบ้ ได้รูปเกือบระฆังโดย skewness หดเหลือ 2/√30</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

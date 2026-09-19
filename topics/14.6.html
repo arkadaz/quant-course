@@ -317,6 +317,32 @@ i=4&:\ p_{(4)}=0.0040\gt0.0020\\
   <p>บทนี้ครบหนึ่งรอบแล้ว: Law of Large Numbers (LLN) ให้ความหมายของการทำซ้ำ Central Limit Theorem (CLT) ให้รูปร่างของค่าเฉลี่ย estimator บอกความเบี้ยวกับความคลาด ช่วงและการทดสอบบอกความไม่แน่นอน และการแก้การทดสอบหลายครั้งบอกต้นทุนของการเลือกผู้ชนะ</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ multiple testing: FWER, Bonferroni และ Benjamini–Hochberg</summary>
+    <pre><code>import numpy as np
+from math import log, sqrt
+from statistics import NormalDist
+assert abs(10_000 / 1024 - 9.77) &lt; 5e-3 and abs(sum(10_000 / 2 ** k for k in range(10)) - 19_980) &lt; 0.5
+assert abs(10 * 10_000 - 19_980 * 0.75 - 85_015) &lt; 1
+assert 200 * 0.05 == 10 and abs(0.95 ** 200 - 0.000035) &lt; 5e-7 and abs(200 * log(0.95) + 10.26) &lt; 5e-3
+assert abs(log(0.5) / log(0.95) - 13.5) &lt; 0.05 and abs(log(0.1) / log(0.95) - 44.9) &lt; 0.05
+z = sqrt(2 * log(200))
+assert abs(z - 3.255) &lt; 5e-4 and abs(z / sqrt(5) - 1.456) &lt; 5e-4
+zc = NormalDist().inv_cdf(1 - 0.00025 / 2)
+assert abs(zc - 3.6623) &lt; 5e-4 and abs(zc / sqrt(5) - 1.638) &lt; 5e-4 and abs(1 - (1 - 0.00025) ** 200 - 0.0488) &lt; 5e-4
+p = [0.0002, 0.0009, 0.0020, 0.0040]
+keep = [i + 1 for i, pi in enumerate(p) if pi &lt;= (i + 1) / 200 * 0.10]
+assert max(keep) == 2 and sum(pi &lt;= 0.00025 for pi in p) == 1
+assert abs(10 / 59 - 0.17) &lt; 5e-3
+zs = np.random.default_rng(27).standard_normal((20_000, 200))   # 200 skill-free strategies
+assert np.mean((np.abs(zs) &gt; 1.96).any(1)) &gt; 0.999 and abs(np.mean((np.abs(zs) &gt; zc).any(1)) - 0.0488) &lt; 0.006</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิดจดหมายฟุตบอลที่เหลือผู้ชนะราว 10 ราย FWER 99.9965% เมื่อลอง 200 กลยุทธ์ เกณฑ์ Bonferroni ที่ Sharpe 1.638 Benjamini–Hochberg เก็บได้ 2 ตัว และจำลอง 200 กลยุทธ์ที่ไม่มีฝีมือว่ามีผู้ผ่านเกือบทุกครั้งถ้าไม่ปรับเกณฑ์</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

@@ -323,6 +323,32 @@ w^{*}&=\frac{8^2}{8^2+400}=\frac{64}{464}=0.138\\
   <p>หัวข้อ 14.4 ต่อจากนี้ด้วยการสื่อสารความไม่แน่นอนโดยตรง สร้างช่วงที่ครอบค่าจริงตามความถี่ที่ประกาศ และอ่านคำว่า 95% confidence ให้ถูก</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจตัวหาร n − 1, MSE และ shrinkage</summary>
+    <pre><code>import numpy as np
+from math import sqrt
+x = np.array([1., 3, 8])
+assert x.mean() == 4 and list(x - x.mean()) == [-3, -1, 4] and ((x - 4) ** 2).sum() == 26
+assert abs(x.var() - 8.67) &lt; 5e-3 and x.var(ddof=1) == 13.0
+rng = np.random.default_rng(24)
+pairs = rng.normal(0, 2, (400_000, 2))                    # sigma^2 = 4, n = 2
+assert abs(pairs.var(axis=1).mean() - 2) &lt; 0.03 and abs(pairs.var(axis=1, ddof=1).mean() - 4) &lt; 0.05
+est = rng.normal(0.5, 1.0, 100_000)                       # an estimator of theta = 0.4
+assert abs(((est - 0.4) ** 2).mean() - (est.var() + (est.mean() - 0.4) ** 2)) &lt; 1e-9
+assert abs(0.20 / sqrt(504) - 0.0089) &lt; 5e-5 and abs(8 - 1.96 * 20 + 31.2) &lt; 1e-9
+w = 64 / 464
+assert abs(w - 0.138) &lt; 5e-4 and abs(w ** 2 * 400 + (1 - w) ** 2 * 64 - 55.2) &lt; 0.05
+assert abs(sqrt(55.2) - 7.43) &lt; 5e-3 and abs(w * 8 - 1.10) &lt; 5e-3
+r = rng.normal(0.08 / 252, 0.20 / sqrt(252), (20_000, 252))
+sig_hat = r.std(axis=1, ddof=1) * sqrt(252); mu_hat = r.mean(axis=1) * 252
+assert abs(sig_hat.std() - 0.0089) &lt; 0.001 and abs(mu_hat.std() - 0.20) &lt; 0.005</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าหาร n ได้ variance ต่ำไป หาร n − 1 ได้ตรง MSE คือ variance บวก bias กำลังสอง ย่อค่าเฉลี่ยลงเหลือ 13.8% ได้ความคลาด 7.43 จุดแทน 20 จุด และจำลองปีข้อมูลรายวันว่า volatility คลาดแค่ 0.89% แต่ค่าเฉลี่ยคลาดถึง 20%</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

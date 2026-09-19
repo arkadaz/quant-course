@@ -325,6 +325,31 @@ P(t\gt1.96)=\Phi(2.0785-1.96)=\Phi(0.1185)=54.7\%,\qquad 1-0.547=45.3\%
   <p>การทดสอบข้างต้นสมมติว่าเลือกสมมติฐานเดียวก่อนเห็นข้อมูล ถ้าลองหลายแบบแล้วเก็บตัวที่ดีที่สุด p = 3.77% ไม่ใช่หลักฐานเดิมอีกต่อไป หัวข้อ 14.6 นับจำนวนที่ลองและคุมการค้นพบปลอม</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดทดสอบ Sharpe ratio: p-value, power และความคลาดของ Sharpe</summary>
+    <pre><code>import numpy as np
+from math import sqrt
+from statistics import NormalDist
+Phi = NormalDist().cdf
+assert 0.5 ** 3 == 0.125 and abs(0.5 ** 5 - 0.031) &lt; 5e-4 and 200 * 0.125 == 25
+t = 1.20 * sqrt(3)
+assert abs(t - 2.0785) &lt; 5e-5 and abs(Phi(t) - 0.981168) &lt; 5e-6 and abs(2 * (1 - Phi(t)) - 0.0377) &lt; 5e-5
+assert abs(1.96 / sqrt(3) - 1.132) &lt; 5e-4 and abs(2 * (1 - Phi(2)) - 0.0455) &lt; 5e-5
+assert abs(Phi(0.04) - 0.516) &lt; 5e-4 and abs(((1.96 + 0.8416) / 0.5) ** 2 - 31.4) &lt; 0.05 and abs(Phi(t - 1.96) - 0.547) &lt; 5e-4
+se = sqrt((1 + 0.5 * 1.44) / 3)
+assert abs(se - 0.757) &lt; 5e-4 and abs(1.20 - 1.96 * se + 0.28) &lt; 5e-3 and abs(1.20 + 1.96 * se - 2.68) &lt; 5e-3
+assert abs((1.96 / 1.2) ** 2 - 2.67) &lt; 5e-3 and abs(1.96 ** 2 * 1.72 / 1.44 - 4.59) &lt; 5e-3 and abs((3 / 1.2) ** 2 - 6.25) &lt; 1e-12
+assert abs(1 + 2 * 0.5 / (1 - 0.5) - 3) &lt; 1e-12
+r = np.random.default_rng(26).normal(1.2, 1.0, (40_000, 100))
+sr = r.mean(1) / r.std(1, ddof=1)
+assert abs(sr.std() - sqrt(1.72 / 100)) &lt; 0.01           # SE formula (1 + SR^2/2)/T at T = 100</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดคิด t = 2.0785 และ p = 3.77% ของ backtest สามปี power แค่ 54.7% ต้อง 32 ปีถึงจะได้ power 80% ช่วงของ Sharpe คือ −0.28 ถึง 2.68 และจำลองยืนยันสูตรความคลาดของ Sharpe</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>

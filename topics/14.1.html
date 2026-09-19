@@ -367,6 +367,35 @@ n_{\rm eff}&=\frac{n}{1+(n-1)\rho}\\
   <p>หัวข้อ 14.2 ถามคำถามที่ใช้งานได้กว่า: ณ จำนวนข้อมูลที่มีอยู่ ค่าเฉลี่ยมีรูปร่างการกระจายแบบไหน และโอกาสเห็นผลระดับนี้เป็นเท่าไร</p>
 </section>
 
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ Law of Large Numbers, Chebyshev และกรณีที่ล้มเหลว</summary>
+    <pre><code>import numpy as np
+from math import sqrt, atan, pi
+from statistics import NormalDist
+Phi = NormalDist().cdf
+for n, want in ((4, 0.25), (100, 0.05), (10_000, 0.005)):
+    assert abs(0.5 / sqrt(n) - want) &lt; 1e-12
+assert (0.5 / 0.01) ** 2 == 2500
+mu, sig = 0.005, 2.0
+assert abs(sig / sqrt(100) - 0.2) &lt; 1e-12 and abs((sig / mu) ** 2 - 160_000) &lt; 1e-6 and abs((2 * sig / mu) ** 2 - 640_000) &lt; 1e-6
+n = 10_000
+assert abs(n * mu - 50) &lt; 1e-9 and sig * sqrt(n) == 200 and abs(Phi(-0.25) - 0.4013) &lt; 5e-5
+assert abs(200 * sqrt(250) - 3162.28) &lt; 5e-3 and abs(0.25 * sqrt(250) - 3.953) &lt; 5e-4 and Phi(-3.953) &lt; 5e-5
+assert abs(sig ** 2 / (640_000 * 0.005 ** 2) - 0.25) &lt; 1e-12 and abs(2 * Phi(-2) - 0.0455) &lt; 5e-5
+assert abs(10_000 / (1 + 9_999 * 0.001) - 909) &lt; 0.5
+assert abs(1 - 2 / pi * atan(10) - 0.063) &lt; 5e-4
+rng = np.random.default_rng(22)
+X = rng.standard_cauchy((8000, 250))
+assert abs(np.mean(np.abs(X.mean(1)) &gt; 10) - 0.063) &lt; 0.015      # averaging does not tame Cauchy
+days = rng.normal(mu, sig, (200, 10_000)).sum(1)
+assert abs(days.mean() - 50) &lt; 50 and abs(days.std() - 200) &lt; 25</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดยืนยันว่าความเหวี่ยงของค่าเฉลี่ยหดตามรากของ n desk ต้องใช้ 160,000 ไม้ถึงจะเห็น edge หนึ่งวันยังขาดทุนได้ 40% แต่หนึ่งปี Sharpe 3.95 Chebyshev ให้ขอบ 25% เทียบกับระฆัง 4.55% correlation หนึ่งในพันเหลือข้อมูลจริง 909 ไม้ และค่าเฉลี่ยของ Cauchy ไม่เคยนิ่ง</p>
+  </div>
+</section>
+
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
