@@ -356,7 +356,7 @@ X_t&=e_t+\tfrac S2(q_t-q_{t-1})\\
   <p>ของที่มี: ขั้นที่ 1 และ 3 ถึง 9</p>
   <p>1. ρ₁ = −0.4/1.16 = −0.3448 และ γ₁ = −3.448 × 10⁻⁷</p>
   <p>2. Roll spread S = 2√(3.448 × 10⁻⁷) = 0.1174% ของราคา หรือ 4.93 เซนต์บนหุ้น \$42 </p>
-  <p>3. ราคาจริงแกว่ง 0.0557% ต่อนาที 0.965% ต่อวัน 15.3% ต่อปี ส่วน 27.5% จากการคูณตรง ๆ สูงเกินจริง 1.8 เท่า และ σ_ε = 0.0928% เป็นแค่ขนาด shock ของ MA(1)</p>
+  <p>3 ราคาจริงแกว่ง 0.0557% ต่อนาที 0.965% ต่อวัน 15.3% ต่อปี ส่วน 27.5% จากการคูณตรง ๆ สูงเกินจริง 1.8 เท่า และ σ_ε = 0.0928% เป็นแค่ขนาด shock ของ MA(1)</p>
   <p>ตรวจเองใน 10 วินาที: 0.0928% × 0.6 = 0.0557% และ 0.1174% × 42 = \$0.0493 </p>
   <p>แปลว่าอะไร: เทรดเดอร์ความถี่สูงที่เห็น autocorrelation ติดลบต้องรู้ว่ามันเกิดจาก bid-ask bounce ไม่ใช่ mean reversion ที่ทำกำไรได้ ส่งคำสั่งข้าม spread เสีย 5 เซนต์ต่อหุ้นทันที และระบบความเสี่ยงที่คำนวณความผันผวนจากราคา trade รายนาทีจะได้ VaR สูงเกินจริงเกือบเท่าตัว ต้องใช้ mid price หรือข้อมูลห่าง 5 ถึง 15 นาที หรือหักส่วนเด้งแบบขั้นที่ 9</p>
 </section>
@@ -376,7 +376,7 @@ X_t&=e_t+\tfrac S2(q_t-q_{t-1})\\
 
 <section class="pitfall">
   <h4>negative autocorrelation ไม่ใช่ free alpha</h4>
-  <p>ถ้าใช้ trade price เห็น $\rho_1=-0.345$ แล้วรีบเรียกว่า mean reversion จะโดน spread กินทุกครั้งที่ cross. คำนวณใหม่บน mid price, ใช้ 5–15 minute sampling, หรือใช้ noise-robust estimator และ re-estimate theta ตาม liquidity ของแต่ละวัน การหักส่วนเด้งด้วย $\gamma_0+2\gamma_1$ หรือ $\sigma_\epsilon(1+\theta)$ ต้องใช้ theta ที่ stable; ถ้าป้อน percent แทน decimal variance จะเพี้ยน 10,000 เท่า</p>
+  <p>ถ้าใช้ trade price เห็น $\rho_1=-0.345$ แล้วรีบเรียกว่า mean reversion จะโดน spread กินทุกครั้งที่ cross คำนวณใหม่บน mid price, ใช้ 5–15 minute sampling, หรือใช้ noise-robust estimator และ re-estimate theta ตาม liquidity ของแต่ละวัน การหักส่วนเด้งด้วย $\gamma_0+2\gamma_1$ หรือ $\sigma_\epsilon(1+\theta)$ ต้องใช้ theta ที่ stable; ถ้าป้อน percent แทน decimal variance จะเพี้ยน 10,000 เท่า</p>
 </section>
 
 <section class="table">
@@ -417,7 +417,7 @@ assert abs(S*42-0.0493)&lt;1e-4</code></pre>
 
 <section class="prose">
   <h4>ก่อนไปต่อ — volatility model</h4>
-  <p>MA/ARMA อธิบาย conditional mean และ microstructure memory แต่ volatility clustering จากหัวข้อ 16.1 อยู่ใน squared return. หัวข้อถัดไปจึงให้ variance เปลี่ยนตาม shock และ variance forecast เดิมด้วย ARCH และ GARCH</p>
+  <p>MA/ARMA อธิบาย conditional mean และ microstructure memory แต่ volatility clustering จากหัวข้อ 16.1 อยู่ใน squared return หัวข้อถัดไปจึงให้ variance เปลี่ยนตาม shock และ variance forecast เดิมด้วย ARCH และ GARCH</p>
 </section>
 
 <section class="takeaways">

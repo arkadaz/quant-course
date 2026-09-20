@@ -99,9 +99,9 @@
 <section class="prose">
   <h4>หนึ่ง order มีหลายชั้นของ market design</h4>
   <p>order มีเส้นทาง: ผลลัพธ์ไม่ได้ขึ้นกับราคาที่เห็นอย่างเดียว แต่ขึ้นกับว่าไปถึงใคร เมื่อไร และถูกจับคู่ตรงไหน.</p>
-  <p>exchange ตั้งกติกาและลำดับจับคู่. broker รับคำสั่งลูกค้าแล้วส่งต่อ. dealer หรือ market maker อาจรับเป็นคู่สัญญาเอง; alternative trading system (ATS) คือ venue เพิ่มอีกแห่ง.</p>
-  <p>National Best Bid and Offer (NBBO) คือภาพ bid และ ask ที่ดีที่สุดจากหลาย venue ไม่ใช่สัญญาว่าคุณจะได้ fill ราคานั้น. quote อาจถูกคนอื่นรับไปก่อน หรือคิวของคุณอยู่ด้านหลัง.</p>
-  <p>เก็บเวลาเริ่มตัดสินใจ, เวลาส่ง, fill, cancel และ fee ให้ตามรอยได้. latency กับ queue position เป็นส่วนของผลลัพธ์จริง ไม่ใช่ footnote.</p>
+  <p>exchange ตั้งกติกาและลำดับจับคู่. broker รับคำสั่งลูกค้าแล้วส่งต่อ. dealer หรือ market maker อาจรับเป็นคู่สัญญาเอง; alternative trading system (ATS) คือ venue เพิ่มอีกแห่ง</p>
+  <p>National Best Bid and Offer (NBBO) คือภาพ bid และ ask ที่ดีที่สุดจากหลาย venue ไม่ใช่สัญญาว่าคุณจะได้ fill ราคานั้น. quote อาจถูกคนอื่นรับไปก่อน หรือคิวของคุณอยู่ด้านหลัง</p>
+  <p>เก็บเวลาเริ่มตัดสินใจ, เวลาส่ง, fill, cancel และ fee ให้ตามรอยได้. latency กับ queue position เป็นส่วนของผลลัพธ์จริง ไม่ใช่ footnote</p>
 </section>
 
 <section class="prose">
@@ -178,7 +178,7 @@ V_{\mathrm{actual}}&=\sum_{k=1}^m q_k(P_T-P_{f,k})-\sum_{k=1}^m q_k c_v\\
   <p>ของที่มี: ขั้นที่ 1 และส่วนคำนวณแต่ละ venue</p>
   <p>1. A: 30,000 × (0.03 + 0.002) = \$960 หรือ \$0.032 ต่อหุ้น</p>
   <p>2. B: 20,000 × (0.01 + 0.004) = \$280 หรือ \$0.014 ต่อหุ้น</p>
-  <p>3. รวม \$1,240 หรือ \$0.0248 ต่อหุ้น alpha 50,000 × 410 × 0.0008 = \$16,400 เหลือ \$15,160</p>
+  <p>3 รวม \$1,240 หรือ \$0.0248 ต่อหุ้น alpha 50,000 × 410 × 0.0008 = \$16,400 เหลือ \$15,160</p>
   <p>ตรวจเองใน 10 วินาที: 960 + 280 = 1,240 และ 1,240 ÷ 50,000 = 0.0248</p>
   <p>แปลว่าอะไร: เลือก venue จาก fee ที่ติดป้ายไม่ได้ A มี fee ต่ำกว่าแต่ต้นทุนรวมต่อหุ้นสูงกว่าเกินสองเท่า transaction-cost analysis ต้องเทียบราคาที่ได้ fee latency และราคาที่วิ่งสวนหลัง fill ทุก venue</p>
 </section>
@@ -256,8 +256,8 @@ for stock_T, call_T in ((Su, 5.0), (Sd, 0.0)):
 
 <section class="prose">
   <h4>ETF เชื่อม market price กับ basket</h4>
-  <p>ETF มีสองราคา: market price ที่ trade บน exchange และ NAV ที่คำนวณจาก basket ณ valuation time. ถ้า ETF price สูงกว่า NAV ผู้ทำ arbitrage อาจซื้อ basket, ส่งให้ AP เพื่อ create ETF shares แล้วขาย ETF; ถ้าต่ำกว่าอาจซื้อ ETF, redeem เป็น basket แล้วขาย basket.</p>
-  <p>กลไกนี้ไม่ได้บังคับ equality ทันที เพราะ basket อาจมี spread, stale price, creation fee, tax, borrow constraint และ settlement delay. ใน bond ETF ช่วง stress market price อาจค้นพบ exit value ก่อน NAV ที่ mark จาก dealer quote จึงเห็น discount ไม่ได้แปลว่ากลไกพัง</p>
+  <p>ETF มีสองราคา: market price ที่ trade บน exchange และ NAV ที่คำนวณจาก basket ณ valuation time ถ้า ETF price สูงกว่า NAV ผู้ทำ arbitrage อาจซื้อ basket, ส่งให้ AP เพื่อ create ETF shares แล้วขาย ETF; ถ้าต่ำกว่าอาจซื้อ ETF, redeem เป็น basket แล้วขาย basket</p>
+  <p>กลไกนี้ไม่ได้บังคับ equality ทันที เพราะ basket อาจมี spread, stale price, creation fee, tax, borrow constraint และ settlement delay ใน bond ETF ช่วง stress market price อาจค้นพบ exit value ก่อน NAV ที่ mark จาก dealer quote จึงเห็น discount ไม่ได้แปลว่ากลไกพัง</p>
 </section>
 
 <section class="prose">
@@ -310,12 +310,12 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 
 <section class="example">
   <h4>worked example — creation arbitrage ใน ETF</h4>
-  <p>สมมติ ETF มี market price 101.20 และ basket NAV 100.00 USD/share; premium เท่ากับ 1.20%. AP ซื้อ basket 10,000 shares แล้วจ่าย creation fee 0.20 และ trading/funding cost 0.35 USD/share. Gross premium คือ \$12,000; all-in cost คือ \$5,500; expected profit ก่อน operational risk คือ \$6,500. หาก ETF ลดเหลือ 100.90 ก่อน create เสร็จ revenue เหลือ \$9,000 และ profit เหลือ \$3,500; funding เพิ่ม \$800 เหลือ \$2,700 จึงต้องมี AP limit และ settlement control</p>
+  <p>สมมติ ETF มี market price 101.20 และ basket NAV 100.00 USD/share; premium เท่ากับ 1.20%. AP ซื้อ basket 10,000 shares แล้วจ่าย creation fee 0.20 และ trading/funding cost 0.35 USD/share. Gross premium คือ \$12,000; all-in cost คือ \$5,500; expected profit ก่อน operational risk คือ \$6,500 หาก ETF ลดเหลือ 100.90 ก่อน create เสร็จ revenue เหลือ \$9,000 และ profit เหลือ \$3,500; funding เพิ่ม \$800 เหลือ \$2,700 จึงต้องมี AP limit และ settlement control</p>
 </section>
 
 <section class="prose">
   <h4>IPO, rating agency และ information asymmetry</h4>
-  <p>IPO มี primary issuance ซึ่งเงินเข้าบริษัท และ secondary trading ซึ่ง investor แลก share กันภายหลัง Underwriter ทำ bookbuilding, due diligence, price range และ allocation; ราคาเปิดจึงอาจมี underpricing เพื่อให้ distribution สำเร็จหรือชดเชย uncertainty.</p>
+  <p>IPO มี primary issuance ซึ่งเงินเข้าบริษัท และ secondary trading ซึ่ง investor แลก share กันภายหลัง Underwriter ทำ bookbuilding, due diligence, price range และ allocation; ราคาเปิดจึงอาจมี underpricing เพื่อให้ distribution สำเร็จหรือชดเชย uncertainty</p>
   <p>Quant ที่ศึกษาผลตอบแทน IPO ต้องควบคุม allocation probability, lock-up expiry, first-day price, delisting และ market benchmark ไม่ใช่ซื้อสมมติฐานว่า “ราคาเปิดต้องขึ้น”.</p>
   <p>Rating agency ให้ signal ของ credit risk แต่ rating เป็น lagging opinion ที่ขึ้นกับข้อมูลและ incentive; production control ต้องใช้ rating เป็น input หนึ่งร่วมกับ spread, leverage, default intensity และ market-implied information</p>
 </section>
@@ -351,8 +351,8 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 \mathbb{E}[\Pi_{IPO}]=p_{alloc}Q(P_1-P_{IPO}-c_{trade})-C_{research}
 \]</div>
   <div class="reading">
-    <p>ถ้าได้ allocation, ใส่จำนวนหุ้น $Q$ คูณส่วนต่างระหว่างราคาขาย $P_1$ กับราคา IPO แล้วหัก trading cost และ research cost. นี่คือกำไรในโลกที่ได้หุ้นจริง</p>
-    <p>แต่ได้หุ้นไม่ทุกครั้ง จึงถ่วงกำไรด้วย probability ของ allocation $p_{alloc}$. การข้ามน้ำหนักนี้ทำให้ backtest ที่สมมติว่าได้หุ้นเต็มจำนวนโกงตัวเองแบบเนียน ๆ</p>
+    <p>ถ้าได้ allocation, ใส่จำนวนหุ้น $Q$ คูณส่วนต่างระหว่างราคาขาย $P_1$ กับราคา IPO แล้วหัก trading cost และ research cost นี่คือกำไรในโลกที่ได้หุ้นจริง</p>
+    <p>แต่ได้หุ้นไม่ทุกครั้ง จึงถ่วงกำไรด้วย probability ของ allocation $p_{alloc}$ การข้ามน้ำหนักนี้ทำให้ backtest ที่สมมติว่าได้หุ้นเต็มจำนวนโกงตัวเองแบบเนียน ๆ</p>
   </div>
 </section>
 
@@ -394,8 +394,8 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 
 <section class="prose">
   <h4>HFT และ securities lending เป็น infrastructure risk ด้วย</h4>
-  <p>HFT ใช้ low-latency data, colocated servers และ automated order logic เพื่อ quote, hedge หรือ arbitrage ความคลาดเคลื่อนสั้นมาก ความได้เปรียบไม่ได้หมายความว่าไม่มี risk: clock drift, stale feed, cancel failure, duplicate order และ kill-switch failure อาจสร้าง position ใหญ่ใน milliseconds.</p>
-  <p>ระบบต้องคุมขนาดคำสั่งล่วงหน้าด้วย pre-trade notional limit และ message-rate limit ก่อน แล้วเสริมด้วย price collar, self-trade prevention, heartbeat และ kill switch อิสระที่ทดสอบจริง.</p>
+  <p>HFT ใช้ low-latency data, colocated servers และ automated order logic เพื่อ quote, hedge หรือ arbitrage ความคลาดเคลื่อนสั้นมาก ความได้เปรียบไม่ได้หมายความว่าไม่มี risk: clock drift, stale feed, cancel failure, duplicate order และ kill-switch failure อาจสร้าง position ใหญ่ใน milliseconds</p>
+  <p>ระบบต้องคุมขนาดคำสั่งล่วงหน้าด้วย pre-trade notional limit และ message-rate limit ก่อน แล้วเสริมด้วย price collar, self-trade prevention, heartbeat และ kill switch อิสระที่ทดสอบจริง</p>
   <p>Securities lending ทำให้ short sale และ settlement เป็นไปได้ แต่ lender อาจ recall share, collateral haircut เปลี่ยน หรือ borrow fee พุ่งเมื่อ short interest สูง ต้อง mark borrow เป็น stochastic cost และทำ locate-before-order control</p>
 </section>
 
@@ -413,8 +413,8 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 \Pi_{short}=N(P_{sell}-P_{buy})-N P_{sell} f_b T-N c_{trade}-L_{recall}
 \]</div>
   <div class="reading">
-    <p>ใส่จำนวนหุ้นที่ short $N$ และส่วนต่างราคาเปิด $P_{sell}$ ลบราคาซื้อคืน $P_{buy}$. ได้ gross trading P&amp;L เป็น USD</p>
-    <p>จากนั้นหัก borrow fee ตาม $f_b$ และเวลา $T$, trading cost $c_{trade}$ และ loss หากถูก recall $L_{recall}$. ทุกพจน์สุดท้ายต้องเป็น USD; thesis ถูกแต่ค่าเช่าหุ้นแพงก็ยังแพ้ได้</p>
+    <p>ใส่จำนวนหุ้นที่ short $N$ และส่วนต่างราคาเปิด $P_{sell}$ ลบราคาซื้อคืน $P_{buy}$ ได้ gross trading P&amp;L เป็น USD</p>
+    <p>จากนั้นหัก borrow fee ตาม $f_b$ และเวลา $T$, trading cost $c_{trade}$ และ loss หากถูก recall $L_{recall}$ ทุกพจน์สุดท้ายต้องเป็น USD; thesis ถูกแต่ค่าเช่าหุ้นแพงก็ยังแพ้ได้</p>
   </div>
 </section>
 
@@ -453,8 +453,8 @@ r_{\mathrm{rebate}}&=r_c-f_b\\
 
 <section class="example">
   <h4>worked example — short sale ที่ดูดีแต่ fee กิน edge</h4>
-  <p>กองทุน short 20,000 shares ของ GME ที่ 30.00 USD/share และตั้งใจซื้อคืนที่ 27.00 ภายใน 30/365 ปี (ค่ายืมหุ้นคิดตามวันปฏิทิน ถือ 30 วันจากปีละ 365 วัน รวมวันหยุด เพราะหุ้นถูกยืมอยู่ทุกวัน).</p>
-  <p>Gross trading profit คือ \$60,000. Borrow fee 36% ต่อปีบนมูลค่า short \$600,000 เป็น \$17,753.42 และ round-trip trading cost \$1,600. ถ้า recall บังคับ buy-in ที่ \$32.00 trading loss เป็น \$40,000; รวม fee และ cost ขาดทุน \$59,353.42. แม้ base case เหลือกำไร \$40,646.58 แต่ต้องมี locate status, borrow utilisation และ squeeze stress</p>
+  <p>กองทุน short 20,000 shares ของ GME ที่ 30.00 USD/share และตั้งใจซื้อคืนที่ 27.00 ภายใน 30/365 ปี (ค่ายืมหุ้นคิดตามวันปฏิทิน ถือ 30 วันจากปีละ 365 วัน รวมวันหยุด เพราะหุ้นถูกยืมอยู่ทุกวัน)</p>
+  <p>Gross trading profit คือ \$60,000. Borrow fee 36% ต่อปีบนมูลค่า short \$600,000 เป็น \$17,753.42 และ round-trip trading cost \$1,600 ถ้า recall บังคับ buy-in ที่ \$32.00 trading loss เป็น \$40,000; รวม fee และ cost ขาดทุน \$59,353.42 แม้ base case เหลือกำไร \$40,646.58 แต่ต้องมี locate status, borrow utilisation และ squeeze stress</p>
 </section>
 
 <section class="formula">
@@ -489,8 +489,8 @@ S_0R&=100(1.02)=102\\[4pt]
 
 <section class="pitfall">
   <h4>กับดัก: fee ต่ำไม่ได้พิสูจน์ best execution</h4>
-  <p>PFOF หรือค่าธรรมเนียม venue เป็นเพียง explicit transfer; broker อาจได้ fee ต่ำแต่ส่ง order ไปยัง quote ที่ fill แย่, latency สูง หรือ adverse selection สูงกว่า.</p>
-  <p>ระบบควบคุมจึงต้องมี venue-level transaction-cost analysis (TCA), SEC Rule 605/606 reporting review ตามขอบเขตที่ใช้ และ audit trail ที่ตรวจย้อนกลับได้จริง ไม่ใช่ดูตัวเลข fee เฉลี่ยตัวเดียวแล้วสรุปว่าดีที่สุด. รายงานควรดูทั้ง percentile และ exception queue ไม่ใช่ค่าเฉลี่ยอย่างเดียว</p>
+  <p>PFOF หรือค่าธรรมเนียม venue เป็นเพียง explicit transfer; broker อาจได้ fee ต่ำแต่ส่ง order ไปยัง quote ที่ fill แย่, latency สูง หรือ adverse selection สูงกว่า</p>
+  <p>ระบบควบคุมจึงต้องมี venue-level transaction-cost analysis (TCA), SEC Rule 605/606 reporting review ตามขอบเขตที่ใช้ และ audit trail ที่ตรวจย้อนกลับได้จริง ไม่ใช่ดูตัวเลข fee เฉลี่ยตัวเดียวแล้วสรุปว่าดีที่สุด รายงานควรดูทั้ง percentile และ exception queue ไม่ใช่ค่าเฉลี่ยอย่างเดียว</p>
 </section>
 
 <section class="table">

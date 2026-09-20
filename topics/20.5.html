@@ -247,8 +247,8 @@ A_C(0,T)&=\left[\frac{2\gamma e^{(\kappa+\gamma)T/2}}{(\gamma+\kappa)(e^{\gamma 
 
 <section class="prose">
   <h4>objective ต้องบอกหน่วยของ error</h4>
-  <p>ก่อนกด optimizer ต้องเลือกก่อนว่า “พลาด” วัดเป็นอะไร. ถ้าวัดเป็น USD bond ใหญ่จะครองคะแนน; ถ้าวัด raw yield quote ที่ไม่น่าเชื่ออาจดังเกินจริง.</p>
-  <p>ตัวอย่างนี้แปลงความพลาดของ yield เป็น basis points แล้วให้ทุกจุดน้ำหนักเท่ากัน. งานจริงค่อยให้น้ำหนักตาม bid–ask หรือ duration และต้องบันทึกกติกานี้คู่กับ parameter.</p>
+  <p>ก่อนกด optimizer ต้องเลือกก่อนว่า “พลาด” วัดเป็นอะไร ถ้าวัดเป็น USD bond ใหญ่จะครองคะแนน; ถ้าวัด raw yield quote ที่ไม่น่าเชื่ออาจดังเกินจริง</p>
+  <p>ตัวอย่างนี้แปลงความพลาดของ yield เป็น basis points แล้วให้ทุกจุดน้ำหนักเท่ากัน. งานจริงค่อยให้น้ำหนักตาม bid–ask หรือ duration และต้องบันทึกกติกานี้คู่กับ parameter</p>
 </section>
 
 <section class="formula">
@@ -533,8 +533,8 @@ e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
 
 <section class="prose">
   <h4>implementation และ risk interpretation</h4>
-  <p>เริ่มจาก freeze วันคิดราคาและแหล่ง curve. แปลง quote เป็น discount factor แล้ว reprice กลับให้ได้ราคาเดิมก่อน.</p>
-  <p>ค่อยลอง optimizer จากหลายจุดเริ่มและเก็บ parameter version. ถ้าค่ากระโดดทุกวัน ให้ถามก่อนว่าข้อมูลแยก parameter ได้จริงไหม ไม่ใช่รีบเรียกว่า market event.</p>
+  <p>เริ่มจาก freeze วันคิดราคาและแหล่ง curve แปลง quote เป็น discount factor แล้ว reprice กลับให้ได้ราคาเดิมก่อน.</p>
+  <p>ค่อยลอง optimizer จากหลายจุดเริ่มและเก็บ parameter version ถ้าค่ากระโดดทุกวัน ให้ถามก่อนว่าข้อมูลแยก parameter ได้จริงไหม ไม่ใช่รีบเรียกว่า market event</p>
   <p>งาน risk จึงแยก quote bump, parameter sensitivity และการเปลี่ยน model ไว้คนละรายงาน.</p>
 </section>
 
@@ -553,8 +553,8 @@ e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
   <h4>ตัวอย่างที่สอง — Vasicek บน LIBOR และ swap จริง</h4>
   <p>คำถาม: ธนาคารต้องการให้ Vasicek ตั้งราคาตามตลาด USD วันที่ 14 ธ.ค. 2017 และ 11 ต.ค. 2018 ด้วย LIBOR ห้าอายุกับ swap เจ็ดอายุ model พลาดตรงไหนมากที่สุด และ volatility ที่ fit ได้เชื่อได้ไหม?</p>
   <p>ของที่มี: ขั้นที่ 12 ถึง 14 และตารางข้อมูลตลาด</p>
-  <p>1. ปี 2017 ได้ speed 1.3806 ต่อปี long-run level 2.406% short rate 1.451% และ SSRE 0.013671 พลาดมากสุดที่ LIBOR 12 เดือน −6.73% และ swap 30 ปี −4.77%</p>
-  <p>2. ปี 2018 ได้ speed 2.8194 ต่อปี long-run level 3.218% short rate 2.133% และ SSRE 0.000948 ทุกจุดพลาดไม่เกิน 2%</p>
+  <p>1 ปี 2017 ได้ speed 1.3806 ต่อปี long-run level 2.406% short rate 1.451% และ SSRE 0.013671 พลาดมากสุดที่ LIBOR 12 เดือน −6.73% และ swap 30 ปี −4.77%</p>
+  <p>2 ปี 2018 ได้ speed 2.8194 ต่อปี long-run level 3.218% short rate 2.133% และ SSRE 0.000948 ทุกจุดพลาดไม่เกิน 2%</p>
   <p>3. volatility จาก 0 ถึง 2% ให้ SSRE ต่างกันไม่ถึง 0.3% curve จึงบอก volatility ไม่ได้</p>
   <p>ตรวจเองใน 10 วินาที: ราคา bond 30 ปีของปี 2018 คือ 0.3824 ต่ำกว่า 0.4896 ของปี 2017 เพราะดอกเบี้ยทั้ง curve สูงขึ้นราว 0.7 ถึง 1 จุด</p>
   <p>แปลว่าอะไร: parameter น้อยทำให้ model เสถียรแต่งอตาม curve ไม่ได้ทุกจุด ถ้าจะตั้งราคา option ต้องเอา volatility มาจากราคา option ไม่ใช่จาก curve</p>

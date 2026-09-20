@@ -183,7 +183,7 @@ H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
 \]</div>
   <div class="reading">
     <p>ใส่ส่วนต่างราคาต่อ share $d$ แล้วหัก cost ตอนเข้า ตอนออก ค่า borrow และ funding ตลอด $T$ วัน. สิ่งที่เหลือในวงเล็บยังเป็น USD ต่อ share</p>
-    <p>คูณด้วยจำนวน shares $Q$ เพื่อเปลี่ยนเป็น USD ทั้ง trade แล้วหัก $L_{gap}$ สำหรับกรณีราคาวิ่งผิดทางก่อนกลับ. คำตอบคือกำไรของ scenario นี้ ไม่ใช่คำรับประกันว่าราคาจะกลับมา</p>
+    <p>คูณด้วยจำนวน shares $Q$ เพื่อเปลี่ยนเป็น USD ทั้ง trade แล้วหัก $L_{gap}$ สำหรับกรณีราคาวิ่งผิดทางก่อนกลับ คำตอบคือกำไรของ scenario นี้ ไม่ใช่คำรับประกันว่าราคาจะกลับมา</p>
   </div>
 </section>
 
@@ -191,9 +191,9 @@ H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
   <h4>คำตอบ — pair trade ที่ส่วนต่างบนจอไม่ใช่กำไร</h4>
   <p>คำถาม: ซื้อหุ้นได้ 50.00 short ได้ \$50.80 จำนวน 10,000 หุ้น ค่าเข้าออกรวม \$0.12 ต่อหุ้น ค่ายืมหุ้นและเงินทุน \$0.020 ต่อหุ้นต่อวัน นาน 10 วัน และขาดทุนจากช่องว่างราคา \$3,500 เหลือจริงเท่าไร?</p>
   <p>ของที่มี: ขั้นที่ 3</p>
-  <p>1. ส่วนต่างบนจอ 10,000 × 0.80 = \$8,000</p>
-  <p>2. ค่าเข้าออก 10,000 × 0.12 = \$1,200 และค่าถือ 10,000 × 0.020 × 10 = \$2,000</p>
-  <p>3. เหลือ 8,000 − 1,200 − 2,000 − 3,500 = \$1,300 หรือ 1.30% ของทุนที่เสี่ยง \$100,000</p>
+  <p>1 ส่วนต่างบนจอ 10,000 × 0.80 = \$8,000</p>
+  <p>2 ค่าเข้าออก 10,000 × 0.12 = \$1,200 และค่าถือ 10,000 × 0.020 × 10 = \$2,000</p>
+  <p>3 เหลือ 8,000 − 1,200 − 2,000 − 3,500 = \$1,300 หรือ 1.30% ของทุนที่เสี่ยง \$100,000</p>
   <p>ตรวจเองใน 10 วินาที: 8,000 − 1,200 − 2,000 − 3,500 = 1,300</p>
   <p>แปลว่าอะไร: ก่อนเปิดสถานะต้องตรวจว่ายืมหุ้นได้ และตั้งจุดตัดขาดทุนไว้ก่อน เพราะส่วนต่างที่เห็นบนจอคือรายได้ก่อนหักต้นทุน ถ้าราคาถ่างออกต่อ margin call มาก่อนที่ความคิดจะถูก</p>
 </section>
@@ -246,7 +246,7 @@ v(x)=\begin{cases}x^\eta,&amp;x\ge0\\
 
 <section class="prose">
   <h4>ทำเป็น quant control ได้อย่างไร</h4>
-  <p>ขั้นที่หนึ่งเก็บ order และ position event แบบ point-in-time เพื่อไม่ให้ใช้ข้อมูลหลังปิด trade. ขั้นที่สองคำนวณ net alpha หลังหัก bid/ask, slippage, fee, borrow และ market impact. ขั้นที่สามทำ placebo และ walk-forward split เพื่อดูว่าสัญญาณยังอยู่เมื่อเปลี่ยนช่วงเวลา. ขั้นที่สี่รายงาน confidence interval, turnover, capacity และ drawdown แยกจากผลตอบแทนเฉลี่ย. ขั้นที่ห้าตั้ง kill switch เมื่อ borrow หาย, spread กว้างเกิน threshold หรือ realized loss ต่อวันเกิน limit</p>
+  <p>ขั้นที่หนึ่งเก็บ order และ position event แบบ point-in-time เพื่อไม่ให้ใช้ข้อมูลหลังปิด trade ขั้นที่สองคำนวณ net alpha หลังหัก bid/ask, slippage, fee, borrow และ market impact ขั้นที่สามทำ placebo และ walk-forward split เพื่อดูว่าสัญญาณยังอยู่เมื่อเปลี่ยนช่วงเวลา ขั้นที่สี่รายงาน confidence interval, turnover, capacity และ drawdown แยกจากผลตอบแทนเฉลี่ย ขั้นที่ห้าตั้ง kill switch เมื่อ borrow หาย, spread กว้างเกิน threshold หรือ realized loss ต่อวันเกิน limit</p>
 </section>
 
 <section class="formula">
@@ -259,7 +259,7 @@ C_{all-in}&=Q\,(c_{spread}+c_{fee}+c_{impact}+c_{borrow})
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใส่ average return ของ strategy แล้วลบ market return ที่คูณ $\hat{\beta}$. ส่วนที่เหลือคือ alpha ก่อนหักต้นทุน</p>
+    <p>ใส่ average return ของ strategy แล้วลบ market return ที่คูณ $\hat{\beta}$ ส่วนที่เหลือคือ alpha ก่อนหักต้นทุน</p>
     <p>รวม cost ต่อ share ทุกก้อน คูณจำนวน shares แล้วหารด้วย capital at risk เพื่อเปลี่ยนต้นทุนเป็น return fraction หน่วยเดียวกัน. ถ้าข้ามขั้นนี้ backtest จะดูหล่อกว่าเงินจริง</p>
   </div>
 </section>
@@ -307,7 +307,7 @@ P(\text{switch})&=P(\text{first pick wrong})\\
 
 <section class="example">
   <h4>implementation check — decision log ก่อนปล่อยสัญญาณ</h4>
-  <p>สำหรับ signal หุ้น Apple (ticker AAPL) ให้ซื้อ 100,000 shares ที่ arrival mid 190.00 USD/share; gross alpha 18 bp บน notional \$19,000,000 เท่ากับ \$34,200. Spread, fee และ impact รวม 0.095 USD/share หรือ \$9,500 จึงเหลือ expected net \$24,700 ก่อน risk. ถ้า fill เฉลี่ย 190.12 USD/share ต้นทุน execution เท่ากับ \$12,000 และต้องหยุดเพิ่ม size เมื่อ realized shortfall เกิน 0.10 USD/share พร้อมส่ง order log ให้ transaction-cost analysis (TCA)</p>
+  <p>สำหรับ signal หุ้น Apple (ticker AAPL) ให้ซื้อ 100,000 shares ที่ arrival mid 190.00 USD/share; gross alpha 18 bp บน notional \$19,000,000 เท่ากับ \$34,200. Spread, fee และ impact รวม 0.095 USD/share หรือ \$9,500 จึงเหลือ expected net \$24,700 ก่อน risk ถ้า fill เฉลี่ย 190.12 USD/share ต้นทุน execution เท่ากับ \$12,000 และต้องหยุดเพิ่ม size เมื่อ realized shortfall เกิน 0.10 USD/share พร้อมส่ง order log ให้ transaction-cost analysis (TCA)</p>
 </section>
 
 <section class="example">

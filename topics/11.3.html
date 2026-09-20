@@ -83,7 +83,7 @@
 
 <section class="prose">
   <h4>สามสมบัติส่งต่อจาก driver เดียว</h4>
-  <p>GBM ไม่ได้เกิดจากชื่อที่ดูหรู; มันคือ exponential transform ของ Brownian Motion. เมื่อ Brownian increments เป็นอิสระ, paths ต่อเนื่อง และ increments normal, price จึงรับ independent multiplicative ratios, continuity และ lognormal terminal distribution ตามลำดับ.</p>
+  <p>GBM ไม่ได้เกิดจากชื่อที่ดูหรู; มันคือ exponential transform ของ Brownian Motion เมื่อ Brownian increments เป็นอิสระ, paths ต่อเนื่อง และ increments normal, price จึงรับ independent multiplicative ratios, continuity และ lognormal terminal distribution ตามลำดับ</p>
 </section>
 
 <section class="formula">
@@ -126,7 +126,7 @@ S_t=\$20&:\ \operatorname{SD}=20e^{0.10}\sqrt{e^{0.0625}-1}=\$5.61
 
 <section class="prose">
   <h4>อิสระของ ratio ไม่ใช่คำทำนายว่า market ไม่มี memory</h4>
-  <p>นี่เป็น property ภายใต้ GBM, ไม่ใช่ fact ของตลาด. Autocorrelation, volatility clustering และ order-flow dependence สามารถทำให้ historical data มี structure; quant ใช้ความเบี่ยงเบนจากสมมติฐานนี้เป็น hypothesis แต่ต้องทดสอบ out-of-sample.</p>
+  <p>นี่เป็น property ภายใต้ GBM, ไม่ใช่ fact ของตลาด. Autocorrelation, volatility clustering และ order-flow dependence สามารถทำให้ historical data มี structure; quant ใช้ความเบี่ยงเบนจากสมมติฐานนี้เป็น hypothesis แต่ต้องทดสอบ out-of-sample</p>
 </section>
 
 <section class="prose">
@@ -303,10 +303,10 @@ z_{70}&=\frac{\log(70/100)-0.06875}{0.25}\\
   <h4>คำตอบ — โอกาสถึงเป้า 130 และหลุด 70 ในหนึ่งปี</h4>
   <p>คำถาม: หุ้น \$100 drift 10% ความผันผวน 25% โอกาสเกิน 130 และต่ำกว่า 70 ในหนึ่งปีเป็นเท่าไร และซอยเป็นสองครึ่งปีแล้วต้องได้เท่าเดิมไหม?</p>
   <p>ของที่มี: ขั้นที่ 4 ถึง 9</p>
-  <p>1. จุดกลางของ log return คือ 0.10 − 0.03125 = 0.06875 และ SD คือ 0.25</p>
-  <p>2. โอกาสเกิน 130 คือ 1 − 0.7807 = 21.9% ที่ z = 0.7744</p>
-  <p>3. โอกาสต่ำกว่า 70 คือ 4.4% ที่ z = −1.7017 และโอกาสอยู่ระหว่าง 70 ถึง 130 คือ 73.6%</p>
-  <p>4. ซอยเป็นสองครึ่งปีได้ค่ากลาง 0.06875 และ variance 0.0625 เท่าเดิม เพราะสมบัติข้อ 1 ให้บวก variance ได้</p>
+  <p>1 จุดกลางของ log return คือ 0.10 − 0.03125 = 0.06875 และ SD คือ 0.25</p>
+  <p>2 โอกาสเกิน 130 คือ 1 − 0.7807 = 21.9% ที่ z = 0.7744</p>
+  <p>3 โอกาสต่ำกว่า 70 คือ 4.4% ที่ z = −1.7017 และโอกาสอยู่ระหว่าง 70 ถึง 130 คือ 73.6%</p>
+  <p>4 ซอยเป็นสองครึ่งปีได้ค่ากลาง 0.06875 และ variance 0.0625 เท่าเดิม เพราะสมบัติข้อ 1 ให้บวก variance ได้</p>
   <p>ตรวจเองใน 10 วินาที: z ≈ 0.77 อยู่ระหว่าง 0 กับ 1 คำตอบจึงต้องอยู่ระหว่าง 16% กับ 50% และค่อนไปทาง 16% ซึ่ง 21.9% ผ่าน</p>
   <p>แปลว่าอะไร: บทวิจัยที่ตั้งเป้า \$130 กำลังพูดถึงเหตุการณ์ที่มีโอกาส 21.9% ไม่ใช่ 50% และการตั้งเป้ากำไรกับ stop-loss ห่างเท่ากันเป็นเงินจะมีโอกาสเกิดไม่เท่ากันเสมอ ถ้าเปลี่ยน μ เป็นอัตราดอกเบี้ยแล้วคิดลดกลับ จะได้ราคา option แบบ Black–Scholes ในหัวข้อ 13.2</p>
 </section>
@@ -349,25 +349,25 @@ assert abs(np.mean(S1 &gt; 130) - 0.2193) &lt; 0.002 and abs(np.mean(S1 &lt; 70)
 
 <section class="prose">
   <h4>จาก formula สู่ risk control</h4>
-  <p>store input timestamp, corporate-action adjusted spot, calendar convention และ parameter version กับทุก probability. Trigger ไม่ควรเป็นแค่ “21.9%”; ต้องระบุว่า one-year, physical $\mu=10\%$, $\sigma=25\%$, continuous no-jump GBM. สำหรับ การประเมินค่าของแบบจำลอง ให้เปลี่ยน probability measure ตามกติกา pricing ในบทหลัง ไม่เอา physical probability ไปตั้งราคา.</p>
+  <p>store input timestamp, corporate-action adjusted spot, calendar convention และ parameter version กับทุก probability. Trigger ไม่ควรเป็นแค่ “21.9%”; ต้องระบุว่า one-year, physical $\mu=10\%$, $\sigma=25\%$, continuous no-jump GBM สำหรับ การประเมินค่าของแบบจำลอง ให้เปลี่ยน probability measure ตามกติกา pricing ในบทหลัง ไม่เอา physical probability ไปตั้งราคา</p>
 </section>
 
 <section class="example">
   <h4>ตัวอย่างเสริม — แปลงโอกาสเป็นเงินของ position 50,000 หุ้น</h4>
-  <p>สำหรับ 50,000 shares ณ \$100, analyst รายงาน probability ปิดเกิน \$130 ในหนึ่งปี 21.9% และ probability ต่ำกว่า \$70 เท่ากับ 4.4%. threshold values แปลเป็น position values \$6.5 ล้าน และ \$3.5 ล้าน ตามลำดับ แต่ probability ไม่รวม dividends, dilution, earnings gaps หรือ trading costs. risk owner จึงใช้เลขนี้เป็น baseline scenario แล้วเติม jump and volatility stress ก่อนอนุมัติ limit.</p>
+  <p>สำหรับ 50,000 shares ณ \$100, analyst รายงาน probability ปิดเกิน \$130 ในหนึ่งปี 21.9% และ probability ต่ำกว่า \$70 เท่ากับ 4.4%. threshold values แปลเป็น position values \$6.5 ล้าน และ \$3.5 ล้าน ตามลำดับ แต่ probability ไม่รวม dividends, dilution, earnings gaps หรือ trading costs. risk owner จึงใช้เลขนี้เป็น baseline scenario แล้วเติม jump and volatility stress ก่อนอนุมัติ limit</p>
   <p>คำถาม: threshold \$130 และ \$70 แปลงเป็นเงินของ position 50,000 shares ได้กี่ USD?</p>
-  <p>ของที่มี: 50,000 shares, spot เริ่ม \$100, upper threshold \$130 และ lower threshold \$70.</p>
-  <p>1. คูณ 50,000 ด้วย \$130 ได้ \$6.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านบน.</p>
-  <p>2. คูณ 50,000 ด้วย \$70 ได้ \$3.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านล่าง.</p>
+  <p>ของที่มี: 50,000 shares, spot เริ่ม \$100, upper threshold \$130 และ lower threshold \$70</p>
+  <p>1 คูณ 50,000 ด้วย \$130 ได้ \$6.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านบน.</p>
+  <p>2 คูณ 50,000 ด้วย \$70 ได้ \$3.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านล่าง</p>
   <p>เฉลย: model ให้โอกาสปิดเหนือ \$130 ที่ 21.9% และต่ำกว่า \$70 ที่ 4.4%; เงินที่เกี่ยวข้องคือ \$6.5 ล้าน กับ \$3.5 ล้าน.</p>
-  <p>เช็ก 10 วินาที: \$130 − \$70 = \$60 ต่อ share; \$60 × 50,000 = \$3.0 ล้าน ระหว่างสอง threshold.</p>
-  <p>งานจริง: ใช้แปลง probability เป็นจำนวน USD ที่ owner ของ limit เห็นภาพได้.</p>
-  <p>กับดัก: อย่าเอา probability ของ GBM ไปแทน earnings gap, dividend, dilution หรือ trading cost ที่ model นี้ไม่ได้ใส่.</p>
+  <p>เช็ก 10 วินาที: \$130 − \$70 = \$60 ต่อ share; \$60 × 50,000 = \$3.0 ล้าน ระหว่างสอง threshold</p>
+  <p>งานจริง: ใช้แปลง probability เป็นจำนวน USD ที่ owner ของ limit เห็นภาพได้</p>
+  <p>กับดัก: อย่าเอา probability ของ GBM ไปแทน earnings gap, dividend, dilution หรือ trading cost ที่ model นี้ไม่ได้ใส่</p>
 </section>
 
 <section class="pitfall">
   <h4>กับดัก: ใส่ μ แทน log mean ใน z-score</h4>
-  <p>distribution ของ log return ใช้ $\mu-\sigma^2/2$, ไม่ใช่ $\mu$. ใส่ 10% แทน 6.875% ในตัวอย่างทำให้ target probability สูงเกินจริง; ตรวจ dimension ด้วยว่า numerator เป็น log return ไม่มีหน่วย และ denominator $\sigma\sqrt T$ ก็ไม่มีหน่วย.</p>
+  <p>distribution ของ log return ใช้ $\mu-\sigma^2/2$, ไม่ใช่ $\mu$ ใส่ 10% แทน 6.875% ในตัวอย่างทำให้ target probability สูงเกินจริง; ตรวจ dimension ด้วยว่า numerator เป็น log return ไม่มีหน่วย และ denominator $\sigma\sqrt T$ ก็ไม่มีหน่วย</p>
 </section>
 
 <section class="table">

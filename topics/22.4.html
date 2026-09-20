@@ -103,10 +103,10 @@
 
 <section class="prose">
   <h4>ทำไม tranche ต้องเริ่มจาก loss function</h4>
-  <p>ลองนึกถึงถังรับความเสียหายสามใบก่อน ถังแรกจ่ายก่อน ถังกลางเริ่มจ่ายเมื่อถังแรกเต็ม และถังสุดท้ายจ่ายเมื่อความเสียหายหนักจริง ๆ. นี่คือสิ่งที่ tranche ทำกับ loss ของ portfolio</p>
-  <p>เริ่มคำนวณจากเงินต้นที่ผิดนัด คูณส่วนที่กู้คืนไม่ได้ แล้วเทียบกับเงินต้นทั้งก้อน ผลลัพธ์คือ portfolio loss fraction.</p>
+  <p>ลองนึกถึงถังรับความเสียหายสามใบก่อน ถังแรกจ่ายก่อน ถังกลางเริ่มจ่ายเมื่อถังแรกเต็ม และถังสุดท้ายจ่ายเมื่อความเสียหายหนักจริง ๆ นี่คือสิ่งที่ tranche ทำกับ loss ของ portfolio</p>
+  <p>เริ่มคำนวณจากเงินต้นที่ผิดนัด คูณส่วนที่กู้คืนไม่ได้ แล้วเทียบกับเงินต้นทั้งก้อน ผลลัพธ์คือ portfolio loss fraction</p>
   <p>Equity tranche รับ loss แรก, mezzanine รับต่อจาก equity และ senior รับท้ายสุด</p>
-  <p>เพราะ senior รออยู่ท้ายแถว จึงดู expected portfolio loss ค่าเดียวไม่ได้. ค่าเฉลี่ยเท่ากันอาจมาจาก loss เล็ก ๆ ทุกครั้ง หรือจากเหตุการณ์หางที่ทะลุ attachment บ่อย ผลต่อ senior ต่างกันมาก</p>
+  <p>เพราะ senior รออยู่ท้ายแถว จึงดู expected portfolio loss ค่าเดียวไม่ได้ ค่าเฉลี่ยเท่ากันอาจมาจาก loss เล็ก ๆ ทุกครั้ง หรือจากเหตุการณ์หางที่ทะลุ attachment บ่อย ผลต่อ senior ต่างกันมาก</p>
   <p>Synthetic CDO ไม่ต้องซื้อ bond จริง แต่ใช้ CDS แทน.</p>
   <p>protection seller รับ premium บน tranche notional ที่ยังเหลือ และจ่ายเมื่อ loss ถูกจัดเข้าชั้นนั้น. counterparty, collateral, settlement lag และกติกา CDS คือ risk เพิ่มที่ต้องตรวจพร้อม credit model ไม่ใช่หมายเหตุท้ายหน้า</p>
 </section>
@@ -118,9 +118,9 @@
 L_T=\frac{1}{N}\sum_{i=1}^{n}w_i(1-R_i)\mathbf{1}(\tau_i\le T)
 \]</div>
   <div class="reading">
-    <p>ดูบริษัทแต่ละราย $i$: ใส่ notional $w_i$, recovery $R_i$ และดูว่า default ก่อนเวลา $T$ หรือไม่.</p>
-    <p>ถ้า default indicator เป็นหนึ่ง เรานับส่วนที่กู้คืนไม่ได้ $1-R_i$ ของ notional นั้น; ถ้ายังไม่ default พจน์นั้นเป็นศูนย์. รวมทุกบริษัทแล้วหารด้วย notional รวม $N$.</p>
-    <p>ผลลัพธ์ $L_T$ คือสัดส่วน loss ของทั้ง portfolio ไม่ใช่ USD ของ tranche ใด tranche หนึ่ง.</p>
+    <p>ดูบริษัทแต่ละราย $i$: ใส่ notional $w_i$, recovery $R_i$ และดูว่า default ก่อนเวลา $T$ หรือไม่</p>
+    <p>ถ้า default indicator เป็นหนึ่ง เรานับส่วนที่กู้คืนไม่ได้ $1-R_i$ ของ notional นั้น; ถ้ายังไม่ default พจน์นั้นเป็นศูนย์ รวมทุกบริษัทแล้วหารด้วย notional รวม $N$.</p>
+    <p>ผลลัพธ์ $L_T$ คือสัดส่วน loss ของทั้ง portfolio ไม่ใช่ USD ของ tranche ใด tranche หนึ่ง</p>
   </div>
 </section>
 
@@ -148,7 +148,7 @@ TL_T&=\frac{\ell(L_T)}{D-A}\end{aligned}
   <p>คำถาม: พอร์ต \$100 ล้าน เสียหาย \$5 ล้าน หรือ 5% ชั้น mezzanine 3%–7% ขนาด \$4 ล้าน จะขาดทุนกี่ดอลลาร์ และชั้นอื่นเสียเท่าไร?</p>
   <p>ของที่มี: ขั้นที่ 1 ถึง 2</p>
   <p>1. equity 0%–3% รับ \$3 ล้าน แรกจนเต็มชั้น</p>
-  <p>2. ส่วนที่เกินคือ \$5 ล้าน − \$3 ล้าน = \$2 ล้าน ไหลเข้า mezzanine</p>
+  <p>2 ส่วนที่เกินคือ \$5 ล้าน − \$3 ล้าน = \$2 ล้าน ไหลเข้า mezzanine</p>
   <p>3. mezzanine เสีย \$2 ล้าน หรือ 50% ของชั้น ส่วน senior เหนือ 7% ไม่เสียเลย</p>
   <p>ตรวจเองใน 10 วินาที: 3 + 2 + 0 = 5 เท่ากับขาดทุนของทั้งพอร์ต</p>
   <p>แปลว่าอะไร: ชั้นเดียวกันอาจไม่เจ็บเลยหรือหมดทั้งชั้น ขึ้นกับว่าขาดทุนรวมไปถึงระดับไหน ความเสี่ยงของ tranche จึงอยู่ที่หางของการกระจายตัว ไม่ใช่ค่าเฉลี่ย</p>
@@ -250,7 +250,7 @@ assert round(d[5:].sum(), 4) == 0.2876 and round((k**2 * d).sum() - 3.669**2, 3)
   <h4>Figure 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche</h4>
   <img src="../figures/22.4-1.svg" alt="Figure 22.4a — attachment แปลง loss ของ portfolio เป็น loss ของ tranche" loading="lazy">
   <figcaption>
-    <p>เส้นหักมุมของ tranche 3%–7% เริ่มเสียที่ 3% และเสียเต็มที่ที่ 7%. รูปนี้ควรอยู่ในทุก model review เพราะช่วยจับ error หน่วย percent versus fraction ได้เร็วมาก</p>
+    <p>เส้นหักมุมของ tranche 3%–7% เริ่มเสียที่ 3% และเสียเต็มที่ที่ 7% รูปนี้ควรอยู่ในทุก model review เพราะช่วยจับ error หน่วย percent versus fraction ได้เร็วมาก</p>
   </figcaption>
 </figure>
 
@@ -279,15 +279,15 @@ E_{\rm tog}[(L-50)^+]&=0.10(50)=5.00
 X_i=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i,\qquad \Pr(\tau_i\le T)=\Pr(X_i\le\Phi^{-1}(p_i))=p_i
 \]</div>
   <div class="reading">
-    <p>ให้ $M$ เป็นแรงร่วมของตลาด และ $\epsilon_i$ เป็นแรงเฉพาะบริษัท. $\rho$ บอกว่าน้ำหนักของแรงร่วมมีมากแค่ไหน.</p>
-    <p>รวมสองแรงเป็นคะแนนซ่อน $X_i$. ถ้าคะแนนต่ำกว่า threshold ที่สร้างจาก default probability $p_i$, บริษัท $i$ default ภายในเวลา $T$.</p>
-    <p>ผลลัพธ์คือวิธีจำลองว่า default มาเป็นกลุ่มได้อย่างไร. $\rho$ สูงขึ้นไม่ได้แปลว่า expected loss ต้องสูงขึ้นเสมอ แต่ย้ายโอกาสไปที่การเกิดพร้อมกันมากขึ้น.</p>
+    <p>ให้ $M$ เป็นแรงร่วมของตลาด และ $\epsilon_i$ เป็นแรงเฉพาะบริษัท $\rho$ บอกว่าน้ำหนักของแรงร่วมมีมากแค่ไหน.</p>
+    <p>รวมสองแรงเป็นคะแนนซ่อน $X_i$ ถ้าคะแนนต่ำกว่า threshold ที่สร้างจาก default probability $p_i$, บริษัท $i$ default ภายในเวลา $T$.</p>
+    <p>ผลลัพธ์คือวิธีจำลองว่า default มาเป็นกลุ่มได้อย่างไร $\rho$ สูงขึ้นไม่ได้แปลว่า expected loss ต้องสูงขึ้นเสมอ แต่ย้ายโอกาสไปที่การเกิดพร้อมกันมากขึ้น.</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ที่มาของตัวคูณถ่วงน้ำหนักและจุดตัดการผิดนัด</h4>
-  <p>เราเริ่มจากสมมติฐานที่เรียบง่ายที่สุด: กำหนดให้แรงขับเคลื่อนระดับตลาด $M$ และแรงเฉพาะตัว $\epsilon_i$ เป็น random variable ปกติมาตรฐานที่กระจายตัวแบบ i.i.d. โดยมี correlation ร่วมกันเป็น $\rho$ เมื่อสร้างคะแนนรวม $X_i$ เราต้องแน่ใจว่าตัวแปรใหม่ยังคงมี standard deviation เท่ากับหนึ่ง และจุดตัดการผิดนัดสอดคล้องกับ probability of default ของลูกหนี้แต่ละราย</p>
+  <p>เราเริ่มจากสมมติฐานที่เรียบง่ายที่สุด: กำหนดให้แรงขับเคลื่อนระดับตลาด $M$ และแรงเฉพาะตัว $\epsilon_i$ เป็น random variable ปกติมาตรฐานที่กระจายตัวแบบ i.i.d โดยมี correlation ร่วมกันเป็น $\rho$ เมื่อสร้างคะแนนรวม $X_i$ เราต้องแน่ใจว่าตัวแปรใหม่ยังคงมี standard deviation เท่ากับหนึ่ง และจุดตัดการผิดนัดสอดคล้องกับ probability of default ของลูกหนี้แต่ละราย</p>
   <div class="math">\[
 \begin{aligned}
 X_i&=\sqrt{\rho}\,M+\sqrt{1-\rho}\,\epsilon_i\\
@@ -378,8 +378,8 @@ PV_{\rm prem}(s)&=PV_{\rm def}
 \]</div>
   <div class="reading">
     <p>premium leg เริ่มจาก spread $s$ คูณช่วงเวลา $\Delta_t$, discount factor $DF_t$ และ notional ที่ยังไม่ถูก loss กินตอนต้นงวด คือ $1-TL_{t-1}$ ตามสไลด์ ต่างจาก CDS ชื่อเดียวที่จบทันทีเมื่อเจ๊ง tranche ยังจ่ายเบี้ยบนส่วนที่เหลือต่อ</p>
-    <p>default leg รวม payment ที่เกิดเมื่อ tranche loss เพิ่มในแต่ละงวด แล้ว discount กลับมาวันนี้.</p>
-    <p>ตั้งสอง present value ให้เท่ากันเพื่อหา fair spread. เมื่อ tranche เสียหาย notional ที่ยังเก็บ premium ได้ก็เล็กลง; อย่าเผลอคิด premium บน notional เต็มตลอดอายุ deal.</p>
+    <p>default leg รวม payment ที่เกิดเมื่อ tranche loss เพิ่มในแต่ละงวด แล้ว discount กลับมาวันนี้</p>
+    <p>ตั้งสอง present value ให้เท่ากันเพื่อหา fair spread เมื่อ tranche เสียหาย notional ที่ยังเก็บ premium ได้ก็เล็กลง; อย่าเผลอคิด premium บน notional เต็มตลอดอายุ deal</p>
   </div>
 </section>
 
@@ -494,7 +494,7 @@ u_0^*&=PV_{\rm def}-s_{\rm fixed}A_{\rm tr}
   <p>เริ่มจากแยกสองคำถาม (ลองเดาก่อน): แต่ละบริษัทผิดนัดบ่อยแค่ไหน และหลายบริษัทผิดนัดพร้อมกันแค่ไหน. copula ช่วยเอา default model รายบริษัทมาประกอบกับ dependence model ที่ตอบคำถามข้อหลัง</p>
   <p>constant correlation ตัวเดียวเล่าเรื่อง underwriting ที่เปลี่ยน, บ้านที่เสี่ยงพร้อมกัน, เงินสดตึง หรือเหตุการณ์หางที่มาเป็นกลุ่มไม่ได้. correlation จากช่วงตลาดปกติจึงไม่ใช่ parameter สำหรับ stress โดยอัตโนมัติ</p>
   <p>model ไม่ใช่ข้อมูลจริง. implied correlation จากราคา tranche ยังรวม liquidity, อุปสงค์อุปทาน, convention และ risk premium อยู่ด้วย</p>
-  <p>ให้เทียบ copula หลายแบบ, stress factor และ contagion, จำกัด concentration และทำ reverse stress. อย่ายก calibration ที่ fit ดีครั้งเดียวขึ้นเป็นความจริงของเศรษฐกิจ</p>
+  <p>ให้เทียบ copula หลายแบบ, stress factor และ contagion, จำกัด concentration และทำ reverse stress อย่ายก calibration ที่ fit ดีครั้งเดียวขึ้นเป็นความจริงของเศรษฐกิจ</p>
 </section>
 
 <figure class="plot">
@@ -515,9 +515,9 @@ u_0^*&=PV_{\rm def}-s_{\rm fixed}A_{\rm tr}
 
 <section class="pitfall">
   <h4>กับดัก: Gaussian copula “caused” losses หรือ correlation เป็น observable truth</h4>
-  <p>Gaussian copula เป็นเครื่องมือจัดความสัมพันธ์ของตัวเลข ไม่ใช่เรื่องเล่าว่าอะไรทำให้คนผิดนัด และไม่ได้รับปากว่าหางจะบาง. ปัญหาเริ่มเมื่อเอาประวัติสั้นหรือเฉพาะ regime หนึ่ง กับ correlation ตัวเดียว ไปแทนระบบบ้านและเครดิตที่มี leverage</p>
+  <p>Gaussian copula เป็นเครื่องมือจัดความสัมพันธ์ของตัวเลข ไม่ใช่เรื่องเล่าว่าอะไรทำให้คนผิดนัด และไม่ได้รับปากว่าหางจะบาง ปัญหาเริ่มเมื่อเอาประวัติสั้นหรือเฉพาะ regime หนึ่ง กับ correlation ตัวเดียว ไปแทนระบบบ้านและเครดิตที่มี leverage</p>
   <p>CDO-squared ยิ่งขยายปัญหา เพราะของข้างในเป็น tranche อยู่แล้ว ความผิดพลาดของ correlation และ model จึงกระทบแบบไม่เป็นเส้นตรง</p>
-  <p>การคุมความเสี่ยงต้องเทียบ curve กับ CDS และ bond, ตรวจ attachment/detachment และ loss conservation, แล้ว stress fat tail กับ clustered default. ตั้ง limit ตามความไวต่อ spread, correlation และ recovery และกัน reserve สำหรับ liquidity กับ model uncertainty</p>
+  <p>การคุมความเสี่ยงต้องเทียบ curve กับ CDS และ bond, ตรวจ attachment/detachment และ loss conservation, แล้ว stress fat tail กับ clustered default ตั้ง limit ตามความไวต่อ spread, correlation และ recovery และกัน reserve สำหรับ liquidity กับ model uncertainty</p>
   <p>fit ที่สวยกว่าต้องไม่ชนะคำอธิบายที่สมเหตุผล</p>
 </section>
 
@@ -538,7 +538,7 @@ u_0^*&=PV_{\rm def}-s_{\rm fixed}A_{\rm tr}
 
 <section class="prose">
   <h4>ก่อนไปต่อ: จาก tranche สู่ปี 2007–2008</h4>
-  <p>ตอนนี้เรามี chain ครบแล้ว: ผลตอบแทนของ mortgage สร้าง collateral loss; waterfall แบ่ง loss นั้นตามลำดับชั้น; dependence model กระจาย joint default ไปยังแต่ละ tranche; และ leverage กับ funding เป็นตัวตัดสินว่าใครอยู่รอดผ่าน mark-to-market ได้จริง. บทถัดไปใช้ chain นี้อธิบาย failure ของปี 2007–2008 ในมุม model-and-balance-sheet ไม่ใช่เรื่องเล่าว่า "มีคนใช้สูตรผิดแค่สูตรเดียว".</p>
+  <p>ตอนนี้เรามี chain ครบแล้ว: ผลตอบแทนของ mortgage สร้าง collateral loss; waterfall แบ่ง loss นั้นตามลำดับชั้น; dependence model กระจาย joint default ไปยังแต่ละ tranche; และ leverage กับ funding เป็นตัวตัดสินว่าใครอยู่รอดผ่าน mark-to-market ได้จริง บทถัดไปใช้ chain นี้อธิบาย failure ของปี 2007–2008 ในมุม model-and-balance-sheet ไม่ใช่เรื่องเล่าว่า "มีคนใช้สูตรผิดแค่สูตรเดียว".</p>
 </section>
 
 <section class="takeaways">

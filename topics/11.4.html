@@ -161,7 +161,7 @@ S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
 
 <section class="prose">
   <h4>assumption audit ก่อนใช้ output</h4>
-  <p>GBM สมมติ constant volatility, normal log returns, continuous paths, independent increments และ frictionless continuous trading. แต่ละข้อเป็น choice ที่ต้อง map ไป decision horizon: one-day risk near earnings ยอมรับ jump-free model ไม่ได้, ส่วน rough long-horizon scenario อาจใช้ baseline ได้ถ้ามี sensitivity overlay.</p>
+  <p>GBM สมมติ constant volatility, normal log returns, continuous paths, independent increments และ frictionless continuous trading แต่ละข้อเป็น choice ที่ต้อง map ไป decision horizon: one-day risk near earnings ยอมรับ jump-free model ไม่ได้, ส่วน rough long-horizon scenario อาจใช้ baseline ได้ถ้ามี sensitivity overlay</p>
 </section>
 
 <figure class="plot">
@@ -300,10 +300,10 @@ z&=\frac{-0.05-0.000317}{0.012599}=-3.994\\
   <h4>คำตอบ — GBM ผิดตรงไหน และทำไมยังใช้</h4>
   <p>คำถาม: SPY ที่ drift 10% ความผันผวน 20% วันที่ร่วง 5% ควรเกิดบ่อยแค่ไหนตาม GBM และทำไมโต๊ะยังใช้แบบจำลองนี้?</p>
   <p>ของที่มี: ขั้นที่ 1 ถึง 4 และ 6</p>
-  <p>1. ความผันผวนรายวัน 0.20/15.8745 = 1.26% จุดกลางรายวัน 0.08/252 = 0.03%</p>
-  <p>2. วันร่วง 5% อยู่ที่ z = −3.994 โอกาส 0.0033% ต่อวัน หรือราวครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</p>
+  <p>1 ความผันผวนรายวัน 0.20/15.8745 = 1.26% จุดกลางรายวัน 0.08/252 = 0.03%</p>
+  <p>2 วันร่วง 5% อยู่ที่ z = −3.994 โอกาส 0.0033% ต่อวัน หรือราวครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</p>
   <p>3. GBM ยังผ่านสองเกณฑ์ที่แบบจำลองบวกเงินตรง ๆ ทำไม่ได้ ราคาติดลบไม่ได้ และตัวคูณในอนาคตไม่มี S_t อยู่ข้างใน หุ้น \$20 กับ \$500 จึงใช้กฎเดียวกัน</p>
-  <p>4. ค่าเฉลี่ยกับค่ากลางสิบปีคือ 271.83 กับ 222.55 ต่างกัน 22% ซึ่งแบบจำลองบอกไว้ล่วงหน้า</p>
+  <p>4 ค่าเฉลี่ยกับค่ากลางสิบปีคือ 271.83 กับ 222.55 ต่างกัน 22% ซึ่งแบบจำลองบอกไว้ล่วงหน้า</p>
   <p>ตรวจเองใน 10 วินาที: 5% ÷ 1.26% ≈ 4 SD และหางที่ 4 SD ของระฆังคือราวสามในแสน</p>
   <p>แปลว่าอะไร: ใช้ GBM เป็นระบบพิกัดตั้งต้น แล้วซ่อมตามอาการ ความผันผวนเกาะกลุ่มใช้ GARCH ราคากระโดดใช้ jump model หางอ้วนใช้ stress test และ implied volatility surface เพิ่มความซับซ้อนเฉพาะเมื่อมันเปลี่ยนการตัดสินใจจริง อย่าใช้ความผันผวนรายวันของ GBM ปลอบใจว่า hedge จะรอดวันข่าว</p>
 </section>
@@ -337,15 +337,15 @@ assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk exa
 
 <section class="example">
   <h4>ตัวอย่างเสริม — ขออนุมัติรับ event risk ของหุ้นสมมติ</h4>
-  <p>สมมติ desk ถือ short exposure ของหุ้นสมมติเทียบเท่า delta 100,000 shares และใช้ spot \$500. Overnight gap 5% คือราคาเปลี่ยน \$25 ต่อ share ดังนั้นผลกระทบอันดับแรกจาก delta อย่างเดียวอยู่ที่ราว \$2.5 ล้าน ก่อน gamma, vega, spread และ impact. ค่า daily sigma จาก GBM ช่วยกำหนดกรอบวันปกติได้ แต่การอนุมัติข้าม event ต้องทำ gap stress และตีราคา volatility surface ใหม่ มิฉะนั้น hedge จะผ่านเฉพาะวันที่อากาศดี.</p>
+  <p>สมมติ desk ถือ short exposure ของหุ้นสมมติเทียบเท่า delta 100,000 shares และใช้ spot \$500. Overnight gap 5% คือราคาเปลี่ยน \$25 ต่อ share ดังนั้นผลกระทบอันดับแรกจาก delta อย่างเดียวอยู่ที่ราว \$2.5 ล้าน ก่อน gamma, vega, spread และ impact ค่า daily sigma จาก GBM ช่วยกำหนดกรอบวันปกติได้ แต่การอนุมัติข้าม event ต้องทำ gap stress และตีราคา volatility surface ใหม่ มิฉะนั้น hedge จะผ่านเฉพาะวันที่อากาศดี</p>
   <p>คำถาม: overnight gap 5% ของ spot \$500 กระทบ delta-equivalent 100,000 shares กี่ USD ก่อน gamma?</p>
-  <p>ของที่มี: spot \$500, move 5%, delta-equivalent 100,000 shares. นี่ยังเป็น first-order approximation.</p>
-  <p>1. คูณ \$500 ด้วย 5% ได้ราคาเปลี่ยน \$25 ต่อ share.</p>
-  <p>2. คูณ \$25 ด้วย 100,000 shares ได้ delta amount \$2.5 ล้าน.</p>
+  <p>ของที่มี: spot \$500, move 5%, delta-equivalent 100,000 shares นี่ยังเป็น first-order approximation</p>
+  <p>1 คูณ \$500 ด้วย 5% ได้ราคาเปลี่ยน \$25 ต่อ share</p>
+  <p>2 คูณ \$25 ด้วย 100,000 shares ได้ delta amount \$2.5 ล้าน.</p>
   <p>เฉลย: gap เพียง 5% สร้าง first-order P&amp;L ราว \$2.5 ล้าน.</p>
-  <p>เช็ก 10 วินาที: \$500 × 0.05 × 100,000 = \$2,500,000.</p>
-  <p>งานจริง: ใช้ gap stress แยกจาก daily GBM band ก่อนอนุมัติ hedge.</p>
-  <p>กับดัก: อย่าใช้ volatility รายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้.</p>
+  <p>เช็ก 10 วินาที: \$500 × 0.05 × 100,000 = \$2,500,000</p>
+  <p>งานจริง: ใช้ gap stress แยกจาก daily GBM band ก่อนอนุมัติ hedge</p>
+  <p>กับดัก: อย่าใช้ volatility รายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้</p>
 </section>
 
 <section class="example">
@@ -357,7 +357,7 @@ assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk exa
 
 <section class="pitfall">
   <h4>กับดัก: เลิกใช้ GBM แล้วคิดว่า model risk หาย</h4>
-  <p>model ที่ซับซ้อนกว่ามี calibration risk, unstable parameters และ implementation risk ของตัวเอง. ทำ comparison against GBM baseline, backtest breaches, document applicability horizon และ attach reserve to known gaps; professional skepticism คือ control ไม่ใช่ model name.</p>
+  <p>model ที่ซับซ้อนกว่ามี calibration risk, unstable parameters และ implementation risk ของตัวเอง ทำ comparison against GBM baseline, backtest breaches, document applicability horizon และ attach reserve to known gaps; professional skepticism คือ control ไม่ใช่ model name</p>
 </section>
 
 <section class="table">
