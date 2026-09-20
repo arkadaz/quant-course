@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>26.6 Performance Attribution: Factor PnL and Idiosyncratic PnL</title>
+<link rel="stylesheet" href="../book.css">
+<script defer src="../book.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="book-nav top-nav">
+  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-10">Part 10</a> <span aria-hidden="true">·</span>
+  <a href="../chapters/26.html">บทที่ 26</a>
+  <span class="topic-progress">หัวข้อ 153/153</span>
+</nav>
+
+<article class="topic" data-number="26.6" data-depends-on="26.5">
+<header class="topic-header">
+  <h1><span class="tnum">26.6</span> Performance Attribution: Factor PnL and Idiosyncratic PnL</h1>
+  <p class="subtitle">เงินมาจากไหน และตัวเลขที่ใหญ่ที่สุดมักไม่ใช่ตัวที่สำคัญที่สุด</p>
+</header>
+
+<div class="hook">
+  <p>กองทุนหนึ่งจบปีที่ \$3.50 ล้าน รายงานบอกว่า style ทำเงิน \$771,401 ซึ่งเป็น factor ที่ทำเงินมากที่สุด ควรขยายการเดิมพันบน style ไหม?</p>
+  <p>เฉลย: ไม่ควรสรุปจากตัวเลขนั้น เพราะ style อธิบายความเหวี่ยงของกองทุนได้แค่ 0.171 คือแทบไม่เกี่ยวกัน ขณะที่ idiosyncratic ทำเงิน \$3.58 ล้าน ซึ่งคือ 102% ของกำไรทั้งปี ส่วนที่น่าสนใจกว่าคือค่าใช้จ่ายในการเทรด −\$752,971 ซึ่งกิน Sharpe Ratio ไป 0.287 จาก 1.619 เหลือ 1.332 นั่นคือตัวเลขที่ควรเอาไปคุยกันก่อน</p>
+</div>
+
+<details class="jargon" open>
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>performance attribution</dt>
+    <dd>การไล่ว่ากำไรขาดทุนที่เกิดขึ้นจริงมาจากแหล่งไหนบ้าง ใช้เป็นการตรวจสอบตัวเองหลังจบงวด</dd>
+    <dt>ex ante</dt>
+    <dd>ก่อนเกิดเหตุ คือตอนที่ยังพยากรณ์อยู่ ใช้เรียกความเสี่ยงและผลตอบแทนคาดหวัง</dd>
+    <dt>ex post</dt>
+    <dd>หลังเกิดเหตุ คือตอนที่รู้ผลแล้ว ใช้เรียกทุกอย่างในหัวข้อนี้</dd>
+    <dt>position PnL</dt>
+    <dd>กำไรขาดทุนที่ได้จากการถือสถานะข้ามงวด โดยถือว่าไม่มีการซื้อขายระหว่างงวด ใช้แยกฝีมือถือของออกจากฝีมือเทรด</dd>
+    <dt>trading PnL</dt>
+    <dd>ส่วนที่เหลือหลังหัก position PnL ออกจากกำไรจริง ใช้เก็บทั้งค่าใช้จ่ายในการเทรดและกำไรจากจังหวะเข้าออกภายในงวด</dd>
+    <dt>factor PnL</dt>
+    <dd>กำไรขาดทุนที่มาจากการมี exposure ต่อ factor ใช้ตอบว่าได้เงินเพราะตลาดขยับหรือเพราะเลือกหุ้นถูก</dd>
+    <dt>idiosyncratic PnL</dt>
+    <dd>กำไรขาดทุนที่เหลือหลังหัก factor ออก ใช้เป็นตัววัดฝีมือเลือกหุ้นที่แท้จริง</dd>
+    <dt>epoch</dt>
+    <dd>เวลาที่ถ่ายภาพพอร์ตไว้ เช่นราคาปิดของทุกวัน ใช้เป็นเส้นแบ่งงวดของการไล่บัญชี</dd>
+    <dt>high-frequency trader</dt>
+    <dd>ผู้เทรดที่ปิดสถานะหมดทุกสิ้นวัน ใช้เป็นกรณีสุดขั้วที่ position PnL เป็นศูนย์แต่กำไรไม่เป็นศูนย์</dd>
+    <dt>Information Ratio (IR)</dt>
+    <dd>ผลตอบแทนคาดหวังต่อความผันผวน คิดเฉพาะส่วน idiosyncratic ใช้วัดฝีมือโดยไม่นับโชคจาก factor</dd>
+    <dt>beta</dt>
+    <dd>ความชันของ PnL ก้อนหนึ่งเทียบกับ PnL ทั้งกอง ใช้บอกว่าก้อนนั้นขับความเหวี่ยงของกองทุนแค่ไหน</dd>
+    <dt>skill</dt>
+    <dd>ความสามารถที่ทำซ้ำได้ ต่างจากผลลัพธ์ที่ดีครั้งเดียว ใช้เป็นสิ่งที่การไล่บัญชีพยายามแยกออกมา</dd>
+    <dt>luck</dt>
+    <dd>ผลลัพธ์ที่มาจากความบังเอิญ ใช้เป็นสิ่งที่ต้องหักออกก่อนตัดสินใจจ่ายโบนัสหรือเพิ่มทุน</dd>
+  </dl>
+</details>
+
+<details class="symbols" open>
+  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$\mathbf w_t$</td><td>สถานะที่ถืออยู่ ณ ต้นงวด t</td><td>USD</td></tr>
+      <tr><td>$\mathbf r_t$</td><td>ผลตอบแทนของหุ้นทุกตัวในงวด t</td><td>decimal</td></tr>
+      <tr><td>$\mathbf b_t$</td><td>factor exposure ณ ต้นงวด t เท่ากับ $\mathbf B^{\mathsf T}\mathbf w_t$</td><td>USD</td></tr>
+      <tr><td>$\mathbf f_t$</td><td>factor return ในงวด t</td><td>decimal</td></tr>
+      <tr><td>$\boldsymbol\epsilon_t$</td><td>idiosyncratic return ในงวด t</td><td>decimal</td></tr>
+      <tr><td>$\text{PnL}_t$</td><td>กำไรขาดทุนจริงที่บัญชีบันทึกในงวด t</td><td>USD</td></tr>
+      <tr><td>$T$</td><td>จำนวนงวดในหนึ่งปี</td><td>วันทำการ</td></tr>
+      <tr><td>$m$</td><td>จำนวน factor</td><td>จำนวน</td></tr>
+      <tr><td>$v$</td><td>ความผันผวนของ PnL</td><td>USD ต่อวัน</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: ใบเดียวที่บอกว่าปีที่แล้วเกิดอะไรขึ้น</h4>
+  <p>Richard Feynman เคยบอกไว้ในสุนทรพจน์ปี 1974 ว่าหลักข้อแรกคือห้ามหลอกตัวเอง และตัวเองคือคนที่หลอกง่ายที่สุด ประโยคนั้นจริงกับนักวิทยาศาสตร์และจริงกับคนเทรดเท่ากัน</p>
+  <p>การไล่บัญชีย้อนหลังคือเครื่องมือที่ทำให้หลอกตัวเองยากขึ้น ถ้าปีที่แล้วได้เงิน มันบอกว่าได้เพราะอะไร ถ้าเสีย มันบอกว่าเสียตรงไหนและซ่อมได้ไหม และบ่อยครั้งคำตอบคือ “ได้เงินจากการเดิมพันที่ไม่ได้ตั้งใจจะเดิมพัน” ซึ่งเป็นข่าวร้ายที่ปลอมตัวมาเป็นข่าวดี</p>
+  <p>บทนี้มีทุกชิ้นส่วนที่ต้องใช้แล้ว หัวข้อนี้แค่ประกอบมันเข้าด้วยกันเป็นรายงานหนึ่งใบ</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์: หนึ่งปีของกองทุน market-neutral</h4>
+  <p>โจทย์ให้อะไรมาบ้าง กองทุนหนึ่งเดิน 251 วันทำการ แบบจำลองความเสี่ยงมีสามกลุ่ม factor คือ market style industry และมี idiosyncratic ข้อมูลที่มีคือสถานะทุกวัน ผลตอบแทนของหุ้นทุกวัน และกำไรขาดทุนจริงที่บัญชีบันทึก</p>
+  <p>ข้อมูลจำลองด้วย seed 153 เพื่อให้รันซ้ำได้ ความผันผวนรายวันของ PnL จากแต่ละกลุ่มคือ \$40,000 \$70,000 \$50,000 และ \$120,000 โดย style กับ idiosyncratic เป็นสองกลุ่มที่คาดว่าจะทำเงิน ส่วนค่าใช้จ่ายในการเทรดสุ่มจาก distribution ที่เป็นบวกเสมอ</p>
+  <p>ต้องหาห้าอย่าง การแยกกำไรเป็นสามก้อน ตัวเลขทั้งปีของแต่ละก้อน Sharpe Ratio ของแต่ละก้อน ราคาที่จ่ายให้ค่าเทรด และคำตอบว่าควรขยาย style หรือไม่</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — แยกกำไรเป็นสามก้อน</h4>
+  <p>นี่คือนิยามของการแยก ไม่ใช่ผลที่พิสูจน์ บวกและลบสิ่งเดียวกันเข้าไป คือกำไรที่จะได้ถ้าถือสถานะต้นงวดนิ่ง ๆ ตลอดงวด แล้วจัดกลุ่มใหม่ ก้อนที่เหลือคือทุกอย่างที่การซื้อขายระหว่างงวดทำให้ต่างไป</p>
+  <div class="math">\[
+\begin{aligned}
+\text{trading PnL}&=\sum_t\Big(\text{PnL}_t-\mathbf w_t^{\mathsf T}\mathbf r_t\Big)\\[4pt]
+\text{factor PnL}&=\sum_t\mathbf b_t^{\mathsf T}\mathbf f_t\\[4pt]
+\text{idio PnL}&=\sum_t\boldsymbol\epsilon_t^{\mathsf T}\mathbf w_t\\[6pt]
+\text{position PnL}&=\text{factor PnL}+\text{idio PnL}\\[2pt]
+\text{PnL}&=\text{trading PnL}+\text{position PnL}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ก้อนกลางกับก้อนขวารวมกันเรียกว่า position PnL คือกำไรที่จะได้ถ้าเทรดได้ทันทีโดยไม่มีค่าใช้จ่าย ส่วนก้อนซ้ายเก็บความจริงทั้งหมด ทั้งค่าคอมมิชชั่น ทั้ง spread ทั้งผลกระทบต่อราคา และทั้งกำไรจากจังหวะเข้าออกภายในวัน</p>
+    <p>วิธีที่ดีที่สุดในการเข้าใจก้อนซ้ายคือดูกรณีสุดขั้ว high-frequency trader ที่ปิดสถานะหมดทุกสิ้นวัน สถานะต้นงวดกับปลายงวดเป็นศูนย์ position PnL จึงเป็นศูนย์ทั้งหมด แต่กำไรจริงของเขาไม่ใช่ศูนย์ ทุกบาททุกสตางค์ของเขาอยู่ในก้อนซ้าย</p>
+    <p>สำหรับกองทุนที่ถือข้ามคืน ก้อนซ้ายมักติดลบ เพราะค่าใช้จ่ายมากกว่ากำไรจากจังหวะ และนั่นคือสิ่งที่จะเห็นในโจทย์นี้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — ตารางเดียว สองวิธีบวก</h4>
+  <p>factor PnL เป็นตารางที่มี T แถวและ m คอลัมน์ ทุกช่องคือ exposure คูณ factor return ของวันนั้น บวกตามแถวก่อนได้รายวัน บวกตามคอลัมน์ก่อนได้รายตัว ผลรวมสุดท้ายเท่ากันเพราะเป็นตารางเดียวกัน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{factor PnL}&=\sum_{t=1}^{T}\sum_{j=1}^{m}[\mathbf b_t]_j[\mathbf f_t]_j\\[4pt]
+&=\sum_{t=1}^{T}\Big(\text{PnL ของวัน }t\Big)
+=\sum_{j=1}^{m}\Big(\text{PnL ของ factor }j\Big)\\[4pt]
+&=\$670{,}303\quad\text{ทั้งสองทาง ตรงถึงเซนต์}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ฟังดูเป็นเรื่องเล็ก แต่มันคือสิ่งที่ทำให้รายงานสองแบบอยู่ร่วมกันได้ ผู้จัดการกองทุนอยากเห็นรายวันเพื่อดูว่าวันไหนเจ็บ ส่วนนักวิจัยอยากเห็นรายตัวเพื่อดูว่า factor ไหนเป็นปัญหา ทั้งสองอ่านตารางเดียวกัน แค่คนละทิศ</p>
+    <p>และจัดกลุ่มได้อีก รวม style ทุกตัวเป็นกลุ่มเดียว รวม industry ทุกตัวเป็นอีกกลุ่ม แล้วรายงานสี่บรรทัดแทนที่จะเป็นร้อยบรรทัด ซึ่งเป็นสิ่งที่หัวข้อ 26.4 ทำกับความเสี่ยง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — ตัวเลขของปีนี้</h4>
+  <p>รันการแยกบนข้อมูลของโจทย์แล้วอ่านผล ทุกตัวเลขเป็นดอลลาร์ตลอดปี 251 วัน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{market}&:\ -\$374{,}242\\
+\text{style}&:\ +\$771{,}401\\
+\text{industry}&:\ +\$273{,}143\\[2pt]
+\hline
+\text{factor รวม}&:\ +\$670{,}303\\
+\text{idiosyncratic}&:\ +\$3{,}582{,}314\\[2pt]
+\hline
+\text{position}&:\ +\$4{,}252{,}616\\
+\text{trading}&:\ -\$752{,}971\\[2pt]
+\hline
+\text{ทั้งกอง}&:\ +\$3{,}499{,}645
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ภาพที่ได้ชัดมาก idiosyncratic ทำเงิน \$3.58 ล้าน ซึ่งคือ 102.4% ของกำไรทั้งปี แปลว่าถ้าไม่มี factor และไม่มีค่าเทรดเลย กองทุนนี้จะได้มากกว่าที่ได้จริง</p>
+    <p>factor รวมได้ \$670,303 ซึ่งดูดี แต่ประกอบด้วย market ที่เสีย \$374,242 กับสองตัวที่ได้ ตัวที่เสียคือตัวที่ไม่ควรมี exposure อยู่แล้ว การเห็นตัวเลขนี้แปลว่า hedge ยังไม่แน่นพอ</p>
+    <p>ตรวจเองใน 10 วินาที สามบรรทัดบนต้องรวมกันได้บรรทัด factor รวม −374,242 + 771,401 + 273,143 = 670,302 ต่างจาก 670,303 อยู่หนึ่งดอลลาร์จากการปัดเศษ และ 670,303 + 3,582,314 = 4,252,617 ซึ่งคือ position PnL</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.6a — กำไรสะสมทั้งปี แยกเป็นสามเส้นทาง</h4>
+  <img src="../figures/26.6-1.svg" alt="Figure 26.6a — กำไรสะสมทั้งปี แยกเป็นสามเส้นทาง" loading="lazy">
+  <figcaption>
+    <p>เส้นหนาคือกำไรสะสมของกองทุนตามบัญชี เส้นที่ไต่ขึ้นสูงสุดคือ idiosyncratic ซึ่งทำงานเกือบทั้งหมด เส้นที่แทบราบคือ factor รวม และเส้นที่ลาดลงตลอดปีคือค่าใช้จ่ายในการเทรด ซึ่งเป็นเส้นเดียวที่คาดเดาได้ว่าจะไปทางไหน</p>
+  </figcaption>
+</figure>
+
+<section class="prose">
+  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
+  <p>ตัวเลขดอลลาร์ยังไม่พอ กำไร \$771,401 จาก style อาจมาจากการเดิมพันก้อนใหญ่ที่บังเอิญถูก หรือจากการเดิมพันก้อนเล็กที่ถูกบ่อย สองอย่างนี้ต่างกันมาก และตัวที่แยกได้คือความเสี่ยงที่จ่ายไปเพื่อให้ได้กำไรนั้น</p>
+  <p>บนโต๊ะจริง ทุกบรรทัดของรายงานต้องมีสามคอลัมน์ กำไรเป็นดอลลาร์ ความผันผวนที่ใช้ไป และผลหารของสองอันนั้น คอลัมน์ที่สามคือคอลัมน์ที่ใช้ตัดสินใจ</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — หารด้วยความเสี่ยงที่จ่ายไป</h4>
+  <p>เอากำไรของแต่ละก้อนมาหารด้วยความผันผวนของมันเอง แล้วคูณรากที่สองของ 251 เพื่อทำให้เป็นรายปี ตัวเลขที่ได้เทียบกันได้ข้ามก้อน ต่างจากตัวเลขดอลลาร์</p>
+  <div class="math">\[
+\begin{aligned}
+\text{idiosyncratic}&:\ v=\$126{,}117\ \Rightarrow\ \text{SR}=1.793\\
+\text{factor รวม}&:\ v=\$102{,}219\ \Rightarrow\ \text{SR}=0.414\\[4pt]
+\text{position}&:\ v=\$165{,}759\ \Rightarrow\ \text{SR}=1.619\\
+\text{ทั้งกอง}&:\ v=\$165{,}810\ \Rightarrow\ \text{SR}=1.332\\[4pt]
+1.619-1.332&=0.287\ \text{คือราคาของการเทรด}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตัวเลข 0.287 คือข้อค้นพบที่สำคัญที่สุดของรายงานใบนี้ ค่าใช้จ่ายในการเทรดกิน Sharpe Ratio ไป 18% ของ 1.619 โดยที่มันไม่ได้เพิ่มความเสี่ยงเลย ความผันผวนขยับจาก \$165,759 เป็น \$165,810 คือแทบไม่ขยับ มันแค่ตัดกำไรออกไปตรง ๆ</p>
+    <p>นั่นทำให้มันเป็นเป้าที่ดีที่สุดสำหรับการปรับปรุง ถ้าลดค่าเทรดลงครึ่งหนึ่ง Sharpe Ratio ขึ้นราว 0.14 ซึ่งยากกว่าการหา alpha ใหม่ที่ให้ผลเท่ากันมากหรือไม่ เป็นคำถามที่บทที่ 31 ทั้งบทตอบ</p>
+    <p>อีกข้อ Sharpe Ratio ของ idiosyncratic ที่ 1.793 สูงกว่าของทั้งกองที่ 1.332 แปลว่าทุกอย่างที่ไม่ใช่ idiosyncratic กำลังฉุดกองทุนลง ทั้ง factor ที่ให้ Sharpe Ratio แค่ 0.414 และค่าเทรดที่ให้ค่าติดลบ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.6b — ดอลลาร์กับ Sharpe Ratio จัดอันดับไม่เหมือนกัน</h4>
+  <img src="../figures/26.6-2.svg" alt="Figure 26.6b — ดอลลาร์กับ Sharpe Ratio จัดอันดับไม่เหมือนกัน" loading="lazy">
+  <figcaption>
+    <p>แผงซ้ายคือกำไรทั้งปีเป็นดอลลาร์ แผงขวาคือกำไรนั้นหารด้วยความผันผวนที่ใช้ไป แท่งของ style ดูใหญ่ในแผงซ้ายแต่หดลงมากในแผงขวา ส่วนแท่งของ market ติดลบทั้งสองแผง ซึ่งเป็นสัญญาณว่า hedge ยังไม่แน่นพอ</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ตอบคำถามที่ตั้งไว้: ควรขยาย style ไหม</h4>
+  <p>ใช้เกณฑ์จากหัวข้อ 26.4 กลุ่มหนึ่งควรโตก็ต่อเมื่อ Sharpe Ratio ของมันเทียบกับของทั้งกอง มากกว่าค่าที่มันแพง ซึ่งวัดด้วย beta ของ PnL กลุ่มนั้นเทียบกับ PnL ทั้งกอง</p>
+  <div class="math">\[
+\begin{aligned}
+\beta_{\text{style}}&=\frac{\operatorname{cov}}{\operatorname{var}}=0.171\\[4pt]
+\text{กำไรของ style}&=\$771{,}401\\[2pt]
+&=22.0\%\ \text{ของกำไรทั้งปี}\\[4pt]
+\text{แต่ขับความเหวี่ยง}&\ \text{ของกองทุนแค่ }17.1\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>คำตอบคือยังตอบไม่ได้จากปีเดียว และนั่นคือคำตอบที่ถูกต้อง กำไร \$771,401 ในหนึ่งปีบนความผันผวนรายวัน \$70,000 แปลว่า Sharpe Ratio ที่วัดได้คือราว 0.70 ซึ่งมีความคลาดเคลื่อนราว ±0.63 ตามสูตรในหัวข้อ 14.5 ช่วงนั้นคร่อมศูนย์</p>
+    <p>ส่วน beta ที่ 0.171 บอกอีกเรื่อง ต่อให้ style ทำเงินจริง มันก็ไม่ได้ขับกองทุนนี้ การขยายมันสองเท่าจะเพิ่มกำไรคาดหวังไม่มากเมื่อเทียบกับความเสี่ยงที่กระจายไม่ได้ที่เพิ่มเข้ามา</p>
+    <p>สิ่งที่ควรทำแทนคือสองอย่างที่ตัวเลขชี้ชัด ลดค่าเทรดซึ่งกิน 0.287 ของ Sharpe Ratio และปิด exposure ต่อ market ที่เสีย \$374,242 ทั้งปีโดยไม่มีเหตุผลให้ถือ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.6c — factor กับ idiosyncratic ไปคนละทางครึ่งหนึ่งของเดือน</h4>
+  <img src="../figures/26.6-3.svg" alt="Figure 26.6c — factor กับ idiosyncratic ไปคนละทางครึ่งหนึ่งของเดือน" loading="lazy">
+  <figcaption>
+    <p>แท่งรายเดือนของกำไรจาก factor เทียบกับจาก idiosyncratic ห้าเดือนจากสิบสองเดือนที่สองก้อนนี้ไปคนละทิศ ถ้าดูแต่ตัวเลขรวมของแต่ละเดือน จะไม่มีทางรู้เลยว่าเดือนที่แย่นั้นแย่เพราะเลือกหุ้นผิด หรือเพราะ factor ไม่เข้าข้าง</p>
+  </figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>Figure 26.6d — Sharpe Ratio ของแต่ละก้อน และที่มันหายไป</h4>
+  <img src="../figures/26.6-4.svg" alt="Figure 26.6d — Sharpe Ratio ของแต่ละก้อน และที่มันหายไป" loading="lazy">
+  <figcaption>
+    <p>เริ่มจาก idiosyncratic ที่ 1.793 การเติม factor เข้ามาลดเหลือ 1.619 เพราะ factor มี Sharpe Ratio แค่ 0.414 และการเติมค่าเทรดลดต่อเหลือ 1.332 ทั้งสองขั้นลดลง และขั้นที่สองลดมากกว่าโดยไม่ได้เพิ่มความเสี่ยงอะไรเลย</p>
+  </figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>กับดัก: อ่านตัวเลขดอลลาร์เป็นฝีมือ และลืมว่าทุกตัวเลขมีความคลาดเคลื่อน</h4>
+  <p>กับดักแรกคืออ่านบรรทัดที่ตัวเลขใหญ่ที่สุดแล้วสรุปว่านั่นคือจุดแข็ง ในโจทย์นี้ style ทำเงินมากที่สุดในบรรดา factor แต่ Sharpe Ratio ของมันแค่ 0.70 และ beta ต่อกองทุนแค่ 0.171 การเพิ่มการเดิมพันบนมันคือการเพิ่มความเสี่ยงที่กระจายไม่ได้ เพื่อกำไรที่พิสูจน์ไม่ได้ว่ามีจริง</p>
+  <p>กับดักที่สองคือลืมว่าการแยกนี้ขึ้นกับแบบจำลองที่ใช้ หัวข้อ 26.3 พิสูจน์แล้วว่าการหมุนแบบจำลองย้าย PnL ระหว่าง factor ได้โดยที่โลกจริงไม่เปลี่ยน ตัวเลขรวมของ factor กับของ idiosyncratic นิ่ง แต่การแบ่งภายใน factor ไม่นิ่ง อย่าเปลี่ยนแบบจำลองกลางปีแล้วเทียบข้ามช่วง</p>
+  <p>กับดักที่สามคือรายงานตัวเลขโดยไม่บอกความคลาดเคลื่อน ค่า factor return ที่ใช้คำนวณ PnL เป็นค่าที่ประมาณมา ไม่ใช่ค่าจริง มันจึงมีความคลาดเคลื่อนติดมาด้วย และผลคือ factor PnL กับ idiosyncratic PnL มีความสัมพันธ์เป็นลบเสมอ ความผิดที่เข้าก้อนหนึ่งจะหายไปจากอีกก้อนพอดี หัวข้อ 32.4 จะกลับมาเรื่องนี้พร้อมวิธีคำนวณความคลาดเคลื่อนนั้น</p>
+</section>
+
+<section class="table">
+  <h4>ข้อจำกัด: รายงานใบนี้บอกอะไร และไม่บอกอะไร</h4>
+  <table>
+    <thead><tr><th>บรรทัด</th><th>บอกอะไร</th><th>ไม่บอกอะไร</th><th>ทำอะไรต่อ</th></tr></thead>
+    <tbody>
+      <tr><td>trading PnL</td><td>ค่าใช้จ่ายและกำไรจากจังหวะ รวมกันเป็นก้อนเดียว</td><td>ไม่แยกว่าส่วนไหนเป็น spread ส่วนไหนเป็นผลกระทบต่อราคา</td><td>ต้องแยกด้วยข้อมูลการซื้อขายจริง ซึ่งเป็นเรื่องของบทที่ 31</td></tr>
+      <tr><td>factor PnL รายตัว</td><td>exposure ไหนเข้าข้างหรือไม่เข้าข้างปีนี้</td><td>ไม่บอกว่าตั้งใจถือหรือเผลอถือ</td><td>เทียบกับขีดจำกัดที่ตั้งไว้ ถ้าไม่เคยตั้ง ให้ตั้ง</td></tr>
+      <tr><td>idiosyncratic PnL</td><td>ฝีมือเลือกหุ้นในภาพรวม</td><td>ไม่บอกว่าเก่งเพราะเลือกข้างถูกหรือเพราะลงขนาดถูก</td><td>แยกต่อด้วยวิธีในหัวข้อ 32.5</td></tr>
+      <tr><td>ทุกบรรทัด</td><td>ค่าที่วัดได้ในหนึ่งปี</td><td>ไม่บอกว่าจะเกิดซ้ำไหม</td><td>ต้องดูความคลาดเคลื่อน และรอข้อมูลหลายปี</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>แถวสุดท้ายคือข้อจำกัดที่ครอบทุกอย่าง หัวข้อ 25.4 พิสูจน์แล้วว่ากลยุทธ์ที่ Sharpe Ratio 1.33 ต้องรัน 2.3 ปีกว่าจะได้ t เท่ากับ 2 รายงานปีเดียวจึงเป็นจุดเริ่มต้นของการสนทนา ไม่ใช่ข้อสรุป</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>สร้างข้อมูลและตรวจทุกตัวเลขของหัวข้อนี้</summary>
+    <pre><code>import numpy as np
+
+T = 251
+fac_vol = np.array([40_000.0, 70_000.0, 50_000.0])       # market, style, industry
+idio_vol = 120_000.0
+C = np.array([[1, .25, .45], [.25, 1, -.15], [.45, -.15, 1]])
+rng = np.random.default_rng(153)
+fp = (np.linalg.cholesky(C) @ rng.standard_normal((3, T))) * fac_vol[:, None]
+fp[1] += 0.8 / np.sqrt(251) * 70_000                      # style is a paid bet
+ip = rng.standard_normal(T) * idio_vol + 1.6 / np.sqrt(251) * idio_vol
+trade = -rng.gamma(2.0, 1500.0, T)                        # costs, always negative
+pos = fp.sum(axis=0) + ip
+book = pos + trade
+
+# step 3: the year, line by line
+assert abs(fp[0].sum() - (-374_242)) &lt; 1
+assert abs(fp[1].sum() - 771_401) &lt; 1
+assert abs(fp[2].sum() - 273_143) &lt; 1
+assert abs(fp.sum() - 670_303) &lt; 1
+assert abs(ip.sum() - 3_582_314) &lt; 1
+assert abs(pos.sum() - 4_252_616) &lt; 1
+assert abs(trade.sum() - (-752_971)) &lt; 1
+assert abs(book.sum() - 3_499_645) &lt; 1
+assert abs(fp.sum() + ip.sum() - pos.sum()) &lt; 1e-6        # the pieces really do add up
+assert abs(pos.sum() + trade.sum() - book.sum()) &lt; 1e-6
+assert abs(ip.sum() / book.sum() - 1.024) &lt; 1e-3          # idio is 102% of the book
+
+# step 2: the grid sums the same either way
+by_day = sum(fp[:, t].sum() for t in range(T))
+by_factor = sum(fp[j].sum() for j in range(3))
+assert abs(by_day - by_factor) &lt; 1e-6
+
+# step 4: divide by the risk each piece used
+ann = lambda x: x.mean() / x.std() * np.sqrt(251)
+assert abs(ip.std() - 126_117) &lt; 1 and abs(ann(ip) - 1.793) &lt; 5e-3
+assert abs(fp.sum(axis=0).std() - 102_219) &lt; 1 and abs(ann(fp.sum(axis=0)) - 0.414) &lt; 5e-3
+assert abs(pos.std() - 165_759) &lt; 1 and abs(ann(pos) - 1.619) &lt; 5e-3
+assert abs(book.std() - 165_810) &lt; 1 and abs(ann(book) - 1.332) &lt; 5e-3
+assert abs(ann(pos) - ann(book) - 0.287) &lt; 5e-3           # what trading costs in Sharpe
+assert abs(book.std() / pos.std() - 1) &lt; 1e-3             # costs add no risk at all
+assert ann(ip) &gt; ann(pos) &gt; ann(book)                     # everything else drags
+
+# step 5: big PnL is not the same as driving the book
+beta = np.cov(fp[1], book)[0, 1] / book.var()
+assert abs(beta - 0.171) &lt; 5e-3
+assert abs(fp[1].sum() / book.sum() - 0.220) &lt; 5e-3       # 22% of the money
+assert abs(ann(fp[1]) - 0.70) &lt; 0.03                      # but a Sharpe of only 0.70
+se = np.sqrt((1 + ann(fp[1]) ** 2 / 2) / 251) * np.sqrt(251)
+assert abs(se - 0.63) &lt; 0.02 and ann(fp[1]) - 2 * se &lt; 0  # the interval straddles zero
+
+# the monthly picture in the figure
+mf = fp.sum(axis=0)[:240].reshape(12, 20).sum(axis=1)
+mi = ip[:240].reshape(12, 20).sum(axis=1)
+assert int(np.sum(np.sign(mf) != np.sign(mi))) == 5       # 5 of 12 months disagree</code></pre>
+  </details>
+  <div class="note">
+    <p>บรรทัดที่เทียบ book.std กับ pos.std ยืนยันข้อสังเกตสำคัญ ค่าใช้จ่ายในการเทรดตัดกำไรออกโดยไม่เพิ่มความเสี่ยงเลย มันจึงกิน Sharpe Ratio เต็ม ๆ และเป็นเป้าที่คุ้มที่สุดในการปรับปรุง</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>ก่อนไปต่อ — จบบทที่ 26</h4>
+  <p>บทนี้ใช้ factor model ราวกับว่ามันตกลงมาจากฟ้า ทั้ง loading ทั้ง factor return ทั้ง covariance matrix มีให้พร้อม แต่ในความเป็นจริงต้องสร้างมันขึ้นมาเองจากข้อมูลดิบ และนั่นคืองานที่ยากกว่าทุกอย่างในบทนี้รวมกัน</p>
+  <p>บทที่ 27 เริ่มจากศูนย์ ข้อมูลผลตอบแทนกับคุณสมบัติของบริษัท แล้วสร้างแบบจำลองความเสี่ยงที่ใช้งานได้จริงขึ้นมาทีละขั้น พร้อมวิธีทดสอบว่ามันดีจริงหรือแค่ดูดี</p>
+</section>
+
+<section class="takeaways">
+  <h4>สรุปที่ใช้ได้จริง</h4>
+  <ul>
+    <li>กำไรแยกได้เป็นสามก้อน trading PnL คือสิ่งที่การซื้อขายทำให้ต่างจากการถือนิ่ง ๆ ส่วน position PnL แยกต่อเป็น factor กับ idiosyncratic ก้อนแรกคือทั้งหมดของ high-frequency trader ที่ปิดสถานะทุกวัน</li>
+    <li>factor PnL เป็นตารางที่บวกได้สองทิศ บวกตามวันได้รายวัน บวกตามคอลัมน์ได้รายตัว ผลรวมเท่ากันเสมอ นั่นทำให้รายงานหลายมุมอยู่ร่วมกันได้</li>
+    <li>ในปีตัวอย่าง idiosyncratic ทำ \$3.58 ล้านซึ่งคือ 102% ของกำไรทั้งปี factor รวมทำ \$670,303 โดยที่ market เสีย \$374,242 และค่าเทรดเสีย \$752,971</li>
+    <li>ค่าเทรดกิน Sharpe Ratio ไป 0.287 จาก 1.619 เหลือ 1.332 โดยไม่เพิ่มความเสี่ยงเลย ความผันผวนขยับแค่จาก \$165,759 เป็น \$165,810 มันจึงเป็นเป้าที่คุ้มที่สุดในการปรับปรุง</li>
+    <li>ตัวเลขดอลลาร์ที่ใหญ่ที่สุดไม่ใช่เรื่องที่สำคัญที่สุด style ทำเงิน 22% ของทั้งปีแต่มี Sharpe Ratio แค่ 0.70 ซึ่งช่วงความคลาดเคลื่อนคร่อมศูนย์ และมี beta ต่อกองทุนแค่ 0.171</li>
+  </ul>
+</section>
+</article>
+
+<nav class="book-nav bottom-nav">
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="26.5.html">26.5 The Frisch–Waugh–Lovell Theorem</a></div>
+  <div class="nav-neighbor nav-next nav-empty"></div>
+</nav>
+</div>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>26.1 The Factor Model Equation and Three Ways to Read It</title>
+<link rel="stylesheet" href="../book.css">
+<script defer src="../book.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="book-nav top-nav">
+  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-10">Part 10</a> <span aria-hidden="true">·</span>
+  <a href="../chapters/26.html">บทที่ 26</a>
+  <span class="topic-progress">หัวข้อ 148/153</span>
+</nav>
+
+<article class="topic" data-number="26.1" data-depends-on="25.5">
+<header class="topic-header">
+  <h1><span class="tnum">26.1</span> The Factor Model Equation and Three Ways to Read It</h1>
+  <p class="subtitle">สมการเดียวที่ทั้ง Part นี้ตั้งอยู่บน และสามวิธีอ่านมัน</p>
+</header>
+
+<div class="hook">
+  <p>พอร์ตหุ้น 500 ตัว covariance matrix ของมันมีตัวเลขที่ต้องประมาณ 125,250 ตัว แต่คุณมีข้อมูลแค่ 251 วัน จะเกิดอะไรขึ้น และ factor model 60 factor ต้องประมาณกี่ตัว?</p>
+  <p>เฉลย: ถ้าใช้ covariance matrix จากข้อมูลตรง ๆ จะมีพอร์ตอย่างน้อย 249 พอร์ตที่แบบจำลองบอกว่าความเสี่ยงเป็นศูนย์พอดี ทั้งที่มันไม่ได้เป็นศูนย์เลย ส่วน factor model ต้องประมาณแค่ 2,330 ตัว น้อยกว่า 53.8 เท่า และไม่มีพอร์ตไหนที่ความเสี่ยงเป็นศูนย์ นั่นคือเหตุผลทั้งหมดที่เครื่องมือชิ้นนี้มีอยู่</p>
+</div>
+
+<details class="jargon" open>
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>factor model</dt>
+    <dd>แบบจำลองที่แยกผลตอบแทนเป็นส่วนที่ขับด้วยแรงร่วมไม่กี่ตัว กับส่วนที่เป็นของหุ้นตัวนั้นเอง ใช้เป็นฐานของทุกอย่างในบทที่ 26 ถึง 32</dd>
+    <dt>factor return</dt>
+    <dd>ผลตอบแทนของแรงร่วมหนึ่งตัวในวันหนึ่ง เช่นวันนี้ตลาดขึ้นเท่าไร ใช้เป็นตัวสุ่มไม่กี่ตัวที่ขับหุ้นทั้งตลาด</dd>
+    <dt>loading</dt>
+    <dd>ตัวเลขที่บอกว่าหุ้นตัวนี้รับแรงจาก factor นั้นมากแค่ไหน ใช้เป็นข้อมูลที่รู้ล่วงหน้า ไม่ใช่สิ่งที่ต้องประมาณ</dd>
+    <dt>loadings matrix</dt>
+    <dd>ตารางของ loading ทุกหุ้นทุก factor ใช้เป็นตัวแปลงจาก factor return ไปเป็นผลตอบแทนหุ้น</dd>
+    <dt>idiosyncratic return</dt>
+    <dd>ส่วนของผลตอบแทนที่เหลือหลังหักแรงร่วมออก เป็นของหุ้นตัวนั้นล้วน ๆ ใช้เป็นที่มาของกำไรที่กระจายความเสี่ยงได้</dd>
+    <dt>systematic component</dt>
+    <dd>ส่วนของผลตอบแทนที่มาจาก factor ใช้เรียกความเสี่ยงที่กระจายไม่หายด้วยการถือหุ้นเยอะขึ้น</dd>
+    <dt>style factor</dt>
+    <dd>factor ที่ loading เป็นคุณสมบัติต่อเนื่องของหุ้น เช่น momentum หรือขนาด ใช้จับพฤติกรรมร่วมที่ไม่ได้มาจากอุตสาหกรรม</dd>
+    <dt>industry factor</dt>
+    <dd>factor ที่ loading เป็น 0 หรือ 1 ตามว่าหุ้นอยู่ในอุตสาหกรรมนั้นไหม ใช้จับการเคลื่อนไหวพร้อมกันของหุ้นกลุ่มเดียวกัน</dd>
+    <dt>market factor</dt>
+    <dd>factor ที่ทุกหุ้นมี loading เท่ากับ 1 ใช้เป็นจุดตัดของสมการ และทำให้ exposure บอกว่าพอร์ต long หรือ short สุทธิ</dd>
+    <dt>dummy variable</dt>
+    <dd>ตัวแปรที่รับค่า 0 หรือ 1 เท่านั้น ใช้เข้ารหัสการเป็นสมาชิกของกลุ่ม</dd>
+    <dt>factor exposure</dt>
+    <dd>ผลรวมของ loading ถ่วงด้วยขนาดสถานะ บอกว่าพอร์ตทั้งกองรับแรงจาก factor นั้นกี่ดอลลาร์ ใช้เป็นภาษาหลักของ risk report</dd>
+    <dt>z-score</dt>
+    <dd>การแปลงตัวเลขให้ค่าเฉลี่ยเป็นศูนย์และความผันผวนเป็นหนึ่ง ใช้ทำให้ loading ของ style factor เทียบกันได้</dd>
+    <dt>strict factor model</dt>
+    <dd>แบบจำลองที่สมมติว่า idiosyncratic return ของหุ้นต่างตัวไม่สัมพันธ์กันเลย ใช้เป็นจุดตั้งต้นก่อนผ่อนเงื่อนไขในหัวข้อ 27.4</dd>
+    <dt>precision matrix</dt>
+    <dd>ตัวผกผันของ covariance matrix ใช้เป็นหัวใจของการหาพอร์ตที่ดีที่สุดในบทที่ 30</dd>
+    <dt>Net Market Value (NMV)</dt>
+    <dd>ผลรวมของสถานะโดยใส่เครื่องหมาย long เป็นบวก short เป็นลบ ใช้บอกว่าพอร์ตเอียงไปทางไหนสุทธิ</dd>
+    <dt>Gross Market Value (GMV)</dt>
+    <dd>ผลรวมของขนาดสถานะโดยไม่สนเครื่องหมาย ใช้วัดว่าพอร์ตใหญ่แค่ไหนจริง ๆ</dd>
+    <dt>dollar-neutral</dt>
+    <dd>พอร์ตที่ผลรวมของสถานะเป็นศูนย์ ใช้แยกให้ชัดจากการไม่มีความเสี่ยงจาก factor ซึ่งเป็นคนละเรื่อง</dd>
+  </dl>
+</details>
+
+<details class="symbols" open>
+  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$n,\ m$</td><td>จำนวนหุ้น และจำนวน factor</td><td>จำนวน</td></tr>
+      <tr><td>$\mathbf r_t$</td><td>ผลตอบแทนส่วนเกินของหุ้นทุกตัว วัน t</td><td>decimal</td></tr>
+      <tr><td>$\boldsymbol\alpha$</td><td>ผลตอบแทนคาดหวังส่วนที่ไม่ได้มาจาก factor</td><td>decimal</td></tr>
+      <tr><td>$\mathbf B$</td><td>loadings matrix ขนาด $n\times m$</td><td>unitless</td></tr>
+      <tr><td>$\mathbf f_t$</td><td>factor return วัน t</td><td>decimal</td></tr>
+      <tr><td>$\boldsymbol\epsilon_t$</td><td>idiosyncratic return วัน t</td><td>decimal</td></tr>
+      <tr><td>$\mathbf w$</td><td>เงินที่ลงในแต่ละหุ้น ติดลบได้เมื่อ short</td><td>USD</td></tr>
+      <tr><td>$\mathbf b$</td><td>factor exposure ของพอร์ต เท่ากับ $\mathbf B^{\mathsf T}\mathbf w$</td><td>USD</td></tr>
+      <tr><td>$\boldsymbol\Omega_f$</td><td>covariance matrix ของ factor return ขนาด $m\times m$</td><td>decimal²</td></tr>
+      <tr><td>$\boldsymbol\Omega_\epsilon$</td><td>covariance matrix ของ idiosyncratic return ขนาด $n\times n$</td><td>decimal²</td></tr>
+      <tr><td>$\boldsymbol\Omega_r$</td><td>covariance matrix ของผลตอบแทนหุ้น</td><td>decimal²</td></tr>
+      <tr><td>$T$</td><td>จำนวนวันที่มีข้อมูล</td><td>วันทำการ</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: ทำไมถึงต้องมีสมการนี้</h4>
+  <p>บทที่ 25 จบลงที่หุ้นตัวเดียว ถ้ามีหุ้นสามพันตัว วิธีที่ตรงไปตรงมาที่สุดคือทำแบบเดิมสามพันครั้ง แต่นั่นทิ้งสิ่งที่สำคัญที่สุดไป หุ้นไม่ได้เคลื่อนไหวแยกกัน วันที่ตลาดร่วง มันร่วงพร้อมกันเกือบหมด</p>
+  <p>ทางเลือกที่สองคือประมาณ covariance ของทุกคู่ ซึ่งฟังดูสมบูรณ์แบบ แต่ที่หุ้น 500 ตัวมีคู่ทั้งหมด 125,250 คู่ ขณะที่ข้อมูลหนึ่งปีมีแค่ 251 วัน เท่ากับพยายามหาค่า 125,250 ตัวจากสมการ 251 สมการ ซึ่งเป็นไปไม่ได้ และผลที่ออกมาไม่ได้แค่ไม่แม่น แต่พังในแบบที่อันตรายมาก ขั้นที่ 6 จะแสดงให้เห็นว่าพังอย่างไร</p>
+  <p>ทางออกคือสมมติว่าการเคลื่อนไหวพร้อมกันทั้งหมดมาจากแรงร่วมไม่กี่ตัว สมมติฐานนี้ไม่ได้จริงเป๊ะ แต่มันใกล้พอ และมันเปลี่ยนปัญหาที่แก้ไม่ได้ให้เป็นปัญหาที่แก้ได้ในเสี้ยววินาที</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์: พอร์ตสี่ตัว สาม factor หนึ่งวัน</h4>
+  <p>โจทย์ให้อะไรมาบ้าง หุ้นสี่ตัว A B C D กับสาม factor คือ market ซึ่งทุกตัวมี loading เท่ากับ 1 momentum ซึ่ง loading เป็น z-score และ tech ซึ่งเป็น 0 หรือ 1 loading ของทั้งสี่ตัวคือ A มี momentum 1.2 และอยู่ใน tech B มี momentum −0.4 และอยู่ใน tech C มี momentum 0.6 ไม่อยู่ใน tech D มี momentum −1.4 ไม่อยู่ใน tech</p>
+  <p>วันนี้ factor return คือ market +0.80% momentum −0.50% tech +0.30% และ idiosyncratic return คือ A +0.40% B −0.25% C +0.15% D −0.60% พอร์ตถือ A \$3 ล้าน B −\$2 ล้าน C \$4 ล้าน D −\$5 ล้าน</p>
+  <p>ต้องหาห้าอย่าง ผลตอบแทนของหุ้นแต่ละตัว factor exposure ของพอร์ต PnL แยกเป็นสองก้อน ความเสี่ยงของพอร์ตแยกเป็นสองก้อน และจำนวน parameter ที่ประหยัดได้เมื่อขยายเป็น 500 ตัว</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — สมการ และผลตอบแทนของหุ้นแต่ละตัว</h4>
+  <p>นี่คือนิยามของ factor model ทั้งหมด ผลตอบแทนคือสามก้อนบวกกัน ส่วนที่คาดหวังไว้ ส่วนที่มาจากแรงร่วม และส่วนที่เป็นของหุ้นตัวนั้นเอง โจทย์นี้ให้ $\boldsymbol\alpha$ เป็นศูนย์เพื่อให้เห็นสองก้อนหลังชัด ๆ</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbf r_t&=\boldsymbol\alpha+\mathbf B\mathbf f_t+\boldsymbol\epsilon_t\\[6pt]
+r_A&=0.80+1.2(-0.50)+1(0.30)+0.40=0.90\%\\
+r_B&=0.80-0.4(-0.50)+1(0.30)-0.25=1.05\%\\
+r_C&=0.80+0.6(-0.50)+0(0.30)+0.15=0.65\%\\
+r_D&=0.80-1.4(-0.50)+0(0.30)-0.60=0.90\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ดู B กับ D เทียบกัน ทั้งคู่มี momentum ติดลบ จึงได้กำไรจากวันที่ momentum ร่วง แต่ B อยู่ใน tech ด้วยและ tech ขึ้น ขณะที่ D โดน idiosyncratic ลบหนัก ผลสุดท้าย B ได้ 1.05% ส่วน D ได้ 0.90%</p>
+    <p>ประเด็นคือ ผลตอบแทนที่เห็นของหุ้นตัวหนึ่งเป็นผลรวมของหลายเรื่อง และสมการนี้แยกมันออกจากกันได้ ถ้าไม่แยก จะไม่มีทางรู้ว่า D แย่กว่า B เพราะหุ้นแย่ หรือเพราะบังเอิญไม่ได้อยู่ในกลุ่มที่ขึ้นวันนี้</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.1a — หน้าตาของ loadings matrix จริง แบ่งเป็นสามบล็อก</h4>
+  <img src="../figures/26.1-1.svg" alt="Figure 26.1a — หน้าตาของ loadings matrix จริง แบ่งเป็นสามบล็อก" loading="lazy">
+  <figcaption>
+    <p>แต่ละแถวคือหุ้นหนึ่งตัว แต่ละคอลัมน์คือ factor หนึ่งตัว บล็อกซ้ายคือ style ซึ่งเป็นตัวเลขต่อเนื่องที่ผ่าน z-score แล้ว บล็อกกลางคือ country และบล็อกขวาคือ industry ซึ่งเป็น 0 กับ 1 และรวมกันได้ 1 ในทุกแถว โครงสร้างนี้เองที่จะสร้างปัญหาในหัวข้อ 27.1</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — อ่านแบบที่หนึ่ง: หุ้นทั้งตลาดห้อยอยู่กับแรงไม่กี่ตัว</h4>
+  <p>มองทีละหุ้น สมการบอกว่าผลตอบแทนคาดหวังของหุ้น i เมื่อรู้ factor return แล้ว คือผลคูณจุดของ loading แถวนั้นกับ factor return</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E\big(r_i-\alpha_i\,\big|\,\mathbf f\big)&=\sum_{j=1}^{m}[\mathbf B]_{i,j}f_j
+=\big\langle[\mathbf B]_{i,\cdot},\mathbf f\big\rangle\\[4pt]
+\text{หุ้น A}&:\ \langle(1,\,1.2,\,1),\,(0.80,-0.50,0.30)\rangle=0.50\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ในแบบจำลองจริงของภูมิภาคหนึ่ง มีหุ้นได้ถึงหมื่นตัวและ factor ราวร้อยตัว ภาพที่ควรมีในหัวคือวงกลมร้อยวงข้างบน สี่เหลี่ยมหมื่นอันข้างล่าง และเส้นเชื่อมที่เบาบางมาก เพราะหุ้นหนึ่งตัวแตะ factor แค่ไม่กี่ตัว คือ market หนึ่งตัว industry หนึ่งตัว country หนึ่งตัว และ style อีกสิบกว่าตัว</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — อ่านแบบที่สอง: ภาพตัดขวางคือผลรวมของเสาไม่กี่เสา</h4>
+  <p>คราวนี้มองทั้งตลาดพร้อมกันในวันเดียว จัดกลุ่มสมการใหม่ตามคอลัมน์แทนแถว จะเห็นว่า vector ผลตอบแทนของหุ้นทุกตัวเป็นผลรวมถ่วงน้ำหนักของ vector ไม่กี่ตัว</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E(\mathbf r-\boldsymbol\alpha\,|\,\mathbf f)&=\sum_{j=1}^{m}[\mathbf B]_{\cdot,j}\,f_j\\[6pt]
+\begin{pmatrix}0.50\\1.00\\0.50\\1.50\end{pmatrix}
+&=0.80\begin{pmatrix}1\\1\\1\\1\end{pmatrix}
+-0.50\begin{pmatrix}1.2\\-0.4\\0.6\\-1.4\end{pmatrix}
++0.30\begin{pmatrix}1\\1\\0\\0\end{pmatrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สิ่งที่การอ่านแบบนี้ทำให้เห็นคือมิติ ผลตอบแทนของหุ้นสี่ตัวควรเป็นจุดในปริภูมิสี่มิติ แต่ส่วนที่มาจาก factor ถูกบังคับให้อยู่ในปริภูมิสามมิติที่สร้างจากสามเสานั้น</p>
+    <p>ที่หุ้น 500 ตัวกับ 60 factor ตัวเลขนี้น่าตกใจกว่ามาก ภาพตัดขวางที่เป็นไปได้มี 500 มิติ แต่ส่วนที่ factor อธิบายได้ถูกขังอยู่ใน 60 มิติ ที่เหลืออีก 440 มิติคือ idiosyncratic ล้วน ๆ และนั่นคือที่ที่กำไรที่กระจายความเสี่ยงได้อาศัยอยู่ ซึ่งเป็นเรื่องของหัวข้อ 26.2</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.1b — ภาพตัดขวางของวันหนึ่ง คือผลรวมของเสาไม่กี่เสา</h4>
+  <img src="../figures/26.1-2.svg" alt="Figure 26.1b — ภาพตัดขวางของวันหนึ่ง คือผลรวมของเสาไม่กี่เสา" loading="lazy">
+  <figcaption>
+    <p>สามแท่งซ้ายคือคอลัมน์ของ loadings matrix แต่ละคอลัมน์คูณด้วย factor return ของวันนั้น แท่งขวาสุดคือผลรวม ซึ่งเป็นส่วนที่ factor อธิบายได้ของผลตอบแทนทั้งสี่ตัว ส่วนที่เหลือจากนี้คือ idiosyncratic</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — อ่านแบบที่สาม: ทั้งพอร์ตยุบเหลือ exposure ไม่กี่ตัว</h4>
+  <p>คูณสมการด้วย vector ของสถานะ แล้วจัดกลุ่มใหม่ ผลคือ PnL ของพอร์ตทั้งกองแยกเป็นสองก้อนชัดเจน โดยก้อนแรกมีมิติเท่ากับจำนวน factor ไม่ใช่จำนวนหุ้น</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbf w^{\mathsf T}\mathbf r
+&=\mathbf w^{\mathsf T}\mathbf B\mathbf f+\mathbf w^{\mathsf T}(\boldsymbol\alpha+\boldsymbol\epsilon)
+=\mathbf b^{\mathsf T}\mathbf f+\mathbf w^{\mathsf T}(\boldsymbol\alpha+\boldsymbol\epsilon),
+\qquad \mathbf b:=\mathbf B^{\mathsf T}\mathbf w\\[6pt]
+b_{\text{market}}&=3-2+4-5=0\\
+b_{\text{mom}}&=1.2(3)-0.4(-2)+0.6(4)-1.4(-5)=3.6+0.8+2.4+7.0=13.8\\
+b_{\text{tech}}&=1(3)+1(-2)+0+0=1\\[6pt]
+\text{factor PnL}&=0(0.008)+13.8(-0.005)+1(0.003)=-\$66{,}000\\
+\text{idio PnL}&=3(0.004)-2(-0.0025)+4(0.0015)-5(-0.006)=+\$53{,}000\\
+\text{รวม}&=-\$13{,}000
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตรวจเองใน 10 วินาที คูณสถานะกับผลตอบแทนตรง ๆ 3(0.90%) − 2(1.05%) + 4(0.65%) − 5(0.90%) เป็นล้านดอลลาร์ ได้ 0.027 − 0.021 + 0.026 − 0.045 = −0.013 ล้าน ตรงกับ −\$13,000 พอดี สองเส้นทางให้คำตอบเดียวกันเสมอ</p>
+    <p>บทเรียนที่สำคัญที่สุดของหัวข้อนี้อยู่ตรงนี้ พอร์ตนี้ dollar-neutral เป๊ะ ๆ ผลรวมของสถานะเป็นศูนย์ และ exposure ต่อ market ก็เป็นศูนย์ด้วย แต่มันเสียเงิน เพราะมันมี exposure ต่อ momentum อยู่ \$13.8 ล้าน โดยไม่ได้ตั้งใจ และวันนี้ momentum ร่วง 0.50%</p>
+    <p>dollar-neutral ไม่เท่ากับ risk-neutral ตัวเลข 13.8 นั้นซ่อนอยู่หลัง NMV ที่เป็นศูนย์ และจะมองไม่เห็นเลยถ้าไม่มี factor model คนที่ดูแค่ NMV กับ GMV จะคิดว่าพอร์ตนี้ปลอดภัย</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
+  <p>exposure vector ที่ยาว 60 ตัวคือภาษาที่ risk manager กับ portfolio manager ใช้คุยกัน แทนที่จะพูดถึงหุ้นสามพันตัว ทุกคนดูตัวเลข 60 ตัวเดียวกัน และรู้ทันทีว่าพอร์ตกำลังพนันอะไรอยู่</p>
+  <p>บนโต๊ะจริง รายงานตอนเช้าคือ exposure ทั้ง 60 ตัวพร้อมขีดจำกัดของแต่ละตัว ถ้าเกินขีด ระบบจะบังคับให้เทรดกลับมา ตัวเลข 13.8 ในขั้นที่ 4 จะโดนจับได้ทันทีในระบบแบบนั้น แต่จะรอดสายตาไปได้ทั้งเดือนในระบบที่ดูแค่ NMV</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ความเสี่ยงก็แยกเป็นสองก้อนเหมือนกัน</h4>
+  <p>หา covariance matrix ของผลตอบแทนหุ้นจากสมการในขั้นที่ 1 เนื่องจาก $\mathbf f$ กับ $\boldsymbol\epsilon$ เป็นอิสระกัน variance ของผลรวมจึงเป็นผลรวมของ variance และการแปลงเชิงเส้นด้วย $\mathbf B$ ทำให้ covariance กลายเป็น $\mathbf B\boldsymbol\Omega_f\mathbf B^{\mathsf T}$</p>
+  <div class="math">\[
+\begin{aligned}
+\boldsymbol\Omega_r&=\mathbf B\boldsymbol\Omega_f\mathbf B^{\mathsf T}+\boldsymbol\Omega_\epsilon\\[4pt]
+\operatorname{var}(\mathbf w^{\mathsf T}\mathbf r)
+&=\mathbf w^{\mathsf T}\big(\mathbf B\boldsymbol\Omega_f\mathbf B^{\mathsf T}+\boldsymbol\Omega_\epsilon\big)\mathbf w
+=\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b+\mathbf w^{\mathsf T}\boldsymbol\Omega_\epsilon\mathbf w\\[6pt]
+\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b&=2.3100\times10^{-3}\ \Rightarrow\ \$48{,}063\\
+\mathbf w^{\mathsf T}\boldsymbol\Omega_\epsilon\mathbf w&=2.5352\times10^{-2}\ \Rightarrow\ \$159{,}223\\
+\text{รวม}&=2.7662\times10^{-2}\ \Rightarrow\ \$166{,}319\ \text{ต่อวัน}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตัวเลขที่ใช้คือ factor volatility รายวัน market 1.00% momentum 0.35% tech 0.55% กับ correlation ระหว่าง market กับ momentum −0.20 market กับ tech +0.50 momentum กับ tech −0.10 และ idiosyncratic volatility ของ A B C D คือ 1.80% 2.20% 1.50% 2.60%</p>
+    <p>สัดส่วนที่ได้คือ idiosyncratic 91.65% และ factor 8.35% ซึ่งสูงมากเพราะพอร์ตมีหุ้นแค่สี่ตัว ในพอร์ตจริงที่มีหุ้นหลายร้อยตัว idiosyncratic variance จะกระจายหายไปเกือบหมด และสัดส่วนมักพลิกกลับเป็น factor 60 ถึง 80%</p>
+    <p>สังเกตว่าความเสี่ยงบวกกันแบบกำลังสอง ไม่ใช่บวกตรง ๆ \$48,063 กับ \$159,223 รวมกันได้ \$166,319 ไม่ใช่ \$207,286 นั่นคือการกระจายความเสี่ยงระหว่างสองแหล่งที่ไม่สัมพันธ์กัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — นับ parameter และดูว่าทางเลือกอีกทางพังอย่างไร</h4>
+  <p>ขยายเป็นขนาดจริง หุ้น 500 ตัว factor 60 ตัว ข้อมูล 251 วัน นับว่าแต่ละทางต้องประมาณกี่ตัว แล้วดูผลที่ตามมาของทางที่ดูเหมือนสมบูรณ์แบบกว่า</p>
+  <div class="math">\[
+\begin{aligned}
+\text{covariance ตรง ๆ}&:\ \frac{n(n+1)}{2}=\frac{500\times501}{2}=125{,}250\\[4pt]
+\text{factor model}&:\ \underbrace{\frac{m(m+1)}{2}}_{1{,}830}+\underbrace{n}_{500}=2{,}330\\[4pt]
+\frac{125{,}250}{2{,}330}&=53.8\ \text{เท่า}\\[6pt]
+\operatorname{rank}\big(\hat{\boldsymbol\Omega}_r\big)&\le T=251\\[2pt]
+\Rightarrow\ &\text{มีอย่างน้อย }500-251=249\text{ พอร์ตที่}\ \mathbf w^{\mathsf T}\hat{\boldsymbol\Omega}_r\mathbf w=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>บรรทัดล่างสุดคือเหตุผลที่แท้จริง ไม่ใช่แค่เรื่องประหยัด covariance matrix ที่คำนวณจาก 251 วันมี rank ไม่เกิน 251 พอร์ตอย่างน้อย 249 พอร์ตจึงได้ความเสี่ยงที่คำนวณได้เป็นศูนย์พอดี</p>
+    <p>ผลที่ตามมาร้ายแรงกว่าที่คิด optimizer ในบทที่ 30 จะหาพอร์ตที่ให้ผลตอบแทนคาดหวังสูงสุดต่อความเสี่ยง ถ้ามีพอร์ตที่ความเสี่ยงเป็นศูนย์ optimizer จะทุ่มเงินเข้าไปไม่จำกัด และรายงาน Sharpe Ratio ที่ไม่มีที่สิ้นสุด ทั้งที่พอร์ตนั้นเสี่ยงเต็มที่ในโลกจริง</p>
+    <p>factor model ไม่มีปัญหานี้เลย เพราะ $\boldsymbol\Omega_\epsilon$ เป็น diagonal ที่ทุกตัวเป็นบวก ผลรวมจึงเป็น positive definite เสมอ ไม่ว่าข้อมูลจะสั้นแค่ไหน และตัวผกผันของมันมีอยู่จริงเสมอ</p>
+    <p>ข้อสังเกตเรื่องการนับ loading 30,000 ตัวไม่ได้อยู่ในรายการที่ต้องประมาณ เพราะมันคือข้อมูล เรารู้ว่าหุ้นตัวไหนอยู่อุตสาหกรรมไหนและมี momentum เท่าไร โดยไม่ต้องเดาจากผลตอบแทน นั่นคือสิ่งที่ทำให้ fundamental factor model ในบทที่ 27 ต่างจาก statistical factor model ในบทที่ 28</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 26.1c — จำนวนตัวเลขที่ต้องประมาณ เทียบกับข้อมูลที่มี</h4>
+  <img src="../figures/26.1-3.svg" alt="Figure 26.1c — จำนวนตัวเลขที่ต้องประมาณ เทียบกับข้อมูลที่มี" loading="lazy">
+  <figcaption>
+    <p>แกนนอนคือจำนวนหุ้น แกนตั้งคือจำนวนตัวเลขที่ต้องประมาณ บนสเกล logarithm เส้นบนโตแบบกำลังสองตามจำนวนหุ้น เส้นล่างโตแบบเชิงเส้น เส้นประคือจำนวนข้อมูลที่มีจริงใน 251 วัน จุดตัดคือจุดที่ covariance ตรง ๆ เริ่มมีพอร์ตที่ความเสี่ยงคำนวณได้เป็นศูนย์</p>
+  </figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>Figure 26.1d — พอร์ตที่แบบจำลองบอกว่าไม่มีความเสี่ยง แต่จริง ๆ มี</h4>
+  <img src="../figures/26.1-4.svg" alt="Figure 26.1d — พอร์ตที่แบบจำลองบอกว่าไม่มีความเสี่ยง แต่จริง ๆ มี" loading="lazy">
+  <figcaption>
+    <p>สร้างหุ้น 500 ตัวจาก factor model จริง แล้วหาพอร์ตที่ covariance matrix จากข้อมูล 251 วันบอกว่าความเสี่ยงเป็นศูนย์ แท่งซ้ายคือความเสี่ยงที่แบบจำลองนั้นทำนาย ซึ่งเป็นศูนย์ แท่งขวาคือความเสี่ยงจริงของพอร์ตเดียวกัน ส่วนแท่งกลางคือสิ่งที่ factor model ทำนายไว้ ซึ่งใกล้ความจริง</p>
+  </figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>กับดัก: สับสนระหว่าง dollar-neutral กับ risk-neutral และคิดว่า loading ต้องประมาณ</h4>
+  <p>กับดักแรกคือกับดักที่ขั้นที่ 4 แสดงให้เห็น พอร์ตที่ NMV เป็นศูนย์และ exposure ต่อ market เป็นศูนย์ ยังมี exposure ต่อ momentum ได้ \$13.8 ล้านบน GMV แค่ \$14 ล้าน ซึ่งเท่ากับเกือบร้อยเปอร์เซ็นต์ นี่ไม่ใช่กรณีประดิษฐ์ พอร์ตที่สร้างจากการเลือกหุ้นทีละตัวมักสะสม exposure แบบนี้โดยไม่มีใครตั้งใจ เพราะคนที่เลือกหุ้นเลือกตามเหตุผลที่สัมพันธ์กับ style factor อยู่แล้ว</p>
+  <p>กับดักที่สองคือคิดว่า loading เป็นสิ่งที่ต้องประมาณจากข้อมูลผลตอบแทน ใน fundamental factor model มันไม่ใช่ loading ของ industry มาจากการจัดประเภทบริษัท loading ของ momentum มาจากผลตอบแทน 12 เดือนที่ผ่านมา ทั้งหมดรู้ได้ตั้งแต่ก่อนวันเทรดเริ่ม สิ่งที่ประมาณคือ factor return ซึ่งเป็นตัวเลขแค่ 60 ตัวต่อวัน</p>
+  <p>กับดักที่สามคือจำวันที่ข้อมูลใช้ได้จริงผิด ผู้ให้บริการส่วนใหญ่ประทับวันที่ของข้อมูลไว้ที่ สิ้น ช่วง ไม่ใช่ต้นช่วง แปลว่า loading ที่ควรใช้อธิบายผลตอบแทนของวันหนึ่ง คือ loading ที่ประทับวันก่อนหน้า การเผลอเลื่อนไปหนึ่งวันทำให้ผลตอบแทนของวันนั้นเองไหลเข้าไปอยู่ใน loading และสร้าง alpha ปลอมที่ดูดีมาก นี่คือกับดักที่หัวข้อ 29.1 จะกลับมาพูดถึงอีกครั้ง</p>
+</section>
+
+<section class="table">
+  <h4>ข้อจำกัด: สมการนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
+  <table>
+    <thead><tr><th>เรื่อง</th><th>สมการนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
+    <tbody>
+      <tr><td>ความสัมพันธ์</td><td>เป็นเชิงเส้น</td><td>มีความไม่เป็นเชิงเส้นอยู่บ้าง โดยเฉพาะในวันวิกฤต</td><td>แบบจำลองอธิบายวันปกติดีกว่าวันที่สำคัญที่สุด</td></tr>
+      <tr><td>idiosyncratic return</td><td>ไม่สัมพันธ์กันเลยระหว่างหุ้น</td><td>หุ้นคู่แฝดและหุ้นหลายชั้นราคายังสัมพันธ์กันสูง</td><td>ความเสี่ยงที่รายงานต่ำกว่าจริง ต้องจัดการอย่างในหัวข้อ 27.4</td></tr>
+      <tr><td>loading</td><td>รู้แน่นอนและคงที่ในช่วงนั้น</td><td>เปลี่ยนทุกวันและมีความคลาดเคลื่อนในการจัดประเภท</td><td>exposure ที่รายงานมีความคลาดเคลื่อนติดมาด้วย</td></tr>
+      <tr><td>จำนวน factor</td><td>ครบถ้วน ไม่มีตัวที่ขาดไป</td><td>มีแรงร่วมที่ยังไม่ได้ใส่เสมอ</td><td>ความเสี่ยงที่ขาดไปโผล่เป็นความสัมพันธ์ใน idiosyncratic ซึ่งตรวจได้</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>แถวสุดท้ายคือเครื่องมือวินิจฉัยที่ใช้ได้จริง ถ้า factor ขาดไป มันจะทิ้งร่องรอยไว้ใน covariance ของ idiosyncratic return ซึ่งเป็นสิ่งที่หัวข้อ 27.4 สอนวิธีมองหา</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>ตรวจทุกตัวเลขของหัวข้อนี้</summary>
+    <pre><code>import numpy as np
+
+B = np.array([[1, 1.2, 1], [1, -0.4, 1], [1, 0.6, 0], [1, -1.4, 0]], float)
+f = np.array([0.008, -0.005, 0.003])
+eps = np.array([0.004, -0.0025, 0.0015, -0.006])
+w = np.array([3.0, -2.0, 4.0, -5.0])          # in USD million
+
+# step 1: asset returns
+r = B @ f + eps
+assert np.allclose(r * 100, [0.90, 1.05, 0.65, 0.90])
+assert abs((B @ f)[0] * 100 - 0.50) &lt; 1e-12   # step 2, stock A's factor part
+
+# step 3: the cross-section as a sum of columns
+cols = sum(B[:, j] * f[j] for j in range(3))
+assert np.allclose(cols, B @ f)
+assert np.allclose(cols * 100, [0.50, 1.00, 0.50, 1.50])
+
+# step 4: exposures and the PnL split
+b = B.T @ w
+assert np.allclose(b, [0.0, 13.8, 1.0])
+assert w.sum() == 0.0 and np.abs(w).sum() == 14.0      # dollar-neutral, GMV 14M
+fp, ip = b @ f * 1e6, w @ eps * 1e6
+assert abs(fp - (-66_000)) &lt; 1e-6 and abs(ip - 53_000) &lt; 1e-6
+assert abs(fp + ip - (w @ r) * 1e6) &lt; 1e-6             # the two routes agree
+assert abs((w @ r) * 1e6 - (-13_000)) &lt; 1e-6
+assert abs(b[1]) / np.abs(w).sum() &gt; 0.98              # 98% of GMV in one hidden bet
+
+# step 5: risk, also in two pieces
+sf = np.array([0.010, 0.0035, 0.0055])
+C = np.array([[1, -0.20, 0.50], [-0.20, 1, -0.10], [0.50, -0.10, 1]])
+Of = np.outer(sf, sf) * C
+se = np.array([0.018, 0.022, 0.015, 0.026])
+vf, vi = b @ Of @ b, float((w ** 2 * se ** 2).sum())
+assert abs(vf - 2.31001e-3) &lt; 1e-9 and abs(vi - 2.53520e-2) &lt; 1e-9
+assert abs(np.sqrt(vf) * 1e6 - 48_063) &lt; 1
+assert abs(np.sqrt(vi) * 1e6 - 159_223) &lt; 1
+assert abs(np.sqrt(vf + vi) * 1e6 - 166_319) &lt; 1
+assert abs(vi / (vf + vi) - 0.9165) &lt; 1e-4
+Or = B @ Of @ B.T + np.diag(se ** 2)                   # the same number the long way
+assert abs(np.sqrt(w @ Or @ w) - np.sqrt(vf + vi)) &lt; 1e-15
+assert np.sqrt(vf + vi) &lt; np.sqrt(vf) + np.sqrt(vi)    # risks add in quadrature
+
+# step 6: the parameter count and the rank trap
+n, m, T = 500, 60, 251
+assert n * (n + 1) // 2 == 125_250
+assert m * (m + 1) // 2 + n == 2_330
+assert abs(125_250 / 2_330 - 53.755) &lt; 1e-3
+rng = np.random.default_rng(2)
+Bn = rng.normal(0, 1, (n, m))
+R = Bn @ rng.normal(0, 0.01, (m, T)) + rng.normal(0, 0.02, (n, T))
+emp = R @ R.T / T
+ev = np.linalg.eigvalsh(emp)
+assert np.sum(ev &lt; 1e-12) &gt;= n - T                     # at least 249 zero directions
+null = np.linalg.svd(R.T)[2][T:]                       # portfolios the data cannot see
+w0 = null[0]
+assert abs(w0 @ emp @ w0) &lt; 1e-12                      # predicted risk: exactly zero
+true = Bn @ (np.eye(m) * 1e-4) @ Bn.T + np.eye(n) * 4e-4
+assert np.sqrt(w0 @ true @ w0) &gt; 0.01                  # real risk: not zero at all</code></pre>
+  </details>
+  <div class="note">
+    <p>บล็อกสุดท้ายสร้างหุ้น 500 ตัวจาก factor model จริง แล้วหาพอร์ตในทิศที่ข้อมูล 251 วันมองไม่เห็น covariance matrix จากข้อมูลบอกว่าความเสี่ยงของพอร์ตนั้นเป็นศูนย์เป๊ะ ๆ ขณะที่ความเสี่ยงจริงของมันมากกว่า 1% ต่อวัน นี่ไม่ใช่การประมาณที่ไม่แม่น แต่เป็นการพังทั้งชิ้น</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>ก่อนไปต่อ</h4>
+  <p>ตอนนี้เรามีสมการและรู้วิธีอ่านมันสามแบบแล้ว คำถามถัดไปคือ ผลตอบแทนคาดหวังที่เรียกว่า alpha นั้นอยู่ตรงไหนของภาพนี้ และทำไมบางส่วนของมันถึงมีค่ามากกว่าส่วนอื่นอย่างมหาศาล</p>
+</section>
+
+<section class="takeaways">
+  <h4>สรุปที่ใช้ได้จริง</h4>
+  <ul>
+    <li>$\mathbf r_t=\boldsymbol\alpha+\mathbf B\mathbf f_t+\boldsymbol\epsilon_t$ แยกผลตอบแทนเป็นส่วนที่คาดหวัง ส่วนที่มาจากแรงร่วม และส่วนที่เป็นของหุ้นตัวนั้น ทั้ง Part นี้ตั้งอยู่บนสมการเดียวนี้</li>
+    <li>อ่านได้สามแบบ ทีละหุ้นเป็นผลคูณจุด ทั้งตลาดเป็นผลรวมของเสาไม่กี่เสา และทั้งพอร์ตยุบเหลือ exposure $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ ที่ยาวเท่าจำนวน factor ไม่ใช่จำนวนหุ้น</li>
+    <li>dollar-neutral ไม่เท่ากับ risk-neutral พอร์ตตัวอย่างมี NMV เป็นศูนย์และ exposure ต่อ market เป็นศูนย์ แต่มี exposure ต่อ momentum \$13.8 ล้านบน GMV \$14 ล้าน และเสียเงินจากตรงนั้น</li>
+    <li>$\boldsymbol\Omega_r=\mathbf B\boldsymbol\Omega_f\mathbf B^{\mathsf T}+\boldsymbol\Omega_\epsilon$ ความเสี่ยงแยกเป็นสองก้อนและบวกกันแบบกำลังสอง \$48,063 กับ \$159,223 รวมได้ \$166,319 ไม่ใช่ \$207,286</li>
+    <li>ที่หุ้น 500 ตัว covariance ตรง ๆ ต้องประมาณ 125,250 ตัวแต่มีข้อมูล 251 วัน จึงมีพอร์ตอย่างน้อย 249 พอร์ตที่ความเสี่ยงคำนวณได้เป็นศูนย์ ส่วน factor model ประมาณ 2,330 ตัวและ positive definite เสมอ</li>
+  </ul>
+</section>
+</article>
+
+<nav class="book-nav bottom-nav">
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="25.5.html">25.5 EWMA, the Kalman Filter, and GARCH as EWMA with an Offset</a></div>
+  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="26.2.html">26.2 Alpha Spanned and Alpha Orthogonal</a></div>
+</nav>
+</div>
+</body>
+</html>

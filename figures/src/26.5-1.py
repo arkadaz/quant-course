@@ -1,0 +1,21 @@
+ax.axis('off')
+def box(x,y,w,h,txt,col,fs=7.5):
+    ax.add_patch(plt.Rectangle((x,y),w,h,fill=True,facecolor=col,alpha=.16,
+                               edgecolor=col,lw=1.6,zorder=2))
+    ax.text(x+w/2,y+h/2,txt,ha='center',va='center',fontsize=fs,zorder=3)
+def arrow(x1,y1,x2,y2,col=INK):
+    ax.annotate('',xy=(x2,y2),xytext=(x1,y1),arrowprops=dict(arrowstyle='->',color=col,lw=1.5))
+box(0.02,0.76,0.26,0.16,'all three columns\nat once',ACCENT)
+arrow(0.28,0.84,0.72,0.72)
+box(0.02,0.40,0.24,0.16,'old model first\n(market, momentum)',GOOD)
+box(0.30,0.40,0.26,0.16,'remove the part\nthe old model has',GOOD)
+box(0.02,0.06,0.24,0.16,'old model first',BAD)
+box(0.30,0.06,0.26,0.16,'use the raw\ncharacteristic',BAD)
+arrow(0.26,0.48,0.30,0.48,GOOD); arrow(0.56,0.48,0.72,0.62,GOOD)
+arrow(0.26,0.14,0.30,0.14,BAD);  arrow(0.56,0.14,0.72,0.30,BAD)
+box(0.72,0.56,0.26,0.20,'0.007496',INK,10)
+box(0.72,0.16,0.26,0.20,'0.005707',BAD,10)
+ax.text(0.85,0.79,'the right answer',ha='center',fontsize=8,color=INK)
+ax.text(0.85,0.10,'24% too low',ha='center',fontsize=8,color=BAD)
+ax.set_xlim(0,1);ax.set_ylim(0,1)
+ax.set_title('Two routes agree to the last digit; a third quietly does not',loc='left')
