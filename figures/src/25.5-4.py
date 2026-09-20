@@ -1,0 +1,11 @@
+lam=np.linspace(0.80,0.995,400)
+hl=-np.log(2)/np.log(lam)
+ax.semilogy(lam,hl,color=ACCENT,lw=2.4)
+for L,lab in ((0.90,'0.90'),(0.94,'0.94'),(0.97,'0.97'),(0.99,'0.99')):
+    y=-np.log(2)/np.log(L)
+    ax.plot(L,y,'o',color=WARM,ms=6)
+    ax.annotate(f'{lab} -> {y:.1f} d',xy=(L,y),xytext=(-52,4),textcoords='offset points',fontsize=8,color=WARM)
+ax.axvspan(0.94,0.97,color=GRID,alpha=.7,zorder=0)
+ax.annotate('0.03 apart, but 11 days apart',xy=(0.955,16),fontsize=7.5,color=MUTED,ha='center')
+ax.set_xlabel('decay factor lambda');ax.set_ylabel('half-life (trading days)')
+ax.set_title('Near 1, a small change in lambda is a large change in memory',loc='left')
