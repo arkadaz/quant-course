@@ -1,12 +1,8 @@
-T = np.linspace(0, 60, 601)
-drift = 0.0808 * T * 100
-noise = 2 * 0.28 * np.sqrt(T) * 100
-ax.plot(T, drift, color=ACCENT, lw=2, label='log drift: 8.08% x years')
-ax.plot(T, noise, color=WARM, lw=2, label='2 SD of noise: 2 x 28% x sqrt(years)')
-tx = (2 * 0.28 / 0.0808) ** 2
-ax.scatter([tx], [0.0808 * tx * 100], color=GOOD, zorder=3)
-ax.annotate(f'cross at {tx:.1f} years', (tx, 0.0808 * tx * 100), xytext=(10, -22), textcoords='offset points', fontsize=8)
-ax.set_xlabel('Horizon (years)')
-ax.set_ylabel('Percent (log return)')
-ax.set_title('Drift grows like t, noise like sqrt(t)', loc='left')
-ax.legend(loc='upper left', fontsize=8)
+x=np.linspace(0,6,301);boundary=10.8-1.2*x;mask=(boundary<=6)&(boundary>=0)
+ax.fill_between(x,np.maximum(boundary,0),6,where=mask,color=GOOD,alpha=.18)
+ax.plot(x,boundary,color=ACCENT,lw=2,label='beta boundary')
+for cost,col in [(1260,BAD),(1350,WARM),(1440,MUTED)]:
+    ax.plot(x,(cost-180*x)/90,color=col,ls='--',lw=1.3,label=f'C = USD {cost:,}')
+ax.scatter([4],[6],color=BAD,s=45,zorder=4)
+ax.set_xlim(0,6.4);ax.set_ylim(0,6.4);ax.set_xlabel('Short QQQ, $x_Q$ (USD million)');ax.set_ylabel('Short SPY, $x_S$ (USD million)')
+ax.legend(loc='lower left',fontsize=7);ax.set_title('The cheapest feasible contour selects the hedge',loc='left')

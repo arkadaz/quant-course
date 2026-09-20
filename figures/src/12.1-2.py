@@ -1,2 +1,2 @@
-n=np.array([8,16,32,64,128,256,512,1024]);sd=np.sqrt(2/n)
-ax.loglog(n,sd,color=WARM,lw=2,marker='o');ax.set_xlabel('Partition count n');ax.set_ylabel('SD of $Q_n$ (years)');ax.set_title('Quadratic-variation noise shrinks as $n^{-1/2}$',loc='left');ax.grid(True,which='both',alpha=.25)
+a=np.linspace(0,1,201);var=.04*a**2+.012*a*(1-a)+.01*(1-a)**2;chord=a*.04+(1-a)*.01
+ax.plot(a,var,color=ACCENT,lw=2,label='portfolio variance');ax.plot(a,chord,color=WARM,ls='--',label='chord');ax.fill_between(a,var,chord,color=GOOD,alpha=.18);ax.set_xlabel('Weight in asset 1');ax.set_ylabel('Annual variance');ax.legend();ax.set_title('A convex risk curve stays below every chord',loc='left')

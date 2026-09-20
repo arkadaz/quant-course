@@ -1,8 +1,3 @@
-u=np.array([1.,2.]); v=2*u
-ax.quiver(0,0,u[0],u[1],angles='xy',scale_units='xy',scale=1,color=ACCENT,width=0.010,label='u')
-ax.quiver(0,0,v[0],v[1],angles='xy',scale_units='xy',scale=1,color=BAD,width=0.010,label='v = 2u')
-ax.plot([-1.2,2.5],[-2.4,5.0],color=MUTED,ls='--',lw=1)
-ax.set_aspect('equal'); ax.set_xlim(-1.4,2.8); ax.set_ylim(-2.7,5.4)
-ax.set_xlabel('Exposure axis 1'); ax.set_ylabel('Exposure axis 2')
-ax.legend(loc='upper left')
-ax.set_title('One direction, two position sizes',loc='left')
+n=np.linspace(1,70,300)
+for ir,c in zip([.25,.5,1.0],SERIES[:3]): ax.plot(n,ir*np.sqrt(n),color=c,lw=2,label=f'IR={ir:.2f}')
+ax.axhline(2,color=BAD,lw=1.2,ls='--',label='t=2'); ax.set(xlabel='Independent years',ylabel='Expected t-statistic',ylim=(0,8.6)); ax.legend(fontsize=7); ax.grid(alpha=.25)

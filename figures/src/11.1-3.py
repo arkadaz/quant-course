@@ -1,13 +1,6 @@
-mu, sig, dt = 0.12, 0.28, 1 / 252
-z = np.array([0.83, -1.42, 0.05])
-s = 100 * np.exp(np.cumsum((mu - sig**2 / 2) * dt + sig * np.sqrt(dt) * z))
-s = np.r_[100, s]
-x = np.arange(4)
-ax.plot(x, s, marker='o', color=ACCENT)
-for i, v in enumerate(s):
-    lab = 'start' if i == 0 else f'Z={z[i-1]:+.2f}'
-    ax.annotate(f'{v:.2f}\n{lab}', (i, v), xytext=(0, 10) if i != 2 else (0, -28), textcoords='offset points', ha='center', fontsize=8)
-ax.set_ylim(98.0, 102.6)
-ax.set_xticks(x, ['Start', 'Day 1', 'Day 2', 'Day 3'])
-ax.set_ylabel('Price (USD/share)')
-ax.set_title('Each day needs only today\'s price and one new Z', loc='left')
+labels=['Initial beta','QQQ reduction','SPY reduction','Residual beta']
+vals=[1.10,0.40,0.50,0.20]
+ax.bar(labels,vals,color=[ACCENT,WARM,GOOD,BAD],width=.58)
+for i,v in enumerate(vals):ax.text(i,v+.035,f'{v:.2f}',ha='center',fontsize=9)
+ax.set_ylim(0,1.25);ax.set_ylabel('Market beta')
+ax.set_title('1.10 - 0.40 - 0.50 = 0.20',loc='left')

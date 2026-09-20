@@ -1,4 +1,1 @@
-
-flows=np.array([300.,-235.,-4962.640274,4900.993367]);labels=['Short call','Long put','Long prepaid','Short bond']
-ax.bar(labels,flows,color=[GOOD,BAD,BAD,GOOD]);ax.axhline(0,color=INK,lw=1);ax.scatter([3.7],[flows.sum()],color=ACCENT,s=70,label=f'Net {flows.sum():.4f}')
-ax.set_ylabel('Initial cash flow (SPX points)');ax.set_xlim(-.6,4.2);ax.tick_params(axis='x',rotation=12);ax.legend()
+t=np.linspace(0,5,300);r0=.015;th=.03;k=.8;sig=.012;m=th+(r0-th)*np.exp(-k*t);sd=sig*np.sqrt((1-np.exp(-2*k*t))/(2*k));ax.plot(t,m*100,color=ACCENT,lw=2,label='conditional mean');ax.fill_between(t,(m-1.645*sd)*100,(m+1.645*sd)*100,color=ACCENT,alpha=.18,label='90% band, Vasicek');ax.plot(t,(m-1.645*sig*np.sqrt(t))*100,color=MUTED,ls=':',lw=1.4,label='90% band, no pull-back');ax.plot(t,(m+1.645*sig*np.sqrt(t))*100,color=MUTED,ls=':',lw=1.4);ax.axhline(th*100,color=GOOD,ls='--',label='long-run level 3%');ax.axhline(0,color=BAD,lw=.8);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Short rate (%)');ax.set_title('Mean reversion caps the uncertainty',loc='left');ax.set_ylim(-2.2,10.5);ax.legend(fontsize=7,loc='upper left',ncol=2,framealpha=.95)

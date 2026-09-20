@@ -1,1 +1,4 @@
-df=np.arange(1,61); crit=stats.t.ppf(.975,df); ax.plot(df,crit,color=SERIES[1],lw=2,label='Student t 95%'); ax.axhline(1.96,color=BAD,lw=1.3,ls='--',label='Normal 95%'); ax.scatter([3],[stats.t.ppf(.975,3)],color=WARM,zorder=3); ax.set(xlabel='Degrees of freedom',ylabel='Critical value',ylim=(1.8,13)); ax.legend(fontsize=7); ax.grid(alpha=.25)
+
+flows=np.array([300.,-235.,-4962.640274,4900.993367]);labels=['Short call','Long put','Long prepaid','Short bond']
+ax.bar(labels,flows,color=[GOOD,BAD,BAD,GOOD]);ax.axhline(0,color=INK,lw=1);ax.scatter([3.7],[flows.sum()],color=ACCENT,s=70,label=f'Net {flows.sum():.4f}')
+ax.set_ylabel('Initial cash flow (SPX points)');ax.set_xlim(-.6,4.2);ax.tick_params(axis='x',rotation=12);ax.legend()

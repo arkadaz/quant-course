@@ -1,6 +1,3 @@
-labels=['Equal 40/40/40','60/-40/20']
-vals=[np.sqrt(3*.4**2),np.sqrt(.6**2+.4**2+.2**2)]
-ax.bar(labels,vals,color=[GOOD,ACCENT],width=.5)
-for i,v in enumerate(vals):ax.text(i,v+.025,f'{v:.4f}',ha='center',fontsize=10,color=INK)
-ax.set_ylim(0,.9);ax.set_ylabel('L2 norm; gross = 1.20')
-ax.set_title('Same gross, higher concentration',loc='left')
+rng=np.random.default_rng(144); n=100; se=.20; est=.08+rng.normal(0,se,n); lo=est-1.96*se; hi=est+1.96*se; cover=(lo<=.08)&(.08<=hi)
+for i in range(n): ax.plot([lo[i],hi[i]],[i,i],color=GOOD if cover[i] else BAD,lw=.8)
+ax.axvline(.08,color=INK,lw=1.2); ax.set(xlabel='Annual expected return',ylabel='Repeated samples',xlim=(-.75,.9)); ax.grid(alpha=.18)

@@ -1,12 +1,5 @@
-m, s = 0.10 - 0.25**2 / 2, 0.25
-for S, col in ((100, ACCENT), (20, WARM)):
-    d = np.linspace(-S * 0.6, S * 1.2, 800)
-    R = 1 + d / S
-    pdf = stats.lognorm.pdf(R, s=s, scale=np.exp(m)) / S
-    sd = S * np.exp(0.10) * np.sqrt(np.exp(0.0625) - 1)
-    ax.plot(d, pdf, color=col, lw=2, label=f'start {S} USD: SD {sd:.2f} USD')
-ax.axvline(0, color=MUTED, lw=.8)
-ax.set_xlabel('Dollar change over one year (USD)')
-ax.set_ylabel('Density')
-ax.set_title('Same ratio, very different dollar spread', loc='left')
-ax.legend(fontsize=8)
+labels=['Primal optimum','Dual optimum'];vals=[1260,1260]
+ax.bar(labels,vals,color=[ACCENT,GOOD],width=.52)
+for i,v in enumerate(vals):ax.text(i,v+35,f'USD {v:,}',ha='center',fontsize=11,weight='bold')
+ax.set_ylim(0,1450);ax.set_ylabel('Objective value (USD)')
+ax.set_title('Strong duality: both ledgers close at the same value',loc='left')

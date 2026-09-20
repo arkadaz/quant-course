@@ -1,1 +1,5 @@
-T=np.linspace(.25,12,300); t=1.2*np.sqrt(T); ax.plot(T,t,color=SERIES[1],lw=2); ax.axhline(2,color=WARM,lw=1.2,ls='--'); ax.axhline(3,color=BAD,lw=1.2,ls='--'); ax.scatter([(2/1.2)**2,(3/1.2)**2],[2,3],color=[WARM,BAD],zorder=3); ax.set(xlabel='Independent years',ylabel='Expected t-statistic',ylim=(0,4.4)); ax.grid(alpha=.25)
+
+k=np.linspace(-.28,.24,240)
+for T,c in zip([.08,.25,1.0],[WARM,ACCENT,MUTED]):
+ iv=.20+.06*np.exp(-2*T)-.12*k+.15*k*k;ax.plot(k,100*iv,color=c,label=f'{T:.2f}y')
+ax.set_xlabel('Log-moneyness log(K/F)');ax.set_ylabel('Implied volatility (%)');ax.legend(title='Maturity')

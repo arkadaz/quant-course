@@ -1,1 +1,6 @@
-rng=np.random.default_rng(731);n=1200;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))];s=100*np.exp(.04*t+.25*w);ax.plot(t,s,color=ACCENT);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('Continuous path, rough local movement',loc='left')
+U=np.linspace(3.6,8.0,160);cost=1620-60*U
+ax.plot(U,cost,color=ACCENT,lw=2)
+ax.scatter([6,7],[1260,1200],color=[BAD,GOOD],s=48,zorder=4)
+ax.annotate('USD 1M more capacity\nsaves USD 60',xy=(7,1200),xytext=(6.55,1370),arrowprops=dict(arrowstyle='->',color=MUTED),fontsize=8)
+ax.set_xlabel('SPY capacity, $U_S$ (USD million)');ax.set_ylabel('Optimal cost (USD)')
+ax.set_title('Local slope = -USD 60 per additional USD 1M of SPY capacity',loc='left')

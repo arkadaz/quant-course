@@ -1,3 +1,6 @@
-x=np.linspace(-2.8,2.0,260);y=np.linspace(-1.4,2.2,260);X,Y=np.meshgrid(x,y);Z=X**2+3*X*Y+Y**3
-ax.contour(X,Y,Z,levels=np.linspace(-5,5,17),cmap='coolwarm');ax.scatter([0],[0],color=BAD,s=48,label='saddle A');ax.scatter([-2.25],[1.5],color=GOOD,s=48,label='local min B')
-ax.set_xlabel('$x_1$');ax.set_ylabel('$x_2$');ax.legend();ax.set_title('Zero gradient does not choose the geometry',loc='left')
+labels=['Success','Ladder failure'];probs=np.array([511/512,1/512]);pnl=np.array([1000,-511000]);weighted=probs*pnl
+x=np.arange(2);ax.bar(x,weighted,color=[GOOD,BAD],width=0.55);ax.axhline(0,color=INK,lw=0.8)
+ax.set_xticks(x,labels);ax.set_ylabel('Probability-weighted P&L (USD)')
+for i,v in enumerate(weighted):ax.text(i,v+(35 if v>=0 else -35),f'{v:+,.2f}',ha='center',va='bottom' if v>=0 else 'top')
+ax.set_title('99.8047% success still nets to zero expectation',fontsize=9,loc='left')
+ax.set_ylim(-1200,1200)

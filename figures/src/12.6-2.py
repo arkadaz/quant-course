@@ -1,4 +1,6 @@
-s=np.linspace(35,230,700);s0=100;sig=.28;T=1
-for drift,col,label in [(.12,ACCENT,'physical P: 47.93% above 110'),(.02,WARM,'risk-neutral Q: 34.13% above 110')]:
- m=np.log(s0)+(drift-.5*sig**2)*T;ax.plot(s,stats.lognorm.pdf(s,s=sig,scale=np.exp(m)),color=col,lw=2,label=label)
-ax.axvline(110,color=BAD,ls='--',label='USD 110 threshold');ax.set_xlabel('Terminal price after 1 year (USD/share)');ax.set_ylabel('Density');ax.set_title('Drift moves; volatility does not',loc='left');ax.legend(fontsize=8)
+labels=['Stocks','Bonds','Tech'];slack=np.array([.105263,.894737,0]);mult=np.array([0,0,.009211]);x=np.arange(3)
+ax.bar(x-.18,slack,.36,color=ACCENT,label='weight (slack)');ax2=ax.twinx();ax2.bar(x+.18,mult,.36,color=BAD,label='multiplier u')
+ax.set_ylim(0,1);ax2.set_ylim(0,.012);ax2.grid(False);ax.set_ylabel('Weight');ax2.set_ylabel('Multiplier u')
+ax2.annotate('$u_3=0.00921$',xy=(2.18,.009211),xytext=(1.2,.0108),arrowprops=dict(arrowstyle='->',color=BAD),color=BAD)
+ax.set_xticks(x,labels);h1,l1=ax.get_legend_handles_labels();h2,l2=ax2.get_legend_handles_labels();ax.legend(h1+h2,l1+l2,loc='upper left')
+ax.set_title('Only a binding lower bound carries a price',loc='left')

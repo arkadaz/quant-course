@@ -1,1 +1,3 @@
-rng=np.random.default_rng(1207);n=30000;z=rng.normal(size=n);s=200*np.exp((.04-.5*.30**2)+.30*z);x=np.exp(-.04)*(s*s/200);idx=np.unique(np.geomspace(50,n,90).astype(int));run=np.cumsum(x);est=run[idx-1]/idx;ax.semilogx(idx,est,color=ACCENT,lw=1.7,label='running Monte Carlo');ax.axhline(200*np.exp(.13),color=GOOD,ls='--',label='analytic USD 227.77');ax.set_xlabel('Path count');ax.set_ylabel('Estimated value (USD)');ax.set_title('Forward averaging meets the closed form',loc='left');ax.legend(fontsize=8)
+gd=np.array([.300000,.253791,.242686,.240052,.239429,.239282]);nt=np.array([.300000,.239141,.239236]);root=.239236
+ax.semilogy(np.arange(len(gd)),np.abs(gd-root)+1e-8,'o-',color=ACCENT,label='gradient descent');ax.semilogy(np.arange(len(nt)),np.abs(nt-root)+1e-8,'o-',color=GOOD,label='Newton')
+ax.set_xlabel('Iteration');ax.set_ylabel('Absolute volatility error');ax.legend();ax.set_title('Curvature information can collapse the error faster',loc='left')

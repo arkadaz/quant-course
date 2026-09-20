@@ -1,4 +1,4 @@
-n=30;j=np.arange(n+1);share=(j+1)/(n+2);polya=np.full(n+1,1/(n+1));coin=stats.binom.pmf(j,n,0.5)
-ax.bar(share-0.006,polya,width=0.012,color=ACCENT,alpha=0.75,label="Polya urn")
-ax.bar(j/n+0.006,coin,width=0.012,color=WARM,alpha=0.65,label='independent coin')
-ax.set_xlabel('Red share');ax.set_ylabel('Probability mass');ax.set_xlim(0,1);ax.legend(loc='upper left')
+q=np.linspace(.001,1,500);ax.plot(12*q,np.sqrt(q),color=ACCENT,lw=2,label='correlation')
+ax.plot(12*q,q,color=GOOD,lw=2,label='$R^2$')
+ax.scatter([1,1],[np.sqrt(1/12),1/12],color=[ACCENT,GOOD],s=40,zorder=4);ax.axvline(1,color=MUTED,ls='--',lw=1)
+ax.set_xlabel('Months observed');ax.set_ylabel('Relationship to full-year total');ax.set_ylim(0,1.05);ax.set_title('Overlap creates correlation without prediction',loc='left');ax.legend(loc='lower right')

@@ -1,5 +1,1 @@
-
-k=np.linspace(3000,7000,401);w=1/k**2
-ax.plot(k,w/w[np.argmin(abs(k-5000))],color=ACCENT)
-ax.axvline(5000,color=INK,ls='--',label='Forward 5,000')
-ax.set_xlabel('Strike (SPX points)');ax.set_ylabel('Weight relative to K=5,000');ax.legend()
+dt=np.array([1/4,1/8,1/16,1/32,1/64,1/128]);e=np.sqrt(dt);m=dt;ax.loglog(dt,e,color=BAD,lw=2,marker='o',label='Euler slope 1/2');ax.loglog(dt,m,color=GOOD,lw=2,marker='o',label='Milstein slope 1');ax.invert_xaxis();ax.set_xlabel('Time step $\Delta t$');ax.set_ylabel('Normalized strong error');ax.set_title('Milstein gains one pathwise order',loc='left');ax.legend(fontsize=8)

@@ -1,5 +1,1 @@
-rng=np.random.default_rng(632);m=500;n=180;h=.25;dt=h/n;start=.8;t=np.linspace(0,h,n+1);p=np.c_[np.full(m,start),start+np.cumsum(rng.normal(0,np.sqrt(dt),(m,n)),axis=1)]
-for i in range(25):ax.plot(t,p[i],color=ACCENT,alpha=.09,lw=.8)
-ax.plot(t,p.mean(axis=0),color=GOOD,lw=2.5,label='ensemble mean')
-ax.axhline(start,color=INK,ls='--',lw=1.1,label='current value')
-ax.set_xlabel('Future horizon');ax.set_ylabel('Process value');ax.set_title('Uncertainty grows while the conditional mean stays put',loc='left');ax.legend(loc='upper left')
+rng=np.random.default_rng(731);n=1200;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))];s=100*np.exp(.04*t+.25*w);ax.plot(t,s,color=ACCENT);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('Continuous path, rough local movement',loc='left')

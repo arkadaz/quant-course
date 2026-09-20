@@ -1,7 +1,13 @@
-A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
-ax.imshow(A,cmap='Blues',vmin=0,vmax=1.6)
-ax.set_xticks([0,1],['Market','Quality'])
-ax.set_yticks([0,1,2],['AAPL','MSFT','SPY'])
-for i in range(3):
-    for j in range(2): ax.text(j,i,f'{A[i,j]:.1f}',ha='center',va='center',color=INK,weight='bold')
-ax.set_title('A: assets by rows, factors by columns',fontsize=9,loc='left')
+u=np.array([2.0,0.7]); v=np.array([0.7,1.8])
+for a in [-1,0,1]:
+    for b in [-1,0,1]:
+        p=a*u+b*v
+        ax.plot(p[0],p[1],'o',color=ACCENT,alpha=0.55,ms=4)
+ax.quiver(0,0,u[0],u[1],angles='xy',scale_units='xy',scale=1,color=GOOD,width=0.008)
+ax.quiver(0,0,v[0],v[1],angles='xy',scale_units='xy',scale=1,color=WARM,width=0.008)
+ax.text(u[0]+.08,u[1],'u',color=GOOD,fontsize=10)
+ax.text(v[0]+.08,v[1],'v',color=WARM,fontsize=10)
+ax.set_aspect('equal')
+ax.set_xlim(-3.2,3.2); ax.set_ylim(-2.8,2.8)
+ax.set_xlabel('Exposure axis 1'); ax.set_ylabel('Exposure axis 2')
+ax.set_title('Independent vectors reach a two-dimensional span',loc='left')

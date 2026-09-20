@@ -1,4 +1,4 @@
-w=np.linspace(-3,3,400);lam=.1/.28;z=np.exp(-lam*w-.5*lam**2);ax.plot(w,z,color=ACCENT,lw=2);ax.axhline(1,color=MUTED,ls='--')
-for x in (-1,0,1):
-    y=np.exp(-lam*x-.5*lam**2);ax.scatter([x],[y],color=WARM,s=30,zorder=3);ax.text(x+.08,y+.12,f'{y:.4f}',fontsize=8)
-ax.set_xlabel('Physical Brownian terminal value $W_1$');ax.set_ylabel('Path weight $dQ/dP$');ax.set_title('Measure change reweights; it does not redraw',loc='left')
+labels=['Stocks','Bonds','Tech'];u=np.array([.171392,.893041,-.064433]);k=np.array([.105263,.894737,0]);x=np.arange(3);bw=.36
+ax.bar(x-bw/2,u*100,bw,color=WARM,label='shorting allowed');ax.bar(x+bw/2,k*100,bw,color=GOOD,label='long-only KKT');ax.axhline(0,color=INK,lw=1)
+ax.annotate('tech -6.44%',xy=(2-bw/2,-6.44),xytext=(1.35,-20),arrowprops=dict(arrowstyle='->',color=WARM),color=WARM)
+ax.set_xticks(x,labels);ax.set_ylabel('Weight (%)');ax.set_ylim(-28,100);ax.legend();ax.set_title('The mandate changes the active set',loc='left')

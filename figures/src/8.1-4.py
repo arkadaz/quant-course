@@ -1,10 +1,5 @@
-f=lambda w: 3*w**4-4*w**3-36*w**2; fp=lambda w: 12*w**3-12*w**2-72*w
-w=np.linspace(-3.0,4.0,500); ax.plot(w,f(w),color=MUTED,lw=1.6)
-for w0,c,lab in [(-1.0,WARM,'run a: start -1'),(1.0,GOOD,'run b: start +1')]:
-    path=[w0]
-    for _ in range(12): path.append(path[-1]-0.005*fp(path[-1]))
-    path=np.array(path); ax.plot(path,f(path),'o-',color=c,ms=4,lw=1.2,label=lab)
-    ax.annotate(f'profit {-f(path[-1]):.0f}M',xy=(path[-1],f(path[-1])),xytext=(path[-1]-0.6 if w0>0 else path[-1]-0.4,f(path[-1])-38),color=c,fontsize=9)
-ax.axvline(0,color=MUTED,ls='--',lw=1); ax.text(0.08,40,'ridge w = 0',color=MUTED,fontsize=9)
-ax.set_xlabel('Signal weight, $w$'); ax.set_ylabel('Backtest loss (USD million)'); ax.set_ylim(-235,80)
-ax.legend(loc='upper left'); ax.set_title('Same code, same data: the start picks the valley',loc='left')
+vals=[570.60,570.00];labs=['P: real-world forecast','Q: pricing forecast'];cols=[WARM,ACCENT]
+ax.bar(labs,vals,color=cols,width=0.55);ax.axhline(570,color=INK,ls='--',lw=1.2,label='current price $570')
+ax.set_ylim(569.4,571.0);ax.set_ylabel('One-step expectation (USD)')
+for i,v in enumerate(vals):ax.text(i,v+0.05,f'${v:,.2f}',ha='center',fontsize=9)
+ax.legend(loc='upper right');ax.tick_params(axis='x',labelrotation=0)

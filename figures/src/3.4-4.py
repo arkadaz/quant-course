@@ -1,0 +1,1 @@
+T=np.linspace(1,25,300); hw=1.96*.20/np.sqrt(T); ax.plot(T,100*hw,color=SERIES[2],lw=2); ax.scatter([1,4,16],[39.2,19.6,9.8],color=[BAD,WARM,GOOD],zorder=3); ax.set(xlabel='Independent years',ylabel='95% half-width (percentage points)',ylim=(0,43)); ax.grid(alpha=.25)

@@ -1,4 +1,1 @@
-
-ST=np.linspace(3500,6500,301);K=5000.;cp=np.maximum(ST-K,0)-np.maximum(K-ST,0)
-ax.plot(ST,cp,color=ACCENT,lw=3,label='Call minus put');ax.plot(ST,ST-K,'--',color=WARM,label='Forward payoff')
-ax.axhline(0,color=INK,lw=1);ax.set_xlabel('SPX at expiry');ax.set_ylabel('Payoff (points)');ax.legend()
+x=np.linspace(0,1,250);ax.plot(x,.25*x,color=ACCENT,lw=2,label='GBM: proportional');ax.plot(x,.12*np.ones_like(x),color=WARM,lw=2,label='Vasicek: constant');ax.plot(x,.14*np.sqrt(x),color=GOOD,lw=2,label='CIR: square root');ax.set_xlabel('Normalized state level');ax.set_ylabel('Diffusion magnitude');ax.set_title('One coefficient creates three model families',loc='left');ax.legend(fontsize=8)

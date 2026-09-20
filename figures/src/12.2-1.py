@@ -1,2 +1,2 @@
-labels=['ordinary chain rule','Itô chain rule'];vals=[.12,.0808];ax.bar(labels,np.array(vals)*100,color=[BAD,GOOD],width=.55);ax.set_ylim(0,14.5);ax.set_ylabel('Log drift (%/year)');ax.set_title('Curvature lowers the median-growth exponent',loc='left');
-for i,v in enumerate(vals):ax.text(i,v*100+.4,f'{v*100:.2f}%',ha='center',weight='bold')
+x=np.linspace(-.1,1.1,18);y=np.linspace(-.1,1.1,18);X,Y=np.meshgrid(x,y);G1=.08*X+.012*Y;G2=.012*X+.02*Y;Z=.04*X**2+.012*X*Y+.01*Y**2
+ax.contour(X,Y,Z,levels=9,cmap='viridis',alpha=.75);n=np.sqrt(G1**2+G2**2)+1e-12;ax.quiver(X,Y,G1/n,G2/n,color=INK,alpha=.45,scale=28);ax.scatter([.6],[.4],color=BAD,s=48);ax.set_xlabel('SPY weight');ax.set_ylabel('AGG weight');ax.set_title('Gradient crosses equal-risk contours',loc='left')

@@ -1,2 +1,2 @@
-labels=['Exact log','Milstein','Euler'];vals=[114.6599,114.5630,116.0809];ax.bar(labels,vals,color=[GOOD,ACCENT,BAD],width=.55);ax.set_ylim(112,117.2);ax.set_ylabel('Terminal price after 4 steps (USD/share)');ax.set_title('Same four shocks, three endpoints',loc='left');
-for i,v in enumerate(vals):ax.text(i,v+.12,f'USD {v:.2f}',ha='center',fontsize=8)
+labels=['SPY','AGG','QQQ'];cur=np.array([40,40,20]);cap=np.array([50,35,15]);tar=np.array([60,30,10]);x=np.arange(3);bw=.25
+ax.bar(x-bw,cur,bw,color=MUTED,label='current');ax.bar(x,cap,bw,color=GOOD,label='10% turnover cap');ax.bar(x+bw,tar,bw,color=ACCENT,label='frictionless target');ax.set_xticks(x,labels);ax.set_ylabel('Weight (%)');ax.legend(fontsize=8);ax.set_title('The trade budget reshapes the portfolio',loc='left')

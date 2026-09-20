@@ -1,11 +1,2 @@
-rng=np.random.default_rng(54);paths=[];steps=500
-for j in range(80):
-    r=1;g=1;z=[0.5]
-    for n in range(steps):
-        if rng.random()<r/(r+g):r+=1
-        else:g+=1
-        z.append(r/(r+g))
-    paths.append(z)
-paths=np.array(paths);t=np.arange(steps+1)
-ax.plot(t,paths[:24].T,color=ACCENT,alpha=0.16,lw=0.8);ax.plot(t,paths.mean(axis=0),color=INK,lw=2.4,label='cross-path mean');ax.axhline(0.5,color=WARM,ls='--')
-ax.set_xlabel('Draw count');ax.set_ylabel('Red share');ax.set_ylim(0,1);ax.legend(loc='upper right')
+fig=ax.figure;ax.remove();ax=fig.add_subplot(111,projection='3d');u,v=np.meshgrid(np.linspace(0,1,45),np.linspace(0,1,45));c=np.minimum(u,v)
+ax.plot_surface(u,v,c,cmap='viridis',linewidth=0,alpha=.9);ax.set_xlabel('$u$ (years)',labelpad=-2);ax.set_ylabel('$v$ (years)',labelpad=-2);ax.set_zlabel('Covariance',labelpad=0);ax.set_box_aspect((1,1,.65));ax.view_init(elev=25,azim=-52);ax.set_title('$Cov(W_u,W_v)=min(u,v)$',loc='left',pad=2)

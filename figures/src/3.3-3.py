@@ -1,12 +1,1 @@
-x=np.array([0,1,2,4,5,6])
-labels=['AAPL','JPM','XOM','common\nAAPL+JPM','relative\nAAPL-JPM','XOM only']
-vals=[6,5,4,5.5,.5,4]
-colors=[ACCENT,ACCENT,ACCENT,WARM,WARM,WARM]
-ax.bar(x,vals,color=colors,width=.68)
-for i,v in zip(x,vals): ax.text(i,v+.18,f'${v:.1f}M',ha='center',fontsize=8,color=INK)
-ax.axvline(3,color=MUTED,lw=.9,ls='--')
-ax.text(1,6.55,'ticker-basis coordinates x',ha='center',fontsize=8,color=ACCENT)
-ax.text(5,6.55,'risk-basis coordinates c',ha='center',fontsize=8,color=WARM)
-ax.set_xticks(x,labels);ax.set_ylim(0,7.2);ax.set_ylabel('Coordinate value (USD millions)')
-ax.tick_params(axis='x',labelsize=7)
-ax.set_title('Same position, two separate coordinate systems',loc='left')
+w=np.linspace(0,1,400); mse=400*w*w+64*(1-w)**2; ws=64/464; ax.plot(w,mse,color=SERIES[1],lw=2); ax.scatter([ws,1],[400*ws*ws+64*(1-ws)**2,400],color=[GOOD,BAD],zorder=3); ax.axvline(ws,color=GOOD,lw=1,ls='--'); ax.set(xlabel='Shrinkage weight w',ylabel='MSE (percentage-points squared)',ylim=(0,430)); ax.grid(alpha=.25)

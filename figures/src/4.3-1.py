@@ -1,17 +1,12 @@
-# Each factor exposure split into the piece every position contributes: C[i, j] = A[i, j] w[j].
-A = np.array([[1.0, 0.8, 0.6], [0.3, 0.5, 0.2], [0.1, 0.2, 0.4]])
-w = np.array([2, -1, 1])
-C = A * w
-x = np.arange(3); bw = 0.22
-for j, (name, col) in enumerate(zip(['AAPL', 'MSFT', 'JPM'], [ACCENT, WARM, GOOD])):
-    ax.bar(x + (j - 1) * bw, C[:, j], bw, color=col, label=f'{name}  {w[j]:+d}M')
-y = C.sum(axis=1)
-ax.scatter(x + 0.42, y, color=INK, marker='D', s=36, zorder=3, label='exposure = row sum')
-for i, v in enumerate(y):
-    ax.text(i + 0.50, v, f'{v:.1f}', va='center', fontsize=10, weight='bold')
-ax.axhline(0, color=MUTED, lw=0.8)
-ax.set_xticks(x, ['market', 'quality', 'rates'])
-ax.set_xlim(-0.5, 2.85)
-ax.set_ylabel('USD million')
-ax.legend(fontsize=8, ncol=2, loc='upper right')
-ax.set_title('Every position feeds every factor: loading x position, then add', loc='left')
+ax.axhline(0,color=MUTED,lw=.8); ax.axvline(0,color=MUTED,lw=.8)
+ax.quiver(0,0,2.0,0.0,angles='xy',scale_units='xy',scale=1,color=ACCENT,width=.008)
+ax.quiver(0,0,0.0,1.7,angles='xy',scale_units='xy',scale=1,color=ACCENT,width=.008)
+ax.quiver(0,0,1.4,.9,angles='xy',scale_units='xy',scale=1,color=WARM,width=.008)
+ax.quiver(0,0,-.5,1.5,angles='xy',scale_units='xy',scale=1,color=WARM,width=.008)
+ax.plot(1.2,1.0,'o',color=GOOD,ms=8)
+ax.text(1.3,1.05,'same portfolio',fontsize=8,color=INK)
+ax.text(2.05,-.18,'e1',fontsize=8,color=ACCENT); ax.text(-.16,1.78,'e2',fontsize=8,color=ACCENT)
+ax.text(1.46,.78,'b1',fontsize=8,color=WARM); ax.text(-.68,1.53,'b2',fontsize=8,color=WARM)
+ax.set_aspect('equal');ax.set_xlim(-1,2.7);ax.set_ylim(-.6,2.2)
+ax.set_xlabel('Exposure coordinate 1');ax.set_ylabel('Exposure coordinate 2')
+ax.set_title('A basis changes the question, not the position',loc='left')

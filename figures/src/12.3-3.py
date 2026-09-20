@@ -1,1 +1,2 @@
-x=np.linspace(-.499,4,600);y=stats.chi2.pdf(2*x+1,df=1)*2;ax.plot(x,y,color=WARM,lw=2);ax.axvline(0,color=INK,ls='--',label='mean = 0');ax.set_xlim(-.55,3);ax.set_xlabel('$I_1=0.5(W_1^2-1)$');ax.set_ylabel('Density');ax.set_title('Fair does not mean symmetric',loc='left');ax.legend(fontsize=8)
+labels=['A: eig 1','A: eig 2','B: eig 1','B: eig 2'];vals=[4.162,-2.162,.890,10.110];cols=[ACCENT,BAD,GOOD,GOOD]
+ax.bar(labels,vals,color=cols);ax.axhline(0,color=INK,lw=1);ax.set_ylabel('Hessian eigenvalue');ax.tick_params(axis='x',rotation=18);ax.set_title('Mixed signs expose a saddle',loc='left')

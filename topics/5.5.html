@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.5 Rank, Range, and Invertibility</title>
+<link rel="stylesheet" href="../book.css">
+<script defer src="../book.js"></script>
+</head>
+<body>
+<div class="wrap">
+<nav class="book-nav top-nav">
+  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+  <a href="../chapters/5.html">บทที่ 5</a>
+  <span class="topic-progress">หัวข้อ 31/158</span>
+</nav>
+
+<article class="topic" data-number="5.5" data-depends-on="5.3 5.4">
+<header class="topic-header">
+  <h1><span class="tnum">5.5</span> Rank, Range, and Invertibility</h1>
+  <p class="subtitle">ดูว่าการแปลงเก็บข้อมูลไว้ครบหรือทำข้อมูลหาย</p>
+</header>
+
+<div class="hook">
+  <p>ตลาดมีสองสภาวะ ขายสินทรัพย์สามตัวที่จ่าย (1, 2), (2, 4) และ (3, 6) ดอลลาร์ในสภาวะที่ 1 และ 2 คุณมีภาระจ่าย \$10 ไม่ว่าสภาวะไหน hedge ได้พอดีไหม?</p>
+  <p>เฉลย: ไม่ได้ ทั้งสามตัวคือทิศ (1, 2) เดียวกันแค่คนละขนาด payoff ที่สร้างได้จึงเป็นเส้นเดียว ภาระ (10, 10) ต้องการ λ = 10 กับ λ = 5 พร้อมกัน ถ้าตลาดเพิ่มสินทรัพย์ที่จ่าย (3, 1) ให้ซื้อตัวแรก 4 หน่วยกับตัวใหม่ 2 หน่วย ได้ 10 พอดีทั้งสองสภาวะ</p>
+  <p>rank บอกจำนวนทิศทางที่ matrix ส่งต่อได้จริง range คือผลลัพธ์ทั้งหมดที่สร้างได้ invertibility คือการย้อนหา input ได้หนึ่งเดียว งาน quant ใช้ตรวจว่าตลาดให้ hedge อะไรได้บ้าง และตรวจ covariance ก่อนกลับด้าน</p>
+</div>
+
+<details class="jargon" open>
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>rank</dt>
+    <dd>จำนวนทิศทางข้อมูลที่ independent จริงใน matrix ใช้วัด information ที่ matrix มีและตรวจ redundancy</dd>
+    <dt>range</dt>
+    <dd>เซตของ output ทั้งหมดที่ matrix สร้างได้จาก input ทุกตัว ใช้รู้ว่า target อยู่ในความสามารถของ mapping หรือไม่</dd>
+    <dt>invertibility</dt>
+    <dd>คุณสมบัติที่มี inverse ซึ่งคืน input จาก output ได้อย่าง unique ใช้แก้ระบบสมการและคำนวณ hedge weights</dd>
+    <dt>singular matrix</dt>
+    <dd>matrix ที่ rank ต่ำกว่าขนาดและไม่มี inverse ใช้เป็นสัญญาณว่า data มี redundant direction หรือ covariance มี zero-risk direction</dd>
+    <dt>null space</dt>
+    <dd>เซตของ input ที่ถูก matrix map ไปเป็นศูนย์ ใช้หา position combinations ที่ mapping มองไม่เห็น</dd>
+    <dt>covariance matrix</dt>
+    <dd>ตาราง covariance ระหว่าง asset returns ใช้คำนวณ portfolio variance และ risk allocation</dd>
+    <dt>variance</dt>
+    <dd>ค่าเฉลี่ยของ squared deviation จากค่าเฉลี่ยใช้วัดการกระจายของผลตอบแทนและคำนวณ portfolio risk</dd>
+    <dt>row reduction</dt>
+    <dd>การเอาแถวหนึ่งคูณตัวเลขแล้วลบออกจากอีกแถวเพื่อสร้างศูนย์ ใช้นับว่ามีแถวที่ให้ข้อมูลใหม่จริงกี่แถว ซึ่งคือ rank</dd>
+    <dt>complete market</dt>
+    <dd>ตลาดที่สินทรัพย์มีทิศพอจะสร้าง payoff ได้ทุกแบบในทุกสภาวะ ใช้บอกว่าภาระใด ๆ hedge ได้พอดีและมีวิธีเดียว</dd>
+    <dt>shrinkage</dt>
+    <dd>การดึง covariance ที่ประมาณมาเข้าหาเป้าหมายที่มีโครงสร้างและกลับด้านได้ ใช้แก้ covariance ที่ singular หรือเกือบ singular</dd>
+    <dt>factor model</dt>
+    <dd>การเขียน covariance ของหุ้นจำนวนมากผ่านปัจจัยร่วมไม่กี่ตัวบวกความเสี่ยงเฉพาะตัว ใช้ลดจำนวนตัวเลขที่ต้องประมาณจากข้อมูล</dd>
+    <dt>principal component analysis (PCA)</dt>
+    <dd>การหาทิศที่อธิบายการเคลื่อนไหวของข้อมูลได้มากที่สุดเรียงลงมา ใช้บอกว่าตลาดที่มีตั๋วหลายสิบตัวมีความเสี่ยงที่ต่างกันจริงกี่ทิศ</dd>
+    <dt>QQQ</dt>
+    <dd>กองทุนที่ติดตาม Nasdaq-100 ในตลาดสหรัฐฯ ใช้เป็น asset ตัวอย่างที่อาจซ้ำซ้อนกับหุ้น technology รายตัว</dd>
+  </dl>
+</details>
+
+<details class="symbols" open>
+  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$A$</td><td>matrix ของ observations หรือ exposures</td><td>ตาม quantity ที่วัด</td></tr>
+      <tr><td>$\operatorname{rank}(A)$</td><td>จำนวน independent directions ของ $A$</td><td>นับทิศทาง</td></tr>
+      <tr><td>$\mathcal R(A)$</td><td>range หรือ column space ของ $A$</td><td>space ของ output</td></tr>
+      <tr><td>$A^{-1}$</td><td>inverse เมื่อมีอยู่</td><td>inverse ของหน่วย $A$</td></tr>
+      <tr><td>$\Sigma$</td><td>covariance matrix ของ daily returns</td><td>(decimal return)² ที่ horizon หนึ่งวัน</td></tr>
+      <tr><td>$r$</td><td>vector ของ asset returns</td><td>decimal return ในหนึ่งวัน</td></tr>
+      <tr><td>$\hat{\mu}$</td><td>vector ของ excess return ของสินทรัพย์</td><td>decimal return</td></tr>
+      <tr><td>$S,\ \theta,\ X$</td><td>ตาราง payoff (แถว = สภาวะ คอลัมน์ = สินทรัพย์), จำนวนหน่วยที่ถือ และภาระที่ต้องจ่าย</td><td>USD ต่อหน่วย, หน่วย, USD</td></tr>
+      <tr><td>$\lambda$</td><td>ตัวเลขตัวเดียวที่บอกตำแหน่งบนเส้น payoff เมื่อ rank = 1</td><td>USD</td></tr>
+      <tr><td>$N,\ T,\ R$</td><td>จำนวนหุ้น จำนวนวัน และตารางผลตอบแทนขนาด T × N ที่หักค่าเฉลี่ยแล้ว</td><td>ตัว, วัน, decimal return</td></tr>
+      <tr><td>$\hat\Sigma,\ F,\ \delta,\ \Sigma^*$</td><td>covariance ที่ประมาณได้ เป้าหมายแนวทแยง น้ำหนัก shrinkage และ covariance หลัง shrink</td><td>(decimal return)², ไม่มีหน่วยสำหรับ δ</td></tr>
+      <tr><td>$z$</td><td>vector ใน null space ที่ส่งผลลัพธ์เป็นศูนย์</td><td>unitless weight</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: เมื่อการแปลงทำข้อมูลหายไปอย่างเงียบ ๆ</h4>
+  <p>ปัญหาที่ทำให้ต้องมีหัวข้อนี้เกิดขึ้นจริงในงานจัดพอร์ตแทบทุกที่ คือเมื่อจำนวนสินทรัพย์มากกว่าจำนวนวันที่มีข้อมูล</p>
+  <p>ในสถานการณ์นั้น ตารางความเสี่ยงที่คำนวณได้จะกลับด้านไม่ได้ในทางคณิตศาสตร์ แต่โปรแกรมจะไม่ฟ้อง มันจะคายตัวเลขออกมาให้ตามปกติ เพราะการปัดทศนิยมทำให้ดูเหมือนกลับได้</p>
+  <p>ผลคือน้ำหนักพอร์ตที่ได้ออกมาสุดโต่งอย่างไร้เหตุผล และเปลี่ยนไปคนละเรื่องเมื่อข้อมูลขยับนิดเดียว โดยที่ไม่มีข้อความเตือนใด ๆ เลย</p>
+  <p>หัวข้อนี้ให้เครื่องมือที่ตรวจอาการนั้นได้ก่อนที่จะเสียเวลาไปกับคำตอบที่ไร้ความหมาย</p>
+</section>
+
+<section class="prose">
+  <h4>ความเป็นมา: จากการแก้ระบบสมการสู่ปัญหา rank deficiency ในพอร์ตการลงทุน</h4>
+  <p>Carl Friedrich Gauss ในช่วงปี 1809 ได้พัฒนา Gaussian elimination เพื่อคำนวณวงโคจรดาวเคราะห์น้อย Ceres ในดาราศาสตร์ ต่อมา Camille Jordan ในปี 1870 และ Ferdinand Georg Frobenius ในปี 1879 ได้บัญญัติคำว่า rank ขึ้นเพื่อระบุมิติสูงสุดของแถวหรือคอลัมน์ที่เป็น linearly independent ต่อกันอย่างแท้จริง</p>
+  <p>ก่อนหน้า Frobenius นักคณิตศาสตร์ตัดสินว่าระบบสมการหาคำตอบได้หรือไม่โดยพึ่งพา determinant เพียงอย่างเดียว ซึ่งใช้ได้เฉพาะกับ square matrix เท่านั้น และไม่สามารถบอกได้ว่าในกรณีทั่วไปมีข้อมูลสูญหายไปกี่มิติ Rank จึงเข้ามาทำหน้าที่แทนโดยให้ข้อมูลครอบคลุม matrix ทุกขนาดผ่านมิติของ range</p>
+  <p>ในโลกการเงิน Harry Markowitz แสดงว่าการหาน้ำหนักพอร์ตที่เหมาะสมจำเป็นต้องหา inverse ของ covariance matrix แต่เมื่อจำนวนสินทรัพย์มีมากกว่าจำนวนวันที่มีข้อมูล ย่อมเกิดภาวะ rank deficiency ที่สร้าง null space ปลอมขึ้นมา ทำให้ optimizer สับสนและใส่ leverage มหาศาลในทิศทางที่ไร้ความหมาย</p>
+</section>
+
+<section class="prose">
+  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: ให้ columns ของ $A$ เป็น daily returns ของ AAPL, MSFT และ QQQ และให้ $\Sigma$ เป็น covariance matrix ของผลตอบแทนหน่วยของแต่ละผลตอบแทนเป็น decimal over one day และหน่วย covariance เป็น decimal-return squared ที่ horizon หนึ่งวัน ถ้า columns มี linear dependence ข้อมูลจะมี rank ต่ำและ inverse ที่ระบบต้องการอาจไม่มี</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — ลองกับฟิลเตอร์สีเทาก่อน: การแปลงที่ย้อนกลับไม่ได้ หน้าตาเป็นอย่างไร</h4>
+  <p>ลองกับฟิลเตอร์ที่รวมสีแดงกับน้ำเงินเป็นสีเทาก่อน มันคือตารางแถวเดียว ใส่ภาพสองแบบเข้าไปแล้วดูว่าแยกออกไหม</p>
+  <div class="math">\[
+\begin{aligned}
+\text{gray}&=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}\text{red}\\
+\text{blue}\end{bmatrix}\\[4pt]
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
+0\end{bmatrix}=0.5\\
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}0\\
+1\end{bmatrix}=0.5\\
+&\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1\\
+-1\end{bmatrix}=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ภาพแดงล้วน $(1,0)$ กับน้ำเงินล้วน $(0,1)$ ให้สีเทา 0.5 เท่ากัน เห็นแค่ 0.5 จึงบอกไม่ได้ว่ามาจากภาพไหน ข้อมูลหายไปหนึ่งทิศ</p>
+    <p>สามบรรทัดสุดท้ายคือทิศที่หายไป: $(1,-1)$ ถูกบีบเป็นศูนย์ เติมมันเข้าไปใน input เท่าไรก็ได้ output ไม่เปลี่ยน ทิศแบบนี้เรียกว่า null space และตราบใดที่มันมี การย้อนกลับก็ทำไม่ได้</p>
+    <p>ตารางนี้มีสองคอลัมน์แต่ส่งข้อมูลต่อได้แค่หนึ่งทิศ จำนวนทิศที่ส่งต่อได้คือ rank ซึ่งตรงนี้เท่ากับ 1</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — นิยามของ rank: นับทิศที่เหลือรอดหลังการแปลง</h4>
+  <p>บรรทัดนี้เป็น นิยาม ของตัวเลขที่เราจะใช้ตอบคำถามหลัก คำถามคือการแปลงนี้ทำข้อมูลหายไปหรือเปล่า และเราวัดมันด้วยจำนวนทิศทางอิสระที่ยังเหลืออยู่ ในฝั่งผลลัพธ์ ถ้าคอลัมน์ไหนซ้ำกับคอลัมน์อื่น มันไม่ได้เพิ่มทิศใหม่ จึงไม่ถูกนับ</p>
+  <div class="math">\[
+\operatorname{rank}(A)=\dim\mathcal R(A)
+\]</div>
+  <div class="reading">
+    <p>rank ของ $A$ คือ dimension ของ range หรือ column space; ถ้า columns independent rank จะเท่าจำนวน columns แต่ถ้ามี column ซ้ำ rank จะลดลง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ตัวอย่างในสไลด์ของคอร์ส: คอลัมน์ที่สองเป็นสามเท่าของคอลัมน์แรก</h4>
+  <div class="math">\[
+\begin{aligned}
+A&=\begin{bmatrix}1&3\\2&6\end{bmatrix},\quad\begin{bmatrix}3\\6\end{bmatrix}=3\begin{bmatrix}1\\2\end{bmatrix}\\
+Ax&=(x_1+3x_2)\begin{bmatrix}1\\2\end{bmatrix}\\
+\mathrm{rank}(A)&=1,\qquad\det A=1(6)-3(2)=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ไม่ว่าเลือก $x$ อะไร ผลคูณก็เป็นทวีคูณของ (1, 2) range จึงเป็นเส้นตรงเส้นเดียวที่ผ่านจุดกำเนิด rank เท่ากับหนึ่ง และ rank ของแถวเท่ากับ rank ของคอลัมน์เสมอ ไม่เกินจำนวนแถวหรือคอลัมน์ที่น้อยกว่า</p>
+    <p>matrix จัตุรัสขนาด $n$ กลับได้ก็ต่อเมื่อ rank เท่ากับ $n$ ตัวอย่างนี้ rank หนึ่งจากสอง จึงกลับไม่ได้ determinant เป็นศูนย์ยืนยันอีกทาง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — ตลาดจากโจทย์เปิดเรื่อง: นับทิศที่ต่างกันจริงด้วย row reduction</h4>
+  <p>ตาราง payoff มี 2 สภาวะ × 3 สินทรัพย์ ก่อนคิดเลข rank ไม่มีทางเกิน min(2, 3) = 2 แล้วใช้แถวบนลบออกจากแถวล่างเพื่อสร้างศูนย์ และดูคอลัมน์ประกอบ</p>
+  <div class="math">\[
+\begin{aligned}
+S&=\begin{bmatrix}1 & 2 & 3\\ 2 & 4 & 6\end{bmatrix}\\[4pt]
+&R_2-2R_1:\\
+&\quad (2-2,\ 4-4,\ 6-6)=(0,\ 0,\ 0)\\
+&\quad\Longrightarrow\quad \begin{bmatrix}1 & 2 & 3\\ 0 & 0 & 0\end{bmatrix}\\[4pt]
+&\begin{bmatrix}2\\ 4\end{bmatrix}=2\begin{bmatrix}1\\ 2\end{bmatrix}\\
+&\begin{bmatrix}3\\ 6\end{bmatrix}=3\begin{bmatrix}1\\ 2\end{bmatrix}\\
+&\quad\Longrightarrow\quad \operatorname{rank}(S)=1
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แถวที่สองเริ่มด้วย 2 แถวแรกเริ่มด้วย 1 จึงใช้ตัวคูณ 2 ลบแล้วเหลือแถวศูนย์ทั้งแถว แถวที่ไม่เป็นศูนย์เหลือหนึ่งแถว ดูฝั่งคอลัมน์ก็ได้เลขเดียวกัน: คอลัมน์ 2 กับ 3 เป็นสองเท่าและสามเท่าของคอลัมน์ 1</p>
+    <p>แถวศูนย์แปลว่าสภาวะที่ 2 ไม่ให้ข้อมูลใหม่เลย ถือพอร์ตอะไรก็ตาม ผลในสภาวะ 2 เป็นสองเท่าของสภาวะ 1 เสมอ ตลาดนี้มีความไม่แน่นอนมิติเดียว ทั้งที่วาดตารางมาสองแถวและขายของสามตัว</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — range เป็นเส้นเดียว: สามตัวแปรยุบเหลือตัวเดียว</h4>
+  <p>คิด Sθ ตรง ๆ สำหรับ θ อะไรก็ได้ แล้วตั้งชื่อก้อนที่โผล่ซ้ำ</p>
+  <div class="math">\[
+\begin{aligned}
+S\theta&=\begin{bmatrix}\theta_1+2\theta_2+3\theta_3\\ 2(\theta_1+2\theta_2+3\theta_3)\end{bmatrix}\\
+&=\lambda\begin{bmatrix}1\\ 2\end{bmatrix}\\
+\lambda&:=\theta_1+2\theta_2+3\theta_3\\[4pt]
+&\theta=(1,1,1):\\
+&\quad \lambda=6,\qquad S\theta=(6,\ 12)=6(1,\ 2)\\
+&\theta=(10,0,0),\ (0,5,0),\\
+&\quad(0,0,\tfrac{10}{3}):\\
+&\quad \lambda=10\ \text{each}\\
+&\quad S\theta=(10,\ 20)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>θ ทั้งสามตัวมีผลผ่านก้อนเดียวคือ λ payoff จึงเป็น λ คูณ (1, 2) เสมอ range ของ S คือเส้นตรงเส้นเดียวในระนาบ สามพอร์ตในสี่บรรทัดล่างต่างกันหมดแต่ให้ payoff เดียวกันเป๊ะ</p>
+    <p>ตลาดแบบนี้ให้อิสระในการเลือกพอร์ตมากมาย แต่ไม่ให้อิสระในการสร้าง payoff เลย นี่คือความต่างระหว่างมีตัวเลือกเยอะกับมีข้อมูลเยอะ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — hedge ภาระได้ไหม: เทียบภาระกับเส้น payoff</h4>
+  <p>hedge พอดีแปลว่าหา θ ที่ Sθ = X ซึ่งก็คือถามว่า X อยู่บนเส้น λ(1, 2) หรือไม่</p>
+  <div class="math">\[
+\begin{aligned}
+X&=(10,\ 10):\\
+&\quad \lambda(1)=10\Rightarrow\lambda=10\\
+&\quad \lambda(2)=10\Rightarrow\lambda=5\\
+&\quad 10\ne5\\[4pt]
+X'&=(10,\ 20):\\
+&\quad \lambda=10\ \text{from both rows}\\
+\theta&=(4,\ 0,\ 2):\\
+&\quad 1(4)+2(0)+3(2)=10\\
+&\quad 2(4)+4(0)+6(2)=20
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ภาระ (10, 10) ต้องการ λ สองค่าพร้อมกัน ไม่มี θ ใดทำได้ จึง hedge ไม่ได้ ส่วน (10, 20) อยู่บนเส้นพอดี hedge ได้ด้วย θ ใดก็ได้ที่ θ₁ + 2θ₂ + 3θ₃ = 10 เช่น (10, 0, 0), (0, 5, 0) หรือ (4, 0, 2) มีคำตอบไม่จำกัด</p>
+    <p>rank ไม่เต็มให้สองอาการพร้อมกัน ภาระส่วนใหญ่หลุดนอกเส้นจน hedge ไม่ได้เลย และภาระที่อยู่บนเส้นพอดี hedge ได้หลายวิธีเกินไป ระบบ hedge อัตโนมัติจึงต้องตรวจ rank ก่อน ไม่ใช่ปล่อยให้ solver สุ่มคำตอบมาให้</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — เงื่อนไข invertibility</h4>
+  <p>ถ้าไม่ทำข้อมูลหาย ก็ย้อนกลับได้ สูตรข้างล่างทำให้ประโยคนั้นตรวจได้ โดยเดินทั้งสองทางของเครื่องหมายเท่ากับ ทางแรกบอกว่าอะไรพังเมื่อทิศไม่ครบ ทางที่สองบอกว่าอะไรใช้ได้เมื่อทิศครบ ขั้นถัดไปจะกางทางแรกให้เห็นเป็นตัวเลข</p>
+  <div class="math">\[
+\begin{aligned}
+&\operatorname{rank}(A) \lt n\\
+&\;\Longrightarrow\;Az=0\ \text{for some}\ z\ne0\\
+A(w+z)&=Aw+Az=Aw\\
+w+z&\ne w,\qquad A(w+z)=Aw\\
+&\Longrightarrow\;\text{no}\ A^{-1}\\[6pt]
+&\operatorname{rank}(A)=n\\
+&\;\Longrightarrow\;Aw=b\\
+&\quad\text{solvable for each}\ b\\
+&\text{one}\ w\ \text{per}\ b:\quad Aw=b\\
+&\Longrightarrow\;A^{-1}\ \text{exists}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทางแรกดูว่าอะไรพังเมื่อทิศไม่ครบ: จะมีทิศที่ถูกบีบจนเหลือศูนย์ บวกทิศนั้นเข้าไปใน input เท่าไรก็ได้ ผลลัพธ์ไม่ขยับเลย จึงมี input สองตัวที่ต่างกันแต่ให้ผลเดียวกัน การย้อนกลับจากผลลัพธ์จึงเลือกไม่ถูกว่าจะเป็นตัวไหน นั่นคือความหมายของคำว่าไม่มีตัวย้อนกลับ</p>
+    <p>ทางที่สองกลับกัน: เมื่อทิศครบ คอลัมน์ปูเต็มปริภูมิผลลัพธ์ ทุกเป้าหมายจึงเขียนได้ และเขียนได้แบบเดียว พอจับคู่กันหนึ่งต่อหนึ่งทั้งสองทาง ตัวย้อนกลับก็มีอยู่จริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — null space ทำให้ solution ไม่ unique</h4>
+  <p>ถ้าทำข้อมูลหาย จะมีทิศทางที่ถูกบีบเป็นศูนย์ ห้าบรรทัดนี้แสดงผลที่ตามมาทีละขั้น ในงานจริงนี่คือสาเหตุที่ optimizer คืนน้ำหนักพอร์ตคนละชุดทุกครั้งที่รัน ทั้งที่ข้อมูลเดิม เพราะ covariance ที่ป้อนเข้าไปมีทิศที่ซ้ำกัน</p>
+  <div class="math">\[
+\begin{aligned}Az&=0,\qquad z\ne0\\
+A(w+cz)&=Aw+A(cz)\\
+&=Aw+c\,(Az)\\
+&=Aw+c\cdot 0\\
+&=Aw\qquad\text{for every scalar }c\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สมมติว่ามีทิศที่ไม่เป็นศูนย์ แต่ถูกการแปลงบีบจนเหลือศูนย์ แล้วดูว่าเกิดอะไรขึ้น การแปลงกระจายเข้าไปในผลบวกได้ และดึงตัวคูณออกมาข้างหน้าได้ ทั้งสองข้อมาจากนิยามในหัวข้อ 5.3</p>
+    <p>พอแทนสมมติฐานลงไป ก้อนที่เติมเข้ามากลายเป็นศูนย์ ไม่ว่าจะใส่ทิศนั้นเข้าไปแรงแค่ไหน ผลลัพธ์ก็ไม่ขยับเลย จึงมี input เป็นอนันต์ที่ให้คำตอบเดียวกัน นั่นคือความหมายของคำว่าคำตอบไม่ unique และในงานจริงคือสาเหตุที่ optimizer คืนน้ำหนักคนละชุดทุกครั้งที่รัน ทั้งที่ข้อมูลเดิม</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — covariance ที่ singular</h4>
+  <p>ปัญหานี้เกิดจริงบนโต๊ะเมื่อจำนวนสินทรัพย์มากกว่าจำนวนวันที่มีข้อมูล และเป็นเหตุผลที่ต้องมี shrinkage ในบทหลัง</p>
+  <div class="math">\[
+\Sigma=\sigma^2\begin{bmatrix}1&amp;1\\
+1&amp;1\end{bmatrix},\quad \sigma^2>0,\qquad \det(\Sigma)=0,\qquad \operatorname{rank}(\Sigma)=1 \lt 2
+\]</div>
+  <div class="reading">
+    <p>$\sigma^2$ คือ variance ของ daily return หน่วย decimal-return squared เมื่อสองผลตอบแทนเหมือนกันทุกครั้ง covariance matrix มี determinant เป็นศูนย์และ rank หนึ่ง จึงไม่มี inverse</p>
+    <p>ทำไม determinant ศูนย์แปลว่ากลับด้านไม่ได้ (กรณี 2×2): $\det=ad-bc$ เป็นศูนย์ก็ต่อเมื่อคอลัมน์ $(a,c)$ กับ $(b,d)$ ขนานกัน คือคอลัมน์หนึ่งเป็นตัวคูณของอีกคอลัมน์ ที่นี่ $1\cdot1-1\cdot1=0$ และคอลัมน์ทั้งสองคือ $(1,1)$ เหมือนกันเป๊ะ ฟิลเตอร์สีเทาในขั้นที่ 1 ก็เป็นเรื่องเดียวกัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — เมื่อกลับได้ ก็เขียนตัวกลับของ $2\times2$ ออกมาตรง ๆ</h4>
+  <p>ขั้นที่ 6 ตอบว่ากลับได้เมื่อไร ขั้นนี้ตอบว่ากลับแล้วหน้าตาเป็นอย่างไร สำหรับ $2\times2$ ซึ่งเป็นขนาดที่ต้องคำนวณด้วยมือบ่อยที่สุด ทั้งในหัวข้อ 7.1, 12.5 และ 17.3</p>
+  <div class="math">\[
+\begin{aligned}
+A&=\begin{bmatrix}a&amp;b\\
+c&amp;d\end{bmatrix}\\
+Ax&=\begin{bmatrix}1\\
+0\end{bmatrix}\\
+ax_1+bx_2&=1\\
+cx_1+dx_2&=0\\[4pt]
+&d(\text{row }1)-b(\text{row }2):\\
+(ad-bc)\,x_1&=d\\
+&a(\text{row }2)-c(\text{row }1):\\
+(ad-bc)\,x_2&=-c\\[4pt]
+A^{-1}&=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\
+-c&amp;a\end{bmatrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ตัวกลับไม่ได้มาจากการท่องจำ มันคือคำตอบของคำถามว่า ต้องคูณอะไรถึงจะได้หลักแรกของ identity กลับมา จึงตั้งเป็นระบบสมการสองบรรทัดแล้วแก้ตรง ๆ</p>
+    <p>วิธีแก้คือกำจัดตัวแปรทีละตัว คูณไขว้แล้วลบกัน ตัวที่ไม่ต้องการหายไป และสิ่งที่โผล่ขึ้นมาเป็นตัวคูณหน้าตัวแปรทั้งสองรอบคือ $ad-bc$ ก้อนเดียวกัน</p>
+    <p>ก้อนนั้นคือ determinant และตรงนี้เองที่เห็นว่าทำไมมันสำคัญ ถ้ามันเป็นศูนย์ สมการกลายเป็น $0=d$ ซึ่งแก้ไม่ได้ ตรงกับขั้นที่ 6 ที่บอกว่า rank ไม่เต็มแล้วกลับไม่ได้ ไม่ใช่กฎสองข้อ แต่เป็นข้อเดียวกันมองคนละมุม</p>
+    <p>ทำซ้ำกับหลักที่สองของ identity จะได้อีกสองช่องที่เหลือ ประกอบกันเป็นรูปที่จำง่าย สลับแนวทแยง กลับเครื่องหมายนอกแนวทแยง แล้วหารด้วย determinant</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — ตลาดจากโจทย์เปิดเรื่อง: det = 0 แล้วเพิ่มสินทรัพย์ที่ต่างจริง</h4>
+  <p>ตัดตลาดเหลือสินทรัพย์ 1 กับ 2 ได้ตาราง 2 × 2 ลองสูตรตัวกลับจากขั้นที่ 9 แล้วเทียบกับตลาดที่เพิ่มสินทรัพย์จ่าย (3, 1)</p>
+  <div class="math">\[
+\begin{aligned}
+B&=\begin{bmatrix}1 & 2\\ 2 & 4\end{bmatrix}:\\
+&\quad \det B=1(4)-2(2)=0\\
+&\quad\Longrightarrow\quad \text{no}\ B^{-1}\\[6pt]
+C&=\begin{bmatrix}1 & 3\\ 2 & 1\end{bmatrix}:\\
+&\quad \det C=1(1)-3(2)=-5\\
+C^{-1}&=\frac{1}{-5}\begin{bmatrix}1 & -3\\ -2 & 1\end{bmatrix}\\
+&=\begin{bmatrix}-0.2 & 0.6\\ 0.4 & -0.2\end{bmatrix}\\
+C^{-1}C&=\begin{bmatrix}-0.2+1.2 & -0.6+0.6\\ 0.4-0.4 & 1.2-0.2\end{bmatrix}\\
+&=\begin{bmatrix}1 & 0\\ 0 & 1\end{bmatrix}\\[6pt]
+\theta&=C^{-1}X\\
+&=\begin{bmatrix}-0.2(10)+0.6(10)\\ 0.4(10)-0.2(10)\end{bmatrix}=\begin{bmatrix}4\\ 2\end{bmatrix}\\
+C\theta&=\begin{bmatrix}4+6\\ 8+2\end{bmatrix}=\begin{bmatrix}10\\ 10\end{bmatrix}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>det B = 0 เพราะคอลัมน์ (1, 2) กับ (2, 4) ขนานกัน สองสินทรัพย์เป็นตัวเดียวกันคนละขนาด ตัวคูณหน้าสูตรกลายเป็น 1/0 จึงไม่มีตัวกลับ ในเรขาคณิต |det| คือพื้นที่สี่เหลี่ยมด้านขนานที่สองคอลัมน์ขึง ขนานเมื่อไรพื้นที่ก็เป็นศูนย์</p>
+    <p>สินทรัพย์ใหม่จ่ายเยอะในสภาวะ 1 ตรงข้ามกับของเดิม det = −5 ไม่เป็นศูนย์ rank เต็ม ภาระ (10, 10) ที่เมื่อกี้ hedge ไม่ได้ ตอนนี้ได้พอดีด้วยการซื้อ 4 กับ 2 หน่วย และมีวิธีเดียว ตลาดกลายเป็น complete market</p>
+    <p>คุณค่าของสินทรัพย์ใหม่จึงไม่ได้อยู่ที่ผลตอบแทน แต่อยู่ที่ว่ามันเพิ่มทิศให้ตลาดหรือเปล่า นี่คือเหตุผลที่ option มีอยู่จริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — Drill: กลับ covariance $2\times2$ แล้วกาง quadratic form</h4>
+  <p>ตรวจเองใน 20 วินาที: $\det$ ต้องได้ 1, ผลคูณกลับต้องได้ identity, และพจน์ไขว้ต้องเป็นลบสองเท่า ถ้าเครื่องหมายนอกแนวทแยงหลุด quadratic form จะกลายเป็นบวก ซึ่งแปลว่าสองสินทรัพย์สวนทางกันแทนที่จะไปด้วยกัน</p>
+  <div class="math">\[
+\begin{aligned}\Sigma&=\begin{bmatrix}1&amp;1\\
+1&amp;2\end{bmatrix},\qquad\det\Sigma=1(2)-1(1)=1\\[4pt]
+\Sigma^{-1}&=\frac{1}{1}\begin{bmatrix}2&-1\\
+-1&amp;1\end{bmatrix}=\begin{bmatrix}2&-1\\
+-1&amp;1\end{bmatrix}\\[4pt]
+\Sigma\,\Sigma^{-1}&=\begin{bmatrix}1&amp;1\\
+1&amp;2\end{bmatrix}\begin{bmatrix}2&-1\\
+-1&amp;1\end{bmatrix}=\begin{bmatrix}1&amp;0\\
+0&amp;1\end{bmatrix}\ \checkmark\\[4pt]
+x^{\mathsf T}\Sigma^{-1}x&=\begin{bmatrix}x_1&amp;x_2\end{bmatrix}\begin{bmatrix}2x_1-x_2\\
+-x_1+x_2\end{bmatrix}\\
+&=2x_1^{2}-x_1x_2-x_1x_2+x_2^{2}\\
+&=2x_1^{2}-2x_1x_2+x_2^{2}\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ลองกับตัวเลขจริงหนึ่งรอบ แล้วรูปแบบจะติดมือ determinant ของ $2\times2$ คือคูณแนวทแยงหลักลบคูณแนวทแยงรอง ได้ 1 พอดี ซึ่งทำให้ตัวหารหายไปและอ่านคำตอบได้ทันที</p>
+    <p>อย่าข้ามบรรทัดที่สาม คูณกลับเพื่อตรวจว่าได้ identity จริง ใช้เวลาสิบวินาที และจับความผิดพลาดเรื่องเครื่องหมายได้เกือบทุกครั้ง</p>
+    <p>สองบรรทัดล่างกาง quadratic form ออกเป็นพหุนาม คูณจากขวาไปซ้ายก่อนเพื่อให้เหลือ vector เดียว แล้วค่อยจับคู่กับ $x^{\mathsf T}$ พจน์ไขว้โผล่สองครั้งเท่ากัน จึงรวมเป็นสองเท่า</p>
+    <p>ก้อนสุดท้ายนี้คือสิ่งที่ไปนั่งอยู่ในเลขชี้กำลังของ density ในหัวข้อ 7.1 ใครกางมันได้ในหัว ก็เขียน density ของ normal สองตัวแปรออกมาได้โดยไม่ต้องเปิดตำรา</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — การคำนวณน้ำหนักพอร์ตผ่าน inverse และผลกระทบเมื่อ matrix ขาด rank</h4>
+  <p>ตัวอย่างนี้แสดงบทบาทของ invertibility ในการคำนวณพอร์ต Mean-Variance โดย $\Sigma$ คือ covariance matrix ขนาด $2\times 2$ และ $\hat{\mu}$ คือ excess return</p>
+  <p>เงื่อนไขบังคับคือ matrix ต้องเป็น full rank ซึ่งตรวจได้จาก determinant ที่ต้องไม่เป็นศูนย์ หาก rank บกพร่อง inverse จะไม่มีอยู่จริง และสมการหาน้ำหนักพอร์ตจะไม่มีคำตอบเดียว ในโปรแกรมคำนวณทั่วไป ความพยายามหา inverse ของ matrix ที่ singular จะส่งผลให้น้ำหนักพุ่งเข้าสู่อินฟินิตี้และพอร์ตพังทลาย</p>
+  <div class="math">\[
+\begin{aligned}
+\det(\Sigma) &= (0.04)(0.05) - (0.02)(0.02)\\
+&= 0.0020 - 0.0004 = 0.0016 \\[4pt]
+\Sigma^{-1} &= \frac{1}{0.0016} \begin{bmatrix} 0.05 & -0.02 \\
+-0.02 & 0.04 \end{bmatrix}\\
+&= \begin{bmatrix} 31.25 & -12.5 \\
+-12.5 & 25.0 \end{bmatrix} \\[4pt]
+w &= \Sigma^{-1} \hat{\mu}\\
+&= \begin{bmatrix} 31.25 & -12.5 \\
+-12.5 & 25.0 \end{bmatrix} \begin{bmatrix} 0.08 \\
+0.04 \end{bmatrix} \\
+&= \begin{bmatrix} 31.25(0.08) - 12.5(0.04) \\
+-12.5(0.08) + 25.0(0.04) \end{bmatrix}\\
+&= \begin{bmatrix} 2.5 - 0.5 \\
+-1.0 + 1.0 \end{bmatrix} = \begin{bmatrix} 2.0 \\
+0.0 \end{bmatrix} \\[6pt]
+\Sigma_{\text{sing}} z &= \begin{bmatrix} 0.04 & 0.04 \\
+0.04 & 0.04 \end{bmatrix} \begin{bmatrix} 1 \\
+-1 \end{bmatrix} = \begin{bmatrix} 0 \\
+0 \end{bmatrix}\\
+&\det(\Sigma_{\text{sing}}) = 0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เมื่อ covariance matrix มี full rank เราสามารถหา determinant ซึ่งได้ 0.0016 และกลับ matrix ได้อย่างแม่นยำ น้ำหนักพอร์ตที่ได้จะสะท้อนผลตอบแทนส่วนเกินเทียบกับความเสี่ยงจริง</p>
+    <p>เมื่อคูณ inverse เข้ากับ vector ของ excess return ตัวเลขจะถูกจัดสรรไปยังสินทรัพย์ตัวแรกทั้งหมด 2.0 หน่วย และไม่ถือสินทรัพย์ตัวที่สองเลย เพราะสินทรัพย์ตัวแรกให้ผลตอบแทนคุ้มค่าความเสี่ยงกว่า</p>
+    <p>หากสินทรัพย์ทั้งสองเคลื่อนไหวซ้ำซ้อนกันจน determinant เป็นศูนย์ matrix จะกลายเป็น singular ทันที ทิศทาง $z = [1, -1]^{\mathsf T}$ จะกลายเป็น null space ที่ variance เป็นศูนย์ ทำให้ไม่สามารถหา inverse ได้และระบบจัดสรรพอร์ตจะล้มเหลว</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
+  <p>การรู้ว่าการแปลงทำข้อมูลหายหรือไม่ ป้องกันความผิดพลาดที่หาสาเหตุยากที่สุด</p>
+  <p>ใช้ตรวจว่า covariance ที่ประมาณมาใช้งานได้จริงหรือไม่ ก่อนจะเอาไปกลับด้านในการจัดพอร์ต</p>
+  <p>ใช้บอกว่าปัญหามีคำตอบเดียวหรือมีหลายคำตอบ ซึ่งถ้ามีหลายคำตอบแปลว่าต้องเพิ่มเงื่อนไข</p>
+  <p>ใช้วินิจฉัยเวลาผลลัพธ์ของการจัดพอร์ตเหวี่ยงแรงผิดปกติ ซึ่งมักเกิดจากตารางที่เกือบกลับด้านไม่ได้</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — หุ้น 500 ตัว ข้อมูล 250 วัน: นับก่อนว่าขออะไรจากข้อมูล</h4>
+  <p>จะหาพอร์ตที่ความเสี่ยงต่ำสุดของหุ้น N = 500 ตัว สูตรต้องใช้ตัวกลับของ covariance ประมาณจากผลตอบแทนรายวัน T = 250 วัน คือข้อมูลราวหนึ่งปี (ปีจริงมี 250 ถึง 252 วันเทรดตามหัวข้อ 1.1 งานความเสี่ยงมักปัดข้อมูลหนึ่งปีเป็น 250 วัน) ด้วย Σ̂ = RᵀR / T แล้วโปรแกรมขึ้นว่า singular matrix ก่อนดูตัวเลขสักตัว ให้นับกับเหตุผลเรื่อง rank</p>
+  <div class="math">\[
+\begin{aligned}
+&\frac{N(N+1)}{2}=\frac{500(501)}{2}\\
+&=125{,}250\ \text{unknowns}\\
+&T\times N=250(500)\\
+&=125{,}000\ \text{numbers}\\[4pt]
+&Rx=0\ \Longrightarrow\ R^{\mathsf T}Rx=0\\
+&R^{\mathsf T}Rx=0\\
+&\Longrightarrow\ x^{\mathsf T}R^{\mathsf T}Rx=\|Rx\|^2=0\\
+&\Longrightarrow\ Rx=0\\[4pt]
+&\operatorname{rank}(\hat\Sigma)=\operatorname{rank}(R)\\
+&\le\min(250,\ 500)=250\ \lt\ 500
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>Σ สมมาตร ตัวเลขที่ต้องประมาณจึงเป็นครึ่งตารางรวมแนวทแยง 125,250 ตัว แต่ข้อมูลมีทั้งหมด 125,000 ตัว น้อยกว่าสิ่งที่ขอ และยังนับแบบใจดี เพราะข้อมูลรายวันมีสัญญาณรบกวนสูง</p>
+    <p>บรรทัดที่ห้าถึงแปดแสดงว่า RᵀR กับ R ส่งทิศเดียวกันไปเป็นศูนย์ จึงมี rank เท่ากัน R มี 250 แถว rank ได้ไม่เกิน 250 Σ̂ ขนาด 500 × 500 จึงขาดอย่างน้อย 250 ทิศ ข้อสรุปนี้จริงไม่ว่าข้อมูลจะดีแค่ไหน ถ้า T น้อยกว่า N ก็ singular เสมอ ตอบได้แน่นอนก่อนรันโปรแกรม</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — ย่อส่วนให้เห็นกับตา: หุ้น 2 ตัว ข้อมูล 1 วัน และพอร์ตผีที่ความเสี่ยงเป็นศูนย์</h4>
+  <p>สัดส่วนเดียวกันคือข้อมูลน้อยกว่าหุ้น ผลตอบแทนวันนั้น r = (0.02, 0.01) Σ̂ = rrᵀ คือหน้าตาของ vvᵀ ในหัวข้อ 5.3</p>
+  <div class="math">\[
+\begin{aligned}
+\hat\Sigma&=rr^{\mathsf T}\\
+&=\begin{bmatrix}0.02(0.02) & 0.02(0.01)\\ 0.01(0.02) & 0.01(0.01)\end{bmatrix}\\
+&=\begin{bmatrix}0.000400 & 0.000200\\ 0.000200 & 0.000100\end{bmatrix}\\[4pt]
+&R_2-0.5R_1\\
+&=(0.0002-0.0002,\ 0.0001-0.0001)\\
+&=(0,\ 0)\\
+\det\hat\Sigma&=0.000400(0.000100)\\
+&\quad-0.000200(0.000200)\\
+&=4\times10^{-8}-4\times10^{-8}=0\\[6pt]
+w&=(1,\ -2)\\
+\hat\Sigma w&=\begin{bmatrix}0.0004-0.0004\\ 0.0002-0.0002\end{bmatrix}=\begin{bmatrix}0\\ 0\end{bmatrix}\\
+w^{\mathsf T}\hat\Sigma w&=0\\
+r^{\mathsf T}w&=1(0.02)+(-2)(0.01)=0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>√0.0004 = 0.02 คือผลตอบแทนวันนั้นพอดี model บอกว่าหุ้นตัวแรกผันผวน 2% ต่อวันจากข้อมูลจุดเดียว row reduction เหลือแถวไม่เป็นศูนย์หนึ่งแถว det เป็นศูนย์ สูตรตัวกลับต้องหารด้วยศูนย์ นี่คือที่มาของข้อความ singular</p>
+    <p>พอร์ต long ตัวแรก 1 หน่วย short ตัวที่สอง 2 หน่วยได้ความเสี่ยงศูนย์ เพราะข้อมูลวันเดียวบังเอิญให้ผลตอบแทนพอร์ตเป็นศูนย์พอดี optimizer ที่หาความเสี่ยงต่ำสุดจะเจอพอร์ตนี้แล้วขยาย 10 เท่า 100 เท่า ความเสี่ยงที่คำนวณได้ยังเป็นศูนย์ ได้ leverage อนันต์ ไม่ใช่ optimizer ผิด แต่ข้อมูลบอกว่ามีของฟรี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — แก้ด้วย shrinkage: ดึงเข้าหาแนวทแยงแล้วกลับด้านได้</h4>
+  <p>Ledoit–Wolf shrinkage ผสม Σ̂ กับเป้าหมาย F ที่กลับด้านได้แน่นอน เลือก F เป็นแนวทแยงของ Σ̂ ซึ่งคือสมมติว่าไม่มี correlation และใช้ δ = 0.20</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma^*&=(1-\delta)\hat\Sigma+\delta F\\
+F&=\begin{bmatrix}0.000400 & 0\\ 0 & 0.000100\end{bmatrix}\\
+\Sigma^*_{11}&=0.80(0.000400)\\
+&\quad+0.20(0.000400)\\
+&=0.000400\\
+\Sigma^*_{12}&=0.80(0.000200)+0.20(0)\\
+&=0.000160\\[4pt]
+\det\Sigma^*&=0.000400(0.000100)\\
+&\quad-0.000160^2\\
+&=4.00\times10^{-8}-2.56\times10^{-8}\\
+&=1.44\times10^{-8}\\
+(\Sigma^*)^{-1}&=\frac{1}{1.44\times10^{-8}}\\
+&\quad\begin{bmatrix}0.000100 & -0.000160\\ -0.000160 & 0.000400\end{bmatrix}\\
+&=\begin{bmatrix}6{,}944.4 & -11{,}111.1\\ -11{,}111.1 & 27{,}777.8\end{bmatrix}\\
+&\text{row 1 check}:\\
+&\quad 6{,}944.4(0.0004)\\
+&\quad-11{,}111.1(0.00016)\\
+&=2.7778-1.7778=1
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>แนวทแยงไม่ขยับเลย ขยับแค่นอกแนวทแยง det = ad − bc เป็นศูนย์เพราะ bc ใหญ่เท่ากับ ad พอดี shrinkage หด b กับ c ลง 20% จาก 0.0002 เป็น 0.00016 ผลคูณ bc จึงหดลง 36% ขณะที่ ad ไม่ขยับ det จึงบวกขึ้นมาจากศูนย์ทันที</p>
+    <p>ในภาษาการเงินคือ อย่าเชื่อ correlation ที่ประมาณมาเต็ม ๆ เพราะเป็นส่วนที่มีสัญญาณรบกวนมากที่สุด ส่วนความผันผวนรายตัวบนแนวทแยงประมาณได้แม่นกว่ามาก จึงไม่ต้องแตะ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — shrinkage ทำให้คำนวณได้ แต่ทำให้ถูกหรือเปล่า</h4>
+  <p>ตรวจสามอย่าง: พอร์ตผีตอนนี้เสี่ยงเท่าไร พอร์ตความเสี่ยงต่ำสุดหน้าตาอย่างไร และถ้าใช้ δ น้อยลงเกิดอะไรขึ้น</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma^*w&=\begin{bmatrix}0.0004-0.00032\\0.00016-0.0002\end{bmatrix}\\
+&=\begin{bmatrix}0.00008\\-0.00004\end{bmatrix}\\
+w^{\mathsf T}\Sigma^*w&=0.00008+0.00008\\
+&=0.00016\\
+\sigma&=\sqrt{0.00016}=1.265\%\\[4pt]
+&(\Sigma^*)^{-1}\mathbf1\\
+&=(6{,}944.4-11{,}111.1,\\
+&\quad -11{,}111.1+27{,}777.8)\\
+&=(-4{,}166.7,\ 16{,}666.7)\\
+\text{weights}&=\Big(\frac{-4{,}166.7}{12{,}500},\ \frac{16{,}666.7}{12{,}500}\Big)\\
+&=(-33.3\%,\ 133.3\%)\\[4pt]
+\delta&=0.01:\\
+\det&=0.000400(0.000100)\\
+&\quad-0.000198^2\\
+&\quad=7.96\times10^{-10}\\
+&(\Sigma^*)^{-1}_{11}\\
+&=0.0001/(7.96\times10^{-10})\\
+&=125{,}628
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>พอร์ตผีกลับมามีความเสี่ยง 1.265% ต่อวัน ไม่ฟรีอีกต่อไป แต่พอร์ตความเสี่ยงต่ำสุดยังสั่ง short หุ้นแรก 33% เพื่อ long ตัวที่สอง 133% จากข้อมูลวันเดียว และถ้าใช้ δ = 0.01 ช่องแรกของตัวกลับพุ่งจาก 6,944 เป็น 125,628 หรือ 18 เท่า ขนาดตำแหน่งที่ optimizer สั่งก็โตตาม</p>
+    <p>shrinkage ไม่ได้เสกข้อมูลขึ้นมา มันแค่ยอมรับว่าไม่รู้ แล้วดึงคำตอบเข้าหาสิ่งที่มีโครงสร้าง ได้ตัวเลขที่คำนวณได้และนิ่งขึ้น แต่ถ้า T น้อยเกินไปจริง คำตอบก็ยังไร้สาระ กฎนิ้วโป้งคือ T ≥ 2N หุ้น 500 ตัวต้องการข้อมูลอย่างน้อย 1,000 วันหรือราว 4 ปี ซึ่งนานพอที่ correlation จะเปลี่ยนไปแล้ว</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>ทางแก้ที่ใช้จริง และจำนวนตัวเลขที่แต่ละทางต้องประมาณ</h4>
+  <p>คำถาม: หุ้น 500 ตัว ข้อมูล 250 วัน ถ้าไม่ใช้ Σ̂ ตรง ๆ มีทางไหนบ้าง และแต่ละทางต้องประมาณตัวเลขกี่ตัว?</p>
+  <p>ของที่มี: 125,250 ตัวเลขของ Σ̂ เต็ม จากขั้นที่ 13</p>
+  <p>1. Shrinkage Σ* = (1 − δ)Σ̂ + δF โดยเลือก δ ด้วยสูตรปิดของ Ledoit–Wolf หรือ cross-validation ทำได้ทันทีแต่ไม่อธิบายว่าความเสี่ยงมาจากไหน</p>
+  <p>2. Factor model Σ = BΩBᵀ + D ใช้ 4 ปัจจัย: 500 × 4 + 4(5)/2 + 500 = 2,000 + 10 + 500 = 2,510 ตัวเลข น้อยกว่า 125,250 ราว 50 เท่า และกลับด้านได้ถ้า D บวกทุกช่อง</p>
+  <p>3. PCA เก็บทิศใหญ่ 10 ถึง 20 ทิศแรกแล้วทิ้งที่เหลือ ซึ่งต้องใช้ eigenvalue ในหัวข้อ 5.6</p>
+  <p>4 เพิ่มค่าบนแนวทแยง Σ̂ + λI เช่น λ = 0.00002 กับตัวอย่างสองหุ้น det = 0.00042(0.00012) − 0.0002² = 5.04 × 10⁻⁸ − 4 × 10⁻⁸ = 1.04 × 10⁻⁸ ไม่เป็นศูนย์</p>
+  <p>เฉลย: factor model ลดจาก 125,250 เหลือ 2,510 ตัวเลข ส่วน shrinkage และการเพิ่มแนวทแยงทำให้กลับด้านได้โดยไม่ลดจำนวนตัวเลข</p>
+  <p>เช็ก 10 วินาที: 500 × 501 / 2 = 125,250 และ 250 × 500 = 125,000</p>
+  <p>งานจริง: rank คือจำนวนความเสี่ยงที่ตลาดให้ซื้อขายได้จริง ซึ่งมักน้อยกว่าจำนวนตั๋วบนกระดานมาก พันธบัตรรัฐบาล 40 รุ่นบนหน้าจอ PCA มักบอกว่า 97% ของการเคลื่อนไหวอธิบายได้ด้วย 3 ทิศคือ level, slope, curvature จึง hedge ได้จริงราว 3 มิติ ที่เหลือคือ basis risk</p>
+  <p>กับดัก: rank ไม่เกิน min(m, d) เสมอ ตลาดสองสภาวะต่อให้ขายสินทรัพย์ 500 ตัว rank ก็ไม่เกิน 2 เพิ่มจำนวนสินทรัพย์ไม่ได้เพิ่มความสามารถในการ hedge ต้องเพิ่มทิศใหม่เท่านั้น</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ rank ตัวกลับ และ shrinkage</summary>
+    <pre><code>import numpy as np
+S=np.array([[1,2,3],[2,4,6]]); assert np.linalg.matrix_rank(S)==1
+C=np.array([[1,3],[2,1]]); assert abs(np.linalg.det(C)+5)&lt;1e-9
+assert np.allclose(np.linalg.inv(C),[[-.2,.6],[.4,-.2]]) and np.allclose(np.linalg.solve(C,[10,10]),[4,2])
+r=np.array([.02,.01]); Sh=np.outer(r,r); w=np.array([1.,-2.])
+assert np.linalg.matrix_rank(Sh)==1 and abs(w@Sh@w)&lt;1e-15
+St=.8*Sh+.2*np.diag(np.diag(Sh))
+assert abs(np.linalg.det(St)-1.44e-8)&lt;1e-15
+assert np.allclose(np.linalg.inv(St),[[6944.44,-11111.11],[-11111.11,27777.78]],atol=0.01)
+assert abs(np.sqrt(w@St@w)-0.012649)&lt;1e-6
+x=np.linalg.solve(St,np.ones(2)); assert np.allclose(x/x.sum(),[-1/3,4/3])</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนี้ตรวจ rank 1 ของตลาดสามสินทรัพย์ det −5 และ θ = (4, 2) covariance วันเดียวที่ singular พร้อมพอร์ตผี และตัวเลขหลัง shrinkage ทั้ง det ตัวกลับ ความเสี่ยงพอร์ตผี และน้ำหนัก −33% กับ 133%</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 5.5a — rank ไม่เต็มคือคอลัมน์ที่ซ้อนทับกัน</h4>
+  <img src="../figures/5.5-1.svg" alt="Figure 5.5a — rank ไม่เต็มคือคอลัมน์ที่ซ้อนทับกัน" loading="lazy">
+  <figcaption>
+    <p>column สองเป็นสองเท่าของ column หนึ่งทุก observation จุดทั้งหมดจึงอยู่บนเส้นเดียว แม้ matrix มีสอง columns แต่มี independent direction เพียงหนึ่ง</p>
+  </figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>Figure 5.5b — ทิศที่สร้างได้ กับทิศที่หายไป</h4>
+  <img src="../figures/5.5-2.svg" alt="Figure 5.5b — ทิศที่สร้างได้ กับทิศที่หายไป" loading="lazy">
+  <figcaption>
+    <p>สำหรับ symmetric map $A=\begin{bmatrix}1&amp;1\\1&amp;1\end{bmatrix}$, output ไปได้เพียงตาม range $\operatorname{span}\{[1,1]^\top\}$ ส่วน input direction $[1,-1]^\top$ อยู่ใน null space และถูก map เป็นศูนย์ ภาพซ้อน input space กับ output space ซึ่งต่างหน้าที่กันไว้ในพิกัดเดียวเพื่อให้เห็นทิศตั้งฉาก; นี่คือเหตุผลที่ output ย้อนหา input เดียวไม่ได้</p>
+  </figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>Figure 5.5c — วงรี covariance ที่แบนจนไม่มีความหนา</h4>
+  <img src="../figures/5.5-3.svg" alt="Figure 5.5c — วงรี covariance ที่แบนจนไม่มีความหนา" loading="lazy">
+  <figcaption>
+    <p>เมื่อผลตอบแทนสองตัว correlated เท่ากับหนึ่ง risk ellipse ยุบเหลือเส้น $r_1=r_2$ และมีความกว้างศูนย์ในทิศตั้งฉาก จึงไม่มี inverse ให้คำนวณ</p>
+  </figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>Figure 5.5d — rank บอกว่าข้อมูลที่ใช้ได้จริงมีกี่ทิศ</h4>
+  <img src="../figures/5.5-4.svg" alt="Figure 5.5d — rank บอกว่าข้อมูลที่ใช้ได้จริงมีกี่ทิศ" loading="lazy">
+  <figcaption>
+    <p>เพิ่ม asset ที่เป็นสำเนาทำให้จำนวน columns โตจากหนึ่งเป็นสาม แต่ rank ค้างที่หนึ่ง ข้อมูลมากช่องขึ้นจึงไม่ได้แปลว่ามี information direction มากขึ้น</p>
+  </figcaption>
+</figure>
+
+<section class="example">
+  <h4>คำตอบ — determinant เป็นศูนย์ จึงกลับ matrix ไม่ได้</h4>
+  <p>คำตอบ: covariance ตัวอย่างมี determinant เท่ากับศูนย์และ rank เท่ากับ 1 จึงไม่มี inverse; สอง columns นำข้อมูลทิศเดียวกันมาซ้ำ</p>
+  <p>ตรวจเองใน 10 วินาที: คูณ matrix [[1,1],[1,1]] ด้วย vector [1,-1] ต้องได้ [0,0] vector ที่ไม่เป็นศูนย์แต่ถูกส่งเป็นศูนย์พิสูจน์ว่ามี null direction และ solution ไม่ unique</p>
+  <p>ใช้ตัดสินใจ: ถ้า QQQ เป็น linear combination ของ AAPL กับ MSFT จริง ให้ตัด factor ซ้ำหรือใช้ regularization ที่ประกาศไว้ ห้ามเติมเลขเล็ก ๆ เงียบ ๆ แล้วเรียกความเสี่ยงว่า stable</p>
+</section>
+
+<section class="pitfall">
+  <h4>กับดัก: rank ต่ำแปลว่าไม่มี data</h4>
+  <p>rank deficiency ไม่ได้แปลว่า matrix ว่าง แต่แปลว่าข้อมูลมี directions ซ้ำหรือถูกบีบอยู่ใน subspace การลบ asset แบบสุ่มอาจทิ้ง signal ที่ดี ควรระบุ null direction และ business meaning ก่อนแก้</p>
+</section>
+
+<section class="table">
+  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
+  <table>
+    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
+    <tbody>
+      <tr><td>การตรวจ</td><td>ตรวจได้ชัดว่ากลับด้านได้หรือไม่</td><td>ของจริงมักเกือบกลับด้านไม่ได้</td><td>คำตอบแบบใช่หรือไม่ใช่ไม่พอ ต้องดูว่าใกล้ขอบแค่ไหน</td></tr>
+      <tr><td>ความแม่นของเครื่อง</td><td>การคำนวณแม่น</td><td>การปัดเลขทำให้ตารางที่ควรกลับด้านไม่ได้ ดูเหมือนกลับได้</td><td>โปรแกรมจะให้คำตอบออกมาโดยไม่เตือน ทั้งที่ตัวเลขนั้นไร้ความหมาย</td></tr>
+      <tr><td>จำนวนข้อมูล</td><td>มีข้อมูลมากพอ</td><td>สินทรัพย์มากกว่าจำนวนวัน ทำให้กลับด้านไม่ได้แน่นอน</td><td>ต้องแก้ด้วยการลดมิติหรือการผสมค่า ซึ่งคือหัวข้อ 17.4 และ 17.8</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <p>แถวกลางคือกับดักที่อันตรายที่สุด เพราะไม่มีข้อความแจ้งเตือนใด ๆ เลย</p>
+  </div>
+</section>
+
+<section class="takeaways">
+  <h4>สรุปที่ใช้ได้จริง</h4>
+  <ul>
+    <li>rank คือจำนวน independent directions และ range คือ output space ที่ mapping สร้างได้</li>
+    <li>square matrix invertible ก็ต่อเมื่อ full rank</li>
+    <li>null space ทำให้ input หลายตัวให้ output เดียวกัน</li>
+    <li>covariance matrix ที่ singular ไม่มี inverse และควรเป็น data/model alert</li>
+    <li>ตลาดสามสินทรัพย์ (1, 2), (2, 4), (3, 6) มี rank 1: ภาระ (10, 10) hedge ไม่ได้ ภาระ (10, 20) hedge ได้ไม่จำกัดวิธี เพิ่มสินทรัพย์ (3, 1) แล้ว det = −5 และ θ = (4, 2) มีวิธีเดียว</li>
+    <li>หุ้น 500 ตัวจากข้อมูล 250 วันต้องประมาณ 125,250 ตัวเลขจาก 125,000 ตัว covariance จึง singular เสมอ shrinkage ทำให้กลับด้านได้ (det 1.44 × 10⁻⁸ ในตัวอย่างสองหุ้น) แต่ไม่ได้เสกข้อมูลขึ้นมา</li>
+  </ul>
+</section>
+</article>
+
+<nav class="book-nav bottom-nav">
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="5.4.html">5.4 Linear Functions and Linear Constraints</a></div>
+  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="5.6.html">5.6 Eigenvalues and Positive Definiteness</a></div>
+</nav>
+</div>
+</body>
+</html>

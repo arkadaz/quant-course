@@ -1,7 +1,5 @@
-rng=np.random.default_rng(52);n=400;t=np.arange(n+1);baseline=320*t
-raw=np.r_[0,np.cumsum(rng.normal(0,2500,400))];bridge=raw-(t/400)*raw[-1]+(t/400)*37000
-observed=baseline+bridge
-ax.plot(t,observed,color=ACCENT,label='observed cumulative P&L')
-ax.plot(t,baseline,color=WARM,ls='--',label='baseline: $320 per trade')
-ax.vlines(400,128000,165000,color=GOOD,lw=3);ax.text(392,146500,'excess = $37,000',ha='right',va='center',color=GOOD)
-ax.scatter([400],[165000],color=ACCENT,s=30);ax.set_xlabel('Trade count');ax.set_ylabel('USD');ax.legend(loc='upper left')
+rng=np.random.default_rng(621);n=800;m=8;t=np.linspace(0,1,n+1);dw=rng.normal(0,np.sqrt(1/n),(m,n));w=np.c_[np.zeros(m),np.cumsum(dw,axis=1)]
+for i in range(m):ax.plot(t,w[i],color=SERIES[i%len(SERIES)],alpha=.62,lw=1)
+ax.plot(t,np.sqrt(t),color=INK,ls='--',lw=1.2,label=r'$+\sqrt{t}$')
+ax.plot(t,-np.sqrt(t),color=INK,ls='--',lw=1.2,label=r'$-\sqrt{t}$')
+ax.set_xlabel('Time');ax.set_ylabel('$W_t$');ax.set_title('Standard Brownian motion sample paths',loc='left');ax.legend(loc='lower left',ncol=2)

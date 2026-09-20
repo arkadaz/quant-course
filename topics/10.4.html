@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10.4 Worked Computation — E_0[W_t+sW_s]</title>
+<title>10.4 Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</title>
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
@@ -11,49 +11,59 @@
 <div class="wrap">
 <nav class="book-nav top-nav">
   <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-4">Part 4</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
   <a href="../chapters/10.html">บทที่ 10</a>
-  <span class="topic-progress">หัวข้อ 61/153</span>
+  <span class="topic-progress">หัวข้อ 60/158</span>
 </nav>
 
-<article class="topic" data-number="10.4" data-depends-on="2.1 6.7 10.3">
+<article class="topic" data-number="10.4" data-depends-on="10.1 10.2 10.3 9.2">
 <header class="topic-header">
-  <h1><span class="tnum">10.4</span> Worked Computation — $\mathbb E_0[W_{t+s}W_s]$</h1>
-  <p class="subtitle">คำนวณผลคูณของค่าจากสองเวลาโดยไม่เดาเส้นทางทั้งเส้น</p>
+  <h1><span class="tnum">10.4</span> Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</h1>
+  <p class="subtitle">แบบจำลองที่ค่าติดลบไม่ได้และโตแบบทบต้น</p>
 </header>
 
 <div class="hook">
-  <p>กองทุนหนึ่งมีกำไรขาดทุนแกว่งปีละ \$12 ล้าน มกราคมกำไร 2 ล้าน ผลงานเดือนแรกอธิบายผลทั้งปีได้กี่เปอร์เซ็นต์ และตอนนี้ควรคาดกำไรทั้งปีเท่าไร?</p>
-  <p>เฉลย: correlation ของเดือนแรกกับทั้งปีคือ √(1/12) = 0.289 อธิบายได้แค่ 8.3% และที่อธิบายได้ก็เพราะมกราคมอยู่ในผลทั้งปีอยู่แล้ว คาดกำไรทั้งปี \$2 ล้าน แต่ยังคลาดได้หนึ่ง standard deviation (SD) 11.49 ล้าน มกราคมบอกอะไรเกี่ยวกับกุมภาพันธ์ถึงธันวาคมไม่ได้เลย</p>
+  <p>ถ้า SPY เดินตาม GBM ที่ drift 10% ความผันผวน 20% ต่อปี วันที่ร่วง 5% ขึ้นไปควรเกิดบ่อยแค่ไหน และในเมื่อตลาดจริงมีวันแบบนั้นหลายวันในปี 2008 กับ 2020 ทำไมโต๊ะยังใช้ GBM?</p>
+  <p>เฉลย: GBM บอกว่า z = −3.99 โอกาสวันละ 0.0033% หรือราวครั้งเดียวใน 122 ปี ของจริงถี่กว่ามาก GBM จึงผิดที่หาง แต่ยังใช้เป็นภาษากลาง เพราะราคาติดลบไม่ได้ ผลตอบแทนไม่ขึ้นกับระดับราคา มีสูตรปิด และความผิดของมันวัดได้และซ่อมได้ทีละข้อ</p>
 </div>
 
 <details class="jargon" open>
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>covariance</dt>
-    <dd>ตัวเลขที่วัดว่าตัวแปรสองตัวขยับร่วมกันในหน่วยผลคูณของทั้งคู่ ใช้สร้าง portfolio risk และหา shared randomness ระหว่างสองเวลา</dd>
-    <dt>Standard Brownian Motion (SBM)</dt>
-    <dd>Brownian motion ที่เริ่มจาก 0 ไม่มี drift และมี variance เท่ากับเวลา ใช้เป็น process มาตรฐานสำหรับคำนวณ covariance ข้ามเวลา</dd>
-    <dt>expected value</dt>
-    <dd>probability-weighted average ของ outcomes ที่เป็นไปได้ ใช้หาค่าเฉลี่ยและ second moments ของ Brownian levels</dd>
-    <dt>correlation</dt>
-    <dd>covariance ที่หารด้วย standard deviations ทั้งสองจนไม่มีหน่วยและอยู่ระหว่าง -1 ถึง 1 ใช้เทียบความสัมพันธ์ข้าม quantities ที่ scale ต่างกัน</dd>
-    <dt>coefficient of determination ($R^2$)</dt>
-    <dd>correlation squared ใน simple linear regression ใช้วัดสัดส่วน variance ของตัวแปรหนึ่งที่ linear projection บนอีกตัวอธิบายได้</dd>
-    <dt>overlapping window</dt>
-    <dd>ช่วงวัดผลสองช่วงที่แชร์ observations หรือเวลาเดียวกัน ใช้เตือนว่าความสัมพันธ์อาจเกิดจากการนับข้อมูลซ้ำ ไม่ใช่ predictive signal</dd>
-    <dt>linear projection</dt>
-    <dd>ค่าพยากรณ์เชิงเส้นที่ลด mean squared error ให้ต่ำสุด ใช้แปลง covariance เป็น forecast coefficient</dd>
-    <dt>hedge</dt>
-    <dd>position ที่เปิดเพื่อลด exposure หรือความเสี่ยงของ position หลัก ใช้ covariance คำนวณขนาดที่ชดเชยการขยับร่วมกัน</dd>
-    <dt>Monte Carlo simulation</dt>
-    <dd>การสุ่ม scenarios จำนวนมากจาก model แล้วเฉลี่ยผล ใช้ตรวจสูตร covariance และ correlation ด้วยตัวเลขที่ทำซ้ำได้</dd>
-    <dt>P&amp;L volatility budget</dt>
-    <dd>standard deviation เป้าหมายของกำไรขาดทุนตลอด horizon ที่ desk ยอมรับ ใช้แปลง Brownian scale เป็นจำนวนเงิน USD</dd>
-    <dt>United States (US) equity fund</dt>
-    <dd>กองทุนที่ลงทุนในหุ้นตลาดสหรัฐฯ ใช้เป็นตัวอย่างการวัด cumulative P&amp;L และประเมินผล manager เป็น USD</dd>
-    <dt>investment committee</dt>
-    <dd>คณะผู้กำกับการลงทุนและความเสี่ยงของกองทุน ใช้ตัดสินใจเรื่อง mandate, capital และการประเมินผล manager</dd>
+    <dt>implied volatility</dt>
+    <dd>ค่าความผันผวนที่ใส่ใน pricing formula แล้วทำให้ราคา model เท่ากับราคา option ในตลาด ใช้ quote option ด้วยหน่วยที่เทียบข้าม strike และ maturity ได้</dd>
+    <dt>volatility smile</dt>
+    <dd>รูปที่ implied volatility เปลี่ยนตาม strike แทนที่จะคงที่ ใช้เป็นหลักฐานจากตลาดว่าค่าความผันผวนเดียวของ GBM อธิบาย option ทุกตัวไม่ได้</dd>
+    <dt>fat tails</dt>
+    <dd>distribution ที่ให้โอกาสของ moves ใหญ่สูงกว่า normal distribution ใช้เตือนว่า normal-tail model อาจประเมิน extreme loss ต่ำเกินไป</dd>
+    <dt>jump diffusion</dt>
+    <dd>model ที่เพิ่ม jump events เข้า diffusion เพื่อให้ราคากระโดดได้ ใช้ stress ข่าว, earnings และ gap risk ที่ continuous GBM พลาด</dd>
+    <dt>delta hedging</dt>
+    <dd>การปรับจำนวน underlying เพื่อลด sensitivity อันดับหนึ่งของ option ต่อราคา ใช้จัดการ small continuous moves แต่เหลือ jump และ transaction-cost risk</dd>
+    <dt>model risk</dt>
+    <dd>ความเสี่ยงที่ decision เสียหายเพราะ assumptions หรือ implementation ของ model ผิด ใช้กำหนด validation, reserves และ stress tests แยกจาก market risk</dd>
+    <dt>normal distribution</dt>
+    <dd>distribution รูประฆังที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็น benchmark ของ standardized GBM log returns และตรวจ tail misfit</dd>
+    <dt>independence</dt>
+    <dd>property ที่รู้ outcome หนึ่งแล้วไม่เปลี่ยน distribution ของอีก outcome ใช้ระบุ assumption ของ future shocks ใน GBM</dd>
+    <dt>underlying</dt>
+    <dd>สินทรัพย์ที่ option หรือ derivative อ้างอิงราคา ใช้กำหนด market factor ที่ hedge ต้องติดตาม</dd>
+    <dt>short</dt>
+    <dd>position ที่ได้ประโยชน์เมื่อมูลค่าของ instrument ลดลงและอาจมี obligation ใช้ระบุ direction ของ option risk ให้ชัด</dd>
+    <dt>long</dt>
+    <dd>position ที่ได้ประโยชน์เมื่อมูลค่าของ instrument เพิ่มขึ้น ใช้ระบุ direction ของ exposure และ P&amp;L</dd>
+    <dt>bid</dt>
+    <dd>ราคาสูงสุดที่ผู้ซื้อพร้อมจ่ายในตลาด ใช้ประเมินราคาที่ขายได้จริงและ execution cost</dd>
+    <dt>ask</dt>
+    <dd>ราคาต่ำสุดที่ผู้ขายพร้อมรับในตลาด ใช้ประเมินราคาที่ซื้อได้จริงและ execution cost</dd>
+    <dt>spread</dt>
+    <dd>ส่วนต่างระหว่าง bid และ ask ใช้เป็นต้นทุนขั้นต่ำของการข้ามตลาดและเป็น input ของ hedge reserve</dd>
+    <dt>liquidity</dt>
+    <dd>ความสามารถซื้อขายขนาดที่ต้องการโดยไม่ขยับราคามาก ใช้กำหนด hedge horizon และ impact stress</dd>
+    <dt>Generalized Autoregressive Conditional Heteroskedasticity (GARCH)</dt>
+    <dd>model ที่ให้ variance วันนี้เรียนรู้จาก shock และ variance ก่อนหน้า ใช้จับ volatility clustering ที่ GBM แบบความผันผวนคงที่มองไม่เห็น</dd>
+    <dt>standard deviation (SD)</dt>
+    <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าวันร่วงแรงอยู่ห่างจุดกลางกี่ช่วง</dd>
   </dl>
 </details>
 
@@ -62,337 +72,292 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$W_t$</td><td>SBM ที่เวลา $t$</td><td>$\sqrt{\mathrm{year}}$ เมื่อวัดเวลาเป็นปี</td></tr>
-      <tr><td>$\mathbb E_0[\cdot]$</td><td>expectation จากข้อมูลเริ่มต้น $\mathcal F_0$ ซึ่งเป็น trivial information ในโจทย์นี้</td><td>ตาม quantity ด้านใน</td></tr>
-      <tr><td>$s,t$</td><td>เวลาแรกและความยาวจากเวลาแรกถึงเวลาหลัง</td><td>ปี</td></tr>
-      <tr><td>$u,v$</td><td>เวลาคู่หนึ่งบน Brownian path</td><td>ปี</td></tr>
-      <tr><td>$\operatorname{Cov}(W_u,W_v)$</td><td>covariance ของ Brownian levels ที่เวลา $u$ และ $v$</td><td>ปี</td></tr>
-      <tr><td>$\rho_{u,v}$</td><td>correlation ของ Brownian levels ที่เวลา $u$ และ $v$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$P_t$</td><td>P&amp;L สะสมของ fund ถึงเวลา $t$</td><td>USD</td></tr>
-      <tr><td>$\sigma_P$</td><td>annual P&amp;L volatility scale</td><td>USD ต่อ $\sqrt{\mathrm{year}}$</td></tr>
+      <tr><td>$S_t$</td><td>underlying price ณ เวลา $t$</td><td>USD/share</td></tr>
+      <tr><td>$r_{t,\Delta t}$</td><td>log return ในช่วงเวลา $\Delta t$</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\sigma$</td><td>constant volatility ที่ GBM สมมติ</td><td>$1/\sqrt{\mathrm{year}}$</td></tr>
+      <tr><td>$K$</td><td>option strike</td><td>USD/share</td></tr>
+      <tr><td>$\Delta$</td><td>option delta ต่อหนึ่ง share</td><td>share/share</td></tr>
+      <tr><td>$N$</td><td>position size</td><td>shares or contracts</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
-  <h4>ที่มาที่ไป: คำถามที่ผู้บริหารถามทุกไตรมาส</h4>
-  <p>คำถามคือผลงานเดือนแรกบอกอะไรเกี่ยวกับทั้งปีได้บ้าง ซึ่งฟังดูเหมือนคำถามเชิงบริหาร แต่จริง ๆ มีคำตอบทางคณิตศาสตร์ที่ชัดเจน</p>
-  <p>สิ่งที่ต้องหาคือความเกี่ยวพันระหว่างค่าที่คนละเวลาของกระบวนการเดียวกัน และวิธีที่ตรงที่สุดคือแยกค่าที่เวลาหลัง ออกเป็นส่วนที่ใช้ร่วมกับเวลาแรก บวกส่วนที่เกิดหลังจากนั้น</p>
-  <p>เทคนิคการแยกก้อนที่รู้ออกจากก้อนที่ยังไม่เกิดนี้ จะถูกใช้ซ้ำตลอดบทที่เหลือ</p>
-  <p>คำตอบที่ได้สะอาดจนน่าประหลาด คือความเกี่ยวพันขึ้นกับความยาวของช่วงเวลาที่ทั้งสองใช้ร่วมกันเท่านั้น</p>
+  <h4>ที่มาที่ไป: รู้ว่ามันผิด แล้วทำไมยังใช้</h4>
+  <p>คำถามที่ยุติธรรมที่สุดที่จะถามกับแบบจำลองนี้คือ ในเมื่อรู้อยู่แล้วว่าตลาดจริงมีหางอ้วนกว่า มีการกระโดด และความผันผวนไม่คงที่ ทำไมยังใช้มันอยู่</p>
+  <p>คำตอบไม่ใช่เพราะความเคยชิน แต่เพราะมันเป็นแบบจำลองที่ง่ายที่สุดที่ยังผ่านเกณฑ์พื้นฐานสองข้อ คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยนตามระดับราคา</p>
+  <p>และเพราะมันมีสูตรปิด ซึ่งแปลว่าคำนวณได้เร็วพอจะทำใหม่ทุกวินาที และตรวจสอบย้อนหลังได้</p>
+  <p>แบบจำลองที่ซับซ้อนกว่ามี parameter ให้ประมาณมากกว่า และความคลาดเคลื่อนจากการประมาณนั้น บางครั้งใหญ่กว่าที่ได้จากการอธิบายที่ดีขึ้น หัวข้อนี้จึงเป็นการชั่งน้ำหนักอย่างซื่อสัตย์</p>
 </section>
 
 <section class="prose">
-  <h4>ประวัติความเป็นมา: จากปัญหาอนุกรมเวลาของ Yule สู่ covariance kernel ของ Kolmogorov</h4>
-  <p>ในปี 1926 นักสถิติชาวอังกฤษ George Udny Yule ตีพิมพ์บทความชื่อดังตั้งคำถามว่า ทำไมอนุกรมเวลาทางเศรษฐกิจถึงมักแสดง correlation ลวงที่สูงผิดปกติ ทั้งที่สองสิ่งไม่ได้มีเหตุผลเชื่อมโยงกันเลย สาเหตุสำคัญประการหนึ่งคือ อนุกรมเวลาเหล่านั้นเกิดจากการสะสมผลกระทบในอดีต (cumulative sums) ทำให้ข้อมูลสองตำแหน่งเวลาใช้ประวัติศาสตร์ร่วมกันเป็นช่วงยาว</p>
-  <p>ต่อมาในทศวรรษ 1930 ถึง 1940 Andrey Kolmogorov และ Norbert Wiener ได้พัฒนาทฤษฎี stochastic process เชิงคณิตศาสตร์และแสดงว่า Gaussian process ทุกตัวถูกกำหนดโครงสร้างอย่างสมบูรณ์ด้วย mean function และ covariance function หรือที่เรียกว่า covariance kernel</p>
-  <p>สำหรับ Brownian motion การที่ covariance kernel มีค่าเท่ากับ $\min(u,v)$ พอดี สะท้อนความจริงพื้นฐานว่าความเกี่ยวพันระหว่างสองเวลาเกิดจาก ส่วนประวัติศาสตร์ที่ใช้ร่วมกัน ล้วน ๆ ไม่ใช่เกิดจากการที่อดีตส่งพลังวิเศษไปทำนายอนาคต การเข้าใจสูตรนี้จึงเป็นวัคซีนป้องกันไม่ให้ quant หลงกลตัวเลข correlation ในหน้าต่างเวลาที่ทับซ้อนกัน</p>
+  <h4>ที่มาทางประวัติศาสตร์: จากวิทยานิพนธ์ปี 1900 ของ Bachelier สู่แบบจำลองของ Samuelson</h4>
+  <p>ในปี 1900 Louis Bachelier นักศึกษาปริญญาเอกชาวฝรั่งเศส นำเสนอวิทยานิพนธ์ชื่อ Théorie de la spéculation โดยใช้ Brownian motion จำลองราคาพันธบัตรและสัญญาซื้อขายในตลาด Paris Bourse ซึ่งเกิดขึ้นก่อนที่ Albert Einstein จะตีพิมพ์ผลงานฟิสิกส์เรื่องเดียวกันถึง 5 ปี</p>
+  <p>ทว่าแบบจำลองของ Bachelier มีจุดบกพร่องร้ายแรง เพราะเขาสมมติว่าราคาหุ้นเคลื่อนที่แบบ arithmetic random walk เมื่อระฆังคว่ำมีหางยาวไม่จำกัดในแดนลบ จึงทำให้ราคาหุ้นมีโอกาสติดลบได้เสมอ ทั้งที่ในความเป็นจริง ผู้ถือหุ้นมีความรับผิดจำกัด (limited liability) ไม่ว่าจะเกิดอะไรขึ้น ราคาไม่มีทางต่ำกว่าศูนย์</p>
+  <p>ราว ๆ ปี 1965 Paul Samuelson ค้นพบงานของ Bachelier อีกครั้งในห้องสมุด เขาแก้ปัญหานี้โดยเสนอให้มองผลตอบแทนเป็นสัดส่วนการคูณ แทนที่จะเป็นการบวกเม็ดเงินตรง ๆ จึงกลายมาเป็น Geometric Brownian Motion ที่ราคาติดลบไม่ได้ แนวคิดนี้กลายเป็นเสาเข็มที่ Fischer Black, Myron Scholes และ Robert Merton นำไปต่อยอดเป็นสูตรตั้งราคา option ในเวลาต่อมา</p>
 </section>
 
 <section class="prose">
-  <h4>โจทย์เป็น expectation ของผลคูณ ไม่ใช่ผลคูณของ expectations</h4>
-  <p>Brownian level ณ เวลาแรกอยู่ภายใน level ณ เวลาหลัง เพราะจุดหลังสะสม randomness จาก shared history มาด้วย ทั้งคู่จึงไม่ independent แม้ future increment หลังเวลาแรกจะ independent จากอดีต</p>
+  <h4>สิ่งที่ GBM ทำถูกและมีประโยชน์ทันที</h4>
+  <p>GBM เหมาะเป็น first model เพราะ (1) $S_t>0$ สอดคล้อง limited liability และ (2) return เป็นสัดส่วนของราคา จึง scale จากหุ้นราคา \$20 ไป \$500 ได้โดยไม่เปลี่ยนหน่วย noise. Closed-form structure ยังทำให้ code, calibration checks และ communication เร็วกว่าการเริ่มจาก model ซับซ้อน.</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — positivity และ scale invariance</h4>
+  <p>เหตุผลข้อแรกที่เลือก model นี้คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยน ไม่ว่าหุ้นจะราคา \$10 หรือ \$10,000</p>
+  <div class="math">\[
+\begin{aligned}
+S_t&=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}\gt0\\
+\frac{S_{t+s}}{S_t}&=e^{(\mu-\sigma^2/2)s+\sigma(W_{t+s}-W_t)}\qquad(\text{no }S_t\text{ inside})
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>exponential รับประกันราคาบวก และ future gross return ratio ไม่ขึ้นกับระดับ $S_t$; สอง property นี้ตอบข้อจำกัดพื้นฐานของ equity price model</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — ที่มาของ GBM: จากการคูณผลตอบแทนย่อย สู่เลขชี้กำลังด้วย Taylor Series</h4>
+  <p>การพิสูจน์นี้เชื่อมโยงโลก discrete เข้ากับโลก continuous อย่างสมบูรณ์ ทำให้เห็นว่าพจน์ลบครึ่ง variance ไม่ใช่ของแปลกประหลาดที่โผล่มาจากฟ้า แต่เป็นผลพวงโดยตรงจากพจน์อันดับสองของ Taylor series ที่สะสมผ่านการทบต้น</p>
+  <p>ลองตรวจด้วยตัวเลขจริงของการเทรด 252 วันในหนึ่งปี ($T=1$): ถ้าหุ้นมี drift 10% และความผันผวน $\sigma=0.20$ ต่อปี ในแต่ละวันความผันผวนจะสร้างแรงฉุดขนาดเล็ก เมื่อสะสมครบ 252 วัน ผลรวมของแรงฉุดจะเท่ากับ $-0.5 \times (0.20)^2 = -0.02$ หรือลดลง 2% ต่อปีเต็มพอดี</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{S_T}{S_0}&=\prod_{k=1}^n(1+R_k)\\
+R_k&\approx\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
+\log\frac{S_T}{S_0}&=\sum_{k=1}^n\log(1+R_k)\\
+\log(1+u)&=u-\tfrac12u^2+\cdots\\
+&\quad(\text{Taylor})\\
+\log\frac{S_T}{S_0}&\approx\sum_{k=1}^n\Big(\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
+&\qquad-\tfrac12\sigma^2\Delta t\,Z_k^2\Big)\\
+&\approx\mu T-\tfrac12\sigma^2T+\sigma\sqrt T\,Z\\
+&\quad(n\Delta t=T)\\
+S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
+&\mu=10\%,\ \sigma=20\%:\\
+&\quad-\tfrac12(0.20)^2=-0.02\ \text{per year}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทำไมราคาหุ้นต้องเขียนในรูป exponential คำตอบไม่ได้มาจากความสวยงาม แต่มาจากการทบต้นของผลตอบแทนรายวัน เมื่อแบ่งเวลา $T$ เป็น $n$ ก้าวสั้น ๆ ราคาปลายทางคือการเอาตัวคูณผลตอบแทนในแต่ละก้าวมาคูณเรียงกัน</p>
+    <p>ใส่ log เพื่อเปลี่ยนผลคูณให้กลายเป็นผลบวก จากนั้นใช้ Taylor series กระจาย $\log(1+u)$ จะเห็นพจน์กำลังสองโผล่ออกมาทันที ซึ่งความผันผวนยกกำลังสองคูณ $\Delta t$ จะไม่หายไปแม้ก้าวเวลาจะสั้นลงจนเข้าใกล้ศูนย์</p>
+    <p>ผลบวกก้อนสุ่มจะ converge สู่ Brownian motion ตาม Central Limit Theorem (CLT) และพจน์กำลังสองจะรวมกันเป็นตัวหักลบครึ่ง variance พอดี เมื่อแปลงกลับด้วย exponential จึงได้สูตร GBM ที่ใช้กันทั่วโลก</p>
+  </div>
 </section>
 
 <section class="prose">
   <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การหาความเกี่ยวพันระหว่างค่าที่คนละเวลา ตอบคำถามที่ผู้บริหารถามทุกไตรมาส</p>
-  <p>ใช้ตอบว่าผลงานเดือนแรกบอกอะไรเกี่ยวกับทั้งปี ซึ่งเป็นคำถามที่มีคำตอบเป็นตัวเลขได้จริง</p>
-  <p>ใช้แยกความเสี่ยงของทั้งปีออกเป็นส่วนที่เกิดแล้วกับส่วนที่ยังไม่เกิด เพื่อวางแผนที่เหลือของปี</p>
-  <p>ใช้เป็นเทคนิคพื้นฐานของการคำนวณในบทถัดไป คือแยกก้อนที่รู้ออกจากก้อนที่ยังสุ่ม</p>
+  <p>การรู้ว่าทำไมถึงเลือกแบบจำลองนี้ และมันผิดตรงไหน คือความต่างระหว่างคนใช้เครื่องมือกับคนเข้าใจเครื่องมือ</p>
+  <p>ใช้ตอบคำถามในการสัมภาษณ์งานและในการทบทวนแบบจำลอง ว่าทำไมถึงใช้ตัวนี้ไม่ใช่ตัวอื่น</p>
+  <p>ใช้ตัดสินว่าเมื่อไรควรเปลี่ยนไปใช้แบบจำลองที่ซับซ้อนกว่า ซึ่งมีต้นทุนในการดูแลสูงกว่ามาก</p>
+  <p>ใช้ออกแบบมาตรการควบคุมความเสี่ยงที่ครอบส่วนที่แบบจำลองมองไม่เห็น</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.4a — สองเวลาใช้เส้นทางร่วมกันจนถึงเวลาที่มาก่อน</h4>
-  <img src="../figures/10.4-1.svg" alt="Figure 10.4a — สองเวลาใช้เส้นทางร่วมกันจนถึงเวลาที่มาก่อน" loading="lazy">
+  <h4>Figure 10.4a — หุ้น 20 กับ \$500 ใช้ตัวคูณชุดเดียวกัน</h4>
+  <img src="../figures/10.4-1.svg" alt="หุ้น \$20 แกนซ้ายกับหุ้น \$500 แกนขวา จุดทับกันทุกวัน" loading="lazy">
   <figcaption>
-    <p>ช่วงสีอำพันจาก 0 ถึง $s$ อยู่ใน Brownian levels ทั้งสอง ส่วนช่วงสีเขียวจาก $s$ ถึง $t+s$ อยู่เฉพาะจุดหลัง; covariance จึงเท่ากับ randomness ของช่วงร่วม</p>
+    <p>แกนซ้ายคือหุ้น \$20 แกนขวาคือหุ้น \$500 สเกลห่างกัน 25 เท่า ใส่ตัวคูณรายวันชุดเดียวกัน จุดทุกจุดทับกันพอดี วันที่ 1 หุ้นถูกขึ้น \$0.82 หุ้นแพงขึ้น \$20.40 เป็นเปอร์เซ็นต์เท่ากันคือ 4.08% ตัวคูณของ GBM ไม่มีราคาอยู่ข้างใน กฎเดียวจึงใช้กับหุ้นทุกระดับราคา</p>
   </figcaption>
 </figure>
 
 <section class="prose">
-  <h4>แปล level จุดหลังให้เป็นภาษาของ increments</h4>
-  <p>นิยาม Brownian motion ให้เครื่องมือกับ increments จึงบวกและลบ $W_s$ เพื่อแยกก้อนที่รู้ ณ เวลา $s$ ออกจากก้อนอนาคต</p>
+  <h4>assumption audit ก่อนใช้ output</h4>
+  <p>GBM สมมติ constant volatility, normal log returns, continuous paths, independent increments และ frictionless continuous trading แต่ละข้อเป็น choice ที่ต้อง map ไป decision horizon: one-day risk near earnings ยอมรับ jump-free model ไม่ได้, ส่วน rough long-horizon scenario อาจใช้ baseline ได้ถ้ามี sensitivity overlay</p>
 </section>
 
+<figure class="plot">
+  <h4>Figure 10.4b — ความผันผวนมาเป็นช่วง ไม่คงที่</h4>
+  <img src="../figures/10.4-2.svg" alt="ความผันผวนย้อนหลัง 15 วันของข้อมูลจำลองสามช่วง เทียบค่าคงที่ 21.8%" loading="lazy">
+  <figcaption>
+    <p>จำลองหนึ่งปีเทรด 252 วันที่มีสามช่วง ยาว 80, 55 และ 117 วัน ความผันผวนรายปี 12.7%, 44.4% และ 17.5% เส้นน้ำเงินคือความผันผวนย้อนหลัง 15 วัน เส้นประคือค่าคงที่ตัวเดียว 21.8% แบบที่ GBM ใช้ ในช่วงร้อนตัวเลขคงที่ต่ำกว่าของจริงเกินสองเท่า ขนาด hedge และวงเงินความเสี่ยงที่คิดจากตัวเลขเดียวจึงเล็กเกินไปตอนที่อันตรายที่สุด</p>
+  </figcaption>
+</figure>
+
 <section class="formula">
-  <h4>ขั้นที่ 1 — แยก shared history กับ future increment</h4>
-  <p>จะหาค่าเฉลี่ยของผลคูณจากสองเวลา อย่าไปคิดทั้งเส้นทาง ให้แยกค่าที่เวลาหลังออกเป็นส่วนที่ใช้ร่วมกับเวลาแรก บวกส่วนที่เกิดหลังจากนั้น จุดที่เลือกแยกไม่ใช่เรื่องบังเอิญ มันคือจุดเดียวที่ทำให้สองก้อนเป็นอิสระต่อกัน</p>
+  <h4>ขั้นที่ 3 — normal tail benchmark versus stressed tail</h4>
+  <p>แต่ต้องซื่อสัตย์ด้วยว่าแบบจำลองนี้ผิดตรงไหน ขั้นนี้ให้ตัวเลขที่แบบจำลองทำนาย เพื่อเอาไปเทียบกับความถี่ที่เกิดขึ้นจริง การเทียบนั้นคือเนื้อหาของหัวข้อ 17.7 และมักจบด้วยการที่แบบจำลองแพ้</p>
   <div class="math">\[
 \begin{aligned}
-&(W_{t+s}-W_s)+W_s\\
-&=W_{t+s}-W_s+W_s\\
-&=W_{t+s}\\[4pt]
-&W_s:\\
-&\quad\text{shared with the earlier time}\\
-&W_{t+s}-W_s:\\
-&\quad\text{new, independent of }\mathcal F_s
+r&=\log\frac{S_{t+\Delta t}}{S_t}\\
+&\sim\mathcal N\Big(\big(\mu-\tfrac12\sigma^2\big)\Delta t,\ \sigma^2\Delta t\Big)\\
+&\mathbb P(r\le-x)\\
+&=\Phi\Big(\frac{-x-(\mu-\sigma^2/2)\Delta t}{\sigma\sqrt{\Delta t}}\Big)\\[4pt]
+&(\mu-\sigma^2/2)\Delta t=0.08/252=0.000317\\
+&\sigma\sqrt{\Delta t}=0.20/15.8745=0.012599\\
+&x=5\%:\\
+z&=\frac{-0.05-0.000317}{0.012599}=-3.994\\
+&\mathbb P(r\le-5\%)\\
+&=\Phi(-3.994)=0.0000325\\
+&1/0.0000325=30{,}762\ \text{days}\\
+&=122\ \text{years}
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>สามบรรทัดแรกคือการบวกและลบ $W_s$ ครั้งเดียว ซึ่งไม่เปลี่ยนค่าอะไรเลย จึงเป็นจริงบนทุกเส้นทาง ไม่ใช่การประมาณ</p>
-    <p>สี่บรรทัดล่างอธิบายว่าทำไมถึงแยกตรงนี้ ไม่ใช่ที่อื่น: ก้อนล่างสุดคือส่วนที่เวลาแรกกับเวลาหลังใช้ร่วมกัน</p>
-    <p>ส่วนก้อนบนคือส่วนที่เกิดขึ้นหลังเวลาแรกไปแล้ว ซึ่งสมบัติข้อแรกของ Brownian motion รับประกันว่าไม่เกี่ยวกับอะไรที่เกิดก่อนหน้านั้น</p>
-    <p>การแยกให้ก้อนหนึ่งเป็นอิสระจากอีกก้อน คือสิ่งที่ทำให้ขั้นถัดไปคำนวณได้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — กระจายผลคูณด้วย linearity</h4>
-  <p>เมื่อแยกได้แล้ว ก็กระจายผลคูณออกเป็นสองพจน์ สามบรรทัดนี้ยังไม่ใช้สมบัติพิเศษของ Brownian motion เลยแม้แต่ข้อเดียว มันเป็นแค่การกระจายวงเล็บ ซึ่งเป็นเหตุผลที่ควรทำก่อนเสมอ</p>
-  <div class="math">\[
-\begin{aligned}W_{t+s}W_s&=\big[(W_{t+s}-W_s)+W_s\big]W_s\\
-&=(W_{t+s}-W_s)W_s+W_s^{2}\\
-\mathbb E_0[W_{t+s}W_s]&=\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]+\mathbb E_0\big[W_s^{2}\big]\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เป้าหมายคือค่าเฉลี่ยของผลคูณของค่าที่สองเวลาบนเส้นทางเดียวกัน ซึ่งพันกันอยู่ เพราะค่าที่เวลาหลังมีค่าที่เวลาแรกอยู่ข้างใน เทคนิคคือแทนการแยกของขั้นที่ 1 เข้าไป แล้วกระจายวงเล็บ ได้สองพจน์ คือพจน์ไขว้ กับกำลังสองของค่าที่เวลาแรก</p>
-    <p>การเฉลี่ยทีละพจน์ใช้กฎบวกค่าเฉลี่ยของหัวข้อ 1.3 ซึ่งใช้ได้เสมอ ไม่ต้องขอ independence สังเกตว่าถึงตรงนี้เรายังไม่ได้ใช้สมบัติอะไรของ Brownian motion เลย มันจะถูกใช้ในขั้นถัดไป ตอนคำนวณพจน์ไขว้</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>ทำให้ cross term หายด้วย tower property</h4>
-  <p>ย้ายจุดยืนไปเวลา $s$ ก่อน ณ จุดนั้น $W_s$ รู้ค่าแล้วจึงดึงออกจาก conditional expectation ได้ และ future increment ยังมี conditional mean 0</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — คำนวณ cross term ทีละชั้น</h4>
-  <p>พจน์ไขว้ดูน่ากลัวที่สุด แต่จัดการได้โดยแทรกข้อมูล ณ เวลาแรกเข้าไปก่อน แล้วดึงส่วนที่รู้แล้วออกมานอกวงเล็บ</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb E_0[(W_{t+s}-W_s)W_s]\\
-&=\mathbb E_0\!\left[\mathbb E[(W_{t+s}-W_s)W_s\mid\mathcal F_s]\right]\\
-&=\mathbb E_0\!\left[W_s\,\mathbb E[W_{t+s}-W_s\mid\mathcal F_s]\right]=0.
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สองบรรทัดแรกใช้ tower property แทรก $\mathcal F_s$; บรรทัดที่สามดึง $W_s$ ออกเพราะรู้แล้ว และ conditional mean ของ increment ใหม่เท่ากับ 0 จึงทำให้ cross term ทั้งก้อนเป็น 0</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — ทางเลือกที่สอง: คำนวณ cross term ด้วย independence ของ increments</h4>
-  <p>วิธีที่สองนี้ยืนยันผลลัพธ์เดียวกันด้วยสัจพจน์ independent increments โดยไม่ต้องพึ่ง filtration ช่วยให้เห็นชัดเจนว่า cross term หายไปเพราะช่วงเวลาไม่ทับกันจริง ๆ</p>
-  <div class="math">\[
-\begin{aligned}
-&[0,s]\ \text{and}\ (s,t+s]:\\
-&\quad\text{no common time}\\
-&W_s=W_s-W_0\\
-&\ \ \text{independent of}\ \ W_{t+s}-W_s\\[4pt]
-&\mathbb E_0\big[(W_{t+s}-W_s)W_s\big]\\
-&=\mathbb E_0[W_{t+s}-W_s]\cdot\mathbb E_0[W_s]\\
-&=0\cdot0=0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ทางเลือกนี้ไม่ง้อ conditional expectation หรือ tower property แต่ใช้สัจพจน์ข้อแรกของ Brownian motion ตรง ๆ คือช่วงเวลา $[0,s]$ กับ $(s,t+s]$ ไม่ซ้อนทับกันเลย</p>
-    <p>เมื่อช่วงเวลาไม่ทับกัน increment บนสองช่วงย่อม independent ต่อกัน และเนื่องจาก $W_0=0$ ค่า $W_s-W_0$ จึงคือตัวแปร $W_s$ พอดิบพอดี</p>
-    <p>เมื่อ random variables สองตัว independent ต่อกัน expected value ของผลคูณจะแยกเป็นผลคูณของ expected values ทันที และเพราะไม่มี drift ทั้งสองก้อนจึงเป็นศูนย์ คูณกันได้ศูนย์</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — second moment ของจุดแรก</h4>
-  <p>เหลือพจน์เดียวคือกำลังสองของจุดแรก ซึ่งไม่ใช่กำลังสองของค่าเฉลี่ย ต้องใช้ความสัมพันธ์ระหว่าง variance กับค่าเฉลี่ยมาช่วย</p>
-  <div class="math">\[
-\mathbb E_0[W_s^2]=\operatorname{Var}(W_s)+\mathbb E_0[W_s]^2=s+0^2=s
-\]</div>
-  <div class="reading">
-    <p>$W_s$ มี variance $s$ และ mean 0 ตามนิยาม SBM; identity ของ second moment จึงให้ expected square เท่ากับ $s$ ไม่ใช่ square ของ expected value</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — รวมคำตอบของ worked computation</h4>
-  <p>รวมสองพจน์เข้าด้วยกัน คำตอบออกมาสะอาดมาก และมีความหมายที่จำง่าย</p>
-  <div class="math">\[
-\boxed{\mathbb E_0[W_{t+s}W_s]=0+s=s}
-\]</div>
-  <div class="reading">
-    <p>พจน์ cross term เป็น 0 และ shared Brownian level ให้ second moment $s$ ดังนั้น expectation ของผลคูณเท่ากับเวลาที่ทั้งคู่แชร์ร่วมกัน</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>ขยายเป็น covariance kernel ทั้งผืน</h4>
-  <p>เพราะ SBM มี mean 0 expectation ของผลคูณเท่ากับ covariance และเวลาที่แชร์กันของจุดทั่วไป $u,v$ สิ้นสุดที่จุดซึ่งมาถึงก่อน</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — covariance ของ Brownian levels</h4>
-  <p>ผลลัพธ์ข้างบนขยายเป็นสูตรทั่วไปได้ทันที และคำว่า minimum ในสูตรนี้ หมายถึงเวลาที่มาก่อน ไม่ได้หมายถึงค่าของเส้นทางที่ต่ำกว่า ความยาวของประวัติที่ใช้ร่วมกันต่างหากที่เป็นตัวกำหนดว่าสองเวลานั้นเกาะกันแค่ไหน</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb E[W_u]=0\\
-&\;\Longrightarrow\;\operatorname{Cov}(W_u,W_v)=\mathbb E[W_uW_v]\\[4pt]
-&u\le v:\\
-W_v&=W_u+(W_v-W_u)\\
-\mathbb E[W_uW_v]&=\mathbb E[W_u^{2}]\\
-&\quad+\mathbb E\big[W_u(W_v-W_u)\big]\\
-&=u+\mathbb E[W_u]\,\mathbb E[W_v-W_u]\\
-&=u+0=u\\[4pt]
-&\text{either order}:\\
-&\operatorname{Cov}(W_u,W_v)=\min(u,v)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เริ่มด้วยการทำให้โจทย์เบาลง ค่าเฉลี่ยเป็นศูนย์ พจน์ที่ต้องลบในสูตรลัดของ covariance ในหัวข้อ 6.5 จึงหายไป เหลือค่าเฉลี่ยของผลคูณล้วน ๆ จากนั้นสมมติให้เวลาแรกมาก่อน แล้วแยกแบบเดียวกับขั้นที่ 1</p>
-    <p>กระจายแล้วเฉลี่ยทีละพจน์ ก้อนแรกคือ variance ของ $W_u$ ซึ่งเท่ากับ $u$ ตามหัวข้อ 10.1 ส่วนพจน์ไขว้แยกคูณกันได้เพราะสองก้อนเป็นอิสระ และ increment มีค่าเฉลี่ยศูนย์ ผลคูณจึงเป็นศูนย์ เหลือ $u$ ล้วน ๆ</p>
-    <p>สองบรรทัดสุดท้ายบอกว่า ความเกี่ยวพันของสองเวลาถูกกำหนดโดยช่วงที่ทั้งคู่แชร์กันเท่านั้น คือเวลาที่มาก่อน ส่วนที่งอกออกไปทีหลังไม่มีส่วนร่วมเลย</p>
+    <p>ยกผลของหัวข้อ 10.2 มาต่อ log return ในช่วงสั้น ๆ ก็ยังเป็นระฆัง จากนั้นทำอย่างเดียวกับขั้นก่อน คือลบจุดกลางและหารความกว้างทั้งสองข้างของอสมการ ตัวหารเป็นบวกเสมอ เครื่องหมายจึงไม่พลิก แล้วอ่านพื้นที่หางซ้ายจาก $\Phi$ ตรง ๆ</p>
+    <p>แต่ตัวเลขที่ได้ต้องใช้ให้ถูกวิธี มันคือเส้นเทียบ ไม่ใช่คำตอบสุดท้าย เพราะแบบจำลองนี้ไม่มีการกระโดด และสมมติว่าความผันผวนคงที่ตลอด ทั้งสองข้อผิดในวันที่สำคัญที่สุด</p>
+    <p>ข้อมูลจริงจึงทะลุเกณฑ์บ่อยกว่าที่สูตรนี้บอกเสมอ วิธีใช้ที่ถูกคือดูว่าของจริงเกินเส้นนี้กี่เท่า ตัวเลขนั้นบอกขนาดของสิ่งที่แบบจำลองมองไม่เห็น</p>
+    <p>แทนเลข SPY วันที่ร่วง 5% อยู่ห่างจุดกลาง 3.99 SD ของวัน GBM จึงบอกว่าเกิดครั้งเดียวในราว 30,762 วันทำการหรือ 122 ปี แต่ในปี 2008 และ 2020 ปีเดียวก็มีวันแบบนี้หลายวัน ผลตอบแทนรายวันจริงมี kurtosis ราว 5 ถึง 10 ไม่ใช่ 3 ของระฆัง หางจึงหนากว่าหลายสิบเท่า</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.4b — พื้นผิว covariance ของ Brownian motion</h4>
-  <img src="../figures/10.4-2.svg" alt="Figure 10.4b — พื้นผิว covariance ของ Brownian motion" loading="lazy">
+  <h4>Figure 10.4c — SD เท่ากัน แต่หางต่างกันมาก</h4>
+  <img src="../figures/10.4-3.svg" alt="density ของผลตอบแทนรายวัน GBM เทียบหางอ้วนที่ SD เท่ากัน บนแกน log" loading="lazy">
   <figcaption>
-    <p>ผิว $\min(u,v)$ สูงตามแนวทแยงและแบนเมื่อเวลาใดเวลาหนึ่งหยุดเพิ่ม เพราะ randomness ที่แชร์กันโตได้ถึงเวลาที่สั้นกว่าเท่านั้น</p>
+    <p>เส้นทึบคือผลตอบแทนรายวันแบบ GBM ที่ SD 1.26% เส้นประคือ t distribution ที่มี 3 degrees of freedom ปรับให้ SD เท่ากันพอดี ใช้เป็นตัวอย่างหางอ้วน ไม่ใช่ข้อมูลจริง แกนตั้งเป็น log เพื่อให้เห็นหาง ตรงกลางสองเส้นแทบเหมือนกัน ความต่างทั้งหมดอยู่ที่หาง</p>
+    <p>ที่เส้น −5% ความสูงของ density สองเส้นต่างกันราว 16 เท่า ส่วนโอกาสสะสมตั้งแต่ −5% ลงไปต่างกัน 95 เท่า คือ 0.0033% กับ 0.31% ต่อวัน หรือครั้งเดียวใน 122 ปีตามขั้นที่ 3 กับ 0.78 ครั้งต่อปี SD ตัวเดียวมองไม่เห็นความต่างนี้</p>
   </figcaption>
 </figure>
 
 <section class="prose">
-  <h4>แปลง covariance เป็น correlation</h4>
-  <p>covariance มีหน่วยเวลา จึงหารด้วย standard deviations ของ Brownian levels ทั้งคู่เพื่อเทียบเป็น scale ไม่มีหน่วย</p>
+  <h4>ความต่อเนื่องล้มเหลวตรงวันที่ต้อง hedge พอดี</h4>
+  <p>ข่าว Earnings ข่าวจากหน่วยงานกำกับ และข่าวข้ามคืนทำให้ราคาเกิด gap ได้ Delta hedge ยกเลิก exposure อันดับหนึ่งได้เฉพาะการเคลื่อนไหวเล็กและต่อเนื่อง เมื่อราคากระโดดจากระดับหนึ่งไปอีกระดับหนึ่ง จะไม่มีลำดับการซื้อขายระหว่างทางมาชดเชย จึงต้องเก็บ jump scenarios กำหนด event-day limits และบวก liquidity add-ons แทนการรายงานว่า hedge ภายใต้ continuous diffusion ป้องกันความเสี่ยงได้ครบถ้วน</p>
 </section>
 
-<section class="formula">
-  <h4>ขั้นที่ 8 — correlation ของ Brownian levels</h4>
-  <p>covariance ยังขึ้นกับหน่วยเวลา จึงเทียบข้ามคู่ไม่ได้ ห้าบรรทัดนี้ปรับให้เป็นตัวเลขไร้หน่วย แล้วรูปแบบก็โผล่ออกมาชัด คือมันขึ้นกับอัตราส่วนของสองเวลาเท่านั้น ไม่ได้ขึ้นกับว่าวัดเป็นวันหรือเป็นปี</p>
-  <div class="math">\[
-\begin{aligned}\operatorname{SD}(W_u)=\sqrt{u},&\qquad\operatorname{SD}(W_v)=\sqrt{v}\\
-\rho_{u,v}&=\frac{\operatorname{Cov}(W_u,W_v)}{\operatorname{SD}(W_u)\operatorname{SD}(W_v)}\\
-&=\frac{\min(u,v)}{\sqrt{u}\sqrt{v}}\\
-&=\frac{\min(u,v)}{\sqrt{\min(u,v)\,\max(u,v)}}\\
-&=\sqrt{\frac{\min(u,v)}{\max(u,v)}}\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>variance เท่ากับเวลาตามหัวข้อ 10.1 จึงถอดรากได้ตรง ๆ แล้วใส่นิยาม correlation จากหัวข้อ 3.5 คือ covariance หารด้วยความกว้างสองตัว จากนั้นแทนผลของขั้นที่ 7 ลงไป</p>
-    <p>กลเม็ดอยู่บรรทัดสี่ เขียนผลคูณ $uv$ ใหม่เป็นเวลาที่มาก่อนคูณเวลาที่มาหลัง เป็นตัวเลขคู่เดิม แค่เรียกชื่อใหม่ แต่พอเรียกแบบนี้ เวลาที่มาก่อนก็โผล่ทั้งบนและในราก ตัดกันเหลือรากของสัดส่วน</p>
-    <p>รูปสุดท้ายไม่มีหน่วยเวลาเหลืออยู่เลย มีแต่สัดส่วน วันที่ 1 กับวันที่ 2 จึงเกี่ยวพันกันเท่ากับปีที่ 1 กับปีที่ 2 และยิ่งสองเวลาห่างกันเป็นเท่าตัวมาก correlation ยิ่งจาง</p>
-  </div>
-</section>
+<figure class="plot">
+  <h4>Figure 10.4d — ราคากระโดดข้ามคืน hedge ปรับไม่ทัน</h4>
+  <img src="../figures/10.4-4.svg" alt="ราคาปิด \$98 เปิด \$78 ร่วง 20.4% ในคืนเดียว" loading="lazy">
+  <figcaption>
+    <p>ปิด \$98 เปิด \$78 ร่วง 20.4% ในคืนเดียว ใต้ GBM ที่ความผันผวนรายวัน 1.26% นี่คือราว −18 SD ซึ่งแทบเป็นไปไม่ได้ แต่ของจริงเกิดจากข่าวงบหรือคดี ระหว่างปิดกับเปิดไม่มีการซื้อขาย hedge ที่ตั้งใจปรับทีละนิดจึงไม่มีโอกาสปรับเลย ขาดทุนทั้งก้อนตรงช่วงแรเงา</p>
+  </figcaption>
+</figure>
 
 <section class="formula">
-  <h4>ขั้นที่ 9 — เดือนแรกเทียบทั้งปี</h4>
-  <p>นำสูตร covariance ที่เพิ่งพิสูจน์มาใช้กับคำถามจริง คือผลของเดือนแรกเกี่ยวกับทั้งปีแค่ไหน</p>
+  <h4>ขั้นที่ 4 — นิยามของการตรวจด้วยราคาตลาด: ถ้าแบบจำลองถูก ต้องเห็นอะไร</h4>
+  <p>บรรทัดนี้ไม่ใช่ผลที่พิสูจน์ มันเป็น เงื่อนไขที่กำหนดขึ้น เพื่อใช้ตรวจ ตรรกะมีข้อเดียว: ถ้าแบบจำลองที่มีความผันผวนค่าเดียวอธิบายตลาดได้จริง ค่าความผันผวนที่ย้อนกลับมาจากราคา option ทุกตัวต้องเท่ากันหมด ของจริงไม่เท่า และรูปที่ไม่เท่านั้นมีชื่อว่า smile ซึ่งเป็นหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
   <div class="math">\[
 \begin{aligned}
-\rho_{1/12,1}&=\sqrt{1/12}=1/3.4641=0.2887\\
-R^2&=\rho^2=1/12=8.33\%\\[4pt]
-&\text{3 months}:\ \rho=\sqrt{3/12}=0.500\\
-&\quad R^2=25.0\%\\
-&\text{6 months}:\ \rho=\sqrt{6/12}=0.707\\
-&\quad R^2=50.0\%\\
-&\text{11 months}:\ \rho=\sqrt{11/12}=0.957\\
-&\quad R^2=91.7\%\\[4pt]
-&\operatorname{Cov}(W_{1/12},\,W_1-W_{1/12})=0
+&\sigma_{\mathrm{imp}}(K,T)=\sigma\\
+&\quad(\text{every strike }K\text{ and maturity }T)
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>เวลาสั้นคือ 1/12 ปีและเวลายาวคือ 1 ปี; correlation เท่ากับ 0.2887 ส่วนสัดส่วน variance ที่อธิบายได้ต้องยกอีกชั้นเป็นกำลังสองจึงเหลือ 8.33%</p>
-    <p>บรรทัดที่สามถึงแปดคือตารางอ่านเร็ว คอลัมน์ R² เท่ากับสัดส่วนของปีที่เห็นไปแล้วพอดี 3 เดือนคือ 25% 6 เดือนคือ 50% ส่วน correlation ดูใหญ่กว่าเสมอเพราะมันคือรากของตัวเลขนั้น นี่คือกลไกเดียวกับที่ทำให้ backtest ดูน่าเชื่อกว่าที่ควร</p>
-    <p>บรรทัดสุดท้ายคือคำถามที่ควรถามจริง มกราคมเกี่ยวกับ 11 เดือนที่เหลือแค่ไหน สองช่วงไม่มีเวลาร่วมกันเลย covariance จึงเป็นศูนย์เป๊ะ</p>
+    <p>ถ้า model มีความผันผวนเดียวและอธิบายตลาดได้ implied volatility ที่ย้อนจากทุก option ต้องเท่ากัน; smile หรือ skew คือ observable model discrepancy</p>
+    <p>อ่านว่า: ความผันผวนที่ย้อนกลับมาจากราคา option ต้องเท่ากันทุก strike และทุกอายุ ของจริง option ที่ strike ห่างจากราคาปัจจุบันมาก มี implied volatility สูงกว่าเสมอ ตลาดกำลังบอกว่ามันไม่เชื่อ GBM</p>
+    <p>แต่ตลาดก็ยังพูดด้วยภาษาของ GBM แทนที่จะบอกว่า option ราคา \$4.72 คนบอกว่า implied volatility 23% ซึ่งเทียบข้ามหุ้นและข้ามอายุได้ทันที GBM จึงเป็นระบบพิกัด ไม่ใช่ความเชื่อ</p>
+    <p>นี่คือสิ่งที่ต้องเห็นถ้าแบบจำลองความผันผวนคงที่อธิบายตลาดได้จริง ของจริงไม่เท่ากัน และรูปที่ไม่เท่านั้นคือหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.4c — correlation ดูสูงกว่าสัดส่วน variance ที่อธิบายได้</h4>
-  <img src="../figures/10.4-3.svg" alt="Figure 10.4c — correlation ดูสูงกว่าสัดส่วน variance ที่อธิบายได้" loading="lazy">
+  <h4>Figure 10.4e — ตลาดตั้งราคา option ด้วยความผันผวนไม่เท่ากันทุก strike</h4>
+  <img src="../figures/10.4-5.svg" alt="implied volatility ลดจากราว 24% ที่ strike 75% ลงไปราว 15% ที่ strike 125% เทียบ GBM 20%" loading="lazy">
   <figcaption>
-    <p>เมื่อสังเกตปีไปสัดส่วน $q$ correlation กับผลทั้งปีเท่ากับ $\sqrt q$ แต่ $R^2$ เท่ากับ $q$ พอดี; เดือนแรกจึงดูสัมพันธ์ 0.289 ทั้งที่อธิบาย variance แค่ 8.33%</p>
+    <p>ตัวอย่างรูปร่างทั่วไปของ implied volatility หุ้น ไม่ใช่ข้อมูลจริงวันใดวันหนึ่ง strike ที่ 75% ของราคาปัจจุบันใช้ราว 24% ที่ราคาปัจจุบันราว 19% ที่ 125% ราว 15% ส่วน GBM ใช้ 20% ตัวเดียวทุก strike ตลาดจ่ายแพงกว่าสำหรับประกันขาลง แปลว่าตลาดเชื่อว่าหางซ้ายอ้วนกว่าที่ GBM บอก</p>
   </figcaption>
 </figure>
 
 <section class="prose">
-  <h4>ใส่หน่วย USD ให้ fund example</h4>
-  <p>model P&amp;L สะสมเป็น $P_t=\sigma_PW_t$ โดย annual volatility scale เท่ากับ \$12 ล้าน เดือนมกราคมจึงมี standard deviation 12 ล้านคูณรากของ 1/12 และ future 11 เดือนมี standard deviation ตามเวลาที่ยังเหลือ</p>
+  <h4>model hierarchy สำหรับ desk ไม่ใช่ศาสนา</h4>
+  <p>ใช้ GBM เป็นระบบพิกัดตั้งต้น คือใช้มันปรับราคาให้เทียบกันได้ สร้างเส้นทางฐานไว้เปรียบเทียบ ตรวจว่าหน่วยของ parameter ถูกต้อง และใช้เป็นภาษากลางเวลาพูดถึง implied volatility</p>
+  <p>จากนั้นค่อยเลือกตัวซ่อมให้ตรงกับอาการที่เจอ: ความผันผวนจับกลุ่มเป็นช่วง ใช้ stochastic volatility หรือ GARCH; ราคากระโดดข้ามช่วง ใช้ jump diffusion; ราคาสิทธิ์โค้งเอียงตาม strike ใช้ local หรือ stochastic volatility surface; และถ้าต้นทุนการเทรดกินกำไร ใช้การ hedge ที่คิดค่าธรรมเนียมเข้าไปด้วย</p>
+  <p>เพิ่มความซับซ้อนเฉพาะเมื่อการตัดสินใจเรื่องความเสี่ยงเปลี่ยนไปจริงเพราะข้อบกพร่องนั้น ไม่ใช่เพราะ model ใหม่ดูน่าเชื่อกว่า</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 10 — risk เดือนแรกและช่วงที่เหลือ</h4>
-  <p>แยกความเสี่ยงทั้งปีออกเป็นส่วนที่เกิดแล้วกับส่วนที่ยังไม่เกิด</p>
+  <h4>ขั้นที่ 5 — นิยามของรายการที่ต้องมีในบัญชี hedge</h4>
+  <p>บรรทัดนี้เป็น รายการที่เรากำหนดขึ้น ว่าต้องมีในบัญชี ไม่ใช่สมการที่พิสูจน์ได้ พจน์แรกคือส่วนที่แบบจำลองอธิบายได้ ส่วนที่เหลือคือสิ่งที่มันอธิบายไม่ได้ และถ้าไม่จดไว้แยกกัน กำไรขาดทุนที่แบบจำลองบอกจะถูกเข้าใจผิดว่าเป็นเงินจริง ค่าแต่ละตัวคำนวณอย่างไรเป็นเรื่องของหัวข้อ 14.3 และ 18.4</p>
   <div class="math">\[
-\begin{aligned}
-\operatorname{SD}(P_{1/12})&=\$12\text{M}\sqrt{1/12}=\$3.464\text{M}\\
-\operatorname{SD}(P_1-P_{1/12})&=\$12\text{M}\sqrt{11/12}=\$11.489\text{M}
-\end{aligned}
+\mathrm{Hedge\ P\&amp;L}\approx N\Delta\,\Delta S+\mathrm{gamma\ error}+\mathrm{jump\ loss}-\mathrm{spread}-\mathrm{impact}
 \]</div>
   <div class="reading">
-    <p>$P_{1/12}$ คือ January P&amp;L และ $P_1-P_{1/12}$ คือ P&amp;L ของ 11 เดือนที่เหลือ; Brownian scaling แยก standard deviation ตามความยาวแต่ละช่วง</p>
+    <p>delta term เป็น first-order continuous approximation; gamma error, jump loss, bid-ask spread และ price impact ต้องอยู่ใน attribution เพื่อไม่ให้ model P and L ถูกเข้าใจเป็น realized P and L</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 11 — forecast สิ้นปีหลังเห็น January P&amp;L</h4>
-  <p>รวมทุกอย่างเป็นคำตอบที่ใช้ได้ คือพอเห็นผลเดือนมกราคมแล้ว ควรปรับความคาดหวังของทั้งปีอย่างไร</p>
+  <h4>ขั้นที่ 6 — ค่าเฉลี่ยกับค่ากึ่งกลางไม่เท่ากัน และส่วนต่างนี้ GBM บังคับ</h4>
+  <p>แบบจำลองนี้บังคับผลที่คนส่วนใหญ่ไม่ได้คาดไว้: ราคาที่คาดหวังกับราคาที่พบได้บ่อยที่สุด เป็นคนละตัวเลข และต่างกันไม่น้อย</p>
+  <p>สาเหตุคือ drift ที่ทบต้นจริง ๆ ไม่ใช่ $\mu$ แต่เป็น $\mu$ ลบครึ่งหนึ่งของ variance ดังนั้นการอ้างค่าเฉลี่ยเป็นสิ่งที่ควรคาดหวังจึงทำให้คาดหวังสูงเกินไป</p>
   <div class="math">\[
 \begin{aligned}
-&\mathbb E[P_1\mid\mathcal F_{1/12}]\\
-&=P_{1/12}+\mathbb E\big[P_1-P_{1/12}\mid\mathcal F_{1/12}\big]\\[4pt]
-&=\$2\text{M}+0=\$2\text{M}\\[4pt]
-&\operatorname{Var}(P_1\mid\mathcal F_{1/12})\\
-&=\operatorname{Var}(P_1-P_{1/12})=\sigma_P^2\cdot\frac{11}{12}\\[4pt]
-&=(\$12\text{M})^2\cdot\frac{11}{12}=144\cdot\frac{11}{12}=\$132\text{M}^2\\[4pt]
-&\operatorname{SD}(P_1\mid\mathcal F_{1/12})\\
-&=\sqrt{132}\approx\$11.489\text{M}
+\text{mean}&=S_0\,e^{\mu T}\\
+\text{median}&=S_0\,e^{(\mu-\sigma^{2}/2)T}\\[4pt]
+&\mu=0.10,\ \sigma=0.20:\\
+&\quad\mu-\sigma^2/2=0.10-0.02=0.08\\
+&T=10:\\
+&\quad\text{mean}=100e^{1.0}=271.83\\
+&\quad\text{median}=100e^{0.8}=222.55\\
+&271.83/222.55=e^{0.2}=1.2214
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>January P&amp;L \$2 ล้าน รู้แล้วจึงเป็น conditional mean ของ annual total เมื่อ future increment มี mean 0; uncertainty ที่ยังเหลือมาจาก 11 เดือนข้างหน้าและยังใหญ่ถึง \$11.489 ล้าน</p>
+    <p>ราคาที่คาดหวังคำนวณจากการยกกำลังของ drift เต็ม เพราะค่าเฉลี่ยของ lognormal ใช้ parameter นั้น ส่วนราคาที่มีโอกาสเกิดเท่ากันด้านบนและด้านล่าง หรือค่ากึ่งกลาง ใช้ drift ที่หักครึ่ง variance ออกแล้ว</p>
+    <p>แทนตัวเลขสิบปี: ค่าเฉลี่ยได้ 271.83 ขณะที่ค่ากึ่งกลางได้ 222.55 ต่างกันราว 22% ตัวเลขทั้งสองถูกต้องพร้อมกัน ไม่ใช่การคำนวณผิด</p>
+    <p>ความต่างนี้มาจาก skewness ขวาของ distribution ราคาสูงมากดึงค่าเฉลี่ยขึ้น แต่ไม่ดึงค่ากึ่งกลาง เพราะค่ากึ่งกลางสนใจแค่ว่ามีกี่เส้นทางที่สูงกว่า ไม่ได้สนใจว่าสูงเท่าไร</p>
+    <p>แปลว่าอะไร: ถ้าต้องรายงานสิ่งที่คาดหวัง ให้ใช้ค่าเฉลี่ยและระบุว่ามันสูงกว่าค่าปกติ แต่ถ้าต้องวางแผนกำลังคนหรือกำลังซื้อ ให้ใช้ค่ากึ่งกลาง เพราะนั่นคือสิ่งที่เกิดขึ้นบ่อยกว่า</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.4d — Monte Carlo ยืนยันผลจากทฤษฎี</h4>
-  <img src="../figures/10.4-4.svg" alt="Figure 10.4d — Monte Carlo ยืนยันผลจากทฤษฎี" loading="lazy">
+  <h4>Figure 10.4f — SPY สิบปี: ค่าเฉลี่ย 271.83 กับ median 222.55</h4>
+  <img src="../figures/10.4-6.svg" alt="ค่าเฉลี่ยกับ median ของราคา SPY สิบปี และแถบ 25% ถึง 75%" loading="lazy">
   <figcaption>
-    <p>การจำลอง 60,000 ปีให้ covariance ใกล้ 1/12 และ correlation ใกล้ 0.289; ก้อน scatter กว้างเตือนว่า January ที่ดีไม่ได้บังคับทั้งปีให้ดี</p>
+    <p>เริ่ม 100 drift 10% ความผันผวน 20% เส้นเขียวคือค่าเฉลี่ย เส้นส้มคือ median ห่างกันมากขึ้นทุกปี ครบสิบปีต่างกัน 22% ตามขั้นที่ 6 แถบคือช่วง 25% ถึง 75% จาก 145 ถึง 341 เส้นค่าเฉลี่ยอยู่เหนือ median ตลอด เพราะหางขวาลากขึ้น แต่ครึ่งหนึ่งของเส้นทางจบต่ำกว่า 222.55</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>คำตอบ — มกราคมกำไร 2 ล้าน บอกอะไรเกี่ยวกับทั้งปี</h4>
-  <p>คำถาม: กองทุนมีกำไรขาดทุนแกว่งปีละ \$12 ล้าน มกราคมกำไร 2 ล้าน เดือนแรกอธิบายผลทั้งปีได้กี่เปอร์เซ็นต์ และควรคาดกำไรทั้งปีเท่าไร?</p>
-  <p>ของที่มี: ขั้นที่ 6 ถึง 11</p>
-  <p>1. covariance ของสองเวลาคือเวลาที่มาก่อน Cov(W_(1/12), W_1) = 1/12</p>
-  <p>2. correlation = √(1/12) = 0.289 และ R² = 1/12 = 8.33%</p>
-  <p>3 คำทำนายทั้งปีคือ \$2 ล้าน และความไม่แน่นอนที่เหลือคือ 12 × √(11/12) = \$11.49 ล้าน</p>
-  <p>4 มกราคมกับกุมภาพันธ์ถึงธันวาคมมี covariance ศูนย์</p>
-  <p>ตรวจเองใน 10 วินาที: √(1/12) = 1/3.464 = 0.289 และ 0.289² = 0.0833 ส่วน 144 × 11/12 = 132 ราก 11.49</p>
-  <p>แปลว่าอะไร: 8.3% ไม่ได้มาจากความสามารถในการทำนาย มันมาจากการนับมกราคมซ้ำในผลทั้งปี ถ้าถามว่ามกราคมบอกอะไรเกี่ยวกับ 11 เดือนที่เหลือ คำตอบคือศูนย์ League table รายไตรมาสจึงแทบไม่มีคุณค่าทางสถิติ และสัญญาจ้างผู้จัดการกองทุนควรวัดผลด้วยหน้าต่างยาว ไม่ใช่ไตรมาสต่อไตรมาส และอย่ารายงาน 0.289 ว่าอธิบายได้ 28.9%</p>
+  <h4>คำตอบ — GBM ผิดตรงไหน และทำไมยังใช้</h4>
+  <p>คำถาม: SPY ที่ drift 10% ความผันผวน 20% วันที่ร่วง 5% ควรเกิดบ่อยแค่ไหนตาม GBM และทำไมโต๊ะยังใช้แบบจำลองนี้?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 4 และ 6</p>
+  <p>1 ความผันผวนรายวัน 0.20/15.8745 = 1.26% จุดกลางรายวัน 0.08/252 = 0.03%</p>
+  <p>2 วันร่วง 5% อยู่ที่ z = −3.994 โอกาส 0.0033% ต่อวัน หรือราวครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</p>
+  <p>3. GBM ยังผ่านสองเกณฑ์ที่แบบจำลองบวกเงินตรง ๆ ทำไม่ได้ ราคาติดลบไม่ได้ และตัวคูณในอนาคตไม่มี S_t อยู่ข้างใน หุ้น \$20 กับ \$500 จึงใช้กฎเดียวกัน</p>
+  <p>4 ค่าเฉลี่ยกับ median สิบปีคือ 271.83 กับ 222.55 ต่างกัน 22% ซึ่งแบบจำลองบอกไว้ล่วงหน้า</p>
+  <p>ตรวจเองใน 10 วินาที: 5% ÷ 1.26% ≈ 4 SD และหางที่ 4 SD ของระฆังคือราวสามในแสน</p>
+  <p>แปลว่าอะไร: ใช้ GBM เป็นระบบพิกัดตั้งต้น แล้วซ่อมตามอาการ ความผันผวนเกาะกลุ่มใช้ GARCH ราคากระโดดใช้ jump model หางอ้วนใช้ stress test และ implied volatility surface เพิ่มความซับซ้อนเฉพาะเมื่อมันเปลี่ยนการตัดสินใจจริง อย่าใช้ความผันผวนรายวันของ GBM ปลอบใจว่า hedge จะรอดวันข่าว</p>
 </section>
 
 <section class="code">
   <details>
-    <summary>โค้ดตรวจ covariance ของสองเวลา และตัวเลขกองทุน</summary>
+    <summary>โค้ดตรวจหางของ GBM, Taylor drag และค่าเฉลี่ยกับ median</summary>
     <pre><code>import numpy as np
-rng = np.random.default_rng(64)
-n = 2_000_000
-s, v = 1 / 12, 1.0
-Ws = rng.normal(0, np.sqrt(s), n)                   # January
-W1 = Ws + rng.normal(0, np.sqrt(v - s), n)          # full year = January + the rest
-assert abs((W1 * Ws).mean() - s) &lt; 1e-3            # E[W_(t+s) W_s] = s
-rho = np.corrcoef(W1, Ws)[0, 1]
-assert abs(rho - np.sqrt(1 / 12)) &lt; 2e-3 and abs(np.sqrt(1 / 12) - 0.2887) &lt; 1e-4
-assert abs(np.corrcoef(Ws, W1 - Ws)[0, 1]) &lt; 2e-3  # January says nothing about Feb-Dec
-for months, r2 in [(3, .25), (6, .50), (11, 11 / 12)]:
-    assert abs(months / 12 - r2) &lt; 1e-12
+from scipy.stats import norm
+mu, sigma, dt = 0.10, 0.20, 1 / 252
+m, sd = (mu - sigma**2 / 2) * dt, sigma * np.sqrt(dt)
+assert abs(m - 0.000317) &lt; 1e-6 and abs(sd - 0.012599) &lt; 1e-6
+z = (-0.05 - m) / sd
+p = norm.cdf(z)
+assert abs(z + 3.994) &lt; 1e-3 and abs(p - 3.25e-5) &lt; 1e-7
+assert abs(1 / p / 252 - 122) &lt; 1                       # once in about 122 years
 
-sigma_P, jan = 12.0, 2.0                            # USD million
-assert abs(sigma_P * np.sqrt(1 / 12) - 3.464) &lt; 1e-3
-assert abs(sigma_P * np.sqrt(11 / 12) - 11.489) &lt; 1e-3
-forecast = jan + 0.0                                # future increment has mean zero
-assert forecast == 2.0 and abs(144 * 11 / 12 - 132) &lt; 1e-12</code></pre>
+rng = np.random.default_rng(114)                        # compounding 252 daily simple returns
+R = mu * dt + sd * rng.standard_normal((20_000, 252))
+logS = np.log1p(R).sum(axis=1)
+assert abs(logS.mean() - (mu - sigma**2 / 2)) &lt; 0.004   # the -sigma^2/2 = -0.02 drag appears
+
+assert abs(100 * np.exp(1.0) - 271.83) &lt; 0.01 and abs(100 * np.exp(0.8) - 222.55) &lt; 0.01
+assert abs(np.exp(0.2) - 1.2214) &lt; 1e-4
+assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk example</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดจำลองสองล้านปีเพื่อตรวจว่าค่าเฉลี่ยของผลคูณเท่ากับ 1/12 correlation 0.2887 และมกราคมไม่เกี่ยวกับ 11 เดือนที่เหลือ แล้วตรวจตัวเลขกองทุน 3.464 และ \$11.489 ล้าน</p>
+    <p>โค้ดตรวจว่า GBM ให้วันร่วง 5% ที่ z = −3.994 และครั้งเดียวในราว 122 ปี จำลองการทบต้นผลตอบแทนรายวัน 252 วันว่าได้แรงฉุด −0.02 ตามขั้นที่ 2 และตรวจค่าเฉลี่ยกับ median สิบปี</p>
   </div>
 </section>
 
+<section class="example">
+  <h4>ตัวอย่างเสริม — ขออนุมัติรับ event risk ของหุ้นสมมติ</h4>
+  <p>สมมติ desk ถือ short exposure ของหุ้นสมมติเทียบเท่า delta 100,000 shares และใช้ spot \$500. Overnight gap 5% คือราคาเปลี่ยน \$25 ต่อ share ดังนั้นผลกระทบอันดับแรกจาก delta อย่างเดียวอยู่ที่ราว \$2.5 ล้าน ก่อน gamma, vega, spread และ impact ค่า daily sigma จาก GBM ช่วยกำหนดกรอบวันปกติได้ แต่การอนุมัติข้าม event ต้องทำ gap stress และตีราคา volatility surface ใหม่ มิฉะนั้น hedge จะผ่านเฉพาะวันที่อากาศดี</p>
+  <p>คำถาม: overnight gap 5% ของ spot \$500 กระทบ delta-equivalent 100,000 shares กี่ USD ก่อน gamma?</p>
+  <p>ของที่มี: spot \$500, move 5%, delta-equivalent 100,000 shares นี่ยังเป็น first-order approximation</p>
+  <p>1 คูณ \$500 ด้วย 5% ได้ราคาเปลี่ยน \$25 ต่อ share</p>
+  <p>2 คูณ \$25 ด้วย 100,000 shares ได้ delta amount \$2.5 ล้าน.</p>
+  <p>เฉลย: gap เพียง 5% สร้าง first-order P&amp;L ราว \$2.5 ล้าน.</p>
+  <p>เช็ก 10 วินาที: \$500 × 0.05 × 100,000 = \$2,500,000</p>
+  <p>งานจริง: ใช้ gap stress แยกจาก daily GBM band ก่อนอนุมัติ hedge</p>
+  <p>กับดัก: อย่าใช้ความผันผวนรายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้</p>
+</section>
+
+<section class="example">
+  <h4>ตัวอย่างเสริม — ค่าเฉลี่ยกับ median สิบปี</h4>
+  <p>คำตอบ: ด้วย drift 10% volatility 20% และเวลาสิบปี ราคาที่คาดหวังคือ 271.83 ขณะที่ค่ากึ่งกลางคือ 222.55 ต่างกันราว 22%</p>
+  <p>ตรวจเองใน 10 วินาที: หักครึ่ง variance ออกจาก drift ก่อนแล้วค่อยยกกำลัง ถ้าใช้ drift เต็มกับค่ากึ่งกลางจะได้ตัวเลขที่สูงเกินไป</p>
+  <p>ใช้ตัดสินใจ: เวลาตั้งเป้าราคาปลายทาง ให้ระบุให้ชัดว่าเป้านั้นเป็นค่าเฉลี่ยหรือค่ากึ่งกลาง เพราะสองตัวเลขนี้ต่างกันหนึ่งในห้า และการสลับกันทำให้แผนผิดตั้งแต่ต้น</p>
+</section>
+
 <section class="pitfall">
-  <h4>กับดัก: overlap ปลอมตัวเป็น predictive skill</h4>
-  <p>อย่ารายงาน correlation 0.289 เป็น 28.9% explained variance เพราะคำตอบที่ถูกคือ $R^2=8.33\%$ และอย่าใช้ $\min(u,v)$ กับ drifting process โดยไม่ center ก่อน January barometer ใน model นี้ไม่ได้มีเครื่องยนต์พยากรณ์; spreadsheet แค่อ้าง cell เดือนมกราคมซ้ำในผลรวมทั้งปี</p>
+  <h4>กับดัก: เลิกใช้ GBM แล้วคิดว่า model risk หาย</h4>
+  <p>model ที่ซับซ้อนกว่ามี calibration risk, unstable parameters และ implementation risk ของตัวเอง ทำ comparison against GBM baseline, backtest breaches, document applicability horizon และ attach reserve to known gaps; professional skepticism คือ control ไม่ใช่ model name</p>
 </section>
 
 <section class="table">
@@ -400,30 +365,31 @@ assert forecast == 2.0 and abs(144 * 11 / 12 - 132) &lt; 1e-12</code></pre>
   <table>
     <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
     <tbody>
-      <tr><td>แบบจำลองที่ใช้</td><td>ผลตอบแทนเดินตาม random walk</td><td>มีแนวโน้มและมีการกลับตัวปนอยู่</td><td>ความเกี่ยวพันจริงต่างจากสูตรนี้ โดยเฉพาะในช่วงยาว</td></tr>
-      <tr><td>ความคงที่</td><td>ความผันผวนคงที่ทั้งปี</td><td>เดือนแรกอาจสงบแล้วครึ่งปีหลังพายุ</td><td>การแบ่งสัดส่วนความเสี่ยงตามเวลาจะผิด</td></tr>
-      <tr><td>การตีความ</td><td>ตัวเลขนี้ใช้พยากรณ์ได้</td><td>มันบอกความเกี่ยวพันเชิงกลไก ไม่ใช่ความสามารถในการทำนาย</td><td>ห้ามใช้สรุปว่าผู้จัดการที่เริ่มดีจะจบดี</td></tr>
+      <tr><td>ความสมเหตุสมผล</td><td>เหตุผลที่ยกมาพิสูจน์ว่าแบบจำลองถูก</td><td>มันพิสูจน์แค่ว่าไม่ผิดอย่างโจ่งแจ้ง</td><td>การที่ราคาติดลบไม่ได้ ไม่ได้แปลว่าส่วนที่เหลือของแบบจำลองถูก</td></tr>
+      <tr><td>การทดแทน</td><td>มีแบบจำลองที่ดีกว่ารออยู่</td><td>แบบจำลองที่ซับซ้อนกว่ามี parameter ให้ประมาณมากกว่า</td><td>ความคลาดเคลื่อนจากการประมาณอาจมากกว่าที่ได้จากการอธิบายที่ดีขึ้น</td></tr>
+      <tr><td>ขอบเขต</td><td>ใช้ได้กับสินทรัพย์ทุกชนิด</td><td>ใช้ไม่ได้กับสินค้าโภคภัณฑ์บางตัวและอัตราดอกเบี้ย</td><td>ต้องเลือกแบบจำลองตามชนิดสินทรัพย์ ไม่ใช่ใช้ตัวเดียวกับทุกอย่าง</td></tr>
     </tbody>
   </table>
   <div class="note">
-    <p>แถวล่างสำคัญ เพราะตัวเลขนี้ถูกนำไปใช้ผิดบ่อยในการประเมินผลระหว่างปี</p>
+    <p>แถวกลางเป็นเหตุผลที่โต๊ะจำนวนมากยังใช้แบบจำลองง่าย ๆ นี้อยู่ ทั้งที่รู้ข้อจำกัดดี</p>
   </div>
 </section>
 
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>แยก $W_{t+s}$ เป็น shared level $W_s$ กับ independent future increment ก่อนคำนวณผลคูณ</li>
-    <li>$\mathbb E_0[W_{t+s}W_s]=s$ และ covariance kernel ของ SBM คือ $\min(u,v)$</li>
-    <li>correlation ของ Brownian levels เท่ากับรากของสัดส่วนเวลาสั้นต่อเวลายาว</li>
-    <li>เดือนแรกอธิบาย annual variance 1/12 เพราะ window ทับกัน ไม่ใช่เพราะทำนาย 11 เดือนถัดไป</li>
+    <li>GBM มีเหตุผลสำหรับ positive equity prices และ proportional returns</li>
+    <li>ความผันผวนคงที่ หางบางแบบ normal เส้นราคาต่อเนื่องไม่กระโดด ผลตอบแทนแต่ละช่วงไม่เกี่ยวกัน และเทรดได้โดยไม่มีต้นทุน ทั้งห้าข้อนี้เป็นข้อสมมติที่เราเลือกใส่เอง ไม่ใช่ข้อเท็จจริงของตลาด</li>
+    <li>smile, clusters และ gaps เป็น diagnostics ที่ตลาดเปิดเผยให้เห็น GBM ที่ 20% ต่อปีบอกว่าวันร่วง 5% เกิดครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</li>
+    <li>ใช้ GBM เป็น baseline แล้ว overlay stress, calibration และ execution controls ตาม decision</li>
+    <li>ภายใต้ GBM ราคาที่คาดหวังกับค่ากึ่งกลางเป็นคนละตัวเลข: drift ที่ทบต้นคือ μ−σ²/2 ดังนั้นค่ากึ่งกลางจึงต่ำกว่าค่าเฉลี่ย และต่างกันราว 22% ในตัวอย่างสิบปี</li>
   </ul>
 </section>
 </article>
 
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="10.3.html">10.3 Filtrations in Continuous Time</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="10.5.html">10.5 Strange Properties of Brownian Paths</a></div>
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="10.3.html">10.3 Three Properties GBM Inherits from Brownian Motion</a></div>
+  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="11.1.html">11.1 Setting Up the Hedging Problem</a></div>
 </nav>
 </div>
 </body>

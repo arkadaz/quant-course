@@ -1,2 +1,6 @@
-a=np.linspace(0,1,201);var=.04*a**2+.012*a*(1-a)+.01*(1-a)**2;chord=a*.04+(1-a)*.01
-ax.plot(a,var,color=ACCENT,lw=2,label='portfolio variance');ax.plot(a,chord,color=WARM,ls='--',label='chord');ax.fill_between(a,var,chord,color=GOOD,alpha=.18);ax.set_xlabel('Weight in asset 1');ax.set_ylabel('Annual variance');ax.legend();ax.set_title('A convex risk curve stays below every chord',loc='left')
+x=[0,1,1];y=[570,576,564]
+ax.plot([0,1],[570,576],color=GOOD,lw=2);ax.plot([0,1],[570,564],color=BAD,lw=2)
+ax.scatter(x,y,c=[INK,GOOD,BAD],s=38,zorder=3)
+ax.axhline(570,color=ACCENT,ls='--',label='conditional mean = current')
+ax.text(1.02,576,'USD 576, p=0.50',va='center');ax.text(1.02,564,'USD 564, p=0.50',va='center')
+ax.set_xlim(-0.08,1.55);ax.set_xticks([0,1],['Now','Tomorrow']);ax.set_ylabel('SPY price (USD)');ax.legend(loc='upper left')

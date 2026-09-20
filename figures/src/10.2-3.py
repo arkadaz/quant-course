@@ -1,5 +1,1 @@
-n=np.arange(1,253);nav=25e6;sd=nav*.0115*np.sqrt(n);wrong=nav*.0115*n
-ax.plot(n,sd/1e6,color=ACCENT,lw=2,label='correct: square-root-of-time')
-ax.plot(n,wrong/1e6,color=BAD,lw=1.5,ls='--',label='wrong: linear volatility')
-for k in [1,5,21,252]:ax.scatter(k,nav*.0115*np.sqrt(k)/1e6,color=GOOD,s=30,zorder=4)
-ax.set_xlabel('Trading days');ax.set_ylabel('One-SD P&L (USD million)');ax.set_yscale('log');ax.set_title('Volatility does not add across days',loc='left');ax.legend(loc='upper left')
+x=np.linspace(20,500,600);pdf=stats.lognorm.pdf(x,s=.30*np.sqrt(5),scale=100*np.exp(.075*5));ax.plot(x,pdf,color=ACCENT);ax.fill_between(x,pdf,color=ACCENT,alpha=.10);ax.axvline(145.50,color=WARM,label='median $145.50');ax.axvline(182.21,color=GOOD,label='mean $182.21');ax.set_xlabel('Terminal price (USD/share)');ax.set_ylabel('Density');ax.set_title('A few high paths lift the mean',loc='left');ax.legend()

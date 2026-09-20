@@ -1,6 +1,4 @@
-
-from scipy.stats import norm
-S=np.linspace(65,135,320);K=100.;sig=.2;rem=.25
-d1=(np.log(S/K)+.5*sig**2*rem)/(sig*np.sqrt(rem));d2=d1-sig*np.sqrt(rem);back=S*norm.cdf(d1)-K*norm.cdf(d2);front=np.maximum(S-K,0)
-ax.plot(S,back,label='Back call value',color=ACCENT);ax.plot(S,front,label='Expired front payoff',color=WARM);ax.fill_between(S,front,back,color=GOOD,alpha=.18,label='Calendar value')
-ax.set_xlabel('Spot at front expiry (USD)');ax.set_ylabel('Value (USD per share)');ax.legend()
+s=np.linspace(35,230,700);s0=100;sig=.28;T=1
+for drift,col,label in [(.12,ACCENT,'physical P: 47.93% above 110'),(.02,WARM,'risk-neutral Q: 34.13% above 110')]:
+ m=np.log(s0)+(drift-.5*sig**2)*T;ax.plot(s,stats.lognorm.pdf(s,s=sig,scale=np.exp(m)),color=col,lw=2,label=label)
+ax.axvline(110,color=BAD,ls='--',label='USD 110 threshold');ax.set_xlabel('Terminal price after 1 year (USD/share)');ax.set_ylabel('Density');ax.set_title('Drift moves; volatility does not',loc='left');ax.legend(fontsize=8)

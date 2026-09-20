@@ -1,1 +1,6 @@
-n=np.arange(2,101); ratio=(n-1)/n; ax.plot(n,100*ratio,color=BAD,lw=2,label=r'$\mathbb{E}[s_n^2]/\sigma^2$'); ax.axhline(100,color=GOOD,lw=1.3,ls='--',label='$n-1$ correction'); ax.scatter([20],[95],color=WARM,zorder=3); ax.set(xlabel='Sample size n',ylabel='Expected variance estimate (% of true)',ylim=(45,102)); ax.legend(fontsize=7); ax.grid(alpha=.25)
+
+from scipy.stats import norm
+S=np.linspace(65,150,320);K=105.;r=.04;sig=.2;T=.25
+d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));d2=d1-sig*np.sqrt(T)
+th=(-S*norm.pdf(d1)*sig/(2*np.sqrt(T))-r*K*np.exp(-r*T)*norm.cdf(d2))/365
+ax.plot(S,th,color=BAD);ax.axhline(0,color=INK,lw=1);ax.set_xlabel('Spot (USD)');ax.set_ylabel('Theta (USD per calendar day)')

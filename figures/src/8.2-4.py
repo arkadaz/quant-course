@@ -1,2 +1,3 @@
-w=np.linspace(0,1,301);q=.038*w**2-.008*w+.01;wm=.008/.076
-ax.plot(w*100,np.sqrt(q)*100,color=ACCENT,lw=2);ax.scatter([wm*100],[np.sqrt(.009578947)*100],color=GOOD,s=50,label='minimum variance');ax.set_xlabel('SPY weight (%)');ax.set_ylabel('Annual volatility (%)');ax.legend();ax.set_title('Full investment removes the zero portfolio',loc='left')
+x=np.linspace(-3.5,3.5,500);y=stats.norm.pdf(x);ax.plot(x,y,color=ACCENT);mask=x>=0.74;ax.fill_between(x[mask],0,y[mask],color=WARM,alpha=0.45,label='one-sided tail = 22.96%')
+ax.axvline(0.74,color=BAD,ls='--');ax.text(0.82,0.30,'observed z = 0.74',color=BAD)
+ax.set_xlabel('z-score');ax.set_ylabel('Density');ax.legend(loc='upper left')

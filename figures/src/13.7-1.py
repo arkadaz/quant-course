@@ -1,5 +1,1 @@
-
-t=np.linspace(.001,3,300);v0=.09;th=.04;k=.2*10
-mean=th+(v0-th)*np.exp(-k*t);avg=th+(v0-th)*(1-np.exp(-k*t))/(k*t)
-ax.plot(t,mean,color=ACCENT,label='Expected instantaneous variance');ax.plot(t,avg,'--',color=WARM,label='Expected running average')
-ax.axhline(th,color=MUTED,ls=':',label='Long-run variance');ax.set_xlabel('Horizon (years)');ax.set_ylabel('Variance (per year)');ax.legend()
+ax.annotate('PDE: backward',xy=(.12,.72),xytext=(.85,.72),arrowprops=dict(arrowstyle='->',color=ACCENT,lw=2),ha='center');ax.annotate('Monte Carlo: forward',xy=(.88,.30),xytext=(.15,.30),arrowprops=dict(arrowstyle='->',color=GOOD,lw=2),ha='center');ax.text(.08,.5,'today',ha='center',weight='bold');ax.text(.92,.5,'expiry',ha='center',weight='bold');ax.set_xlim(0,1);ax.set_ylim(0,1);ax.set_xticks([]);ax.set_yticks([]);ax.set_title('Two directions, one valuation function',loc='left')

@@ -1,1 +1,2 @@
-dt=np.array([1/4,1/8,1/16,1/32,1/64,1/128]);e=np.sqrt(dt);m=dt;ax.loglog(dt,e,color=BAD,lw=2,marker='o',label='Euler slope 1/2');ax.loglog(dt,m,color=GOOD,lw=2,marker='o',label='Milstein slope 1');ax.invert_xaxis();ax.set_xlabel('Time step $\Delta t$');ax.set_ylabel('Normalized strong error');ax.set_title('Milstein gains one pathwise order',loc='left');ax.legend(fontsize=8)
+to=np.linspace(0,.30,200);W=50e6;cost=W*(2*to)*.001
+ax.plot(to*100,cost/1000,color=ACCENT,lw=2);ax.scatter([10,20],[10,20],color=GOOD,s=45);ax.set_xlabel('One-way turnover (%)');ax.set_ylabel('Linear cost (USD thousand)');ax.set_title('Counting both legs links turnover to cash cost',loc='left')

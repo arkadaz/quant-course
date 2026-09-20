@@ -1,9 +1,7 @@
-A=np.array([[1.0,0.8,0.6],[0.3,0.5,0.2],[0.1,0.2,0.4]])
-w=np.array([2,-1,1])
-y=A@w
-ax.bar(['Market','Quality','Rates'],y,color=[ACCENT,GOOD,WARM])
-ax.axhline(0,color=MUTED,lw=0.8)
-for i,v in enumerate(y): ax.text(i,v+(0.08 if v>=0 else -0.12),f'{v:.1f}',ha='center',va='bottom' if v>=0 else 'top')
-ax.set_ylim(0,2.25)
-ax.set_ylabel('factor exposure (USD million)')
-ax.set_title('One row dot product per factor output',fontsize=9,loc='left')
+labels=['AAPL/JPM common','AAPL vs JPM','XOM only']
+vals=[5.5,.5,4.0]
+ax.bar(labels,vals,color=[ACCENT,WARM,GOOD],width=.58)
+for i,v in enumerate(vals): ax.text(i,v+.18,f'${v:.1f}M',ha='center',fontsize=9,color=INK)
+ax.set_ylim(0,6.5);ax.set_ylabel('Basis coordinate ($M)')
+ax.tick_params(axis='x',rotation=12)
+ax.set_title('Coordinates reveal the risk story hidden by tickers',loc='left')

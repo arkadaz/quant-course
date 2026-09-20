@@ -1,1 +1,9 @@
-rng=np.random.default_rng(711);n=252;dt=1/n;t=np.linspace(0,1,n+1);z=rng.normal(size=n);add=np.r_[100,100+np.cumsum(-95*dt+35*np.sqrt(dt)*z)];gbm=100*np.exp(np.r_[0,np.cumsum((-.95-.5*.35**2)*dt+.35*np.sqrt(dt)*z)]);ax.plot(t,add,color=BAD,label='additive price');ax.plot(t,gbm,color=GOOD,label='GBM price');ax.axhline(0,color=INK,lw=.9);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('Multiplicative shocks preserve positivity',loc='left');ax.legend()
+x=np.linspace(0,6,301)
+boundary=10.8-1.2*x
+mask=(boundary<=6)&(boundary>=0)
+ax.fill_between(x,np.maximum(boundary,0),6,where=mask,color=GOOD,alpha=.24,label='feasible region')
+ax.plot(x,boundary,color=ACCENT,lw=2,label='$1.2x_Q+x_S=10.8$')
+ax.axvline(6,color=WARM,ls='--',lw=1);ax.axhline(6,color=WARM,ls='--',lw=1)
+ax.scatter([4],[6],color=BAD,s=45,zorder=4,label='optimum (4, 6)')
+ax.set_xlim(0,6.4);ax.set_ylim(0,6.4);ax.set_xlabel('Short QQQ, $x_Q$ (USD million)');ax.set_ylabel('Short SPY, $x_S$ (USD million)')
+ax.legend(loc='lower left',fontsize=7);ax.set_title('Risk floor and liquidity caps define the feasible triangle',loc='left')

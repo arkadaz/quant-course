@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10.2 Standard Brownian Motion (SBM)</title>
+<title>10.2 Expected Future Price — Why the Drift Is Exactly μ</title>
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
@@ -11,61 +11,69 @@
 <div class="wrap">
 <nav class="book-nav top-nav">
   <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-4">Part 4</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
   <a href="../chapters/10.html">บทที่ 10</a>
-  <span class="topic-progress">หัวข้อ 59/153</span>
+  <span class="topic-progress">หัวข้อ 58/158</span>
 </nav>
 
-<article class="topic" data-number="10.2" data-depends-on="10.1">
+<article class="topic" data-number="10.2" data-depends-on="10.1 9.2 9.3">
 <header class="topic-header">
-  <h1><span class="tnum">10.2</span> Standard Brownian Motion (SBM)</h1>
-  <p class="subtitle">เริ่มจาก random walk มาตรฐาน แล้วอ่านค่าเฉลี่ยกับความผันผวน</p>
+  <h1><span class="tnum">10.2</span> Expected Future Price — Why the Drift Is Exactly μ</h1>
+  <p class="subtitle">ทำไมค่าเฉลี่ยของ Geometric Brownian Motion (GBM) ในอนาคตจึงเลื่อนไปตามอัตรา μ</p>
 </header>
 
 <div class="hook">
-  <p>พอร์ต SPY มูลค่า \$25,000,000 มีความผันผวนรายวัน 1.15% หากตลาดเปิด 252 วันต่อปี ความเสี่ยงรายปีและราคา option แบบ at-the-money (ATM) straddle อายุ 30 วันที่ราคาหุ้น \$520 ควรมีมูลค่าเท่าใด?</p>
-  <p>เฉลย: ความผันผวนรายปีคือ 18.26% (ความเสี่ยงพอร์ต \$4.57 ล้าน ไม่ใช่ \$72.45 ล้าน) และราคา straddle 30 วันคือ 4.18% ของราคาหุ้น หรือ \$21.72 ต่อหุ้น (\$2,172 ต่อสัญญา) เพราะความเสี่ยงโตตามรากของเวลา</p>
+  <p>กองทุนโฆษณาว่ามูลค่าโตเฉลี่ย 14% ต่อปี ความผันผวน 32% ลงทุน \$100 นาน 20 ปี นักลงทุนคนกลาง ๆ ได้เท่าไร กี่เปอร์เซ็นต์ได้ถึงค่าเฉลี่ย และควรกู้มาลงกี่เท่า?</p>
+  <p>เฉลย: อัตราทบต้นจริงคือ 14% − 0.32²/2 = 8.88% ต่อปี 20 ปี median คือ \$591 ขณะที่ค่าเฉลี่ยคือ \$1,644 ห่างกัน 2.78 เท่า มีแค่ 23.7% ที่ได้ถึงค่าเฉลี่ย และ 10.7% ยังขาดทุน กู้ดีที่สุด 1.37 เท่า เกิน 2.73 เท่าขาดทุนแน่ในระยะยาว</p>
 </div>
 
 <details class="jargon" open>
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Standard Brownian Motion (SBM)</dt>
-    <dd>Brownian motion ที่เริ่มจาก 0 ไม่มี drift และมี variance เท่ากับเวลาที่ผ่านไป ใช้เป็นหน่วยมาตรฐานสำหรับสร้าง Brownian motion และจำลอง noise ใน model เวลาต่อเนื่อง</dd>
     <dt>expected value</dt>
-    <dd>ค่าเฉลี่ยที่ถ่วงด้วยโอกาสของผลลัพธ์ทุกแบบ ใช้บอกค่าเฉลี่ยที่ model คาดเมื่อสุ่มเหตุการณ์เดิมจำนวนมาก</dd>
-    <dt>sample path</dt>
-    <dd>ผลลัพธ์หนึ่งเส้นจากการสุ่ม process ตลอดหลายเวลา ใช้ดู scenario ที่เป็นไปได้ แต่เส้นเดียวไม่ใช่ forecast ของตลาด</dd>
-    <dt>Monte Carlo simulation</dt>
-    <dd>วิธีสุ่ม sample paths จำนวนมากแล้วสรุป distribution ของผลลัพธ์ ใช้ประมาณ risk, probability และราคาเมื่อคำนวณตรง ๆ ยาก</dd>
-    <dt>log return</dt>
-    <dd>logarithm ของอัตราส่วนราคาปลายช่วงต่อราคาเริ่มช่วง ซึ่งบวกข้ามช่วงเวลาติดกันได้ ใช้เชื่อม Brownian increments กับผลตอบแทนสะสม</dd>
-    <dt>square-root-of-time rule</dt>
-    <dd>กฎที่แปลง standard deviation ระหว่าง horizons ด้วยรากของอัตราส่วนเวลา ใช้ annualize หรือ de-annualize volatility เมื่อ increments เป็นอิสระและมี variance คงที่</dd>
-    <dt>at-the-money (ATM)</dt>
-    <dd>สถานะที่ strike เท่ากับราคา spot ปัจจุบันของ underlying ใช้เป็นจุดอ้างอิงคำนวณ option โดยไม่มี intrinsic value</dd>
-    <dt>at-the-money straddle</dt>
-    <dd>position ที่ซื้อ call option และ put option strike เดียวกับ spot และ expiry เดียวกัน ใช้ซื้อความผันผวนทั้งขาขึ้นและขาลงโดยไม่เลือกทิศ</dd>
-    <dt>call option</dt>
-    <dd>สัญญาที่ให้สิทธิ์ซื้อ underlying ที่ strike ภายในหรือ ณ expiry ใช้รับ upside โดยจำกัดขาดทุนของผู้ซื้อไว้ที่ premium</dd>
-    <dt>put option</dt>
-    <dd>สัญญาที่ให้สิทธิ์ขาย underlying ที่ strike ภายในหรือ ณ expiry ใช้รับ downside หรือป้องกันราคาลดลง</dd>
-    <dt>strike</dt>
-    <dd>ราคาที่กำหนดสิทธิ์ซื้อหรือขายไว้ใน option ใช้แบ่งว่าที่ expiry option มี intrinsic payoff หรือไม่</dd>
-    <dt>spot</dt>
-    <dd>ราคาตลาดของ underlying ณ ปัจจุบัน ใช้เป็นฐานเทียบ strike และคำนวณ notional ของ position</dd>
-    <dt>expiry</dt>
-    <dd>เวลาสิ้นสุดสิทธิ์ของ option ใช้กำหนด horizon ที่ความผันผวนมีเวลาสะสม</dd>
-    <dt>premium</dt>
-    <dd>ราคาที่ผู้ซื้อ option จ่ายล่วงหน้าให้ผู้ขาย ใช้แลกกับ payoff ที่อาจเกิดในอนาคต</dd>
-    <dt>United States (US) equity option contract</dt>
-    <dd>หน่วยซื้อขาย option ในตลาดสหรัฐฯ ซึ่งหนึ่งสัญญาโดยทั่วไปอ้างอิง 100 shares ใช้แปลงราคาต่อ share เป็นเงินสดต่อสัญญา</dd>
-    <dt>notional</dt>
-    <dd>มูลค่าอ้างอิงที่ position ควบคุมก่อนหัก hedge หรือ leverage ใช้แปลง return volatility เป็น P&amp;L risk หน่วย USD</dd>
-    <dt>realized volatility</dt>
-    <dd>ความผันผวนที่วัดได้จริงจากผลตอบแทนในอดีต ใช้เทียบว่าราคา option ในตลาดแพงหรือถูก</dd>
-    <dt>implied volatility</dt>
-    <dd>ความผันผวนที่ต้องใส่ในสูตรให้ได้ราคา option เท่าราคาตลาด ใช้อ่านว่าตลาดคาดความผันผวนในอนาคตเท่าไร</dd>
+    <dd>ค่าเฉลี่ยถ่วงน้ำหนักของ outcomes ทุกแบบภายใต้ distribution ที่กำหนด ใช้สรุป mean P&amp;L หรือ mean future price แต่ไม่ใช่ outcome ที่ต้องเกิดขึ้น</dd>
+    <dt>median</dt>
+    <dd>median ที่มีโอกาสครึ่งหนึ่งอยู่ต่ำกว่าและครึ่งหนึ่งอยู่สูงกว่า ใช้บอก typical path เมื่อ distribution เอียงและค่าเฉลี่ยถูกดึงด้วย right tail</dd>
+    <dt>moment generating function</dt>
+    <dd>สูตรที่ให้ expectation ของ exponential ของ normal random variable ใช้คำนวณค่าเฉลี่ยของ GBM โดยไม่ต้องสุ่ม paths จำนวนมาก</dd>
+    <dt>volatility drag</dt>
+    <dd>ส่วนต่างระหว่าง arithmetic price growth กับ typical log-growth ที่เกิดจากความผันผวน ใช้เตือนว่าผลตอบแทนขึ้นลงแรงทำให้ compounded wealth โตช้าลง</dd>
+    <dt>lognormal distribution</dt>
+    <dd>distribution ของ positive random variable ที่ logarithm เป็น normal ใช้บรรยาย terminal price ที่มี right tail ของ GBM</dd>
+    <dt>variance</dt>
+    <dd>ค่าเฉลี่ยของ squared deviation จากค่าเฉลี่ยใช้วัดการกระจายและกำหนด how uncertainty accumulates with time</dd>
+    <dt>random variable</dt>
+    <dd>quantity ที่ค่าขึ้นกับ outcome สุ่ม ใช้แยก future price หรือผลตอบแทนออกจาก input ที่รู้แน่นอนวันนี้</dd>
+    <dt>compounding</dt>
+    <dd>การนำผลตอบแทนของแต่ละช่วงมาคูณต่อกันเป็น wealth growth ใช้เชื่อม one-period return กับผลสะสมหลายปี</dd>
+    <dt>leverage</dt>
+    <dd>การขยาย exposure ให้มากกว่า cash capital ใช้เพิ่มทั้ง expected return และ volatility drag จึงต้องมี limit</dd>
+    <dt>factor</dt>
+    <dd>quantity มาตรฐานที่คูณกับค่าเริ่มต้นเพื่อให้ค่าใหม่ ใช้อธิบาย price multiplier และ growth decomposition</dd>
+    <dt>leveraged Exchange-Traded Fund (ETF)</dt>
+    <dd>
+      <p>คืออะไร: กองทุนที่ตั้งเป้าให้ผลตอบแทน *รายวัน* เป็นสองหรือสามเท่าของดัชนีที่อ้างอิง</p>
+      <p>ใช้ทำอะไร: ใช้เก็งกำไรระยะสั้นเมื่อมั่นใจทิศทางมาก</p>
+      <p>ทำไมต้องระวัง: เพราะมันปรับสถานะใหม่ทุกวันเพื่อรักษาอัตราส่วน ผลคือแรงฉุดความผันผวนโตตามกำลังสองของ leverage ไม่ใช่โตเป็นเส้นตรง</p>
+    </dd>
+    <dt>leverage multiplier</dt>
+    <dd>
+      <p>คืออะไร: ตัวเลข $L$ ที่บอกว่าเราคุม exposure มากกว่าเงินทุนจริงกี่เท่า</p>
+      <p>ใช้ทำอะไร: แปลงการขยับของดัชนีให้เป็นการขยับของพอร์ตเรา</p>
+      <p>ทำไมต้องระวัง: เพราะมันขยายความผันผวนเป็น $L$ เท่าแบบเส้นตรง แต่แรงฉุดที่กัดกินผลตอบแทนขยายเป็น $L^2$ เท่า สองอัตรานี้ไม่เท่ากัน</p>
+    </dd>
+    <dt>standard deviation (SD)</dt>
+    <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าเป้าหมายอยู่ห่างจุดกลางกี่ช่วง</dd>
+    <dt>swap</dt>
+    <dd>สัญญาแลกกระแสเงินสดระหว่างสองฝ่าย ใช้ให้กองทุนได้ผลตอบแทนเป็นหลายเท่าของดัชนีโดยไม่ต้องถือหุ้นจริงทั้งหมด</dd>
+    <dt>funding rate</dt>
+    <dd>ดอกเบี้ยที่จ่ายบนเงินที่ยืมมาซื้อเพิ่ม ใช้คิดต้นทุนของส่วนที่เกินเงินทุนตัวเอง</dd>
+    <dt>ProShares Ultra Oil &amp; Gas (DIG)</dt>
+    <dd>ETF ที่ให้ผลตอบแทนรายวันสองเท่าของดัชนีหุ้นน้ำมันและก๊าซสหรัฐ ใช้เก็งกำไรขาขึ้นระยะสั้นของหุ้นพลังงาน</dd>
+    <dt>ProShares UltraShort Oil &amp; Gas (DUG)</dt>
+    <dd>ETF คู่ของ DIG ที่ให้ผลตอบแทนรายวันลบสองเท่าของดัชนีเดียวกัน ใช้เก็งกำไรหรือป้องกันขาลงระยะสั้น</dd>
+    <dt>expense ratio</dt>
+    <dd>ค่าธรรมเนียมรายปีที่กองทุนหักจากมูลค่ากอง เป็นเปอร์เซ็นต์ต่อปี ใช้เทียบต้นทุนการถือกองทุนแต่ละกอง</dd>
   </dl>
 </details>
 
@@ -74,368 +82,508 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$W_t$</td><td>SBM ที่เวลา $t$</td><td>$\sqrt{\mathrm{time}}$</td></tr>
-      <tr><td>$\Delta W_i$</td><td>increment ของ SBM ในช่วงย่อยที่ $i$</td><td>$\sqrt{\mathrm{time}}$</td></tr>
-      <tr><td>$\Delta t$</td><td>ความยาวของช่วงย่อยหนึ่งช่วง</td><td>เวลา</td></tr>
-      <tr><td>$Z_i$</td><td>independent standard Normal draw ของช่วงที่ $i$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$X_t$</td><td>Brownian motion ทั่วไปที่สร้างจาก SBM</td><td>หน่วยของ risk factor</td></tr>
-      <tr><td>$x$</td><td>ค่าเริ่มต้นของ $X_t$</td><td>หน่วยของ $X$</td></tr>
-      <tr><td>$\mu$</td><td>drift ของ $X_t$ ต่อหน่วยเวลา</td><td>หน่วยของ $X$ ต่อเวลา</td></tr>
-      <tr><td>$\sigma$</td><td>volatility scale ของ $X_t$</td><td>หน่วยของ $X$ ต่อ $\sqrt{\mathrm{time}}$</td></tr>
-      <tr><td>$n$</td><td>จำนวนช่วงย่อยหรือจำนวน trading days</td><td>ช่วง</td></tr>
-      <tr><td>$S_0,K$</td><td>spot ปัจจุบันและ strike ของ option</td><td>USD ต่อ share</td></tr>
-      <tr><td>$T$</td><td>เวลาถึง expiry</td><td>ปี</td></tr>
-      <tr><td>$Z$</td><td>standard Normal random variable</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$s$</td><td>future horizon จากเวลาปัจจุบัน</td><td>year</td></tr>
+      <tr><td>$Y$</td><td>Brownian increment $W_{t+s}-W_t$</td><td>$\sqrt{\mathrm{year}}$</td></tr>
+      <tr><td>$m$</td><td>mean ของ log price ratio</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\Phi$</td><td>พื้นที่สะสมใต้เส้นระฆังมาตรฐาน ใช้แปลงค่ามาตรฐานให้กลายเป็นความน่าจะเป็น ชื่อเต็มคือ standard normal cumulative distribution function</td><td>probability</td></tr>
+      <tr><td>$\mathbb E_t[\cdot]$</td><td>expectation เมื่อรู้ข้อมูล ณ เวลา $t$</td><td>ตาม quantity ด้านใน</td></tr>
+      <tr><td>$L$</td><td>leverage multiplier ของกองทุน ETF</td><td>เท่า</td></tr>
+      <tr><td>$g$</td><td>อัตราทบต้นที่เส้นทางกลาง ๆ ได้จริง $\mu-\sigma^2/2$</td><td>ต่อปี</td></tr>
+      <tr><td>$k$</td><td>จำนวนเท่าที่กู้มาลงทุน</td><td>เท่า</td></tr>
+      <tr><td>$\lambda$</td><td>ตัวคูณผลตอบแทนรายวันของ leveraged ETF เช่น 2 หรือ −1</td><td>เท่า</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
-  <h4>ที่มาที่ไป: ก้อนสุ่มมาตรฐาน ที่ทุกอย่างสร้างต่อจากมัน</h4>
-  <p>แทนที่จะนิยามแบบจำลองใหม่ทุกครั้งที่เจอสินทรัพย์ใหม่ วิธีที่ประหยัดกว่าคือนิยามก้อนสุ่มมาตรฐานไว้ก้อนเดียว แล้วสร้างทุกอย่างต่อจากมันด้วยการเลื่อนและขยาย</p>
-  <p>แนวคิดเดียวกับที่เราทำกับระฆังคว่ำในบทที่หนึ่ง คือมีตัวมาตรฐานที่ค่าเฉลี่ยเป็นศูนย์และความผันผวนเป็นหนึ่ง แล้วตัวอื่นสร้างจากมัน</p>
-  <p>ผลพลอยได้ที่สำคัญคือกฎรากที่สอง ซึ่งโผล่ออกมาจากนิยามโดยตรง ไม่ใช่กฎที่ใครตั้งขึ้น</p>
-  <p>กฎนั้นคือสิ่งที่ทำให้แปลงความเสี่ยงรายวันเป็นรายปีได้ และเป็นการคำนวณที่ทำกันทุกวันในทุกทีม</p>
+  <h4>ที่มาที่ไป: ตัวเลขเดียวกันที่คนเรียกคนละอย่าง</h4>
+  <p>คำว่า growth ต้องระบุว่าหมายถึงค่าใด ใน GBM นี้ค่าเฉลี่ยของราคาโตด้วยอัตรา μ ส่วนค่าเฉลี่ยของ log return ต่อหน่วยเวลาเท่ากับ μ ลบครึ่งหนึ่งของ σ² สองค่านี้ต่างกันเพราะเราเฉลี่ยคนละปริมาณ</p>
+  <p>ครึ่ง variance เป็นผลเฉพาะของโครงสร้าง Normal ในแบบจำลองนี้ หัวข้อ 1.10 แสดงตัวอย่างเหรียญที่ต้องชดเชยต่างออกไปแล้ว ส่วนหน้านี้พิสูจน์แบบมีเงื่อนไข โดยนับเฉพาะข้อมูลที่รู้ถึงวันนี้</p>
 </section>
 
 <section class="prose">
-  <h4>ประวัติความเป็นมา: จากละอองเกสรของ Brown สู่สมการฟิสิกส์และการเงิน</h4>
-  <p>ในปี 1827 นักพฤกษศาสตร์ชาวสก็อต Robert Brown ส่องกล้องจุลทรรศน์ดูละอองเกสรดอกไม้ Clarkia pulchella ที่ลอยในน้ำ แล้วพบว่าอนุภาคขนาดเล็กขยับสั่นไปมาอย่างไม่มีทิศทางแน่นอนตลอดเวลา ตอนแรกเขาคิดว่าละอองเกสรอาจมีชีวิต แต่เมื่อทดลองกับผงแก้วและเขม่าควันกลับพบการส่ายแบบเดียวกัน จึงสรุปว่าเป็นปรากฏการณ์ธรรมชาติของอนุภาคจิ๋ว</p>
-  <p>ต่อมาในปี 1900 นักคณิตศาสตร์ชาวฝรั่งเศส Louis Bachelier นำเสนอวิทยานิพนธ์ Théorie de la spéculation โดยเสนอเป็นคนแรกว่า ราคาพันธบัตรรัฐบาลในตลาดหุ้นปารีสมีพฤติกรรมสุ่มแบบเดียวกับละอองเกสรของ Brown การสร้างแบบจำลอง continuous-time ครั้งนั้นนำไปสู่สูตรคำนวณราคา option ก่อนที่วงการการเงินสมัยใหม่จะหยิบมาต่อยอดกว่าเจ็ดสิบปี</p>
-  <p>ในปี 1905 Albert Einstein ตีพิมพ์คำอธิบายฟิสิกส์ว่า การส่ายของอนุภาคเกิดจากโมเลกุลของน้ำนับพันล้านโมเลกุลวิ่งชนจากรอบทิศ เขาแสดงว่าระยะทางกำลังสองเฉลี่ยโตตามเวลาแบบเส้นตรง ไม่ใช่เวลาคูณเวลา ซึ่งผลงานนี้เปิดทางให้ Jean Perrin ทดลองยืนยันการมีอยู่จริงของอะตอมจนได้รับรางวัลโนเบล</p>
-  <p>ท้ายที่สุดในปี 1923 Norbert Wiener ได้สร้างรากฐานคณิตศาสตร์อันรัดกุม พิสูจน์ว่า stochastic process ที่มี sample path ต่อเนื่องบนเวลา continuous time นี้มีอยู่จริงในทางทฤษฎีความน่าจะเป็น นักคณิตศาสตร์จึงเรียกกระบวนการนี้ว่า Wiener process เพื่อเป็นเกียรติแก่เขา</p>
+  <h4>ที่มาทางประวัติศาสตร์: ทำไม Samuelson ต้องใส่ลบครึ่ง variance ไว้ในเลขชี้กำลัง</h4>
+  <p>ในปี 1900 Louis Bachelier เสนอให้ใช้ Brownian motion จำลองราคาหุ้นบนตลาด Paris Bourse เป็นครั้งแรก แต่แบบจำลองของเขาเป็น arithmetic: ระดับราคาเป็น random walk แบบเส้นตรง ข้อผิดพลาดร้ายแรงคือราคาหุ้นมีโอกาสติดลบ ทั้งที่ในโลกความเป็นจริง ผู้ถือหุ้นมีความรับผิดจำกัด (limited liability) ราคาจึงไม่มีทางต่ำกว่าศูนย์ได้เลย</p>
+  <p>ราว ๆ ปี 1965 Paul Samuelson แก้ปัญหานี้โดยเสนอ Geometric Brownian Motion (GBM) นำ Brownian motion ไปใส่ไว้บนเลขชี้กำลังของระดับราคา ทำให้ราคาเป็นบวกเสมอ แต่ความยากใหม่ก็ตามมาทันที: exponential เป็น function ที่โค้งขึ้น ตามหลัก Jensen's inequality ค่าเฉลี่ยของ exponential ย่อมสูงกว่า exponential ของค่าเฉลี่ยเสมอ</p>
+  <p>ถ้า Samuelson ตั้งให้อัตราบนเลขชี้กำลังเป็น drift ดิบ ๆ ระดับราคาเฉลี่ยจะโตเตลิดไปไกลกว่าที่ควรจะเป็น เพื่อบังคับให้ expected future price เติบโตที่อัตรา drift $\mu$ พอดี เขาจึงต้องจงใจลบครึ่งหนึ่งของ variance ออกจากเลขชี้กำลัง พจน์นี้จึงไม่ใช่ต้นทุนหรือแรงเสียดทานของตลาด แต่เป็นตัวชดเชย convexity ที่มนุษย์จงใจออกแบบไว้</p>
+</section>
+
+<section class="prose">
+  <h4>คำถามหนึ่งข้อ แต่มีสาม growth rates</h4>
+  <p>ภายใต้ GBM ต้องพูดให้ชัดว่าถาม expected price, median price หรือ expected log return ทั้งสามใช้ inputs เดียวกันแต่ตอบคนละคำถาม: budgeting อาจต้องการ mean, investor experience มักใกล้ median, และ compounding research สนใจ log-growth</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — นิยาม SBM ในหนึ่งบรรทัด</h4>
-  <p>ก่อนจะสร้าง model ราคาอะไรก็ตาม ต้องมีก้อนสุ่มมาตรฐานไว้หนึ่งก้อนก่อน ขั้นนี้นิยามมันด้วยสามเงื่อนไขสั้น ๆ ที่เหลือทั้งบทสร้างต่อจากนี้</p>
+  <h4>ขั้นที่ 1 — ของที่ยกมาจากหัวข้อ 10.1: สูตรเดินหน้าหนึ่งก้าว</h4>
+  <p>บรรทัดนี้เป็น ของที่ให้มา จากหัวข้อ 10.1 ไม่ได้สร้างใหม่ที่นี่ เมื่อตรึงข้อมูลถึงเวลา $t$ แล้ว ราคาปัจจุบันกลายเป็นเลขที่รู้ค่า เหลือแค่ก้อนสุ่มก้อนเดียวคืออนาคตที่ยังไม่เกิด ทุกบรรทัดที่เหลือในหัวข้อนี้คำนวณออกมาจากบรรทัดเดียวนี้ ไม่มีสูตรอื่นเข้ามาอีก</p>
   <div class="math">\[
-\begin{aligned}
-W_0&=0\\
-W_{t+s}-W_t&\sim\mathcal N(0,s)\\
-W_{t+s}-W_t&\ \ \text{independent of}\ \ \mathcal F_t
-\end{aligned}
+S_{t+s}=S_te^{\left(\mu-\frac12\sigma^2\right)s+\sigma Y},\qquad Y\sim\mathcal N(0,s)
 \]</div>
   <div class="reading">
-    <p>$W_0$ กำหนดจุดเริ่มที่ 0; ให้ $\mathcal F_t$ แทนข้อมูลจาก path ถึงเวลา $t$; increment ยาว $s$ มี mean 0 และ variance $s$; บรรทัดสามบอกว่า increment อนาคตไม่ขึ้นกับข้อมูลถึงเวลา $t$</p>
+    <p>เมื่อข้อมูลถึงเวลา $t$ ถูกตรึง $S_t$ เป็น known factor และอนาคตเหลือ Brownian increment $Y$ ซึ่งมี variance เท่ากับ horizon $s$</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 2 — Brownian motion ทุก scale สร้างจาก SBM</h4>
-  <p>ของจริงไม่ได้เริ่มที่ศูนย์ ไม่ได้นิ่ง และไม่ได้แกว่งเท่ากันทุกตัว สี่บรรทัดนี้แสดงว่าการเติมสามอย่างนั้นเข้าไป ไม่ได้ทำให้ต้องสร้างทฤษฎีใหม่ เพราะทุกบรรทัดใช้แค่กฎค่าเฉลี่ยกับกฎ variance ที่มีอยู่แล้ว</p>
+  <h4>ขั้นที่ 2 — ดึง known factor ออกจาก expectation</h4>
+  <p>ราคาวันนี้กับส่วน drift รู้ค่าแล้วทั้งคู่ จึงดึงออกมานอกวงเล็บได้ เหลือของที่ยังสุ่มอยู่ก้อนเดียวให้จัดการ</p>
   <div class="math">\[
-\begin{aligned}X_t&:=x+\mu t+\sigma W_t\\
-\mathbb E[X_t]&=x+\mu t+\sigma\,\mathbb E[W_t]=x+\mu t\\
-\operatorname{Var}(X_t)&=\operatorname{Var}(\sigma W_t)=\sigma^{2}\operatorname{Var}(W_t)=\sigma^{2}t\\
-W_t\ \text{normal}\;&\Longrightarrow\;X_t\sim\mathcal N\big(x+\mu t,\ \sigma^{2}t\big)\end{aligned}
+\begin{aligned}\mathbb E_t[S_{t+s}]&=\mathbb E_t[S_t e^{(\mu-\sigma^2/2)s+\sigma Y}]\\
+&=\mathbb E_t[S_t e^{(\mu-\sigma^2/2)s}e^{\sigma Y}]\\
+&=S_t e^{(\mu-\sigma^2/2)s}\mathbb E_t[e^{\sigma Y}]\\
+&=S_t e^{(\mu-\sigma^2/2)s}\mathbb E[e^{\sigma Y}]\end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดแรกไม่ใช่ผลลัพธ์ แต่เป็น นิยาม ของสิ่งที่เราสร้างขึ้นเอง: หยิบก้อนมาตรฐานมา แล้วเติมจุดเริ่มต้น ทิศทาง และขนาดความผันผวนเข้าไป คำถามคือของที่สร้างแบบนี้มีหน้าตาอย่างไร</p>
-    <p>หาค่าเฉลี่ยก่อน สองพจน์แรกไม่ได้สุ่มจึงผ่านออกมาตรง ๆ ส่วนก้อนมาตรฐานมีค่าเฉลี่ยเป็นศูนย์ ทิศทางจึงเป็นของที่เราใส่เข้าไปล้วน ๆ</p>
-    <p>ต่อด้วยความผันผวน การบวกเลขคงที่ไม่เปลี่ยนความผันผวน เพราะเลื่อนทั้งก้อนเท่ากันหมด ส่วนตัวคูณออกมาเป็นกำลังสองตามหัวข้อ 6.5 แล้วใช้ผลของหัวข้อ 10.1 ว่า variance เท่ากับเวลา</p>
-    <p>บรรทัดสุดท้ายคือประเด็นที่ทำให้ทั้งบทเดินต่อได้ การคูณและบวกด้วยเลขคงที่ไม่ทำให้ระฆังเลิกเป็นระฆัง มันแค่เลื่อนและยืด ทุกขนาดจึงสร้างจากก้อนมาตรฐานก้อนเดียวได้หมด</p>
+    <p>บรรทัดแรกแทนราคาจากสูตร transition บรรทัดสองแยกเลขชี้กำลังด้วย $e^{a+b}=e^{a}e^{b}$ บรรทัดสามดึงสิ่งที่รู้แล้ว ณ เวลา $t$ ออกจาก conditional expectation ส่วนบรรทัดสุดท้ายใช้ข้อสำคัญว่า Brownian increment $Y=W_{t+s}-W_t$ เป็นอิสระจากข้อมูลถึงเวลา $t$ จึงเอาเงื่อนไขออกจากก้อนสุดท้ายได้</p>
   </div>
 </section>
 
-<section class="prose">
-  <h4>simulation ที่ถูกต้องไม่บวก Normal scale 1 ทุกก้าว</h4>
-  <p>แบ่ง horizon เป็น grid แล้วสุ่ม increment ที่มี standard deviation สอดคล้องกับความยาวช่วง ถ้าลด $\Delta t$ ลง 100 เท่า แต่ไม่ลดขนาดก้าวลง 10 เท่า path จะระเบิดและไม่ใช่ SBM</p>
+<section class="formula">
+  <h4>ขั้นที่ 3 — normal exponential moment</h4>
+  <p>ก้อนที่เหลือคือ exponential ของระฆังคว่ำ ซึ่งคำนวณไว้แล้วในหัวข้อ 1.10 ห้าบรรทัดนี้แค่แปลงตัวแปรให้ตรงกับรูปที่พิสูจน์ไว้ ผลลัพธ์ไม่ใช่หนึ่ง และตรงนั้นคือเหตุผลที่ค่าเฉลี่ยของราคาสูงกว่าค่าที่อยู่ตรงกลาง</p>
+  <div class="math">\[
+\begin{aligned}Y\sim\mathcal N(0,s)\;&\Longrightarrow\;Y=\sqrt{s}\,Z,\quad Z\sim\mathcal N(0,1)\\
+\mathbb E\big[e^{\sigma Y}\big]&=\mathbb E\big[e^{\sigma\sqrt{s}\,Z}\big]\\
+\mathbb E\big[e^{aZ}\big]&=e^{a^{2}/2}\qquad\text{(topic 1.10)}\\
+a=\sigma\sqrt{s}:\quad\frac{a^{2}}{2}&=\frac{\sigma^{2}s}{2}\\
+\mathbb E\big[e^{\sigma Y}\big]&=e^{\sigma^{2}s/2}\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เป้าหมายคือค่าเฉลี่ยของ exponential ของระฆัง ซึ่งเราเคยทำมาแล้วครั้งหนึ่งในหัวข้อ 1.10 แต่ทำกับระฆังมาตรฐาน วิธีที่ง่ายที่สุดจึงไม่ใช่การอินทิเกรตใหม่ แต่คือการดัดให้กลายเป็นก้อนมาตรฐานเสียก่อน</p>
+    <p>คูณก้อนมาตรฐานด้วยรากของ $s$ แล้ว variance จะโตเป็นกำลังสองของตัวคูณ คือได้ $s$ พอดี แทนลงไปก็เหลือก้อนมาตรฐานตัวเดียว ใส่ผลของหัวข้อ 1.10 ที่พิสูจน์ด้วย integral และการจัดกำลังสองสมบูรณ์ แล้วยกกำลังสอง รากก็หายไปพอดี</p>
+    <p>ผลลัพธ์บรรทัดสุดท้ายคือของที่ต้องหยุดดู มันไม่เท่ากับหนึ่ง ทั้งที่ตัวข้างในมีค่าเฉลี่ยเป็นศูนย์ เพราะ exponential โค้งขึ้น ขาขึ้นจึงชนะขาลงเสมอ ส่วนเกินก้อนนั้นคือหัวใจของทั้งหัวข้อนี้</p>
+  </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — สูตรสร้าง path บน grid</h4>
-  <p>จะจำลองด้วยคอมพิวเตอร์ได้ ต้องแปลงนิยามที่เป็นเวลาต่อเนื่อง ให้กลายเป็นสูตรเดินทีละขั้นเสียก่อน</p>
+  <h4>ขั้นที่ 4 — เจาะลึกที่มาของ exponential moment ด้วยการจัดกำลังสองสมบูรณ์</h4>
+  <p>การพิสูจน์หกบรรทัดนี้ลากบันไดลงมาจนถึงนิยามพื้นฐานที่สุด โดยไม่ต้องท่องจำสูตรลอย ๆ สังเกตว่าหัวใจอยู่ที่การจัดรูปกำลังสองสมบูรณ์เพื่อดึงค่าคงที่ $e^{a^2/2}$ ออกมาข้างนอก</p>
+  <p>เมื่อนำไปใช้กับ $a=\sigma\sqrt{s}$ จะได้ $a^2/2 = \sigma^2s/2$ ทันที ซึ่งเป็นปริมาณบวกเสมอ ยืนยันว่าความผันผวนใน exponential จะดึงค่าเฉลี่ยของราคาให้สูงขึ้นเสมอ</p>
+  <p>ลองแทนตัวเลขจริงจากตัวอย่าง 5 ปี: เมื่อความผันผวน $\sigma=0.30$ และระยะเวลา 5 ปี จะได้ตัวคูณก้อน exponential มีค่าประมาณ 1.2523 เมื่อนำไปคูณกับ median price ที่ \$145.50 จะได้ expected price ออกมาเป็น \$182.21 พอดีเป๊ะ</p>
   <div class="math">\[
 \begin{aligned}
-\Delta W_i&=\sqrt{\Delta t}\,Z_i,\qquad Z_i\ \text{i.i.d.}\ \mathcal N(0,1)\\
-W_{t_k}&=\sum_{i=1}^{k}\Delta W_i
+\mathbb E\big[e^{aZ}\big]&=\int_{-\infty}^{\infty}e^{az}\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz\\
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\exp\!\left(-\frac{z^2-2az}{2}\right)dz\\
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\exp\!\left(-\frac{(z-a)^2-a^2}{2}\right)dz\\
+&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\exp\!\left(-\frac{(z-a)^2}{2}+\frac{a^2}{2}\right)dz\\
+&=e^{a^2/2}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\exp\!\left(-\frac{(z-a)^2}{2}\right)dz\\
+&=e^{a^2/2}\times 1 = e^{a^2/2}
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>$Z_i$ คือ standard Normal draws ที่ independent and identically distributed; นำ $\sqrt{\Delta t}$ มาคูณเพื่อให้แต่ละ increment มี variance $\Delta t$ แล้ว cumulative sum ให้ค่าของ $W$ ที่ grid point $t_k$</p>
+    <p>ถ้าจำสูตรไม่ได้ ไม่จำเป็นต้องเปิดตำรา เพราะสร้างใหม่ได้ภายในหนึ่งนาที นิยาม expected value ของ continuous random variable คือเอา function เป้าหมายคูณกับ standard normal density แล้วคำนวณ integral ตลอดช่วง</p>
+    <p>รวมเลขชี้กำลังเข้าด้วยกัน ตัวเศษข้างในคือ $z^2-2az$ จัดรูปด้วยกำลังสองสมบูรณ์ระดับมัธยมเป็น $(z-a)^2-a^2$ แยกพจน์บวก $a^2/2$ ซึ่งไม่มี $z$ ออกมานอก integral ได้ทันที</p>
+    <p>ก้อน integral ที่เหลืออยู่ คือพื้นที่ใต้กราฟระฆังคว่ำที่มีจุดกึ่งกลางเลื่อนไปที่ $a$ พื้นที่รวมของ probability density function ใด ๆ ต้องเป็นหนึ่งเสมอ ผลลัพธ์จึงเหลือเพียง $e^{a^2/2}$ ตรงไปตรงมา</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — cancellation ที่กำหนด convention ของ μ</h4>
+  <p>เอาสองก้อนมาคูณกัน แล้วดูว่าอะไรหักล้างกันพอดี นี่คือเหตุผลที่สูตร GBM ต้องมีพจน์ลบครึ่ง variance ตั้งแต่แรก</p>
+  <div class="math">\[
+\mathbb E_t[S_{t+s}]=S_t e^{(\mu-\sigma^2/2)s}e^{\sigma^2s/2}=S_t e^{\mu s}
+\]</div>
+  <div class="reading">
+    <p>พจน์ความผันผวนสองก้อนหักล้างพอดี จึงนิยาม $\mu$ ให้เป็น continuously compounded expected price growth ไม่ใช่ median growth</p>
   </div>
 </section>
 
 <section class="prose">
   <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>ก้อนสุ่มมาตรฐานเป็นวัตถุดิบที่ใช้ประกอบแบบจำลองราคาทุกตัว</p>
-  <p>ใช้เขียนโค้ดจำลองราคา ซึ่งทุกระบบจำลองเริ่มจากการสร้างก้อนนี้ก่อนแล้วค่อยปรับขนาด</p>
-  <p>ใช้แปลงความผันผวนรายวันเป็นรายเดือนหรือรายปี ด้วยกฎรากที่สองที่ได้จากที่นี่</p>
-  <p>ใช้ประมาณราคาของกลยุทธ์ที่จ่ายตามขนาดการเคลื่อนไหว โดยไม่สนทิศ ซึ่งเป็นโครงสร้างที่ใช้เทรดความผันผวน</p>
+  <p>สูตรนี้ใช้ตรวจค่าเฉลี่ยของราคาที่จำลองตาม GBM ได้ เมื่อจำลองมากขึ้น ค่าเฉลี่ยตัวอย่างควรเข้าใกล้ค่าทฤษฎีภายในความคลาดเคลื่อนจากการสุ่ม</p>
+  <p>มันยังแยกค่าเฉลี่ยออกจาก median ได้ ราคากึ่งกลางไม่ใช่ผลที่นักลงทุนแต่ละคนจะได้รับ และผลตอบแทนของนักลงทุนจริงยังขึ้นกับราคาเข้าออก เงินปันผล ต้นทุน และขนาดสถานะ</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.2a — เส้นทางตัวอย่างของ Brownian motion จากเลขสุ่มชุดเดิม</h4>
-  <img src="../figures/10.2-1.svg" alt="Figure 10.2a — เส้นทางตัวอย่างของ Brownian motion จากเลขสุ่มชุดเดิม" loading="lazy">
+  <h4>Figure 10.2a — กองทุน 14% ความผันผวน 32%: ค่าเฉลี่ยกับ median แยกกันตามเวลา</h4>
+  <img src="../figures/10.2-1.svg" alt="\$100 นาน 20 ปี ค่าเฉลี่ย \$1,644.46 median \$590.62" loading="lazy">
   <figcaption>
-    <p>ทุก path เริ่มที่ 0 และเส้น $\pm\sqrt{t}$ เป็นเพียงเส้นอ้างอิงหนึ่ง standard deviation ของระดับ ณ เวลา $t$ ไม่ใช่ขอบเขตที่ทุก path ต้องอยู่ภายใน; seed ทำให้รูปตรวจซ้ำได้ แต่ไม่ได้ทำให้ scenario ใดกลายเป็น forecast</p>
-  </figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — self-similarity ของ SBM</h4>
-  <p>SBM มีสมบัติที่ใช้ตรวจงานได้ดีมาก คือย่อหรือขยายแกนเวลา แล้วปรับแกนตั้งด้วยราก หน้าตาของมันจะเหมือนเดิมทุกประการ</p>
-  <div class="math">\[
-\frac{W_{ct}}{\sqrt c}\overset{d}{=} W_t\qquad (c>0,\ t\ge 0)
-\]</div>
-  <div class="reading">
-    <p>$c$ คือ factor ขยายเวลา; หารแกนตั้งด้วย $\sqrt c$ แล้ว finite-dimensional distributions ของ process เท่ากันทุกช่วงเวลา เครื่องหมาย equality in distribution ไม่ได้บอกว่าเป็น sample path เส้นเดียวกัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — พิสูจน์ Brownian scaling จากสมบัติของ SBM</h4>
-  <p>การพิสูจน์นี้ยืนยันว่าการย่อขยายแกนเวลาด้วยตัวคูณ $c$ แล้วปรับสเกลแกนตั้งด้วย $\sqrt c$ ไม่ทำให้สมบัติของ SBM เสียหายเลย ทั้งจุดเริ่มต้น expected value, variance และ independence ของ increment ยังสอดคล้องกับนิยามตั้งต้นครบทุกข้อ</p>
-  <div class="math">\[
-\begin{aligned}
-Y_t&:=\frac{W_{ct}}{\sqrt c},\qquad c>0\\[4pt]
-Y_0&=\frac{W_0}{\sqrt c}=\frac{0}{\sqrt c}=0\\[4pt]
-&Y_{t+s}-Y_t=\frac{W_{c(t+s)}-W_{ct}}{\sqrt c}\\[4pt]
-&\mathbb E[Y_{t+s}-Y_t]\\
-&=\frac{\mathbb E[W_{c(t+s)}-W_{ct}]}{\sqrt c}=\frac{0}{\sqrt c}=0\\[4pt]
-&\operatorname{Var}(Y_{t+s}-Y_t)\\
-&=\frac{\operatorname{Var}(W_{c(t+s)}-W_{ct})}{(\sqrt c)^2}\\
-&=\frac{c(t+s)-ct}{c}=\frac{cs}{c}=s\\[4pt]
-&Y_{t+s}-Y_t\sim\mathcal N(0,s)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>กำหนด process ใหม่ $Y_t$ ด้วยการเร่งเวลาไป $c$ เท่าแล้วบีบความสูงลงด้วย $\sqrt c$; จุดเริ่มต้น $Y_0$ ยังคงเป็นศูนย์เพราะ $W_0$ เท่ากับศูนย์ตั้งแต่แรก</p>
-    <p>เมื่อดู increment จาก $t$ ไป $t+s$ ตัวเศษคือการก้าวของ $W$ ในช่วงเวลาที่ยาว $cs$ ค่าเฉลี่ยของก้อนนี้เป็นศูนย์เพราะไม่มี drift ตั้งแต่ต้น</p>
-    <p>เมื่อดึงตัวคูณคงที่ $\sqrt c$ ออกจาก variance มันจะถูกยกกำลังสองกลายเป็น $c$ ในตัวส่วน จึงตัดกับความยาวช่วงเวลา $cs$ พอดี เหลือ variance เท่ากับ $s$</p>
-    <p>เนื่องจากการคูณและรวมเชิงเส้นของ Normal ยังคงเป็น Normal ก้อน $Y$ จึงมี increment ที่มี distribution เดียวกัน และ independence ของแต่ละช่วงเวลายังคงเดิมทุกประการ ทำให้ $Y$ เป็น SBM เช่นกัน</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 10.2b — ปรับสเกลแล้วได้ distribution ปลายทางเดิม</h4>
-  <img src="../figures/10.2-2.svg" alt="Figure 10.2b — ปรับสเกลแล้วได้ distribution ปลายทางเดิม" loading="lazy">
-  <figcaption>
-    <p>ค่า $W_1$, $W_4/2$ และ $W_9/3$ ซ้อนทับ standard Normal เดียวกัน การหารด้วย $\sqrt{t}$ ล้างผลของ horizon ออกพอดี</p>
+    <p>เส้นบนคือค่าเฉลี่ยของ \$100 ที่โต 14% ต่อปี เส้นล่างคือ median ที่โต 8.88% ต่อปี ครบ 20 ปีได้ 1,644.46 กับ \$590.62 ห่างกัน 2.78 เท่า ช่องว่างนี้ไม่ใช่เงินหาย นักลงทุนส่วนน้อยที่โชคดีมากดึงค่าเฉลี่ยขึ้น คนกลาง ๆ ได้เส้นล่าง</p>
   </figcaption>
 </figure>
 
 <section class="prose">
-  <h4>derive square-root-of-time จาก log returns</h4>
-  <p>ให้ daily log returns อิสระและมี standard deviation $\sigma_d$ ผลตอบแทน $n$ วันคือผลรวมของ daily increments ดังนั้นสิ่งที่บวกกันคือ variance ไม่ใช่ volatility</p>
+  <h4>median ไม่ได้ขัดกับ expectation</h4>
+  <p>exponential ของ Normal มี right tail ยาว: paths ส่วนมากอยู่ใกล้หรือใต้ค่าเฉลี่ยแต่ paths ขาขึ้นสุดโต่งจำนวนน้อยดัน average ขึ้น. จึงห้ามสื่อสาร $S_0e^{\mu s}$ ว่าเป็น “ราคาที่น่าจะได้” โดยไม่บอกว่ามันคือ mean</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 6 — variance ของผลรวม $n$ วัน</h4>
-  <p>คำถามที่โต๊ะถามบ่อยที่สุดคือความเสี่ยงรายวันแปลงเป็นรายเดือนรายปีอย่างไร สูตรข้างล่างตอบ และที่สำคัญกว่าคำตอบคือบรรทัดที่ตั้ง covariance เป็นศูนย์ ซึ่งเป็นจุดที่กฎนี้พัง ในวันที่ตลาดมีแนวโน้มต่อเนื่อง พจน์ไขว้ไม่เป็นศูนย์ และรากที่สองก็ประเมินความเสี่ยงต่ำไป</p>
+  <h4>ขั้นที่ 6 — distribution ของ log return</h4>
+  <p>เปลี่ยนมุมมองจากราคาเป็น log return จะเห็นว่ามันเป็นระฆังธรรมดา ห้าบรรทัดนี้แสดงว่าจุดกลางของ log return ไม่ใช่ค่าเดียวกับค่าเฉลี่ยของราคา และความต่างนั้นมาจากพจน์ลบครึ่ง variance ที่ติดอยู่ในเลขชี้กำลังตั้งแต่ขั้นที่ 1</p>
   <div class="math">\[
-\begin{aligned}
-&\operatorname{Var}\Big(\sum_{i=1}^{n}r_i\Big)\\
-&=\sum_{i=1}^{n}\operatorname{Var}(r_i)+\sum_{i\ne j}\operatorname{Cov}(r_i,r_j)\\
-&=\sum_{i=1}^{n}\operatorname{Var}(r_i)\\
-&\quad(\operatorname{Cov}=0,\ \text{independent})\\
-&=n\sigma_d^{2}\qquad(\operatorname{Var}(r_i)=\sigma_d^{2})\\
-\operatorname{SD}&=\sigma_d\sqrt{n}
-\end{aligned}
+\begin{aligned}\frac{S_{t+s}}{S_t}&=e^{\left(\mu-\frac12\sigma^{2}\right)s+\sigma Y}\\
+\log\!\left(\frac{S_{t+s}}{S_t}\right)&=\left(\mu-\frac12\sigma^{2}\right)s+\sigma Y\\
+\mathbb E[\sigma Y]&=\sigma\,\mathbb E[Y]=0\\
+\operatorname{Var}(\sigma Y)&=\sigma^{2}\operatorname{Var}(Y)=\sigma^{2}s\\
+\Longrightarrow\ \log\!\left(\frac{S_{t+s}}{S_t}\right)&\sim\mathcal N\!\left(\left(\mu-\tfrac12\sigma^{2}\right)s,\ \sigma^{2}s\right)\end{aligned}
 \]</div>
   <div class="reading">
-    <p>กาง variance ของผลรวมให้ครบก่อน ตามรูปที่หัวข้อ 6.5 สร้างไว้ คือ variance ของแต่ละวัน บวกพจน์ไขว้ทุกคู่ พจน์ไขว้นั่นแหละคือหัวใจของขั้นนี้</p>
-    <p>บรรทัดที่สามถึงสี่ใช้ข้อสมมติว่าแต่ละวันไม่ส่งข่าวถึงกัน พจน์ไขว้ทุกตัวจึงเป็นศูนย์ กฎรากที่สองทั้งกฎแขวนอยู่กับบรรทัดนี้บรรทัดเดียว และนี่คือข้อที่ตลาดจริงละเมิดบ่อยที่สุด เพราะวันแย่มักมากันเป็นชุด</p>
-    <p>ที่เหลือง่าย ทุกวันแกว่งเท่ากัน จึงบวก $n$ ก้อนที่เท่ากัน แล้วถอดรากกลับมาเป็นหน่วยผลตอบแทน ได้รูปที่ใช้แปลงความเสี่ยงรายวันเป็นรายปีกันทุกวันนี้</p>
+    <p>หารสองข้างของขั้นที่ 1 ด้วยราคาปัจจุบัน แล้วใส่ log ทั้งสองข้าง log ย้อน exponential กลับพอดี เลขชี้กำลังจึงโผล่ออกมาทั้งก้อน เหลือของที่หน้าตาคุ้น คือเลขคงที่บวกระฆังคูณตัวคูณ</p>
+    <p>จุดกลางมาจากพจน์แรกอย่างเดียว เพราะพจน์ที่สองมีค่าเฉลี่ยศูนย์ ส่วนความกว้างมาจากพจน์ที่สองอย่างเดียว เพราะเลขคงที่ไม่เหวี่ยง ตัวคูณออกมาเป็นกำลังสองตามหัวข้อ 6.5 และรูปทรงยังเป็นระฆัง เพราะการคูณและบวกเลขคงที่ไม่ทำให้ระฆังเลิกเป็นระฆัง</p>
+    <p>สิ่งที่ต้องสังเกตคือจุดกลางมีพจน์ลบครึ่ง variance ติดอยู่ ไม่ใช่ตัวเดียวเปล่า ๆ พจน์นี้จะหายไปในค่าเฉลี่ยของราคา แต่ไม่หายจากค่าเฉลี่ยของ log return และความสับสนระหว่างสองอย่างนี้ทำให้คนอ่านผลผิดบ่อยที่สุด</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 7 — แปลงกลับเป็น volatility</h4>
-  <p>variance บวกกันได้ แต่ความผันผวนบวกกันไม่ได้ ขั้นนี้แสดงว่ารากที่สองที่ทุกคนท่องจำกันนั้นโผล่ออกมาจากตรงไหน</p>
-  <div class="math">\[
-\sigma_n=\sqrt{n\sigma_d^2}=\sigma_d\sqrt n
-\]</div>
-  <div class="reading">
-    <p>$\sigma_n$ คือ standard deviation ของผลตอบแทนสะสม $n$ วัน; square root เกิดจากนิยาม standard deviation ไม่ใช่สูตรจำลอย ๆ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — แทน daily volatility 1.15%</h4>
-  <p>ความผันผวนของ Brownian motion โตตามรากของเวลา ไม่ใช่ตามเวลา จึงต้องถอดรากจำนวนวันก่อนคูณ</p>
+  <h4>ขั้นที่ 7 — median และค่าเฉลี่ยจาก inputs เดียวกัน</h4>
+  <p>วางสองค่าไว้ข้างกันเพื่อให้เห็นว่ามันต่างกันจริง ทั้งที่มาจากตัวเลขชุดเดียวกัน เจ็ดบรรทัดนี้แสดงว่าพจน์ลบครึ่ง variance ในสูตรราคา ไม่ได้ใส่มาเพื่อความสวยงาม มันมีหน้าที่หักล้างส่วนเกินของ exponential ให้ค่าเฉลี่ยออกมาเป็น $\mu$ พอดี</p>
   <div class="math">\[
 \begin{aligned}
-\sigma_{5}&=1.15\%\sqrt5=1.15\%(2.2361)=2.57\%\\
-\sigma_{21}&=1.15\%\sqrt{21}=1.15\%(4.5826)=5.27\%\\
-\sqrt{252}&=\sqrt{4\times63}=2(7.9373)=15.8745\\
-\sigma_{252}&=1.15\%(15.8745)=18.26\%\\[4pt]
-\text{wrong}&:\ 1.15\%(252)=289.8\%\\
-\text{ratio}&=289.8/18.26=15.87=\sqrt{252}
+\mathbb P(Y\le0)&=\tfrac12\\
+S_{t+s}\le S_te^{(\mu-\sigma^{2}/2)s}&\ \ \text{exactly when}\ \ Y\le0\\
+\operatorname{Median}_t(S_{t+s})&=S_te^{(\mu-\sigma^{2}/2)s}\\[4pt]
+\mathbb E_t[S_{t+s}]&=S_te^{(\mu-\sigma^{2}/2)s}\,\mathbb E\big[e^{\sigma Y}\big]\\
+&=S_te^{(\mu-\sigma^{2}/2)s}\,e^{\sigma^{2}s/2}\\
+&=S_te^{\mu s}\\[4pt]
+\frac{\mathbb E_t[S_{t+s}]}{\operatorname{Median}_t(S_{t+s})}&=e^{\sigma^{2}s/2}
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>หนึ่งปีมี 252 วัน แต่ความผันผวนโตขึ้นเพียง 15.87 เท่า ไม่ใช่ 252 เท่า</p>
-    <p>นี่คือเหตุผลที่ความเสี่ยงรายปีดูเล็กกว่าที่สัญชาตญาณคิด เมื่อเทียบกับความเสี่ยงรายวันคูณจำนวนวัน</p>
-    <p>√252 หาด้วยมือได้ แยก 252 = 4 × 63 แล้วลองยกกำลังสอง 7.93² = 62.885 กับ 7.94² = 63.044 จึงได้ √63 ≈ 7.9373 และ √252 ≈ 15.87 ≈ 16 ทางลัดในหัวคือ σ รายปี ≈ 16 × σ รายวัน เห็น 1% ต่อวันให้อ่านว่าราว 16% ต่อปี</p>
-    <p>สองบรรทัดล่างคือความผิดที่พบบ่อย คูณ 252 ตรง ๆ ได้ 289.8% ผิดไป 15.87 เท่าพอดี ซึ่งคือ √252 นั่นเอง วิธีจับผิดในสองวินาที: ถ้าเวลาเพิ่มสี่เท่า ความเสี่ยงต้องเพิ่มสองเท่า ไม่ใช่สี่เท่า</p>
+    <p>คำถามคือ median กับค่าเฉลี่ยของราคาต่างกันตรงไหน เริ่มจาก median ก่อนเพราะง่ายกว่า ระฆังสมมาตรรอบศูนย์ ครึ่งหนึ่งจึงอยู่ต่ำกว่าศูนย์ และ exponential เพิ่มขึ้นเสมอจึงไม่พลิกเครื่องหมายตอนแปลงกลับ ค่าที่แบ่งครึ่งราคาอ่านออกมาได้ทันที</p>
+    <p>ฝั่งค่าเฉลี่ยต้องใช้ขั้นที่ 3 ดึงก้อนที่ไม่สุ่มออกมาก่อน แล้วแทนผลนั้นลงไป พจน์ลบครึ่ง variance กับพจน์บวกครึ่ง variance หักกันหมดพอดี</p>
+    <p>นี่คือเหตุผลที่สูตรของขั้นที่ 1 ต้องมีพจน์ลบครึ่งอยู่ตั้งแต่แรก มันไม่ได้โผล่มาลอย ๆ แต่ถูกใส่ไว้ให้หักกับส่วนเกินของขั้นที่ 3 พอดี</p>
+    <p>หารสองค่าแล้วเหลือส่วนต่างที่โตตามความผันผวนและเวลา ค่าเฉลี่ยจึงสูงกว่าค่าที่อยู่ตรงกลางเสมอ หางขวาที่ยาวไม่จำกัดคือตัวที่ดึงมันขึ้น แปลว่าผลตอบแทนเฉลี่ยที่โฆษณากัน คนส่วนใหญ่ไม่ได้รับ</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.2c — horizon risk for the \$25 ล้าน SPY sleeve</h4>
-  <img src="../figures/10.2-3.svg" alt="Figure 10.2c — horizon risk for the \$25 ล้าน SPY sleeve" loading="lazy">
+  <h4>Figure 10.2b — ยิ่งผันผวน median ยิ่งโตช้า และช้าลงแบบกำลังสอง</h4>
+  <img src="../figures/10.2-2.svg" alt="median growth ต่อปีเทียบความผันผวน ที่ 32% เหลือ 8.88% ที่ 52.9% เหลือศูนย์" loading="lazy">
   <figcaption>
-    <p>one-standard-deviation P&amp;L risk โตจาก \$287,500 ต่อวันเป็นประมาณ \$4.57 ล้าน ต่อปี; เส้น square-root อยู่ต่ำกว่าเส้นผิดที่คูณเวลาดิบอย่างรวดเร็ว</p>
+    <p>เส้นแดงคือ median growth ต่อปี เท่ากับ 14% ลบ $\sigma^2/2$ ที่ความผันผวน 32% เหลือ 8.88% และที่ 52.9% เหลือศูนย์ เพิ่มความผันผวนสองเท่า แรงฉุดเพิ่มสี่เท่า เส้นประคือ 14% ที่ค่าเฉลี่ยยังได้ทุกกรณี ช่องว่างระหว่างสองเส้นคือภาษีความผันผวนในขั้นที่ 9</p>
+  </figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — checked USD example at five years</h4>
+  <p>แทนตัวเลขจริงห้าปี จะเห็นระยะห่างของสองค่านี้ชัดจนเถียงไม่ได้</p>
+  <div class="math">\[
+\begin{aligned}
+S_0&=\$100,\quad\mu=0.12\\
+\sigma&=0.30,\quad s=5\\
+\mathbb E[S_5]&=100e^{0.12(5)}=100e^{0.60}\\
+&=\$182.21\\
+&\operatorname{Median}(S_5)\\
+&=100e^{(0.12-0.045)(5)}=100e^{0.375}\\
+&=\$145.50
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>expected price ใช้ 12% ต่อปี ส่วน median exponent ใช้ $0.12-0.045=0.075$ ต่อปี; ทั้งสองเป็น hypothetical USD per share และไม่ใช่ forecast guarantee</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>Figure 10.2c — ราคาหลัง 5 ปีจากขั้นที่ 8</h4>
+  <img src="../figures/10.2-3.svg" alt="density ของราคาหลัง 5 ปี median \$145.50 ค่าเฉลี่ย \$182.21" loading="lazy">
+  <figcaption>
+    <p>หุ้น \$100 drift 12% ความผันผวน 30% ครบ 5 ปี เส้นส้มคือ median \$145.50 เส้นเขียวคือค่าเฉลี่ย \$182.21 ตามขั้นที่ 8 หางขวายาวเกิน \$400 ดึงค่าเฉลี่ยให้อยู่ขวาของยอด เวลารายงานตัวเลขความเสี่ยงต้องบอกว่าตัวไหนคือค่าเฉลี่ย ตัวไหนคือ median</p>
   </figcaption>
 </figure>
 
 <section class="prose">
-  <h4>sanity check ด้วยราคา straddle 30 วัน</h4>
-  <p>เพื่อผูก scale กับราคา option ให้ SPY spot และ strike เท่ากับ \$520, annual volatility 18.26%, expiry 30/365 ปี และสมมติ rate กับ dividend เป็น 0 สำหรับ approximation ระยะสั้น payoff ของ at-the-money straddle ใกล้เคียงขนาด absolute Normal move</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — scale ของการขยับตลอด 30 วัน</h4>
-  <p>ใช้กฎรากที่สองกับ horizon ที่โจทย์ถามจริง คือหนึ่งเดือนข้างหน้า</p>
-  <div class="math">\[
-\begin{aligned}
-T&=30/365=0.082192\\
-\sqrt T&=0.286691\\
-\sigma\sqrt T&=0.182557(0.286691)\\
-&=0.052337=5.234\%\\[4pt]
-&\text{21 trading days}:\\
-&\quad 0.182557\sqrt{21/252}\\
-&\quad=0.182557(0.288675)\\
-&=0.052700=5.270\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>30 วันคิดเป็น 0.082192 ปี ถอดรากได้ 0.286691 ความผันผวนหนึ่งเดือนจึงเป็นราว 28.7% ของความผันผวนทั้งปี</p>
-    <p>สี่บรรทัดล่างตรวจอีกทาง 30 วันปฏิทินราว 21 วันทำการ ได้ 5.27% ต่างจาก 5.23% แค่ 0.04 จุด ในบรรทัดเดียวกันห้ามปนสองแบบ แต่คนละบรรทัดได้: σ รายปีนับวันทำการเพราะราคาขยับตอนตลาดเปิด ส่วนอายุสัญญานับวันปฏิทินเพราะหมดอายุตามนาฬิกาจริง สำหรับ option อายุ 2–3 วันความต่างนี้จะใหญ่ขึ้นมาก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — expected value ของ absolute standard Normal</h4>
-  <p>straddle จ่ายตามขนาดการขยับ โดยไม่สนว่าขึ้นหรือลง เราจึงต้องการค่าเฉลี่ยของ *ขนาด* ไม่ใช่ค่าเฉลี่ยของค่าที่ยังติดเครื่องหมาย ซึ่งเป็นศูนย์</p>
-  <div class="math">\[
-\begin{aligned}\mathbb E[|Z|]&=2\int_0^\infty z\,\phi(z)\,dz\\[4pt]
-&=2\int_0^\infty z\,\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz\\[4pt]
-&=\sqrt{\frac{2}{\pi}}\int_0^\infty e^{-u}\,du\qquad (u=z^2/2,\ du=z\,dz)\\[4pt]
-&=\sqrt{\frac{2}{\pi}}\Big[-e^{-u}\Big]_0^\infty\\[4pt]
-&=\sqrt{\frac{2}{\pi}}\big(0-(-1)\big)=\sqrt{\frac{2}{\pi}}\approx0.797885\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$Z$ คือ standard Normal และ $\phi$ คือ density ของมัน; absolute value พับ left tail มารวมกับ right tail ทำให้ expected magnitude เป็น 0.797885 แทน 0</p>
-    <p>แทน $\phi(z)=e^{-z^2/2}/\sqrt{2\pi}$ จะได้ $2/\sqrt{2\pi}$ คูณ integral ของ $ze^{-z^2/2}$ ตั้งแต่ 0 ถึงอนันต์ เพราะ derivative ของ $-e^{-z^2/2}$ คือ $ze^{-z^2/2}$ integral จึงเป็น $0-(-1)=1$ เหลือ $2/\sqrt{2\pi}=\sqrt{2/\pi}$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 11 — ราคา straddle แบบ small-move approximation</h4>
-  <p>รวมสามชิ้นที่หามาได้เข้าด้วยกัน คือราคาปัจจุบัน ความผันผวนของการขยับหนึ่งเดือน และค่าเฉลี่ยของขนาดการขยับ</p>
-  <div class="math">\[
-\begin{aligned}
-S_0\,\sigma\sqrt T\,\mathbb E|Z|&=\$520(0.052337)(0.797885)\\
-&=\$21.72\ \text{per share}\\
-&=\$2{,}172\ \text{per contract}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$S_0$ คือ spot \$520, 5.234% คือ return scale และ 0.797885 คือ expected absolute Normal move; คูณ 100 shares ต่อ contract แปลง premium ต่อ share เป็นเงินสดต่อ US equity option contract</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 12 — ตรวจกับสูตร Black–Scholes เต็ม</h4>
-  <p>ทางลัด 0.798 × σ√T ต้องตรวจกับสูตรเต็มของบทที่ 13 ก่อนเชื่อ ที่ ATM และดอกเบี้ย 0 call กับ put ราคาเท่ากัน straddle จึงเท่ากับสอง call และสูตรยุบเหลือผลต่างของพื้นที่ใต้ระฆังที่สองตำแหน่ง</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{straddle}\\
-&=2S\big[\Phi(\sigma\sqrt T/2)-\Phi(-\sigma\sqrt T/2)\big]\\
-&\sigma\sqrt T/2=0.052337/2=0.026169\\
-&\Phi(0.026169)=0.510439\\
-&\Phi(-0.026169)=0.489561\\
-&2(0.510439-0.489561)\\
-&=2(0.020877)\\
-&=0.041754=4.175\%\\
-&\text{shortcut}:\\
-&\quad 0.797885(0.052337)\\
-&\quad=0.041759=4.176\%\\[4pt]
-&\Phi(x)\approx0.5+\varphi(0)\,x\\
-&\varphi(0)=\frac{1}{\sqrt{2\pi}}=0.398942
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สูตรเต็มให้ 4.175% ทางลัดให้ 4.176% ต่างกัน 0.001 จุด บนหุ้น \$520 คือ 21.71 เทียบ \$21.72 ทางลัดจึงใช้ได้จริงที่ ATM</p>
-    <p>ทำไมแม่นขนาดนี้ ดูสองบรรทัดสุดท้าย ใกล้ศูนย์ระฆังแทบเป็นเส้นตรง ผลต่างของสองค่านี้จึงเป็น 2φ(0)(σ√T/2) = φ(0)σ√T คูณ 2S ได้ 2φ(0) = 0.798 พอดี นี่คือที่มาของกฎในหัวของโต๊ะว่า ATM call ≈ 0.4 × S × σ√T</p>
-    <p>ทางลัดจะเริ่มเพี้ยนเมื่อ σ√T ใหญ่ เช่น option อายุยาวมาก หรือหุ้นที่ผันผวนสุดขั้ว เพราะระฆังไม่เป็นเส้นตรงอีกต่อไป</p>
-  </div>
+  <h4>เชื่อมกับ implementation และ controls</h4>
+  <p>ใน simulation ใช้ exact transition ของ 7.1 แล้วตรวจ sample mean กับ analytical target $S_0e^{\mu s}$ ตามจำนวน paths ที่มากพอ สร้าง separate columns สำหรับ mean, median, percentile และ expected shortfall; อย่าให้ dashboard ที่ชื่อ “expected” ซ่อน tail risk หรือ horizon convention</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.2d — straddle ที่ราคาใช้สิทธิเท่าราคาตลาด ซื้อขนาดการเคลื่อนไหว ไม่ได้ซื้อทิศทาง</h4>
-  <img src="../figures/10.2-4.svg" alt="Figure 10.2d — straddle ที่ราคาใช้สิทธิเท่าราคาตลาด ซื้อขนาดการเคลื่อนไหว ไม่ได้ซื้อทิศทาง" loading="lazy">
+  <h4>Figure 10.2d — จำลองยิ่งมาก ค่าเฉลี่ยตัวอย่างยิ่งเข้าใกล้ 182.21</h4>
+  <img src="../figures/10.2-4.svg" alt="ค่าเฉลี่ยสะสมของราคาจำลองหลัง 5 ปี เข้าใกล้ \$182.21 เมื่อจำนวนเส้นทางเพิ่ม" loading="lazy">
   <figcaption>
-    <p>payoff รูปตัว V จ่ายเมื่อ SPY ห่างจาก strike ทั้งสองด้าน จุด break-even ของ premium approximation อยู่ราว \$498.28 และ \$541.72 ก่อนลองดู rate, dividend และ model smile</p>
+    <p>จำลองราคาหลัง 5 ปีทีละเส้นทาง แล้วหาค่าเฉลี่ยสะสม ช่วงไม่กี่สิบเส้นแรกค่าเฉลี่ยกระโดดไปมา เพราะเส้นทางที่สูงมากเข้ามาทีละตัว พอถึงหลักพันเส้นจะนิ่งใกล้ 182.21 ที่คำนวณด้วยสูตร ค่าเฉลี่ยนิ่งแล้ว แต่ราคารายเส้นยังกระจายกว้างเท่าเดิม จำลองมากขึ้นไม่ได้ลดความเสี่ยงของพอร์ต</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>คำตอบ — ความเสี่ยงพอร์ต SPY และราคา ATM straddle 30 วัน</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: พอร์ต SPY มูลค่า \$25,000,000 ผันผวนรายวัน 1.15% (252 วันทำการต่อปี) ราคาหุ้น \$520 และ option อายุ 30 วัน</p>
-  <p>คำถาม: ความผันผวนรายปี และราคา option แบบ ATM straddle อายุ 30 วัน มีมูลค่ากี่ดอลลาร์?</p>
-  <p>ของที่มี (ขั้นที่ 6 ถึง 12): $\sigma_d = 1.15\%$, พอร์ต \$25,000,000, spot \$520, อายุ 30 วัน ($T = 30/365$ ปี)</p>
-  <p>1 คำนวณความผันผวนรายปี: 1.15% คูณ 15.8745 ได้ 18.26% คิดเป็นความเสี่ยงพอร์ต \$4.57 ล้าน (ไม่ใช่คูณ 252 ตรง ๆ ซึ่งได้ 289.8% และผิดไป 15.87 เท่า)</p>
-  <p>2 คำนวณขนาดแกว่ง 30 วัน: 18.26% คูณ 0.28669 ได้ 5.234%</p>
-  <p>3 คำนวณราคา ATM straddle: คูณด้วย 0.7979 ได้ 4.18% ของราคาหุ้น คิดเป็น \$21.72 ต่อหุ้น (\$2,172 ต่อสัญญา)</p>
-  <p>คำตอบ: ความผันผวนรายปีคือ 18.26% และราคา ATM straddle 30 วันคือ \$21.72 ต่อหุ้น เทียบกับสูตร Black-Scholes (บทที่ 13) เต็มที่ได้ \$21.71</p>
-  <p>ตรวจเองใน 10 วินาที: เอา 16 คูณ 1.15% ได้ราว 18.4% และ straddle ประมาณ 0.8 คูณ 5.23% ได้ราว 4.18%</p>
-  <p>แปลว่าอะไร: ตัวเลขเดียวคือความผันผวนรายวัน 1.15% ตอบได้สามคำถามที่ต่างกันสิ้นเชิง เดือนนี้พอร์ตแกว่งได้แค่ไหน (5.27%) ปีนี้ควรตั้ง limit เท่าไร (18.26% หรือ \$4.57 ล้าน) และ option ตัวนี้แพงหรือถูก (4.18%) ถ้าตลาดขาย straddle ตัวนี้ที่ 6% แปลว่าตลาดคาดความผันผวนราว 6% ÷ 0.7979 ÷ 0.2867 = 26.2% ต่อปี สูงกว่า 18.26% ที่วัดจากอดีต นั่นคือ implied volatility คุยกับ realized volatility ซึ่งเป็นงานประจำวันของโต๊ะ option</p>
+  <h4>โจทย์หลัก: 14% บนโบรชัวร์ กับ 8.88% ที่เข้ากระเป๋าจริง</h4>
+  <p>กองทุนหนึ่งรายงานว่ามูลค่าหน่วยลงทุนโตเฉลี่ย μ = 14% ต่อปี ความผันผวน σ = 32% ต่อปี สมมติราคาเดินตาม GBM ขั้นที่ 5 พิสูจน์แล้วว่า drift ของราคาคือ μ พอดี สี่ขั้นถัดไปตอบว่าคนกลาง ๆ ได้อัตราทบต้นเท่าไร ลงทุน \$100 นาน 20 ปีค่าเฉลี่ยกับ median ห่างกันแค่ไหน กี่คนได้ถึงค่าเฉลี่ย และควรกู้มาลงทุนกี่เท่า</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — ภาษีความผันผวน: ขึ้นแล้วลงเท่ากัน เงินไม่กลับที่เดิม</h4>
+  <p>ก่อนใช้สูตร ลองขึ้นแล้วลงเปอร์เซ็นต์เท่ากันกับเงินจริง แล้วดูว่าหายไปเท่าไร ส่วนที่หายนี้คือที่มาของ σ²/2</p>
+  <div class="math">\[
+\begin{aligned}
+&(1+x)(1-x)=1-x^2\\
+x=10\%&:\ 100\to110\to99\quad(-1\%)\\
+x=50\%&:\ 100\to150\to75\quad(-25\%)\\
+x=80\%&:\ 100\to180\to36\quad(-64\%)\\[4pt]
+&\sigma=15\%,\ 30\%:\\
+&\quad\sigma^2/2=1.125\%,\ 4.50\%\\
+&\sigma=32\%,\ 60\%:\\
+&\quad\sigma^2/2=5.12\%,\ 18.0\%\\[4pt]
+g&=\mu-\sigma^2/2\\
+&=0.14-0.0512=0.0888
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ขึ้น x แล้วลง x ผลตอบแทนเฉลี่ยแบบเลขคณิตเป็นศูนย์ แต่เงินหายไป x² ทุกครั้ง เพราะขาลงทำงานบนฐานที่ใหญ่กว่า ขึ้น 50% ได้ \$50 แต่ลง 50% จากฐาน 150 เสีย \$75 ส่วนที่หายต่องวดจึงราวครึ่งหนึ่งของ variance ต่องวด คือ σ²/2</p>
+    <p>ภาษีนี้โตตาม σ² ไม่ใช่ σ เพิ่ม σ สองเท่า ภาษีเพิ่มสี่เท่า ที่ σ = 60% ต้องมี drift เกิน 18% ต่อปี แค่ให้ median ไม่ขาดทุน ลด σ ของกองทุนนี้จาก 32% เหลือ 20% ได้อัตราทบต้นเพิ่มฟรี 5.12 − 2.00 = 3.12 จุดต่อปี</p>
+    <p>สองบรรทัดสุดท้ายคืออัตราที่เข้ากระเป๋าคนกลาง ๆ 8.88% ต่อปี ต่ำกว่าที่โฆษณา 5.12 จุด ไม่มีใครเก็บส่วนนี้ไป ไม่ใช่ค่าธรรมเนียม มันคือผลของเงินที่เดินแบบคูณกัน ถ้าแปลงเป็นผลตอบแทนธรรมดา ค่าเฉลี่ยของราคาโต e^0.14 − 1 = 15.03% ต่อปี ส่วนคนกลาง ๆ ได้ e^0.0888 − 1 = 9.29%</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — \$100 นาน 20 ปี: ค่าเฉลี่ยกับ median ห่างกันกี่เท่า</h4>
+  <p>ใช้ขั้นที่ 7 กับตัวเลขของกองทุน ค่าเฉลี่ยใช้ μ ส่วน median ใช้ g</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E[S_{20}]&=100e^{0.14(20)}=100e^{2.8}=\$1{,}644\\
+\operatorname{Median}(S_{20})&=100e^{0.0888(20)}=100e^{1.776}=\$591\\
+1{,}644/591&=e^{2.8-1.776}=e^{1.024}=2.78\\
+1.024&=0.0512(20)=(\sigma^2/2)\,T
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ช่องว่างคือ e ยกด้วย (σ²/2)T ซึ่งมีเวลาอยู่ในเลขชี้กำลัง มันจึงโตแบบทวีคูณ ปีแรกห่าง 5.3% สิบปีห่าง 1.67 เท่า ยี่สิบปีห่าง 2.78 เท่า สี่สิบปีห่าง 7.7 เท่า ยิ่งลงทุนยาว คำว่าผลตอบแทนคาดหวังยิ่งไม่ใช่สิ่งที่คุณจะได้</p>
+    <p>กับดักที่พบบ่อยคือเอา 14% ไปทบต้นตรง ๆ 100 × 1.14²⁰ = \$1,374 ตัวเลขนี้ไม่ตรงกับอะไรเลย ไม่ใช่ค่าเฉลี่ย 1,644 และไม่ใช่ median 591 ถ้าจะวางแผนการเงินจริงให้ใช้ median</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — มีกี่คนได้ถึงค่าเฉลี่ย และกี่คนยังขาดทุนหลัง 20 ปี</h4>
+  <p>log ของผลตอบแทนสะสมเป็นระฆังตามขั้นที่ 6 จึงแปลงคำถามเรื่องราคาเป็นคำถามเรื่อง z ได้</p>
+  <div class="math">\[
+\begin{aligned}
+&\log(S_{20}/100)\\
+&\sim\mathcal N\big(0.0888(20),\ 0.1024(20)\big)\\
+&=\mathcal N(1.776,\ 2.048)\\
+\operatorname{SD}&=\sqrt{2.048}=1.4311\\
+z&=\frac{\ln(16.44)-1.776}{1.4311}\\
+&=\frac{2.8-1.776}{1.4311}=0.7155\\
+&P(S_{20}\ge1{,}644)\\
+&=1-\Phi(0.7155)=23.7\%\\
+z_0&=\frac{0-1.776}{1.4311}=-1.2410\\
+&P(S_{20}\lt100)\\
+&=\Phi(-1.2410)=10.7\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>จะได้ถึงค่าเฉลี่ย \$1,644 ต้องมี log return อย่างน้อย 2.8 ซึ่งอยู่เหนือจุดกลาง 0.7155 SD โอกาสจึงเหลือ 23.7% ถ้าปล่อยนักลงทุน 1,000 คนลงกองนี้พร้อมกัน 20 ปี มีแค่ราว 237 คนได้ถึงตัวเลขบนโบรชัวร์</p>
+    <p>และมีราว 107 คนที่ผ่านไป 20 ปีแล้วยังขาดทุน ทั้งที่ผลตอบแทนคาดหวังเป็นบวก 14% ต่อปี ค่าเฉลี่ยถูกดึงขึ้นโดยคนส่วนน้อยที่โชคดีมาก และในชีวิตจริงคุณได้หนึ่งเส้นทาง ไม่ใช่ค่าเฉลี่ยของพันเส้นทาง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — กู้มาลงทุนกี่เท่าถึงดีที่สุด และทำไมกู้มากแล้วพัง</h4>
+  <p>กู้มาลงทุน k เท่า drift โตเป็น kμ ความผันผวนเป็น kσ แต่ภาษีโตเป็น k²σ²/2 ลองแทนเลข แล้วหาจุดสูงสุด</p>
+  <div class="math">\[
+\begin{aligned}
+g(k)&=k\mu-\frac{k^2\sigma^2}{2}\\
+k=1&:\ 0.140-1(0.0512)=8.88\%\\
+k=1.37&:\ 0.1914-1.869(0.0512)\\
+&\quad=9.57\%\\
+k=2&:\ 0.280-4(0.0512)=7.52\%\\
+k=3&:\ 0.420-9(0.0512)=-4.08\%\\[4pt]
+\frac{dg}{dk}&=\mu-k\sigma^2=0\\
+&\Longrightarrow\ k^*=\frac{\mu}{\sigma^2}=\frac{0.14}{0.1024}=1.37\\
+g(k)&=0\ \Longrightarrow\ k=\frac{2\mu}{\sigma^2}=2.73
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>กำไรโตเป็นเส้นตรงตาม k แต่ภาษีโตตาม k² พาราโบลาคว่ำนี้จึงมียอด หา derivative แล้วตั้งเป็นศูนย์ได้ k* = 1.37 เท่า ให้อัตราทบต้น 9.57% ดีที่สุด</p>
+    <p>เกิน 2.73 เท่า อัตราทบต้นติดลบ ขาดทุนแน่ในระยะยาว แม้ทุกดีลจะมี expected value เป็นบวก สูตร k* = μ/σ² คือเกณฑ์ Kelly ในเวลาต่อเนื่อง ซึ่งจะกลับมาในหัวข้อ 17.2</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — กองทุน 14% ความผันผวน 32% ให้อะไรนักลงทุนจริง</h4>
+  <p>คำถาม: ลงทุน \$100 ในกองทุนที่โตเฉลี่ย 14% ต่อปี ความผันผวน 32% นาน 20 ปี คนกลาง ๆ ได้เท่าไร กี่เปอร์เซ็นต์ได้ถึงค่าเฉลี่ย และควรกู้มาลงกี่เท่า?</p>
+  <p>ของที่มี: ขั้นที่ 5 ถึง 12</p>
+  <p>1. drift ของราคาคือ μ พอดี เพราะ −σ²/2 ในนิยามถูกหักล้างด้วย +σ²/2 จาก exponential moment</p>
+  <p>2 อัตราทบต้นที่ได้จริงคือ 0.14 − 0.0512 = 8.88% ต่อปี ต่ำกว่าที่รายงาน 5.12 จุด</p>
+  <p>3. 20 ปี ค่าเฉลี่ย \$1,644 median \$591 ห่างกัน 2.78 เท่า มีแค่ 23.7% ที่ได้ถึงค่าเฉลี่ย และ 10.7% ยังขาดทุน</p>
+  <p>4. leverage ที่ดีที่สุด k* = 0.14/0.1024 = 1.37 เท่า เกิน 2.73 เท่าขาดทุนแน่ในระยะยาว</p>
+  <p>ตรวจเองใน 10 วินาที: 0.32² = 0.1024 ครึ่งหนึ่ง 0.0512 ลบจาก 0.14 ได้ 0.0888 และ 1,644 ÷ 591 ≈ 2.78</p>
+  <p>แปลว่าอะไร: เห็นตัวเลขผลตอบแทนเฉลี่ยต่อปีบนเอกสารกองทุน ให้ถามทันทีสองข้อ เฉลี่ยแบบไหน เลขคณิต (μ) หรือทบต้นที่เข้ากระเป๋าจริง (μ − σ²/2) และ σ เท่าไร เพราะถ้าไม่รู้ σ แปลงระหว่างสองตัวไม่ได้ สิ่งที่ใช้ตัดสินใจควรเป็น g เสมอ กองทุนที่ผันผวนน้อยกว่าจึงมักชนะกองทุนที่ผลตอบแทนเฉลี่ยสูงกว่าในระยะยาว</p>
 </section>
 
 <section class="code">
   <details>
-    <summary>โค้ดตรวจการแปลงความผันผวนและราคา straddle ด้วย Python</summary>
-    <pre><code>import math
+    <summary>โค้ดตรวจ 8.88%, 1,644 กับ 591, 23.7%, 10.7% และ Kelly 1.37</summary>
+    <pre><code>import numpy as np
 from scipy.stats import norm
+mu, sigma, T = 0.14, 0.32, 20
+g = mu - sigma**2 / 2
+assert abs(g - 0.0888) &lt; 1e-12
+assert abs(np.exp(mu) - 1 - 0.1503) &lt; 1e-4 and abs(np.exp(g) - 1 - 0.0929) &lt; 1e-4
+mean20, med20 = 100 * np.exp(mu * T), 100 * np.exp(g * T)
+assert abs(mean20 - 1644.46) &lt; 0.01 and abs(med20 - 590.62) &lt; 0.01
+assert abs(mean20 / med20 - 2.7843) &lt; 1e-4
+sd = np.sqrt(sigma**2 * T)
+assert abs(1 - norm.cdf((np.log(mean20 / 100) - g * T) / sd) - 0.2371) &lt; 1e-4
+assert abs(norm.cdf(-g * T / sd) - 0.1073) &lt; 1e-4
+assert abs(100 * 1.14**20 - 1374.35) &lt; 0.01          # the number that matches nothing
 
-spot = 520.0
-notional = 25_000_000.0
-sigma_daily = 0.0115
+k = np.linspace(0, 3, 30001)
+gk = k * mu - k**2 * sigma**2 / 2
+assert abs(k[np.argmax(gk)] - mu / sigma**2) &lt; 1e-3 and abs(mu / sigma**2 - 1.3672) &lt; 1e-4
+assert abs(gk.max() - 0.0957) &lt; 1e-4 and abs(2 * mu / sigma**2 - 2.734) &lt; 1e-3
 
-# 1. Horizon volatility
-sigma_5 = sigma_daily * math.sqrt(5)
-sigma_21 = sigma_daily * math.sqrt(21)
-sigma_252 = sigma_daily * math.sqrt(252)
-risk_year = notional * sigma_252
-
-# 2. 30-day option scaling
-T = 30.0 / 365.0
-sigma_T = sigma_252 * math.sqrt(T)
-
-# 3. Expected absolute standard Normal and straddle approximation
-e_abs_z = math.sqrt(2.0 / math.pi)
-straddle_pct = sigma_T * e_abs_z
-straddle_price = spot * straddle_pct
-
-# 4. Full Black-Scholes comparison at ATM, r = 0
-d1 = sigma_T / 2.0
-bs_straddle_pct = 2.0 * (norm.cdf(d1) - norm.cdf(-d1))
-
-assert abs(sigma_5 - 0.0257) &lt; 1e-3
-assert abs(sigma_21 - 0.0527) &lt; 1e-3
-assert abs(sigma_252 - 0.1826) &lt; 1e-3
-assert abs(risk_year - 4_563_925) &lt; 1000
-assert abs(e_abs_z - 0.79788) &lt; 1e-4
-assert abs(straddle_pct - 0.0418) &lt; 1e-3
-assert abs(straddle_price - 21.72) &lt; 0.05
-assert abs(straddle_pct - bs_straddle_pct) &lt; 1e-4
-assert abs(sigma_daily * 252 - 2.898) &lt; 1e-9 and abs(2.898 / sigma_252 - 15.87) &lt; 0.01   # the wrong way
-assert abs(sigma_252 * math.sqrt(21 / 252) - 0.0527) &lt; 1e-4          # trading-day check
-assert abs(0.06 / e_abs_z / math.sqrt(T) - 0.2623) &lt; 1e-4             # implied vol of a 6% straddle
-print(f"Annual vol: {sigma_252*100:.2f}%, Straddle: ${straddle_price:.2f}, BS: {bs_straddle_pct*100:.3f}%")</code></pre>
+rng = np.random.default_rng(72)                      # simulate 200,000 investors
+S20 = 100 * np.exp(g * T + sd * rng.standard_normal(200_000))
+assert abs(np.mean(S20 &gt;= mean20) - 0.237) &lt; 0.005 and abs(np.mean(S20 &lt; 100) - 0.107) &lt; 0.005</code></pre>
   </details>
   <div class="note">
-    <p>ตรวจการแปลงความผันผวนรายวันเป็นรายปี และราคา straddle เปรียบเทียบกับสูตร Black-Scholes (บทที่ 13)</p>
+    <p>โค้ดตรวจอัตราทบต้น 8.88% ค่าเฉลี่ยกับ median 20 ปี สัดส่วนคนที่ถึงค่าเฉลี่ยและที่ขาดทุนทั้งด้วยสูตรและด้วยการจำลองนักลงทุน 200,000 คน แล้วหา leverage ที่ดีที่สุดด้วยการไล่ k</p>
   </div>
 </section>
 
+<section class="example">
+  <h4>ตัวอย่างเสริม — แก้ deck นักลงทุนด้วยตัวเลข 5 ปี</h4>
+  <p>บน 10,000 shares ที่ \$100, expected five-year position value คือ \$1,822,119 และ median value คือ \$1,455,000 ก่อน dividends, tax, transaction costs และ model error. deck ที่เรียก \$1.455 ล้าน ว่า expected value จึงผิด convention; deck ที่เสนอ \$1.822 ล้าน เป็น client outcome ก็ชวนเข้าใจผิด รายงานที่ดีใส่ทั้งสองตัวพร้อม 5th/95th percentiles และบอก physical-model assumptions</p>
+  <p>คำถาม: ทำไม expected value \$1,822,119 จึงสูงกว่า median \$1,455,000 มาก?</p>
+  <p>ของที่มี: position เริ่ม 10,000 shares ที่ \$100 และ forecast ห้าปีมี expected value \$1,822,119 กับ median \$1,455,000</p>
+  <p>1 ลบ \$1,455,000 จาก \$1,822,119 ได้ \$367,119 นี่คือช่องว่างที่ right tail ดึงค่าเฉลี่ยขึ้น.</p>
+  <p>2 หาร \$367,119 ด้วย \$1,455,000 ได้ประมาณ 25.2% จึงไม่ใช่ความต่างเล็ก ๆ ที่ละเลยได้</p>
+  <p>เฉลย: ค่าเฉลี่ยสูงกว่า median เพราะ outcome ด้านบนที่ใหญ่แต่ไม่บ่อยยก expected value ขึ้น.</p>
+  <p>เช็ก 10 วินาที: \$1.822119 ล้าน − \$1.455 ล้าน = \$0.367119 ล้าน.</p>
+  <p>งานจริง: รายงานทั้ง expected value, median และ percentile ก่อนให้ client หรือ risk owner ตัดสินใจ</p>
+  <p>กับดัก: อย่าเรียก median ว่า expected value หรือขาย expected value ราวกับเป็น outcome ที่ “น่าจะเกิดที่สุด”.</p>
+</section>
+
+<section class="prose">
+  <h4>ตัวอย่างที่แรงฉุดกัดจริง: กองทุน 2x ETF</h4>
+  <p>ตอนนี้เรามีสูตรครบทั้งสองอัตราแล้ว ลองใช้กับสินค้าที่คนซื้อกันจริง คือกองทุนที่สัญญาว่าจะให้ผลตอบแทนรายวันเป็นสองเท่าของดัชนี ในแบบจำลองที่ปรับสถานะต่อเนื่อง (continuous rebalancing) กองทุนแบบนี้ก็เดินตาม GBM เหมือนกัน แค่ drift กับความผันผวนถูกคูณด้วย $L$</p>
+  <p>คำถามคือ ถ้าดัชนีโตแบบ median ที่ 8% ต่อปี กองทุน 2x จะโตแบบ median ที่ 16% ไหม ลองเดาก่อน</p>
+</section>
+
+<section class="table">
+  <h4>โจทย์ ชุดข้อมูลที่คูณสอง: ตัวเลขบนโต๊ะ</h4>
+  <table>
+    <thead><tr><th>Symbol</th><th>Value</th><th>ความหมาย</th></tr></thead>
+    <tbody>
+      <tr><td>$\mu$</td><td>10%</td><td>GBM price-drift rate ต่อปีของ SPY</td></tr>
+      <tr><td>$\sigma$</td><td>20%</td><td>annualized volatility ของ SPY</td></tr>
+      <tr><td>$L$</td><td>2</td><td>leverage ของ ETF (continuous-rebalancing toy model; ไม่คิด funding, fees หรือ tracking error)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — median growth ของ SPY แบบไม่ใส่ leverage</h4>
+  <p>คำนวณ median log-growth rate ของ SPY ก่อนใส่ leverage</p>
+  <div class="math">\[
+\mu-\frac{\sigma^2}{2} = 10\%-2\% = 8\%
+\]</div>
+  <div class="reading">
+    <p>$\mu=10\%$ และ $\sigma=20\%$ ทำให้มีแรงฉุด $\sigma^2/2=2\%$ ดังนั้น median log-growth rate ของ SPY คือ 8% ต่อปี (คิดเป็น median simple return เท่ากับ $e^{0.08}-1\approx 8.33\%$)</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — เลเวอเรจคูณความผันผวน $\sigma$ เป็นเส้นตรง</h4>
+  <p>กองทุน 2x ETF เพิ่มความผันผวนขึ้นเป็น 2 เท่าตรง ๆ</p>
+  <div class="math">\[
+\sigma_{\text{lev}} = L\sigma = 2\times20\% = 40\%
+\]</div>
+  <div class="reading">
+    <p>$L=2$ และ $\sigma=20\%$ ทำให้ความผันผวนใหม่กลายเป็น $\sigma_{\text{lev}}=L\sigma=40\%$ ต่อปี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — Median Growth ของ 2x ETF เจอแรงฉุดกำลังสองเล่นงาน</h4>
+  <p>คำนวณ median log-growth rate ของ 2x ETF เมื่อแรงฉุดใหม่กลายเป็น $(40\%)^2 / 2 = 8\%$</p>
+  <div class="math">\[
+g_{\mathrm{med},L}=L\mu-\frac{(L\sigma)^2}{2}=12\%,\qquad e^{g_{\mathrm{med},L}}-1\approx12.75\%
+\]</div>
+  <div class="reading">
+    <p>$L\mu=20\%$ แต่ถูกแรงฉุดใหม่ $(L\sigma)^2/2=8\%$ หักออกไป ทำให้ median log-growth เหลือเพียง 12% ต่อปี (คิดเป็น median simple return เพียง $e^{0.12}-1\approx 12.75\%$) แทนที่จะเป็นสองเท่าของเดิม (16.66%) ตามที่นักลงทุนทั่วไปเข้าใจผิด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — ของจริงรายวัน: ดัชนีกลับที่เดิม แต่ ETF ทั้งขาขึ้นและขาลงขาดทุน</h4>
+  <p>ETF แบบ leverage ปรับสถานะทุกวันให้ได้ผลตอบแทนรายวันเท่ากับ λ เท่าของดัชนี λ = 2 คือกองขาขึ้นสองเท่า λ = −1 คือกองขาลง ลองดัชนีที่ขึ้น 5% แล้วลงกลับที่เดิมในสองวัน</p>
+  <div class="math">\[
+\begin{aligned}
+\text{index}&:\ 100\to105\to100\quad(+5\%,\ -4.762\%)\\
+\lambda=2&:\ 100\to110\to110(1-0.09524)=99.52\\
+\lambda=-1&:\ 100\to95\to95(1+0.04762)=99.52\\[4pt]
+\text{drag}&\approx-\frac{\lambda^2-\lambda}{2}\sum_i\Big(\ln\frac{S_{i+1}}{S_i}\Big)^2\\
+\textstyle\sum(\ln)^2&=0.04879^2+0.04879^2=0.004761\\
+\lambda=2&:\ -\tfrac{4-2}{2}(0.004761)=-0.476\%\\
+\lambda=-1&:\ -\tfrac{1+1}{2}(0.004761)=-0.476\%\\
+\text{exact}&:\ \ln(0.99524)=-0.477\%
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ดัชนีกลับมาที่ 100 แต่กองขาขึ้นสองเท่าและกองขาลงต่างเหลือ 99.52 ขาดทุน 0.48% ทั้งคู่ นี่คือภาษีความผันผวนแบบรายวัน สูตรประมาณให้ −0.476% ใกล้ค่าจริง −0.477%</p>
+    <p>พจน์ (λ² − λ)/2 เป็นบวกทั้งที่ λ = 2 และ λ = −1 กองทั้งสองจึงขาดทุนเมื่อตลาดแกว่งไปมา เหมือนคนที่ขายความผันผวนไว้ ในตลาดน้ำมันที่ผันผวนแรง กองขาขึ้นและขาลงสองเท่าของหุ้นพลังงานเคยลดลงพร้อมกันทั้งคู่ด้วยกลไกนี้</p>
+    <p>ทำไมยังมีคนซื้อกองขาลง เพราะมันให้สถานะขาลงที่ขาดทุนได้ไม่เกินเงินที่ลงไป ต่างจากการขาย short ที่ขาดทุนได้ไม่จำกัด กองแบบนี้สร้างจาก swap ที่ปรับทุกวัน จึงเหมาะกับการถือสั้น ไม่ใช่ถือข้ามปี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 17 — ถือ leverage เองครั้งเดียว เทียบกับถือ ETF ที่ปรับทุกวัน</h4>
+  <p>มีเงิน \$100 อยากได้ exposure สองเท่าของดัชนีหนึ่งปี ทางแรกยืม \$100 ที่ดอกเบี้ย 5% แล้วซื้อครั้งเดียวไม่แตะอีก ทางที่สองซื้อ ETF สองเท่าที่ค่าธรรมเนียม 0.95% ต่อปี ความผันผวนทั้งปี 20% และปลายปีดัชนีกลับมาที่เดิม ทางไหนเหลือเงินเท่าไร?</p>
+  <div class="math">\[
+\begin{aligned}
+\text{static}&=\frac{\lambda S_T-(\lambda-1)S_0(1+rT)}{S_0}\\
+\text{ETF}&\approx\Big(\frac{S_T}{S_0}\Big)^{\lambda}e^{\,x}\\
+x&=(1-\lambda)rT-fT\\
+&\quad-\frac{\lambda^2-\lambda}{2}\sum_i\Big(\ln\frac{S_{i+1}}{S_i}\Big)^2\\[4pt]
+&\lambda=2,\ S_0=S_T=100,\ T=1\\
+&r=0.05,\ f=0.0095\\
+\textstyle\sum(\ln)^2&\approx\sigma^2T=0.20^2=0.04\\[4pt]
+\text{static}&=\frac{200-105}{100}=0.95\\
+x&=-0.05-0.0095-0.04=-0.0995\\
+\text{ETF}&\approx1^{2}\,e^{-0.0995}=0.9053
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทางแรกเป็นบัญชีธรรมดา ปลายปีถือดัชนีสองหน่วย มูลค่า $\lambda S_T$ = 200 แล้วคืนเงินยืมพร้อมดอกเบี้ย $(\lambda-1)S_0(1+rT)$ = 105 เหลือ 95 เสียแค่ดอกเบี้ย 5% เพราะดัชนีไม่ได้ไปไหน</p>
+    <p>ทางที่สองมีสามก้อนในเลขชี้กำลัง ก้อนแรก $(1-\lambda)rT$ = −5% คือดอกเบี้ยของส่วนที่ยืมเหมือนทางแรก ก้อนที่สอง $fT$ คือค่าธรรมเนียม 0.95% ก้อนที่สามคือแรงฉุดจากการปรับทุกวันแบบเดียวกับขั้นที่ 16 ผลรวมกำลังสองของ log return รายวันทั้งปีประมาณเท่ากับ variance ทั้งปี 0.04 คูณ $(\lambda^2-\lambda)/2$ = 1 จึงหักอีก 4%</p>
+    <p>ดัชนีเท่าเดิม ทางแรกเหลือ 95.00 ทางที่สองเหลือราว 90.53 ส่วนต่างเกือบทั้งหมดคือก้อนความผันผวนที่ทางแรกไม่มี นี่คือเหตุที่สไลด์ต้นทางเรียกก้อนนี้ว่าการขายความผันผวนปีไหนดัชนีแกว่งแรง ETF เสียมากขึ้นแม้ปลายทางเท่าเดิม สไลด์ใช้ตัวอักษร β แทน λ ความหมายเหมือนกัน</p>
+    <p>ของจริงจากสไลด์ต้นทาง: ProShares Ultra Oil &amp; Gas (DIG) คือ ETF หุ้นน้ำมันและก๊าซสองเท่า ProShares UltraShort Oil &amp; Gas (DUG) คือตัวขาลงสองเท่าของดัชนีเดียวกัน สัปดาห์ 2 ถึง 6 มีนาคม 2009 สองกองวิ่งสวนกันตามที่ออกแบบ DUG +9.60% DIG −13.05%</p>
+    <p>แต่ตลอดกันยายน 2008 ถึงมีนาคม 2009 ที่หุ้นพลังงานร่วงหนักและแกว่งแรง DIG ลบ 74.73% ส่วน DUG ที่ควรได้กำไรจากขาลงกลับลบ 17.39% ด้วย ถือยาวในตลาดผันผวน ฝั่งขึ้นและฝั่งลงแพ้พร้อมกันได้</p>
+  </div>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ ETF 99.52 ทั้งสองฝั่ง และ 95.00 เทียบ 90.53</summary>
+    <pre><code>import numpy as np
+S = np.array([100.0, 105.0, 100.0])
+r = S[1:] / S[:-1] - 1
+for lam in (2, -1):
+    etf = 100 * np.prod(1 + lam * r)
+    assert abs(etf - 99.524) &lt; 1e-3
+    drag = -(lam**2 - lam) / 2 * np.sum(np.log(S[1:] / S[:-1])**2)
+    assert abs(drag - (-0.00476)) &lt; 1e-5
+assert abs(np.log(0.99524) - (-0.00477)) &lt; 1e-5
+
+lam, S0, ST, rate, f, T, sigma = 2, 100.0, 100.0, 0.05, 0.0095, 1.0, 0.20
+static = (lam * ST - (lam - 1) * S0 * (1 + rate * T)) / S0
+assert abs(static - 0.95) &lt; 1e-12
+x = (1 - lam) * rate * T - f * T - (lam**2 - lam) / 2 * sigma**2 * T
+assert abs(x - (-0.0995)) &lt; 1e-12
+assert abs((ST / S0)**lam * np.exp(x) - 0.9053) &lt; 1e-4
+
+rng = np.random.default_rng(17)                      # 252 daily steps, same yearly variance
+lr = rng.standard_normal(252) * sigma / np.sqrt(252)
+lr -= lr.mean()                                      # index ends flat
+assert abs(np.sum(lr**2) - 0.04) &lt; 0.008</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดเดินดัชนี 100 ไป 105 แล้วกลับ 100 ให้ ETF สองเท่าและขาลงหนึ่งเท่าจบที่ 99.52 เท่ากัน แล้วแทนสูตรของสไลด์เทียบการถือ leverage เองกับถือ ETF ทั้งปี และจำลองดัชนีหนึ่งปีเทรด 252 วันเพื่อดูว่าผลรวมกำลังสองของ log return รายวันใกล้ 0.04 จริง</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>ผลต่างที่ไม่ได้ส่งใบเสร็จ แต่หักเงินจริง</h4>
+  <p>ส่วนต่าง 4 จุด ระหว่างการคูณสองตรง ๆ (16%) กับการเติบโตจริง (12%) ไม่ได้เกิดจากค่าธรรมเนียมกองทุน แต่เกิดจากแรงฉุดกำลังสองของความผันผวนล้วน ๆ นี่คือเหตุผลที่ quant ใช้ Leveraged ETF เพื่อการเทรดเก็งกำไรระยะสั้นตามโมเมนตัมเท่านั้น ไม่ถือยาวข้ามวัฏจักร</p>
+</section>
+
 <section class="pitfall">
-  <h4>กับดัก: square-root-of-time เป็นเงื่อนไข ไม่ใช่กฎธรรมชาติ</h4>
-  <p>การคูณ 1.15% ด้วย 252 ให้ 289.8% เพราะเอา standard deviations มาบวกเหมือน cash flows — spreadsheet ไม่ผิด มันแค่ทำตามคำสั่งแบบมีวินัยน่ากลัว กฎที่ถูกต้องยังต้องสมมติ independent increments และ variance คงที่; volatility clustering, autocorrelation และ jumps ทำให้ scaling จริงต่างออกไป</p>
+  <h4>กับดักมหาโหด: Leveraged ETF พังเพราะแรงฉุด $\sigma^2$ ยกกำลังสอง</h4>
+  <p>อย่าคิดง่าย ๆ ว่ากองทุน 2x ETF จะให้ผลตอบแทนเป็นสองเท่าของสินทรัพย์อ้างอิงในระยะยาวเสมอ ในแบบจำลอง continuous rebalancing การคูณ leverage $L$ เท่า จะทำให้ความผันผวนกลายเป็น $L\sigma$ แบบเชิงเส้น แต่แรงฉุดความผันผวนกลับเพิ่มขึ้นตาม $L^2$! กองทุนเลเวอเรจในตลาดแกว่งตัว sideway จึงเผชิญกับ volatility decay ที่กัดกินมูลค่าเงินต้นลงเรื่อย ๆ</p>
+</section>
+
+<section class="pitfall">
+  <h4>กับดัก: volatility drag ไม่ได้แปลว่าความผันผวนลด expected price</h4>
+  <p>เมื่อ $\mu$ ถูกนิยามเป็น price drift, expected price ไม่มี negative volatility term หลัง cancellation. drag อยู่ใน median log-growth และ compounded typical path; เปลี่ยน drift convention กลาง calculation แล้วหัก $\sigma^2/2$ สองรอบคือ bug ที่ดูฉลาดมาก</p>
 </section>
 
 <section class="table">
@@ -443,30 +591,31 @@ print(f"Annual vol: {sigma_252*100:.2f}%, Straddle: ${straddle_price:.2f}, BS: {
   <table>
     <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
     <tbody>
-      <tr><td>ขนาดของก้าว</td><td>ก้าวเล็กมีขนาดตามรากของเวลาเสมอ</td><td>ก้าวจริงมีทั้งช่วงนิ่งและช่วงกระชาก</td><td>การประมาณราคาด้วยสูตรง่ายนี้ต่ำเกินจริงในช่วงที่ตลาดเหวี่ยง</td></tr>
-      <tr><td>รูปของก้าว</td><td>แต่ละก้าวเป็นระฆังคว่ำ</td><td>ผลตอบแทนรายวันจริงหางอ้วนกว่ามาก</td><td>โอกาสของวันที่ขยับแรงมากถูกประเมินต่ำหลายเท่า</td></tr>
-      <tr><td>การปรับขนาด</td><td>ปรับขนาดด้วยรากของเวลาได้เสมอ</td><td>จริงเมื่อแต่ละวันเป็นอิสระกันเท่านั้น</td><td>เมื่อความผันผวนเกาะกลุ่ม การแปลงเป็นรายปีจะต่ำเกินจริง</td></tr>
+      <tr><td>ความหมายของอัตรา</td><td>ทุกคนหมายถึงอัตราเดียวกัน</td><td>เอกสารบางฉบับหมายถึงอัตราของค่าเฉลี่ย บางฉบับหมายถึงของ log</td><td>การเอาตัวเลขจากคนละแหล่งมาใช้ปนกันทำให้ผลผิดอย่างเงียบ ๆ</td></tr>
+      <tr><td>ค่าเฉลี่ยที่ใช้ได้</td><td>ค่าเฉลี่ยเป็นตัวแทนที่ดี</td><td>ค่าเฉลี่ยถูกลากด้วยเส้นทางไม่กี่เส้น</td><td>การวางแผนด้วยค่าเฉลี่ยทำให้คาดหวังสูงเกินจริงสำหรับผู้ลงทุนคนเดียว</td></tr>
+      <tr><td>ความคงที่</td><td>อัตราคงที่ตลอดช่วง</td><td>ไม่มีใครรู้อัตราที่แท้จริงและมันเปลี่ยน</td><td>อัตรานี้ประมาณยากที่สุดในบรรดา input ทั้งหมด</td></tr>
     </tbody>
   </table>
   <div class="note">
-    <p>แถวล่างเป็นข้อผิดพลาดที่ใช้กันแพร่หลายที่สุด เพราะกฎรากที่สองถูกใช้โดยไม่ตรวจเงื่อนไข</p>
+    <p>แถวแรกเป็นความสับสนที่พบบ่อยที่สุดเวลาอ่านเอกสารจากหลายแหล่ง</p>
   </div>
 </section>
 
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>SBM เริ่มที่ 0 และมี increment ยาว $s$ แจกแจง $\mathcal N(0,s)$</li>
-    <li>simulation ใช้ $\Delta W_i=\sqrt{\Delta t}Z_i$ แล้ว cumulative sum; ต้อง seed randomness เพื่อทำซ้ำ</li>
-    <li>volatility $n$ วันเท่ากับ daily volatility คูณ $\sqrt n$ เมื่อ increments อิสระและ variance คงที่</li>
-    <li>sample paths เป็น scenarios ไม่ใช่ forecasts และ straddle shortcut เป็นเพียง sanity check ภายใต้สมมติฐานแคบ</li>
+    <li>GBM ให้ $\mathbb E_t[S_{t+s}]=S_te^{\mu s}$</li>
+    <li>median price โตที่ log drift $\mu-\sigma^2/2$</li>
+    <li>volatility drag โตตาม $\sigma^2$ และ horizon กองทุน 14% ความผันผวน 32% ให้คนกลาง ๆ 8.88% ต่อปี 20 ปีได้ \$591 เทียบค่าเฉลี่ย 1,644 และมีแค่ 23.7% ที่ถึงค่าเฉลี่ย</li>
+    <li>leverage ที่ดีที่สุดคือ μ/σ² = 1.37 เท่า และ ETF แบบ 2 เท่าหรือ −1 เท่าขาดทุน 0.48% ทั้งคู่เมื่อดัชนีขึ้น 5% แล้วกลับที่เดิม</li>
+    <li>simulation ต้อง label mean, median, percentiles และ assumptions แยกกัน</li>
   </ul>
 </section>
 </article>
 
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="10.1.html">10.1 Three Defining Properties of Brownian Motion</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="10.3.html">10.3 Filtrations in Continuous Time</a></div>
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="10.1.html">10.1 Definition of Geometric Brownian Motion (GBM)</a></div>
+  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="10.3.html">10.3 Three Properties GBM Inherits from Brownian Motion</a></div>
 </nav>
 </div>
 </body>

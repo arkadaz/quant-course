@@ -1,0 +1,1 @@
+M=np.arange(1,201); fwer=1-(1-.05)**M; pts=np.array([1,14,45,200]); ax.plot(M,100*fwer,color=BAD,lw=2); ax.scatter(pts,100*(1-(1-.05)**pts),color=[SERIES[0],WARM,WARM,BAD],zorder=3); ax.set(xlabel='Number of tests M',ylabel='P(at least one false positive) %',ylim=(0,103)); ax.grid(alpha=.25)

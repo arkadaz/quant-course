@@ -1,0 +1,1 @@
+A=np.arange(1,253); iid=.10*np.sqrt(A); adj=iid*np.sqrt((1-.3)/(1+.3)); ax.plot(A,iid,color=SERIES[0],lw=2,label='iid scaling'); ax.plot(A,adj,color=BAD,lw=2,label='rho=0.3 adjusted'); ax.set(xlabel='Periods per year',ylabel='Annualized Sharpe proxy'); ax.legend(fontsize=7); ax.grid(alpha=.25)

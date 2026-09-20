@@ -1,1 +1,4 @@
-x=np.linspace(-.65,.81,600); mu=.08; se=.20; ax.plot(x,stats.norm.pdf(x,mu,se),color=SERIES[0],lw=2); ax.axvline(mu,color=INK,lw=1.2,ls='--',label='estimate / true centre'); ax.axvspan(mu-1.96*se,mu+1.96*se,color=WARM,alpha=.22,label='95% half-width'); ax.set(xlabel='Annual expected return',ylabel='Density'); ax.legend(fontsize=7); ax.grid(alpha=.22)
+
+ST=np.linspace(3500,6500,301);K=5000.;cp=np.maximum(ST-K,0)-np.maximum(K-ST,0)
+ax.plot(ST,cp,color=ACCENT,lw=3,label='Call minus put');ax.plot(ST,ST-K,'--',color=WARM,label='Forward payoff')
+ax.axhline(0,color=INK,lw=1);ax.set_xlabel('SPX at expiry');ax.set_ylabel('Payoff (points)');ax.legend()

@@ -1,7 +1,1 @@
-labels=['Net exposure','Gross exposure']
-vals=[15,25]
-ax.bar(labels,vals,color=[ACCENT,WARM],width=0.48)
-for i,v in enumerate(vals): ax.text(i,v+0.8,f'${v}M',ha='center',fontsize=10,color=INK,weight='bold')
-ax.set_ylim(0,30)
-ax.set_ylabel('Exposure ($M)')
-ax.set_title('Signed risk and deployed capital are not the same number',loc='left')
+n=np.linspace(1,20000,300); sr=.005/2*np.sqrt(n); ax.plot(n,sr,color=SERIES[1],lw=2); ax.axhline(.25,color=GOOD,lw=1.2,ls='--'); ax.scatter([100,10000],[.005/2*np.sqrt(100),.25],color=[BAD,GOOD],zorder=3); ax.set(xlabel='Independent trades per day',ylabel='Daily Sharpe ratio',ylim=(0,.38)); ax.grid(alpha=.25)

@@ -1,6 +1,1 @@
-
-from scipy.stats import norm
-S=np.linspace(70,140,300);K=105.;r=.04;sig=.2
-for T,c in zip([1.0,.25,.05],[MUTED,ACCENT,WARM]):
- d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));ax.plot(S,norm.cdf(d1),color=c,label=f'{T:.2f}y')
-ax.set_xlabel('Spot (USD)');ax.set_ylabel('Delta');ax.set_ylim(0,1);ax.legend(title='Time left')
+t=np.arange(5);w=np.array([0,.5,0,.5,1.]);ax.step(t,w,where='post',color=ACCENT,lw=2,label='Brownian level');ax.scatter(t[:-1],w[:-1],color=GOOD,s=45,label='left positions');ax.scatter(t[1:],w[1:],facecolors='none',edgecolors=BAD,s=55,label='right positions');ax.set_xlabel('Interval boundary');ax.set_ylabel('Position signal $W$');ax.set_title('Trade first, then observe the move',loc='left');ax.legend(fontsize=8)

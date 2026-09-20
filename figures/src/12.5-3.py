@@ -1,2 +1,2 @@
-labels=['Base','SPY drift','QQQ drift','Cross term'];pieces=np.array([1,np.exp(.08)-1,np.exp(.18)-np.exp(.08),np.exp(.21)-np.exp(.18)])*1e6;ax.bar(labels,pieces/1e3,color=[MUTED,ACCENT,WARM,GOOD]);ax.set_ylabel('Contribution (USD thousand)');ax.set_title('USD expectation includes the covariance correction',loc='left');
-for i,v in enumerate(pieces/1e3):ax.text(i,v+8,f'{v:.0f}',ha='center',fontsize=8)
+w=np.linspace(-.2,1.2,500);ret=.12*w+.06*(1-w);vol=np.sqrt(.04*w**2+.012*w*(1-w)+.01*(1-w)**2);wt=.4318;rt=.12*wt+.06*(1-wt);vt=np.sqrt(.04*wt**2+.012*wt*(1-wt)+.01*(1-wt)**2)
+ax.plot(vol*100,ret*100,color=ACCENT,lw=2);xx=np.linspace(0,22,100);ax.plot(xx,2+.5645*xx,color=WARM,ls='--');ax.scatter([vt*100],[rt*100],color=GOOD,s=50);ax.set_xlim(0,22);ax.set_ylim(1,14);ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Expected annual return (%)');ax.set_title('The cash line touches once',loc='left')

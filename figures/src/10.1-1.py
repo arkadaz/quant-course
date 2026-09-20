@@ -1,7 +1,1 @@
-rng=np.random.default_rng(611)
-n=900;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))]
-ax.plot(t,w,color=ACCENT,lw=1.5)
-ax.axvspan(.12,.30,color=WARM,alpha=.18,label='non-overlapping window A')
-ax.axvspan(.58,.82,color=GOOD,alpha=.15,label='non-overlapping window B')
-for q in [.12,.30,.58,.82]: ax.scatter([q],[np.interp(q,t,w)],s=25,color=INK,zorder=4)
-ax.set_xlabel('Time');ax.set_ylabel('$B_t$');ax.set_title('A continuous path with independent Normal increments',loc='left');ax.legend(loc='upper left',fontsize=7)
+rng=np.random.default_rng(711);n=252;dt=1/n;t=np.linspace(0,1,n+1);z=rng.normal(size=n);add=np.r_[100,100+np.cumsum(-95*dt+35*np.sqrt(dt)*z)];gbm=100*np.exp(np.r_[0,np.cumsum((-.95-.5*.35**2)*dt+.35*np.sqrt(dt)*z)]);ax.plot(t,add,color=BAD,label='additive price');ax.plot(t,gbm,color=GOOD,label='GBM price');ax.axhline(0,color=INK,lw=.9);ax.set_xlabel('Horizon (years)');ax.set_ylabel('Price (USD/share)');ax.set_title('Multiplicative shocks preserve positivity',loc='left');ax.legend()

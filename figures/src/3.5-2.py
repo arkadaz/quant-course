@@ -1,8 +1,1 @@
-labels=['inner product','divide by norms','correlation']
-vals=[1,.5,.5]
-ax.bar(labels,vals,color=[ACCENT,WARM,GOOD],width=.55)
-for i,v in enumerate(vals): ax.text(i,v+.05,f'{v:g}',ha='center',fontsize=11,color=INK)
-ax.annotate('',xy=(.85,.55),xytext=(.35,.55),arrowprops=dict(arrowstyle='->',color=MUTED))
-ax.annotate('',xy=(1.85,.55),xytext=(1.35,.55),arrowprops=dict(arrowstyle='->',color=MUTED))
-ax.set_ylim(0,1.25);ax.set_ylabel('value after each operation')
-ax.set_title('Dot product to angle to correlation',loc='left')
+T=np.linspace(.25,12,300); t=1.2*np.sqrt(T); ax.plot(T,t,color=SERIES[1],lw=2); ax.axhline(2,color=WARM,lw=1.2,ls='--'); ax.axhline(3,color=BAD,lw=1.2,ls='--'); ax.scatter([(2/1.2)**2,(3/1.2)**2],[2,3],color=[WARM,BAD],zorder=3); ax.set(xlabel='Independent years',ylabel='Expected t-statistic',ylim=(0,4.4)); ax.grid(alpha=.25)

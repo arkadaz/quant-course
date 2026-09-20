@@ -1,1 +1,3 @@
-s0=100;mu=.12;sig=.28;T=1;x=np.linspace(40,220,600);scale=sig*np.sqrt(T);m=np.log(s0)+(mu-.5*sig**2)*T;pdf=stats.lognorm.pdf(x,s=scale,scale=np.exp(m));mean=s0*np.exp(mu*T);med=np.exp(m);ax.plot(x,pdf,color=ACCENT,lw=2);ax.axvline(med,color=GOOD,ls='--',label=f'median USD {med:.2f}');ax.axvline(mean,color=BAD,ls='--',label=f'mean USD {mean:.2f}');ax.set_xlabel('Terminal price after 1 year (USD/share)');ax.set_ylabel('Density');ax.set_title('A lognormal tail pulls the mean right',loc='left');ax.legend(fontsize=8)
+vals=[.0528,.0152];ax.bar(['SPY','AGG'],vals,color=[BAD,GOOD],width=.55)
+for i,v in enumerate(vals):ax.text(i,v+.0015,f'{v:.4f}',ha='center',weight='bold')
+ax.set_ylim(0,.06);ax.set_ylabel('Marginal annual variance');ax.set_title('Marginal risk depends on current holdings',loc='left')

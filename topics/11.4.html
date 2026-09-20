@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>11.4 Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</title>
+<title>11.4 Constructing the Dual — Lagrangian Relaxation</title>
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
@@ -11,59 +11,52 @@
 <div class="wrap">
 <nav class="book-nav top-nav">
   <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-4">Part 4</a> <span aria-hidden="true">·</span>
+  <a href="../index.html#part-2">Part 2</a> <span aria-hidden="true">·</span>
   <a href="../chapters/11.html">บทที่ 11</a>
-  <span class="topic-progress">หัวข้อ 66/153</span>
+  <span class="topic-progress">หัวข้อ 64/158</span>
 </nav>
 
-<article class="topic" data-number="11.4" data-depends-on="11.1 11.2 11.3 10.2">
+<article class="topic" data-number="11.4" data-depends-on="11.3">
 <header class="topic-header">
-  <h1><span class="tnum">11.4</span> Why Geometric Brownian Motion (GBM) Is a Sensible Model for Stock Prices</h1>
-  <p class="subtitle">แบบจำลองที่ค่าติดลบไม่ได้และโตแบบทบต้น</p>
+  <h1><span class="tnum">11.4</span> Constructing the Dual — Lagrangian Relaxation</h1>
+  <p class="subtitle">สร้างโจทย์คู่ของ linear program (LP) ด้วยการผ่อนแรงบังคับของโจทย์เดิม</p>
 </header>
 
 <div class="hook">
-  <p>ถ้า SPY เดินตาม GBM ที่ drift 10% ความผันผวน 20% ต่อปี วันที่ร่วง 5% ขึ้นไปควรเกิดบ่อยแค่ไหน และในเมื่อตลาดจริงมีวันแบบนั้นหลายวันในปี 2008 กับ 2020 ทำไมโต๊ะยังใช้ GBM?</p>
-  <p>เฉลย: GBM บอกว่า z = −3.99 โอกาสวันละ 0.0033% หรือราวครั้งเดียวใน 122 ปี ของจริงถี่กว่ามาก GBM จึงผิดที่หาง แต่ยังใช้เป็นภาษากลาง เพราะราคาติดลบไม่ได้ ผลตอบแทนไม่ขึ้นกับระดับราคา มีสูตรปิด และความผิดของมันวัดได้และซ่อมได้ทีละข้อ</p>
+  <p>เดสก์มีเพดาน VaR 50 ล้าน ต้องแบ่งทุนให้ 3 ทีมที่ทำกำไร 20%, 21%, 9% และกิน VaR 0.30, 0.50, 0.25 ต่อทุน 1 ล้าน ทีมแรกยังติดเพดานสภาพคล่องหุ้น A ด้วย ถ้าจะไปขอผ่อนเพดาน ควรขอข้อไหนก่อน?</p>
+  <p>เฉลย: แบ่งทุน 60/64/0 ล้าน ได้กำไร 25.44 ล้านต่อปี ราคาเงาของ VaR คือ 0.42 ต่อ 1 ล้าน ของเพดาน gross คือ 0 และของสภาพคล่องหุ้น A คือ 1.85 ต่อ 1 ล้านหุ้น จึงขอสภาพคล่องหุ้น A ก่อน ส่วนเพดาน gross ขอไปก็ไม่ได้อะไร</p>
+  <p>Lagrangian relaxation ย้าย constraint เข้า objective ด้วย multiplier ซึ่งเป็นราคาของการใช้ทรัพยากร ใช้สร้าง dual หาขอบของคำตอบ และอ่านว่าทรัพยากรไหนแพงจริง</p>
 </div>
 
 <details class="jargon" open>
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>implied volatility</dt>
-    <dd>ค่าความผันผวนที่ใส่ใน pricing formula แล้วทำให้ราคา model เท่ากับราคา option ในตลาด ใช้ quote option ด้วยหน่วยที่เทียบข้าม strike และ maturity ได้</dd>
-    <dt>volatility smile</dt>
-    <dd>รูปที่ implied volatility เปลี่ยนตาม strike แทนที่จะคงที่ ใช้เป็นหลักฐานจากตลาดว่าค่าความผันผวนเดียวของ GBM อธิบาย option ทุกตัวไม่ได้</dd>
-    <dt>fat tails</dt>
-    <dd>distribution ที่ให้โอกาสของ moves ใหญ่สูงกว่า normal distribution ใช้เตือนว่า normal-tail model อาจประเมิน extreme loss ต่ำเกินไป</dd>
-    <dt>jump diffusion</dt>
-    <dd>model ที่เพิ่ม jump events เข้า diffusion เพื่อให้ราคากระโดดได้ ใช้ stress ข่าว, earnings และ gap risk ที่ continuous GBM พลาด</dd>
-    <dt>delta hedging</dt>
-    <dd>การปรับจำนวน underlying เพื่อลด sensitivity อันดับหนึ่งของ option ต่อราคา ใช้จัดการ small continuous moves แต่เหลือ jump และ transaction-cost risk</dd>
-    <dt>model risk</dt>
-    <dd>ความเสี่ยงที่ decision เสียหายเพราะ assumptions หรือ implementation ของ model ผิด ใช้กำหนด validation, reserves และ stress tests แยกจาก market risk</dd>
-    <dt>normal distribution</dt>
-    <dd>distribution รูประฆังที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็น benchmark ของ standardized GBM log returns และตรวจ tail misfit</dd>
-    <dt>independence</dt>
-    <dd>property ที่รู้ outcome หนึ่งแล้วไม่เปลี่ยน distribution ของอีก outcome ใช้ระบุ assumption ของ future shocks ใน GBM</dd>
-    <dt>underlying</dt>
-    <dd>สินทรัพย์ที่ option หรือ derivative อ้างอิงราคา ใช้กำหนด market factor ที่ hedge ต้องติดตาม</dd>
-    <dt>short</dt>
-    <dd>position ที่ได้ประโยชน์เมื่อมูลค่าของ instrument ลดลงและอาจมี obligation ใช้ระบุ direction ของ option risk ให้ชัด</dd>
-    <dt>long</dt>
-    <dd>position ที่ได้ประโยชน์เมื่อมูลค่าของ instrument เพิ่มขึ้น ใช้ระบุ direction ของ exposure และ P&amp;L</dd>
-    <dt>bid</dt>
-    <dd>ราคาสูงสุดที่ผู้ซื้อพร้อมจ่ายในตลาด ใช้ประเมินราคาที่ขายได้จริงและ execution cost</dd>
-    <dt>ask</dt>
-    <dd>ราคาต่ำสุดที่ผู้ขายพร้อมรับในตลาด ใช้ประเมินราคาที่ซื้อได้จริงและ execution cost</dd>
-    <dt>spread</dt>
-    <dd>ส่วนต่างระหว่าง bid และ ask ใช้เป็นต้นทุนขั้นต่ำของการข้ามตลาดและเป็น input ของ hedge reserve</dd>
-    <dt>liquidity</dt>
-    <dd>ความสามารถซื้อขายขนาดที่ต้องการโดยไม่ขยับราคามาก ใช้กำหนด hedge horizon และ impact stress</dd>
-    <dt>Generalized Autoregressive Conditional Heteroskedasticity (GARCH)</dt>
-    <dd>model ที่ให้ variance วันนี้เรียนรู้จาก shock และ variance ก่อนหน้า ใช้จับ volatility clustering ที่ GBM แบบความผันผวนคงที่มองไม่เห็น</dd>
-    <dt>standard deviation (SD)</dt>
-    <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าวันร่วงแรงอยู่ห่างจุดกลางกี่ช่วง</dd>
+    <dt>Value at Risk (VaR)</dt>
+    <dd>ขาดทุนที่พอร์ตจะไม่เกินด้วยความมั่นใจที่กำหนดในช่วงเวลาหนึ่ง ใช้เป็นโควตาความเสี่ยงที่ฝ่ายบริหารแจกให้เดสก์และแต่ละทีม</dd>
+    <dt>average daily volume (ADV)</dt>
+    <dd>จำนวนหุ้นที่ซื้อขายเฉลี่ยต่อวัน ใช้ตั้งเพดานการถือหุ้นตัวหนึ่งให้ขายออกได้โดยไม่ทำให้ราคาพัง</dd>
+    <dt>gross notional</dt>
+    <dd>ขนาดพอร์ตรวมโดยไม่หักล้างกัน ใช้คุมขนาดงบดุลของเดสก์</dd>
+    <dt>Karush–Kuhn–Tucker (KKT)</dt>
+    <dd>ชุดเงื่อนไขของคำตอบที่ดีที่สุดเมื่อโจทย์มีข้อจำกัด ใช้ตรวจว่า multiplier กับข้อจำกัดที่ชนเข้าคู่กันถูกต้อง ซึ่งบทที่ 12 จะใช้กับโจทย์ไม่เชิงเส้น</dd>
+    <dt>support vector machine (SVM)</dt>
+    <dd>วิธีจำแนกข้อมูลใน machine learning ที่หาเส้นแบ่งกว้างที่สุด ใช้เป็นตัวอย่างว่าโจทย์นอกการเงินก็แก้ผ่าน dual แบบเดียวกัน</dd>
+    <dt>constraint residual</dt>
+    <dd>ค่าฝั่งซ้ายลบ limit หลังเขียน constraint เป็นรูปไม่เกินศูนย์ ใช้บอกว่าคำตอบผ่าน เท่ากับ หรือฝ่าฝืน constraint มากเท่าไร</dd>
+    <dt>Lagrange multiplier</dt>
+    <dd>ราคาต่อหนึ่ง native unit ของ constraint residual ใช้แปลงการผ่อนหรือฝ่าฝืน constraint ให้เป็นผลกระทบหน่วย USD</dd>
+    <dt>Lagrangian</dt>
+    <dd>objective บวกผลรวมของ multiplier คูณ constraint residual ใช้เชื่อม primal decisions กับ dual prices ในสมการเดียว</dd>
+    <dt>Lagrangian relaxation</dt>
+    <dd>วิธีนำ constraints บางแถวเข้า objective ผ่าน multipliers แล้วหาค่าต่ำสุดเหนือ decision domain ที่เหลือ ใช้สร้าง lower bound และ dual problem</dd>
+    <dt>dual function</dt>
+    <dd>ค่าต่ำสุดของ Lagrangian เมื่อ fix multipliers แล้ว optimize decision variables ใช้ให้ lower bound หนึ่งค่าต่อ multiplier vector</dd>
+    <dt>dual feasibility</dt>
+    <dd>เงื่อนไขบน multipliers ที่ทำให้ dual function ไม่ลงไปถึง minus infinity ใช้รักษา lower bound ให้มีความหมาย</dd>
+    <dt>lower bound</dt>
+    <dd>ค่าที่ไม่สูงกว่า feasible primal cost ใด ๆ ใช้ตรวจ solver และบีบ optimum จากด้านล่าง</dd>
+    <dt>hard constraint</dt>
+    <dd>limit ที่ order จริงยังต้องผ่านแม้เราจะ relax มันเพื่อคำนวณ dual ใช้แยกเครื่องมือวิเคราะห์ออกจากสิทธิ์ในการฝ่าฝืน risk policy</dd>
   </dl>
 </details>
 
@@ -72,292 +65,493 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$S_t$</td><td>underlying price ณ เวลา $t$</td><td>USD/share</td></tr>
-      <tr><td>$r_{t,\Delta t}$</td><td>log return ในช่วงเวลา $\Delta t$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$\sigma$</td><td>constant volatility ที่ GBM สมมติ</td><td>$1/\sqrt{\mathrm{year}}$</td></tr>
-      <tr><td>$K$</td><td>option strike</td><td>USD/share</td></tr>
-      <tr><td>$\Delta$</td><td>option delta ต่อหนึ่ง share</td><td>share/share</td></tr>
-      <tr><td>$N$</td><td>position size</td><td>shares or contracts</td></tr>
+      <tr><td>$x_Q,x_S$</td><td>short notionals ของ QQQ และ SPY</td><td>USD million</td></tr>
+      <tr><td>$g_B(x)$</td><td>residual ของ minimum beta-reduction constraint ในรูปไม่เกินศูนย์</td><td>beta-USD million</td></tr>
+      <tr><td>$g_Q(x),g_S(x)$</td><td>residuals ของ QQQ และ SPY caps ในรูปไม่เกินศูนย์</td><td>USD million</td></tr>
+      <tr><td>$y$</td><td>multiplier ของ beta residual</td><td>USD ต่อ beta-USD million</td></tr>
+      <tr><td>$u_Q,u_S$</td><td>multipliers ของ QQQ และ SPY cap residuals</td><td>USD ต่อ USD million</td></tr>
+      <tr><td>$\lambda$</td><td>multiplier vector $(y,u_Q,u_S)$</td><td>mixed native units ตามแต่ละ constraint</td></tr>
+      <tr><td>$\lambda_0$</td><td>trial dual-feasible multiplier vector $(130,0,45)$ ที่ใช้วาด relaxation surface</td><td>mixed native units ตามแต่ละ constraint</td></tr>
+      <tr><td>$\mathcal L(x;\lambda)$</td><td>Lagrangian ของ hedge problem เมื่อ decisions และ multipliers ถูกกำหนด</td><td>USD</td></tr>
+      <tr><td>$q(\lambda)$</td><td>dual function หรือ infimum ของ Lagrangian เหนือ non-negative notionals</td><td>USD</td></tr>
+      <tr><td>$U_S$</td><td>SPY liquidity cap ที่ใช้ทำ sensitivity check</td><td>USD million</td></tr>
+      <tr><td>$x_1,x_2,x_3$</td><td>ทุกที่แบ่งให้ทีม stat-arb หุ้น A, ทีม macro และทีม credit</td><td>USD million</td></tr>
+      <tr><td>$c$</td><td>กำไรคาดหมายต่อปีต่อทุน 1 ล้าน (0.20, 0.21, 0.09)</td><td>USD million ต่อ USD million</td></tr>
+      <tr><td>$a$</td><td>VaR ที่แต่ละทีมกินต่อทุน 1 ล้าน (0.30, 0.50, 0.25)</td><td>USD million ต่อ USD million</td></tr>
+      <tr><td>$u_1,u_2,u_3$</td><td>ราคาเงาของเพดาน VaR, gross และสภาพคล่องหุ้น A</td><td>กำไรต่อหน่วยของแต่ละเพดาน</td></tr>
+      <tr><td>$\mathcal L(x, u)$</td><td>Lagrangian ที่ผนวกค่าปรับของข้อจำกัดเข้ากับ objective เดิม</td><td>USD</td></tr>
+      <tr><td>$q(u)$</td><td>dual function คือค่าที่ดีที่สุดของ Lagrangian เมื่อปล่อย $x$ อิสระ</td><td>USD</td></tr>
     </tbody>
   </table>
 </details>
 
 <section class="prose">
-  <h4>ที่มาที่ไป: รู้ว่ามันผิด แล้วทำไมยังใช้</h4>
-  <p>คำถามที่ยุติธรรมที่สุดที่จะถามกับแบบจำลองนี้คือ ในเมื่อรู้อยู่แล้วว่าตลาดจริงมีหางอ้วนกว่า มีการกระโดด และความผันผวนไม่คงที่ ทำไมยังใช้มันอยู่</p>
-  <p>คำตอบไม่ใช่เพราะความเคยชิน แต่เพราะมันเป็นแบบจำลองที่ง่ายที่สุดที่ยังผ่านเกณฑ์พื้นฐานสองข้อ คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยนตามระดับราคา</p>
-  <p>และเพราะมันมีสูตรปิด ซึ่งแปลว่าคำนวณได้เร็วพอจะทำใหม่ทุกวินาที และตรวจสอบย้อนหลังได้</p>
-  <p>แบบจำลองที่ซับซ้อนกว่ามี parameter ให้ประมาณมากกว่า และความคลาดเคลื่อนจากการประมาณนั้น บางครั้งใหญ่กว่าที่ได้จากการอธิบายที่ดีขึ้น หัวข้อนี้จึงเป็นการชั่งน้ำหนักอย่างซื่อสัตย์</p>
+  <h4>ที่มาที่ไป: แทนที่จะห้ามเด็ดขาด ให้ตั้งค่าปรับแทน</h4>
+  <p>แนวคิดตั้งต้นมาจาก Joseph-Louis Lagrange ในงานกลศาสตร์ปี 1788 ซึ่งเจอปัญหาว่า วัตถุเคลื่อนที่ได้เฉพาะบนเส้นทางที่ถูกบังคับไว้ ไม่ใช่เคลื่อนที่ได้อิสระ</p>
+  <p>วิธีของเขาคือแทนที่จะห้ามเด็ดขาด ให้ติดราคาให้กับการฝ่าฝืน แล้วปล่อยให้ตัวแปรอิสระ ถ้าตั้งราคาถูกต้อง คำตอบจะไม่ฝ่าฝืนเองโดยไม่ต้องห้าม</p>
+  <p>ความคิดนี้ทรงพลังกว่าที่เห็น เพราะมันเปลี่ยนปัญหาที่มีข้อจำกัดให้เป็นปัญหาที่ไม่มีข้อจำกัด ซึ่งมีเครื่องมือแก้อยู่แล้วเต็มไปหมด</p>
+  <p>ในงานการเงิน ราคาที่ติดให้ข้อจำกัดนั้นกลายเป็นตัวเลขที่มีความหมายทางธุรกิจโดยตรง คือมันบอกว่าข้อจำกัดนั้นกำลังทำให้เราเสียโอกาสเท่าไร</p>
 </section>
 
 <section class="prose">
-  <h4>ที่มาทางประวัติศาสตร์: จากวิทยานิพนธ์ปี 1900 ของ Bachelier สู่แบบจำลองของ Samuelson</h4>
-  <p>ในปี 1900 Louis Bachelier นักศึกษาปริญญาเอกชาวฝรั่งเศส นำเสนอวิทยานิพนธ์ชื่อ Théorie de la spéculation โดยใช้ Brownian motion จำลองราคาพันธบัตรและสัญญาซื้อขายในตลาด Paris Bourse ซึ่งเกิดขึ้นก่อนที่ Albert Einstein จะตีพิมพ์ผลงานฟิสิกส์เรื่องเดียวกันถึง 5 ปี</p>
-  <p>ทว่าแบบจำลองของ Bachelier มีจุดบกพร่องร้ายแรง เพราะเขาสมมติว่าราคาหุ้นเคลื่อนที่แบบ arithmetic random walk เมื่อระฆังคว่ำมีหางยาวไม่จำกัดในแดนลบ จึงทำให้ราคาหุ้นมีโอกาสติดลบได้เสมอ ทั้งที่ในความเป็นจริง ผู้ถือหุ้นมีความรับผิดจำกัด (limited liability) ไม่ว่าจะเกิดอะไรขึ้น ราคาไม่มีทางต่ำกว่าศูนย์</p>
-  <p>ราว ๆ ปี 1965 Paul Samuelson ค้นพบงานของ Bachelier อีกครั้งในห้องสมุด เขาแก้ปัญหานี้โดยเสนอให้มองผลตอบแทนเป็นสัดส่วนการคูณ แทนที่จะเป็นการบวกเม็ดเงินตรง ๆ จึงกลายมาเป็น Geometric Brownian Motion ที่ราคาติดลบไม่ได้ แนวคิดนี้กลายเป็นเสาเข็มที่ Fischer Black, Myron Scholes และ Robert Merton นำไปต่อยอดเป็นสูตรตั้งราคา option ในเวลาต่อมา</p>
+  <h4>ประวัติศาสตร์และที่มา: จากกลศาสตร์ของ Lagrange สู่การผ่อนคลายข้อจำกัด</h4>
+  <p>ในปี 1788 Joseph-Louis Lagrange ได้ตีพิมพ์ตำราคลาสสิก Mécanique Analytique ซึ่งปฏิวัติวงการฟิสิกส์ด้วยการเสนอแนวคิด Lagrange multipliers สำหรับการเคลื่อนที่ของอนุภาคภายใต้พันธนาการทางกายภาพ เช่น ลูกตุ้มที่ถูกรั้งด้วยเชือก แทนที่จะต้องพยายามแก้ระบบสมการเพื่อกำจัดตัวแปรออกอย่างยากลำบาก Lagrange เสนอให้เปลี่ยนพันธนาการนั้นให้กลายเป็นแรงเสมือนที่ผนวกเข้าไปในสมการการเคลื่อนที่โดยตรง</p>
+  <p>เกือบสองศตวรรษต่อมา ในทศวรรษ 1970 นักวิจัยด้านการหาค่าเหมาะที่สุดอย่าง Arthur Geoffrion และ Marshall Fisher ได้นำหลักการนี้มาประยุกต์สู่ linear programming และ discrete optimization ในชื่อ Lagrangian relaxation ปัญหาในโลกจริงมักประกอบด้วยข้อจำกัดหลักที่แก้ได้ง่าย และข้อจำกัดที่เชื่อมโยงกันจนซับซ้อน การปลดข้อจำกัดที่ยุ่งยากออกแล้วแทนที่ด้วยค่าปรับ ทำให้ปัญหาแยกส่วนคำนวณได้อย่างอิสระ</p>
+  <p>ในงานวิศวกรรมการเงินและการบริหารความเสี่ยงของ Martin Haugh และ Garud Iyengar ที่มหาวิทยาลัยโคลัมเบีย Lagrangian relaxation ถูกใช้เป็นสะพานเชื่อมหลักในการสร้าง dual problem จาก primal problem ทุกรูปแบบ เพราะมันเผยให้เห็นโดยอัตโนมัติว่าเงื่อนไข dual constraints เกิดขึ้นเพื่อป้องกันไม่ให้ค่าปรับพังทลายลงสู่ลบอนันต์</p>
 </section>
 
 <section class="prose">
-  <h4>สิ่งที่ GBM ทำถูกและมีประโยชน์ทันที</h4>
-  <p>GBM เหมาะเป็น first model เพราะ (1) $S_t>0$ สอดคล้อง limited liability และ (2) return เป็นสัดส่วนของราคา จึง scale จากหุ้นราคา \$20 ไป \$500 ได้โดยไม่เปลี่ยนหน่วย noise. Closed-form structure ยังทำให้ code, calibration checks และ communication เร็วกว่าการเริ่มจาก model ซับซ้อน.</p>
+  <h4>ตัวอย่างแรก — ราคาเงาบอกว่าเดสก์ขาดทรัพยากรอะไรจริง ๆ</h4>
+  <p>เริ่มจากโจทย์เปิดเรื่อง ทรัพยากรสามอย่างถูกแบ่งให้สามทีม คำถามสุดท้ายไม่ใช่แค่แบ่งอย่างไร แต่คือเพดานข้อไหนแพงที่สุด ซึ่ง Lagrangian relaxation ตอบได้ตรง ๆ</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — positivity และ scale invariance</h4>
-  <p>เหตุผลข้อแรกที่เลือก model นี้คือราคาติดลบไม่ได้ และกฎการเคลื่อนไหวไม่เปลี่ยน ไม่ว่าหุ้นจะราคา \$10 หรือ \$10,000</p>
+  <h4>ขั้นที่ 1 — ของที่โจทย์ให้: ตาราง LP พร้อมหน่วยทุกแถว</h4>
+  <p>ตัวแปรคือทุกที่แบ่งให้แต่ละทีม หน่วยล้านดอลลาร์ ติดลบไม่ได้เพราะแบ่งทุนติดลบไม่มีความหมาย ตัวเลขทุกตัวคือของที่โจทย์ให้</p>
   <div class="math">\[
 \begin{aligned}
-S_t&=S_0e^{(\mu-\sigma^2/2)t+\sigma W_t}\gt0\\
-\frac{S_{t+s}}{S_t}&=e^{(\mu-\sigma^2/2)s+\sigma(W_{t+s}-W_t)}\qquad(\text{no }S_t\text{ inside})
+\max\quad &0.20x_1+0.21x_2+0.09x_3\\
+\text{VaR}:\quad &0.30x_1+0.50x_2+0.25x_3\le50\\
+\text{gross}:\quad &x_1+x_2+x_3\le200\\
+\text{liquidity A}:\quad &0.04x_1\le2.4\\
+&x_1,\ x_2,\ x_3\ge0
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>exponential รับประกันราคาบวก และ future gross return ratio ไม่ขึ้นกับระดับ $S_t$; สอง property นี้ตอบข้อจำกัดพื้นฐานของ equity price model</p>
+    <p>หุ้น A ซื้อขายเฉลี่ย 12 ล้านหุ้นต่อวัน นโยบายให้ถือไม่เกิน 20% ของ ADV คือ 0.20 × 12 = 2.4 ล้านหุ้น หุ้น A ราคา \$25 ทุน 1 ล้านจึงซื้อได้ 1,000,000/25 = 40,000 หุ้น = 0.04 ล้านหุ้น แถวสภาพคล่องจึงเท่ากับ x₁ ≤ 2.4/0.04 = 60</p>
+    <p>แถวสภาพคล่องต้องอยู่ในหน่วยหุ้น เพราะเพดานจริงคือจำนวนหุ้นที่ขายออกได้โดยไม่ทำให้ราคาพัง ถ้าราคาหุ้น A ขยับ ตัวเลข 0.04 เปลี่ยนแต่ 2.4 ไม่เปลี่ยน ผลข้างเคียงคือราคาเงาของแถวนี้มีหน่วยกำไรต่อล้านหุ้น ซึ่งเทียบกับแถว VaR ตรง ๆ ไม่ได้</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 2 — ที่มาของ GBM: จากการคูณผลตอบแทนย่อย สู่เลขชี้กำลังด้วย Taylor Series</h4>
-  <p>การพิสูจน์นี้เชื่อมโยงโลก discrete เข้ากับโลก continuous อย่างสมบูรณ์ ทำให้เห็นว่าพจน์ลบครึ่ง variance ไม่ใช่ของแปลกประหลาดที่โผล่มาจากฟ้า แต่เป็นผลพวงโดยตรงจากพจน์อันดับสองของ Taylor series ที่สะสมผ่านการทบต้น</p>
-  <p>ลองตรวจด้วยตัวเลขจริงของการเทรด 252 วันในหนึ่งปี ($T=1$): ถ้าหุ้นมี drift 10% และความผันผวน $\sigma=0.20$ ต่อปี ในแต่ละวันความผันผวนจะสร้างแรงฉุดขนาดเล็ก เมื่อสะสมครบ 252 วัน ผลรวมของแรงฉุดจะเท่ากับ $-0.5 \times (0.20)^2 = -0.02$ หรือลดลง 2% ต่อปีเต็มพอดี</p>
+  <h4>ขั้นที่ 2 — Lagrangian ของโจทย์ max: ค่าเช่าทรัพยากรที่ไม่ได้ใช้ทำให้ได้ขอบบน</h4>
+  <p>ถ้าไม่มีข้อจำกัดเลย เทเงินให้ทีมที่กำไรสูงสุดได้ไม่จำกัด ข้อจำกัดคือทั้งหมดของปัญหานี้ แทนที่จะห้ามใช้เกิน ให้ตั้งค่าเช่า uᵢ ต่อทรัพยากร i หนึ่งหน่วย แล้วปล่อยให้ทุกทีมทำอะไรก็ได้</p>
   <div class="math">\[
 \begin{aligned}
-\frac{S_T}{S_0}&=\prod_{k=1}^n(1+R_k)\\
-R_k&\approx\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
-\log\frac{S_T}{S_0}&=\sum_{k=1}^n\log(1+R_k)\\
-\log(1+u)&=u-\tfrac12u^2+\cdots\\
-&\quad(\text{Taylor})\\
-\log\frac{S_T}{S_0}&\approx\sum_{k=1}^n\Big(\mu\,\Delta t+\sigma\sqrt{\Delta t}\,Z_k\\
-&\qquad-\tfrac12\sigma^2\Delta t\,Z_k^2\Big)\\
-&\approx\mu T-\tfrac12\sigma^2T+\sigma\sqrt T\,Z\\
-&\quad(n\Delta t=T)\\
-S_T&=S_0\exp\Big(\big(\mu-\tfrac12\sigma^2\big)T+\sigma W_T\Big)\\[4pt]
-&\mu=10\%,\ \sigma=20\%:\\
-&\quad-\tfrac12(0.20)^2=-0.02\ \text{per year}
+\mathcal L(x,u)&=c^{\mathsf T}x+u^{\mathsf T}(b-Ax)\\
+&\quad u\ge0\\
+&b-Ax\ge0,\ u\ge0\\
+&\Longrightarrow\ u^{\mathsf T}(b-Ax)\ge0\\
+&\Longrightarrow\ c^{\mathsf T}x\le\mathcal L(x,u)\\[4pt]
+\mathcal L(x,u)&=u^{\mathsf T}b+(c-A^{\mathsf T}u)^{\mathsf T}x\\
+&(c-A^{\mathsf T}u)_j\gt0\\
+&\Longrightarrow\ \text{raise }x_j\ \text{forever}\\
+&A^{\mathsf T}u\ge c\\
+&\Longrightarrow\ \text{best }x=0,\quad \mathcal L\le u^{\mathsf T}b
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ทำไมราคาหุ้นต้องเขียนในรูป exponential คำตอบไม่ได้มาจากความสวยงาม แต่มาจากการทบต้นของผลตอบแทนรายวัน เมื่อแบ่งเวลา $T$ เป็น $n$ ก้าวสั้น ๆ ราคาปลายทางคือการเอาตัวคูณผลตอบแทนในแต่ละก้าวมาคูณเรียงกัน</p>
-    <p>ใส่ log เพื่อเปลี่ยนผลคูณให้กลายเป็นผลบวก จากนั้นใช้ Taylor series กระจาย $\log(1+u)$ จะเห็นพจน์กำลังสองโผล่ออกมาทันที ซึ่งความผันผวนยกกำลังสองคูณ $\Delta t$ จะไม่หายไปแม้ก้าวเวลาจะสั้นลงจนเข้าใกล้ศูนย์</p>
-    <p>ผลบวกก้อนสุ่มจะ converge สู่ Brownian motion ตาม Central Limit Theorem (CLT) และพจน์กำลังสองจะรวมกันเป็นตัวหักลบครึ่ง variance พอดี เมื่อแปลงกลับด้วย exponential จึงได้สูตร GBM ที่ใช้กันทั่วโลก</p>
+    <p>ก้อนแรกคือกำไรจริง ก้อนที่สองคือเงินคืนจากทรัพยากรที่ไม่ได้ใช้ สำหรับแผนที่ทำได้จริง ก้อนที่สองไม่ติดลบ Lagrangian จึงเป็นขอบบนของกำไรเสมอ</p>
+    <p>จัดรูปให้ x อยู่ที่เดียว ถ้าตัวคูณของ x ตัวใดเป็นบวก ดันตัวนั้นขึ้นได้เรื่อย ๆ ขอบบนพุ่งเป็นอนันต์ใช้ไม่ได้ จึงบังคับ Aᵀu ≥ c แล้วขอบบนคือ uᵀb เลือก u ที่ให้ขอบบนต่ำที่สุด ได้ dual เป็นโจทย์ min เพราะ primal เป็น max ขอบที่ dual ให้จึงอยู่เหนือคำตอบเสมอ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — เขียน dual เป็นตัวเลข: หนึ่งแถวต่อหนึ่งทีม</h4>
+  <p>แต่ละแถวของ Aᵀu ≥ c คือหนึ่งคอลัมน์ของ A หรือหนึ่งทีม</p>
+  <div class="math">\[
+\begin{aligned}
+D=\min\quad &50u_1+200u_2+2.4u_3\\
+\text{team 1}:\quad &0.30u_1+u_2+0.04u_3\ge0.20\\
+\text{team 2}:\quad &0.50u_1+u_2\ge0.21\\
+\text{team 3}:\quad &0.25u_1+u_2\ge0.09\\
+&u_1,\ u_2,\ u_3\ge0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>อ่านแต่ละแถวว่า ค่าเช่าทรัพยากรที่ทีมนั้นใช้ต้องไม่ถูกกว่ากำไรที่ทีมนั้นทำได้ ถ้ามีทีมที่ค่าเช่ายังถูกกว่ากำไร แปลว่าตั้งราคาทรัพยากรต่ำเกินไป ทุกคนจะแห่มาขอ ราคาที่ถูกต้องคือราคาต่ำที่สุดที่ไม่มีใครอยากขอเพิ่ม</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — เดา u หนึ่งชุด: ได้ขอบบนโดยยังไม่ต้องแก้อะไร</h4>
+  <p>เลือก u ที่ถูกกติกามาสักชุด ไม่ต้องดีที่สุด แล้วตรวจทีละแถว</p>
+  <div class="math">\[
+\begin{aligned}
+&u=(0.5,\ 0,\ 2.0):\\
+&\text{team 1}:\ 0.150+0+0.080\\
+&\quad=0.230\ge0.20\\
+&\text{team 2}:\ 0.250\ge0.21\\
+&\text{team 3}:\ 0.125\ge0.09\\[4pt]
+u^{\mathsf T}b&=50(0.5)+200(0)+2.4(2.0)\\
+&=25.0+0+4.8=29.8
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ยังไม่ได้แก้ primal เลย แต่พิสูจน์ได้แล้วว่ากำไรสูงสุดของเดสก์นี้ไม่มีทางเกิน 29.8 ล้าน ใครอ้างว่าจัดพอร์ตได้กำไร 32 ล้าน ถูกหักล้างทันทีในสามบรรทัด ในงานใหญ่ วิธีนี้คือแก้ปัญหาที่ผ่อนแล้วซึ่งง่ายกว่าเพื่อได้ขอบ แล้วค่อยขยับ u ให้ขอบแน่นขึ้น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — แก้ primal: เรียงทีมตามกำไรต่อ VaR หนึ่งหน่วย</h4>
+  <p>ทรัพยากรที่หายากที่สุดคือ VaR จึงจัดอันดับด้วยกำไรส่วน VaR ที่กิน แล้วเติมตามลำดับ</p>
+  <div class="math">\[
+\begin{aligned}
+&\frac{0.20}{0.30}=0.667,\qquad \frac{0.21}{0.50}=0.420\\
+&\frac{0.09}{0.25}=0.360\\[4pt]
+&x_1=60\ (\text{liquidity cap}):\\
+&\quad \text{VaR used}=0.30(60)=18\\
+&\quad \text{left}=50-18=32\\
+x_2&=\frac{32}{0.50}=64,\qquad x_3=0\\
+&\text{gross}=60+64+0=124\le200\\
+&\text{profit}=0.20(60)+0.21(64)\\
+&\quad+0.09(0)=12.00+13.44=25.44
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทีม 1 คุ้มที่สุดแต่ติดเพดานสภาพคล่องที่ 60 ทีม 2 รับ VaR ที่เหลือทั้งหมด VaR ใช้หมดพอดี ทีม 3 ไม่ได้อะไร เพดาน gross ยังเหลือ 76 จึงไม่ชน กำไร 25.44 ต่ำกว่าขอบบน 29.8 ที่เดาไว้ ขอบบนใช้ได้จริงแต่หลวมไป 4.36</p>
+    <p>การเรียงแบบนี้ใช้ได้ที่นี่เพราะมีทรัพยากรที่ชนจริงแค่สองตัว และแต่ละทีมใช้ทรัพยากรเป็นสัดส่วนตรง ถ้ามีหลายข้อจำกัดชนพร้อมกันหรือมีเงื่อนไขจำนวนเต็ม ต้องแก้ LP จริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — แกะราคาเงาออกจาก complementary slackness</h4>
+  <p>สองกฎ: ข้อจำกัดที่ไม่ชนมีราคาเงาเป็นศูนย์ และทีมที่ได้เงินทำให้แถว dual ของทีมนั้นเป็นสมการพอดี</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{gross slack}=76\gt0\\
+&\Longrightarrow\ u_2=0\\
+&x_2=64\gt0:\\
+&\quad 0.50u_1+u_2=0.21\\
+&\Longrightarrow\ u_1=\frac{0.21}{0.50}=0.42\\
+&x_1=60\gt0:\\
+&\quad 0.30(0.42)+0+0.04u_3=0.20\\
+&\Longrightarrow\ 0.04u_3=0.074,\quad u_3=1.85\\
+&x_3=0:\\
+&\quad 0.25(0.42)+0=0.105\ \ge\ 0.09\\[4pt]
+u^*&=(0.42,\ 0,\ 1.85)
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทีม 3 ไม่ได้เงินเพราะค่าเช่า VaR ที่ต้องจ่าย 0.105 แพงกว่ากำไร 0.09 อยู่ 0.015 ถูกคัดออกถูกต้อง</p>
+    <p>u₁ เท่ากับอัตราส่วนของทีม 2 พอดี เพราะทีม 2 คือผู้ใช้ VaR หน่วยสุดท้าย ถ้าได้ VaR เพิ่ม 1 ล้าน มันจะไหลไปทีม 2 เพราะทีม 1 ติดสภาพคล่องและทีม 3 ไม่คุ้ม ราคาเงาของทรัพยากรจึงเท่ากับผลตอบแทนของผู้ใช้รายถัดไปที่ต่อคิว ไม่ใช่ของทีมที่เก่งที่สุด</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — strong duality: กำไรแตกตามทรัพยากรที่ชนได้พอดี</h4>
+  <p>คูณราคาเงากับโควตาที่มีแล้วบวก ต้องได้กำไรจากขั้นที่ 5 พอดี</p>
+  <div class="math">\[
+\begin{aligned}
+D&=50(0.42)+200(0)+2.4(1.85)\\
+&=21.00+0+4.44=25.44=P\\[4pt]
+&\text{guess }(0.5,0,2.0):\ 29.80\\
+&u^*:\ 25.44\\
+&\Longrightarrow\ \text{gap closed}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>อ่านสองบรรทัดบนเป็นงบกำไรแบบใหม่: กำไร 25.44 ล้าน มี 21.00 ล้านที่เกิดจากโควตา VaR และ 4.44 ล้านที่เกิดจากสภาพคล่องหุ้น A ส่วนเพดาน gross ไม่ได้สร้างมูลค่าเลย</p>
+    <p>นี่ตอบคำถามที่ทุกเดสก์เถียงกันทุกปีว่ากำไรนี้เป็นของใคร: กำไรทั้งก้อนแตกออกพอดีตามทรัพยากรที่ชน ไม่ใช่ตามคนที่นั่งเทรด และผลรวมลงตัวเสมอเพราะ strong duality</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — ทดสอบราคาเงาของจริง: ผ่อนทีละหน่วยแล้วแก้ใหม่</h4>
+  <p>ราคาเงาใช้ได้เฉพาะช่วงหนึ่ง วิธีตรวจคือผ่อนเพดานทีละข้อหนึ่งหน่วยแล้วตามรอยเงิน</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{VaR }50\to51:\\
+&\quad\Delta x_2=1/0.50=+2\\
+&\quad\Delta\text{profit}=0.21(2)=+0.42\\
+&\quad(60,\ 66,\ 0)\\
+&\text{gross }200\to201:\\
+&\quad\text{nothing moves},\ \ \Delta\text{profit}=0\\
+&\text{liq }2.4\to3.4:\\
+&\quad\Delta x_1=1/0.04=+25\\
+&\quad\text{VaR}+0.30(25)=+7.5\\
+&\quad\Delta x_2=-7.5/0.50=-15\\
+&\quad\Delta\text{profit}=0.20(25)-0.21(15)\\
+&\quad=5.00-3.15=+1.85
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทั้งสามแถวตรงกับ u* ผ่อนสภาพคล่อง 1 ล้านหุ้นเท่ากับทุนทีม 1 เพิ่ม 25 ล้าน แต่กิน VaR เพิ่ม 7.5 ล้านซึ่งต้องแย่งจากทีม 2 กำไรสุทธิ 1.85 จึงเป็นกำไรหลังหักค่าเสียโอกาสของ VaR ที่แย่งมาแล้ว ราคาเงาคิดผลกระทบทั้งระบบให้เสร็จ</p>
+    <p>ดันสภาพคล่องต่อไปเรื่อย ๆ จน x₁ กิน VaR หมด 50 ล้านที่ x₁ = 50/0.30 = 166.7 ทีม 2 เหลือศูนย์ แล้วราคาเงาเปลี่ยนทันทีเพราะผู้ใช้รายถัดไปเปลี่ยนคน การผ่อนทีละหน่วยแล้วแก้ใหม่จึงเป็นวิธีเช็กว่ายังอยู่ในช่วงเดิม</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>คำตอบ — ขอสภาพคล่องหุ้น A ก่อน อย่าไปขอเพดาน gross</h4>
+  <p>คำถาม: แบ่งทุนอย่างไรให้กำไรสูงสุด ราคาเงาของสามเพดานเป็นเท่าไร และควรไปขอผ่อนข้อไหนก่อน?</p>
+  <p>ของที่มี: ขั้นที่ 1 ถึง 8</p>
+  <p>1 แบ่งทุน (60, 64, 0) ล้าน กำไร 25.44 ล้านต่อปี ทีม credit ไม่ได้เพราะกำไรต่อ VaR 0.36 ต่ำกว่าราคาเงา 0.42</p>
+  <p>2. Dual คือ min uᵀb ภายใต้ Aᵀu ≥ c และ u ≥ 0 ได้ u* = (0.42, 0, 1.85) และ D = 21.00 + 0 + 4.44 = 25.44 = P</p>
+  <p>3 สภาพคล่องหุ้น A ทุก 1 ล้านหุ้นที่ผ่อนได้ให้กำไรเพิ่ม 1.85 ล้านต่อปี เพดาน gross มีราคาเงาศูนย์</p>
+  <p>เฉลย: ขอผ่อนสภาพคล่องหุ้น A ก่อน และประโยคที่ใช้ในห้องประชุมได้คือ ขอ VaR เพิ่ม 10 ล้านจะได้กำไรคาดหมายเพิ่ม 10 × 0.42 = 4.2 ล้านต่อปี</p>
+  <p>เช็ก 10 วินาที: 0.20(60) + 0.21(64) = 25.44 และ 50(0.42) + 2.4(1.85) = 25.44</p>
+  <p>งานจริง: ราคาเงาเปลี่ยนการประชุมงบความเสี่ยงจากการเถียงด้วยความรู้สึกเป็นตัวเลขที่ตรวจได้ แต่มีเงื่อนไขสามข้อ: ใช้ได้เฉพาะการขยับเล็ก ๆ รอบจุดปัจจุบัน สมมติว่า c และ a คงที่ ทั้งที่กำไรต่อทุนลดลงเมื่อพอร์ตใหญ่ขึ้นเพราะ market impact และ VaR ไม่ได้บวกกันเป็นเส้นตรงจริงเพราะทีมต่าง ๆ กระจายความเสี่ยงให้กัน แถว VaR นี้จึงเป็นการประมาณแบบระวังไว้ก่อน</p>
+  <p>กับดัก: อย่าเทียบ 1.85 กับ 0.42 แล้วสรุปว่าสภาพคล่องสำคัญกว่า VaR 4.4 เท่า หน่วยต่างกัน 0.42 คือกำไรต่อ VaR 1 ล้าน ส่วน 1.85 คือกำไรต่อ 1 ล้านหุ้นซึ่งเท่ากับทุน 25 ล้าน ปรับหน่วยแล้วคือ 0.074 ต่อทุน 1 ล้าน ให้เทียบราคาเงาแต่ละตัวกับต้นทุนจริงของการได้ทรัพยากรนั้นเพิ่มหนึ่งหน่วย</p>
+</section>
+
+<section class="code">
+  <details>
+    <summary>โค้ดตรวจ LP ราคาเงา และการผ่อนเพดาน</summary>
+    <pre><code>import numpy as np
+from scipy.optimize import linprog
+c=[0.20,0.21,0.09]; A=[[0.30,0.50,0.25],[1,1,1],[0.04,0,0]]
+def solve(b):
+    r=linprog([-v for v in c],A_ub=A,b_ub=b,method="highs")
+    return r.x,-r.fun,-r.ineqlin.marginals
+x,P,u=solve([50,200,2.4])
+assert np.allclose(x,[60,64,0]) and abs(P-25.44)&lt;1e-9
+assert np.allclose(u,[0.42,0,1.85])
+assert abs(np.dot(u,[50,200,2.4])-P)&lt;1e-9
+assert abs(solve([51,200,2.4])[1]-25.86)&lt;1e-9
+assert abs(solve([50,200,3.4])[1]-27.29)&lt;1e-9
+assert abs(np.dot([0.5,0,2.0],[50,200,2.4])-29.8)&lt;1e-9</code></pre>
+  </details>
+  <div class="note">
+    <p>โค้ดนี้แก้ LP ด้วย solver ตรวจคำตอบ (60, 64, 0) กำไร 25.44 ราคาเงา (0.42, 0, 1.85) ความเท่ากันของ primal กับ dual และแก้ใหม่หลังผ่อน VaR กับสภาพคล่องหนึ่งหน่วย</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>รูปทั่วไป — สร้าง dual ด้วย Lagrangian relaxation เมื่อ primal เป็นโจทย์ min</h4>
+  <p>ตัวอย่างแรกเป็นโจทย์ max จึงได้ขอบบน บรรทัดข้างล่างคือกระจกของมันสำหรับโจทย์ min ซึ่งให้ขอบล่าง กระบวนการผ่อนคลายข้อจำกัดด้วย Lagrangian เป็นวิธีสากลที่ใช้สร้างโจทย์คู่สำหรับ linear program ทุกประเภท โดยเริ่มจากการติดราคาให้กับการละเมิด แล้วจัดกลุ่มตัวแปรเพื่อค้นหาเงื่อนไขที่ทำให้ขอบล่างมีค่าคงที่ไม่ร่วงลงสู่ลบอนันต์</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{Primal LP:}\\
+&\quad P = \min_x \{ c^{\mathsf T}x : Ax \ge b,\; x \ge 0 \} \\
+&\text{Penalised Lagrangian:}\\
+&\quad \mathcal L(x, u) = c^{\mathsf T}x - u^{\mathsf T}(Ax - b)\\
+&\quad (u \ge 0) \\
+&\text{Regroup coefficients:}\\
+&\quad \mathcal L(x, u) = b^{\mathsf T}u + (c - A^{\mathsf T}u)^{\mathsf T}x \\
+&\text{Dual function:}\\
+&\quad q(u) = \min_{x \ge 0} \mathcal L(x, u)\\
+&\quad = \begin{cases} b^{\mathsf T}u, & A^{\mathsf T}u \le c \\
+-\infty, & \text{otherwise} \end{cases} \\
+&\text{Dual problem:}\\
+&\quad D = \max_{u \ge 0} q(u)\\
+&\quad = \max_{u \ge 0} \{ b^{\mathsf T}u : A^{\mathsf T}u \le c \}
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เริ่มต้นจากโจทย์ primal ที่ต้องการ minimize ต้นทุนภายใต้อสมการ $Ax \ge b$ เราผ่อนคลายข้อจำกัดด้วยการหักค่าปรับ $u^{\mathsf T}(Ax-b)$ โดยกำหนดให้ตัวคูณ $u \ge 0$</p>
+    <p>เมื่อจัดกลุ่มพจน์ใหม่ พจน์คงที่ที่ไม่มีตัวแปร $x$ จะแยกออกมาเป็น $b^{\mathsf T}u$ ขณะที่ตัวแปร $x$ จะถูกคูณด้วย vector ของความชัน $c - A^{\mathsf T}u$</p>
+    <p>หากความชันหน้าตัวแปรมีค่าติดลบ การเลือก $x \ge 0$ ให้ใหญ่ขึ้นเรื่อย ๆ จะทำให้ค่าดิ่งลงสู่ลบอนันต์ ดังนั้นขอบล่างจะมีค่าจำกัดก็ต่อเมื่อความชันไม่ติดลบ นั่นคือ $A^{\mathsf T}u \le c$</p>
+    <p>การค้นหาขอบล่างที่ดีที่สุดจึงนำไปสู่โจทย์ maximize $b^{\mathsf T}u$ ภายใต้เงื่อนไข $A^{\mathsf T}u \le c$ ซึ่งคืนรูป dual LP มาตรฐานอย่างสมบูรณ์</p>
+  </div>
+</section>
+
+<section class="prose">
+  <h4>ตัวอย่างที่สอง — Lagrangian ของ beta hedge ด้วย QQQ และ SPY</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: เริ่มจาก primal LP ของตัวอย่างที่สองในหัวข้อ 11.1–11.3 แล้วเขียนทุก constraint เป็น residual ไม่เกินศูนย์ สำหรับ feasible hedge และ multipliers ไม่ติดลบ Lagrangian จะไม่สูงกว่า primal cost จึงสร้าง lower bound ได้ วิธีเดียวกันเป็นสะพานจาก constrained optimization ไปสู่ multiplier analysis ที่ใช้กว้างกว่างาน linear</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 9 — นิยาม residuals พร้อมหน่วย</h4>
+  <p>เริ่มจากเขียนว่าแต่ละข้อบังคับยังเหลือช่องว่างเท่าไร พร้อมระบุหน่วยให้ชัด เพราะราคาที่จะติดให้มันต้องมีหน่วยที่เข้ากัน</p>
+  <div class="math">\[
+\begin{aligned}g_B(x)&=10.8-1.2x_Q-x_S\le0,\\
+g_Q(x)&=x_Q-6\le0,\\
+g_S(x)&=x_S-6\le0.\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>$g_B$ วัด beta exposure ที่ยังขาดหน่วย beta-USD million; $g_Q$ และ $g_S$ วัด notional ที่เกิน caps หน่วย USD million ค่าที่ไม่เกินศูนย์จึงหมายถึง hedge ผ่าน constraint แถวนั้น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 10 — นิยามของ Lagrangian: ติดราคาให้การฝ่าฝืนแต่ละข้อ</h4>
+  <p>บรรทัดนี้เป็น นิยาม ของก้อนที่เราสร้างขึ้นมาเอง ไม่ได้พิสูจน์มาจากอะไร แนวคิดคือแทนที่จะห้ามเด็ดขาด เราตั้งค่าปรับให้กับการฝ่าฝืนทุกข้อ ตัวคูณแต่ละตัวคือราคาต่อหนึ่งหน่วยที่ฝ่าฝืน และถูกบังคับให้ไม่ติดลบ ประโยชน์ของการเขียนแบบนี้จะเห็นในขั้นถัดไป ตอนจัดกลุ่มใหม่</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{Primal cost:}\\
+&\quad C(x) = 180x_Q + 90x_S \\
+&\text{Penalty beta:}\\
+&\quad y \cdot g_B(x) = y(10.8 - 1.2x_Q - x_S) \\
+&\text{Penalty QQQ cap:}\\
+&\quad u_Q \cdot g_Q(x) = u_Q(x_Q - 6) \\
+&\text{Penalty SPY cap:}\\
+&\quad u_S \cdot g_S(x) = u_S(x_S - 6) \\
+&\mathcal L(x; y, u_Q, u_S)\\
+&= C(x) + y g_B(x)\\
+&\quad + u_Q g_Q(x) + u_S g_S(x)\\
+&\quad y, u_Q, u_S \ge 0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>การสร้าง Lagrangian เริ่มต้นจาก function ต้นทุนเดิมของ primal แล้วบวกเพิ่มด้วยค่าปรับของการฝ่าฝืนแต่ละข้อ</p>
+    <p>แถว beta มีตัวคูณ $y$ ถ่วงน้ำหนักปริมาณ beta ที่ยังขาด ขณะที่เพดานสภาพคล่องของ QQQ และ SPY มีตัวคูณ $u_Q$ และ $u_S$ คอยปรับขนาดคำสั่งที่เกินโควตา</p>
+    <p>ตัวคูณทั้งหมดถูกบังคับไม่ให้ติดลบ เพื่อให้การละเมิดข้อจำกัดส่งผลเพิ่มต้นทุนรวมเสมอ โครงสร้างนี้ทำให้เราสามารถยุบข้อจำกัดทั้งหมดเข้าสู่สมการเดียวได้อย่างเป็นระบบ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 11 — จัดกลุ่ม constant และ decision coefficients</h4>
+  <p>จัดกลุ่มใหม่ให้เห็นชัดว่าอะไรคงที่ และอะไรคูณอยู่กับตัวแปรที่เราเลือกได้ สามบรรทัดนี้ไม่มีอะไรใหม่เลยทางคณิตศาสตร์ มีแค่การกระจายและการรวบพจน์ แต่มันคือขั้นที่ทำให้เห็นว่า dual มาจากไหน</p>
+  <div class="math">\[
+\begin{aligned}\mathcal L&=180x_Q+90x_S+y(10.8-1.2x_Q-x_S)+u_Q(x_Q-6)+u_S(x_S-6)\\
+&=180x_Q+90x_S+10.8y-1.2yx_Q-yx_S+u_Qx_Q-6u_Q+u_Sx_S-6u_S\\
+&=\underbrace{10.8y-6u_Q-6u_S}_{\text{no }x}+x_Q\big(180-1.2y+u_Q\big)+x_S\big(90-y+u_S\big)\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ทั้งขั้นนี้ไม่มีคณิตศาสตร์ใหม่เลย มีแค่กระจายวงเล็บแล้วรวบพจน์ใหม่ แต่มันคือขั้นที่ทำให้เห็นว่า dual มาจากไหน บรรทัดสองกระจายวงเล็บทั้งสามออกให้หมด แล้วบรรทัดสามจัดกลุ่มใหม่ตามตัวแปรที่เราเลือกได้ เก็บพจน์ที่ไม่มี $x$ ไว้ข้างหน้า ที่เหลือรวบเข้าวงเล็บของตัวเอง</p>
+    <p>ประโยชน์อ่านได้ทันที: ถ้าวงเล็บหน้า $x_Q$ เป็นลบ เราจะดัน $x_Q$ ให้ใหญ่ขึ้นเรื่อย ๆ แล้วค่าจะดิ่งไม่มีขอบ dual จึงต้องบังคับให้วงเล็บนั้นไม่ติดลบ ซึ่งเป็นที่มาของข้อบังคับในขั้นถัดไป</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 12 — หา dual function เหนือ non-negative notionals</h4>
+  <p>ตัวแปรที่เราเลือกได้จะถูกดันไปสุดขอบเสมอ ยกเว้นตัวคูณของมันเป็นศูนย์พอดี เงื่อนไขนั้นเองที่กลายเป็นข้อบังคับของโจทย์คู่</p>
+  <div class="math">\[
+q(y,u_Q,u_S)=\min_{x_Q,x_S\ge0}\mathcal L=\begin{cases}10.8y-6u_Q-6u_S,&\substack{180-1.2y+u_Q\ge0,\\
+90-y+u_S\ge0},\\
+-\infty,&\text{otherwise.}\end{cases}
+\]</div>
+  <div class="reading">
+    <p>$q$ คือ lower bound หน่วย USD; ถ้า decision coefficient ใดติดลบ เราดัน non-negative notional ตัวนั้นขึ้นได้ไม่จำกัดและ $\mathcal L$ ลงสู่ minus infinity ดังนั้น coefficients ทั้งสองต้องไม่ติดลบ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 13 — dual feasibility ที่ได้ตรงกับหัวข้อ 11.3</h4>
+  <p>ผลที่ได้ตรงกับโจทย์คู่ที่เขียนไว้ในหัวข้อก่อนหน้าทุกบรรทัด แปลว่าสองวิธีสร้างโจทย์คู่ให้ผลเดียวกัน</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{QQQ slope condition:}\\
+&\quad 180 - 1.2y + u_Q \ge 0\\
+&\quad\Longrightarrow\; 1.2y - u_Q \le 180 \\
+&\text{SPY slope condition:}\\
+&\quad 90 - y + u_S \ge 0\\
+&\quad\Longrightarrow\; y - u_S \le 90 \\
+&\text{Dual feasibility system:}\\
+&\quad 1.2y - u_Q \le 180,\quad y - u_S \le 90\\
+&\quad y, u_Q, u_S \ge 0
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>การป้องกันไม่ให้ค่า infimum ดิ่งลงสู่ลบอนันต์ บังคับให้ตัวคูณหน้าตัวแปรทั้งสองต้องไม่ติดลบ</p>
+    <p>เงื่อนไขของ QQQ จัดรูปใหม่ได้เป็น $1.2y - u_Q \le 180$ ซึ่งจำกัดไม่ให้มูลค่า beta ส่วนเกินสูงกว่าต้นทุนการ short</p>
+    <p>ในทำนองเดียวกัน เงื่อนไขของ SPY คือ $y - u_S \le 90$ ทั้งสองอสมการรวมกับเงื่อนไขตัวคูณไม่ติดลบ ให้ผลลัพธ์ตรงกับ dual constraints ของหัวข้อ 11.3 อย่างแม่นยำ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 14 — multipliers ที่ optimum คืน \$1,260</h4>
+  <p>แทนค่าที่จุดเหมาะที่สุด ค่าของโจทย์คู่ต้องเท่ากับค่าของโจทย์เดิมพอดี</p>
+  <div class="math">\[
+\begin{aligned}
+&q(150, 0, 60)\\
+&= 10.8(150) - 6(0) - 6(60) \\
+&= 1{,}620 - 0 - 360 = \$1{,}260 \\
+&\mathcal L(x; 150, 0, 60)\\
+&= 1{,}260 + x_Q(180 - 1.2(150) + 0)\\
+&\quad + x_S(90 - 150 + 60) \\
+&= 1{,}260 + 0x_Q + 0x_S = \$1{,}260
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>การแทนชุดตัวคูณที่จุดเหมาะที่สุด $(150, 0, 60)$ ลงในสูตรคำนวณ dual function ให้ค่าขอบล่าง \$1,260 </p>
+    <p>เมื่อตรวจสอบความชันหน้าตัวแปรทั้งสอง พบว่ากลายเป็นศูนย์พอดีทั้งคู่ ทำให้พจน์ของ $x_Q$ และ $x_S$ หายไป</p>
+    <p>ผลลัพธ์คือ Lagrangian กลายเป็นระนาบคงที่ที่ระดับ \$1,260 ทั่วทั้งโดเมน ไม่ว่าเราจะเลือกค่า $x$ ใดก็ตาม ขอบล่างจึงแตะกับคำตอบของโจทย์เดิมพอดี</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 15 — ตรวจ relaxation surface ด้วย multiplier ที่ feasible แต่ยังไม่ optimal</h4>
+  <p>ลองใช้ราคาที่ถูกกติกาแต่ยังไม่ดีที่สุด เพื่อยืนยันว่ามันให้ขอบล่างเสมอ ไม่เคยเกินจริง</p>
+  <div class="math">\[
+\begin{aligned}
+q(\lambda_0) &= 10.8(130) - 6(0) - 6(45)\\
+&= 1{,}404 - 0 - 270 = \$1{,}134 \\
+&\text{Slopes:}\\
+&\quad 180 - 1.2(130) + 0\\
+&\quad = 180 - 156 = 24 \ge 0 \\
+&\quad 90 - 130 + 45 = 5 \ge 0 \\
+\mathcal L(x; \lambda_0) &= 1{,}134 + 24x_Q + 5x_S \\
+&\mathcal L(4, 6; \lambda_0)\\
+&= 1{,}134 + 24(4) + 5(6)\\
+&= 1{,}134 + 96 + 30 = \$1{,}260
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>การทดลองใช้ชุดตัวคูณ $\lambda_0=(130,0,45)$ ซึ่งอยู่ใน feasible region แต่ยังไม่ optimal ให้ขอบล่างที่จุดตัดแกน \$1,134 </p>
+    <p>ความชันหน้า $x_Q$ และ $x_S$ มีค่าเป็นบวก 24 และ \$5 ตามลำดับ ยืนยันว่าระนาบนี้เอียงขึ้นเมื่อตัวแปรเพิ่มขึ้น</p>
+    <p>เมื่อนำจุด primal optimum $(4, 6)$ มาแทนค่า จะได้ความสูงของระนาบเท่ากับ \$1,260 พอดี แสดงให้เห็นว่าระนาบ relaxation จะอยู่ใต้ feasible points เสมอและแตะยอดที่จุดคำตอบจริง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 16 — ใช้ SPY multiplier ตรวจการผ่อน cap หนึ่งหน่วย</h4>
+  <p>ราคาเงาไม่ใช่ตัวเลขลอย ๆ มันบอกตรง ๆ ว่าถ้าผ่อนข้อบังคับนั้นหนึ่งหน่วย จะประหยัดได้เท่าไร</p>
+  <div class="math">\[
+\begin{aligned}
+&\text{Relax SPY cap:}\\
+&\quad U_S = 6 \to 7 \\
+&\text{New hedge sizes:}\\
+&\quad x_S = 7\\
+&\quad x_Q = \frac{10.8 - 7}{1.2} = \frac{3.8}{1.2} = \frac{19}{6}\\
+&\quad\;\text{USD million} \\
+&\text{New total cost:}\\
+&\quad C = 180\left(\frac{19}{6}\right) + 90(7)\\
+&\quad = 30(19) + 630 = 570 + 630\\
+&\quad = \$1{,}200 \\
+&\text{Cost saving:}\\
+&\quad \Delta C = \$1{,}260 - \$1{,}200\\
+&\quad = \$60 = u_S^* \times 1
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>เมื่อขยายเพดานสภาพคล่องของ SPY จาก 6 เป็น \$7 ล้าน เราสามารถเพิ่มการ short ตัวที่ถูกกว่าได้เต็มจำนวน 7 ล้าน</p>
+    <p>ภาระความเสี่ยงที่เหลือให้ QQQ เติมลดลงเหลือ 3.8 หน่วย คิดเป็นขนาดคำสั่ง $19/6$ ล้านดอลลาร์</p>
+    <p>ต้นทุนใหม่คำนวณได้ \$1,200 ลดลงจากเดิม \$60 ตรงกับค่า shadow price $u_S^*=60$ ซึ่งพิสูจน์ว่า multiplier ทำนายอัตราการประหยัดต้นทุนต่อหนึ่งหน่วยของการผ่อนคลายข้อจำกัดได้อย่างแม่นยำ</p>
   </div>
 </section>
 
 <section class="prose">
   <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การรู้ว่าทำไมถึงเลือกแบบจำลองนี้ และมันผิดตรงไหน คือความต่างระหว่างคนใช้เครื่องมือกับคนเข้าใจเครื่องมือ</p>
-  <p>ใช้ตอบคำถามในการสัมภาษณ์งานและในการทบทวนแบบจำลอง ว่าทำไมถึงใช้ตัวนี้ไม่ใช่ตัวอื่น</p>
-  <p>ใช้ตัดสินว่าเมื่อไรควรเปลี่ยนไปใช้แบบจำลองที่ซับซ้อนกว่า ซึ่งมีต้นทุนในการดูแลสูงกว่ามาก</p>
-  <p>ใช้ออกแบบมาตรการควบคุมความเสี่ยงที่ครอบส่วนที่แบบจำลองมองไม่เห็น</p>
+  <p>การสร้างโจทย์คู่ด้วยการติดราคาให้ข้อจำกัด เป็นเทคนิคที่ใช้ต่อได้ทั้งเล่ม</p>
+  <p>ใช้กับปัญหาที่ใหญ่เกินกว่าจะแก้ตรง ๆ โดยแตกเป็นปัญหาย่อยที่แก้แยกกันได้</p>
+  <p>ใช้หาขอบล่างของต้นทุน เพื่อรู้ว่าคำตอบที่มีอยู่ห่างจากคำตอบที่ดีที่สุดแค่ไหน ซึ่งสำคัญเมื่อเวลาไม่พอจะหาคำตอบที่ดีที่สุดจริง</p>
+  <p>ใช้เป็นแนวคิดตั้งต้นของ Lagrange multipliers ในบทถัดไป ซึ่งเป็นเครื่องมือหลักของการจัดพอร์ต</p>
+  <p>แนวคิดติดราคาให้ข้อจำกัดเดียวกันนี้ใช้ต่อใน optimization แบบไม่เชิงเส้นของบทที่ 12 ในเงื่อนไข Karush–Kuhn–Tucker (KKT) ใน support vector machine (SVM) ของ machine learning และในการตั้งราคา derivative ทุกครั้งที่เห็น Lagrange multiplier ให้อ่านว่าราคาของข้อจำกัดนั้น</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 11.4a — หุ้น 20 กับ \$500 ใช้ตัวคูณชุดเดียวกัน</h4>
-  <img src="../figures/11.4-1.svg" alt="หุ้น \$20 แกนซ้ายกับหุ้น \$500 แกนขวา จุดทับกันทุกวัน" loading="lazy">
+  <h4>Figure 11.4a — พื้นผิวของ Lagrangian relaxation</h4>
+  <img src="../figures/11.4-1.svg" alt="Figure 11.4a — พื้นผิวของ Lagrangian relaxation" loading="lazy">
   <figcaption>
-    <p>แกนซ้ายคือหุ้น \$20 แกนขวาคือหุ้น \$500 สเกลห่างกัน 25 เท่า ใส่ตัวคูณรายวันชุดเดียวกัน จุดทุกจุดทับกันพอดี วันที่ 1 หุ้นถูกขึ้น \$0.82 หุ้นแพงขึ้น \$20.40 เป็นเปอร์เซ็นต์เท่ากันคือ 4.08% ตัวคูณของ GBM ไม่มีราคาอยู่ข้างใน กฎเดียวจึงใช้กับหุ้นทุกระดับราคา</p>
+    <p>พื้นผิวจริงที่ trial multipliers $(130,0,45)$ คือระนาบ $1134+24x_Q+5x_S$ จุด primal optimum อยู่ที่ความสูง \$1,260 ขณะที่จุดต่ำสุดของพื้นผิวให้ dual lower bound \$1,134</p>
   </figcaption>
 </figure>
 
-<section class="prose">
-  <h4>assumption audit ก่อนใช้ output</h4>
-  <p>GBM สมมติ constant volatility, normal log returns, continuous paths, independent increments และ frictionless continuous trading แต่ละข้อเป็น choice ที่ต้อง map ไป decision horizon: one-day risk near earnings ยอมรับ jump-free model ไม่ได้, ส่วน rough long-horizon scenario อาจใช้ baseline ได้ถ้ามี sensitivity overlay</p>
-</section>
-
 <figure class="plot">
-  <h4>Figure 11.4b — ความผันผวนมาเป็นช่วง ไม่คงที่</h4>
-  <img src="../figures/11.4-2.svg" alt="ความผันผวนย้อนหลัง 15 วันของข้อมูลจำลองสามช่วง เทียบค่าคงที่ 21.8%" loading="lazy">
+  <h4>Figure 11.4b — dual function เมื่อขยับตัวคูณของ beta</h4>
+  <img src="../figures/11.4-2.svg" alt="Figure 11.4b — dual function เมื่อขยับตัวคูณของ beta" loading="lazy">
   <figcaption>
-    <p>จำลองหนึ่งปีเทรด 252 วันที่มีสามช่วง ยาว 80, 55 และ 117 วัน ความผันผวนรายปี 12.7%, 44.4% และ 17.5% เส้นน้ำเงินคือความผันผวนย้อนหลัง 15 วัน เส้นประคือค่าคงที่ตัวเดียว 21.8% แบบที่ GBM ใช้ ในช่วงร้อนตัวเลขคงที่ต่ำกว่าของจริงเกินสองเท่า ขนาด hedge และวงเงินความเสี่ยงที่คิดจากตัวเลขเดียวจึงเล็กเกินไปตอนที่อันตรายที่สุด</p>
+    <p>เมื่อเลือก cap multipliers ต่ำสุดที่ยัง dual-feasible ค่า $q(y)$ สูงขึ้นจนถึง \$1,260 ที่ $y=150$ แล้วลดลง การ maximize lower bound จึงเลือก beta price \$150</p>
   </figcaption>
 </figure>
 
-<section class="formula">
-  <h4>ขั้นที่ 3 — normal tail benchmark versus stressed tail</h4>
-  <p>แต่ต้องซื่อสัตย์ด้วยว่าแบบจำลองนี้ผิดตรงไหน ขั้นนี้ให้ตัวเลขที่แบบจำลองทำนาย เพื่อเอาไปเทียบกับความถี่ที่เกิดขึ้นจริง การเทียบนั้นคือเนื้อหาของหัวข้อ 17.7 และมักจบด้วยการที่แบบจำลองแพ้</p>
-  <div class="math">\[
-\begin{aligned}
-r&=\log\frac{S_{t+\Delta t}}{S_t}\\
-&\sim\mathcal N\Big(\big(\mu-\tfrac12\sigma^2\big)\Delta t,\ \sigma^2\Delta t\Big)\\
-&\mathbb P(r\le-x)\\
-&=\Phi\Big(\frac{-x-(\mu-\sigma^2/2)\Delta t}{\sigma\sqrt{\Delta t}}\Big)\\[4pt]
-&(\mu-\sigma^2/2)\Delta t=0.08/252=0.000317\\
-&\sigma\sqrt{\Delta t}=0.20/15.8745=0.012599\\
-&x=5\%:\\
-z&=\frac{-0.05-0.000317}{0.012599}=-3.994\\
-&\mathbb P(r\le-5\%)\\
-&=\Phi(-3.994)=0.0000325\\
-&1/0.0000325=30{,}762\ \text{days}\\
-&=122\ \text{years}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ยกผลของหัวข้อ 11.2 มาต่อ log return ในช่วงสั้น ๆ ก็ยังเป็นระฆัง จากนั้นทำอย่างเดียวกับขั้นก่อน คือลบจุดกลางและหารความกว้างทั้งสองข้างของอสมการ ตัวหารเป็นบวกเสมอ เครื่องหมายจึงไม่พลิก แล้วอ่านพื้นที่หางซ้ายจาก $\Phi$ ตรง ๆ</p>
-    <p>แต่ตัวเลขที่ได้ต้องใช้ให้ถูกวิธี มันคือเส้นเทียบ ไม่ใช่คำตอบสุดท้าย เพราะแบบจำลองนี้ไม่มีการกระโดด และสมมติว่าความผันผวนคงที่ตลอด ทั้งสองข้อผิดในวันที่สำคัญที่สุด</p>
-    <p>ข้อมูลจริงจึงทะลุเกณฑ์บ่อยกว่าที่สูตรนี้บอกเสมอ วิธีใช้ที่ถูกคือดูว่าของจริงเกินเส้นนี้กี่เท่า ตัวเลขนั้นบอกขนาดของสิ่งที่แบบจำลองมองไม่เห็น</p>
-    <p>แทนเลข SPY วันที่ร่วง 5% อยู่ห่างจุดกลาง 3.99 SD ของวัน GBM จึงบอกว่าเกิดครั้งเดียวในราว 30,762 วันทำการหรือ 122 ปี แต่ในปี 2008 และ 2020 ปีเดียวก็มีวันแบบนี้หลายวัน ผลตอบแทนรายวันจริงมี kurtosis ราว 5 ถึง 10 ไม่ใช่ 3 ของระฆัง หางจึงหนากว่าหลายสิบเท่า</p>
-  </div>
-</section>
-
 <figure class="plot">
-  <h4>Figure 11.4c — SD เท่ากัน แต่หางต่างกันมาก</h4>
-  <img src="../figures/11.4-3.svg" alt="density ของผลตอบแทนรายวัน GBM เทียบหางอ้วนที่ SD เท่ากัน บนแกน log" loading="lazy">
+  <h4>Figure 11.4c — coefficient ที่รักษาขอบล่างไว้</h4>
+  <img src="../figures/11.4-3.svg" alt="Figure 11.4c — coefficient ที่รักษาขอบล่างไว้" loading="lazy">
   <figcaption>
-    <p>เส้นทึบคือผลตอบแทนรายวันแบบ GBM ที่ SD 1.26% เส้นประคือ t distribution ที่มี 3 degrees of freedom ปรับให้ SD เท่ากันพอดี ใช้เป็นตัวอย่างหางอ้วน ไม่ใช่ข้อมูลจริง แกนตั้งเป็น log เพื่อให้เห็นหาง ตรงกลางสองเส้นแทบเหมือนกัน ความต่างทั้งหมดอยู่ที่หาง</p>
-    <p>ที่เส้น −5% ความสูงของ density สองเส้นต่างกันราว 16 เท่า ส่วนโอกาสสะสมตั้งแต่ −5% ลงไปต่างกัน 95 เท่า คือ 0.0033% กับ 0.31% ต่อวัน หรือครั้งเดียวใน 122 ปีตามขั้นที่ 3 กับ 0.78 ครั้งต่อปี SD ตัวเดียวมองไม่เห็นความต่างนี้</p>
+    <p>dual-feasible cap prices ทำให้ coefficients ของทั้ง QQQ และ SPY ไม่ติดลบ ที่ $y=150$ ทั้งคู่แตะศูนย์พร้อมกัน จึงไม่มี direction ที่ลาก Lagrangian ลงสู่ minus infinity</p>
   </figcaption>
 </figure>
 
-<section class="prose">
-  <h4>ความต่อเนื่องล้มเหลวตรงวันที่ต้อง hedge พอดี</h4>
-  <p>ข่าว Earnings ข่าวจากหน่วยงานกำกับ และข่าวข้ามคืนทำให้ราคาเกิด gap ได้ Delta hedge ยกเลิก exposure อันดับหนึ่งได้เฉพาะการเคลื่อนไหวเล็กและต่อเนื่อง เมื่อราคากระโดดจากระดับหนึ่งไปอีกระดับหนึ่ง จะไม่มีลำดับการซื้อขายระหว่างทางมาชดเชย จึงต้องเก็บ jump scenarios กำหนด event-day limits และบวก liquidity add-ons แทนการรายงานว่า hedge ภายใต้ continuous diffusion ป้องกันความเสี่ยงได้ครบถ้วน</p>
-</section>
-
 <figure class="plot">
-  <h4>Figure 11.4d — ราคากระโดดข้ามคืน hedge ปรับไม่ทัน</h4>
-  <img src="../figures/11.4-4.svg" alt="ราคาปิด \$98 เปิด \$78 ร่วง 20.4% ในคืนเดียว" loading="lazy">
+  <h4>Figure 11.4d — ผ่อนเพดาน SPY ที่ติดอยู่</h4>
+  <img src="../figures/11.4-4.svg" alt="Figure 11.4d — ผ่อนเพดาน SPY ที่ติดอยู่" loading="lazy">
   <figcaption>
-    <p>ปิด \$98 เปิด \$78 ร่วง 20.4% ในคืนเดียว ใต้ GBM ที่ความผันผวนรายวัน 1.26% นี่คือราว −18 SD ซึ่งแทบเป็นไปไม่ได้ แต่ของจริงเกิดจากข่าวงบหรือคดี ระหว่างปิดกับเปิดไม่มีการซื้อขาย hedge ที่ตั้งใจปรับทีละนิดจึงไม่มีโอกาสปรับเลย ขาดทุนทั้งก้อนตรงช่วงแรเงา</p>
-  </figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — นิยามของการตรวจด้วยราคาตลาด: ถ้าแบบจำลองถูก ต้องเห็นอะไร</h4>
-  <p>บรรทัดนี้ไม่ใช่ผลที่พิสูจน์ มันเป็น เงื่อนไขที่กำหนดขึ้น เพื่อใช้ตรวจ ตรรกะมีข้อเดียว: ถ้าแบบจำลองที่มีความผันผวนค่าเดียวอธิบายตลาดได้จริง ค่าความผันผวนที่ย้อนกลับมาจากราคา option ทุกตัวต้องเท่ากันหมด ของจริงไม่เท่า และรูปที่ไม่เท่านั้นมีชื่อว่า smile ซึ่งเป็นหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
-  <div class="math">\[
-\begin{aligned}
-&\sigma_{\mathrm{imp}}(K,T)=\sigma\\
-&\quad(\text{every strike }K\text{ and maturity }T)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ถ้า model มีความผันผวนเดียวและอธิบายตลาดได้ implied volatility ที่ย้อนจากทุก option ต้องเท่ากัน; smile หรือ skew คือ observable model discrepancy</p>
-    <p>อ่านว่า: ความผันผวนที่ย้อนกลับมาจากราคา option ต้องเท่ากันทุก strike และทุกอายุ ของจริง option ที่ strike ห่างจากราคาปัจจุบันมาก มี implied volatility สูงกว่าเสมอ ตลาดกำลังบอกว่ามันไม่เชื่อ GBM</p>
-    <p>แต่ตลาดก็ยังพูดด้วยภาษาของ GBM แทนที่จะบอกว่า option ราคา \$4.72 คนบอกว่า implied volatility 23% ซึ่งเทียบข้ามหุ้นและข้ามอายุได้ทันที GBM จึงเป็นระบบพิกัด ไม่ใช่ความเชื่อ</p>
-    <p>นี่คือสิ่งที่ต้องเห็นถ้าแบบจำลองความผันผวนคงที่อธิบายตลาดได้จริง ของจริงไม่เท่ากัน และรูปที่ไม่เท่านั้นคือหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 11.4e — ตลาดตั้งราคา option ด้วยความผันผวนไม่เท่ากันทุก strike</h4>
-  <img src="../figures/11.4-5.svg" alt="implied volatility ลดจากราว 24% ที่ strike 75% ลงไปราว 15% ที่ strike 125% เทียบ GBM 20%" loading="lazy">
-  <figcaption>
-    <p>ตัวอย่างรูปร่างทั่วไปของ implied volatility หุ้น ไม่ใช่ข้อมูลจริงวันใดวันหนึ่ง strike ที่ 75% ของราคาปัจจุบันใช้ราว 24% ที่ราคาปัจจุบันราว 19% ที่ 125% ราว 15% ส่วน GBM ใช้ 20% ตัวเดียวทุก strike ตลาดจ่ายแพงกว่าสำหรับประกันขาลง แปลว่าตลาดเชื่อว่าหางซ้ายอ้วนกว่าที่ GBM บอก</p>
-  </figcaption>
-</figure>
-
-<section class="prose">
-  <h4>model hierarchy สำหรับ desk ไม่ใช่ศาสนา</h4>
-  <p>ใช้ GBM เป็นระบบพิกัดตั้งต้น คือใช้มันปรับราคาให้เทียบกันได้ สร้างเส้นทางฐานไว้เปรียบเทียบ ตรวจว่าหน่วยของ parameter ถูกต้อง และใช้เป็นภาษากลางเวลาพูดถึง implied volatility</p>
-  <p>จากนั้นค่อยเลือกตัวซ่อมให้ตรงกับอาการที่เจอ: ความผันผวนจับกลุ่มเป็นช่วง ใช้ stochastic volatility หรือ GARCH; ราคากระโดดข้ามช่วง ใช้ jump diffusion; ราคาสิทธิ์โค้งเอียงตาม strike ใช้ local หรือ stochastic volatility surface; และถ้าต้นทุนการเทรดกินกำไร ใช้การ hedge ที่คิดค่าธรรมเนียมเข้าไปด้วย</p>
-  <p>เพิ่มความซับซ้อนเฉพาะเมื่อการตัดสินใจเรื่องความเสี่ยงเปลี่ยนไปจริงเพราะข้อบกพร่องนั้น ไม่ใช่เพราะ model ใหม่ดูน่าเชื่อกว่า</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — นิยามของรายการที่ต้องมีในบัญชี hedge</h4>
-  <p>บรรทัดนี้เป็น รายการที่เรากำหนดขึ้น ว่าต้องมีในบัญชี ไม่ใช่สมการที่พิสูจน์ได้ พจน์แรกคือส่วนที่แบบจำลองอธิบายได้ ส่วนที่เหลือคือสิ่งที่มันอธิบายไม่ได้ และถ้าไม่จดไว้แยกกัน กำไรขาดทุนที่แบบจำลองบอกจะถูกเข้าใจผิดว่าเป็นเงินจริง ค่าแต่ละตัวคำนวณอย่างไรเป็นเรื่องของหัวข้อ 13.3 และ 18.4</p>
-  <div class="math">\[
-\mathrm{Hedge\ P\&amp;L}\approx N\Delta\,\Delta S+\mathrm{gamma\ error}+\mathrm{jump\ loss}-\mathrm{spread}-\mathrm{impact}
-\]</div>
-  <div class="reading">
-    <p>delta term เป็น first-order continuous approximation; gamma error, jump loss, bid-ask spread และ price impact ต้องอยู่ใน attribution เพื่อไม่ให้ model P and L ถูกเข้าใจเป็น realized P and L</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ค่าเฉลี่ยกับค่ากึ่งกลางไม่เท่ากัน และส่วนต่างนี้ GBM บังคับ</h4>
-  <p>แบบจำลองนี้บังคับผลที่คนส่วนใหญ่ไม่ได้คาดไว้: ราคาที่คาดหวังกับราคาที่พบได้บ่อยที่สุด เป็นคนละตัวเลข และต่างกันไม่น้อย</p>
-  <p>สาเหตุคือ drift ที่ทบต้นจริง ๆ ไม่ใช่ $\mu$ แต่เป็น $\mu$ ลบครึ่งหนึ่งของ variance ดังนั้นการอ้างค่าเฉลี่ยเป็นสิ่งที่ควรคาดหวังจึงทำให้คาดหวังสูงเกินไป</p>
-  <div class="math">\[
-\begin{aligned}
-\text{mean}&=S_0\,e^{\mu T}\\
-\text{median}&=S_0\,e^{(\mu-\sigma^{2}/2)T}\\[4pt]
-&\mu=0.10,\ \sigma=0.20:\\
-&\quad\mu-\sigma^2/2=0.10-0.02=0.08\\
-&T=10:\\
-&\quad\text{mean}=100e^{1.0}=271.83\\
-&\quad\text{median}=100e^{0.8}=222.55\\
-&271.83/222.55=e^{0.2}=1.2214
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ราคาที่คาดหวังคำนวณจากการยกกำลังของ drift เต็ม เพราะค่าเฉลี่ยของ lognormal ใช้ parameter นั้น ส่วนราคาที่มีโอกาสเกิดเท่ากันด้านบนและด้านล่าง หรือค่ากึ่งกลาง ใช้ drift ที่หักครึ่ง variance ออกแล้ว</p>
-    <p>แทนตัวเลขสิบปี: ค่าเฉลี่ยได้ 271.83 ขณะที่ค่ากึ่งกลางได้ 222.55 ต่างกันราว 22% ตัวเลขทั้งสองถูกต้องพร้อมกัน ไม่ใช่การคำนวณผิด</p>
-    <p>ความต่างนี้มาจาก skewness ขวาของ distribution ราคาสูงมากดึงค่าเฉลี่ยขึ้น แต่ไม่ดึงค่ากึ่งกลาง เพราะค่ากึ่งกลางสนใจแค่ว่ามีกี่เส้นทางที่สูงกว่า ไม่ได้สนใจว่าสูงเท่าไร</p>
-    <p>แปลว่าอะไร: ถ้าต้องรายงานสิ่งที่คาดหวัง ให้ใช้ค่าเฉลี่ยและระบุว่ามันสูงกว่าค่าปกติ แต่ถ้าต้องวางแผนกำลังคนหรือกำลังซื้อ ให้ใช้ค่ากึ่งกลาง เพราะนั่นคือสิ่งที่เกิดขึ้นบ่อยกว่า</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 11.4f — SPY สิบปี: ค่าเฉลี่ย 271.83 กับ median 222.55</h4>
-  <img src="../figures/11.4-6.svg" alt="ค่าเฉลี่ยกับ median ของราคา SPY สิบปี และแถบ 25% ถึง 75%" loading="lazy">
-  <figcaption>
-    <p>เริ่ม 100 drift 10% ความผันผวน 20% เส้นเขียวคือค่าเฉลี่ย เส้นส้มคือ median ห่างกันมากขึ้นทุกปี ครบสิบปีต่างกัน 22% ตามขั้นที่ 6 แถบคือช่วง 25% ถึง 75% จาก 145 ถึง 341 เส้นค่าเฉลี่ยอยู่เหนือ median ตลอด เพราะหางขวาลากขึ้น แต่ครึ่งหนึ่งของเส้นทางจบต่ำกว่า 222.55</p>
+    <p>การผ่อน SPY cap หนึ่ง USD million ลด cost \$60 ตาม multiplier: order เปลี่ยนจาก $(4,6)$ เป็นประมาณ $(3.167,7)$ แต่ beta reduction ยังคง 10.8</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>คำตอบ — GBM ผิดตรงไหน และทำไมยังใช้</h4>
-  <p>คำถาม: SPY ที่ drift 10% ความผันผวน 20% วันที่ร่วง 5% ควรเกิดบ่อยแค่ไหนตาม GBM และทำไมโต๊ะยังใช้แบบจำลองนี้?</p>
-  <p>ของที่มี: ขั้นที่ 1 ถึง 4 และ 6</p>
-  <p>1 ความผันผวนรายวัน 0.20/15.8745 = 1.26% จุดกลางรายวัน 0.08/252 = 0.03%</p>
-  <p>2 วันร่วง 5% อยู่ที่ z = −3.994 โอกาส 0.0033% ต่อวัน หรือราวครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</p>
-  <p>3. GBM ยังผ่านสองเกณฑ์ที่แบบจำลองบวกเงินตรง ๆ ทำไม่ได้ ราคาติดลบไม่ได้ และตัวคูณในอนาคตไม่มี S_t อยู่ข้างใน หุ้น \$20 กับ \$500 จึงใช้กฎเดียวกัน</p>
-  <p>4 ค่าเฉลี่ยกับ median สิบปีคือ 271.83 กับ 222.55 ต่างกัน 22% ซึ่งแบบจำลองบอกไว้ล่วงหน้า</p>
-  <p>ตรวจเองใน 10 วินาที: 5% ÷ 1.26% ≈ 4 SD และหางที่ 4 SD ของระฆังคือราวสามในแสน</p>
-  <p>แปลว่าอะไร: ใช้ GBM เป็นระบบพิกัดตั้งต้น แล้วซ่อมตามอาการ ความผันผวนเกาะกลุ่มใช้ GARCH ราคากระโดดใช้ jump model หางอ้วนใช้ stress test และ implied volatility surface เพิ่มความซับซ้อนเฉพาะเมื่อมันเปลี่ยนการตัดสินใจจริง อย่าใช้ความผันผวนรายวันของ GBM ปลอบใจว่า hedge จะรอดวันข่าว</p>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดตรวจหางของ GBM, Taylor drag และค่าเฉลี่ยกับ median</summary>
-    <pre><code>import numpy as np
-from scipy.stats import norm
-mu, sigma, dt = 0.10, 0.20, 1 / 252
-m, sd = (mu - sigma**2 / 2) * dt, sigma * np.sqrt(dt)
-assert abs(m - 0.000317) &lt; 1e-6 and abs(sd - 0.012599) &lt; 1e-6
-z = (-0.05 - m) / sd
-p = norm.cdf(z)
-assert abs(z + 3.994) &lt; 1e-3 and abs(p - 3.25e-5) &lt; 1e-7
-assert abs(1 / p / 252 - 122) &lt; 1                       # once in about 122 years
-
-rng = np.random.default_rng(114)                        # compounding 252 daily simple returns
-R = mu * dt + sd * rng.standard_normal((20_000, 252))
-logS = np.log1p(R).sum(axis=1)
-assert abs(logS.mean() - (mu - sigma**2 / 2)) &lt; 0.004   # the -sigma^2/2 = -0.02 drag appears
-
-assert abs(100 * np.exp(1.0) - 271.83) &lt; 0.01 and abs(100 * np.exp(0.8) - 222.55) &lt; 0.01
-assert abs(np.exp(0.2) - 1.2214) &lt; 1e-4
-assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk example</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดตรวจว่า GBM ให้วันร่วง 5% ที่ z = −3.994 และครั้งเดียวในราว 122 ปี จำลองการทบต้นผลตอบแทนรายวัน 252 วันว่าได้แรงฉุด −0.02 ตามขั้นที่ 2 และตรวจค่าเฉลี่ยกับ median สิบปี</p>
-  </div>
-</section>
-
-<section class="example">
-  <h4>ตัวอย่างเสริม — ขออนุมัติรับ event risk ของหุ้นสมมติ</h4>
-  <p>สมมติ desk ถือ short exposure ของหุ้นสมมติเทียบเท่า delta 100,000 shares และใช้ spot \$500. Overnight gap 5% คือราคาเปลี่ยน \$25 ต่อ share ดังนั้นผลกระทบอันดับแรกจาก delta อย่างเดียวอยู่ที่ราว \$2.5 ล้าน ก่อน gamma, vega, spread และ impact ค่า daily sigma จาก GBM ช่วยกำหนดกรอบวันปกติได้ แต่การอนุมัติข้าม event ต้องทำ gap stress และตีราคา volatility surface ใหม่ มิฉะนั้น hedge จะผ่านเฉพาะวันที่อากาศดี</p>
-  <p>คำถาม: overnight gap 5% ของ spot \$500 กระทบ delta-equivalent 100,000 shares กี่ USD ก่อน gamma?</p>
-  <p>ของที่มี: spot \$500, move 5%, delta-equivalent 100,000 shares นี่ยังเป็น first-order approximation</p>
-  <p>1 คูณ \$500 ด้วย 5% ได้ราคาเปลี่ยน \$25 ต่อ share</p>
-  <p>2 คูณ \$25 ด้วย 100,000 shares ได้ delta amount \$2.5 ล้าน.</p>
-  <p>เฉลย: gap เพียง 5% สร้าง first-order P&amp;L ราว \$2.5 ล้าน.</p>
-  <p>เช็ก 10 วินาที: \$500 × 0.05 × 100,000 = \$2,500,000</p>
-  <p>งานจริง: ใช้ gap stress แยกจาก daily GBM band ก่อนอนุมัติ hedge</p>
-  <p>กับดัก: อย่าใช้ความผันผวนรายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้</p>
-</section>
-
-<section class="example">
-  <h4>ตัวอย่างเสริม — ค่าเฉลี่ยกับ median สิบปี</h4>
-  <p>คำตอบ: ด้วย drift 10% volatility 20% และเวลาสิบปี ราคาที่คาดหวังคือ 271.83 ขณะที่ค่ากึ่งกลางคือ 222.55 ต่างกันราว 22%</p>
-  <p>ตรวจเองใน 10 วินาที: หักครึ่ง variance ออกจาก drift ก่อนแล้วค่อยยกกำลัง ถ้าใช้ drift เต็มกับค่ากึ่งกลางจะได้ตัวเลขที่สูงเกินไป</p>
-  <p>ใช้ตัดสินใจ: เวลาตั้งเป้าราคาปลายทาง ให้ระบุให้ชัดว่าเป้านั้นเป็นค่าเฉลี่ยหรือค่ากึ่งกลาง เพราะสองตัวเลขนี้ต่างกันหนึ่งในห้า และการสลับกันทำให้แผนผิดตั้งแต่ต้น</p>
+  <h4>คำตอบ — Lagrangian ตีราคา SPY cap ที่ \$60</h4>
+  <p>คำตอบ: multipliers (150,0,60) ทำให้ dual value เท่ากับ primal cost \$1,260 และ SPY cap มีราคา \$60 ต่อ capacity เพิ่ม \$1 ล้าน</p>
+  <p>ตรวจเองใน 10 วินาที: เมื่อเพิ่ม SPY cap เป็น 7 ให้ QQQ เท่ากับ 19/6 แล้วเช็ก 1.2×(19/6) + 7 = 10.8; cost ใหม่ 180×(19/6) + 90×7 = \$1,200 ต่ำกว่าเดิม 60</p>
+  <p>ใช้ตัดสินใจ: ขอ SPY capacity เพิ่มเมื่อ operational cost ของ capacity \$1 ล้าน ต่ำกว่า saving \$60 และต้องยืนยัน liquidity กับ linear-impact assumption ก่อนส่ง order</p>
 </section>
 
 <section class="pitfall">
-  <h4>กับดัก: เลิกใช้ GBM แล้วคิดว่า model risk หาย</h4>
-  <p>model ที่ซับซ้อนกว่ามี calibration risk, unstable parameters และ implementation risk ของตัวเอง ทำ comparison against GBM baseline, backtest breaches, document applicability horizon และ attach reserve to known gaps; professional skepticism คือ control ไม่ใช่ model name</p>
+  <h4>กับดัก: คิดว่า relaxation คือใบอนุญาตฝ่า limit</h4>
+  <p>Lagrangian relaxation ย้าย constraint เข้า objective เพื่อสร้าง bound และ sensitivity เท่านั้น final hedge ยังต้องผ่าน beta target กับ liquidity caps จริง multiplier เป็นป้ายราคา ไม่ใช่บัตรผ่าน risk control — solver ที่รายงาน lower bound สวยแต่ order ฝ่า hard limit ยังเป็น solver ที่ส่งงานไม่ได้</p>
 </section>
 
 <section class="table">
@@ -365,31 +559,32 @@ assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk exa
   <table>
     <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
     <tbody>
-      <tr><td>ความสมเหตุสมผล</td><td>เหตุผลที่ยกมาพิสูจน์ว่าแบบจำลองถูก</td><td>มันพิสูจน์แค่ว่าไม่ผิดอย่างโจ่งแจ้ง</td><td>การที่ราคาติดลบไม่ได้ ไม่ได้แปลว่าส่วนที่เหลือของแบบจำลองถูก</td></tr>
-      <tr><td>การทดแทน</td><td>มีแบบจำลองที่ดีกว่ารออยู่</td><td>แบบจำลองที่ซับซ้อนกว่ามี parameter ให้ประมาณมากกว่า</td><td>ความคลาดเคลื่อนจากการประมาณอาจมากกว่าที่ได้จากการอธิบายที่ดีขึ้น</td></tr>
-      <tr><td>ขอบเขต</td><td>ใช้ได้กับสินทรัพย์ทุกชนิด</td><td>ใช้ไม่ได้กับสินค้าโภคภัณฑ์บางตัวและอัตราดอกเบี้ย</td><td>ต้องเลือกแบบจำลองตามชนิดสินทรัพย์ ไม่ใช่ใช้ตัวเดียวกับทุกอย่าง</td></tr>
+      <tr><td>ช่องว่างระหว่างสองด้าน</td><td>สองด้านให้คำตอบเท่ากัน</td><td>จริงสำหรับปัญหาเส้นตรง แต่ไม่จริงทั่วไป</td><td>ในปัญหาที่มีจำนวนเต็มหรือความโค้ง ขอบล่างที่ได้อาจต่ำกว่าคำตอบจริงเสมอ</td></tr>
+      <tr><td>การเลือกราคา</td><td>หาราคาที่ดีที่สุดได้</td><td>การหานั้นเองเป็นอีกปัญหาหนึ่งที่ต้องแก้</td><td>อาจใช้เวลามากกว่าการแก้ปัญหาเดิมตรง ๆ ในบางกรณี</td></tr>
+      <tr><td>ความหมาย</td><td>ราคาเงาตีความได้ทางธุรกิจ</td><td>บางข้อจำกัดเป็นเรื่องเทคนิคล้วน</td><td>การพยายามหาความหมายให้ทุกตัวทำให้เข้าใจผิดได้</td></tr>
     </tbody>
   </table>
   <div class="note">
-    <p>แถวกลางเป็นเหตุผลที่โต๊ะจำนวนมากยังใช้แบบจำลองง่าย ๆ นี้อยู่ ทั้งที่รู้ข้อจำกัดดี</p>
+    <p>แถวแรกเป็นเหตุผลที่ปัญหาที่มีจำนวนเต็มถึงยากกว่ามาก แม้จะดูคล้ายกัน</p>
   </div>
 </section>
 
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>GBM มีเหตุผลสำหรับ positive equity prices และ proportional returns</li>
-    <li>ความผันผวนคงที่ หางบางแบบ normal เส้นราคาต่อเนื่องไม่กระโดด ผลตอบแทนแต่ละช่วงไม่เกี่ยวกัน และเทรดได้โดยไม่มีต้นทุน ทั้งห้าข้อนี้เป็นข้อสมมติที่เราเลือกใส่เอง ไม่ใช่ข้อเท็จจริงของตลาด</li>
-    <li>smile, clusters และ gaps เป็น diagnostics ที่ตลาดเปิดเผยให้เห็น GBM ที่ 20% ต่อปีบอกว่าวันร่วง 5% เกิดครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</li>
-    <li>ใช้ GBM เป็น baseline แล้ว overlay stress, calibration และ execution controls ตาม decision</li>
-    <li>ภายใต้ GBM ราคาที่คาดหวังกับค่ากึ่งกลางเป็นคนละตัวเลข: drift ที่ทบต้นคือ μ−σ²/2 ดังนั้นค่ากึ่งกลางจึงต่ำกว่าค่าเฉลี่ย และต่างกันราว 22% ในตัวอย่างสิบปี</li>
+    <li>ในโจทย์ max ค่าเช่าทรัพยากรที่ไม่ได้ใช้ทำให้ Lagrangian เป็นขอบบน dual จึงเป็นโจทย์ min: เดสก์สามทีมได้ (60, 64, 0) กำไร 25.44 และราคาเงา (0.42, 0, 1.85) แตกกำไรได้พอดี 21.00 + 0 + 4.44</li>
+    <li>ราคาเงาเท่ากับผลตอบแทนของผู้ใช้ทรัพยากรรายถัดไป และใช้ได้เฉพาะช่วงที่ผู้ใช้รายนั้นยังไม่เปลี่ยน ตรวจด้วยการผ่อนทีละหน่วยแล้วแก้ใหม่</li>
+    <li>เขียน residuals เป็น $g_B,g_Q,g_S\le0$ แล้วจับคู่กับ non-negative multipliers ที่มีหน่วยสอดคล้องกัน</li>
+    <li>dual function เป็น finite lower bound ก็ต่อเมื่อ decision coefficients ไม่ติดลบ</li>
+    <li>multipliers $(150,0,60)$ ทำให้ $q=\$1{,}260$ และคืน dual จากหัวข้อ 11.3 ทุกเครื่องหมาย</li>
+    <li>SPY multiplier \$60 ทำนาย local saving จาก cap เพิ่ม \$1 ล้าน แต่ final order ยังต้องผ่าน hard constraints</li>
   </ul>
 </section>
 </article>
 
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="11.3.html">11.3 Three Properties GBM Inherits from Brownian Motion</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="12.1.html">12.1 Why Ordinary Calculus Fails on Brownian Motion</a></div>
+  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="11.3.html">11.3 Linear Programming Duality</a></div>
+  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="12.1.html">12.1 Global vs Local Minima</a></div>
 </nav>
 </div>
 </body>

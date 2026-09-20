@@ -1,5 +1,12 @@
-rng=np.random.default_rng(631);n=700;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))];cut=.58;k=np.searchsorted(t,cut)
-ax.plot(t[:k+1],w[:k+1],color=ACCENT,lw=2,label='observable path')
-ax.plot(t[k:],w[k:],color=MUTED,lw=1.4,alpha=.35,label='future path hidden')
-ax.axvspan(0,cut,color=ACCENT,alpha=.07);ax.axvline(cut,color=BAD,ls='--',lw=1.4,label='current time')
-ax.set_xlabel('Time');ax.set_ylabel('$W_t$');ax.set_title('The filtration stops at the decision timestamp',loc='left');ax.legend(loc='upper left')
+m, s = 0.10 - 0.25**2 / 2, 0.25
+for S, col in ((100, ACCENT), (20, WARM)):
+    d = np.linspace(-S * 0.6, S * 1.2, 800)
+    R = 1 + d / S
+    pdf = stats.lognorm.pdf(R, s=s, scale=np.exp(m)) / S
+    sd = S * np.exp(0.10) * np.sqrt(np.exp(0.0625) - 1)
+    ax.plot(d, pdf, color=col, lw=2, label=f'start {S} USD: SD {sd:.2f} USD')
+ax.axvline(0, color=MUTED, lw=.8)
+ax.set_xlabel('Dollar change over one year (USD)')
+ax.set_ylabel('Density')
+ax.set_title('Same ratio, very different dollar spread', loc='left')
+ax.legend(fontsize=8)

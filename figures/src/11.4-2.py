@@ -1,1 +1,6 @@
-rng=np.random.default_rng(742);n=252;v=np.r_[np.full(80,.008),np.full(55,.028),np.full(117,.011)];ret=rng.normal(0,v);roll=np.sqrt(np.convolve(ret**2,np.ones(15)/15,'same'))*np.sqrt(252);ax.plot(roll*100,color=ACCENT,label='realized rolling vol');ax.axhline(np.mean(v)*np.sqrt(252)*100,color=WARM,ls='--',label='one constant σ');ax.set_xlabel('Trading day');ax.set_ylabel('Annualized volatility (%)');ax.set_title('A single volatility misses regimes',loc='left');ax.legend()
+y=np.linspace(0,220,401);uQ=np.maximum(0,1.2*y-180);uS=np.maximum(0,y-90);q=10.8*y-6*uQ-6*uS
+ax.plot(y,q,color=ACCENT,lw=2)
+ax.scatter([150],[1260],color=BAD,s=48,zorder=4,label='maximum: USD 1,260')
+ax.axvline(150,color=WARM,ls='--',lw=1.2)
+ax.set_xlabel('Beta multiplier, $y$');ax.set_ylabel('Dual function, $q(y)$ (USD)')
+ax.legend(loc='lower right',fontsize=8);ax.set_title('Maximising the lower bound recovers the dual optimum',loc='left')

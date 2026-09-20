@@ -1,5 +1,1 @@
-
-k=np.linspace(-.28,.24,240)
-for T,c in zip([.08,.25,1.0],[WARM,ACCENT,MUTED]):
- iv=.20+.06*np.exp(-2*T)-.12*k+.15*k*k;ax.plot(k,100*iv,color=c,label=f'{T:.2f}y')
-ax.set_xlabel('Log-moneyness log(K/F)');ax.set_ylabel('Implied volatility (%)');ax.legend(title='Maturity')
+rho=np.linspace(-1,1,300);vol=np.sqrt(.20**2+.25**2+2*rho*.20*.25);ax.plot(rho,vol*100,color=WARM,lw=2);ax.scatter([.6],[np.sqrt(.1625)*100],color=GOOD,s=45);ax.axhline(45,color=BAD,ls='--',label='naive sum = 45%');ax.set_xlabel('Instantaneous correlation');ax.set_ylabel('Product volatility (%/year)');ax.set_title('The correlation term controls diversification',loc='left');ax.legend(fontsize=8)

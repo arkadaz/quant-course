@@ -1,7 +1,11 @@
-y=np.linspace(0,150,301);lower=np.maximum(0,y-90)
-ax.fill_between(y,lower,100,color=GOOD,alpha=.20,label='dual-feasible slice')
-ax.plot(y,lower,color=ACCENT,lw=2,label=r'$u_S=\max(0,y-90)$')
-ax.axvline(150,color=WARM,ls='--',lw=1.3,label=r'$y\leq150$ when $u_Q=0$')
-ax.scatter([150],[60],color=BAD,s=48,zorder=4,label='optimum (150, 60)')
-ax.set_xlim(0,158);ax.set_ylim(0,100);ax.set_xlabel('Beta-floor price, $y$');ax.set_ylabel('SPY-cap price, $u_S$')
-ax.legend(loc='upper left',fontsize=7);ax.set_title('Dual feasibility prices the binding constraints',loc='left')
+assets=['Thai stocks','Bonds','Gold']
+money=np.array([50,30,20]);risk=np.array([85.84,1.46,12.70]);parity=np.array([21.15,58.69,20.16])
+x=np.arange(3);wd=.26
+b1=ax.bar(x-wd,money,wd,color=ACCENT,label='share of money (50/30/20)')
+b2=ax.bar(x,risk,wd,color=BAD,label='share of risk it carries')
+b3=ax.bar(x+wd,parity,wd,color=GOOD,label='risk-parity money (equal risk)')
+for bars in (b1,b2,b3):
+ for r in bars:
+  ax.annotate(f'{r.get_height():.1f}',(r.get_x()+r.get_width()/2,r.get_height()),textcoords='offset points',xytext=(0,2),ha='center',fontsize=7)
+ax.set_xticks(x);ax.set_xticklabels(assets);ax.set_ylim(0,100);ax.set_ylabel('% of portfolio')
+ax.set_title('Half the money carries 85.8% of the risk',loc='left');ax.legend(fontsize=7,loc='upper right')

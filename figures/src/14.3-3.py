@@ -1,1 +1,6 @@
-w=np.linspace(0,1,400); mse=400*w*w+64*(1-w)**2; ws=64/464; ax.plot(w,mse,color=SERIES[1],lw=2); ax.scatter([ws,1],[400*ws*ws+64*(1-ws)**2,400],color=[GOOD,BAD],zorder=3); ax.axvline(ws,color=GOOD,lw=1,ls='--'); ax.set(xlabel='Shrinkage weight w',ylabel='MSE (percentage-points squared)',ylim=(0,430)); ax.grid(alpha=.25)
+
+from scipy.stats import norm
+S=np.linspace(70,140,300);K=105.;r=.04;sig=.2
+for T,c in zip([.05,.25,1.0],[WARM,ACCENT,MUTED]):
+ d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));v=.01*S*norm.pdf(d1)*np.sqrt(T);ax.plot(S,v,color=c,label=f'{T:.2f}y')
+ax.set_xlabel('Spot (USD)');ax.set_ylabel('Vega (USD per vol point)');ax.legend(title='Time left')

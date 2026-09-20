@@ -1,4 +1,7 @@
-ax.barh(['AAPL','MSFT','JPM'],[2,-1,0.5],color=[GOOD,BAD,ACCENT])
-ax.axvline(0,color=MUTED,lw=0.8)
-ax.set_xlabel('position w (USD million)')
-ax.set_title('One USD million position value per matrix row',fontsize=9,loc='left')
+labels=['Net exposure','Gross exposure']
+vals=[15,25]
+ax.bar(labels,vals,color=[ACCENT,WARM],width=0.48)
+for i,v in enumerate(vals): ax.text(i,v+0.8,f'${v}M',ha='center',fontsize=10,color=INK,weight='bold')
+ax.set_ylim(0,30)
+ax.set_ylabel('Exposure ($M)')
+ax.set_title('Signed risk and deployed capital are not the same number',loc='left')

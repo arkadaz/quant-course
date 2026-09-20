@@ -1,10 +1,1 @@
-fig=ax.figure
-ax.remove()
-ax=fig.add_subplot(111,projection='3d')
-vecs=[(1,0,1,ACCENT,'u'),(0,1,1,WARM,'v'),(1,1,0,GOOD,'w')]
-for x,y,z,c,label in vecs:
- ax.quiver(0,0,0,x,y,z,color=c,arrow_length_ratio=.10,linewidth=2)
- ax.text(x*1.08,y*1.08,z*1.08,label,color=c,fontsize=10)
-ax.set_xlim(0,1.35);ax.set_ylim(0,1.35);ax.set_zlim(0,1.35)
-ax.set_xlabel('factor 1');ax.set_ylabel('factor 2');ax.set_zlabel('factor 3')
-ax.set_title(r'Independent vectors span $\mathbb{R}^3$',loc='left')
+n=np.linspace(1,60,300); se=.06/np.sqrt(n); infl=np.sqrt(3); ax.plot(n,100*se,color=SERIES[0],lw=2,label='iid SE'); ax.plot(n,100*infl*se,color=BAD,lw=2,label='AR(1) rho=0.5 proxy'); ax.set(xlabel='Years',ylabel='SE of mean (%)'); ax.legend(fontsize=7); ax.grid(alpha=.25)

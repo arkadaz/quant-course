@@ -1,2 +1,3 @@
-labels=['Spot today','Q mean at 1Y','Discounted Q mean','P mean at 1Y'];vals=[100,100*np.exp(.02),100,100*np.exp(.12)];ax.bar(labels,vals,color=[ACCENT,WARM,GOOD,MUTED],width=.55);ax.set_ylabel('USD/share');ax.set_ylim(0,128);ax.set_title('Risk-neutral growth cancels discounting',loc='left');
-for i,v in enumerate(vals):ax.text(i,v+2,f'USD {v:.2f}',ha='center',fontsize=8,weight='bold')
+vals=[.0191579,.0191579,.0283684];ax.bar(['Stocks','Bonds','Tech'],vals,color=[GOOD,GOOD,BAD]);ax.axhline(.0191579,color=WARM,ls='--',label='held-asset level 2$\\sigma_p^2$')
+ax.annotate('$u_3=0.00921$',xy=(2,.0283684),xytext=(1.2,.0305),arrowprops=dict(arrowstyle='->',color=BAD),color=BAD)
+ax.set_ylim(0,.034);ax.set_ylabel('Marginal annual variance $2(Vx)_i$');ax.legend(loc='upper left');ax.set_title('The excluded asset fails the marginal-risk test',loc='left')

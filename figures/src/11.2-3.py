@@ -1,1 +1,5 @@
-x=np.linspace(20,500,600);pdf=stats.lognorm.pdf(x,s=.30*np.sqrt(5),scale=100*np.exp(.075*5));ax.plot(x,pdf,color=ACCENT);ax.fill_between(x,pdf,color=ACCENT,alpha=.10);ax.axvline(145.50,color=WARM,label='median $145.50');ax.axvline(182.21,color=GOOD,label='mean $182.21');ax.set_xlabel('Terminal price (USD/share)');ax.set_ylabel('Density');ax.set_title('A few high paths lift the mean',loc='left');ax.legend()
+labels=['Beta row','QQQ-cap row','SPY-cap row'];lhs=np.array([10.8,6,6]);rhs=np.array([10.8,6,6]);i=np.arange(3)
+ax.bar(i-.18,lhs,.36,color=ACCENT,label='$A_{eq}z^*$')
+ax.bar(i+.18,rhs,.36,color=GOOD,label='$d$')
+ax.set_xticks(i,labels);ax.set_ylabel("Value in each row's native unit");ax.legend(loc='upper right')
+ax.set_title('Compare each left-hand side only with its labelled target',loc='left')

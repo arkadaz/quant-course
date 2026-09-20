@@ -1,5 +1,1 @@
-s=np.linspace(470,570,500);k=520;prem=21.72;pay=np.abs(s-k);pnl=pay-prem
-ax.plot(s,pay,color=ACCENT,lw=2,label='expiry payoff');ax.plot(s,pnl,color=GOOD,lw=2,label='buyer P&L after premium')
-ax.axhline(0,color=INK,lw=.8);ax.axvline(k,color=MUTED,ls='--',lw=1,label='strike = spot')
-ax.scatter([k-prem,k+prem],[0,0],color=BAD,s=30,zorder=4,label='break-even')
-ax.set_xlabel('SPY price at expiry (USD)');ax.set_ylabel('USD per share');ax.set_title('30-day ATM straddle: two-sided exposure',loc='left');ax.legend(loc='upper center',ncol=2,fontsize=7)
+rng=np.random.default_rng(724);n=np.arange(1,5001);z=rng.normal(size=5000);terminal=100*np.exp(.075*5+.30*np.sqrt(5)*z);cum=np.cumsum(terminal)/n;ax.plot(n,cum,color=ACCENT,lw=1.4,label='sample mean');ax.axhline(100*np.exp(.12*5),color=GOOD,ls='--',label='analytical mean');ax.set_xscale('log');ax.set_xlabel('Number of paths');ax.set_ylabel('Mean terminal price (USD/share)');ax.set_title('Simulation checks the formula, not the forecast',loc='left');ax.legend()

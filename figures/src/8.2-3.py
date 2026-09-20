@@ -1,2 +1,5 @@
-h=np.linspace(0,.05,101);linear=.0528*h;actual=linear+.04*h**2
-ax.plot(h*100,actual,color=ACCENT,lw=2,label='exact');ax.plot(h*100,linear,color=WARM,ls='--',label='linear');ax.fill_between(h*100,linear,actual,color=BAD,alpha=.15);ax.set_xlabel('Added SPY weight (percentage points)');ax.set_ylabel('Change in annual variance');ax.legend();ax.set_title('First-order accuracy fades with trade size',loc='left')
+n=np.arange(1,3001);signal=92.5*n;noise=1.96*2500*np.sqrt(n)
+ax.plot(n,signal,color=GOOD,label='persistent excess: $92.50 n');ax.plot(n,noise,color=BAD,label='95% noise boundary')
+ax.axvline(400,color=MUTED,ls='--');ax.axvline(2807,color=ACCENT,ls='--')
+ax.scatter([400],[37000],color=GOOD,s=28);ax.text(430,37000,'400 trades',va='center');ax.text(2760,8000,'2,807',ha='right',color=ACCENT)
+ax.set_xlabel('Trade count');ax.set_ylabel('USD');ax.legend(loc='upper left')

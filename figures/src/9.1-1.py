@@ -1,8 +1,7 @@
-from matplotlib.patches import Rectangle
-ax.set_xlim(0,10);ax.set_ylim(0,6);ax.axis('off')
-boxes=[(0.7,1.9,2.1,2.0,'Day 0','open'),(0.7,1.2,4.2,3.4,'Day 1','price + news'),(0.7,0.5,6.4,4.8,'Day 2','price + news + flow')]
-for i,(x,y,w,h,f,label) in enumerate(boxes):
-    ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=2,color=SERIES[i]))
-    ax.text(x+w-0.15,y+h-0.32,f'{f}: {label}',ha='right',va='top',color=SERIES[i],fontsize=8)
-ax.axvline(7.8,color=BAD,ls='--',lw=1.5);ax.text(7.95,4.9,'Future price\nnot observable yet',color=BAD,va='top')
-ax.annotate('information only grows',xy=(6.8,0.7),xytext=(3.8,0.1),arrowprops=dict(arrowstyle='->',color=INK),ha='center')
+rng=np.random.default_rng(611)
+n=900;t=np.linspace(0,1,n+1);w=np.r_[0,np.cumsum(rng.normal(0,np.sqrt(1/n),n))]
+ax.plot(t,w,color=ACCENT,lw=1.5)
+ax.axvspan(.12,.30,color=WARM,alpha=.18,label='non-overlapping window A')
+ax.axvspan(.58,.82,color=GOOD,alpha=.15,label='non-overlapping window B')
+for q in [.12,.30,.58,.82]: ax.scatter([q],[np.interp(q,t,w)],s=25,color=INK,zorder=4)
+ax.set_xlabel('Time');ax.set_ylabel('$B_t$');ax.set_title('A continuous path with independent Normal increments',loc='left');ax.legend(loc='upper left',fontsize=7)

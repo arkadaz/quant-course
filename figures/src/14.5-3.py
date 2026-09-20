@@ -1,1 +1,4 @@
-rho=np.linspace(-.6,.75,300); fac=np.sqrt((1+rho)/(1-rho)); ax.plot(rho,fac,color=BAD,lw=2); ax.axhline(1,color=INK,lw=1,ls='--'); ax.scatter([-.3,.0,.5],[np.sqrt(.7/1.3),1,np.sqrt(3)],color=[GOOD,WARM,BAD],zorder=3); ax.set(xlabel='First-order autocorrelation',ylabel='Long-run SE multiplier',ylim=(0,3.2)); ax.grid(alpha=.25)
+
+T=np.linspace(.08,1.0,220);good=.006+.035*T;bad=.010+.025*T-.030*T*T
+ax.plot(T,good,color=ACCENT,label='Increasing total variance');ax.plot(T,bad,'--',color=BAD,label='Calendar violation');ax.axhline(0,color=INK,lw=1)
+ax.set_xlabel('Maturity (years)');ax.set_ylabel('Total variance');ax.legend()

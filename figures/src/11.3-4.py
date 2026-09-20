@@ -1,1 +1,7 @@
-k=np.linspace(60,170,300);z=(np.log(k/100)-(.10-.5*.25**2))/.25;p=1-stats.norm.cdf(z);ax.plot(k,p*100,color=ACCENT);ax.scatter([130],[21.9],color=GOOD);ax.axvline(130,color=GOOD,ls='--');ax.set_xlabel('Threshold K (USD/share)');ax.set_ylabel('P(S₁ > K) (%)');ax.set_title('One-year exceedance probability under GBM',loc='left')
+y=np.linspace(0,150,301);lower=np.maximum(0,y-90)
+ax.fill_between(y,lower,100,color=GOOD,alpha=.20,label='dual-feasible slice')
+ax.plot(y,lower,color=ACCENT,lw=2,label=r'$u_S=\max(0,y-90)$')
+ax.axvline(150,color=WARM,ls='--',lw=1.3,label=r'$y\leq150$ when $u_Q=0$')
+ax.scatter([150],[60],color=BAD,s=48,zorder=4,label='optimum (150, 60)')
+ax.set_xlim(0,158);ax.set_ylim(0,100);ax.set_xlabel('Beta-floor price, $y$');ax.set_ylabel('SPY-cap price, $u_S$')
+ax.legend(loc='upper left',fontsize=7);ax.set_title('Dual feasibility prices the binding constraints',loc='left')

@@ -1,6 +1,1 @@
-
-from scipy.stats import norm
-S=np.linspace(70,140,260);K=105.;r=.04;sig=.2;T=.25
-d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));d2=d1-sig*np.sqrt(T)
-ax.plot(S,norm.cdf(d1),label='Phi(d1): share-weighted',color=ACCENT);ax.plot(S,norm.cdf(d2),label='Phi(d2): exercise probability',color=WARM)
-ax.set_xlabel('Spot (USD)');ax.set_ylabel('Quantity');ax.set_ylim(0,1);ax.legend()
+sig=np.linspace(.10,.60,200);g=.12-.5*sig**2;ax.plot(sig*100,g*100,color=WARM,lw=2);ax.axhline(0,color=INK,lw=.8);ax.scatter([28],[8.08],color=GOOD,s=40,zorder=3);ax.annotate('28% vol: 8.08%',xy=(28,8.08),xytext=(33,10),fontsize=8,arrowprops=dict(arrowstyle='->',color=INK));ax.scatter([48.99],[0],color=BAD,s=40,zorder=3);ax.annotate('49% vol: 0%',xy=(48.99,0),xytext=(38,-4),fontsize=8,arrowprops=dict(arrowstyle='->',color=INK));ax.set_xlabel('Annual volatility (%)');ax.set_ylabel('Median log-growth exponent (%/year)');ax.set_title('Same 12% drift, more volatility, lower median growth',loc='left')

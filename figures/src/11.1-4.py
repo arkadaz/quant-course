@@ -1,13 +1,5 @@
-m, s = 0.0808, 0.28
-x = np.linspace(30, 260, 700)
-pdf = stats.lognorm.pdf(x, s=s, scale=100 * np.exp(m))
-ax.plot(x, pdf, color=ACCENT, lw=2)
-lo, hi = 100 * np.exp(m - 1.6449 * s), 100 * np.exp(m + 1.6449 * s)
-band = (x >= lo) & (x <= hi)
-ax.fill_between(x[band], pdf[band], color=ACCENT, alpha=.12, label=f'5%-95%: {lo:.2f} to {hi:.2f}')
-ax.axvline(100 * np.exp(m), color=WARM, lw=1.5, label='median 108.42')
-ax.axvline(100 * np.exp(0.12), color=GOOD, lw=1.5, ls='--', label='mean 112.75')
-ax.set_xlabel('Price after 252 days (USD/share)')
-ax.set_ylabel('Density')
-ax.set_title('One year of 12% drift and 28% volatility', loc='left')
-ax.legend(fontsize=8)
+labels=['QQQ','SPY'];vals=[180/1.2,90/1.0]
+ax.bar(labels,vals,color=[WARM,GOOD],width=.5)
+for i,v in enumerate(vals):ax.text(i,v+5,f'USD {v:.0f}',ha='center',fontsize=10,weight='bold')
+ax.set_ylim(0,175);ax.set_ylabel('Cost per beta-USD million removed (USD)')
+ax.set_title('Cheaper beta reduction uses SPY capacity first',loc='left')

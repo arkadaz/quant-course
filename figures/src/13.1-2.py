@@ -1,4 +1,2 @@
-
-terms=np.array([-8.91134085,1.47087462,7.53610130,-.09563508]);labels=[r'$\Theta$', r'$r S \Delta$', r'$0.5\,\sigma^2 S^2 \Gamma$', r'$-r C$']
-ax.bar(labels,terms,color=[BAD,WARM,ACCENT,MUTED]);ax.axhline(0,color=INK,lw=1)
-ax.set_ylabel('PDE contribution (USD/year)');ax.tick_params(axis='x',rotation=13)
+n=np.array([8,16,32,64,128,256,512,1024]);sd=np.sqrt(2/n)
+ax.loglog(n,sd,color=WARM,lw=2,marker='o');ax.set_xlabel('Partition count n');ax.set_ylabel('SD of $Q_n$ (years)');ax.set_title('Quadratic-variation noise shrinks as $n^{-1/2}$',loc='left');ax.grid(True,which='both',alpha=.25)

@@ -1,2 +1,6 @@
-x=np.linspace(-1.1,1.1,180);y=np.linspace(-1.1,1.1,180);X,Y=np.meshgrid(x,y);Z=.04*X**2+.012*X*Y+.01*Y**2
-ax.contour(X,Y,Z,levels=9,cmap='viridis');ax.scatter([0],[0],color=GOOD,s=45);ax.set_xlabel('$p_1$');ax.set_ylabel('$p_2$');ax.set_aspect('equal');ax.set_title('Positive curvature leaves one basin',loc='left')
+rng=np.random.default_rng(51);n=80;t=np.arange(n+1)
+for drift,col,label in [(0.12,GOOD,'submartingale'),(0.0,ACCENT,'martingale'),(-0.12,BAD,'supermartingale')]:
+    inc=rng.normal(drift,1.0,size=(250,n));p=np.c_[np.zeros(250),np.cumsum(inc,axis=1)]
+    ax.plot(t,p[:5].T,color=col,alpha=0.10,lw=0.8)
+    ax.plot(t,p.mean(axis=0),color=col,lw=2.4,label=label)
+ax.axhline(0,color=MUTED,lw=0.8);ax.set_xlabel('Time step');ax.set_ylabel('Value change');ax.legend(loc='upper left',ncol=3,fontsize=7)

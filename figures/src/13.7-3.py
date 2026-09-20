@@ -1,4 +1,1 @@
-
-K=np.array([70,80,90,100,110,120,130]);curves={-0.2:[26.379810,25.488041,24.802535,24.314822,24.008209,23.856274,23.826995],-0.7:[28.484994,26.928887,25.487606,24.153042,22.928766,21.827040,20.864150],-0.9:[29.203277,27.425677,25.722234,24.068001,22.447609,20.855933,19.300442]}
-for (rho,y),c in zip(curves.items(),[MUTED,ACCENT,WARM]): ax.plot(K,y,'o-',color=c,label=f'rho={rho:.1f}')
-ax.set_xlabel('Strike (USD)');ax.set_ylabel('Implied volatility (%)');ax.legend()
+rng=np.random.default_rng(1207);n=30000;z=rng.normal(size=n);s=200*np.exp((.04-.5*.30**2)+.30*z);x=np.exp(-.04)*(s*s/200);idx=np.unique(np.geomspace(50,n,90).astype(int));run=np.cumsum(x);est=run[idx-1]/idx;ax.semilogx(idx,est,color=ACCENT,lw=1.7,label='running Monte Carlo');ax.axhline(200*np.exp(.13),color=GOOD,ls='--',label='analytic USD 227.77');ax.set_xlabel('Path count');ax.set_ylabel('Estimated value (USD)');ax.set_title('Forward averaging meets the closed form',loc='left');ax.legend(fontsize=8)

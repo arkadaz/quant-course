@@ -1,6 +1,5 @@
-rng=np.random.default_rng(53);R=900
-for j in range(36):
-    fail=rng.random(R)<1/512;inc=np.where(fail,-511000,1000);eq=np.r_[0,np.cumsum(inc)]
-    first=np.flatnonzero(fail);end=(first[0]+1) if len(first) else R
-    ax.plot(np.arange(end+1),eq[:end+1]/1000,color=BAD if len(first) else ACCENT,alpha=0.28,lw=1)
-ax.axhline(0,color=INK,lw=0.8);ax.set_xlabel('Completed cycles');ax.set_ylabel('Cumulative P&L (USD thousands)');ax.set_title('Fixed nine-rung policy; paths stop at first ladder failure',fontsize=9,loc='left')
+rng=np.random.default_rng(633);m=5000;n=250;t=np.linspace(0,1,n+1);w=np.c_[np.zeros(m),np.cumsum(rng.normal(0,np.sqrt(1/n),(m,n)),axis=1)]
+ax.plot(t,(w*w).mean(axis=0),color=ACCENT,lw=2,label='mean of $W_t^2$')
+ax.plot(t,(w*w-t).mean(axis=0),color=GOOD,lw=2,label='mean of $W_t^2-t$')
+ax.plot(t,t,color=INK,ls='--',lw=1,label='theory: $t$')
+ax.axhline(0,color=MUTED,lw=.8);ax.set_xlabel('Time');ax.set_ylabel('Ensemble mean');ax.set_title('Compensation subtracts predictable quadratic growth',loc='left');ax.legend(loc='upper left')

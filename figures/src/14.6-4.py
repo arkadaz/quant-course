@@ -1,1 +1,3 @@
-T=np.linspace(1,25,300); baseline=np.sqrt(2*np.log(200)/T); ax.plot(T,baseline,color=SERIES[2],lw=2); ax.scatter([5,20],[np.sqrt(2*np.log(200)/5),np.sqrt(2*np.log(200)/20)],color=[WARM,GOOD],zorder=3); ax.set(xlabel='Independent years T',ylabel='Null maximum Sharpe proxy',ylim=(0,3.4)); ax.grid(alpha=.25)
+
+vals=np.array([.398443914,.241165374,.024176827,-.157278540,.082168479]);names=['Straddle','Strangle','Risk reversal','Butterfly','Calendar']
+ax.bar(names,vals,color=np.where(vals>=0,ACCENT,BAD));ax.axhline(0,color=INK,lw=1);ax.set_ylabel('Vega (USD per vol point)');ax.tick_params(axis='x',rotation=15)

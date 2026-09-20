@@ -1,1 +1,6 @@
-n=np.linspace(1,60,300); se=.06/np.sqrt(n); infl=np.sqrt(3); ax.plot(n,100*se,color=SERIES[0],lw=2,label='iid SE'); ax.plot(n,100*infl*se,color=BAD,lw=2,label='AR(1) rho=0.5 proxy'); ax.set(xlabel='Years',ylabel='SE of mean (%)'); ax.legend(fontsize=7); ax.grid(alpha=.25)
+
+from scipy.stats import norm
+S=100.;K=105.;r=.04;T=.25;v=np.linspace(.005,1.2,320)
+d1=(np.log(S/K)+(r+.5*v**2)*T)/(v*np.sqrt(T));d2=d1-v*np.sqrt(T);c=S*norm.cdf(d1)-K*np.exp(-r*T)*norm.cdf(d2)
+ax.plot(100*v,c,color=ACCENT);ax.axhline(S,color=MUTED,ls='--',label='Upper bound S0')
+ax.set_xlabel('Volatility (% per sqrt year)');ax.set_ylabel('Call value (USD)');ax.legend()

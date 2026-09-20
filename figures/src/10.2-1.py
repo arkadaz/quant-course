@@ -1,5 +1,12 @@
-rng=np.random.default_rng(621);n=800;m=8;t=np.linspace(0,1,n+1);dw=rng.normal(0,np.sqrt(1/n),(m,n));w=np.c_[np.zeros(m),np.cumsum(dw,axis=1)]
-for i in range(m):ax.plot(t,w[i],color=SERIES[i%len(SERIES)],alpha=.62,lw=1)
-ax.plot(t,np.sqrt(t),color=INK,ls='--',lw=1.2,label=r'$+\sqrt{t}$')
-ax.plot(t,-np.sqrt(t),color=INK,ls='--',lw=1.2,label=r'$-\sqrt{t}$')
-ax.set_xlabel('Time');ax.set_ylabel('$W_t$');ax.set_title('Standard Brownian motion sample paths',loc='left');ax.legend(loc='lower left',ncol=2)
+s = np.linspace(0, 20, 300)
+mu, sig = 0.14, 0.32
+mean = 100 * np.exp(mu * s)
+med = 100 * np.exp((mu - sig**2 / 2) * s)
+ax.plot(s, mean, color=ACCENT, lw=2, label='mean: 100 e^(0.14 t)')
+ax.plot(s, med, color=WARM, lw=2, label='median: 100 e^(0.0888 t)')
+ax.annotate(f'{mean[-1]:,.2f}', (20, mean[-1]), xytext=(-8, -4), textcoords='offset points', ha='right', fontsize=8)
+ax.annotate(f'{med[-1]:,.2f}', (20, med[-1]), xytext=(-8, 6), textcoords='offset points', ha='right', fontsize=8)
+ax.set_xlabel('Horizon (years)')
+ax.set_ylabel('Value of 100 USD')
+ax.set_title('Fund at 14% drift, 32% volatility', loc='left')
+ax.legend(loc='upper left', fontsize=8)

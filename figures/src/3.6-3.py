@@ -1,0 +1,1 @@
+i=np.arange(1,11); threshold=i*.10/200; p=np.array([.0002,.0009,.0020,.0040,.0060,.009,.013,.020,.030,.045]); ax.plot(i,threshold,color=BAD,lw=2,label='i q / M'); ax.scatter(i,p,color=[GOOD,GOOD]+[WARM]*8,s=28,zorder=3,label='sorted p-values'); ax.set(xlabel='Rank i',ylabel='p-value',ylim=(0,.008),xlim=(.5,10.5)); ax.legend(fontsize=7); ax.grid(alpha=.25)

@@ -1,6 +1,0 @@
-labels=['Stocks','Bonds','Tech'];slack=np.array([.105263,.894737,0]);mult=np.array([0,0,.009211]);x=np.arange(3)
-ax.bar(x-.18,slack,.36,color=ACCENT,label='weight (slack)');ax2=ax.twinx();ax2.bar(x+.18,mult,.36,color=BAD,label='multiplier u')
-ax.set_ylim(0,1);ax2.set_ylim(0,.012);ax2.grid(False);ax.set_ylabel('Weight');ax2.set_ylabel('Multiplier u')
-ax2.annotate('$u_3=0.00921$',xy=(2.18,.009211),xytext=(1.2,.0108),arrowprops=dict(arrowstyle='->',color=BAD),color=BAD)
-ax.set_xticks(x,labels);h1,l1=ax.get_legend_handles_labels();h2,l2=ax2.get_legend_handles_labels();ax.legend(h1+h2,l1+l2,loc='upper left')
-ax.set_title('Only a binding lower bound carries a price',loc='left')

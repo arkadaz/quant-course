@@ -1,7 +1,2 @@
-
-from scipy.stats import norm
-S=np.linspace(60,145,320);K=105.;r=.04;sig=.2;T=.25
-d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));d2=d1-sig*np.sqrt(T)
-c=S*norm.cdf(d1)-K*np.exp(-r*T)*norm.cdf(d2)
-ax.plot(S,np.maximum(S-K,0),'--',color=MUTED,label='Expiry payoff');ax.plot(S,c,color=ACCENT,label='Value with 0.25y left')
-ax.set_xlabel('Spot (USD)');ax.set_ylabel('USD per share');ax.legend()
+labels=['ordinary chain rule','Itô chain rule'];vals=[.12,.0808];ax.bar(labels,np.array(vals)*100,color=[BAD,GOOD],width=.55);ax.set_ylim(0,14.5);ax.set_ylabel('Log drift (%/year)');ax.set_title('Curvature lowers the median-growth exponent',loc='left');
+for i,v in enumerate(vals):ax.text(i,v*100+.4,f'{v*100:.2f}%',ha='center',weight='bold')

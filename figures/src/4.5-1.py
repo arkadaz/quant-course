@@ -1,5 +1,6 @@
-c1=np.array([1.0,2.0,3.0]); c2=2*c1
-ax.scatter(c1,c2,color=ACCENT,s=35)
-line=np.linspace(0,3.5,100); ax.plot(line,2*line,color=BAD,ls='--')
-ax.set_xlabel('column 1 value');ax.set_ylabel('column 2 value')
-ax.set_title('Collinear columns reveal rank deficiency',fontsize=9,loc='left')
+ax.axhline(0,color=MUTED,lw=.8);ax.axvline(0,color=MUTED,lw=.8)
+vecs=[((1,-1),ACCENT,'x'),((1,0),GOOD,'acute: dot > 0'),((1,1),WARM,'orthogonal: dot = 0'),((-1,2),BAD,'obtuse: dot < 0')]
+for (dx,dy),c,lbl in vecs: ax.quiver(0,0,dx,dy,angles='xy',scale_units='xy',scale=1,color=c,width=.009,label=lbl)
+ax.set_aspect('equal');ax.set_xlim(-1.5,1.6);ax.set_ylim(-1.5,2.5)
+ax.set_xlabel('centered return axis 1');ax.set_ylabel('centered return axis 2')
+ax.legend(loc='upper left',fontsize=7);ax.set_title('Acute, right, and obtuse geometry',loc='left')

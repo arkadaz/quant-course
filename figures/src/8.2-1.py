@@ -1,2 +1,7 @@
-x=np.linspace(-.1,1.1,18);y=np.linspace(-.1,1.1,18);X,Y=np.meshgrid(x,y);G1=.08*X+.012*Y;G2=.012*X+.02*Y;Z=.04*X**2+.012*X*Y+.01*Y**2
-ax.contour(X,Y,Z,levels=9,cmap='viridis',alpha=.75);n=np.sqrt(G1**2+G2**2)+1e-12;ax.quiver(X,Y,G1/n,G2/n,color=INK,alpha=.45,scale=28);ax.scatter([.6],[.4],color=BAD,s=48);ax.set_xlabel('SPY weight');ax.set_ylabel('AGG weight');ax.set_title('Gradient crosses equal-risk contours',loc='left')
+rng=np.random.default_rng(52);n=400;t=np.arange(n+1);baseline=320*t
+raw=np.r_[0,np.cumsum(rng.normal(0,2500,400))];bridge=raw-(t/400)*raw[-1]+(t/400)*37000
+observed=baseline+bridge
+ax.plot(t,observed,color=ACCENT,label='observed cumulative P&L')
+ax.plot(t,baseline,color=WARM,ls='--',label='baseline: $320 per trade')
+ax.vlines(400,128000,165000,color=GOOD,lw=3);ax.text(392,146500,'excess = $37,000',ha='right',va='center',color=GOOD)
+ax.scatter([400],[165000],color=ACCENT,s=30);ax.set_xlabel('Trade count');ax.set_ylabel('USD');ax.legend(loc='upper left')

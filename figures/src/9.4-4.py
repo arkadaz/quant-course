@@ -1,5 +1,4 @@
-x=np.linspace(0,1,401);ax.plot(x,np.ones_like(x),color=INK,lw=2)
-ax.fill_between(x,0,1,where=x<=0.10,color=BAD,alpha=0.35,label='extreme: 0%-10%')
-ax.fill_between(x,0,1,where=(x>=0.45)&(x<=0.55),color=GOOD,alpha=0.45,label='near tie: 45%-55%')
-ax.fill_between(x,0,1,where=x>=0.90,color=BAD,alpha=0.35,label='extreme: 90%-100%')
-ax.set_xlim(0,1);ax.set_ylim(0,1.2);ax.set_xlabel('Limiting share');ax.set_ylabel('Uniform density');ax.legend(loc='upper center',ncol=3,fontsize=7)
+rng=np.random.default_rng(642);m=60000;s=1/12;jan=rng.normal(0,np.sqrt(s),m);rest=rng.normal(0,np.sqrt(1-s),m);year=jan+rest;cov=np.cov(jan,year,ddof=0)[0,1];rho=np.corrcoef(jan,year)[0,1]
+ix=np.arange(0,m,30);ax.scatter(jan[ix],year[ix],s=8,alpha=.22,color=ACCENT,edgecolors='none')
+xx=np.linspace(jan[ix].min(),jan[ix].max(),100);ax.plot(xx,xx,color=GOOD,lw=2,label='conditional mean: year = January')
+ax.set_xlabel('January cumulative result');ax.set_ylabel('Full-year cumulative result');ax.set_title(f'Monte Carlo: covariance={cov:.4f}, correlation={rho:.3f}',loc='left');ax.legend(loc='upper left')

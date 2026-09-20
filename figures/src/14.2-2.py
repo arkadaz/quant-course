@@ -1,3 +1,6 @@
-n=np.linspace(1,70,300)
-for ir,c in zip([.25,.5,1.0],SERIES[:3]): ax.plot(n,ir*np.sqrt(n),color=c,lw=2,label=f'IR={ir:.2f}')
-ax.axhline(2,color=BAD,lw=1.2,ls='--',label='t=2'); ax.set(xlabel='Independent years',ylabel='Expected t-statistic',ylim=(0,8.6)); ax.legend(fontsize=7); ax.grid(alpha=.25)
+
+from scipy.stats import norm
+z=np.linspace(-3.7,3.7,500);cut=.437901642;y=norm.pdf(z)
+ax.plot(z,y,color=ACCENT);ax.fill_between(z,0,y,where=z>=cut,color=WARM,alpha=.55)
+ax.axvline(cut,color=BAD,ls='--',label='Exercise threshold')
+ax.set_xlabel('Standard normal shock Z');ax.set_ylabel('Density');ax.legend()

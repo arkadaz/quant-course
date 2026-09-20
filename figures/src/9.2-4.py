@@ -1,3 +1,5 @@
-x=np.linspace(-3.5,3.5,500);y=stats.norm.pdf(x);ax.plot(x,y,color=ACCENT);mask=x>=0.74;ax.fill_between(x[mask],0,y[mask],color=WARM,alpha=0.45,label='one-sided tail = 22.96%')
-ax.axvline(0.74,color=BAD,ls='--');ax.text(0.82,0.30,'observed z = 0.74',color=BAD)
-ax.set_xlabel('z-score');ax.set_ylabel('Density');ax.legend(loc='upper left')
+s=np.linspace(470,570,500);k=520;prem=21.72;pay=np.abs(s-k);pnl=pay-prem
+ax.plot(s,pay,color=ACCENT,lw=2,label='expiry payoff');ax.plot(s,pnl,color=GOOD,lw=2,label='buyer P&L after premium')
+ax.axhline(0,color=INK,lw=.8);ax.axvline(k,color=MUTED,ls='--',lw=1,label='strike = spot')
+ax.scatter([k-prem,k+prem],[0,0],color=BAD,s=30,zorder=4,label='break-even')
+ax.set_xlabel('SPY price at expiry (USD)');ax.set_ylabel('USD per share');ax.set_title('30-day ATM straddle: two-sided exposure',loc='left');ax.legend(loc='upper center',ncol=2,fontsize=7)

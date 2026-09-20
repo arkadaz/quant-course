@@ -1,1 +1,2 @@
-n=np.logspace(2,7,250);sampling=.8/np.sqrt(n/100);bias=np.full_like(n,.08);ax.loglog(n,sampling,color=ACCENT,lw=2,label='sampling error');ax.loglog(n,bias,color=WARM,lw=2,label='fixed-grid bias');ax.set_xlabel('Monte Carlo paths');ax.set_ylabel('Illustrative error scale');ax.set_title('A billion paths cannot repair a coarse grid',loc='left');ax.legend(fontsize=8)
+q=np.linspace(0,.4,250);linear=.001*q;impact=.006*q**2;ax.plot(q*100,linear*1e4,color=ACCENT,lw=2,label='linear spread/fees');ax.plot(q*100,(linear+impact)*1e4,color=BAD,lw=2,label='plus quadratic impact')
+ax.set_xlabel('Gross weight traded');ax.set_ylabel('Cost (bp of portfolio value)');ax.legend();ax.set_title('Impact bends the cost curve upward',loc='left')

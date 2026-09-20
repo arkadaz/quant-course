@@ -1,4 +1,2 @@
-
-T=np.linspace(.08,1.0,220);good=.006+.035*T;bad=.010+.025*T-.030*T*T
-ax.plot(T,good,color=ACCENT,label='Increasing total variance');ax.plot(T,bad,'--',color=BAD,label='Calendar violation');ax.axhline(0,color=INK,lw=1)
-ax.set_xlabel('Maturity (years)');ax.set_ylabel('Total variance');ax.legend()
+labels=['Base','SPY drift','QQQ drift','Cross term'];pieces=np.array([1,np.exp(.08)-1,np.exp(.18)-np.exp(.08),np.exp(.21)-np.exp(.18)])*1e6;ax.bar(labels,pieces/1e3,color=[MUTED,ACCENT,WARM,GOOD]);ax.set_ylabel('Contribution (USD thousand)');ax.set_title('USD expectation includes the covariance correction',loc='left');
+for i,v in enumerate(pieces/1e3):ax.text(i,v+8,f'{v:.0f}',ha='center',fontsize=8)

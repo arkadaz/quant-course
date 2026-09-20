@@ -1,8 +1,2 @@
-
-from scipy.stats import norm
-S=np.linspace(70,135,350);sig=.2;T1=.25;T2=.5
-def g(K,T):
- d1=(np.log(S/K)+.5*sig**2*T)/(sig*np.sqrt(T));return norm.pdf(d1)/(S*sig*np.sqrt(T))
-sets={'Straddle':2*g(100,T1),'Strangle':g(90,T1)+g(110,T1),'Risk reversal':g(110,T1)-g(90,T1),'Butterfly':g(90,T1)-2*g(100,T1)+g(110,T1),'Calendar':g(100,T2)-g(100,T1)}
-for (name,y),c in zip(sets.items(),[ACCENT,WARM,BAD,GOOD,MUTED]): ax.plot(S,y,label=name,color=c)
-ax.axhline(0,color=INK,lw=1);ax.set_xlabel('Spot (USD)');ax.set_ylabel('Gamma (per USD)');ax.legend(ncol=2)
+labels=['Spot today','Q mean at 1Y','Discounted Q mean','P mean at 1Y'];vals=[100,100*np.exp(.02),100,100*np.exp(.12)];ax.bar(labels,vals,color=[ACCENT,WARM,GOOD,MUTED],width=.55);ax.set_ylabel('USD/share');ax.set_ylim(0,128);ax.set_title('Risk-neutral growth cancels discounting',loc='left');
+for i,v in enumerate(vals):ax.text(i,v+2,f'USD {v:.2f}',ha='center',fontsize=8,weight='bold')

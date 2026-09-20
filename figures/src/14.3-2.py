@@ -1,1 +1,6 @@
-labels=['Mean, 1 year','Vol, 252 days','Vol, 98,280 min']; vals=[20,20/np.sqrt(504)*100,20/np.sqrt(196560)*100]; ax.bar(labels,vals,color=[BAD,SERIES[0],GOOD]); ax.set(ylabel='Standard error (percentage points)',ylim=(0,22)); ax.tick_params(axis='x',labelrotation=12,labelsize=7); ax.grid(axis='y',alpha=.25)
+
+from scipy.stats import norm
+S=np.linspace(70,140,300);K=105.;r=.04;sig=.2
+for T,c in zip([1.0,.25,.05],[MUTED,ACCENT,WARM]):
+ d1=(np.log(S/K)+(r+.5*sig**2)*T)/(sig*np.sqrt(T));g=norm.pdf(d1)/(S*sig*np.sqrt(T));ax.plot(S,g,color=c,label=f'{T:.2f}y')
+ax.set_xlabel('Spot (USD)');ax.set_ylabel('Gamma (per USD)');ax.legend(title='Time left')
