@@ -1,8 +1,8 @@
-x=np.linspace(-11,8,360);marg_mean=0.03;marg_sd=3.0
-beta=0.60;xobs=-3.0;muX=0.04;cond_mean=marg_mean+beta*(xobs-muX);cond_sd=np.sqrt(7.56)
-marg=stats.norm.pdf(x,loc=marg_mean,scale=marg_sd);cond=stats.norm.pdf(x,loc=cond_mean,scale=cond_sd)
-ax.plot(x,marg,color=MUTED,lw=2,label='QQQ marginal: mean 0.03%, SD 3.00%')
-ax.plot(x,cond,color=GOOD,lw=2,label=f'conditional: mean {cond_mean:.3f}%, SD {cond_sd:.2f}%')
-ax.axvline(cond_mean,color=GOOD,ls='--',lw=.9)
-ax.set_xlabel('QQQ return (%)');ax.set_ylabel('density');ax.legend(loc='upper left',fontsize=7)
-ax.set_title('Conditioning shifts the mean and removes explained variance',fontsize=9,loc='left')
+x=np.linspace(0,10,200); y=(10-x)/2
+ax.plot(x,y,color=BAD,lw=2)
+ax.fill_between(x,0,y,color=GOOD,alpha=0.18)
+ax.scatter([4,8],[2,3],s=45,color=[GOOD,BAD])
+ax.annotate('feasible (4,2)',(4,2),xytext=(4.5,2.7),fontsize=8)
+ax.annotate('reject (8,3)',(8,3),xytext=(8.1,3.6),fontsize=8)
+ax.set_xlim(-0.5,10.8);ax.set_ylim(-0.3,5.8);ax.set_xlabel('x1 (USD million)');ax.set_ylabel('x2 (USD million)')
+ax.set_title('Feasibility is checked before optimization',fontsize=9,loc='left')

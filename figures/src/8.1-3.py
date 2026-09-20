@@ -1,6 +1,6 @@
-rng=np.random.default_rng(51);n=80;t=np.arange(n+1)
-for drift,col,label in [(0.12,GOOD,'submartingale'),(0.0,ACCENT,'martingale'),(-0.12,BAD,'supermartingale')]:
-    inc=rng.normal(drift,1.0,size=(250,n));p=np.c_[np.zeros(250),np.cumsum(inc,axis=1)]
-    ax.plot(t,p[:5].T,color=col,alpha=0.10,lw=0.8)
-    ax.plot(t,p.mean(axis=0),color=col,lw=2.4,label=label)
-ax.axhline(0,color=MUTED,lw=0.8);ax.set_xlabel('Time step');ax.set_ylabel('Value change');ax.legend(loc='upper left',ncol=3,fontsize=7)
+rng=np.random.default_rng(0)
+S=np.array([[0.0004,0.00012],[0.00012,0.0006]])
+z=rng.multivariate_normal([0,0],S,700)
+ax.scatter(z[:,0]*100,z[:,1]*100,s=8,alpha=0.28,color=ACCENT)
+ax.set_xlabel('Technology return (%)');ax.set_ylabel('Financials return (%)')
+ax.set_title('Off-diagonal covariance tilts the return cloud',fontsize=9,loc='left')

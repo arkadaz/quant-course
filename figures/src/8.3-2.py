@@ -1,6 +1,5 @@
-labels=['Success','Ladder failure'];probs=np.array([511/512,1/512]);pnl=np.array([1000,-511000]);weighted=probs*pnl
-x=np.arange(2);ax.bar(x,weighted,color=[GOOD,BAD],width=0.55);ax.axhline(0,color=INK,lw=0.8)
-ax.set_xticks(x,labels);ax.set_ylabel('Probability-weighted P&L (USD)')
-for i,v in enumerate(weighted):ax.text(i,v+(35 if v>=0 else -35),f'{v:+,.2f}',ha='center',va='bottom' if v>=0 else 'top')
-ax.set_title('99.8047% success still nets to zero expectation',fontsize=9,loc='left')
-ax.set_ylim(-1200,1200)
+x=np.linspace(-2.5,2.5,100);a=np.linspace(0,2.5,60)
+ax.plot(x,x*x,color=ACCENT,lw=2,label='E[Y | X=x] = x²')
+ax.plot(a,a*a,color=BAD,ls='--',label='E[Y | |X|=a] = a²')
+ax.set_xlabel('signed X or magnitude |X|');ax.set_ylabel('conditional mean')
+ax.legend(loc='upper center');ax.set_title('Conditional mean exposes nonlinear dependence',fontsize=9,loc='left')

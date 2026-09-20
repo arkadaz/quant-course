@@ -1,10 +1,3 @@
-fig=ax.figure
-ax.remove()
-ax=fig.add_subplot(111,projection='3d')
-vecs=[(1,0,1,ACCENT,'u'),(0,1,1,WARM,'v'),(1,1,0,GOOD,'w')]
-for x,y,z,c,label in vecs:
- ax.quiver(0,0,0,x,y,z,color=c,arrow_length_ratio=.10,linewidth=2)
- ax.text(x*1.08,y*1.08,z*1.08,label,color=c,fontsize=10)
-ax.set_xlim(0,1.35);ax.set_ylim(0,1.35);ax.set_zlim(0,1.35)
-ax.set_xlabel('factor 1');ax.set_ylabel('factor 2');ax.set_zlabel('factor 3')
-ax.set_title(r'Independent vectors span $\mathbb{R}^3$',loc='left')
+x=np.linspace(-3.5,3.5,500);y=stats.norm.pdf(x);ax.plot(x,y,color=ACCENT);mask=x>=0.74;ax.fill_between(x[mask],0,y[mask],color=WARM,alpha=0.45,label='one-sided tail = 22.96%')
+ax.axvline(0.74,color=BAD,ls='--');ax.text(0.82,0.30,'observed z = 0.74',color=BAD)
+ax.set_xlabel('z-score');ax.set_ylabel('Density');ax.legend(loc='upper left')

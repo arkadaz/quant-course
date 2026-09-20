@@ -1,0 +1,5 @@
+x=np.linspace(0,1,401);ax.plot(x,np.ones_like(x),color=INK,lw=2)
+ax.fill_between(x,0,1,where=x<=0.10,color=BAD,alpha=0.35,label='extreme: 0%-10%')
+ax.fill_between(x,0,1,where=(x>=0.45)&(x<=0.55),color=GOOD,alpha=0.45,label='near tie: 45%-55%')
+ax.fill_between(x,0,1,where=x>=0.90,color=BAD,alpha=0.35,label='extreme: 90%-100%')
+ax.set_xlim(0,1);ax.set_ylim(0,1.2);ax.set_xlabel('Limiting share');ax.set_ylabel('Uniform density');ax.legend(loc='upper center',ncol=3,fontsize=7)

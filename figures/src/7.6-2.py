@@ -1,6 +1,9 @@
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]]);L=np.linalg.cholesky(S)*100
-ax.imshow(L,cmap='Blues',vmin=0,vmax=3)
-ax.set_xticks([0,1],['shock 1','shock 2']);ax.set_yticks([0,1],['SPX','QQQ'])
-for i in range(2):
-    for j in range(2): ax.text(j,i,f'{L[i,j]:.3f}%',ha='center',va='center',color=INK,weight='bold')
-ax.set_title('Cholesky factor in daily percentage-point units',fontsize=9,loc='left')
+theta=np.linspace(0,2*np.pi,300)
+S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
+vals=np.linalg.eigvalsh(S)[::-1]
+xy=np.vstack([np.sqrt(vals[0])*np.cos(theta),np.sqrt(vals[1])*np.sin(theta)])
+ax.plot(xy[0]*100,xy[1]*100,color=ACCENT,lw=2)
+ax.plot([-np.sqrt(vals[0])*100,np.sqrt(vals[0])*100],[0,0],color=BAD,ls='--',label='large eigen-direction')
+ax.plot([0,0],[-np.sqrt(vals[1])*100,np.sqrt(vals[1])*100],color=WARM,ls=':',label='small eigen-direction')
+ax.set_aspect('equal');ax.set_xlabel('rotated direction 1 (%)');ax.set_ylabel('rotated direction 2 (%)');ax.legend(loc='upper right')
+ax.set_title('Covariance becomes diagonal along eigenvectors',fontsize=9,loc='left')

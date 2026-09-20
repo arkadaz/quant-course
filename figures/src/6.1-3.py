@@ -1,10 +1,7 @@
-x=np.linspace(-6,6,160);y=np.linspace(-6,6,160);X,Y=np.meshgrid(x,y)
-sx,sy,rho=2.5,3.0,0.6;cov=[[sx**2,rho*sx*sy],[rho*sx*sy,sy**2]]
-Z=stats.multivariate_normal.pdf(np.dstack((X,Y)),mean=[0,0],cov=cov)
-rng=np.random.default_rng(0);cdf=stats.multivariate_normal.cdf([-1,-1],mean=[0,0],cov=cov,rng=rng)
-ax.contourf(X,Y,Z,levels=10,cmap='Blues',alpha=0.75)
-ax.fill_between([-6,-1],-6,-1,color=BAD,alpha=0.30)
-ax.axvline(-1,color=BAD,ls='--');ax.axhline(-1,color=BAD,ls='--')
-ax.text(-5.6,-5.0,f'F(-1%,-1%) = {cdf:.3f}',color=INK,fontsize=8)
-ax.set_xlabel('AAPL return (%)');ax.set_ylabel('MSFT return (%)')
-ax.set_title('Joint CDF counts the entire lower-left region',fontsize=9,loc='left')
+labels=['Net exposure','Gross exposure']
+vals=[15,25]
+ax.bar(labels,vals,color=[ACCENT,WARM],width=0.48)
+for i,v in enumerate(vals): ax.text(i,v+0.8,f'${v}M',ha='center',fontsize=10,color=INK,weight='bold')
+ax.set_ylim(0,30)
+ax.set_ylabel('Exposure ($M)')
+ax.set_title('Signed risk and deployed capital are not the same number',loc='left')

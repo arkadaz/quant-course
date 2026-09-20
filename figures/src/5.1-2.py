@@ -1,11 +1,7 @@
-A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
-w=np.array([2.0,-1.0,0.5])
-c=w[:,None]*A
-x=np.arange(3)
-ax.bar(x-0.18,c[:,0],width=0.36,color=ACCENT,label='Market contribution')
-ax.bar(x+0.18,c[:,1],width=0.36,color=WARM,label='Quality contribution')
-ax.axhline(0,color=MUTED,lw=0.8)
-ax.set_xticks(x,['AAPL','MSFT','JPM'])
-ax.set_ylabel('factor exposure contribution (USD million)')
-ax.legend(loc='upper right')
-ax.set_title('Asset contributions add to each factor exposure',fontsize=9,loc='left')
+x=np.linspace(-6,6,160);y=np.linspace(-6,6,160);X,Y=np.meshgrid(x,y)
+sx,sy,rho=2.5,3.0,0.6
+Z=np.exp(-0.5/(1-rho**2)*((X/sx)**2-2*rho*X*Y/(sx*sy)+(Y/sy)**2))/(2*np.pi*sx*sy*np.sqrt(1-rho**2))
+cs=ax.contour(X,Y,Z,levels=7,colors=ACCENT)
+ax.clabel(cs,inline=True,fontsize=7,fmt='%.3f')
+ax.set_xlabel('AAPL return (%)');ax.set_ylabel('MSFT return (%)')
+ax.set_title('Joint PDF contours show co-movement geometry',fontsize=9,loc='left')

@@ -1,5 +1,7 @@
-c1=np.array([1.0,2.0,3.0]); c2=2*c1
-ax.scatter(c1,c2,color=ACCENT,s=35)
-line=np.linspace(0,3.5,100); ax.plot(line,2*line,color=BAD,ls='--')
-ax.set_xlabel('column 1 value');ax.set_ylabel('column 2 value')
-ax.set_title('Collinear columns reveal rank deficiency',fontsize=9,loc='left')
+labels=['Mean sum','Product mean','Variance sum']
+ind=[1.0,1.0,1.0]
+need=['always','needs X⊥Y','needs X⊥Y']
+ax.bar(labels,ind,color=[GOOD,ACCENT,WARM])
+for i,t in enumerate(need): ax.text(i,0.5,t,ha='center',color='white',weight='bold')
+ax.set_ylim(0,1.2);ax.set_ylabel('validity indicator')
+ax.set_title('Independence is a condition, not a universal shortcut',fontsize=9,loc='left')

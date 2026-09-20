@@ -1,6 +1,4 @@
-labels=['Equal 40/40/40','60/-40/20']
-vals=[np.sqrt(3*.4**2),np.sqrt(.6**2+.4**2+.2**2)]
-ax.bar(labels,vals,color=[GOOD,ACCENT],width=.5)
-for i,v in enumerate(vals):ax.text(i,v+.025,f'{v:.4f}',ha='center',fontsize=10,color=INK)
-ax.set_ylim(0,.9);ax.set_ylabel('L2 norm; gross = 1.20')
-ax.set_title('Same gross, higher concentration',loc='left')
+n=30;j=np.arange(n+1);share=(j+1)/(n+2);polya=np.full(n+1,1/(n+1));coin=stats.binom.pmf(j,n,0.5)
+ax.bar(share-0.006,polya,width=0.012,color=ACCENT,alpha=0.75,label="Polya urn")
+ax.bar(j/n+0.006,coin,width=0.012,color=WARM,alpha=0.65,label='independent coin')
+ax.set_xlabel('Red share');ax.set_ylabel('Probability mass');ax.set_xlim(0,1);ax.legend(loc='upper left')

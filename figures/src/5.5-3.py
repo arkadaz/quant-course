@@ -1,6 +1,6 @@
-x=np.linspace(-3,3,100)
-ax.plot(x,x,color=BAD,lw=2,label='perfect correlation')
-ax.fill_between(x,x-0.03,x+0.03,color=BAD,alpha=0.25)
-ax.set_xlim(-3,3);ax.set_ylim(-3,3);ax.set_aspect('equal')
-ax.set_xlabel('return asset 1');ax.set_ylabel('return asset 2');ax.legend(loc='upper left')
-ax.set_title('Singular covariance has a collapsed risk ellipse',fontsize=9,loc='left')
+a=np.linspace(-2,2,100)
+mean=75*a+40
+ax.plot(a,mean,color=ACCENT,lw=2)
+ax.axhline(0,color=MUTED,lw=0.8);ax.axvline(0,color=MUTED,lw=0.8)
+ax.set_xlabel('AAPL position coefficient a');ax.set_ylabel('expected combined P&L (USD/day)')
+ax.set_title('Expected values add under any dependence structure',fontsize=9,loc='left')

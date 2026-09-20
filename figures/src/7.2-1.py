@@ -1,8 +1,7 @@
-t=np.linspace(-0.004,0.004,200);mu=75;sig=300
-M=np.exp(mu*t+0.5*sig*sig*t*t)
-ax.plot(t,M,color=ACCENT,lw=2)
-ax.scatter([0],[1],color=BAD,zorder=3)
-ax.annotate('M(0) = 1',(0,1),xytext=(0.0006,1.35),fontsize=8)
-ax.axvline(0,color=MUTED,ls='--',lw=0.8)
-ax.set_xlabel('t (day/USD)');ax.set_ylabel('M_X(t)')
-ax.set_title('The MGF stores moments around t = 0',fontsize=9,loc='left')
+A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
+ax.imshow(A,cmap='Blues',vmin=0,vmax=1.6)
+ax.set_xticks([0,1],['Market','Quality'])
+ax.set_yticks([0,1,2],['AAPL','MSFT','SPY'])
+for i in range(3):
+    for j in range(2): ax.text(j,i,f'{A[i,j]:.1f}',ha='center',va='center',color=INK,weight='bold')
+ax.set_title('A: assets by rows, factors by columns',fontsize=9,loc='left')

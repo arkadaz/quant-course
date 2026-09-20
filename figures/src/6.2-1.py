@@ -1,9 +1,13 @@
-x=np.linspace(-6,6,160);y=np.linspace(-8,8,200);X,Y=np.meshgrid(x,y)
-sx,sy,rho=2.5,3.0,0.6;cov=[[sx**2,rho*sx*sy],[rho*sx*sy,sy**2]]
-Z=stats.multivariate_normal.pdf(np.dstack((X,Y)),mean=[0,0],cov=cov)
-yi=np.linspace(-18,18,500);XI,YI=np.meshgrid(x,yi);ZI=stats.multivariate_normal.pdf(np.dstack((XI,YI)),mean=[0,0],cov=cov)
-ax.contourf(X,Y,Z,levels=10,cmap='Blues')
-mx=np.trapezoid(ZI,yi,axis=0);baseline=-8;shown=baseline+1.8*mx/mx.max()
-ax.plot(x,shown,color=BAD,lw=2,label='AAPL marginal shape (rescaled)')
-ax.set_xlabel('AAPL return (%)');ax.set_ylabel('MSFT return (%)')
-ax.legend(loc='upper left');ax.set_title('Integrate down the other axis to get a marginal',fontsize=9,loc='left')
+u=np.array([2.0,0.7]); v=np.array([0.7,1.8])
+for a in [-1,0,1]:
+    for b in [-1,0,1]:
+        p=a*u+b*v
+        ax.plot(p[0],p[1],'o',color=ACCENT,alpha=0.55,ms=4)
+ax.quiver(0,0,u[0],u[1],angles='xy',scale_units='xy',scale=1,color=GOOD,width=0.008)
+ax.quiver(0,0,v[0],v[1],angles='xy',scale_units='xy',scale=1,color=WARM,width=0.008)
+ax.text(u[0]+.08,u[1],'u',color=GOOD,fontsize=10)
+ax.text(v[0]+.08,v[1],'v',color=WARM,fontsize=10)
+ax.set_aspect('equal')
+ax.set_xlim(-3.2,3.2); ax.set_ylim(-2.8,2.8)
+ax.set_xlabel('Exposure axis 1'); ax.set_ylabel('Exposure axis 2')
+ax.set_title('Independent vectors reach a two-dimensional span',loc='left')

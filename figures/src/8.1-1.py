@@ -1,8 +1,10 @@
-from matplotlib.patches import Rectangle
-ax.set_xlim(0,10);ax.set_ylim(0,6);ax.axis('off')
-boxes=[(0.7,1.9,2.1,2.0,'Day 0','open'),(0.7,1.2,4.2,3.4,'Day 1','price + news'),(0.7,0.5,6.4,4.8,'Day 2','price + news + flow')]
-for i,(x,y,w,h,f,label) in enumerate(boxes):
-    ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=2,color=SERIES[i]))
-    ax.text(x+w-0.15,y+h-0.32,f'{f}: {label}',ha='right',va='top',color=SERIES[i],fontsize=8)
-ax.axvline(7.8,color=BAD,ls='--',lw=1.5);ax.text(7.95,4.9,'Future price\nnot observable yet',color=BAD,va='top')
-ax.annotate('information only grows',xy=(6.8,0.7),xytext=(3.8,0.1),arrowprops=dict(arrowstyle='->',color=INK),ha='center')
+S=np.array([[0.0004,0.00008,0.00012],[0.00008,0.0009,0.00018],[0.00012,0.00018,0.0006]])
+S_bp2=S*1e8
+ax.imshow(S_bp2,cmap='RdBu_r',vmin=0,vmax=100000)
+labels=['Technology','Energy','Financials']
+ax.set_xticks(range(3),labels);ax.set_yticks(range(3),labels)
+for i in range(3):
+    for j in range(3):
+        colour='white' if S_bp2[i,j]<25000 or S_bp2[i,j]>75000 else INK
+        ax.text(j,i,f'{S_bp2[i,j]:,.0f}',ha='center',va='center',color=colour)
+ax.set_title('Daily-return covariance matrix (bp²)',fontsize=9,loc='left')

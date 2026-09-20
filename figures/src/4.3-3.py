@@ -1,12 +1,6 @@
-x=np.array([0,1,2,4,5,6])
-labels=['AAPL','JPM','XOM','common\nAAPL+JPM','relative\nAAPL-JPM','XOM only']
-vals=[6,5,4,5.5,.5,4]
-colors=[ACCENT,ACCENT,ACCENT,WARM,WARM,WARM]
-ax.bar(x,vals,color=colors,width=.68)
-for i,v in zip(x,vals): ax.text(i,v+.18,f'${v:.1f}M',ha='center',fontsize=8,color=INK)
-ax.axvline(3,color=MUTED,lw=.9,ls='--')
-ax.text(1,6.55,'ticker-basis coordinates x',ha='center',fontsize=8,color=ACCENT)
-ax.text(5,6.55,'risk-basis coordinates c',ha='center',fontsize=8,color=WARM)
-ax.set_xticks(x,labels);ax.set_ylim(0,7.2);ax.set_ylabel('Coordinate value (USD millions)')
-ax.tick_params(axis='x',labelsize=7)
-ax.set_title('Same position, two separate coordinate systems',loc='left')
+rng=np.random.default_rng(53);R=900
+for j in range(36):
+    fail=rng.random(R)<1/512;inc=np.where(fail,-511000,1000);eq=np.r_[0,np.cumsum(inc)]
+    first=np.flatnonzero(fail);end=(first[0]+1) if len(first) else R
+    ax.plot(np.arange(end+1),eq[:end+1]/1000,color=BAD if len(first) else ACCENT,alpha=0.28,lw=1)
+ax.axhline(0,color=INK,lw=0.8);ax.set_xlabel('Completed cycles');ax.set_ylabel('Cumulative P&L (USD thousands)');ax.set_title('Fixed nine-rung policy; paths stop at first ladder failure',fontsize=9,loc='left')

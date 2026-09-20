@@ -1,5 +1,0 @@
-x=np.linspace(-2.5,2.5,100);a=np.linspace(0,2.5,60)
-ax.plot(x,x*x,color=ACCENT,lw=2,label='E[Y | X=x] = x²')
-ax.plot(a,a*a,color=BAD,ls='--',label='E[Y | |X|=a] = a²')
-ax.set_xlabel('signed X or magnitude |X|');ax.set_ylabel('conditional mean')
-ax.legend(loc='upper center');ax.set_title('Conditional mean exposes nonlinear dependence',fontsize=9,loc='left')

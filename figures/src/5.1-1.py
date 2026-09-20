@@ -1,9 +1,6 @@
-A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
-ax.imshow(A,cmap='Blues',vmin=0,vmax=1.6)
-ax.set_xticks([0,1],['Market factor','Quality factor'])
-ax.set_yticks([0,1,2],['AAPL','MSFT','JPM'])
-for i in range(3):
-    for j in range(2): ax.text(j,i,f'{A[i,j]:.1f}',ha='center',va='center',color=INK,weight='bold')
-ax.set_xlabel('columns: factors')
-ax.set_ylabel('rows: assets')
-ax.set_title('A is a table of unitless asset-to-factor loadings',fontsize=9,loc='left')
+x=np.linspace(-6,6,160);y=np.linspace(-6,6,160);X,Y=np.meshgrid(x,y)
+sx,sy,rho=2.5,3.0,0.6
+Z=np.exp(-0.5/(1-rho**2)*((X/sx)**2-2*rho*X*Y/(sx*sy)+(Y/sy)**2))/(2*np.pi*sx*sy*np.sqrt(1-rho**2))
+ax.imshow(Z,extent=[x.min(),x.max(),y.min(),y.max()],origin='lower',aspect='auto',cmap='viridis')
+ax.set_xlabel('AAPL return (%)');ax.set_ylabel('MSFT return (%)')
+ax.set_title('Normalized joint PDF across two stock returns',fontsize=9,loc='left')

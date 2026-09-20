@@ -1,11 +1,9 @@
-rng=np.random.default_rng(54);paths=[];steps=500
-for j in range(80):
-    r=1;g=1;z=[0.5]
-    for n in range(steps):
-        if rng.random()<r/(r+g):r+=1
-        else:g+=1
-        z.append(r/(r+g))
-    paths.append(z)
-paths=np.array(paths);t=np.arange(steps+1)
-ax.plot(t,paths[:24].T,color=ACCENT,alpha=0.16,lw=0.8);ax.plot(t,paths.mean(axis=0),color=INK,lw=2.4,label='cross-path mean');ax.axhline(0.5,color=WARM,ls='--')
-ax.set_xlabel('Draw count');ax.set_ylabel('Red share');ax.set_ylim(0,1);ax.legend(loc='upper right')
+mu=np.array([0.0004,0.0003])*100
+S=np.array([[0.0004,0.00024],[0.00024,0.0009]])*10000
+x=np.linspace(-8,8,180);y=np.linspace(-10,10,180);X,Y=np.meshgrid(x,y)
+pos=np.dstack((X,Y));Z=stats.multivariate_normal(mean=mu,cov=S).pdf(pos)
+cs=ax.contour(X,Y,Z,levels=8,colors=ACCENT)
+ax.clabel(cs,inline=True,fontsize=7,fmt='%.3f')
+ax.scatter([mu[0]],[mu[1]],color=BAD,s=25)
+ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)')
+ax.set_title('Contours are constant Mahalanobis distance',fontsize=9,loc='left')

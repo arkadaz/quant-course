@@ -1,10 +1,10 @@
-rng=np.random.default_rng(0)
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
-pts=rng.multivariate_normal([0,0],S,500)
-vals,vecs=np.linalg.eigh(S)
-ax.scatter(pts[:,0]*100,pts[:,1]*100,s=8,alpha=0.25,color=ACCENT)
-for val,vec,col in zip(vals,vecs.T,[WARM,BAD]):
-    p=2*100*np.sqrt(val)*vec
-    ax.plot([-p[0],p[0]],[-p[1],p[1]],color=col,lw=2)
-ax.set_xlabel('SPX one-day return (%)');ax.set_ylabel('QQQ one-day return (%)')
-ax.set_title('Eigenvectors reveal the principal covariance directions',fontsize=9,loc='left')
+z=np.linspace(-4,4,300)
+p1=1/(1+np.exp(-(z+0.5)));p2=1/(1+np.exp(-(z-0.4)));joint=p1*p2
+w=stats.norm.pdf(z);norm=np.trapezoid(w,z)
+uncond_joint=np.trapezoid(joint*w,z)/norm;product_means=(np.trapezoid(p1*w,z)/norm)*(np.trapezoid(p2*w,z)/norm)
+ax.plot(z,p1,color=ACCENT,lw=2,label='P(D1=1 | Z)')
+ax.plot(z,p2,color=WARM,lw=2,label='P(D2=1 | Z)')
+ax.plot(z,joint,color=GOOD,lw=2,label='conditional joint = p1 × p2')
+ax.text(-3.8,0.82,f'mix over Z: joint={uncond_joint:.3f}\nproduct of marginals={product_means:.3f}',fontsize=7.5,color=INK)
+ax.set_xlabel('common factor Z');ax.set_ylabel('conditional default probability')
+ax.legend(loc='lower right');ax.set_title('Condition on the driver before judging dependence',fontsize=9,loc='left')

@@ -1,7 +1,8 @@
-t=np.linspace(-0.003,0.003,200);mu=75;sig=300
-M=np.exp(mu*t+0.5*sig*sig*t*t)
-ax.plot(t,M,color=ACCENT,lw=2)
-ax.plot(t,1+mu*t,color=GOOD,ls='--',label='tangent: mean')
-ax.scatter([0],[1],color=BAD,zorder=3,label='t = 0')
-ax.set_xlabel('t (day/USD)');ax.set_ylabel('MGF value')
-ax.legend(loc='upper left');ax.set_title('Local slope and curvature encode moments',fontsize=9,loc='left')
+A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
+B=A.T
+ax.imshow(B,cmap='Oranges',vmin=0,vmax=1.6)
+ax.set_xticks([0,1,2],['AAPL','MSFT','SPY'])
+ax.set_yticks([0,1],['Market','Quality'])
+for i in range(2):
+    for j in range(3): ax.text(j,i,f'{B[i,j]:.1f}',ha='center',va='center',color=INK,weight='bold')
+ax.set_title('Aᵀ: factors by rows, assets by columns',fontsize=9,loc='left')

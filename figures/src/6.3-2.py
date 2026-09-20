@@ -1,8 +1,7 @@
-x=np.linspace(-10,8,400);sx,sy,rho,y0=2.5,3.0,0.6,-3.0
-mean=rho*sx/sy*y0;sd=sx*np.sqrt(1-rho**2)
-marg=stats.norm.pdf(x,0,sx);cond=stats.norm.pdf(x,mean,sd)
-ax.plot(x,marg,color=MUTED,lw=2,label='AAPL marginal: mean 0%, sd 2.5%')
-ax.plot(x,cond,color=BAD,lw=2,label='AAPL | MSFT=-3%: mean -1.5%, sd 2.0%')
-ax.axvline(mean,color=BAD,ls='--',lw=0.8)
-ax.set_xlabel('AAPL return (%)');ax.set_ylabel('density per percentage point')
-ax.legend(loc='upper left');ax.set_title('Conditioning updates both location and uncertainty',fontsize=9,loc='left')
+labels=['AAPL/JPM common','AAPL vs JPM','XOM only']
+vals=[5.5,.5,4.0]
+ax.bar(labels,vals,color=[ACCENT,WARM,GOOD],width=.58)
+for i,v in enumerate(vals): ax.text(i,v+.18,f'${v:.1f}M',ha='center',fontsize=9,color=INK)
+ax.set_ylim(0,6.5);ax.set_ylabel('Basis coordinate ($M)')
+ax.tick_params(axis='x',rotation=12)
+ax.set_title('Coordinates reveal the risk story hidden by tickers',loc='left')

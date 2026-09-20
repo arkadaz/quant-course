@@ -1,9 +1,17 @@
-mu=np.array([0.0004,0.0003])*100;S=np.array([[0.0004,0.00024],[0.00024,0.0009]])*10000
-x=np.linspace(-8,8,240);y=np.linspace(-10,10,240);X,Y=np.meshgrid(x,y)
-Z=stats.multivariate_normal(mean=mu,cov=S).pdf(np.dstack((X,Y)))
-ax.contourf(X,Y,Z,levels=12,cmap='Blues',alpha=0.8)
-marg=stats.norm.pdf(x,loc=mu[0],scale=np.sqrt(S[0,0]));base=y.min()+0.25
-proj=base+1.8*marg/marg.max();ax.plot(x,proj,color=BAD,lw=2,label='SPX marginal, centered at 0.04%')
-ax.fill_between(x,base,proj,color=BAD,alpha=.15)
-ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)');ax.legend(loc='upper left',fontsize=7)
-ax.set_title('Integrating out QQQ leaves the SPX marginal',fontsize=9,loc='left')
+# Each factor exposure split into the piece every position contributes: C[i, j] = A[i, j] w[j].
+A = np.array([[1.0, 0.8, 0.6], [0.3, 0.5, 0.2], [0.1, 0.2, 0.4]])
+w = np.array([2, -1, 1])
+C = A * w
+x = np.arange(3); bw = 0.22
+for j, (name, col) in enumerate(zip(['AAPL', 'MSFT', 'JPM'], [ACCENT, WARM, GOOD])):
+    ax.bar(x + (j - 1) * bw, C[:, j], bw, color=col, label=f'{name}  {w[j]:+d}M')
+y = C.sum(axis=1)
+ax.scatter(x + 0.42, y, color=INK, marker='D', s=36, zorder=3, label='exposure = row sum')
+for i, v in enumerate(y):
+    ax.text(i + 0.50, v, f'{v:.1f}', va='center', fontsize=10, weight='bold')
+ax.axhline(0, color=MUTED, lw=0.8)
+ax.set_xticks(x, ['market', 'quality', 'rates'])
+ax.set_xlim(-0.5, 2.85)
+ax.set_ylabel('USD million')
+ax.legend(fontsize=8, ncol=2, loc='upper right')
+ax.set_title('Every position feeds every factor: loading x position, then add', loc='left')

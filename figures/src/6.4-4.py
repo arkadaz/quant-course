@@ -1,6 +1,0 @@
-y=np.linspace(-3,3,100)
-ax.plot(y,np.zeros_like(y),color=GOOD,lw=2,label='independent: E[X|Y=y] constant')
-ax.plot(y,0.65*y,color=BAD,lw=2,label='dependent: conditional mean moves')
-ax.axhline(0,color=MUTED,lw=0.8)
-ax.set_xlabel('observed XOM return (standardized)');ax.set_ylabel('conditional AAPL mean')
-ax.legend(loc='upper left');ax.set_title('Independence means no conditional update',fontsize=9,loc='left')

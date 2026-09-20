@@ -1,6 +1,6 @@
-rng=np.random.default_rng(0)
-x=rng.normal(0,1,700);y=0.75*x+rng.normal(0,np.sqrt(1-0.75**2),700)
-ax.scatter(x,y,s=9,alpha=0.35,color=BAD)
-ax.axhline(0,color=MUTED,lw=0.7);ax.axvline(0,color=MUTED,lw=0.7)
-ax.set_xlabel('AAPL standardized return');ax.set_ylabel('XOM standardized return')
-ax.set_title('Dependent returns: one coordinate carries signal',fontsize=9,loc='left')
+names=['Buy AAPL','Short JPM','Buy XOM']
+vals=[1,1,1]
+ax.bar(names,vals,color=[GOOD,BAD,GOOD],width=.55)
+for i,v in enumerate(vals):ax.text(i,v+.05,'$1.0M',ha='center',fontsize=9,color=INK)
+ax.set_ylim(0,1.35);ax.set_ylabel('Traded notional ($M)')
+ax.set_title('L1 turnover adds the three tickets: $3.0M',loc='left')

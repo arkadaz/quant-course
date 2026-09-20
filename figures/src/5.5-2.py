@@ -1,8 +1,6 @@
-theta=np.linspace(0,2*np.pi,200)
-ax.plot(np.cos(theta),np.sin(theta),color=GRID,lw=1)
-ax.arrow(0,0,1.6,1.6,color=ACCENT,width=0.02,length_includes_head=True)
-ax.arrow(0,0,1.4,-1.4,color=BAD,width=0.02,length_includes_head=True)
-ax.text(1.7,1.7,'output range [1, 1]',color=ACCENT,fontsize=8)
-ax.text(1.5,-1.5,'input null [1, -1]',color=BAD,fontsize=8)
-ax.set_aspect('equal');ax.set_xlim(-2,2);ax.set_ylim(-2,2);ax.set_xlabel('schematic coordinate 1');ax.set_ylabel('schematic coordinate 2')
-ax.set_title('Schematic overlay: output range and input null',fontsize=9,loc='left')
+labels=['Independent','Positive co-movement','Negative co-movement']
+base=[2,2,2];cross=[0,1.4,-1.0]
+ax.bar(labels,base,color=ACCENT,label='component variances')
+ax.bar(labels,cross,bottom=base,color=[MUTED,BAD,GOOD],label='2ab covariance term')
+ax.axhline(0,color=MUTED,lw=0.8);ax.set_ylabel('variance units')
+ax.legend(loc='upper left');ax.set_title('The cross-term is the price of dependence',fontsize=9,loc='left')

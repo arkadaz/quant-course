@@ -1,8 +1,8 @@
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
-vals=np.linalg.eigvalsh(S)[::-1]
-labels=['Direction 1','Direction 2']
-vals_bp2=vals*1e8
-ax.bar(labels,vals_bp2,color=[BAD,WARM])
-for i,v in enumerate(vals_bp2): ax.text(i,v+1800,f'{v:,.0f}',ha='center',fontsize=8)
-ax.set_ylabel('eigenvalue ((basis points)²)')
-ax.set_title('Eigenvalues rank the principal risk directions',fontsize=9,loc='left')
+rho,nu=0.6,4
+lambda_gauss=0.0
+lambda_t=2*stats.t.cdf(-np.sqrt((nu+1)*(1-rho)/(1+rho)),df=nu+1)
+vals=[lambda_gauss,lambda_t]
+ax.bar(['Gaussian copula','Student-t copula (df=4)'],vals,color=[ACCENT,BAD])
+for i,v in enumerate(vals): ax.text(i,v+0.012,f'{v:.3f}',ha='center',fontsize=8,color=INK)
+ax.set_ylim(0,0.38);ax.set_ylabel('upper-tail dependence coefficient')
+ax.set_title('Same central rho, different asymptotic tail dependence',fontsize=9,loc='left')

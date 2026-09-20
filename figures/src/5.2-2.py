@@ -1,8 +1,6 @@
-A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
-B=A.T
-ax.imshow(B,cmap='Oranges',vmin=0,vmax=1.6)
-ax.set_xticks([0,1,2],['AAPL','MSFT','SPY'])
-ax.set_yticks([0,1],['Market','Quality'])
-for i in range(2):
-    for j in range(3): ax.text(j,i,f'{B[i,j]:.1f}',ha='center',va='center',color=INK,weight='bold')
-ax.set_title('Aᵀ: factors by rows, assets by columns',fontsize=9,loc='left')
+x=np.linspace(-10,10,400);sx,sy=2.5,3.0
+fx=stats.norm.pdf(x,0,sx);fy=stats.norm.pdf(x,0,sy)
+ax.plot(x,fx,color=ACCENT,lw=2,label='AAPL marginal PDF')
+ax.plot(x,fy,color=WARM,lw=2,label='MSFT marginal PDF')
+ax.set_xlabel('daily return (%)');ax.set_ylabel('density per percentage point')
+ax.legend(loc='upper left');ax.set_title('Two normalized marginal PDFs from one joint model',fontsize=9,loc='left')

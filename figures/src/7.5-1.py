@@ -1,8 +1,5 @@
-rng=np.random.default_rng(0)
-mu=np.array([0.0004,0.0003]);S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
-z=rng.multivariate_normal(mu,S,1600)*100;a=np.array([0.6,0.4])
-ax.scatter(z[:,0],z[:,1],s=7,alpha=0.18,color=ACCENT)
-centre=mu*100;t=np.linspace(-5,5,80);direction=a/np.linalg.norm(a)
-line=centre+t[:,None]*direction;ax.plot(line[:,0],line[:,1],color=BAD,lw=2,label='60/40 projection direction')
-ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)');ax.legend(loc='upper left',fontsize=8)
-ax.set_title('A linear combination projects the joint cloud',fontsize=9,loc='left')
+c1=np.array([1.0,2.0,3.0]); c2=2*c1
+ax.scatter(c1,c2,color=ACCENT,s=35)
+line=np.linspace(0,3.5,100); ax.plot(line,2*line,color=BAD,ls='--')
+ax.set_xlabel('column 1 value');ax.set_ylabel('column 2 value')
+ax.set_title('Collinear columns reveal rank deficiency',fontsize=9,loc='left')

@@ -1,6 +1,8 @@
-labels=['Independent','Positive co-movement','Negative co-movement']
-base=[2,2,2];cross=[0,1.4,-1.0]
-ax.bar(labels,base,color=ACCENT,label='component variances')
-ax.bar(labels,cross,bottom=base,color=[MUTED,BAD,GOOD],label='2ab covariance term')
-ax.axhline(0,color=MUTED,lw=0.8);ax.set_ylabel('variance units')
-ax.legend(loc='upper left');ax.set_title('The cross-term is the price of dependence',fontsize=9,loc='left')
+labels=['inner product','divide by norms','correlation']
+vals=[1,.5,.5]
+ax.bar(labels,vals,color=[ACCENT,WARM,GOOD],width=.55)
+for i,v in enumerate(vals): ax.text(i,v+.05,f'{v:g}',ha='center',fontsize=11,color=INK)
+ax.annotate('',xy=(.85,.55),xytext=(.35,.55),arrowprops=dict(arrowstyle='->',color=MUTED))
+ax.annotate('',xy=(1.85,.55),xytext=(1.35,.55),arrowprops=dict(arrowstyle='->',color=MUTED))
+ax.set_ylim(0,1.25);ax.set_ylabel('value after each operation')
+ax.set_title('Dot product to angle to correlation',loc='left')

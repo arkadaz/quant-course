@@ -1,11 +1,8 @@
-assets=['Thai stocks','Bonds','Gold']
-money=np.array([50,30,20]);risk=np.array([85.84,1.46,12.70]);parity=np.array([21.15,58.69,20.16])
-x=np.arange(3);wd=.26
-b1=ax.bar(x-wd,money,wd,color=ACCENT,label='share of money (50/30/20)')
-b2=ax.bar(x,risk,wd,color=BAD,label='share of risk it carries')
-b3=ax.bar(x+wd,parity,wd,color=GOOD,label='risk-parity money (equal risk)')
-for bars in (b1,b2,b3):
- for r in bars:
-  ax.annotate(f'{r.get_height():.1f}',(r.get_x()+r.get_width()/2,r.get_height()),textcoords='offset points',xytext=(0,2),ha='center',fontsize=7)
-ax.set_xticks(x);ax.set_xticklabels(assets);ax.set_ylim(0,100);ax.set_ylabel('% of portfolio')
-ax.set_title('Half the money carries 85.8% of the risk',loc='left');ax.legend(fontsize=7,loc='upper right')
+x=np.linspace(-12,12,500);sx,sy,rho=2.5,3.0,0.6;sd=sx*np.sqrt(1-rho**2)
+ys=np.array([-3.0,0.0,3.0]);means=rho*sx/sy*ys
+curves=[stats.norm.pdf(x,m,sd) for m in means]
+areas=[np.trapezoid(z,x) for z in curves]
+ax.bar(['MSFT -3%','MSFT 0%','MSFT +3%'],areas,color=[BAD,MUTED,GOOD])
+ax.axhline(1,color=ACCENT,ls='--',lw=1.2,label='required area = 1')
+ax.set_ylim(0,1.12);ax.set_ylabel('conditional density area')
+ax.legend(loc='lower left');ax.set_title('Every conditioned density renormalizes to one',fontsize=9,loc='left')

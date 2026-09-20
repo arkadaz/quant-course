@@ -1,4 +1,7 @@
-n=30;j=np.arange(n+1);share=(j+1)/(n+2);polya=np.full(n+1,1/(n+1));coin=stats.binom.pmf(j,n,0.5)
-ax.bar(share-0.006,polya,width=0.012,color=ACCENT,alpha=0.75,label="Polya urn")
-ax.bar(j/n+0.006,coin,width=0.012,color=WARM,alpha=0.65,label='independent coin')
-ax.set_xlabel('Red share');ax.set_ylabel('Probability mass');ax.set_xlim(0,1);ax.legend(loc='upper left')
+theta=np.linspace(0,2*np.pi,300)
+for rho,col,label in [(0.0,MUTED,'rho = 0'),(0.4,BAD,'rho = 0.4 target')]:
+    z=np.vstack([2.0*np.cos(theta),3.0*(rho*np.cos(theta)+np.sqrt(1-rho*rho)*np.sin(theta))])
+    ax.plot(z[0]+0.04,z[1]+0.03,color=col,lw=2,label=label)
+ax.scatter([0.04],[0.03],color=INK,s=20,label='mean')
+ax.set_aspect('equal');ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)');ax.legend(loc='upper left')
+ax.set_title('Correlation rotates the equal-distance ellipse',fontsize=9,loc='left')

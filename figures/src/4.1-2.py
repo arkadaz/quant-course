@@ -1,9 +1,6 @@
-names=['AAPL long','JPM long','NVDA short']
-vals=np.array([12.5,7.5,-5.0])
-colors=[GOOD,GOOD,BAD]
-ax.bar(names, vals, color=colors, width=0.58)
-ax.axhline(0,color=INK,lw=0.9)
-for i,v in enumerate(vals): ax.text(i, v+(0.45 if v>=0 else -0.75), f'${v:.1f}M', ha='center', va='bottom' if v>=0 else 'top', fontsize=9, color=INK)
-ax.set_ylim(-8,16)
-ax.set_ylabel('Dollar exposure ($M)')
-ax.set_title('Weights translated into a $25M portfolio', loc='left')
+x=[0,1,1];y=[570,576,564]
+ax.plot([0,1],[570,576],color=GOOD,lw=2);ax.plot([0,1],[570,564],color=BAD,lw=2)
+ax.scatter(x,y,c=[INK,GOOD,BAD],s=38,zorder=3)
+ax.axhline(570,color=ACCENT,ls='--',label='conditional mean = current')
+ax.text(1.02,576,'USD 576, p=0.50',va='center');ax.text(1.02,564,'USD 564, p=0.50',va='center')
+ax.set_xlim(-0.08,1.55);ax.set_xticks([0,1],['Now','Tomorrow']);ax.set_ylabel('SPY price (USD)');ax.legend(loc='upper left')

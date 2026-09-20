@@ -1,7 +1,6 @@
-labels=['AAPL/JPM common','AAPL vs JPM','XOM only']
-vals=[5.5,.5,4.0]
-ax.bar(labels,vals,color=[ACCENT,WARM,GOOD],width=.58)
-for i,v in enumerate(vals): ax.text(i,v+.18,f'${v:.1f}M',ha='center',fontsize=9,color=INK)
-ax.set_ylim(0,6.5);ax.set_ylabel('Basis coordinate ($M)')
-ax.tick_params(axis='x',rotation=12)
-ax.set_title('Coordinates reveal the risk story hidden by tickers',loc='left')
+labels=['Success','Ladder failure'];probs=np.array([511/512,1/512]);pnl=np.array([1000,-511000]);weighted=probs*pnl
+x=np.arange(2);ax.bar(x,weighted,color=[GOOD,BAD],width=0.55);ax.axhline(0,color=INK,lw=0.8)
+ax.set_xticks(x,labels);ax.set_ylabel('Probability-weighted P&L (USD)')
+for i,v in enumerate(weighted):ax.text(i,v+(35 if v>=0 else -35),f'{v:+,.2f}',ha='center',va='bottom' if v>=0 else 'top')
+ax.set_title('99.8047% success still nets to zero expectation',fontsize=9,loc='left')
+ax.set_ylim(-1200,1200)

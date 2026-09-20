@@ -1,9 +1,8 @@
-y=np.linspace(-12,12,500);x0=0.0;sx,sy,rho=2.5,3.0,0.6
-cov=[[sx**2,rho*sx*sy],[rho*sx*sy,sy**2]]
-points=np.column_stack([np.full_like(y,x0),y])
-slice_=stats.multivariate_normal.pdf(points,mean=[0,0],cov=cov)
-area=np.trapezoid(slice_,y);exact=stats.norm.pdf(x0,0,sx)
-ax.fill_between(y,0,slice_,color=GOOD,alpha=0.35);ax.plot(y,slice_,color=GOOD,lw=2)
-ax.text(-11,0.047,f'slice area = {area:.4f}\nf_X(0) = {exact:.4f}',fontsize=8,color=INK)
-ax.set_xlabel('MSFT return (%) at AAPL = 0%');ax.set_ylabel('joint density per percentage point²')
-ax.set_title('A whole hidden-axis slice integrates to one marginal height',fontsize=9,loc='left')
+ax.plot([-2.4,2.4],[-1.2,1.2],color=BAD,lw=2,label='dependent additions: same line')
+ax.fill([-2.0,2.0,2.6,-1.4],[-1.8,0.2,2.2,0.2],color=GOOD,alpha=.18,label='independent pair: area of choices')
+ax.quiver(0,0,1.8,.9,angles='xy',scale_units='xy',scale=1,color=ACCENT,width=.009)
+ax.quiver(0,0,.6,1.7,angles='xy',scale_units='xy',scale=1,color=WARM,width=.009)
+ax.set_xlim(-2.7,2.9); ax.set_ylim(-2.1,2.6)
+ax.set_xlabel('Exposure axis 1'); ax.set_ylabel('Exposure axis 2')
+ax.legend(loc='upper left',fontsize=7)
+ax.set_title('Diversification adds directions, not labels',loc='left')

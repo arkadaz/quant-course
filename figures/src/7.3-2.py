@@ -1,7 +1,9 @@
-x=np.linspace(-8,8,320);mean=0.04;sd=2.0
-fx=stats.norm.pdf(x,loc=mean,scale=sd)
-ax.plot(x,fx,color=ACCENT,lw=2)
-ax.axvline(mean,color=BAD,ls='--',label='mean = 0.04%')
-ax.fill_between(x,0,fx,where=(x>=mean-sd)&(x<=mean+sd),color=GOOD,alpha=0.25,label='mean +/- 1 SD')
-ax.set_xlabel('SPX return (%)');ax.set_ylabel('density');ax.legend(loc='upper left')
-ax.set_title('The SPX marginal keeps mean 0.04% and SD 2%',fontsize=9,loc='left')
+A=np.array([[1.0,0.8,0.6],[0.3,0.5,0.2],[0.1,0.2,0.4]])
+w=np.array([2,-1,1])
+y=A@w
+ax.bar(['Market','Quality','Rates'],y,color=[ACCENT,GOOD,WARM])
+ax.axhline(0,color=MUTED,lw=0.8)
+for i,v in enumerate(y): ax.text(i,v+(0.08 if v>=0 else -0.12),f'{v:.1f}',ha='center',va='bottom' if v>=0 else 'top')
+ax.set_ylim(0,2.25)
+ax.set_ylabel('factor exposure (USD million)')
+ax.set_title('One row dot product per factor output',fontsize=9,loc='left')

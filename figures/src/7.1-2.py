@@ -1,9 +1,11 @@
-mu=np.array([0.0004,0.0003])*100
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]])*10000
-x=np.linspace(-8,8,180);y=np.linspace(-10,10,180);X,Y=np.meshgrid(x,y)
-pos=np.dstack((X,Y));Z=stats.multivariate_normal(mean=mu,cov=S).pdf(pos)
-cs=ax.contour(X,Y,Z,levels=8,colors=ACCENT)
-ax.clabel(cs,inline=True,fontsize=7,fmt='%.3f')
-ax.scatter([mu[0]],[mu[1]],color=BAD,s=25)
-ax.set_xlabel('SPX return (%)');ax.set_ylabel('QQQ return (%)')
-ax.set_title('Contours are constant Mahalanobis distance',fontsize=9,loc='left')
+A=np.array([[1.2,0.4],[0.9,0.2],[1.5,0.7]])
+w=np.array([2.0,-1.0,0.5])
+c=w[:,None]*A
+x=np.arange(3)
+ax.bar(x-0.18,c[:,0],width=0.36,color=ACCENT,label='Market contribution')
+ax.bar(x+0.18,c[:,1],width=0.36,color=WARM,label='Quality contribution')
+ax.axhline(0,color=MUTED,lw=0.8)
+ax.set_xticks(x,['AAPL','MSFT','JPM'])
+ax.set_ylabel('factor exposure contribution (USD million)')
+ax.legend(loc='upper right')
+ax.set_title('Asset contributions add to each factor exposure',fontsize=9,loc='left')

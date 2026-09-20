@@ -1,3 +1,7 @@
-k=np.arange(1,10);stake=1000*2**(k-1);loss=1000*(2**k-1)
-ax.plot(k,stake/1000,marker='o',color=ACCENT,label='next stake');ax.plot(k,loss/1000,marker='s',color=BAD,label='cumulative loss')
-ax.axhline(1,color=GOOD,ls='--',label='target profit = $1k');ax.set_yscale('log',base=2);ax.set_xlabel('Ladder rung');ax.set_ylabel('USD thousands, log2 scale');ax.set_xticks(k);ax.legend(loc='upper left',ncol=2,fontsize=7)
+rng=np.random.default_rng(0)
+xh=rng.normal(0,1,350);eps=0.08*rng.normal(size=350)
+x=np.r_[xh,-xh];y=np.r_[xh*xh+eps,xh*xh+eps];sample_cov=np.cov(x,y,ddof=1)[0,1]
+ax.scatter(x,y,s=9,alpha=0.35,color=ACCENT)
+ax.axvline(0,color=MUTED,lw=0.7);ax.text(-3.5,8.5,f'sample covariance = {sample_cov:.2e}',fontsize=8,color=INK)
+ax.set_xlabel('signal X');ax.set_ylabel('response Y')
+ax.set_title('Zero covariance can hide a strong nonlinear U-shape',fontsize=9,loc='left')

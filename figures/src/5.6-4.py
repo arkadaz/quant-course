@@ -1,9 +1,6 @@
-theta=np.linspace(0,2*np.pi,200)
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
-q=[]
-for t in theta:
-    x=np.array([np.cos(t),np.sin(t)]); q.append(x@S@x*1e8)
-ax.plot(theta,q,color=GOOD,lw=2)
-ax.axhline(0,color=BAD,ls='--',lw=1)
-ax.set_xlabel('unit-vector direction angle (radians)');ax.set_ylabel('xᵀΣx ((basis points)²)')
-ax.set_title('Positive definiteness means positive risk in every direction',fontsize=9,loc='left')
+p=0.02;z=stats.norm.ppf(p);rhos=np.linspace(0,0.95,60);rng=np.random.default_rng(0)
+joint=np.array([stats.multivariate_normal.cdf([z,z],mean=[0,0],cov=[[1,r],[r,1]],rng=rng) for r in rhos])
+ax.plot(rhos,joint*100,color=BAD,lw=2,label='Gaussian-copula joint default')
+ax.axhline(p*p*100,color=ACCENT,ls='--',lw=1.2,label='independent: p² = 0.04%')
+ax.set_xlabel('latent correlation rho');ax.set_ylabel('joint default probability (%)')
+ax.legend(loc='upper left');ax.set_title('Dependence moves joint loss while margins stay fixed',fontsize=9,loc='left')

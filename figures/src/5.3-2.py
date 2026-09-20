@@ -1,9 +1,8 @@
-A=np.array([[1.0,0.8,0.6],[0.3,0.5,0.2],[0.1,0.2,0.4]])
-w=np.array([2,-1,1])
-y=A@w
-ax.bar(['Market','Quality','Rates'],y,color=[ACCENT,GOOD,WARM])
-ax.axhline(0,color=MUTED,lw=0.8)
-for i,v in enumerate(y): ax.text(i,v+(0.08 if v>=0 else -0.12),f'{v:.1f}',ha='center',va='bottom' if v>=0 else 'top')
-ax.set_ylim(0,2.25)
-ax.set_ylabel('factor exposure (USD million)')
-ax.set_title('One row dot product per factor output',fontsize=9,loc='left')
+x=np.linspace(-10,8,400);sx,sy,rho,y0=2.5,3.0,0.6,-3.0
+mean=rho*sx/sy*y0;sd=sx*np.sqrt(1-rho**2)
+marg=stats.norm.pdf(x,0,sx);cond=stats.norm.pdf(x,mean,sd)
+ax.plot(x,marg,color=MUTED,lw=2,label='AAPL marginal: mean 0%, sd 2.5%')
+ax.plot(x,cond,color=BAD,lw=2,label='AAPL | MSFT=-3%: mean -1.5%, sd 2.0%')
+ax.axvline(mean,color=BAD,ls='--',lw=0.8)
+ax.set_xlabel('AAPL return (%)');ax.set_ylabel('density per percentage point')
+ax.legend(loc='upper left');ax.set_title('Conditioning updates both location and uncertainty',fontsize=9,loc='left')

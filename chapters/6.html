@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>บทที่ 6 — Multivariate Distributions</title>
+<title>บทที่ 6 — Vectors</title>
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
@@ -16,19 +16,15 @@
 <header class="chapter-landing">
   <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
   <h1>บทที่ 6</h1>
-  <p>Multivariate Distributions · 9 หัวข้อ</p>
-  <p class="chapter-sequence">จัดการความไม่แน่นอนหลายตัวพร้อมกัน ตั้งแต่ joint distribution จนถึง covariance matrix ของทั้งพอร์ต</p>
+  <p>Vectors · 5 หัวข้อ</p>
+  <p class="chapter-sequence">เขียนพอร์ตเป็น vector แล้วอ่าน correlation ออกมาเป็นมุมระหว่างสองทิศ</p>
 </header>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/6.1.html"><span class="toc-number">6.1</span><span class="toc-name">Joint Cumulative Distribution Function (CDF) and Joint Probability Density Function (PDF)<span class="toc-why">จากโอกาสที่สองเหตุการณ์จะเกิดร่วมกัน สู่พื้นที่ความน่าจะเป็นบนระนาบสองมิติ</span></span></a></li>
-  <li><a href="../topics/6.2.html"><span class="toc-number">6.2</span><span class="toc-name">Marginal Distributions<span class="toc-why">จากการมองภาพรวมสองมิติ สู่การรวมผลกระทบเพื่อแยกดูสินทรัพย์รายตัว</span></span></a></li>
-  <li><a href="../topics/6.3.html"><span class="toc-number">6.3</span><span class="toc-name">Conditional Distributions<span class="toc-why">เมื่อได้ข้อมูลใหม่มาอยู่ในมือ ปรับการคาดการณ์สินทรัพย์ที่เหลืออย่างไรให้แม่นยำ</span></span></a></li>
-  <li><a href="../topics/6.4.html"><span class="toc-number">6.4</span><span class="toc-name">Independence<span class="toc-why">เมื่อข้อมูลของตัวหนึ่งไม่บอกอะไรเกี่ยวกับอีกตัว และวิธีทดสอบที่ไม่หลงกลภาพลวงตา</span></span></a></li>
-  <li><a href="../topics/6.5.html"><span class="toc-number">6.5</span><span class="toc-name">Consequences of Independence<span class="toc-why">ทางลัดคณิตศาสตร์เมื่อตัวแปรไม่เกี่ยวข้องกัน และจุดที่ห้ามเผลอใช้สูตรลัด</span></span></a></li>
-  <li><a href="../topics/6.6.html"><span class="toc-number">6.6</span><span class="toc-name">Conditional Independence and the Gaussian Copula<span class="toc-why">เมื่อตัวแปรดูเหมือนเกี่ยวข้องกันเพราะปัจจัยร่วม และการแยกโครงสร้างความเสี่ยงด้วยคอปูลา</span></span></a></li>
-  <li><a href="../topics/6.7.html"><span class="toc-number">6.7</span><span class="toc-name">The Mean Vector and the Covariance Matrix<span class="toc-why">จัดระเบียบจุดศูนย์กลางและความสัมพันธ์ของหลายสินทรัพย์ให้อยู่ในรูป vector และ matrix</span></span></a></li>
-  <li><a href="../topics/6.8.html"><span class="toc-number">6.8</span><span class="toc-name">Linear Transformations and Portfolio Risk<span class="toc-why">คำนวณผลตอบแทนและความเสี่ยงพอร์ตผ่านการแปลงเชิงเส้น และพิสูจน์พลังของการกระจายความเสี่ยง</span></span></a></li>
-  <li><a href="../topics/6.9.html"><span class="toc-number">6.9</span><span class="toc-name">Zero Covariance ≠ Independence<span class="toc-why">เมื่อค่าความสัมพันธ์เชิงเส้นเป็นศูนย์ แต่ตัวแปรยังผูกพันกันอย่างแนบแน่น</span></span></a></li>
+  <li><a href="../topics/6.1.html"><span class="toc-number">6.1</span><span class="toc-name">Row Vectors and Column Vectors<span class="toc-why">เขียนข้อมูลชุดเดียวกันเป็นแถวหรือคอลัมน์ให้ชัด</span></span></a></li>
+  <li><a href="../topics/6.2.html"><span class="toc-number">6.2</span><span class="toc-name">Linear Independence and Linear Combinations<span class="toc-why">รู้ได้อย่างไรว่าทิศทางหนึ่งสร้างจากทิศทางอื่น</span></span></a></li>
+  <li><a href="../topics/6.3.html"><span class="toc-number">6.3</span><span class="toc-name">Basis<span class="toc-why">เลือกชุดลูกศรที่สร้างพื้นที่ทั้งหมดโดยไม่ซ้ำซ้อน</span></span></a></li>
+  <li><a href="../topics/6.4.html"><span class="toc-number">6.4</span><span class="toc-name">Norms<span class="toc-why">วัดความยาวของข้อมูลหลายมิติอย่างเป็นระบบ</span></span></a></li>
+  <li><a href="../topics/6.5.html"><span class="toc-number">6.5</span><span class="toc-name">Inner Product, Angle, and Correlation<span class="toc-why">วัดความเอียงไปทางเดียวกันของลูกศรสองตัว</span></span></a></li>
 </ol>
 </div>
 </body>

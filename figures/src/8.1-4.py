@@ -1,5 +1,5 @@
-vals=[570.60,570.00];labs=['P: real-world forecast','Q: pricing forecast'];cols=[WARM,ACCENT]
-ax.bar(labs,vals,color=cols,width=0.55);ax.axhline(570,color=INK,ls='--',lw=1.2,label='current price $570')
-ax.set_ylim(569.4,571.0);ax.set_ylabel('One-step expectation (USD)')
-for i,v in enumerate(vals):ax.text(i,v+0.05,f'${v:,.2f}',ha='center',fontsize=9)
-ax.legend(loc='upper right');ax.tick_params(axis='x',labelrotation=0)
+S=np.array([[0.0004,0.00008,0.00012],[0.00008,0.0009,0.00018],[0.00012,0.00018,0.0006]])*1e8
+upper=np.triu(S,1);lower=np.tril(S,-1)
+ax.bar(['upper triangle','lower triangle'],[np.abs(upper).sum(),np.abs(lower).sum()],color=[ACCENT,GOOD])
+ax.set_ylabel('absolute off-diagonal covariance sum (bp²)')
+ax.set_title('Symmetry is a cheap covariance data check',fontsize=9,loc='left')

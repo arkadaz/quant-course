@@ -1,8 +1,8 @@
-rng=np.random.default_rng(0)
-S=np.array([[0.0004,0.00024],[0.00024,0.0009]]);L=np.linalg.cholesky(S)
-ns=np.array([50,100,250,800,2500,8000,25000]);z=rng.normal(size=(ns[-1],2));r=z@L.T
-errs=[np.cov(r[:n],rowvar=False,ddof=1)[0,1]*10000 for n in ns];target=S[0,1]*10000
-ax.semilogx(ns,errs,marker='o',color=ACCENT,lw=2,label='sample covariance')
-ax.axhline(target,color=BAD,ls='--',label='target = 2.40')
-ax.set_xlabel('scenario count n');ax.set_ylabel(r'Covariance $((\text{percentage points})^2/\text{day})$')
-ax.legend(loc='upper right',fontsize=8);ax.set_title('Sample covariance approaches the target',fontsize=9,loc='left')
+S=np.array([[0.0004,0.00024],[0.00024,0.0009]])
+vals=np.linalg.eigvalsh(S)[::-1]
+labels=['Direction 1','Direction 2']
+vals_bp2=vals*1e8
+ax.bar(labels,vals_bp2,color=[BAD,WARM])
+for i,v in enumerate(vals_bp2): ax.text(i,v+1800,f'{v:,.0f}',ha='center',fontsize=8)
+ax.set_ylabel('eigenvalue ((basis points)²)')
+ax.set_title('Eigenvalues rank the principal risk directions',fontsize=9,loc='left')
