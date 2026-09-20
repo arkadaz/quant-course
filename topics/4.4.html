@@ -28,7 +28,7 @@
   <p>Norm คือกติกาวัดขนาดของ vector ที่ไม่ติดลบ ขยายตาม leverage ตรง ๆ และรวมสองพอร์ตแล้วไม่เกินผลรวมของขนาด แต่ละ norm ตอบคำถามคนละข้อ งานจริงเลือก norm ให้ตรงกับ risk limit และวัตถุประสงค์ของ model</p>
 </div>
 
-<details class="jargon" open>
+<details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>norm</dt>
@@ -70,7 +70,7 @@
   </dl>
 </details>
 
-<details class="symbols" open>
+<details class="symbols">
   <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
@@ -380,7 +380,8 @@ m&=\frac{\|\mathbf{w}\|_1}{n}\\[4pt]
 N\|\Delta\mathbf{w}\|_1=10{,}000{,}000\times0.30=\$3{,}000{,}000
 \]</div>
   <div class="reading">
-    <p>$N=\$10{,}000{,}000$ คือ NAV ของ book และ turnover 0.30 มาจากขั้นที่ 11 ผลคูณเป็น $3M$ ของ notional traded ซึ่งเป็นฐานที่ execution desk ใช้คูณ commission, spread และ impact estimate</p>
+    <p>ตัวแรกคือขนาดของพอร์ตที่ \$10 ล้าน และ 0.30 คือ turnover ที่ได้จากขั้นที่ 11 คูณกันแล้วได้ \$3 ล้าน ซึ่งคือมูลค่าที่ต้องซื้อขายจริง</p>
+    <p>ตัวเลขนี้สำคัญเพราะโต๊ะส่งคำสั่งเอาไปคูณกับต้นทุนสามอย่างคือ commission ที่จ่ายโบรกเกอร์ spread ที่เสียตอนข้ามฝั่งราคา และ impact ที่ราคาขยับหนีเพราะคำสั่งของเราเอง</p>
   </div>
 </section>
 
@@ -473,7 +474,8 @@ N\|\Delta\mathbf{w}\|_1=10{,}000{,}000\times0.30=\$3{,}000{,}000
   <h4>Figure 4.4c — L2 ลงโทษการกระจุกตัว</h4>
   <img src="../figures/4.4-3.svg" alt="Figure 4.4c — L2 ลงโทษการกระจุกตัว" loading="lazy">
   <figcaption>
-    <p>ทั้งสอง portfolio มี gross exposure 120%: equal weights $[0.4,0.4,0.4]$ มี L2 $0.6928$ ส่วน $[0.6,-0.4,0.2]$ มี L2 $0.7483$; concentration จึงใช้ risk budget มากกว่า</p>
+    <p>พอร์ตทั้งสองวางเงินรวมเท่ากันที่ 120% ของทุน แต่ L2 ไม่เท่ากัน พอร์ตที่แบ่งเท่ากันสามทางได้ 0.6928 ส่วนพอร์ตที่เทน้ำหนักไปทางเดียวได้ 0.7483</p>
+    <p>ตัวเลขที่สูงกว่าแปลว่าการกระจุกตัวกินโควตาความเสี่ยงมากกว่า ทั้งที่ใช้เงินเท่ากัน</p>
   </figcaption>
 </figure>
 

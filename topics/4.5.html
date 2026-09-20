@@ -28,7 +28,7 @@
   <p>Inner product คูณทีละตำแหน่งแล้วบวก ได้ตัวเลขเดียวที่บอกว่าสอง vector ชี้ทางเดียวกันแค่ไหน เมื่อหักค่าเฉลี่ยออกก่อน cosine ของมุมคือ correlation พอดี quant ใช้วัดว่าความเสี่ยงสองก้อนช่วยกันหรือซ้ำเติมกัน</p>
 </div>
 
-<details class="jargon" open>
+<details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>inner product</dt>
@@ -56,7 +56,7 @@
   </dl>
 </details>
 
-<details class="symbols" open>
+<details class="symbols">
   <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
@@ -325,7 +325,8 @@ s_p&=\sqrt{2.3864/4}\\
   <h4>Figure 4.5b — correlation จัดอันดับตัวเลือก hedge ได้ แต่ไม่รับประกัน</h4>
   <img src="../figures/4.5-2.svg" alt="Figure 4.5b — correlation จัดอันดับตัวเลือก hedge ได้ แต่ไม่รับประกัน" loading="lazy">
   <figcaption>
-    <p>โซ่เดียวกันคือ inner product $1$ → cosine $0.5$ → correlation $0.5$ เมื่อใช้ centered returns; normalization เอาขนาดออก เหลือ direction ที่ใช้เปรียบเทียบ co-movement</p>
+    <p>สามขั้นนี้คือเรื่องเดียวกัน inner product ได้ 1 หารด้วยความยาวทั้งสองได้ cosine 0.5 และเมื่อผลตอบแทนถูกลบค่าเฉลี่ยออกแล้ว ตัวเลขนั้นก็คือ correlation 0.5</p>
+    <p>การหารด้วยความยาวคือการเอาขนาดทิ้ง เหลือแต่ทิศ ซึ่งเป็นสิ่งเดียวที่ใช้เทียบได้ว่าสองตัวขยับไปด้วยกันแค่ไหน</p>
   </figcaption>
 </figure>
 
@@ -362,7 +363,8 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\\
 \text{QQQ hedge}= -hN=-0.85\times\$12{,}000{,}000=-\$10{,}200{,}000
 \]</div>
   <div class="reading">
-    <p>$h=0.85$ คือ hedge ratio ที่ estimated จาก return sensitivity และ $N=\$12{,}000{,}000$ คือ long semiconductor basket เครื่องหมายลบหมายถึง short QQQ ผลลัพธ์ $-\$10.2M$ คือ notional hedge ที่นำไปตรวจ contract size และ execution cost ต่อได้</p>
+    <p>ค่า 0.85 คือ hedge ratio ที่วัดมาจากความไวของผลตอบแทน และ \$12 ล้าน คือเงินที่ถือ long อยู่ในตะกร้าหุ้นชิป</p>
+    <p>เครื่องหมายลบแปลว่าต้อง short QQQ ไม่ใช่ซื้อเพิ่ม ผลลัพธ์ \$10.2 ล้าน คือขนาดที่ต้อง short ซึ่งเอาไปหารด้วยขนาดสัญญาหนึ่งใบเพื่อนับจำนวนใบ แล้วคิดต้นทุนการส่งคำสั่งต่อได้ทันที</p>
   </div>
 </section>
 
@@ -418,7 +420,8 @@ h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}\\
   <h4>Figure 4.5c — hedge ตัดได้หนึ่งทิศทาง ไม่ได้ตัดความไม่แน่นอนทั้งหมด</h4>
   <img src="../figures/4.5-3.svg" alt="Figure 4.5c — hedge ตัดได้หนึ่งทิศทาง ไม่ได้ตัดความไม่แน่นอนทั้งหมด" loading="lazy">
   <figcaption>
-    <p>short QQQ hedge ตัด common direction ออกมาก แต่ residual $(0.3,0.5)$ ไม่ขนานกับ basket $(2,1)$ เพราะ determinant $2(0.5)-1(0.3)=0.7\ne 0$; นี่คือ basis risk จริง ไม่ใช่ under-hedge บนเส้นเดิม</p>
+    <p>การ short QQQ ตัดทิศที่สองตัวขยับร่วมกันออกไปได้มาก แต่สิ่งที่เหลือคือ $(0.3,0.5)$ ซึ่งไม่ได้ชี้ไปทางเดียวกับตะกร้า $(2,1)$ ตรวจได้จาก determinant ที่ได้ 0.7 ไม่ใช่ศูนย์</p>
+    <p>ความต่างของทิศนี้คือ basis risk ของจริง ไม่ใช่การ hedge น้อยไปบนทิศเดิม เติม QQQ อีกเท่าไรก็ไม่หาย</p>
   </figcaption>
 </figure>
 
