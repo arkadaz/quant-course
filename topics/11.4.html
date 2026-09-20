@@ -31,9 +31,9 @@
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>implied volatility</dt>
-    <dd>ค่า volatility ที่ใส่ใน pricing formula แล้วทำให้ราคา model เท่ากับราคา option ในตลาด ใช้ quote option ด้วยหน่วยที่เทียบข้าม strike และ maturity ได้</dd>
+    <dd>ค่าความผันผวนที่ใส่ใน pricing formula แล้วทำให้ราคา model เท่ากับราคา option ในตลาด ใช้ quote option ด้วยหน่วยที่เทียบข้าม strike และ maturity ได้</dd>
     <dt>volatility smile</dt>
-    <dd>รูปที่ implied volatility เปลี่ยนตาม strike แทนที่จะคงที่ ใช้เป็นหลักฐานจากตลาดว่าค่า volatility เดียวของ GBM อธิบาย option ทุกตัวไม่ได้</dd>
+    <dd>รูปที่ implied volatility เปลี่ยนตาม strike แทนที่จะคงที่ ใช้เป็นหลักฐานจากตลาดว่าค่าความผันผวนเดียวของ GBM อธิบาย option ทุกตัวไม่ได้</dd>
     <dt>fat tails</dt>
     <dd>distribution ที่ให้โอกาสของ moves ใหญ่สูงกว่า normal distribution ใช้เตือนว่า normal-tail model อาจประเมิน extreme loss ต่ำเกินไป</dd>
     <dt>jump diffusion</dt>
@@ -43,7 +43,7 @@
     <dt>model risk</dt>
     <dd>ความเสี่ยงที่ decision เสียหายเพราะ assumptions หรือ implementation ของ model ผิด ใช้กำหนด validation, reserves และ stress tests แยกจาก market risk</dd>
     <dt>normal distribution</dt>
-    <dd>distribution รูประฆังที่กำหนดด้วย mean และ variance ใช้เป็น benchmark ของ standardized GBM log returns และตรวจ tail misfit</dd>
+    <dd>distribution รูประฆังที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็น benchmark ของ standardized GBM log returns และตรวจ tail misfit</dd>
     <dt>independence</dt>
     <dd>property ที่รู้ outcome หนึ่งแล้วไม่เปลี่ยน distribution ของอีก outcome ใช้ระบุ assumption ของ future shocks ใน GBM</dd>
     <dt>underlying</dt>
@@ -61,7 +61,7 @@
     <dt>liquidity</dt>
     <dd>ความสามารถซื้อขายขนาดที่ต้องการโดยไม่ขยับราคามาก ใช้กำหนด hedge horizon และ impact stress</dd>
     <dt>Generalized Autoregressive Conditional Heteroskedasticity (GARCH)</dt>
-    <dd>model ที่ให้ variance วันนี้เรียนรู้จาก shock และ variance ก่อนหน้า ใช้จับ volatility clustering ที่ GBM แบบ volatility คงที่มองไม่เห็น</dd>
+    <dd>model ที่ให้ variance วันนี้เรียนรู้จาก shock และ variance ก่อนหน้า ใช้จับ volatility clustering ที่ GBM แบบความผันผวนคงที่มองไม่เห็น</dd>
     <dt>standard deviation (SD)</dt>
     <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าวันร่วงแรงอยู่ห่างจุดกลางกี่ช่วง</dd>
   </dl>
@@ -231,7 +231,7 @@ z&=\frac{-0.05-0.000317}{0.012599}=-3.994\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ถ้า model มี volatility เดียวและอธิบายตลาดได้ implied volatility ที่ย้อนจากทุก option ต้องเท่ากัน; smile หรือ skew คือ observable model discrepancy</p>
+    <p>ถ้า model มีความผันผวนเดียวและอธิบายตลาดได้ implied volatility ที่ย้อนจากทุก option ต้องเท่ากัน; smile หรือ skew คือ observable model discrepancy</p>
     <p>อ่านว่า: ความผันผวนที่ย้อนกลับมาจากราคา option ต้องเท่ากันทุก strike และทุกอายุ ของจริง option ที่ strike ห่างจากราคาปัจจุบันมาก มี implied volatility สูงกว่าเสมอ ตลาดกำลังบอกว่ามันไม่เชื่อ GBM</p>
     <p>แต่ตลาดก็ยังพูดด้วยภาษาของ GBM แทนที่จะบอกว่า option ราคา \$4.72 คนบอกว่า implied volatility 23% ซึ่งเทียบข้ามหุ้นและข้ามอายุได้ทันที GBM จึงเป็นระบบพิกัด ไม่ใช่ความเชื่อ</p>
     <p>นี่คือสิ่งที่ต้องเห็นถ้าแบบจำลองความผันผวนคงที่อธิบายตลาดได้จริง ของจริงไม่เท่ากัน และรูปที่ไม่เท่านั้นคือหลักฐานว่าแบบจำลองนี้ไม่ครบ</p>
@@ -345,7 +345,7 @@ assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk exa
   <p>เฉลย: gap เพียง 5% สร้าง first-order P&amp;L ราว \$2.5 ล้าน.</p>
   <p>เช็ก 10 วินาที: \$500 × 0.05 × 100,000 = \$2,500,000</p>
   <p>งานจริง: ใช้ gap stress แยกจาก daily GBM band ก่อนอนุมัติ hedge</p>
-  <p>กับดัก: อย่าใช้ volatility รายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้</p>
+  <p>กับดัก: อย่าใช้ความผันผวนรายวันมาปลอบใจตัวเองว่า hedge รอด event gap; gamma, vega, spread และ impact ยังตามมาได้</p>
 </section>
 
 <section class="example">

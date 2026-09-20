@@ -44,13 +44,13 @@
     <dt>normal distribution</dt>
     <dd>distribution รูประฆังที่ใช้เป็น base law ของแต่ละ shock และของ MVN scenario</dd>
     <dt>variance</dt>
-    <dd>ค่ากระจายรอบ mean ใช้ตรวจ spread ของ transformed sample</dd>
+    <dd>ค่ากระจายรอบค่าเฉลี่ยใช้ตรวจ spread ของ transformed sample</dd>
     <dt>covariance</dt>
     <dd>ค่า co-movement ระหว่างผลตอบแทนใช้เป็น target ที่ Cholesky ต้อง reproduce</dd>
     <dt>factor</dt>
     <dd>ตัวคูณใน transformation ที่ผสม shocks ใช้สร้าง shared covariance component</dd>
     <dt>spread</dt>
-    <dd>ความกว้างของ transformed return distribution ใช้ตรวจว่า simulator สร้าง volatility ตาม target หรือไม่</dd>
+    <dd>ความกว้างของ transformed return distribution ใช้ตรวจว่า simulator สร้างความผันผวนตาม target หรือไม่</dd>
     <dt>volatility</dt>
     <dd>ขนาดของ return fluctuation ที่อ่านจาก standard deviation ใช้เป็น target spread ของ simulator</dd>
     <dt>SPX</dt>
@@ -421,7 +421,7 @@ C_{\text{fix}}&=C+\tfrac{0.8}{3}\,vv^{\mathsf T}\\
   <h4>Figure 7.6d — ค่าเฉลี่ยและความกว้างของแต่ละฉากทัศน์</h4>
   <img src="../figures/7.6-4.svg" alt="Figure 7.6d — ค่าเฉลี่ยและความกว้างของแต่ละฉากทัศน์" loading="lazy">
   <figcaption>
-    <p>transformed sample ควรคืน mean ใกล้ 0.04% กับ 0.03% และ unequal daily spreads ใกล้ 2% กับ 3% ตาม target; moments ทั้งคู่ต้องอยู่ใน simulation review report</p>
+    <p>transformed sample ควรคืนค่าเฉลี่ยใกล้ 0.04% กับ 0.03% และ unequal daily spreads ใกล้ 2% กับ 3% ตาม target; moments ทั้งคู่ต้องอยู่ใน simulation review report</p>
   </figcaption>
 </figure>
 
@@ -488,7 +488,7 @@ assert np.allclose(F/np.outer(d,d),[[1,.5,.5],[.5,1,-.5],[.5,-.5,1]])</code></pr
     <li>Cholesky เขียน $\Sigma=L L^{\mathsf T}$ แล้วใช้ $r=\mu+Lz$</li>
     <li>$z$ เป็น independent standard Normal shocks</li>
     <li>σ 20% กับ 30% ที่ ρ 0.6 ได้ L แถว (0.20, 0) และ (0.18, 0.24) ตัวที่สองยืม z₁ มา 0.18 ส่วน และ 0.24 คือความเสี่ยงที่ตัวแรกอธิบายไม่ได้</li>
-    <li>sample review ต้องตรวจ mean และ covariance ทั้งคู่</li>
+    <li>sample review ต้องตรวจค่าเฉลี่ยและ covariance ทั้งคู่</li>
     <li>$\Sigma$ ต้องเป็น positive definite ก่อน Cholesky จึงจะแตกมันออกเป็นสองชิ้นได้ ถ้า covariance ที่ประมาณมาไม่ผ่านเงื่อนไขนี้ ให้กลับไปแก้ที่ตัวมันเอง ไม่ใช่ฝืนรันต่อ</li>
   </ul>
 </section>

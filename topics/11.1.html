@@ -49,9 +49,9 @@
     <dt>Markov process</dt>
     <dd>process ที่ conditional distribution ของอนาคตขึ้นกับ state ปัจจุบันโดยไม่ต้องเก็บอดีตทั้งหมด ใช้ลด memory ของ simulation engine</dd>
     <dt>standard deviation</dt>
-    <dd>รากที่สองของ variance ซึ่งวัดขนาดการกระจายรอบค่าเฉลี่ย ใช้แปล volatility เป็น uncertainty ตาม horizon</dd>
+    <dd>รากที่สองของ variance ซึ่งวัดขนาดการกระจายรอบค่าเฉลี่ย ใช้แปลความผันผวนเป็น uncertainty ตาม horizon</dd>
     <dt>variance</dt>
-    <dd>ค่าเฉลี่ยของ squared deviations รอบ mean ใช้วัดการกระจายของ random shock ก่อนแปลงเป็น standard deviation</dd>
+    <dd>ค่าเฉลี่ยของ squared deviations รอบค่าเฉลี่ยใช้วัดการกระจายของ random shock ก่อนแปลงเป็น standard deviation</dd>
     <dt>payoff</dt>
     <dd>เงินที่ contract หรือ position จ่ายเมื่อถึง state หรือวันกำหนด ใช้แปลง simulated price path เป็นมูลค่าที่ต้องประเมิน</dd>
     <dt>slippage</dt>
@@ -311,7 +311,7 @@ N &= 110.0^2 = 12{,}105\text{ trading days}\\
 
 <section class="prose">
   <h4>implementation contract ที่ต้องล็อกก่อนรัน</h4>
-  <p>เก็บ drift และ volatility ใน annual convention, เลือก 252 trading days ต่อปี, ใช้ currency เดียวกับ position, และบันทึก random seed สำหรับ reproducibility อย่าปะปน simple return กับ log return; noise ต้อง scale ด้วยรากที่สองของ elapsed time มิฉะนั้น daily risk จะเล็กผิดระดับขนาดหนึ่ง</p>
+  <p>เก็บ drift และความผันผวนใน annual convention, เลือก 252 trading days ต่อปี, ใช้ currency เดียวกับ position, และบันทึก random seed สำหรับ reproducibility อย่าปะปน simple return กับ log return; noise ต้อง scale ด้วยรากที่สองของ elapsed time มิฉะนั้น daily risk จะเล็กผิดระดับขนาดหนึ่ง</p>
 </section>
 
 <figure class="plot">

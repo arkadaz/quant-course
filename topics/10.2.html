@@ -55,7 +55,7 @@
     <dt>spot</dt>
     <dd>ราคาตลาดของ underlying ณ ปัจจุบัน ใช้เป็นฐานเทียบ strike และคำนวณ notional ของ position</dd>
     <dt>expiry</dt>
-    <dd>เวลาสิ้นสุดสิทธิ์ของ option ใช้กำหนด horizon ที่ volatility มีเวลาสะสม</dd>
+    <dd>เวลาสิ้นสุดสิทธิ์ของ option ใช้กำหนด horizon ที่ความผันผวนมีเวลาสะสม</dd>
     <dt>premium</dt>
     <dd>ราคาที่ผู้ซื้อ option จ่ายล่วงหน้าให้ผู้ขาย ใช้แลกกับ payoff ที่อาจเกิดในอนาคต</dd>
     <dt>United States (US) equity option contract</dt>
@@ -243,7 +243,7 @@ Y_0&=\frac{W_0}{\sqrt c}=\frac{0}{\sqrt c}=0\\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 7 — แปลงกลับเป็น volatility</h4>
-  <p>variance บวกกันได้ แต่ volatility บวกกันไม่ได้ ขั้นนี้แสดงว่ารากที่สองที่ทุกคนท่องจำกันนั้นโผล่ออกมาจากตรงไหน</p>
+  <p>variance บวกกันได้ แต่ความผันผวนบวกกันไม่ได้ ขั้นนี้แสดงว่ารากที่สองที่ทุกคนท่องจำกันนั้นโผล่ออกมาจากตรงไหน</p>
   <div class="math">\[
 \sigma_n=\sqrt{n\sigma_d^2}=\sigma_d\sqrt n
 \]</div>
@@ -388,7 +388,7 @@ S_0\,\sigma\sqrt T\,\mathbb E|Z|&=\$520(0.052337)(0.797885)\\
 
 <section class="code">
   <details>
-    <summary>โค้ดตรวจการแปลง volatility และราคา straddle ด้วย Python</summary>
+    <summary>โค้ดตรวจการแปลงความผันผวนและราคา straddle ด้วย Python</summary>
     <pre><code>import math
 from scipy.stats import norm
 

@@ -167,7 +167,7 @@
 
 <section class="prose">
   <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ให้ forward ของ SPX ที่ expiry 30 วันเท่ากับ 5,000 จุด อัตราดอกเบี้ยต่อเนื่อง 4% ต่อปี และ option midquotes สังเคราะห์มาจากสูตร 13.2 ด้วย volatility แบน 20% ต่อรากปี ใช้ strike 3,000 ถึง 7,000 ทุก 50 จุด ตัวเลขทั้งหมดเป็นแบบฝึกคำนวณ ไม่ใช่ snapshot ตลาดจริง</p>
+  <p>โจทย์ให้อะไรมาบ้าง: ให้ forward ของ SPX ที่ expiry 30 วันเท่ากับ 5,000 จุด อัตราดอกเบี้ยต่อเนื่อง 4% ต่อปี และ option midquotes สังเคราะห์มาจากสูตร 13.2 ด้วยความผันผวนแบน 20% ต่อรากปี ใช้ strike 3,000 ถึง 7,000 ทุก 50 จุด ตัวเลขทั้งหมดเป็นแบบฝึกคำนวณ ไม่ใช่ snapshot ตลาดจริง</p>
   <p>สัญญา variance swap สมมติวัด log return ตอนปิด 10 ครั้ง ใช้ $A=252$ observations ต่อปี ไม่หัก sample mean และมี variance notional \$1,000,000 ต่อ annualized variance หนึ่งหน่วย ต้องล็อกสาม convention นี้ก่อนคำนวณ เพราะสัญญาจริงอาจมีวันหยุด ราคา disruption และกติกาปรับข้อมูลต่างกัน</p>
 </section>
 
@@ -459,7 +459,7 @@ I_C&=\int_F^\infty\frac{C(K,T)}{K^2}\,dK\\
 K_{\rm var}&=\frac{2e^{rT}}{T}(I_P+I_C)\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$P$ กับ $C$ เป็นราคา option วันนี้จึงคูณ $e^{rT}$ เพื่อย้าย expected payoff ไปเวลา $T$ แล้วปรับด้วยอายุ $T$ ให้เป็นอัตรารายปี สูตรไม่ต้องกำหนด Heston หรือ volatility คงที่ แต่ต้องมี continuum ของ strike และเส้นทางต่อเนื่องตามขั้นก่อน</p>
+    <p>$P$ กับ $C$ เป็นราคา option วันนี้จึงคูณ $e^{rT}$ เพื่อย้าย expected payoff ไปเวลา $T$ แล้วปรับด้วยอายุ $T$ ให้เป็นอัตรารายปี สูตรไม่ต้องกำหนด Heston หรือความผันผวนคงที่ แต่ต้องมี continuum ของ strike และเส้นทางต่อเนื่องตามขั้นก่อน</p>
     <p>เรียก integral ฝั่ง Put ว่า $I_P$ และฝั่ง Call ว่า $I_C$ ชั่วคราว คำนวณสองส่วนนี้แยกกันแล้วบวก ก่อนคูณด้วยตัวคูณด้านหน้า สูตรจึงยังเป็นสูตรเดิม แต่เห็นส่วนประกอบทีละส่วน</p>
   </div>
 </section>
@@ -564,7 +564,7 @@ K_{\rm vol}^{\rm grid}&=\sqrt{0.04020277169}=20.050629\%\end{aligned}
   <h4>ภาพ 13.8e — payoff เป็นเส้นตรงใน variance แต่โค้งใน volatility</h4>
   <img src="../figures/13.8-5.svg" alt="ภาพ 13.8e — payoff เป็นเส้นตรงใน variance แต่โค้งใน volatility" loading="lazy">
   <figcaption>
-    <p>แกนนอนแสดง realized volatility แต่สัญญาชำระจากกำลังสอง จึงได้เส้นโค้ง จุดคุ้มทุนคือ 20.0506% และตัวอย่าง 21.8814% จ่าย \$7,677.23 การพูดว่า volatility เพิ่ม 1 จุดแล้วได้เงินคงที่จึงเป็นเพียง linear approximation ใกล้ strike</p>
+    <p>แกนนอนแสดง realized volatility แต่สัญญาชำระจากกำลังสอง จึงได้เส้นโค้ง จุดคุ้มทุนคือ 20.0506% และตัวอย่าง 21.8814% จ่าย \$7,677.23 การพูดว่าความผันผวนเพิ่ม 1 จุดแล้วได้เงินคงที่จึงเป็นเพียง linear approximation ใกล้ strike</p>
   </figcaption>
 </figure>
 
@@ -593,7 +593,7 @@ w_{30}&=T_1K_1\cdot\frac{T_2-T_{30}}{T_2-T_1}+T_2K_2\cdot\frac{T_{30}-T_1}{T_2-T
 
 <section class="formula">
   <h4>ขั้นที่ 15 — ตัวอย่างการเชื่อม 23 วันกับ 37 วัน</h4>
-  <p>อายุ 23 วันกับ 37 วันคร่อม 30 วันที่เราต้องการ ต้องเชื่อมบนแกน total variance ไม่ใช่เชื่อม volatility ตรง ๆ</p>
+  <p>อายุ 23 วันกับ 37 วันคร่อม 30 วันที่เราต้องการ ต้องเชื่อมบนแกน total variance ไม่ใช่เชื่อมความผันผวนตรง ๆ</p>
   <div class="math">\[
 \begin{aligned}w_{23}&=0.22^2\left(\tfrac{23}{365}\right)=0.0484(0.063014)=0.00304986\\
 w_{37}&=0.19^2\left(\tfrac{37}{365}\right)=0.0361(0.101370)=0.00365945\\[4pt]
@@ -603,7 +603,7 @@ w_{30}&=0.00304986+\frac{30-23}{37-23}\bigl(0.00365945-0.00304986\bigr)\\
 \]</div>
   <div class="reading">
     <p>30 วันอยู่กึ่งกลางระหว่าง 23 กับ 37 พอดี ตัวถ่วงจึงเป็น 0.5</p>
-    <p>ถ้าเชื่อม volatility ตรง ๆ จะได้ 20.5% ซึ่งสูงกว่าคำตอบที่ถูกต้อง 20.2027% ความต่างนี้คือเหตุผลที่ต้องเชื่อมบนแกน variance</p>
+    <p>ถ้าเชื่อมความผันผวนตรง ๆ จะได้ 20.5% ซึ่งสูงกว่าคำตอบที่ถูกต้อง 20.2027% ความต่างนี้คือเหตุผลที่ต้องเชื่อมบนแกน variance</p>
   </div>
 </section>
 
@@ -684,7 +684,7 @@ assert abs((0.22 + 0.19) / 2 - 0.205) &lt; 1e-12            # the wrong, linear-
     <li>คำนวณ realized variance ตาม observation schedule และ annualization ที่สัญญาระบุก่อนแปลงเป็น USD</li>
     <li>fair variance strike มาจาก OTM put ใต้ forward และ OTM call เหนือ forward ที่ถ่วงด้วย $1/K^2$</li>
     <li>ผลรวมแบบ VIX-style มี discretization, tail truncation และ quote conventions; constant 30 วันเชื่อม total variance</li>
-    <li>variance swap เป็นเส้นตรงใน variance ไม่ใช่ใน volatility และ jump ทำให้ static replication เหลือ basis risk</li>
+    <li>variance swap เป็นเส้นตรงใน variance ไม่ใช่ในความผันผวนและ jump ทำให้ static replication เหลือ basis risk</li>
   </ul>
 </section>
 </article>

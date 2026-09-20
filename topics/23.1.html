@@ -504,7 +504,7 @@ U_0&=A_0=24{,}633{,}143\\
 
 <section class="prose">
   <h4>จากสูตรสู่ implementation และการควบคุม</h4>
-  <p>ในระบบ pricing ให้เก็บ lattice เป็น array ของเวลาและ state แล้วทำ backward induction จาก terminal node; อย่าปัดค่าระหว่าง node เพราะการปัดหลายชั้นทำให้ boundary เปลี่ยน ตรวจ unit test ด้วย one-step tree ที่คำนวณมือได้ และทดสอบ limiting cases: ถ้า volatility เป็นศูนย์ option ควรเท่ากับ discounted deterministic payoff; ถ้าเงินลงทุนสูงมาก ค่า option ควรเข้าใกล้ศูนย์; ถ้าให้ exercise ได้ทันทีทุก node ต้องไม่ต่ำกว่า immediate NPV</p>
+  <p>ในระบบ pricing ให้เก็บ lattice เป็น array ของเวลาและ state แล้วทำ backward induction จาก terminal node; อย่าปัดค่าระหว่าง node เพราะการปัดหลายชั้นทำให้ boundary เปลี่ยน ตรวจ unit test ด้วย one-step tree ที่คำนวณมือได้ และทดสอบ limiting cases: ถ้าความผันผวนเป็นศูนย์ option ควรเท่ากับ discounted deterministic payoff; ถ้าเงินลงทุนสูงมาก ค่า option ควรเข้าใกล้ศูนย์; ถ้าให้ exercise ได้ทันทีทุก node ต้องไม่ต่ำกว่า immediate NPV</p>
   <p>สำหรับ risk report ให้แยก sensitivity ต่องบลงทุน อัตราดอกเบี้ย volatility horizon และ correlation กับราคาสินค้า อย่ารายงานเพียงราคาเดียว: ติดตาม exercise boundary, model version, input market data timestamp และการอนุมัติ parameter ด้วย ฝ่าย trading ใช้ option value ตัดสินใจว่าจะ lock capacity หรือรอ ส่วนฝ่าย control ต้องตรวจว่า cash flow ที่ใช้สร้างมูลค่าโครงการเป็น incremental จริงและไม่ใส่ sunk cost ซ้ำ เครื่องคิดเลขไม่ควรได้รับ promotion เป็น investment committee เพียงเพราะมันกดปุ่มเร็วกว่า</p>
 </section>
 
@@ -571,7 +571,7 @@ assert abs((2_500 * 2_160 - 1_000_000) / 1.1 - 4e6) &lt; 1e-6   # year-9 break-e
 
 <section class="pitfall">
   <h4>กับดัก: risk-neutral probability ไม่ใช่ forecast</h4>
-  <p>ค่า $q=0.4166667$ ถูกสร้างเพื่อให้การ discount สอดคล้องกับ no-arbitrage ไม่ได้บอกว่า analyst เชื่อว่าโครงการมีโอกาสขึ้น 41.66667% ในโลกจริง การประเมินลงทุนต้องใช้ scenario หรือ real-world probability แยกต่างหาก ส่วนการตั้งราคา option ต้องใช้ pricing measure และ discount curve ที่เหมาะสม อีกกับดักคือใช้ volatility สูงแล้วสรุปว่า option ดีเสมอ: ถ้าโครงการมี downside cash outflow, abandonment cost, liquidity constraint หรือ capacity ที่ขยายไม่ได้ ความ convexity อาจหายไป</p>
+  <p>ค่า $q=0.4166667$ ถูกสร้างเพื่อให้การ discount สอดคล้องกับ no-arbitrage ไม่ได้บอกว่า analyst เชื่อว่าโครงการมีโอกาสขึ้น 41.66667% ในโลกจริง การประเมินลงทุนต้องใช้ scenario หรือ real-world probability แยกต่างหาก ส่วนการตั้งราคา option ต้องใช้ pricing measure และ discount curve ที่เหมาะสม อีกกับดักคือใช้ความผันผวนสูงแล้วสรุปว่า option ดีเสมอ: ถ้าโครงการมี downside cash outflow, abandonment cost, liquidity constraint หรือ capacity ที่ขยายไม่ได้ ความ convexity อาจหายไป</p>
 </section>
 
 <section class="table">

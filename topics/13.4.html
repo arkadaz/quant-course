@@ -259,7 +259,7 @@ A-B=61.646908,\qquad C-P=300-235=65,\qquad \varepsilon=(C-P)-(A-B)=3.353092
   <h4>ภาพ 13.4a — Call ลบ put คือ forward payoff</h4>
   <img src="../figures/13.4-1.svg" alt="ภาพ 13.4a — Call ลบ put คือ forward payoff" loading="lazy">
   <figcaption>
-    <p>เส้น call ลบ put ทับเส้น $S_T-K$ ทุกจุด ไม่ว่าปลายทางอยู่ฝั่งใด นี่คือเหตุผลจาก payoff ก่อนมีแบบจำลอง volatility เข้ามา</p>
+    <p>เส้น call ลบ put ทับเส้น $S_T-K$ ทุกจุด ไม่ว่าปลายทางอยู่ฝั่งใด นี่คือเหตุผลจาก payoff ก่อนมีแบบจำลองความผันผวนเข้ามา</p>
   </figcaption>
 </figure>
 
@@ -272,10 +272,10 @@ A-B=61.646908,\qquad C-P=300-235=65,\qquad \varepsilon=(C-P)-(A-B)=3.353092
 </figure>
 
 <details class="jargon" open>
-  <summary>ศัพท์ชุดที่สอง: เมื่อเลิกเชื่อว่า volatility เดียวใช้ได้ทุก strike</summary>
+  <summary>ศัพท์ชุดที่สอง: เมื่อเลิกเชื่อว่าความผันผวนเดียวใช้ได้ทุก strike</summary>
   <dl>
     <dt>implied volatility</dt>
-    <dd>implied volatility คือค่า volatility ที่เมื่อใส่ในสูตรราคาแล้วคืน market price ของ option ใช้แปลงราคาต่าง strike ให้เทียบกันบนสเกลเดียว แต่ยังเป็นผลย้อนจากราคา ไม่ใช่สิ่งสังเกตตรง</dd>
+    <dd>implied volatility คือค่าความผันผวนที่เมื่อใส่ในสูตรราคาแล้วคืน market price ของ option ใช้แปลงราคาต่าง strike ให้เทียบกันบนสเกลเดียว แต่ยังเป็นผลย้อนจากราคา ไม่ใช่สิ่งสังเกตตรง</dd>
     <dt>volatility smile</dt>
     <dd>
       <p>คืออะไร: รูปที่ได้เมื่อวาด implied volatility ของทุก strike ที่วันหมดอายุเดียวกัน แล้วพบว่าปีกทั้งสองข้างสูงกว่าตรงกลาง</p>
@@ -317,14 +317,14 @@ A-B=61.646908,\qquad C-P=300-235=65,\qquad \varepsilon=(C-P)-(A-B)=3.353092
 
 <section class="prose">
   <h4>จาก equality หนึ่ง strike ไปสู่ smile ทั้ง expiry</h4>
-  <p>parity บอกเพียงความต่างระหว่าง call กับ put ที่ strike เดียว จึงไม่บังคับให้ implied volatility คงที่ตาม strike เมื่อตลาดกำหนดราคาปีกลงแพงขึ้น ทั้ง call และ put ที่จับคู่ถูกต้องยังรักษา parity ได้พร้อมกับมี smile หรือ skew สิ่งที่ห้ามคือใช้ volatility คนละค่าแล้วสรุปว่าราคา call กับ put ขัด parity โดยไม่ตรวจราคาจริง</p>
+  <p>parity บอกเพียงความต่างระหว่าง call กับ put ที่ strike เดียว จึงไม่บังคับให้ implied volatility คงที่ตาม strike เมื่อตลาดกำหนดราคาปีกลงแพงขึ้น ทั้ง call และ put ที่จับคู่ถูกต้องยังรักษา parity ได้พร้อมกับมี smile หรือ skew สิ่งที่ห้ามคือใช้ความผันผวนคนละค่าแล้วสรุปว่าราคา call กับ put ขัด parity โดยไม่ตรวจราคาจริง</p>
 </section>
 
 <figure class="plot">
   <h4>ภาพ 13.4c — Parity ไม่ขึ้นกับ volatility</h4>
   <img src="../figures/13.4-3.svg" alt="ภาพ 13.4c — Parity ไม่ขึ้นกับ volatility" loading="lazy">
   <figcaption>
-    <p>Black–Scholes call และ put ต่างเพิ่มตาม volatility แต่ผลต่างคงที่ที่ $A-B=61.6469$ จุด เส้นแนวนอนจึงเป็นผลจาก payoff replication ไม่ใช่การคาดว่า volatility เท่าไร</p>
+    <p>Black–Scholes call และ put ต่างเพิ่มตามความผันผวนแต่ผลต่างคงที่ที่ $A-B=61.6469$ จุด เส้นแนวนอนจึงเป็นผลจาก payoff replication ไม่ใช่การคาดว่าความผันผวนเท่าไร</p>
   </figcaption>
 </figure>
 
@@ -338,7 +338,7 @@ C_{\rm BS}\big(F,K,T,\sigma_{\rm imp}\big)&=C_{\rm market}(K,T)
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>สำหรับแต่ละ strike เราแก้ volatility ที่ทำให้สูตร Black–Scholes คืน market price แล้ววางกับ log-moneyness ซึ่งศูนย์หมายถึง strike เท่ากับ forward</p>
+    <p>สำหรับแต่ละ strike เราแก้ความผันผวนที่ทำให้สูตร Black–Scholes คืน market price แล้ววางกับ log-moneyness ซึ่งศูนย์หมายถึง strike เท่ากับ forward</p>
   </div>
 </section>
 

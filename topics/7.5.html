@@ -19,7 +19,7 @@
 <article class="topic" data-number="7.5" data-depends-on="7.1 7.3 6.8">
 <header class="topic-header">
   <h1><span class="tnum">7.5</span> Linear Combinations</h1>
-  <p class="subtitle">รวม correlated Normal returns ให้เป็น P&amp;L scalar ที่คำนวณ mean และ variance ได้</p>
+  <p class="subtitle">รวม correlated Normal returns ให้เป็น P&amp;L scalar ที่คำนวณค่าเฉลี่ยและ variance ได้</p>
 </header>
 
 <div class="hook">
@@ -42,11 +42,11 @@
     <dt>long-only weights</dt>
     <dd>weights ที่ไม่ติดลบเพราะ portfolio ถือซื้อแต่ละสินทรัพย์ ใช้ในข้อเปรียบเทียบที่ weighted-average volatility เป็น upper bound</dd>
     <dt>variance</dt>
-    <dd>ค่ากระจายรอบ mean ใช้คำนวณความเสี่ยงของ linear combination ในหน่วย return²</dd>
+    <dd>ค่ากระจายรอบค่าเฉลี่ยใช้คำนวณความเสี่ยงของ linear combination ในหน่วย return²</dd>
     <dt>normal distribution</dt>
-    <dd>distribution ที่กำหนดด้วย mean และ variance ใช้รับรองรูปของ linear combination ภายใต้ MVN</dd>
+    <dd>distribution ที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้รับรองรูปของ linear combination ภายใต้ MVN</dd>
     <dt>standard deviation</dt>
-    <dd>รากที่สองของ variance ใช้รายงาน volatility ในหน่วย return/day</dd>
+    <dd>รากที่สองของ variance ใช้รายงานความผันผวนในหน่วย return/day</dd>
     <dt>covariance</dt>
     <dd>ค่า co-movement ระหว่าง components ใช้สร้าง cross-term ของ portfolio variance</dd>
     <dt>Value at Risk (VaR)</dt>
@@ -97,7 +97,7 @@
 
 <section class="prose">
   <h4>โจทย์ portfolio scalar</h4>
-  <p>ให้ $r$ เป็น vector ของ SPX และ QQQ daily returns และ $a$ เป็น portfolio weights การรวมผลตอบแทนนี้ทำให้ risk service ต้องคำนวณ mean กับ variance ของผลลัพธ์ โดยเก็บ covariance ไว้ครบ</p>
+  <p>ให้ $r$ เป็น vector ของ SPX และ QQQ daily returns และ $a$ เป็น portfolio weights การรวมผลตอบแทนนี้ทำให้ risk service ต้องคำนวณค่าเฉลี่ยกับ variance ของผลลัพธ์ โดยเก็บ covariance ไว้ครบ</p>
 </section>
 
 <section class="formula">
@@ -222,7 +222,7 @@ E[L]&=0.6(0.0004)+0.4(0.0003)\\
 \]</div>
   <div class="reading">
     <p>พจน์กลางคือส่วนที่มาจากการเคลื่อนไหวร่วม ถ้าสองตัวเป็นอิสระกันสนิท พจน์นี้จะเป็นศูนย์ และ $\sigma_L$ จะเหลือเพียง 1.70%</p>
-    <p>สังเกตว่า 2.008% ต่ำกว่าค่าเฉลี่ยถ่วงน้ำหนักของ volatility สองตัว การผสมจึงลดความเสี่ยงได้ แม้จะไม่ได้ลดจนหมด</p>
+    <p>สังเกตว่า 2.008% ต่ำกว่าค่าเฉลี่ยถ่วงน้ำหนักของความผันผวนสองตัว การผสมจึงลดความเสี่ยงได้ แม้จะไม่ได้ลดจนหมด</p>
     <p>สามตัวเลขวางเรียงกัน: อิสระกันสนิท $\sqrt{0.000288}=1.70\%$ ของจริง $2.008\%$ และค่าเฉลี่ยถ่วงน้ำหนักของ volatility $0.6(2\%)+0.4(3\%)=2.4\%$ ของจริงอยู่ระหว่างสองขั้ว: covariance บวกดันขึ้นจาก 1.70 แต่ยังต่ำกว่า 2.4 เพราะสองตัวไม่ได้ขยับตามกันเป๊ะ ($\rho=0.4$ ไม่ใช่ 1)</p>
   </div>
 </section>
@@ -357,7 +357,7 @@ w_iw_j&=0.15,\ 0.10,\ 0.06\\[4pt]
   <h4>Figure 7.5a — ผสมเชิงเส้นของ Normal ที่สัมพันธ์กัน</h4>
   <img src="../figures/7.5-1.svg" alt="Figure 7.5a — ผสมเชิงเส้นของ Normal ที่สัมพันธ์กัน" loading="lazy">
   <figcaption>
-    <p>เส้นแดงคือทิศของ weight 60/40 ที่ใช้ project joint cloud เป็น portfolio return หนึ่งตัว; จุดทุกจุดยังมาจาก mean และ covariance ชุดเดียวกับหัวข้อ 7.1</p>
+    <p>เส้นแดงคือทิศของ weight 60/40 ที่ใช้ project joint cloud เป็น portfolio return หนึ่งตัว; จุดทุกจุดยังมาจากค่าเฉลี่ยและ covariance ชุดเดียวกับหัวข้อ 7.1</p>
   </figcaption>
 </figure>
 
@@ -373,12 +373,12 @@ w_iw_j&=0.15,\ 0.10,\ 0.06\\[4pt]
   <h4>Figure 7.5c — distribution ของผลตอบแทนพอร์ต</h4>
   <img src="../figures/7.5-3.svg" alt="Figure 7.5c — distribution ของผลตอบแทนพอร์ต" loading="lazy">
   <figcaption>
-    <p>simulation 5,000 จุดแสดง SPX, QQQ และ portfolio 60/40; ภายใต้ MVN แต่ละ projection ยังมีรูป Normal และใช้ mean ที่ระบุ ไม่ได้บังคับ centre เป็นศูนย์</p>
+    <p>simulation 5,000 จุดแสดง SPX, QQQ และ portfolio 60/40; ภายใต้ MVN แต่ละ projection ยังมีรูป Normal และใช้ค่าเฉลี่ยที่ระบุ ไม่ได้บังคับ centre เป็นศูนย์</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 7.5d — ค่าเฉลี่ยและ volatility ตามน้ำหนักที่เลือก</h4>
+  <h4>Figure 7.5d — ค่าเฉลี่ยและความผันผวนตามน้ำหนักที่เลือก</h4>
   <img src="../figures/7.5-4.svg" alt="Figure 7.5d — ค่าเฉลี่ยและ volatility ตามน้ำหนักที่เลือก" loading="lazy">
   <figcaption>
     <p>จุดแดงคือ portfolio 60/40 ที่ expected return 0.036% และ daily volatility 2.008%; เส้นทั้งเส้นรวม covariance 0.00024 ไว้แล้ว</p>

@@ -47,7 +47,7 @@
     <dt>realized volatility</dt>
     <dd>square root ของ realized variance หลังปรับหน่วยเวลา ใช้รายงานความผันผวนที่เกิดขึ้นจริงให้เทียบกับ implied หรือ forecast volatility</dd>
     <dt>integrated variance</dt>
-    <dd>integral ของ instantaneous variance ตลอดเวลา ใช้เป็นเป้าหมายประชากรที่ realized variance ประมาณเมื่อ volatility เปลี่ยนตามเวลา</dd>
+    <dd>integral ของ instantaneous variance ตลอดเวลา ใช้เป็นเป้าหมายประชากรที่ realized variance ประมาณเมื่อความผันผวนเปลี่ยนตามเวลา</dd>
     <dt>market microstructure noise</dt>
     <dd>ความคลาดเคลื่อนระยะสั้นจาก bid-ask bounce, price discreteness และกลไกการซื้อขาย ใช้เตือนว่าการ sample ถี่เกินไปอาจดัน realized variance สูงเกินจริง</dd>
     <dt>bid</dt>
@@ -348,12 +348,12 @@ n=10{,}000&:\ 0.7979(100)=79.79\ \to\ \infty
 
 <section class="prose">
   <h4>จาก quadratic variation สู่ realized volatility</h4>
-  <p>สำหรับ log price ที่มี volatility เปลี่ยนตามเวลา quadratic variation เป้าหมายไม่ใช่ $T$ แต่เป็น integrated variance ผลรวม squared intraday log returns เป็น estimator ที่ desk คำนวณได้จากราคา</p>
+  <p>สำหรับ log price ที่มีความผันผวนเปลี่ยนตามเวลา quadratic variation เป้าหมายไม่ใช่ $T$ แต่เป็น integrated variance ผลรวม squared intraday log returns เป็น estimator ที่ desk คำนวณได้จากราคา</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 10 — นิยามของ realized variance: ตัวเลขที่โต๊ะวัดจริงทุกวัน</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เราคำนวณจากข้อมูล ส่วนเครื่องหมายประมาณทางขวา คือสิ่งที่ขั้นที่ 5 กับ 6 พิสูจน์ไว้ว่ามันลู่เข้าหาอะไร ทั้งหมดข้างบนจึงไม่ใช่เรื่องนามธรรม มันคือฐานของตัวเลขที่ใช้ตั้งราคาสัญญาที่จ่ายตามความผันผวนจริง ในหัวข้อ 13.8 และใช้ตรวจว่าแบบจำลอง volatility ทำงานถูกหรือไม่</p>
+  <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เราคำนวณจากข้อมูล ส่วนเครื่องหมายประมาณทางขวา คือสิ่งที่ขั้นที่ 5 กับ 6 พิสูจน์ไว้ว่ามันลู่เข้าหาอะไร ทั้งหมดข้างบนจึงไม่ใช่เรื่องนามธรรม มันคือฐานของตัวเลขที่ใช้ตั้งราคาสัญญาที่จ่ายตามความผันผวนจริง ในหัวข้อ 13.8 และใช้ตรวจว่าแบบจำลองความผันผวนทำงานถูกหรือไม่</p>
   <div class="math">\[
 RV:=\sum_{i=1}^{n}r_i^2\;\approx\;\int_0^T\sigma_t^2\,dt
 \]</div>
@@ -466,7 +466,7 @@ assert abs((1 - 2 * Phi(-0.01)) - np.sqrt(2 / (pi * 10_000))) &lt; 1e-5</code></
 
 <section class="pitfall">
   <h4>กับดัก: อ่าน mnemonic เป็น algebra และอ่านข้อมูลถี่เป็นข้อมูลดี</h4>
-  <p>$(dW_t)^2=dt$ สรุป limit ของ quadratic sums ไม่ได้อนุญาตให้หารด้วย $dW_t$ แบบตัวเลข และ $[W]_T=T$ ใช้กับ SBM scale 1 เท่านั้น สำหรับ process ที่ volatility เปลี่ยนเป้าหมายคือ integrated variance ส่วน sampling ถี่เกินไปทำให้ market microstructure noise พองขึ้นแทนที่จะหาย</p>
+  <p>$(dW_t)^2=dt$ สรุป limit ของ quadratic sums ไม่ได้อนุญาตให้หารด้วย $dW_t$ แบบตัวเลข และ $[W]_T=T$ ใช้กับ SBM scale 1 เท่านั้น สำหรับ process ที่ความผันผวนเปลี่ยนเป้าหมายคือ integrated variance ส่วน sampling ถี่เกินไปทำให้ market microstructure noise พองขึ้นแทนที่จะหาย</p>
 </section>
 
 <section class="table">

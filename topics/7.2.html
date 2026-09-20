@@ -19,7 +19,7 @@
 <article class="topic" data-number="7.2" data-depends-on="2.1 6.5 7.1">
 <header class="topic-header">
   <h1><span class="tnum">7.2</span> The Moment Generating Function (MGF)</h1>
-  <p class="subtitle">เครื่องกำเนิด moments ที่ย่อ distribution ให้คำนวณ mean และ variance ได้</p>
+  <p class="subtitle">เครื่องกำเนิด moments ที่ย่อ distribution ให้คำนวณค่าเฉลี่ยและ variance ได้</p>
 </header>
 
 <div class="hook">
@@ -34,7 +34,7 @@
     <dt>Moment Generating Function (MGF)</dt>
     <dd>สูตรเดียวที่เก็บค่าเฉลี่ยของ $X,X^2,X^3,\ldots$ ไว้ด้วยกัน เขียนเป็น $M_X(t)=E[e^{tX}]$ แล้วใช้ derivative ที่ $t=0$ ดึงข้อมูลแต่ละชั้นออกมา</dd>
     <dt>moment</dt>
-    <dd>ค่าเฉลี่ยของกำลังของ random variable เช่น moment แรกคือ mean และ moment ที่สองช่วยหา variance</dd>
+    <dd>ค่าเฉลี่ยของกำลังของ random variable เช่น moment แรกคือค่าเฉลี่ยและ moment ที่สองช่วยหา variance</dd>
     <dt>derivative</dt>
     <dd>ตัววัดว่า function เปลี่ยนเร็วแค่ไหนเมื่อขยับ input เล็กน้อย ในหัวข้อนี้ใช้ดึง moment จาก MGF ที่จุดศูนย์</dd>
     <dt>cumulant</dt>
@@ -237,7 +237,7 @@ M_{X+Y}(t) &= \mathbb{E}\left[e^{t(X+Y)}\right] \\
     <p>จุดชี้ขาดของระฆังคว่ำคือการจัดกำลังสองสมบูรณ์ใน integral เลขชี้กำลัง $az - z^2/2$ ถูกแปลงเป็น $-\frac{1}{2}(z-a)^2 + a^2/2$</p>
     <p>พจน์ $e^{a^2/2}$ ไม่มีตัวแปร $z$ จึงดึงออกมานอก integral ได้ ส่วน integral ที่เหลือคือพื้นที่ใต้กราฟระฆังคว่ำที่มีค่าเท่ากับหนึ่งพอดี</p>
     <p>เมื่อเลื่อนจุดกึ่งกลางเป็น $\mu$ และขยายสเกลด้วย $\sigma$ เราได้สูตรปิด $e^{\mu t + \sigma^2 t^2 / 2}$ อย่างสมบูรณ์</p>
-    <p>การหา derivative ครั้งแรกและครั้งที่สองคืนค่า mean และ second moment ตรงตามนิยาม</p>
+    <p>การหา derivative ครั้งแรกและครั้งที่สองคืนค่าค่าเฉลี่ยและ second moment ตรงตามนิยาม</p>
     <p>เมื่อแทนตัวเลขจริง $\mu = 75$ และ $\sigma = 300$ จะได้ second moment 95,625 ซึ่งเมื่อหักลบ $75^2$ จะคืนค่า variance $90{,}000 = 300^2$ พอดี</p>
   </div>
 </section>
@@ -300,7 +300,7 @@ M_{X+Y}(t) &= \mathbb{E}\left[e^{t(X+Y)}\right] \\
 
 <section class="formula">
   <h4>ขั้นที่ 9 — ขยายสู่ Multivariate Normal MGF: vector และ covariance matrix</h4>
-  <p>จากสูตรหนึ่งมิติ เราขยายสู่หลายมิติได้อย่างเป็นธรรมชาติ โดยมองว่าการคูณ inner product $s^\top X$ คือการแปลงเป็นตัวแปรแบบ scalar หนึ่งมิติที่มี mean และ variance ตามโครงสร้าง matrix</p>
+  <p>จากสูตรหนึ่งมิติ เราขยายสู่หลายมิติได้อย่างเป็นธรรมชาติ โดยมองว่าการคูณ inner product $s^\top X$ คือการแปลงเป็นตัวแปรแบบ scalar หนึ่งมิติที่มีค่าเฉลี่ยและ variance ตามโครงสร้าง matrix</p>
   <div class="math">\[
 \begin{aligned}
 X &\sim \mathcal{MN}_d(\mu, \Sigma)\\
@@ -336,7 +336,7 @@ M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
   <h4>Figure 7.2a — MGF เก็บ moment ไว้ตรงไหน</h4>
   <img src="../figures/7.2-1.svg" alt="Figure 7.2a — MGF เก็บ moment ไว้ตรงไหน" loading="lazy">
   <figcaption>
-    <p>มองที่ $t=0$ ก่อน เส้นเริ่มที่ 1 ความชันตรงนั้นให้ mean ส่วนความโค้งให้ค่าเฉลี่ยของ $X^2$</p>
+    <p>มองที่ $t=0$ ก่อน เส้นเริ่มที่ 1 ความชันตรงนั้นให้ค่าเฉลี่ยส่วนความโค้งให้ค่าเฉลี่ยของ $X^2$</p>
   </figcaption>
 </figure>
 
@@ -344,7 +344,7 @@ M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
   <h4>Figure 7.2b — ความชันกับความโค้ง</h4>
   <img src="../figures/7.2-2.svg" alt="Figure 7.2b — ความชันกับความโค้ง" loading="lazy">
   <figcaption>
-    <p>ซูมใกล้ศูนย์แล้วอ่านสองอย่าง ความชันคือ mean ความโค้งคือค่าเฉลี่ยของ $X^2$ เมื่อลบ mean ยกกำลังสองจึงได้ variance</p>
+    <p>ซูมใกล้ศูนย์แล้วอ่านสองอย่าง ความชันคือค่าเฉลี่ยความโค้งคือค่าเฉลี่ยของ $X^2$ เมื่อลบค่าเฉลี่ยยกกำลังสองจึงได้ variance</p>
   </figcaption>
 </figure>
 
@@ -360,7 +360,7 @@ M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
   <h4>Figure 7.2d — ตรวจ derivative ใกล้ศูนย์</h4>
   <img src="../figures/7.2-4.svg" alt="Figure 7.2d — ตรวจ derivative ใกล้ศูนย์" loading="lazy">
   <figcaption>
-    <p>ลองคำนวณ derivative ด้วยช่วงก้าวเล็กหลายค่า แล้วเทียบกับ mean และ moment ที่รู้คำตอบ ถ้าความคลาดเคลื่อนไม่ลดตามรูป เส้นทางคำนวณใน library มีจุดผิด</p>
+    <p>ลองคำนวณ derivative ด้วยช่วงก้าวเล็กหลายค่า แล้วเทียบกับค่าเฉลี่ยและ moment ที่รู้คำตอบ ถ้าความคลาดเคลื่อนไม่ลดตามรูป เส้นทางคำนวณใน library มีจุดผิด</p>
   </figcaption>
 </figure>
 

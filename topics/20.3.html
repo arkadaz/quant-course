@@ -47,7 +47,7 @@
     <dt>Ho-Lee model</dt>
     <dd>short-rate model แบบ additive Gaussian ที่ใช้ time-dependent drift fit curve และ absolute volatility สร้างการกระจาย ใช้ง่ายแต่ยอมให้ rates ติดลบ</dd>
     <dt>Black-Derman-Toy (BDT)</dt>
-    <dd>short-rate model แบบ lognormal tree ที่ปรับระดับแต่ละชั้นและ volatility ให้ fit ตลาด ใช้รักษา short rate เป็นบวกภายใต้รูปแบบดั้งเดิม</dd>
+    <dd>short-rate model แบบ lognormal tree ที่ปรับระดับแต่ละชั้นและความผันผวนให้ fit ตลาด ใช้รักษา short rate เป็นบวกภายใต้รูปแบบดั้งเดิม</dd>
     <dt>mean reversion</dt>
     <dd>แรงใน dynamics ที่ดึง rate กลับหาระดับระยะยาว ใช้ควบคุม persistence ของ shock; Ho-Lee แบบพื้นฐานไม่มีแรงนี้</dd>
     <dt>volatility</dt>
@@ -324,7 +324,7 @@ V_0=\sum_jQ_{2,j}N(P_j-X)^+=\$2{,}564.15
 
 <section class="prose">
   <h4>จากตัวอย่างไป Ho-Lee ที่ calibrate จริง</h4>
-  <p>Ho-Lee เขียน node เป็น deterministic level shift บวก cumulative additive shocks แต่ละ $\alpha_n$ ถูกแก้ให้ผลรวม state prices ของ layer ถัดไปตรง market discount factor โดยยึด volatility ไว้ จากนั้น calibrate volatility กับ caplet หรือ swaption prices เพราะ curve อย่างเดียวระบุ distribution ไม่ได้ การ fit discount curve สมบูรณ์จึงยังไม่พิสูจน์ว่า option price ถูก</p>
+  <p>Ho-Lee เขียน node เป็น deterministic level shift บวก cumulative additive shocks แต่ละ $\alpha_n$ ถูกแก้ให้ผลรวม state prices ของ layer ถัดไปตรง market discount factor โดยยึดความผันผวนไว้ จากนั้น calibrate volatility กับ caplet หรือ swaption prices เพราะ curve อย่างเดียวระบุ distribution ไม่ได้ การ fit discount curve สมบูรณ์จึงยังไม่พิสูจน์ว่า option price ถูก</p>
 </section>
 
 <section class="formula">
@@ -334,7 +334,7 @@ V_0=\sum_jQ_{2,j}N(P_j-X)^+=\$2{,}564.15
 r_{n,j}=\alpha_n+(n-2j)\sigma_r\sqrt{\Delta t},\qquad j=0,1,\ldots,n
 \]</div>
   <div class="reading">
-    <p>$\alpha_n$ ขยับทั้ง layer เพื่อ fit curve และพจน์ state สร้างระยะห่างจาก volatility แบบ absolute rate</p>
+    <p>$\alpha_n$ ขยับทั้ง layer เพื่อ fit curve และพจน์ state สร้างระยะห่างจากความผันผวนแบบ absolute rate</p>
   </div>
 </section>
 
@@ -392,7 +392,7 @@ D(0,t_{n+1})&=e^{-\alpha_n\Delta t}\sum_{j=0}^{n}Q_{n,j}\\
 
 <section class="prose">
   <h4>BDT เปลี่ยนสิ่งที่ shock กระทำ</h4>
-  <p>BDT แบบดั้งเดิมให้ log short rate กระจายเป็น tree จึงทำให้ rate เป็นบวกและตี volatility เป็น relative move แทน absolute move ระดับแต่ละ layer และความกว้างของ tree ถูก calibrate กับ curve กับ option volatility quotes ผลคือ Ho-Lee เหมาะกับ negative-rate possibility และ arithmetic โปร่งใส ส่วน BDT รักษา positivity แต่มีพฤติกรรมแปลกเมื่อ rate ใกล้ศูนย์</p>
+  <p>BDT แบบดั้งเดิมให้ log short rate กระจายเป็น tree จึงทำให้ rate เป็นบวกและตีความผันผวนเป็น relative move แทน absolute move ระดับแต่ละ layer และความกว้างของ tree ถูก calibrate กับ curve กับ option volatility quotes ผลคือ Ho-Lee เหมาะกับ negative-rate possibility และ arithmetic โปร่งใส ส่วน BDT รักษา positivity แต่มีพฤติกรรมแปลกเมื่อ rate ใกล้ศูนย์</p>
 </section>
 
 <section class="formula">
@@ -565,7 +565,7 @@ b=0.01&:\ a_1=7.9013\%\\
   <h4>Figure 20.3e — curve fit กับ option fit เป็นคนละเงื่อนไข</h4>
   <img src="../figures/20.3-5.svg" alt="Figure 20.3e — curve fit กับ option fit เป็นคนละเงื่อนไข" loading="lazy">
   <figcaption>
-    <p>level shifts สามารถทำให้ discount factors ตรงตลาดแทบทุก maturity แม้ volatility ผิด แต่ option error จะเผย distribution ที่ผิด จึงต้องตรวจทั้ง curve instruments และ volatility instruments</p>
+    <p>level shifts สามารถทำให้ discount factors ตรงตลาดแทบทุก maturity แม้ความผันผวนผิด แต่ option error จะเผย distribution ที่ผิด จึงต้องตรวจทั้ง curve instruments และ volatility instruments</p>
   </figcaption>
 </figure>
 

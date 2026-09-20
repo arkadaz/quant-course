@@ -203,7 +203,7 @@ H_{\rm straddle}=|S_T-100|,\qquad H_{\rm strangle}=(90-S_T)^++(S_T-110)^+
 
 <section class="formula">
   <h4>ขั้นที่ 4 — ทำไม call+put payoff กลายเป็นค่าสัมบูรณ์</h4>
-  <p>สิ่งที่ straddle กำลังซื้อจริง ๆ คือ ขนาดของการเคลื่อน ไม่ใช่ทิศทาง ยิ่ง spot วิ่งไกลจาก strike ยิ่งจ่ายมาก ทั้งขึ้นและลง นี่คือเหตุผลที่เทรดเดอร์ volatility ชอบ straddle</p>
+  <p>สิ่งที่ straddle กำลังซื้อจริง ๆ คือ ขนาดของการเคลื่อน ไม่ใช่ทิศทาง ยิ่ง spot วิ่งไกลจาก strike ยิ่งจ่ายมาก ทั้งขึ้นและลง นี่คือเหตุผลที่เทรดเดอร์ความผันผวนชอบ straddle</p>
   <p>ตรวจด้วยตัวเลข: ถ้า strike คือ 100 และ spot จบที่ 118 สองขารวมกันจ่าย \$18 ถ้าจบที่ 82 ก็จ่าย \$18 เท่ากัน ผู้ถือจึงไม่ได้เดิมพันว่าราคาจะขึ้นหรือลง แต่เดิมพันว่ามันจะเคลื่อนแรงแค่ไหน และนั่นคือคำว่า volatility trade</p>
   <div class="math">\[
 \begin{aligned}
@@ -442,7 +442,7 @@ V_{\rm set}&=\sum_i n_iV_i\\
 
 <section class="formula">
   <h4>ขั้นที่ 13 — derive: delta ของ ATM straddle ใกล้ศูนย์</h4>
-  <p>ATM straddle มี delta ใกล้ศูนย์แต่ gamma สูงมาก นี่คือเหตุผลที่เทรดเดอร์ volatility ชอบใช้ เพราะไม่ต้องเดาทิศทาง แต่ได้กำไรจากการเคลื่อนไม่ว่าทิศไหน</p>
+  <p>ATM straddle มี delta ใกล้ศูนย์แต่ gamma สูงมาก นี่คือเหตุผลที่เทรดเดอร์ความผันผวนชอบใช้ เพราะไม่ต้องเดาทิศทาง แต่ได้กำไรจากการเคลื่อนไม่ว่าทิศไหน</p>
   <div class="math">\[
 \begin{aligned}
 &\Delta_{\rm straddle}\\
@@ -518,7 +518,7 @@ V_{\rm set}&=\sum_i n_iV_i\\
 \]</div>
   <div class="reading">
     <p>ทีละชิ้น: 0.25 คูณ 0.04 ได้ 0.01 และ 0.25 คูณ 0.09 ได้ 0.0225 รวมส่วนเดี่ยว 0.0325 ส่วนร่วม: 2(0.5)(0.5) = 0.5 คูณ 0.20 × 0.30 = 0.06 ได้ 0.03 คูณ 0.4 ได้ 0.012 รวม 0.0445 รากของมันคือ 0.210950</p>
-    <p>ส่วน single-name รวม 0.0325 และส่วน correlation 0.0120 จึงได้ index variance 0.0445 ต่อปีหรือ volatility ประมาณ 21.0950 เปอร์เซ็นต์</p>
+    <p>ส่วน single-name รวม 0.0325 และส่วน correlation 0.0120 จึงได้ index variance 0.0445 ต่อปีหรือความผันผวนประมาณ 21.0950 เปอร์เซ็นต์</p>
   </div>
 </section>
 
@@ -575,7 +575,7 @@ V_{\rm set}&=\sum_i n_iV_i\\
 <section class="prose">
   <h4>แปล $\Delta\sigma_I^2$ เป็นเงิน: ทำไมถึงคูณ notional ตรง ๆ ได้</h4>
   <p>variance swap จ่ายตาม variance ที่วัดได้ลบ strike ดังนั้น variance ที่ลดลง 0.0060 คือ P&amp;L ตรง ๆ สำหรับคนที่ short index variance 1 ล้าน notional</p>
-  <p>1,000,000 × 0.0060 = \$6,000 เงินก้อนนี้มาจาก correlation ที่ลดลง 0.2 ไม่ได้มาจากการเปลี่ยนแปลงของ volatility แต่ละตัว ถ้า single-stock vol เปลี่ยนด้วย ต้องกลับไปคำนวณ own terms ใหม่</p>
+  <p>1,000,000 × 0.0060 = \$6,000 เงินก้อนนี้มาจาก correlation ที่ลดลง 0.2 ไม่ได้มาจากการเปลี่ยนแปลงของความผันผวนแต่ละตัว ถ้า single-stock vol เปลี่ยนด้วย ต้องกลับไปคำนวณ own terms ใหม่</p>
   <p>ข้อจำกัดสำคัญ: ตัวอย่างนี้สมมติว่า single-stock vol คงที่ ในตลาดจริง เมื่อ correlation ลดลง single-stock vol มักเพิ่มขึ้นด้วย (risk-off regime) ทำให้ P&amp;L จริงไม่ตรงกับ 6,000</p>
 </section>
 
@@ -583,7 +583,7 @@ V_{\rm set}&=\sum_i n_iV_i\\
   <h4>ภาพ 13.6e — Index variance เคลื่อนเป็นเส้นตรงกับ correlation</h4>
   <img src="../figures/13.6-5.svg" alt="ภาพ 13.6e — Index variance เคลื่อนเป็นเส้นตรงกับ correlation" loading="lazy">
   <figcaption>
-    <p>เมื่อ volatility และน้ำหนักคงที่ index variance เพิ่มตาม correlation markers แสดง 0.0385 ที่ correlation 0.2 และ 0.0445 ที่ 0.4 ความเป็นเส้นตรงหายได้เมื่อ volatilities กับน้ำหนักเคลื่อนพร้อมกัน</p>
+    <p>เมื่อความผันผวนและน้ำหนักคงที่ index variance เพิ่มตาม correlation markers แสดง 0.0385 ที่ correlation 0.2 และ 0.0445 ที่ 0.4 ความเป็นเส้นตรงหายได้เมื่อ volatilities กับน้ำหนักเคลื่อนพร้อมกัน</p>
   </figcaption>
 </figure>
 

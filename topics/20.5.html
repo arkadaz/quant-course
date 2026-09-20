@@ -526,8 +526,8 @@ e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
 </section>
 
 <section class="prose">
-  <h4>curve-only calibration ระบุ volatility ได้น้อยกว่าที่คิด</h4>
-  <p>bond curve มี information เกี่ยวกับ combination ของ mean reversion, long-run level และ convexity แต่ volatility มักเปลี่ยนได้พร้อม long-run level แล้วรักษา fit ใกล้เดิม หาก model ใช้ราคา options ต้อง calibrate volatility และอาจรวม mean reversion กับ caplet หรือ swaption surface มิฉะนั้น curve fit ดีแต่ option vega และ exercise distribution ผิด Historical time series estimate อยู่ภายใต้ physical measure และไม่สามารถแทน risk-neutral parameter โดยไม่ระบุ market price of risk</p>
+  <h4>curve-only calibration ระบุความผันผวนได้น้อยกว่าที่คิด</h4>
+  <p>bond curve มี information เกี่ยวกับ combination ของ mean reversion, long-run level และ convexity แต่ความผันผวนมักเปลี่ยนได้พร้อม long-run level แล้วรักษา fit ใกล้เดิม หาก model ใช้ราคา options ต้อง calibrate volatility และอาจรวม mean reversion กับ caplet หรือ swaption surface มิฉะนั้น curve fit ดีแต่ option vega และ exercise distribution ผิด Historical time series estimate อยู่ภายใต้ physical measure และไม่สามารถแทน risk-neutral parameter โดยไม่ระบุ market price of risk</p>
   <p>ในเชิงสถิติ อัตราดอกเบี้ยในแบบจำลอง CIR มี transition density เป็น non-central chi-squared ที่มี degrees of freedom $4\kappa\theta/\sigma_C^2$ ซึ่งยืนยันว่าอัตราจะไม่ติดลบเมื่อผ่าน Feller condition แต่ทั้ง Vasicek และ CIR ต่างเป็น one-factor model ที่มี parameter คงที่เพียง 4 ตัว (speed, level, volatility และ short rate เริ่มต้น) จึงสร้างรูปร่างของ yield curve ได้เพียง 3 แบบเท่านั้น (ชันขึ้น ชันลง หรือโค้งหลังเต่าจุดเดียว) ไม่สามารถ fit เส้นผลตอบแทนตลาดจริงที่มีการบิดงอหลายจุดได้อย่างสมบูรณ์</p>
 </section>
 
@@ -551,13 +551,13 @@ e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
 
 <section class="example">
   <h4>ตัวอย่างที่สอง — Vasicek บน LIBOR และ swap จริง</h4>
-  <p>คำถาม: ธนาคารต้องการให้ Vasicek ตั้งราคาตามตลาด USD วันที่ 14 ธ.ค. 2017 และ 11 ต.ค. 2018 ด้วย LIBOR ห้าอายุกับ swap เจ็ดอายุ model พลาดตรงไหนมากที่สุด และ volatility ที่ fit ได้เชื่อได้ไหม?</p>
+  <p>คำถาม: ธนาคารต้องการให้ Vasicek ตั้งราคาตามตลาด USD วันที่ 14 ธ.ค. 2017 และ 11 ต.ค. 2018 ด้วย LIBOR ห้าอายุกับ swap เจ็ดอายุ model พลาดตรงไหนมากที่สุด และความผันผวนที่ fit ได้เชื่อได้ไหม?</p>
   <p>ของที่มี: ขั้นที่ 12 ถึง 14 และตารางข้อมูลตลาด</p>
   <p>1 ปี 2017 ได้ speed 1.3806 ต่อปี long-run level 2.406% short rate 1.451% และ SSRE 0.013671 พลาดมากสุดที่ LIBOR 12 เดือน −6.73% และ swap 30 ปี −4.77%</p>
   <p>2 ปี 2018 ได้ speed 2.8194 ต่อปี long-run level 3.218% short rate 2.133% และ SSRE 0.000948 ทุกจุดพลาดไม่เกิน 2%</p>
-  <p>3. volatility จาก 0 ถึง 2% ให้ SSRE ต่างกันไม่ถึง 0.3% curve จึงบอก volatility ไม่ได้</p>
+  <p>3. volatility จาก 0 ถึง 2% ให้ SSRE ต่างกันไม่ถึง 0.3% curve จึงบอกความผันผวนไม่ได้</p>
   <p>ตรวจเองใน 10 วินาที: ราคา bond 30 ปีของปี 2018 คือ 0.3824 ต่ำกว่า 0.4896 ของปี 2017 เพราะดอกเบี้ยทั้ง curve สูงขึ้นราว 0.7 ถึง 1 จุด</p>
-  <p>แปลว่าอะไร: parameter น้อยทำให้ model เสถียรแต่งอตาม curve ไม่ได้ทุกจุด ถ้าจะตั้งราคา option ต้องเอา volatility มาจากราคา option ไม่ใช่จาก curve</p>
+  <p>แปลว่าอะไร: parameter น้อยทำให้ model เสถียรแต่งอตาม curve ไม่ได้ทุกจุด ถ้าจะตั้งราคา option ต้องเอาความผันผวนมาจากราคา option ไม่ใช่จาก curve</p>
 </section>
 
 <section class="pitfall">
@@ -653,7 +653,7 @@ assert abs(flat[0] - 0.013680) &lt; 2e-6 and abs(flat[1] - 0.013643) &lt; 2e-6</
     <li>ก่อนปรับ parameter ต้องบอกว่าเทียบ model กับ curve ชุดไหน วัด error ด้วยหน่วยอะไร และให้น้ำหนักแต่ละจุดเท่าไร</li>
     <li>Vasicek และ CIR fit curve เดียวกันได้ใกล้มากแต่สร้าง tails, boundary และ option risk ต่างกัน</li>
     <li>ตัวอย่าง recover Vasicek $\kappa=0.65$, $\theta=4.5\%$, $\sigma_V=1.2\%$ ต่อรากปี และ CIR มี yield error ประมาณ 0.02745 basis point</li>
-    <li>curve fit อย่างเดียวระบุ volatility ไม่แข็งแรง จึงต้องใช้ caplet หรือ swaption data เมื่อ model ใช้ราคา optionality</li>
+    <li>curve fit อย่างเดียวระบุความผันผวนไม่แข็งแรง จึงต้องใช้ caplet หรือ swaption data เมื่อ model ใช้ราคา optionality</li>
     <li>UST curve กับ SOFR discount curve มี economic content ต่างกันและห้ามสลับชื่อโดยไม่ประกาศ</li>
     <li>บนข้อมูลจริงปี 2017 Vasicek พลาด LIBOR 12 เดือน 6.73% และ swap 30 ปี 4.77% ส่วนปี 2018 พลาดไม่เกิน 2% เพราะมี parameter แค่สี่ตัว</li>
     <li>short rate, HJM, LMM และ SMM ต่างกันที่ตัวสุ่ม short rate เลือกเพราะ parameter น้อยและ implement ง่าย</li>
