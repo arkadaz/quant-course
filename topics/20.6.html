@@ -27,6 +27,11 @@
   <p>เฉลย: \$9,684,390.68 โดยแยกคิดลดเป็นสามส่วน: มูลค่าคูปองที่ได้เมื่อรอด \$2,077,689.22 เงินต้นปีสุดท้าย \$7,297,888.74 และเงินชดเชยกรณีผิดนัด \$308,812.72 ต่ำกว่าพันธบัตรไร้ความเสี่ยงที่ \$10,173,877.69</p>
 </div>
 
+<section class="prose">
+  <h4>modeling convention ของตัวอย่าง USD</h4>
+  <p>bond จ่าย coupon ปีละครั้ง $Nc$ หาก issuer รอดถึง payment date และจ่าย principal หากรอดถึงปี 5 Default เกิดได้ต่อเนื่องด้วย constant risk-neutral hazard 1.8% ต่อปีและเป็นอิสระจาก deterministic risk-free rate 4.5% ต่อปี Recovery of par 40% จ่ายทันที ณ default ไม่มี accrued coupon, restructuring, taxes, transaction costs หรือ liquidity premium ตัวอย่างใช้ continuous discounting แต่ yield-to-maturity รายงานแบบ annual effective เพื่อแสดงว่า quote convention เปลี่ยนเลขได้</p>
+</section>
+
 <details class="jargon">
   <summary>ศัพท์ของ default model และเหตุผลที่ต้องใช้</summary>
   <dl>
@@ -99,20 +104,6 @@
     </tbody>
   </table>
 </details>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: สองสำนักคิดเรื่องความเสี่ยงว่าจะเจ๊ง</h4>
-  <p>การตั้งราคาหุ้นกู้ที่มีความเสี่ยงผิดนัดชำระ มีสองแนวทางที่ต่างกันตั้งแต่ราก</p>
-  <p>แนวทางแรกซึ่ง Robert Merton เสนอในปี 1974 มองว่าบริษัทจะเจ๊งเมื่อมูลค่าสินทรัพย์ตกต่ำกว่าหนี้ ซึ่งมีเหตุผลทางเศรษฐกิจสวยงาม แต่ต้องรู้มูลค่าสินทรัพย์ของบริษัท ซึ่งมองไม่เห็น</p>
-  <p>แนวทางที่สองซึ่งพัฒนาขึ้นในทศวรรษ 1990 เลิกถามว่าทำไมถึงเจ๊ง แล้วมองการเจ๊งเป็นเหตุการณ์ที่โผล่มาแบบสุ่ม ด้วยอัตราที่แกะได้จากราคาตลาด</p>
-  <p>หากมองผ่านโครงสร้างต้นไม้ แต่ละ node จะแตกแขนงออกเป็นสถานะรอดและสถานะผิดนัดที่ไม่ฟื้นกลับมาอีก หากไม่มีเงินคืนเลย (zero recovery) ราคาพันธบัตรจะคิดลดด้วยอัตรา $r + h$ เสมือนว่า hazard rate $h$ ทำหน้าที่เป็น credit spread บวกเพิ่มบนดอกเบี้ยไร้ความเสี่ยงโดยตรง</p>
-  <p>แนวทางที่สองใช้งานง่ายกว่ามากและเป็นที่นิยมในโต๊ะเทรด ส่วนแนวทางแรกยังใช้ในงานวิเคราะห์เครดิตที่ต้องการเข้าใจสาเหตุ</p>
-</section>
-
-<section class="prose">
-  <h4>modeling convention ของตัวอย่าง USD</h4>
-  <p>bond จ่าย coupon ปีละครั้ง $Nc$ หาก issuer รอดถึง payment date และจ่าย principal หากรอดถึงปี 5 Default เกิดได้ต่อเนื่องด้วย constant risk-neutral hazard 1.8% ต่อปีและเป็นอิสระจาก deterministic risk-free rate 4.5% ต่อปี Recovery of par 40% จ่ายทันที ณ default ไม่มี accrued coupon, restructuring, taxes, transaction costs หรือ liquidity premium ตัวอย่างใช้ continuous discounting แต่ yield-to-maturity รายงานแบบ annual effective เพื่อแสดงว่า quote convention เปลี่ยนเลขได้</p>
-</section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — hazard rate คือ conditional rate ไม่ใช่ unconditional probability</h4>
@@ -612,6 +603,15 @@ h_5&=2.0102\%,\quad f=0
 <section class="pitfall">
   <h4>กับดัก: failure modes และ model limits</h4>
   <p>hazard 1.8% ไม่ใช่ five-year probability 9% แบบ exact, yield spread ไม่ใช่ hazard, recovery 40% ต้องบอกว่า 40% ของอะไรและจ่ายเมื่อไร และ physical default forecast ใช้แทน risk-neutral hazard ไม่ได้โดยตรง Model นี้สมมติ deterministic independent rates, constant hazard และ recovery of par จึงพลาด wrong-way risk, stochastic recovery, liquidity และ capital structure — issuer default ได้จริงเพียงครั้งเดียว แต่ spreadsheet ที่ event logic ผิดสามารถนับ default ซ้ำได้ทุก coupon</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: สองสำนักคิดเรื่องความเสี่ยงว่าจะเจ๊ง</h4>
+  <p>การตั้งราคาหุ้นกู้ที่มีความเสี่ยงผิดนัดชำระ มีสองแนวทางที่ต่างกันตั้งแต่ราก</p>
+  <p>แนวทางแรกซึ่ง Robert Merton เสนอในปี 1974 มองว่าบริษัทจะเจ๊งเมื่อมูลค่าสินทรัพย์ตกต่ำกว่าหนี้ ซึ่งมีเหตุผลทางเศรษฐกิจสวยงาม แต่ต้องรู้มูลค่าสินทรัพย์ของบริษัท ซึ่งมองไม่เห็น</p>
+  <p>แนวทางที่สองซึ่งพัฒนาขึ้นในทศวรรษ 1990 เลิกถามว่าทำไมถึงเจ๊ง แล้วมองการเจ๊งเป็นเหตุการณ์ที่โผล่มาแบบสุ่ม ด้วยอัตราที่แกะได้จากราคาตลาด</p>
+  <p>หากมองผ่านโครงสร้างต้นไม้ แต่ละ node จะแตกแขนงออกเป็นสถานะรอดและสถานะผิดนัดที่ไม่ฟื้นกลับมาอีก หากไม่มีเงินคืนเลย (zero recovery) ราคาพันธบัตรจะคิดลดด้วยอัตรา $r + h$ เสมือนว่า hazard rate $h$ ทำหน้าที่เป็น credit spread บวกเพิ่มบนดอกเบี้ยไร้ความเสี่ยงโดยตรง</p>
+  <p>แนวทางที่สองใช้งานง่ายกว่ามากและเป็นที่นิยมในโต๊ะเทรด ส่วนแนวทางแรกยังใช้ในงานวิเคราะห์เครดิตที่ต้องการเข้าใจสาเหตุ</p>
 </section>
 
 <section class="table">

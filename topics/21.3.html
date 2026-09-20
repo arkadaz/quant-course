@@ -63,22 +63,6 @@
   </table>
 </details>
 
-<section class="prose">
-  <h4>ที่มาทางประวัติศาสตร์: จากสอง integral ของ Heston สู่ batch FFT ของ Carr–Madan</h4>
-  <p>ก่อนปี 1999 วิธีตั้งราคา option ด้วย Fourier transform ในการเงินยังแยกเป็นสองส่วน Steven Heston (1993) สร้างแบบจำลอง stochastic volatility โดยเลียนแบบโครงสร้างของ Black–Scholes ที่มีพจน์ P1 และ P2 ซึ่งต้องคำนวณ numerical integral ในแกนความถี่แยกกันสองรอบสำหรับแต่ละ strike</p>
-  <p>หากในตลาดมี 50 strike วิศวกรการเงินต้องคำนวณ numerical integral ถึง 100 ครั้งในทุกรอบที่ optimizer ขยับ parameter ยิ่งกว่านั้น แบบจำลองดั้งเดิมของ Heston ประสบปัญหาการข้าม branch-cut ของ complex logarithm ทำให้ค่า integral กระโดดอย่างควบคุมไม่ได้</p>
-  <p>Peter Carr และ Dilip Madan (1999) เปลี่ยนกระบวนทัศน์นี้ในบทความวิชาการ โดยตั้งคำถามใหม่ว่า แทนที่จะหา integral แยกตามแต่ละ strike ทำไมเราไม่มองราคา option ทั้งหมดเป็น function ของ log-strike k แล้วแปลง Fourier เพียงครั้งเดียว</p>
-  <p>Carr และ Madan ค้นพบว่าเมื่อคูณราคาด้วย exponential damping factor $e^{\alpha k}$ จะทำให้ function สลายตัวเป็นศูนย์ที่ปลายทั้งสองข้างและหา Fourier transform ได้ในรูปปิด จากนั้นนำมาเชื่อมกับ Fast Fourier Transform (FFT) ทำให้ได้ราคา option พร้อมกัน N strike ด้วยต้นทุน O(N log N)</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ทางลัดที่ยืมมาจากงานประมวลผลสัญญาณ</h4>
-  <p>แบบจำลองอย่าง Heston ไม่มีสูตรราคาปิด แต่มีสูตรของอีกสิ่งหนึ่งที่เรียกว่า characteristic function ซึ่งเป็นการมองการกระจายตัวในโลกของความถี่แทนที่จะเป็นโลกของค่า</p>
-  <p>Peter Carr กับ Dilip Madan แสดงในปี 1999 ว่าเราแปลงจากโลกนั้นกลับมาเป็นราคาได้ ด้วยเครื่องมือที่วงการประมวลผลสัญญาณใช้กันมานาน</p>
-  <p>ข้อได้เปรียบที่ทำให้วิธีนี้ชนะคือมันคำนวณราคาของ strike ทั้งแถวได้ในครั้งเดียว แทนที่จะคำนวณทีละตัว ซึ่งเร็วกว่าหลายสิบเท่า</p>
-  <p>และความเร็วนั้นสำคัญมาก เพราะการปรับเทียบต้องคำนวณราคาซ้ำเป็นพันครั้ง</p>
-</section>
-
 <section class="table">
   <h4>option สองแบบบนหุ้น Apple ที่ \$190: คนเก็งกำไร</h4>
   <table>
@@ -533,6 +517,22 @@ C(k_v,T)\approx\frac{e^{-\alpha k_v}\eta}{\pi}\sum_{j=0}^{N-1}w_j\Re\!\left[e^{-
   <h4>กับดัก: เร็วขึ้นแล้วลืมว่าได้ approximation</h4>
   <p>อย่าสับสน characteristic function ภายใต้ real-world measure กับ risk-neutral measure ที่ใช้ตั้งราคา และอย่า reuse branch ของ complex logarithm โดยไม่ทดสอบ maturity และ parameter ทั้งช่วง Heston กับ jump model อาจมี moment explosion หรือ branch discontinuity ที่ทำให้ damping ใช้ไม่ได้</p>
   <p>อย่าพบ negative price ที่ปลาย grid แล้ว clamp เป็นศูนย์ก่อน calibration optimizer จะเห็น objective ปลอมและอาจ fit error ที่เราใส่เอง FFT มีค่าเมื่อ grid convention, tolerance และ arbitrage controls เป็นส่วนของ application programming interface (API)</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาทางประวัติศาสตร์: จากสอง integral ของ Heston สู่ batch FFT ของ Carr–Madan</h4>
+  <p>ก่อนปี 1999 วิธีตั้งราคา option ด้วย Fourier transform ในการเงินยังแยกเป็นสองส่วน Steven Heston (1993) สร้างแบบจำลอง stochastic volatility โดยเลียนแบบโครงสร้างของ Black–Scholes ที่มีพจน์ P1 และ P2 ซึ่งต้องคำนวณ numerical integral ในแกนความถี่แยกกันสองรอบสำหรับแต่ละ strike</p>
+  <p>หากในตลาดมี 50 strike วิศวกรการเงินต้องคำนวณ numerical integral ถึง 100 ครั้งในทุกรอบที่ optimizer ขยับ parameter ยิ่งกว่านั้น แบบจำลองดั้งเดิมของ Heston ประสบปัญหาการข้าม branch-cut ของ complex logarithm ทำให้ค่า integral กระโดดอย่างควบคุมไม่ได้</p>
+  <p>Peter Carr และ Dilip Madan (1999) เปลี่ยนกระบวนทัศน์นี้ในบทความวิชาการ โดยตั้งคำถามใหม่ว่า แทนที่จะหา integral แยกตามแต่ละ strike ทำไมเราไม่มองราคา option ทั้งหมดเป็น function ของ log-strike k แล้วแปลง Fourier เพียงครั้งเดียว</p>
+  <p>Carr และ Madan ค้นพบว่าเมื่อคูณราคาด้วย exponential damping factor $e^{\alpha k}$ จะทำให้ function สลายตัวเป็นศูนย์ที่ปลายทั้งสองข้างและหา Fourier transform ได้ในรูปปิด จากนั้นนำมาเชื่อมกับ Fast Fourier Transform (FFT) ทำให้ได้ราคา option พร้อมกัน N strike ด้วยต้นทุน O(N log N)</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: ทางลัดที่ยืมมาจากงานประมวลผลสัญญาณ</h4>
+  <p>แบบจำลองอย่าง Heston ไม่มีสูตรราคาปิด แต่มีสูตรของอีกสิ่งหนึ่งที่เรียกว่า characteristic function ซึ่งเป็นการมองการกระจายตัวในโลกของความถี่แทนที่จะเป็นโลกของค่า</p>
+  <p>Peter Carr กับ Dilip Madan แสดงในปี 1999 ว่าเราแปลงจากโลกนั้นกลับมาเป็นราคาได้ ด้วยเครื่องมือที่วงการประมวลผลสัญญาณใช้กันมานาน</p>
+  <p>ข้อได้เปรียบที่ทำให้วิธีนี้ชนะคือมันคำนวณราคาของ strike ทั้งแถวได้ในครั้งเดียว แทนที่จะคำนวณทีละตัว ซึ่งเร็วกว่าหลายสิบเท่า</p>
+  <p>และความเร็วนั้นสำคัญมาก เพราะการปรับเทียบต้องคำนวณราคาซ้ำเป็นพันครั้ง</p>
 </section>
 
 <section class="table">

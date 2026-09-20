@@ -27,6 +27,12 @@
   <p>เฉลย: ก้าวนี้ทำให้ objective ลดลงจาก 0.645 เหลือ 0.0258 จึงยอมรับก้าวได้ โดยค่า residual ใหม่หดลงเหลือหนึ่งในห้าของเดิม</p>
 </div>
 
+<section class="prose">
+  <h4>โจทย์หลายมิติไม่ใช่ implied volatility หลายครั้ง</h4>
+  <p>implied volatility ของ option หนึ่งตัวมักมีหุบหนึ่งมิติ แต่ stochastic-volatility หรือ curve model มี parameter หลายตัว และ quote หลายสิบถึงหลายพันตัว Parameter สองชุดอาจให้ smile วันนี้ใกล้กันมาก แต่ให้ Greek และ stress P&amp;L ต่างกันในวันพรุ่งนี้</p>
+  <p>ก่อนเลือก optimizer ให้ตอบให้ชัดว่ากำลัง fit ราคา, implied volatility หรือ error ที่เทียบกับ bid–ask ราคา \$0.05 ที่ option ถูกอาจกิน spread ทั้งหมด ขณะที่ error เดียวกันบน option \$20 แทบไม่มีความหมาย การไม่เขียน objective คือเลือกน้ำหนักโดยไม่รู้ตัว</p>
+</section>
+
 <details class="jargon">
   <summary>ศัพท์ที่ทำให้คำว่า calibrate มีความหมาย</summary>
   <dl>
@@ -72,28 +78,6 @@
     </tbody>
   </table>
 </details>
-
-<section class="prose">
-  <h4>ที่มาทางประวัติศาสตร์: จาก Black–Scholes หนึ่งตัวแปรสู่โลกหลายมิติ</h4>
-  <p>ก่อนปี 1973 ตลาด option เป็นแบบ over-the-counter ที่ไม่มีมาตรฐานกลาง เมื่อตลาดซื้อขาย option แบบมาตรฐานอย่าง Chicago Board Options Exchange เปิดทำการและเกิด Black–Scholes–Merton model ในปี 1973 งานคำนวณในห้องค้ามีเพียงการหา implied volatility ตัวเดียวสำหรับแต่ละสัญญา ซึ่งแก้ได้ง่ายด้วยวิธี bisection หรือ Newton–Raphson มิติเดียว</p>
-  <p>แต่หลังวิกฤติตลาดหุ้นตุลาคม 1987 ราคา option ในตลาดเกิดปรากฏการณ์ volatility skew อย่างรุนแรง ทำให้ implied volatility ของสัญญา strike ต่ำพุ่งสูงขึ้น แบบจำลอง parameter เดียวไม่สามารถอธิบายราคาข้าม strike ได้อีกต่อไป</p>
-  <p>แบบจำลองยุคถัดมา เช่น Heston (1993) หรือ jump-diffusion จึงต้องมี parameter ถึง 5 ตัวเพื่อดัดรูปทรงของ volatility surface ให้ตรงกับตลาดพร้อมกันทุก strike และ maturity เมื่อจำนวนสัญญาในตลาด $m$ มากกว่าจำนวน parameter $n$ โจทย์จึงกลายเป็น nonlinear least-squares หลายมิติ</p>
-  <p>วงการการเงินจึงหยิบยืมเครื่องมือจากสาขาอื่น Kenneth Levenberg (1944) คิดค้นวิธี damped least-squares ขณะออกแบบเลนส์กล้องที่ Frankford Arsenal ต่อมา Donald Marquardt (1963) ที่ DuPont นำมาต่อยอดจนกลายเป็น Levenberg–Marquardt (LM) ขณะที่ Broyden, Fletcher, Goldfarb และ Shanno (1970) ร่วมกันคิดค้น BFGS เพื่อประมาณ curvature ของโจทย์โดยไม่ต้องคำนวณ second derivative</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: การหาค่า parameter ที่ทำให้ราคาตรงตลาด</h4>
-  <p>แบบจำลองที่ซับซ้อนขึ้นมี parameter ให้หาหลายตัวพร้อมกัน และไม่มีสูตรที่แก้ตรง ๆ ได้</p>
-  <p>งานนี้จึงกลายเป็นการค้นหาในพื้นที่หลายมิติ ซึ่งเป็นปัญหาที่หัวข้อ 12.7 แนะนำเครื่องมือไว้แล้ว แต่ในบริบทนี้มีข้อจำกัดเพิ่มที่ทำให้ยากขึ้นมาก</p>
-  <p>ข้อจำกัดข้อแรกคือเวลา ระบบต้องปรับเทียบให้เสร็จก่อนตลาดเปิด ไม่ใช่ปรับจนกว่าจะพอใจ</p>
-  <p>ข้อที่สองคือความนิ่ง ถ้าค่าที่ได้กระโดดไปมาระหว่างวันทั้งที่ตลาดแทบไม่เปลี่ยน ราคาที่รายงานก็จะเหวี่ยงตาม ซึ่งเป็นปัญหาจริงที่ต้องออกแบบระบบมารองรับ</p>
-</section>
-
-<section class="prose">
-  <h4>โจทย์หลายมิติไม่ใช่ implied volatility หลายครั้ง</h4>
-  <p>implied volatility ของ option หนึ่งตัวมักมีหุบหนึ่งมิติ แต่ stochastic-volatility หรือ curve model มี parameter หลายตัว และ quote หลายสิบถึงหลายพันตัว Parameter สองชุดอาจให้ smile วันนี้ใกล้กันมาก แต่ให้ Greek และ stress P&amp;L ต่างกันในวันพรุ่งนี้</p>
-  <p>ก่อนเลือก optimizer ให้ตอบให้ชัดว่ากำลัง fit ราคา, implied volatility หรือ error ที่เทียบกับ bid–ask ราคา \$0.05 ที่ option ถูกอาจกิน spread ทั้งหมด ขณะที่ error เดียวกันบน option \$20 แทบไม่มีความหมาย การไม่เขียน objective คือเลือกน้ำหนักโดยไม่รู้ตัว</p>
-</section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — นิยามของความคลาดที่ถ่วงด้วยคุณภาพของราคาที่เห็น</h4>
@@ -403,6 +387,22 @@ v_0&=0.044,\ \ldots,\ 0.064\\[4pt]
   <h4>กับดัก: ปุ่ม success ไม่ใช่ใบรับรอง model risk</h4>
   <p>อย่าใช้ finite-difference gradient ที่ step เล็กจน engine noise ครอบงำ หรือใหญ่จนวัดคนละบริเวณ ตรวจ gradient ด้วย central difference และ directional check ก่อนเชื่อ BFGS ทำ multi-start, cluster คำตอบ และทดสอบ out-of-sample</p>
   <p>parameter ที่ติดขอบอาจบอกว่า model กำลังชดเชย missing jump หรือข้อมูลเสีย ไม่ใช่รางวัลสำหรับ fit ดี optimizer รายงาน success เพียงว่าเกณฑ์หยุดผ่าน; desk ต้องตัดสินว่า quote, parameter และ Greek ผ่าน governance หรือไม่</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาทางประวัติศาสตร์: จาก Black–Scholes หนึ่งตัวแปรสู่โลกหลายมิติ</h4>
+  <p>ก่อนปี 1973 ตลาด option เป็นแบบ over-the-counter ที่ไม่มีมาตรฐานกลาง เมื่อตลาดซื้อขาย option แบบมาตรฐานอย่าง Chicago Board Options Exchange เปิดทำการและเกิด Black–Scholes–Merton model ในปี 1973 งานคำนวณในห้องค้ามีเพียงการหา implied volatility ตัวเดียวสำหรับแต่ละสัญญา ซึ่งแก้ได้ง่ายด้วยวิธี bisection หรือ Newton–Raphson มิติเดียว</p>
+  <p>แต่หลังวิกฤติตลาดหุ้นตุลาคม 1987 ราคา option ในตลาดเกิดปรากฏการณ์ volatility skew อย่างรุนแรง ทำให้ implied volatility ของสัญญา strike ต่ำพุ่งสูงขึ้น แบบจำลอง parameter เดียวไม่สามารถอธิบายราคาข้าม strike ได้อีกต่อไป</p>
+  <p>แบบจำลองยุคถัดมา เช่น Heston (1993) หรือ jump-diffusion จึงต้องมี parameter ถึง 5 ตัวเพื่อดัดรูปทรงของ volatility surface ให้ตรงกับตลาดพร้อมกันทุก strike และ maturity เมื่อจำนวนสัญญาในตลาด $m$ มากกว่าจำนวน parameter $n$ โจทย์จึงกลายเป็น nonlinear least-squares หลายมิติ</p>
+  <p>วงการการเงินจึงหยิบยืมเครื่องมือจากสาขาอื่น Kenneth Levenberg (1944) คิดค้นวิธี damped least-squares ขณะออกแบบเลนส์กล้องที่ Frankford Arsenal ต่อมา Donald Marquardt (1963) ที่ DuPont นำมาต่อยอดจนกลายเป็น Levenberg–Marquardt (LM) ขณะที่ Broyden, Fletcher, Goldfarb และ Shanno (1970) ร่วมกันคิดค้น BFGS เพื่อประมาณ curvature ของโจทย์โดยไม่ต้องคำนวณ second derivative</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: การหาค่า parameter ที่ทำให้ราคาตรงตลาด</h4>
+  <p>แบบจำลองที่ซับซ้อนขึ้นมี parameter ให้หาหลายตัวพร้อมกัน และไม่มีสูตรที่แก้ตรง ๆ ได้</p>
+  <p>งานนี้จึงกลายเป็นการค้นหาในพื้นที่หลายมิติ ซึ่งเป็นปัญหาที่หัวข้อ 12.7 แนะนำเครื่องมือไว้แล้ว แต่ในบริบทนี้มีข้อจำกัดเพิ่มที่ทำให้ยากขึ้นมาก</p>
+  <p>ข้อจำกัดข้อแรกคือเวลา ระบบต้องปรับเทียบให้เสร็จก่อนตลาดเปิด ไม่ใช่ปรับจนกว่าจะพอใจ</p>
+  <p>ข้อที่สองคือความนิ่ง ถ้าค่าที่ได้กระโดดไปมาระหว่างวันทั้งที่ตลาดแทบไม่เปลี่ยน ราคาที่รายงานก็จะเหวี่ยงตาม ซึ่งเป็นปัญหาจริงที่ต้องออกแบบระบบมารองรับ</p>
 </section>
 
 <section class="table">

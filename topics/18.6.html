@@ -27,6 +27,11 @@
   <p>เฉลย: ที่ 0.000001 แบบเท่ากันชนะ 42,000 ต่อ \$44,600 ที่ 0.000003 แบบเร่งชนะ 73,800 ต่อ 86,000 แต่ทั้งสองแบบยังแพ้ schedule ของ Almgren–Chriss ที่ได้ 39,885 และ \$72,299 ผู้ชนะถูกตัดสินด้วยความกลัวที่เราเขียนลงไปเอง</p>
 </div>
 
+<section class="prose">
+  <h4>โจทย์ต้องบังคับให้ inventory จบที่ศูนย์</h4>
+  <p>ให้ order ขายทั้งหมด order 100,000 shares ใน 5 daily intervals; parameter details อยู่ใน symbol table และ formulas ด้านล่าง โครงสร้างนี้เป็น discrete teaching version ของ Almgren-Chriss optimiser ไม่ได้อ่านใจตลาดได้ มันแค่อ่าน penalty ที่เรายอมเขียนลงไป</p>
+</section>
+
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
@@ -58,19 +63,6 @@
     </tbody>
   </table>
 </details>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: จะขายของก้อนใหญ่ให้เสร็จภายในกี่ชั่วโมง</h4>
-  <p>กองทุนขนาดใหญ่เจอปัญหาที่กองทุนเล็กไม่มี คือคำสั่งของตัวเองใหญ่พอจะดันราคาเสียเอง</p>
-  <p>ถ้ารีบขายให้เสร็จ ราคาจะถูกกดจนขาดทุนจากผลกระทบของตัวเอง แต่ถ้าค่อย ๆ ขาย ก็เสี่ยงที่ราคาจะวิ่งหนีไปก่อนขายเสร็จ</p>
-  <p>Robert Almgren กับ Neil Chriss วางกรอบคิดสำหรับการชั่งสองแรงนี้ในช่วงปี 2000 โดยเขียนทั้งต้นทุนที่คาดหวังและความเสี่ยงไว้ในเป้าหมายเดียวกัน</p>
-  <p>ผลที่ได้กลายเป็นฐานของระบบส่งคำสั่งอัตโนมัติที่ใช้กันทั่วอุตสาหกรรม และเปลี่ยนการส่งคำสั่งจากงานที่ใช้สัญชาตญาณ เป็นงานที่มีคำตอบคำนวณได้</p>
-</section>
-
-<section class="prose">
-  <h4>โจทย์ต้องบังคับให้ inventory จบที่ศูนย์</h4>
-  <p>ให้ order ขายทั้งหมด order 100,000 shares ใน 5 daily intervals; parameter details อยู่ใน symbol table และ formulas ด้านล่าง โครงสร้างนี้เป็น discrete teaching version ของ Almgren-Chriss optimiser ไม่ได้อ่านใจตลาดได้ มันแค่อ่าน penalty ที่เรายอมเขียนลงไป</p>
-</section>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — inventory accounting</h4>
@@ -341,6 +333,14 @@ assert np.allclose(np.sinh(kap * (5 - t)) / np.sinh(kap * 5), (5 - t) / 5, atol=
 <section class="pitfall">
   <h4>กับดัก: ใช้ model cost เป็น promise ของ fill</h4>
   <p>Almgren-Chriss สมมติ parameter คงที่และ price dynamics เรียบพอให้ variance penalty แทนความเสี่ยงได้ ข่าว, halt, adverse selection และ volume surprise ทำให้ schedule ต้องมี monitoring และ override rules Model ให้ baseline; trader ยังต้องดู market state</p>
+</section>
+
+<section class="prose">
+  <h4>ที่มาที่ไป: จะขายของก้อนใหญ่ให้เสร็จภายในกี่ชั่วโมง</h4>
+  <p>กองทุนขนาดใหญ่เจอปัญหาที่กองทุนเล็กไม่มี คือคำสั่งของตัวเองใหญ่พอจะดันราคาเสียเอง</p>
+  <p>ถ้ารีบขายให้เสร็จ ราคาจะถูกกดจนขาดทุนจากผลกระทบของตัวเอง แต่ถ้าค่อย ๆ ขาย ก็เสี่ยงที่ราคาจะวิ่งหนีไปก่อนขายเสร็จ</p>
+  <p>Robert Almgren กับ Neil Chriss วางกรอบคิดสำหรับการชั่งสองแรงนี้ในช่วงปี 2000 โดยเขียนทั้งต้นทุนที่คาดหวังและความเสี่ยงไว้ในเป้าหมายเดียวกัน</p>
+  <p>ผลที่ได้กลายเป็นฐานของระบบส่งคำสั่งอัตโนมัติที่ใช้กันทั่วอุตสาหกรรม และเปลี่ยนการส่งคำสั่งจากงานที่ใช้สัญชาตญาณ เป็นงานที่มีคำตอบคำนวณได้</p>
 </section>
 
 <section class="table">
