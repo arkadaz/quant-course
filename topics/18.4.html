@@ -19,7 +19,7 @@
 <article class="topic" data-number="18.4" data-depends-on="18.3">
 <header class="topic-header">
   <h1><span class="tnum">18.4</span> Delta Hedging P&amp;L</h1>
-  <p class="subtitle">delta ลด exposure อันดับหนึ่ง แต่ไม่ได้ลบ risk ทั้งหมด</p>
+  <p class="subtitle">delta ลด exposure อันดับหนึ่ง แต่ไม่ได้ลบความเสี่ยงทั้งหมด</p>
 </header>
 
 <div class="hook">
@@ -151,7 +151,7 @@ V_S&=\Delta,\quad V_{SS}=\Gamma,\quad V_t=\Theta\\
 \]</div>
   <div class="reading">
     <p>gamma gain เท่ากับ $40$ USD จาก 1,000 shares และ theta loss ของทั้ง position เท่ากับ $18$ USD ในวันเดียว</p>
-    <p>จึงได้ estimated delta-hedged gain $22$ USD ก่อน cost และ vega effect</p>
+    <p>จึงได้ estimated delta-hedged gain $22$ USD ก่อนต้นทุนและ vega effect</p>
   </div>
 </section>
 
@@ -539,7 +539,7 @@ assert abs(V * (0.30 - 0.3036) + 3_570) &lt; 10                      # path 2: v
 
 <section class="pitfall">
   <h4>กับดัก: เรียก delta-neutral ว่า risk-neutral</h4>
-  <p>delta-neutral ณ เวลาเดียว ไม่ได้ neutral ต่อ gamma, vega, jump, gap, funding หรือ transaction cost Hedge ratio เปลี่ยนทันทีเมื่อ price และ volatility เปลี่ยน และ continuous hedging เป็นสมมติฐาน ไม่ใช่ service ที่ตลาดขายให้</p>
+  <p>delta-neutral ณ เวลาเดียว ไม่ได้ neutral ต่อ gamma, vega, jump, gap, funding หรือ transaction cost Hedge ratio เปลี่ยนทันทีเมื่อราคาและ volatility เปลี่ยน และ continuous hedging เป็นสมมติฐาน ไม่ใช่ service ที่ตลาดขายให้</p>
 </section>
 
 

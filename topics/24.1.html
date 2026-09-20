@@ -89,11 +89,11 @@
 
 <section class="prose">
   <h4>ทำไม efficiency ไม่ได้แปลว่า price = value ทุกวินาที</h4>
-  <p>ให้แยกคำว่า value ซึ่งเป็นมูลค่าปัจจุบันของ cash flow ที่คาดไว้ ออกจาก price ซึ่งเป็นราคาที่ผู้ซื้อกับผู้ขายยอมแลกกัน ณ ตอนนี้ ตลาดที่ efficient ไม่จำเป็นต้องรู้ value ที่แท้จริงอย่างสมบูรณ์ แต่หมายถึงข้อมูลที่ทุกคนเข้าถึงและ trade ได้ถูกแข่งขันจนโอกาสกำไรที่ปรับด้วยความเสี่ยงและต้นทุนไม่เหลืออย่างง่ายดาย สำหรับ United States (US) equity การทดสอบจึงต้องระบุ universe, timestamp, benchmark, bid/ask, fee และ horizon ให้ชัด ไม่เช่นนั้น backtest จะพิสูจน์เพียงว่าเราเลือกคำจำกัดความได้เก่ง</p>
+  <p>ให้แยกคำว่า value ซึ่งเป็นมูลค่าปัจจุบันของ cash flow ที่คาดไว้ ออกจากราคาซึ่งเป็นราคาที่ผู้ซื้อกับผู้ขายยอมแลกกัน ณ ตอนนี้ ตลาดที่ efficient ไม่จำเป็นต้องรู้ value ที่แท้จริงอย่างสมบูรณ์ แต่หมายถึงข้อมูลที่ทุกคนเข้าถึงและ trade ได้ถูกแข่งขันจนโอกาสกำไรที่ปรับด้วยความเสี่ยงและต้นทุนไม่เหลืออย่างง่ายดาย สำหรับ United States (US) equity การทดสอบจึงต้องระบุ universe, timestamp, benchmark, bid/ask, fee และ horizon ให้ชัด ไม่เช่นนั้น backtest จะพิสูจน์เพียงว่าเราเลือกคำจำกัดความได้เก่ง</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — นิยาม return และข้อมูลที่อนุญาต</h4>
+  <h4>ขั้นที่ 1 — นิยามผลตอบแทนและข้อมูลที่อนุญาต</h4>
   <p>ขั้นแรกต้องกำหนด horizon เช่น 5 นาทีหรือ 1 วัน ไม่ควรผสมกัน เพราะ spread และ volatility มีหน่วยเวลาไม่เหมือนกัน</p>
   <div class="math">\[
 \begin{aligned}
@@ -104,7 +104,7 @@ H_0&:\ \mathbb{E}[R^{adj}_{t+1}\mid I_t]=0
 \]</div>
   <div class="reading">
     <p>$P_t$ และ $P_{t+1}$ คือ USD/share ก่อนและหลัง horizon เดียวกัน ส่วน $R_{t+1}$ เป็น fraction ไม่ใช่ USD; $I_t$ คือข้อมูลที่ใช้ได้ ณ เวลา trade</p>
-    <p>ส่วน adjusted return หัก benchmark ที่เหมาะกับ risk และต้นทุน c ใน horizon เดียวกัน; เงื่อนไขค่าเฉลี่ยศูนย์ใน $H_0$ เป็น null ที่บอกว่า signal จาก $I_t$ ไม่ทำนาย return ส่วนเกินหลังปรับ risk กับ cost ได้</p>
+    <p>ส่วน adjusted return หัก benchmark ที่เหมาะกับความเสี่ยงและต้นทุน c ใน horizon เดียวกัน; เงื่อนไขค่าเฉลี่ยศูนย์ใน $H_0$ เป็น null ที่บอกว่า signal จาก $I_t$ ไม่ทำนายผลตอบแทนส่วนเกินหลังปรับความเสี่ยงกับต้นทุนได้</p>
   </div>
 </section>
 
@@ -117,8 +117,8 @@ H_0&:\ \mathbb{E}[R^{adj}_{t+1}\mid I_t]=0
 \]</div>
   <div class="reading">
     <p>ตัวอย่างหนึ่งช่วง: strategy ได้ 1.2% ตลาดได้ 1% และ beta เท่ากับ 1.10 ผลตอบแทน 1.1% จึงอธิบายด้วย market exposure เหลือส่วนเกิน 0.1% ก่อนต้นทุน หากต้นทุนช่วงเดียวกัน 0.1% ส่วนเกินสุทธิเป็นศูนย์ทั้งที่ผลตอบแทนรวมเป็นบวก</p>
-    <p>เมื่อพูดว่าไม่มี alpha ที่หาได้ง่าย เราหมายถึงส่วนเกินเทียบ benchmark ที่ปรับความเสี่ยงและต้นทุนแล้ว ไม่ใช่คาดว่าราคาหุ้นทุกตัวจะให้ return ศูนย์</p>
-    <p>การทดสอบยังขึ้นกับว่า benchmark ที่เลือกอธิบาย risk ได้ดีแค่ไหน</p>
+    <p>เมื่อพูดว่าไม่มี alpha ที่หาได้ง่าย เราหมายถึงส่วนเกินเทียบ benchmark ที่ปรับความเสี่ยงและต้นทุนแล้ว ไม่ใช่คาดว่าราคาหุ้นทุกตัวจะให้ผลตอบแทนศูนย์</p>
+    <p>การทดสอบยังขึ้นกับว่า benchmark ที่เลือกอธิบายความเสี่ยงได้ดีแค่ไหน</p>
   </div>
 </section>
 
@@ -132,8 +132,8 @@ H_0\ (\text{EMH})&:\ \mathbb{E}[\alpha_{t+1}\mid I_t]=0
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใส่ return ของ market benchmark $R^M$ และน้ำหนักที่ strategy ขยับตามตลาด $\beta$ เข้าไปก่อน. ส่วนนี้คือผลตอบแทนที่มาจากการถือ market exposure ธรรมดา</p>
-    <p>จากนั้นเหลือ $\alpha$ ซึ่งเป็นส่วนที่ strategy อ้างว่าทำนายได้ และ $\varepsilon$ ซึ่งคือ shock ที่อธิบายไม่ได้. EMH ไม่ได้บอกว่า return ต้องเป็นศูนย์; มันบอกว่า alpha หลังเทียบ benchmark และต้นทุนไม่ควรเดาได้ง่าย</p>
+    <p>ใส่ผลตอบแทนของ market benchmark $R^M$ และน้ำหนักที่ strategy ขยับตามตลาด $\beta$ เข้าไปก่อน. ส่วนนี้คือผลตอบแทนที่มาจากการถือ market exposure ธรรมดา</p>
+    <p>จากนั้นเหลือ $\alpha$ ซึ่งเป็นส่วนที่ strategy อ้างว่าทำนายได้ และ $\varepsilon$ ซึ่งคือ shock ที่อธิบายไม่ได้. EMH ไม่ได้บอกว่าผลตอบแทนต้องเป็นศูนย์; มันบอกว่า alpha หลังเทียบ benchmark และต้นทุนไม่ควรเดาได้ง่าย</p>
   </div>
 </section>
 
@@ -182,7 +182,7 @@ H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
 \Pi=Q\left(d-c_{in}-c_{out}-f_bT-f_mT\right)-L_{gap}
 \]</div>
   <div class="reading">
-    <p>ใส่ส่วนต่างราคาต่อ share $d$ แล้วหัก cost ตอนเข้า ตอนออก ค่า borrow และ funding ตลอด $T$ วัน. สิ่งที่เหลือในวงเล็บยังเป็น USD ต่อ share</p>
+    <p>ใส่ส่วนต่างราคาต่อ share $d$ แล้วหักต้นทุนตอนเข้า ตอนออก ค่า borrow และ funding ตลอด $T$ วัน. สิ่งที่เหลือในวงเล็บยังเป็น USD ต่อ share</p>
     <p>คูณด้วยจำนวน shares $Q$ เพื่อเปลี่ยนเป็น USD ทั้ง trade แล้วหัก $L_{gap}$ สำหรับกรณีราคาวิ่งผิดทางก่อนกลับ คำตอบคือกำไรของ scenario นี้ ไม่ใช่คำรับประกันว่าราคาจะกลับมา</p>
   </div>
 </section>
@@ -208,7 +208,7 @@ H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
 
 <section class="prose">
   <h4>จาก rational benchmark ไปสู่ prospect theory</h4>
-  <p>สมมติว่า trader ไม่ได้ให้ utility กับผลตอบแทน absolute แต่เทียบกับ reference point เช่นราคาเข้าหรือ target ที่ตั้งไว้ Prospect theory ใช้ value function ที่ชันฝั่งขาดทุนกว่า และทำให้ loss เล็ก ๆ เจ็บกว่ากำไรขนาดเท่ากัน ความหมายเชิง implementation คืออย่าดูแค่ average P&amp;L: ต้องวัด exit hazard แยก winning และ losing positions, unrealized loss age, และการเพิ่ม size เพื่อแก้มือ</p>
+  <p>สมมติว่า trader ไม่ได้ให้ utility กับผลตอบแทน absolute แต่เทียบกับ reference point เช่นราคาเข้าหรือ target ที่ตั้งไว้ Prospect theory ใช้ value function ที่ชันฝั่งขาดทุนกว่า และทำให้ loss เล็ก ๆ เจ็บกว่ากำไรขนาดเท่ากัน ความหมายเชิง implementation คืออย่าดูแค่ average P&amp;L: ต้องวัด exit hazard แยก winning และ losing positions, unrealized loss age, และการเพิ่มขนาดเพื่อแก้มือ</p>
 </section>
 
 <section class="formula">
@@ -219,7 +219,7 @@ H_0&:\ \alpha=0\ \text{given model}\ M\end{aligned}
 &amp;v(100)=10>\tfrac12v(0)+\tfrac12v(200)=7.0711\end{aligned}
 \]</div>
   <div class="reading">
-    <p>คิด payoff เทียบ reference point เดียวกันและใช้ probability ครึ่งต่อครึ่งโดยยังไม่บิดน้ำหนัก ขาดทุนแน่ 100 ให้ value ลบยี่สิบ แต่เสี่ยงไม่เสียเลยหรือเสีย 200 ให้ค่าเฉลี่ยลบ 14.14 คนใน model นี้จึงยอมเสี่ยงต่อในแดนขาดทุน</p>
+    <p>คิด payoff เทียบ reference point เดียวกันและใช้โอกาสครึ่งต่อครึ่งโดยยังไม่บิดน้ำหนัก ขาดทุนแน่ 100 ให้ value ลบยี่สิบ แต่เสี่ยงไม่เสียเลยหรือเสีย 200 ให้ค่าเฉลี่ยลบ 14.14 คนใน model นี้จึงยอมเสี่ยงต่อในแดนขาดทุน</p>
     <p>ฝั่งกำไรกลับกัน ได้ 100 แน่มีค่า 10 มากกว่าการเสี่ยงศูนย์หรือ 200 ที่ค่าเฉลี่ย 7.07 จึงชอบปิดกำไร ความโค้งจาก eta ต่ำกว่าหนึ่งทำให้สองฝั่งชอบความเสี่ยงต่างกัน การตั้ง eta หนึ่งกับ lambda สองเพียงอย่างเดียวบอก loss aversion แต่ยังไม่พิสูจน์ disposition effect</p>
   </div>
 </section>
@@ -260,7 +260,7 @@ C_{all-in}&=Q\,(c_{spread}+c_{fee}+c_{impact}+c_{borrow})
 \]</div>
   <div class="reading">
     <p>ใส่ average return ของ strategy แล้วลบ market return ที่คูณ $\hat{\beta}$ ส่วนที่เหลือคือ alpha ก่อนหักต้นทุน</p>
-    <p>รวม cost ต่อ share ทุกก้อน คูณจำนวน shares แล้วหารด้วย capital at risk เพื่อเปลี่ยนต้นทุนเป็น return fraction หน่วยเดียวกัน. ถ้าข้ามขั้นนี้ backtest จะดูหล่อกว่าเงินจริง</p>
+    <p>รวมต้นทุนต่อ share ทุกก้อน คูณจำนวน shares แล้วหารด้วย capital at risk เพื่อเปลี่ยนต้นทุนเป็น return fraction หน่วยเดียวกัน. ถ้าข้ามขั้นนี้ backtest จะดูหล่อกว่าเงินจริง</p>
   </div>
 </section>
 
@@ -307,7 +307,7 @@ P(\text{switch})&=P(\text{first pick wrong})\\
 
 <section class="example">
   <h4>implementation check — decision log ก่อนปล่อยสัญญาณ</h4>
-  <p>สำหรับ signal หุ้น Apple (ticker AAPL) ให้ซื้อ 100,000 shares ที่ arrival mid 190.00 USD/share; gross alpha 18 bp บน notional \$19,000,000 เท่ากับ \$34,200. Spread, fee และ impact รวม 0.095 USD/share หรือ \$9,500 จึงเหลือ expected net \$24,700 ก่อน risk ถ้า fill เฉลี่ย 190.12 USD/share ต้นทุน execution เท่ากับ \$12,000 และต้องหยุดเพิ่ม size เมื่อ realized shortfall เกิน 0.10 USD/share พร้อมส่ง order log ให้ transaction-cost analysis (TCA)</p>
+  <p>สำหรับ signal หุ้น Apple (ticker AAPL) ให้ซื้อ 100,000 shares ที่ arrival mid 190.00 USD/share; gross alpha 18 bp บน notional \$19,000,000 เท่ากับ \$34,200. Spread, fee และ impact รวม 0.095 USD/share หรือ \$9,500 จึงเหลือ expected net \$24,700 ก่อนความเสี่ยงถ้า fill เฉลี่ย 190.12 USD/share ต้นทุน execution เท่ากับ \$12,000 และต้องหยุดเพิ่มขนาดเมื่อ realized shortfall เกิน 0.10 USD/share พร้อมส่ง order log ให้ transaction-cost analysis (TCA)</p>
 </section>
 
 <section class="example">
@@ -382,7 +382,7 @@ assert abs((190.12 - 190.00) * 100_000 - 12_000) &lt; 1e-6</code></pre>
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>market efficiency เป็น null model เรื่อง predictability หลังปรับ risk และ cost ไม่ใช่คำกล่าวว่า price เท่ากับ value ทุก tick</li>
+    <li>market efficiency เป็น null model เรื่อง predictability หลังปรับความเสี่ยงและต้นทุนไม่ใช่คำกล่าวว่าราคาเท่ากับ value ทุก tick</li>
     <li>arbitrage ต้องจ่าย spread, funding, borrow และรับ gap risk; gross discrepancy จึงไม่ใช่กำไรสุทธิ</li>
     <li>prospect theory และ disposition effect แปลงเป็น control ได้ด้วย holding-time, exit hazard, unrealized-loss age และ position limit</li>
     <li>alpha ที่น่าเชื่อถือควร survive point-in-time data, walk-forward test, all-in TCA, capacity และ stress scenario</li>

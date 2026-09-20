@@ -39,7 +39,7 @@
     <dt>liquidity</dt>
     <dd>ความสามารถซื้อหรือขายขนาดที่ต้องการโดยราคาไม่เคลื่อนมากและทำได้เร็ว ใช้ประเมินว่าการ mark-to-market สะท้อนราคาขายจริงได้แค่ไหน</dd>
     <dt>fire sale</dt>
-    <dd>การขายสินทรัพย์อย่างเร่งด่วนเพื่อหา cash จนราคาต่ำกว่ามูลค่าในภาวะปกติ ใช้อธิบาย feedback จาก forced deleveraging</dd>
+    <dd>การขายสินทรัพย์อย่างเร่งด่วนเพื่อหาเงินสดจนราคาต่ำกว่ามูลค่าในภาวะปกติ ใช้อธิบาย feedback จาก forced deleveraging</dd>
     <dt>systemic risk</dt>
     <dd>ความเสี่ยงที่การผิดนัดหรือการขายของสถาบันหนึ่งส่งผ่านจนกระทบระบบการเงินวงกว้าง ใช้กำหนด stress test และ capital buffer</dd>
     <dt>mark-to-market</dt>
@@ -96,7 +96,7 @@
 <section class="prose">
   <h4>bubble ไม่ใช่แค่ราคาขึ้นเร็ว</h4>
   <p>ราคาหุ้น United States (US) โตได้เพราะ expected cash flow, discount rate หรือ risk premium เปลี่ยนอย่างสมเหตุสมผล ดังนั้นต้องเทียบราคากับ cash-flow model และดู financing behaviour ประกอบ สัญญาณเตือนคือราคาขึ้นพร้อม leverage สูง, underwriting มาตรฐานตก, maturity สั้น, collateral ถูก mark ด้วยราคาที่สูงขึ้นเอง</p>
-  <p>และผู้เล่นพึ่งพาการขายต่อทันที เมื่อราคาเป็นหลักประกันของหนี้และหนี้เป็นเชื้อเพลิงให้ซื้อราคาเดิม ระบบจะมี endogeneity: ราคาสูงสร้าง capacity กู้ และ capacity กู้สร้างแรงซื้อ จุดแตกหักมาถึงเมื่อผู้เล่นที่ต้องจ่าย cash ไม่สามารถขายในราคาที่เคยใช้ค้ำหนี้ได้</p>
+  <p>และผู้เล่นพึ่งพาการขายต่อทันที เมื่อราคาเป็นหลักประกันของหนี้และหนี้เป็นเชื้อเพลิงให้ซื้อราคาเดิม ระบบจะมี endogeneity: ราคาสูงสร้าง capacity กู้ และ capacity กู้สร้างแรงซื้อ จุดแตกหักมาถึงเมื่อผู้เล่นที่ต้องจ่ายเงินสดไม่สามารถขายในราคาที่เคยใช้ค้ำหนี้ได้</p>
 </section>
 
 <section class="formula">
@@ -166,7 +166,7 @@ R_A&\lt-\frac{0.05}{0.95}=-5.26\%
 
 <section class="prose">
   <h4>จาก price risk ไปสู่ funding risk</h4>
-  <p>ในวิกฤต desk อาจถูกต้องว่าหลักทรัพย์จะฟื้นใน 30 วัน แต่ถ้า repo lender เรียก cash วันนี้ desk ต้องขายก่อน thesis จะทำงาน Funding liquidity จึงเป็น risk ของ path ไม่ใช่แค่ terminal price ควรแยก market liquidity ซึ่งวัด spread และ depth ออกจาก funding liquidity ซึ่งวัด cash source, haircut และ maturity. Haircut คือส่วนลดที่ lender หักจากมูลค่าหลักทรัพย์ก่อนให้กู้; haircut กว้างขึ้นทำให้ต้องใช้ equity มากขึ้นทันที long horizon ช่วยได้ก็ต่อเมื่อ portfolio มี cash พอจะเดินทางไปถึง horizon นั้น</p>
+  <p>ในวิกฤต desk อาจถูกต้องว่าหลักทรัพย์จะฟื้นใน 30 วัน แต่ถ้า repo lender เรียกเงินสดวันนี้ desk ต้องขายก่อน thesis จะทำงาน Funding liquidity จึงเป็นความเสี่ยงของ path ไม่ใช่แค่ terminal price ควรแยก market liquidity ซึ่งวัด spread และ depth ออกจาก funding liquidity ซึ่งวัด cash source, haircut และ maturity. Haircut คือส่วนลดที่ lender หักจากมูลค่าหลักทรัพย์ก่อนให้กู้; haircut กว้างขึ้นทำให้ต้องใช้ equity มากขึ้นทันที long horizon ช่วยได้ก็ต่อเมื่อ portfolio มีเงินสดพอจะเดินทางไปถึง horizon นั้น</p>
 </section>
 
 <section class="formula">
@@ -268,7 +268,7 @@ assert abs(np.log10(bound) + 137.514) &lt; 1e-3 and abs(norm.sf(25) / 1e-138 - 3
 <section class="prose">
   <h4>ทำไม regulation หลัง 2008 เน้น buffer และ transparency</h4>
   <p>บทเรียนเชิงระบบคือทำให้การล้มของผู้เล่นหนึ่งไม่บังคับทุกคนขายพร้อมกัน Regulation จึงใช้ capital requirement ดู loss-absorbing equity, liquidity requirement ดู cash horizon, central clearing และ margin ลด counterparty uncertainty, trade reporting ช่วยเห็น concentration, stress testing ตรวจ feedback และ resolution planning ลด bailout expectation</p>
-  <p>Dodd–Frank Act และ Basel capital framework เป็นกรอบสำคัญ แต่ implementation ต้องตรวจ mapping จาก rule ไปยัง limit, data lineage, escalation และ evidence ของการทดสอบ การควบคุมที่ดีไม่ถามแค่ว่า “model บอก loss เท่าไร” แต่ถามว่า “ถ้า loss เกิน model ใครมีอำนาจหยุดและมี cash กี่วัน”</p>
+  <p>Dodd–Frank Act และ Basel capital framework เป็นกรอบสำคัญ แต่ implementation ต้องตรวจ mapping จาก rule ไปยัง limit, data lineage, escalation และ evidence ของการทดสอบ การควบคุมที่ดีไม่ถามแค่ว่า “model บอก loss เท่าไร” แต่ถามว่า “ถ้า loss เกิน model ใครมีอำนาจหยุดและมีเงินสดกี่วัน”</p>
 </section>
 
 <section class="formula">
@@ -346,7 +346,7 @@ L&=D\times\mathrm{LGD}\times\mathrm{EAD}\\
 
 <section class="pitfall">
   <h4>กับดัก: regulation ลดความเสี่ยง ไม่ได้ลบความเสี่ยง</h4>
-  <p>Capital rule อาจทำให้ risk ย้ายไป broker, hedge fund หรือ private credit; central clearing ลด bilateral exposure แต่เพิ่มความสำคัญของ central counterparty (CCP) margin และ liquidity; stress test ที่ใช้ historical correlation อาจพลาด correlation jump; mark-to-market ที่ใช้ last trade อาจไม่ใช่ exit price ใน fire sale</p>
+  <p>Capital rule อาจทำให้ความเสี่ยงย้ายไป broker, hedge fund หรือ private credit; central clearing ลด bilateral exposure แต่เพิ่มความสำคัญของ central counterparty (CCP) margin และ liquidity; stress test ที่ใช้ historical correlation อาจพลาด correlation jump; mark-to-market ที่ใช้ last trade อาจไม่ใช่ exit price ใน fire sale</p>
   <p>จึงต้องมี model risk inventory, independent validation, reverse stress test, intraday liquidity dashboard และ governance ที่ท้าทายสมมติฐาน สะพานไป 24.3 คือ regulation ทำงานผ่าน exchange, broker, dealer, exchange-traded fund (ETF) issuer, underwriter, rating agency และ securities lender จึงต้องรู้ว่าแต่ละคนถือความเสี่ยงและส่งคำสั่งต่อกันอย่างไร</p>
 </section>
 
@@ -381,7 +381,7 @@ L&=D\times\mathrm{LGD}\times\mathrm{EAD}\\
     <li>market liquidity กับ funding liquidity เป็นคนละ risk; haircut และ maturity ทำให้ path ของการรอดสำคัญกว่าราคา terminal</li>
     <li>regulation หลัง 2008 ใช้ capital, liquidity, clearing, reporting และ stress testing เป็น defense in depth</li>
     <li>expected loss ไม่แทน stress loss; ต้องมี reverse stress, model-risk governance และ trigger ที่คนมีอำนาจลงมือได้</li>
-    <li>สะพานถัดไปคือโครงสร้างสถาบันที่ส่งผ่าน order, borrow และ risk ระหว่าง exchange, broker, ETF และ lender</li>
+    <li>สะพานถัดไปคือโครงสร้างสถาบันที่ส่งผ่าน order, borrow และความเสี่ยงระหว่าง exchange, broker, ETF และ lender</li>
   </ul>
 </section>
 </article>

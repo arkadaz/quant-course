@@ -374,7 +374,7 @@ w_j&=\frac{B_j}{\sum_i B_i}\\
   <p>ในทางกลับกัน Non-Agency MBS หรือ private-label MBS ออกโดยธนาคารพาณิชย์ ไม่มีรัฐค้ำประกัน ผู้ลงทุนจึงแบกรับ default risk โดยตรง และต้องพึ่งพาการเสริมสภาพคล่อง (credit enhancement) เช่น การแบ่ง tranche ลำดับชั้นรับผลขาดทุน</p>
   <p>Engine ขั้นต่ำต้องเก็บ loan-level original balance, current balance, coupon, remaining term, payment date, delinquency state และ servicing rule</p>
   <p>ทุกเดือนให้ reconcile: beginning balance minus scheduled principal minus prepayment minus default liquidation เท่ากับ ending balance; และ sum ของ investor allocations บวก fees ต้องเท่ากับ collateral collections ภายใน cent tolerance</p>
-  <p>ระบุ day-count, remittance lag, holiday convention และ cutoff date เพราะ cash ที่มาถูกวันยังมีราคาไม่เท่ากัน</p>
+  <p>ระบุ day-count, remittance lag, holiday convention และ cutoff date เพราะเงินสดที่มาถูกวันยังมีราคาไม่เท่ากัน</p>
   <p>ผลลัพธ์ต้องผ่าน bounds: balance ไม่ติดลบ, principal ไม่เกิน beginning balance, และเมื่อ prepayment เป็นศูนย์ schedule ต้องเท่ากับ closed form</p>
   <p>Parallel shift ของ discount curve เป็น sensitivity test มีประโยชน์ แต่ไม่พอ เพราะ prepayment function เองตอบสนองต่อ rate; หัวข้อถัดไปจึงเพิ่ม borrower option เข้า model</p>
 </section>
@@ -420,7 +420,7 @@ w_j&=\frac{B_j}{\sum_i B_i}\\
     <li>Mortgage \$100,000 อัตรา 8.125% 360 งวด ค่างวดคงที่ \$742.50 งวดแรกตัดดอกเบี้ย \$677.08 (91.19%) ตัดเงินต้นเพียง \$65.41 ผ่านไป 2 ปีเหลือยอดหนี้ \$98,301.53</li>
     <li>Mortgage payment คงที่ได้ แต่ interest, principal และ balance เปลี่ยนทุกเดือน; นี่คือจุดตั้งต้นของ MBS cash-flow engine</li>
     <li>Pass-through ส่ง principal และ net interest ตาม collateral หลังหัก servicing fee จึงมี exposure ที่ทยอยลดลงตามเวลา</li>
-    <li>Loan-level reconciliation, cutoff date และ fee rules เป็น controls ขั้นพื้นฐานก่อนนำ cash flow ไป price หรือ hedge</li>
+    <li>Loan-level reconciliation, cutoff date และ fee rules เป็น controls ขั้นพื้นฐานก่อนนำ cash flow ไปราคาหรือ hedge</li>
   </ul>
 </section>
 </article>

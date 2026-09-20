@@ -36,13 +36,13 @@
     <dt>stochastic process</dt>
     <dd>ชุด random variables ที่เรียงตามเวลา ใช้บอกว่าปริมาณสุ่มเปลี่ยนอย่างไรจากช่วงหนึ่งไปอีกช่วง</dd>
     <dt>Poisson thinning (splitting)</dt>
-    <dd>วิธีสุ่มแยกเหตุการณ์ Poisson เป็นสายย่อยด้วย probability ที่กำหนด โดยแต่ละสายยังเป็น Poisson process ใช้คำนวณ arrival rate แยกตามประเภท</dd>
+    <dd>วิธีสุ่มแยกเหตุการณ์ Poisson เป็นสายย่อยด้วยโอกาสที่กำหนด โดยแต่ละสายยังเป็น Poisson process ใช้คำนวณ arrival rate แยกตามประเภท</dd>
     <dt>Poisson distribution</dt>
     <dd>Poisson distribution บอกโอกาสของจำนวนครั้งที่เหตุการณ์สุ่มจะเกิดในช่วงเวลาหนึ่ง</dd>
     <dt>Binomial distribution</dt>
-    <dd>Binomial distribution บอก probability ของจำนวนครั้งที่สำเร็จจากการทดลองซ้ำแบบ independent ใช้เมื่อจำนวนเหตุการณ์รวมถูกล็อกไว้แล้ว</dd>
+    <dd>Binomial distribution บอกโอกาสของจำนวนครั้งที่สำเร็จจากการทดลองซ้ำแบบ independent ใช้เมื่อจำนวนเหตุการณ์รวมถูกล็อกไว้แล้ว</dd>
     <dt>independence</dt>
-    <dd>independence หมายถึงเหตุการณ์ในสายหนึ่งไม่ให้ข้อมูลและไม่เปลี่ยน probability ของอีกสาย ใช้ตรวจว่าสอง count แยกวิเคราะห์ได้หรือไม่</dd>
+    <dd>independence หมายถึงเหตุการณ์ในสายหนึ่งไม่ให้ข้อมูลและไม่เปลี่ยนโอกาสของอีกสาย ใช้ตรวจว่าสอง count แยกวิเคราะห์ได้หรือไม่</dd>
     <dt>SPY</dt>
     <dd>
       <p>คืออะไร: ชื่อย่อของกองทุนที่ซื้อขายในตลาดหลักทรัพย์ ซึ่งเคลื่อนไหวตามดัชนี S&amp;P 500</p>
@@ -70,7 +70,7 @@
     <dt>adverse selection</dt>
     <dd>การที่คำสั่งได้จับคู่บ่อยที่สุดในจังหวะที่แย่ที่สุด เช่นตอนราคาวิ่งสวนทาง ใช้เตือนว่ากำไรต่อการจับคู่ไม่คงที่</dd>
     <dt>Probability Generating Function (PGF)</dt>
-    <dd>function ทางคณิตศาสตร์ที่เก็บข้อมูล probability ของ random variable จำนวนนับไว้ในรูปเลขชี้กำลัง ใช้พิสูจน์ distribution และ independence ของผลรวมสุ่ม</dd>
+    <dd>function ทางคณิตศาสตร์ที่เก็บข้อมูลโอกาสของ random variable จำนวนนับไว้ในรูปเลขชี้กำลัง ใช้พิสูจน์ distribution และ independence ของผลรวมสุ่ม</dd>
     <dt>indicator random variable</dt>
     <dd>random variable ที่มีค่าได้เพียง 1 หรือ 0 เพื่อระบุว่าเหตุการณ์ที่สนใจเกิดขึ้นหรือไม่ ใช้แปลงการนับจำนวนครั้งให้อยู่ในรูปผลรวมทางคณิตศาสตร์</dd>
   </dl>
@@ -226,7 +226,7 @@ m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
 
 <section class="formula">
   <h4>ขั้นที่ 6 — เส้นทางลัดสายที่สอง: พิสูจน์ Poisson Thinning ผ่าน Probability Generating Function</h4>
-  <p>หากการกระจายแบบ Binomial ในขั้นก่อนหน้าดูซับซ้อน เราสามารถสร้างผลลัพธ์เดียวกันในสามบรรทัดด้วย Probability Generating Function (PGF) นิยามจาก $G_X(s)=\mathbb E[s^X]$ ซึ่งเก็บข้อมูล probability ทุกค่าไว้บนเลขชี้กำลัง</p>
+  <p>หากการกระจายแบบ Binomial ในขั้นก่อนหน้าดูซับซ้อน เราสามารถสร้างผลลัพธ์เดียวกันในสามบรรทัดด้วย Probability Generating Function (PGF) นิยามจาก $G_X(s)=\mathbb E[s^X]$ ซึ่งเก็บข้อมูลโอกาสทุกค่าไว้บนเลขชี้กำลัง</p>
   <div class="math">\[
 \begin{aligned}
 &G_{N_A}(s)=\mathbb E\big[s^{N_A(t)}\big]\\
@@ -432,7 +432,7 @@ m&:=n-k\;\Longrightarrow\;m=0,1,2,\dots\\
 
 <section class="prose">
   <h4>ก่อนไปต่อ: จากตัวแปรเดียวสู่หลาย exposure</h4>
-  <p>ตอนนี้เรารู้วิธีรวม แยก และ condition ความสุ่มแล้ว ต่อไปพักเรื่อง probability ชั่วคราวเพื่อเรียน vector กับ matrix—ภาษาที่จะย่อหลาย exposure ให้ตรวจได้ในบรรทัดเดียว ก่อนกลับมาใช้กับ joint distribution, covariance และการลดความเสี่ยงหลาย position พร้อมกัน</p>
+  <p>ตอนนี้เรารู้วิธีรวม แยก และ condition ความสุ่มแล้ว ต่อไปพักเรื่องโอกาสชั่วคราวเพื่อเรียน vector กับ matrix—ภาษาที่จะย่อหลาย exposure ให้ตรวจได้ในบรรทัดเดียว ก่อนกลับมาใช้กับ joint distribution, covariance และการลดความเสี่ยงหลาย position พร้อมกัน</p>
 </section>
 
 <section class="code">

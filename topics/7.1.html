@@ -36,17 +36,17 @@
     <dt>Normal distribution</dt>
     <dd>distribution รูประฆังที่กำหนดด้วย mean และ variance ใช้เป็น building block ของ MVN และ return scenario</dd>
     <dt>probability density function (PDF)</dt>
-    <dd>density ที่ต้อง integrate เหนือพื้นที่จึงได้ probability ใช้แสดงความสูงของ joint distribution</dd>
+    <dd>density ที่ต้อง integrate เหนือพื้นที่จึงได้โอกาสใช้แสดงความสูงของ joint distribution</dd>
     <dt>covariance matrix</dt>
-    <dd>matrix ที่เก็บ variance และ co-movement ของ returns ใช้กำหนดทิศทางและความกว้างของ MVN ellipse</dd>
+    <dd>matrix ที่เก็บ variance และ co-movement ของผลตอบแทนใช้กำหนดทิศทางและความกว้างของ MVN ellipse</dd>
     <dt>correlation</dt>
     <dd>covariance ที่หารด้วย standard deviations ของทั้งสองตัว จึงอยู่ระหว่าง -1 ถึง 1 ใช้สื่อความแรงและทิศของ co-movement โดยไม่ติดหน่วย</dd>
     <dt>variance</dt>
     <dd>ค่ากระจายรอบ mean ที่ใช้วัดความกว้างของ return distribution และกำหนด diagonal ของ covariance matrix</dd>
     <dt>spread</dt>
-    <dd>ขนาดการกระจายของ returns รอบ mean ใช้ตีความความกว้างของ density และ volatility ในหน่วย return</dd>
+    <dd>ขนาดการกระจายของผลตอบแทนรอบ mean ใช้ตีความความกว้างของ density และ volatility ในหน่วย return</dd>
     <dt>factor</dt>
-    <dd>ตัวแปรร่วมที่ขับเคลื่อน returns หลายสินทรัพย์ ใช้สรุป source ของ co-movement ใน joint model</dd>
+    <dd>ตัวแปรร่วมที่ขับเคลื่อนผลตอบแทนหลายสินทรัพย์ ใช้สรุป source ของ co-movement ใน joint model</dd>
     <dt>volatility</dt>
     <dd>ขนาดความผันผวนที่อ่านจาก standard deviation ใช้แปลง spread ของ return distribution เป็น risk number</dd>
     <dt>standard deviation</dt>
@@ -54,9 +54,9 @@
     <dt>Mahalanobis distance</dt>
     <dd>ระยะจากค่าเฉลี่ยที่วัดหลังปรับตามความผันผวนและ correlation ของข้อมูลแล้ว ใช้บอกว่าจุดหนึ่งน่าประหลาดใจแค่ไหน เป็นหลักของระบบจับความผิดปกติในเดสก์ความเสี่ยง</dd>
     <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ของตลาดสหรัฐฯ ใช้เป็น return ตัวแรกใน joint model</dd>
+    <dd>ดัชนี S&amp;P 500 ของตลาดสหรัฐฯ ใช้เป็นผลตอบแทนตัวแรกใน joint model</dd>
     <dt>QQQ</dt>
-    <dd>กองทุนที่ติดตาม Nasdaq-100 ของตลาดสหรัฐฯ ใช้เป็น return ตัวที่สองใน joint model</dd>
+    <dd>กองทุนที่ติดตาม Nasdaq-100 ของตลาดสหรัฐฯ ใช้เป็นผลตอบแทนตัวที่สองใน joint model</dd>
   </dl>
 </details>
 
@@ -91,7 +91,7 @@
 
 <section class="prose">
   <h4>โจทย์ joint return model</h4>
-  <p>ให้ $r$ เป็น vector ของ SPX กับ QQQ daily returns ใน decimal ต่อวัน และต้องการ density ที่ให้ทั้ง centre, spread และ co-movement ในมิติเดียวกัน MVN เป็น model ที่ใช้ mean vector $\mu$ กับ covariance matrix $\Sigma$ เป็น parameter ของ returns ตลาดสหรัฐฯ</p>
+  <p>ให้ $r$ เป็น vector ของ SPX กับ QQQ daily returns ใน decimal ต่อวัน และต้องการ density ที่ให้ทั้ง centre, spread และ co-movement ในมิติเดียวกัน MVN เป็น model ที่ใช้ mean vector $\mu$ กับ covariance matrix $\Sigma$ เป็น parameter ของผลตอบแทนตลาดสหรัฐฯ</p>
 </section>
 
 <section class="formula">
@@ -202,8 +202,8 @@ z=(1,\,-1)&:\ q=\frac{1+0.80+1}{0.84}\\
   <div class="reading">
     <p>เมื่อแทน inverse matrix ขนาดสองคูณสองลงในสมการกำลังสอง การคูณแถวกับคอลัมน์จะแยกออกเป็นสามพจน์ คือกำลังสองของแต่ละตัวแปรและพจน์ไขว้ตรงกลาง</p>
     <p>เมื่อแปลงเป็น $z$-score สัดส่วนความกว้างจะถูกแทนที่ด้วยระยะห่างมาตรฐาน โดยมีตัวคูณ $-2\rho$ เป็นตัวกำหนดผลกระทบของทิศทางการเคลื่อนที่ร่วมกัน</p>
-    <p>กรณีที่สินทรัพย์ทั้งสองขึ้นพร้อมกันหนึ่ง standard deviation เครื่องหมายพจน์ไขว้จะมาช่วยลดค่า $q$ เหลือเพียง 1.4286 ทำให้ density ของ probability สูงถึง 0.4895</p>
-    <p>แต่หากตัวหนึ่งขึ้นและอีกตัวลง พจน์ไขว้จะกลายเป็นบวกและดันค่า $q$ พุ่งไปถึง 3.3333 ส่งผลให้ probability ลดฮวบเหลือเพียง 0.1889 แสดงให้เห็นว่า correlation เชิงบวกทำให้เหตุการณ์สวนทางเกิดขึ้นยากมาก</p>
+    <p>กรณีที่สินทรัพย์ทั้งสองขึ้นพร้อมกันหนึ่ง standard deviation เครื่องหมายพจน์ไขว้จะมาช่วยลดค่า $q$ เหลือเพียง 1.4286 ทำให้ density ของโอกาสสูงถึง 0.4895</p>
+    <p>แต่หากตัวหนึ่งขึ้นและอีกตัวลง พจน์ไขว้จะกลายเป็นบวกและดันค่า $q$ พุ่งไปถึง 3.3333 ส่งผลให้โอกาสลดฮวบเหลือเพียง 0.1889 แสดงให้เห็นว่า correlation เชิงบวกทำให้เหตุการณ์สวนทางเกิดขึ้นยากมาก</p>
   </div>
 </section>
 
@@ -256,7 +256,7 @@ q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
 
 <section class="formula">
   <h4>ขั้นที่ 8 — อินทิเกรตบน contour วงรีและความเชื่อมโยงกับ Chi-Square distribution</h4>
-  <p>การหา probability ของบริเวณวงรี Mahalanobis ไม่จำเป็นต้องคำนวณ integral สองชั้นโดยตรง เพราะระยะทางกำลังสอง $q(r)$ มี distribution แบบ Chi-Square ที่มี 2 degrees of freedom ซึ่งมีสูตรสะสมแบบปิด</p>
+  <p>การหาโอกาสของบริเวณวงรี Mahalanobis ไม่จำเป็นต้องคำนวณ integral สองชั้นโดยตรง เพราะระยะทางกำลังสอง $q(r)$ มี distribution แบบ Chi-Square ที่มี 2 degrees of freedom ซึ่งมีสูตรสะสมแบบปิด</p>
   <div class="math">\[
 \begin{aligned}
 &P(\text{inside }B)\\
@@ -277,7 +277,7 @@ q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>นิยามพื้นฐานของ probability คือการ integrate พื้นที่ใต้ joint density เหนืออาณาบริเวณ $B$ แต่เมื่อบริเวณดังกล่าวถูกตีกรอบด้วยเส้น contour รูปวงรี $q(r) \le c^2$ เราสามารถเปลี่ยนตัวแปรไปสู่ระบบพิกัด $z$</p>
+    <p>นิยามพื้นฐานของโอกาสคือการ integrate พื้นที่ใต้ joint density เหนืออาณาบริเวณ $B$ แต่เมื่อบริเวณดังกล่าวถูกตีกรอบด้วยเส้น contour รูปวงรี $q(r) \le c^2$ เราสามารถเปลี่ยนตัวแปรไปสู่ระบบพิกัด $z$</p>
     <p>เนื่องจาก $z_1, z_2$ เป็น Standard Normal อิสระต่อกัน ผลบวกกำลังสอง $z_1^2 + z_2^2$ จึงมี distribution เป็น Chi-Square ที่มี 2 degrees of freedom ซึ่งมี density function แบบ exponential</p>
     <p>การ integrate จึงลดรูปลงมาเหลือเพียงตัวแปรเดียวในหนึ่งมิติ และได้ผลลัพธ์แบบปิด $1 - e^{-c^2/2}$ ทันที</p>
     <p>เมื่อแทน $c = 1$ หรือกรอบหนึ่ง standard deviation จะครอบคลุม probability 39.35% และหากต้องการ confidence interval 95% จะต้องขยายกรอบวงรีออกไปที่ $c^2 = 5.991$ เสมอ</p>
@@ -329,7 +329,7 @@ q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
   <p>โจทย์ให้อะไรมาบ้าง: SPX มี daily volatility 2%, QQQ มี 3% และ correlation 0.40 ต้องหาช่อง covariance ใน covariance matrix</p>
   <p>คำตอบ: covariance คือ $0.02\times0.03\times0.40=0.00024$ return²/day².</p>
   <p>ตรวจเองใน 10 วินาที: กด <code>0.02*0.03*0.40</code> ต้องได้ 0.00024 และค่านี้ต้องอยู่ทั้งสองช่องนอกแนวทแยง</p>
-  <p>แปลว่าอะไร: ช่องนี้ทำให้ ellipse เอียงและเปลี่ยน probability ของการขยับพร้อมกัน. กับดักคือใส่ correlation 0.40 ลง covariance matrix โดยไม่คูณ volatilities</p>
+  <p>แปลว่าอะไร: ช่องนี้ทำให้ ellipse เอียงและเปลี่ยนโอกาสของการขยับพร้อมกัน. กับดักคือใส่ correlation 0.40 ลง covariance matrix โดยไม่คูณ volatilities</p>
 </section>
 
 <section class="pitfall">

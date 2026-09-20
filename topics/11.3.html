@@ -37,15 +37,15 @@
     <dt>lognormal distribution</dt>
     <dd>distribution ของ positive random variable ที่ logarithm เป็น normal ใช้บรรยาย terminal price ของ GBM และคำนวณ probabilities จาก normal table</dd>
     <dt>quantile</dt>
-    <dd>จุดตัดของ distribution ที่มี probability สะสมตามระดับที่เลือก ใช้ตั้ง scenario, limit และ stress threshold เช่น 5th percentile</dd>
+    <dd>จุดตัดของ distribution ที่มีโอกาสสะสมตามระดับที่เลือก ใช้ตั้ง scenario, limit และ stress threshold เช่น 5th percentile</dd>
     <dt>tail probability</dt>
     <dd>probability ที่ outcome อยู่ไกลกว่าระดับกำหนดด้านซ้ายหรือขวา ใช้วัดโอกาส breach ของ target หรือ loss threshold</dd>
     <dt>strike</dt>
     <dd>ราคาอ้างอิงที่กำหนดสิทธิ์ซื้อหรือขายใน option contract ใช้เปรียบ payoff threshold กับราคาของ underlying</dd>
     <dt>underlying</dt>
-    <dd>สินทรัพย์ที่ option หรือ derivative อ้างอิงราคา ใช้ระบุ price process ที่สร้าง probability และ hedge exposure</dd>
+    <dd>สินทรัพย์ที่ option หรือ derivative อ้างอิงราคา ใช้ระบุ price process ที่สร้างโอกาสและ hedge exposure</dd>
     <dt>hedge</dt>
-    <dd>position ที่เพิ่มเพื่อลด sensitivity ของ exposure เดิมต่อ market move ใช้จำกัด loss แต่ไม่ลบ risk ทุกชนิด</dd>
+    <dd>position ที่เพิ่มเพื่อลด sensitivity ของ exposure เดิมต่อ market move ใช้จำกัด loss แต่ไม่ลบความเสี่ยงทุกชนิด</dd>
     <dt>standard deviation (SD)</dt>
     <dd>ความกว้างของการกระจายในหน่วยเดียวกับข้อมูล ใช้วัดว่าเป้าราคาอยู่ห่างจุดกลางกี่ช่วง</dd>
   </dl>
@@ -125,7 +125,7 @@ S_t=\$20&:\ \operatorname{SD}=20e^{0.10}\sqrt{e^{0.0625}-1}=\$5.61
 </section>
 
 <section class="prose">
-  <h4>อิสระของ ratio ไม่ใช่คำทำนายว่า market ไม่มี memory</h4>
+  <h4>อิสระของ ratio ไม่ใช่คำทำนายว่าตลาดไม่มี memory</h4>
   <p>นี่เป็น property ภายใต้ GBM, ไม่ใช่ fact ของตลาด. Autocorrelation, volatility clustering และ order-flow dependence สามารถทำให้ historical data มี structure; quant ใช้ความเบี่ยงเบนจากสมมติฐานนี้เป็น hypothesis แต่ต้องทดสอบ out-of-sample</p>
 </section>
 
@@ -354,15 +354,15 @@ assert abs(np.mean(S1 &gt; 130) - 0.2193) &lt; 0.002 and abs(np.mean(S1 &lt; 70)
 
 <section class="example">
   <h4>ตัวอย่างเสริม — แปลงโอกาสเป็นเงินของ position 50,000 หุ้น</h4>
-  <p>สำหรับ 50,000 shares ณ \$100, analyst รายงาน probability ปิดเกิน \$130 ในหนึ่งปี 21.9% และ probability ต่ำกว่า \$70 เท่ากับ 4.4%. threshold values แปลเป็น position values \$6.5 ล้าน และ \$3.5 ล้าน ตามลำดับ แต่ probability ไม่รวม dividends, dilution, earnings gaps หรือ trading costs. risk owner จึงใช้เลขนี้เป็น baseline scenario แล้วเติม jump and volatility stress ก่อนอนุมัติ limit</p>
+  <p>สำหรับ 50,000 shares ณ \$100, analyst รายงานโอกาสปิดเกิน \$130 ในหนึ่งปี 21.9% และโอกาสต่ำกว่า \$70 เท่ากับ 4.4%. threshold values แปลเป็น position values \$6.5 ล้าน และ \$3.5 ล้าน ตามลำดับ แต่โอกาสไม่รวม dividends, dilution, earnings gaps หรือ trading costs. risk owner จึงใช้เลขนี้เป็น baseline scenario แล้วเติม jump and volatility stress ก่อนอนุมัติ limit</p>
   <p>คำถาม: threshold \$130 และ \$70 แปลงเป็นเงินของ position 50,000 shares ได้กี่ USD?</p>
   <p>ของที่มี: 50,000 shares, spot เริ่ม \$100, upper threshold \$130 และ lower threshold \$70</p>
   <p>1 คูณ 50,000 ด้วย \$130 ได้ \$6.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านบน.</p>
   <p>2 คูณ 50,000 ด้วย \$70 ได้ \$3.5 ล้าน. นี่คือมูลค่า position ที่ threshold ด้านล่าง</p>
   <p>เฉลย: model ให้โอกาสปิดเหนือ \$130 ที่ 21.9% และต่ำกว่า \$70 ที่ 4.4%; เงินที่เกี่ยวข้องคือ \$6.5 ล้าน กับ \$3.5 ล้าน.</p>
   <p>เช็ก 10 วินาที: \$130 − \$70 = \$60 ต่อ share; \$60 × 50,000 = \$3.0 ล้าน ระหว่างสอง threshold</p>
-  <p>งานจริง: ใช้แปลง probability เป็นจำนวน USD ที่ owner ของ limit เห็นภาพได้</p>
-  <p>กับดัก: อย่าเอา probability ของ GBM ไปแทน earnings gap, dividend, dilution หรือ trading cost ที่ model นี้ไม่ได้ใส่</p>
+  <p>งานจริง: ใช้แปลงโอกาสเป็นจำนวน USD ที่ owner ของ limit เห็นภาพได้</p>
+  <p>กับดัก: อย่าเอาโอกาสของ GBM ไปแทน earnings gap, dividend, dilution หรือ trading cost ที่ model นี้ไม่ได้ใส่</p>
 </section>
 
 <section class="pitfall">

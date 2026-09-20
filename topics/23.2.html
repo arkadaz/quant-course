@@ -407,7 +407,7 @@ S\,S_t&=P_t-(hG_t+c_{var})\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>$MC_t$ คือ marginal cost USD/MWh; $h$ คือ heat rate MMBtu/MWh; $G_t$ คือ gas price USD/MMBtu; $c_{var}$ คือ cost อื่น USD/MWh; $S\,S_t$ คือ spark spread USD/MWh; $Q_t$ คือ generation MWh; max แทนการเลือกไม่เดินเครื่องเมื่อ spread ติดลบ</p>
+    <p>$MC_t$ คือ marginal cost USD/MWh; $h$ คือ heat rate MMBtu/MWh; $G_t$ คือ gas price USD/MMBtu; $c_{var}$ คือต้นทุนอื่น USD/MWh; $S\,S_t$ คือ spark spread USD/MWh; $Q_t$ คือ generation MWh; max แทนการเลือกไม่เดินเครื่องเมื่อ spread ติดลบ</p>
   </div>
 </section>
 
@@ -655,7 +655,7 @@ assert abs(xi**2 / (2 * kappa) * (1 - np.exp(-2 * kappa * 50)) - xi**2 / (2 * ka
 
 <section class="prose">
   <h4>การสร้าง model และระบบ execution</h4>
-  <p>ระบบต้องเก็บ curve แยกตาม delivery month, hub, node, peak shape และ settlement convention — ไม่ใช่มีคอลัมน์ price เดียวสำหรับทุกอย่าง ฝั่ง storage ให้ optimizer เลือก inject/withdraw ด้วย dynamic programming หรือ linear programming ภายใต้ inventory, rate และ outage ที่กำหนด ฝั่ง power ให้ model hourly load, weather, forced outage, transmission และ scarcity cap แล้วคำนวณ Greeks หรือ scenario P&amp;L ตาม jump และ basis ที่เกิดขึ้นจริง</p>
+  <p>ระบบต้องเก็บ curve แยกตาม delivery month, hub, node, peak shape และ settlement convention — ไม่ใช่มีคอลัมน์ราคาเดียวสำหรับทุกอย่าง ฝั่ง storage ให้ optimizer เลือก inject/withdraw ด้วย dynamic programming หรือ linear programming ภายใต้ inventory, rate และ outage ที่กำหนด ฝั่ง power ให้ model hourly load, weather, forced outage, transmission และ scarcity cap แล้วคำนวณ Greeks หรือ scenario P&amp;L ตาม jump และ basis ที่เกิดขึ้นจริง</p>
 </section>
 
 <section class="prose">

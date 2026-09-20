@@ -120,10 +120,10 @@ E[r_t]=\mu,\qquad Var(r_t)=\gamma_0,\qquad Cov(r_t,r_{t-k})=\gamma_k
 </section>
 
 <figure class="plot">
-  <h4>Figure 16.1a — ราคาเดิน แต่ return แกว่งรอบศูนย์</h4>
+  <h4>Figure 16.1a — ราคาเดิน แต่ผลตอบแทนแกว่งรอบศูนย์</h4>
   <img src="../figures/16.1-1.svg" alt="Figure 16.1a — ราคาเดิน แต่ return แกว่งรอบศูนย์" loading="lazy">
   <figcaption>
-    <p>ข้อมูลสังเคราะห์ 120 วันของ SPY ใช้แยกราคาออกจาก return เส้นราคาเป็น random-walk-like path ที่ไม่ควรตีความว่า stationary ส่วน return มี scale เดียวกันโดยประมาณและเป็น input ของ ACF</p>
+    <p>ข้อมูลสังเคราะห์ 120 วันของ SPY ใช้แยกราคาออกจากผลตอบแทนเส้นราคาเป็น random-walk-like path ที่ไม่ควรตีความว่า stationary ส่วนผลตอบแทนมี scale เดียวกันโดยประมาณและเป็น input ของ ACF</p>
   </figcaption>
 </figure>
 
@@ -200,7 +200,7 @@ H_0:\rho_k=0,\qquad SE(\hat\rho_k)\approx\frac{1}{\sqrt n},\qquad -\frac{1.96}{\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>เมื่อสมมติว่า return ไม่มี memory แต่ละวันเป็นอิสระต่อกัน ผลคูณ $r_t r_{t-k}$ จึงมีค่าเฉลี่ยเป็นศูนย์ และเมื่อคำนวณ variance ของผลคูณ ผลลัพธ์จะกลายเป็น $\sigma^4$ เพราะ variance ของแต่ละวันคูณกันตรง ๆ</p>
+    <p>เมื่อสมมติว่าผลตอบแทนไม่มี memory แต่ละวันเป็นอิสระต่อกัน ผลคูณ $r_t r_{t-k}$ จึงมีค่าเฉลี่ยเป็นศูนย์ และเมื่อคำนวณ variance ของผลคูณ ผลลัพธ์จะกลายเป็น $\sigma^4$ เพราะ variance ของแต่ละวันคูณกันตรง ๆ</p>
     <p>ผลคูณของวันต่างคู่กันไม่มีชิ้นส่วนร่วม จึงมี covariance เป็นศูนย์ ทำให้ variance รวมของผลบวก $n$ วันคือ $n\sigma^4$ เมื่อหารด้วยตัวหาร $n^2$ จึงเหลือ $\sigma^4/n$ สำหรับ sample autocovariance</p>
     <p>เมื่อนำมาหารด้วย sample variance ซึ่งลู่เข้าหา $\sigma^2$ ตาม law of large numbers (LLN) ตัวคูณ $\sigma^4$ บนและล่างจะตัดกันหมด เหลือเพียง $1/n$ พอดี ถอด square root ได้ standard error เท่ากับ $1/\sqrt{n}$</p>
     <p>สำหรับข้อมูล $1{,}000$ วัน จะได้ standard error ราว $0.0316$ คูณ $1.96$ ได้แถบวิกฤต $\pm 0.0620$ ค่า ACF ที่แกว่งอยู่ในกรอบนี้จึงเป็นเพียง random noise จาก sample ไม่ใช่สัญญาณทำกำไร</p>

@@ -35,7 +35,7 @@
     <dt>volatility smile</dt>
     <dd>รูปที่ implied volatility เปลี่ยนตาม strike แทนที่จะคงที่ ใช้เป็นหลักฐานจากตลาดว่าค่า volatility เดียวของ GBM อธิบาย option ทุกตัวไม่ได้</dd>
     <dt>fat tails</dt>
-    <dd>distribution ที่ให้ probability ของ moves ใหญ่สูงกว่า normal distribution ใช้เตือนว่า normal-tail model อาจประเมิน extreme loss ต่ำเกินไป</dd>
+    <dd>distribution ที่ให้โอกาสของ moves ใหญ่สูงกว่า normal distribution ใช้เตือนว่า normal-tail model อาจประเมิน extreme loss ต่ำเกินไป</dd>
     <dt>jump diffusion</dt>
     <dd>model ที่เพิ่ม jump events เข้า diffusion เพื่อให้ราคากระโดดได้ ใช้ stress ข่าว, earnings และ gap risk ที่ continuous GBM พลาด</dd>
     <dt>delta hedging</dt>
@@ -380,7 +380,7 @@ assert abs(500 * 0.05 * 100_000 - 2_500_000) &lt; 1e-6      # the event-risk exa
   <ul>
     <li>GBM มีเหตุผลสำหรับ positive equity prices และ proportional returns</li>
     <li>ความผันผวนคงที่ หางบางแบบ normal เส้นราคาต่อเนื่องไม่กระโดด ผลตอบแทนแต่ละช่วงไม่เกี่ยวกัน และเทรดได้โดยไม่มีต้นทุน ทั้งห้าข้อนี้เป็นข้อสมมติที่เราเลือกใส่เอง ไม่ใช่ข้อเท็จจริงของตลาด</li>
-    <li>smile, clusters และ gaps เป็น diagnostics ที่ market เปิดเผยให้เห็น GBM ที่ 20% ต่อปีบอกว่าวันร่วง 5% เกิดครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</li>
+    <li>smile, clusters และ gaps เป็น diagnostics ที่ตลาดเปิดเผยให้เห็น GBM ที่ 20% ต่อปีบอกว่าวันร่วง 5% เกิดครั้งเดียวใน 122 ปี ของจริงเกิดหลายวันในปีเดียว</li>
     <li>ใช้ GBM เป็น baseline แล้ว overlay stress, calibration และ execution controls ตาม decision</li>
     <li>ภายใต้ GBM ราคาที่คาดหวังกับค่ากึ่งกลางเป็นคนละตัวเลข: drift ที่ทบต้นคือ μ−σ²/2 ดังนั้นค่ากึ่งกลางจึงต่ำกว่าค่าเฉลี่ย และต่างกันราว 22% ในตัวอย่างสิบปี</li>
   </ul>

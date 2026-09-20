@@ -37,7 +37,7 @@
     <dt>single monthly mortality (SMM)</dt>
     <dd>ความน่าจะเป็น prepay ในหนึ่งเดือน conditional on surviving balance ใช้แปลง CPR ไป cash-flow engine รายเดือน</dd>
     <dt>Public Securities Association (PSA) benchmark</dt>
-    <dd>มาตรฐาน scenario ที่ ramp CPR จาก 0 ถึง 6% ใน 30 เดือนที่ 100 PSA ใช้เปรียบเทียบ price และ risk ไม่ใช่ forecast ของ borrower ทุกคน</dd>
+    <dd>มาตรฐาน scenario ที่ ramp CPR จาก 0 ถึง 6% ใน 30 เดือนที่ 100 PSA ใช้เปรียบเทียบราคาและความเสี่ยงไม่ใช่ forecast ของ borrower ทุกคน</dd>
     <dt>burnout</dt>
     <dd>ปรากฏการณ์ที่ borrower ซึ่ง refinance ง่ายได้ออกจาก pool แล้ว ผู้ที่เหลือ prepay ช้าลง ใช้จำกัดการ extrapolate incentive</dd>
     <dt>principal-only (PO)</dt>
@@ -318,7 +318,7 @@ PV_{IO}&=\sum_{t=1}^{T}\frac{c_{\mathrm{net}}B_{t-1}/12}{(1+y/12)^t}
 <section class="prose">
   <h4>ทำไม PO และ IO ตอบสนองต่อ rates กลับด้าน</h4>
   <p>เมื่อ rates ลดและ prepayment เร็วขึ้น PO ได้ principal เร็วกว่าจึงมักมีค่าเพิ่ม เพราะ discounting น้อยลง. IO สูญเสีย future interest base อย่างรวดเร็ว จึงมักมีค่าลดลง</p>
-  <p>ในเชิง rate risk PO จึงมี duration บวกสูง ขณะที่ IO อาจมี duration ติดลบ; คำว่า “อาจ” สำคัญ เพราะ price ยังขึ้นกับ discount curve, coupon, premium/discount และ prepayment model ทั้งหมด</p>
+  <p>ในเชิง rate risk PO จึงมี duration บวกสูง ขณะที่ IO อาจมี duration ติดลบ; คำว่า “อาจ” สำคัญ เพราะราคายังขึ้นกับ discount curve, coupon, premium/discount และ prepayment model ทั้งหมด</p>
   <p>IO ที่ราคาต่ำกว่ามากไม่ได้แปลว่าปลอดภัย: cash flow ของมันสามารถหายจาก refinance wave</p>
   <p>PO ที่ดูชนะเมื่อ rates ลดก็รับ extension ได้เมื่อ rates สูงและ principal กลับช้า</p>
 </section>
@@ -327,7 +327,7 @@ PV_{IO}&=\sum_{t=1}^{T}\frac{c_{\mathrm{net}}B_{t-1}/12}{(1+y/12)^t}
   <h4>Figure 22.2c — PO กับ IO รับ shock คนละทาง</h4>
   <img src="../figures/22.2-3.svg" alt="Figure 22.2c — PO กับ IO รับ shock คนละทาง" loading="lazy">
   <figcaption>
-    <p>เส้นตัวอย่างใช้ discount yield เปลี่ยนพร้อม CPR scenario ที่ตอบสนองต่อ rates. PO สูงขึ้นเมื่อ yield ลดและ cash กลับเร็ว ขณะที่ IO ลดลงเพราะ balance ถูกล้างเร็ว; รูปทรงเป็น intuition ไม่ใช่ market quote</p>
+    <p>เส้นตัวอย่างใช้ discount yield เปลี่ยนพร้อม CPR scenario ที่ตอบสนองต่อ rates. PO สูงขึ้นเมื่อ yield ลดและเงินสดกลับเร็ว ขณะที่ IO ลดลงเพราะ balance ถูกล้างเร็ว; รูปทรงเป็น intuition ไม่ใช่ market quote</p>
   </figcaption>
 </figure>
 
@@ -472,8 +472,8 @@ f^{\rm burn}_k&=0.3+0.7\,M_{k-1}/M_0\\[4pt]
 
 <section class="pitfall">
   <h4>กับดัก: PSA คือ forecast และ IO คือ short bond</h4>
-  <p>PSA เป็น benchmark scenario; มันไม่มี incentive, geography, credit, turnover หรือ burnout อยู่ข้างใน. อย่า price ทุก vintage ด้วย 100 PSA โดยไม่ทำ sensitivity grid</p>
-  <p>อีกกับดักคือ hedge IO ด้วย duration ตัวเดียว: IO exposure เปลี่ยน sign และ size เมื่อ rates, volatility และ model parameter เปลี่ยน.</p>
+  <p>PSA เป็น benchmark scenario; มันไม่มี incentive, geography, credit, turnover หรือ burnout อยู่ข้างใน. อย่าราคาทุก vintage ด้วย 100 PSA โดยไม่ทำ sensitivity grid</p>
+  <p>อีกกับดักคือ hedge IO ด้วย duration ตัวเดียว: IO exposure เปลี่ยน sign และขนาดเมื่อ rates, volatility และ model parameter เปลี่ยน.</p>
   <p>ขอบเขตของตัวอย่าง: ไม่มี default, buyout, delinquency, rate volatility หรือ curtailment; discount curve แบนและ yield shock parallel</p>
   <p>PSA ไม่มีแรงจูงใจรีไฟแนนซ์อยู่ข้างใน โต๊ะเทรดจึงใช้ model ของ CPR ที่ขึ้นกับดอกเบี้ย เช่น Richard and Roll ในขั้นที่ 8</p>
 </section>

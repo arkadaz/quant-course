@@ -44,7 +44,7 @@
     <dt>covariance matrix</dt>
     <dd>ตาราง covariance ระหว่าง asset returns ใช้คำนวณ portfolio variance และ risk allocation</dd>
     <dt>variance</dt>
-    <dd>ค่าเฉลี่ยของ squared deviation จาก mean ใช้วัดการกระจายของ return และคำนวณ portfolio risk</dd>
+    <dd>ค่าเฉลี่ยของ squared deviation จาก mean ใช้วัดการกระจายของผลตอบแทนและคำนวณ portfolio risk</dd>
     <dt>row reduction</dt>
     <dd>การเอาแถวหนึ่งคูณตัวเลขแล้วลบออกจากอีกแถวเพื่อสร้างศูนย์ ใช้นับว่ามีแถวที่ให้ข้อมูลใหม่จริงกี่แถว ซึ่งคือ rank</dd>
     <dt>complete market</dt>
@@ -98,7 +98,7 @@
 
 <section class="prose">
   <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ให้ columns ของ $A$ เป็น daily returns ของ AAPL, MSFT และ QQQ และให้ $\Sigma$ เป็น covariance matrix ของ returns หน่วยของแต่ละ return เป็น decimal over one day และหน่วย covariance เป็น decimal-return squared ที่ horizon หนึ่งวัน ถ้า columns มี linear dependence ข้อมูลจะมี rank ต่ำและ inverse ที่ระบบต้องการอาจไม่มี</p>
+  <p>โจทย์ให้อะไรมาบ้าง: ให้ columns ของ $A$ เป็น daily returns ของ AAPL, MSFT และ QQQ และให้ $\Sigma$ เป็น covariance matrix ของผลตอบแทนหน่วยของแต่ละผลตอบแทนเป็น decimal over one day และหน่วย covariance เป็น decimal-return squared ที่ horizon หนึ่งวัน ถ้า columns มี linear dependence ข้อมูลจะมี rank ต่ำและ inverse ที่ระบบต้องการอาจไม่มี</p>
 </section>
 
 <section class="formula">
@@ -260,7 +260,7 @@ A(w+cz)&=Aw+A(cz)\\
 1&amp;1\end{bmatrix},\quad \sigma^2>0,\qquad \det(\Sigma)=0,\qquad \operatorname{rank}(\Sigma)=1 \lt 2
 \]</div>
   <div class="reading">
-    <p>$\sigma^2$ คือ variance ของ daily return หน่วย decimal-return squared เมื่อสอง returns เหมือนกันทุกครั้ง covariance matrix มี determinant เป็นศูนย์และ rank หนึ่ง จึงไม่มี inverse</p>
+    <p>$\sigma^2$ คือ variance ของ daily return หน่วย decimal-return squared เมื่อสองผลตอบแทนเหมือนกันทุกครั้ง covariance matrix มี determinant เป็นศูนย์และ rank หนึ่ง จึงไม่มี inverse</p>
     <p>ทำไม determinant ศูนย์แปลว่ากลับด้านไม่ได้ (กรณี 2×2): $\det=ad-bc$ เป็นศูนย์ก็ต่อเมื่อคอลัมน์ $(a,c)$ กับ $(b,d)$ ขนานกัน คือคอลัมน์หนึ่งเป็นตัวคูณของอีกคอลัมน์ ที่นี่ $1\cdot1-1\cdot1=0$ และคอลัมน์ทั้งสองคือ $(1,1)$ เหมือนกันเป๊ะ ฟิลเตอร์สีเทาในขั้นที่ 1 ก็เป็นเรื่องเดียวกัน</p>
   </div>
 </section>
@@ -552,7 +552,7 @@ x=np.linalg.solve(St,np.ones(2)); assert np.allclose(x/x.sum(),[-1/3,4/3])</code
   <h4>Figure 4.5c — วงรี covariance ที่แบนจนไม่มีความหนา</h4>
   <img src="../figures/4.5-3.svg" alt="Figure 4.5c — วงรี covariance ที่แบนจนไม่มีความหนา" loading="lazy">
   <figcaption>
-    <p>เมื่อ returns สองตัว correlated เท่ากับหนึ่ง risk ellipse ยุบเหลือเส้น $r_1=r_2$ และมีความกว้างศูนย์ในทิศตั้งฉาก จึงไม่มี inverse ให้คำนวณ</p>
+    <p>เมื่อผลตอบแทนสองตัว correlated เท่ากับหนึ่ง risk ellipse ยุบเหลือเส้น $r_1=r_2$ และมีความกว้างศูนย์ในทิศตั้งฉาก จึงไม่มี inverse ให้คำนวณ</p>
   </figcaption>
 </figure>
 
@@ -568,7 +568,7 @@ x=np.linalg.solve(St,np.ones(2)); assert np.allclose(x/x.sum(),[-1/3,4/3])</code
   <h4>คำตอบ — determinant เป็นศูนย์ จึงกลับ matrix ไม่ได้</h4>
   <p>คำตอบ: covariance ตัวอย่างมี determinant เท่ากับศูนย์และ rank เท่ากับ 1 จึงไม่มี inverse; สอง columns นำข้อมูลทิศเดียวกันมาซ้ำ</p>
   <p>ตรวจเองใน 10 วินาที: คูณ matrix [[1,1],[1,1]] ด้วย vector [1,-1] ต้องได้ [0,0] vector ที่ไม่เป็นศูนย์แต่ถูกส่งเป็นศูนย์พิสูจน์ว่ามี null direction และ solution ไม่ unique</p>
-  <p>ใช้ตัดสินใจ: ถ้า QQQ เป็น linear combination ของ AAPL กับ MSFT จริง ให้ตัด factor ซ้ำหรือใช้ regularization ที่ประกาศไว้ ห้ามเติมเลขเล็ก ๆ เงียบ ๆ แล้วเรียก risk ว่า stable</p>
+  <p>ใช้ตัดสินใจ: ถ้า QQQ เป็น linear combination ของ AAPL กับ MSFT จริง ให้ตัด factor ซ้ำหรือใช้ regularization ที่ประกาศไว้ ห้ามเติมเลขเล็ก ๆ เงียบ ๆ แล้วเรียกความเสี่ยงว่า stable</p>
 </section>
 
 <section class="pitfall">

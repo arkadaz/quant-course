@@ -34,7 +34,7 @@
     <dt>linear combination</dt>
     <dd>การเอา vector หลายตัวมาคูณด้วยจำนวนจริงแล้วบวกกัน ใช้สร้าง portfolio หรือ hedge ใหม่จาก building blocks ที่มีอยู่</dd>
     <dt>linear independence</dt>
-    <dd>สถานะที่ไม่มี vector ตัวใดเขียนเป็น linear combination ของตัวอื่นได้ ใช้ตรวจว่า trade ใหม่เพิ่มทิศ risk ใหม่จริง ไม่ใช่ exposure เดิมที่ถูกคูณขนาด</dd>
+    <dd>สถานะที่ไม่มี vector ตัวใดเขียนเป็น linear combination ของตัวอื่นได้ ใช้ตรวจว่า trade ใหม่เพิ่มทิศความเสี่ยงใหม่จริง ไม่ใช่ exposure เดิมที่ถูกคูณขนาด</dd>
     <dt>span</dt>
     <dd>เซตของ vector ทุกตัวที่สร้างได้จาก linear combination ของชุดตั้งต้น ใช้บอกขอบเขต exposure ที่ desk สร้างหรือ hedge ได้จาก instruments ที่ถือ</dd>
     <dt>hedge</dt>
@@ -42,11 +42,11 @@
     <dt>diversification</dt>
     <dd>การรวม risk drivers ที่ไม่เคลื่อนพร้อมกันทั้งหมด ใช้ลดความผันผวนของ portfolio โดยไม่จำเป็นต้องลดเงินลงทุนทุกดอลลาร์</dd>
     <dt>factor exposure</dt>
-    <dd>ความไวของ portfolio ต่อ driver ร่วม เช่น Nasdaq growth stocks ใช้แยกว่าหลาย ticker ให้ risk อิสระจริงหรือรับแรงเดียวกันพร้อมกัน</dd>
+    <dd>ความไวของ portfolio ต่อ driver ร่วม เช่น Nasdaq growth stocks ใช้แยกว่าหลาย ticker ให้ความเสี่ยงอิสระจริงหรือรับแรงเดียวกันพร้อมกัน</dd>
     <dt>beta</dt>
-    <dd>ความไวเชิงเส้นของ return สินทรัพย์ต่อ return ของตลาดหรือ factor ที่เลือก ใช้วัดว่าขนาด market exposure ของ trade จะเพิ่มหรือลดเมื่อ factor ขยับ</dd>
+    <dd>ความไวเชิงเส้นของผลตอบแทนสินทรัพย์ต่อผลตอบแทนของตลาดหรือ factor ที่เลือก ใช้วัดว่าขนาด market exposure ของ trade จะเพิ่มหรือลดเมื่อ factor ขยับ</dd>
     <dt>correlation</dt>
-    <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดว่า return สองชุดเคลื่อนไหวเชิงเส้นไปด้วยกันมากเพียงใด ใช้คัดกรองว่าหลาย position อาจซ่อน risk direction เดียวกัน แม้ correlation ต่ำก็ยังไม่พิสูจน์ว่า vectors เป็นอิสระ</dd>
+    <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดว่าผลตอบแทนสองชุดเคลื่อนไหวเชิงเส้นไปด้วยกันมากเพียงใด ใช้คัดกรองว่าหลาย position อาจซ่อน risk direction เดียวกัน แม้ correlation ต่ำก็ยังไม่พิสูจน์ว่า vectors เป็นอิสระ</dd>
     <dt>leverage</dt>
     <dd>การทำให้ gross exposure ใหญ่กว่าเงินทุนที่รองรับ ใช้ขยายขนาด bet ทั้งด้านกำไรและขาดทุน จึงต้องแยกจากการเพิ่ม risk direction ใหม่</dd>
     <dt>alpha</dt>
@@ -60,7 +60,7 @@
     <dt>arbitrage</dt>
     <dd>การซื้อของหนึ่งและขายของที่ให้ผลเหมือนกันทุกสถานการณ์เพื่อเก็บส่วนต่างราคาโดยไม่รับความเสี่ยง ใช้อธิบายว่าทำไมของที่ซ้ำกันต้องมีราคาสอดคล้องกัน</dd>
     <dt>portfolio manager (PM)</dt>
-    <dd>ผู้รับผิดชอบเลือก positions และจัดสรร risk ของ portfolio ใช้ตัดสินใจว่าจะเพิ่ม ลด หรือ hedge trade ภายใต้ mandate และ limit ที่ได้รับ</dd>
+    <dd>ผู้รับผิดชอบเลือก positions และจัดสรรความเสี่ยงของ portfolio ใช้ตัดสินใจว่าจะเพิ่ม ลด หรือ hedge trade ภายใต้ mandate และ limit ที่ได้รับ</dd>
   </dl>
 </details>
 
@@ -228,7 +228,7 @@ a\begin{bmatrix}1\\
 a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
 \]</div>
   <div class="reading">
-    <p>$\mathbf{u}$ และ $\mathbf{v}$ คือ vectors สองตัว $a$ และ $b$ คือ scalar weights นิยามบอกว่าเมื่อผสม vectors แล้วได้ $\mathbf{0}$ วิธีเดียวต้องเป็นเลือก weight ทั้งคู่เป็นศูนย์ จึงไม่มี vector ไหนถูกสร้างจากอีกตัว และทั้งคู่เพิ่ม direction ใหม่</p>
+    <p>$\mathbf{u}$ และ $\mathbf{v}$ คือ vectors สองตัว $a$ และ $b$ คือ scalar weights นิยามบอกว่าเมื่อผสม vectors แล้วได้ $\mathbf{0}$ วิธีเดียวต้องเป็นเลือกน้ำหนักทั้งคู่เป็นศูนย์ จึงไม่มี vector ไหนถูกสร้างจากอีกตัว และทั้งคู่เพิ่ม direction ใหม่</p>
   </div>
 </section>
 
@@ -309,7 +309,7 @@ a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
   <h4>Figure 3.2b — ไม้ที่ซ้ำกันคือลูกศรเดิมที่ขยายด้วย leverage</h4>
   <img src="../figures/3.2-2.svg" alt="Figure 3.2b — ไม้ที่ซ้ำกันคือลูกศรเดิมที่ขยายด้วย leverage" loading="lazy">
   <figcaption>
-    <p>ลูกศรสองอันอยู่เส้นเดียวกัน จึงเป็น risk เดิมที่ขยาย leverage; gross exposure โต แต่ span ไม่โต</p>
+    <p>ลูกศรสองอันอยู่เส้นเดียวกัน จึงเป็นความเสี่ยงเดิมที่ขยาย leverage; gross exposure โต แต่ span ไม่โต</p>
   </figcaption>
 </figure>
 
@@ -344,12 +344,12 @@ a\mathbf{u}+b\mathbf{v}=\mathbf{0}\quad\Longrightarrow\quad a=b=0
 
 <section class="formula">
   <h4>ขั้นที่ 11 — นิยามของ hedge ที่สร้างได้: ทุกส่วนผสมของสิ่งที่ซื้อขายได้</h4>
-  <p>บรรทัดนี้เป็น นิยาม ไม่ใช่ผลที่พิสูจน์มา เรากำลังตั้งชื่อให้กับกองของ hedge ทั้งหมด ที่ desk สร้างได้จริงจาก instrument สองตัวที่มี ขนาด $a$ กับ $b$ เลือกได้อิสระ ประโยชน์ของการเขียนแบบนี้คือ ถ้า risk ที่ต้องปิดอยู่นอกกองนี้ ก็แปลว่าต้องหา instrument ใหม่</p>
+  <p>บรรทัดนี้เป็น นิยาม ไม่ใช่ผลที่พิสูจน์มา เรากำลังตั้งชื่อให้กับกองของ hedge ทั้งหมด ที่ desk สร้างได้จริงจาก instrument สองตัวที่มี ขนาด $a$ กับ $b$ เลือกได้อิสระ ประโยชน์ของการเขียนแบบนี้คือ ถ้าความเสี่ยงที่ต้องปิดอยู่นอกกองนี้ ก็แปลว่าต้องหา instrument ใหม่</p>
   <div class="math">\[
 \mathbf{h}=a\mathbf{u}+b\mathbf{v}
 \]</div>
   <div class="reading">
-    <p>$\mathbf{h}$ คือ hedge exposure ที่ desk สร้างได้ $\mathbf{u}$ และ $\mathbf{v}$ คือ exposures ของ instruments ที่ซื้อขายได้ ส่วน $a,b$ คือขนาดที่จะเลือก สูตรนี้บอกว่า hedge ที่เป็นไปได้อยู่ใน span ของ instruments ที่มีเท่านั้น ถ้า risk ที่ต้องปิดอยู่นอก span ต้องหา instrument ใหม่</p>
+    <p>$\mathbf{h}$ คือ hedge exposure ที่ desk สร้างได้ $\mathbf{u}$ และ $\mathbf{v}$ คือ exposures ของ instruments ที่ซื้อขายได้ ส่วน $a,b$ คือขนาดที่จะเลือก สูตรนี้บอกว่า hedge ที่เป็นไปได้อยู่ใน span ของ instruments ที่มีเท่านั้น ถ้าความเสี่ยงที่ต้องปิดอยู่นอก span ต้องหา instrument ใหม่</p>
   </div>
 </section>
 
@@ -502,7 +502,7 @@ assert abs(np.linalg.det(np.array([[1, 0, 1], [0, 1, 1], [1, 1, 0.]])) + 2) &lt;
   <ul>
     <li>linear independence คือการมี direction ใหม่จริง; จำนวน ticker ไม่ใช่หลักฐานของ diversification</li>
     <li>dependent vector เป็นสำเนาที่ขยายหรือย่อของ direction เดิม จึงเพิ่ม gross exposure ได้แต่ไม่เพิ่ม hedge capability</li>
-    <li>span บอกชุด exposure ที่สร้างได้จาก instruments ที่ถือ; risk นอก span ปิดไม่ได้ด้วยการปรับ weight อย่างเดียว</li>
+    <li>span บอกชุด exposure ที่สร้างได้จาก instruments ที่ถือ; risk นอก span ปิดไม่ได้ด้วยการปรับน้ำหนักอย่างเดียว</li>
     <li>ได้ค่าตัวแปรจากบางแถวแล้วต้องตรวจกับแถวที่เหลือทุกครั้ง: กองทุน C = 0.5A + 0.5B ผ่านทั้งสามแถว จึงซ้ำจริงและค่าธรรมเนียมที่แพงกว่า 0.20% ต่อปีคือเงินที่เสียเปล่า</li>
     <li>ก่อนเรียก book ว่า diversified ให้ตรวจ factor exposure และ dependence ใน stress period</li>
   </ul>

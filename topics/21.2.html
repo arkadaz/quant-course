@@ -92,7 +92,7 @@
 <section class="prose">
   <h4>โจทย์หลายมิติไม่ใช่ implied volatility หลายครั้ง</h4>
   <p>implied volatility ของ option หนึ่งตัวมักมีหุบหนึ่งมิติ แต่ stochastic-volatility หรือ curve model มี parameter หลายตัว และ quote หลายสิบถึงหลายพันตัว Parameter สองชุดอาจให้ smile วันนี้ใกล้กันมาก แต่ให้ Greek และ stress P&amp;L ต่างกันในวันพรุ่งนี้</p>
-  <p>ก่อนเลือก optimizer ให้ตอบให้ชัดว่ากำลัง fit ราคา, implied volatility หรือ error ที่เทียบกับ bid–ask ราคา \$0.05 ที่ option ถูกอาจกิน spread ทั้งหมด ขณะที่ error เดียวกันบน option \$20 แทบไม่มีความหมาย การไม่เขียน objective คือเลือก weight โดยไม่รู้ตัว</p>
+  <p>ก่อนเลือก optimizer ให้ตอบให้ชัดว่ากำลัง fit ราคา, implied volatility หรือ error ที่เทียบกับ bid–ask ราคา \$0.05 ที่ option ถูกอาจกิน spread ทั้งหมด ขณะที่ error เดียวกันบน option \$20 แทบไม่มีความหมาย การไม่เขียน objective คือเลือกน้ำหนักโดยไม่รู้ตัว</p>
 </section>
 
 <section class="formula">
@@ -428,7 +428,7 @@ v_0&=0.044,\ \ldots,\ 0.064\\[4pt]
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>calibration เริ่มจาก objective และ weight ที่อธิบายได้; residual ต่อ half-spread ทำให้ error มีมาตรฐานร่วมกัน</li>
+    <li>calibration เริ่มจาก objective และน้ำหนักที่อธิบายได้; residual ต่อ half-spread ทำให้ error มีมาตรฐานร่วมกัน</li>
     <li>Nelder–Mead เป็น derivative-free check, BFGS ใช้ gradient, และ LM ใช้โครงสร้าง least-squares พร้อม damping</li>
     <li>ก่อนปล่อย optimizer ทำงานจริง ต้องกำหนด transforms, ลองหลายจุดเริ่ม, เก็บ diagnostics, บันทึกเหตุผล accept/reject และตรวจข้อมูลนอก sample</li>
   </ul>

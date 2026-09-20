@@ -118,7 +118,7 @@
 \mathrm{IS}_{buy}=Q(P_f-P_0)+Q c_v,\qquad \mathrm{IS}_{sell}=Q(P_0-P_f)+Q c_v
 \]</div>
   <div class="reading">
-    <p>$Q$ คือ shares, $P_0$ คือ decision price USD/share, $P_f$ คือ average fill USD/share และ $c_v$ คือ explicit venue cost USD/share; สำหรับ buy ราคา fill สูงกว่าจุดตัดสินใจเป็น cost ส่วน sell กลับเครื่องหมายเพื่อให้ cost เป็นบวก</p>
+    <p>$Q$ คือ shares, $P_0$ คือ decision price USD/share, $P_f$ คือ average fill USD/share และ $c_v$ คือ explicit venue cost USD/share; สำหรับ buy ราคา fill สูงกว่าจุดตัดสินใจเป็นต้นทุนส่วน sell กลับเครื่องหมายเพื่อให้ต้นทุนเป็นบวก</p>
   </div>
 </section>
 
@@ -276,7 +276,7 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 \Pi&=N(g-c)\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$P_{ETF}$ และ $NAV$ เป็น USD/share, $\pi$ เป็น fraction, $N$ คือจำนวน shares และ cost ทุกตัวเป็น USD/share; arbitrage มี positive expected profit ก็ต่อเมื่อ premium ต่อ share ชนะ creation, trading และ funding cost รวม</p>
+    <p>$P_{ETF}$ และ $NAV$ เป็น USD/share, $\pi$ เป็น fraction, $N$ คือจำนวน shares และต้นทุนทุกตัวเป็น USD/share; arbitrage มี positive expected profit ก็ต่อเมื่อ premium ต่อ share ชนะ creation, trading และ funding cost รวม</p>
     <p>$g$ คือส่วนต่างราคาต่อหน่วยก่อนหักต้นทุน ส่วน $c$ คือต้นทุนรวมต่อหน่วย ทั้งสองเป็นชื่อย่อในขั้นนี้ เมื่อลบกันแล้วจึงคูณด้วยจำนวนหน่วย $N$ เพื่อได้เงินสุทธิ $\Pi$</p>
   </div>
 </section>
@@ -310,7 +310,7 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 
 <section class="example">
   <h4>worked example — creation arbitrage ใน ETF</h4>
-  <p>สมมติ ETF มี market price 101.20 และ basket NAV 100.00 USD/share; premium เท่ากับ 1.20%. AP ซื้อ basket 10,000 shares แล้วจ่าย creation fee 0.20 และ trading/funding cost 0.35 USD/share. Gross premium คือ \$12,000; all-in cost คือ \$5,500; expected profit ก่อน operational risk คือ \$6,500 หาก ETF ลดเหลือ 100.90 ก่อน create เสร็จ revenue เหลือ \$9,000 และ profit เหลือ \$3,500; funding เพิ่ม \$800 เหลือ \$2,700 จึงต้องมี AP limit และ settlement control</p>
+  <p>สมมติ ETF มี market price 101.20 และ basket NAV 100.00 USD/share; premium เท่ากับ 1.20%. AP ซื้อ basket 10,000 shares แล้วจ่าย creation fee 0.20 และ trading/funding cost 0.35 USD/share. Gross premium คือ \$12,000; all-in cost คือ \$5,500; expected profit ก่อน operational risk คือ \$6,500 หาก ETF ลดเหลือ 100.90 ก่อน create เสร็จ revenue เหลือ \$9,000 และกำไรเหลือ \$3,500; funding เพิ่ม \$800 เหลือ \$2,700 จึงต้องมี AP limit และ settlement control</p>
 </section>
 
 <section class="prose">
@@ -339,8 +339,8 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 \]</div>
   <div class="reading">
     <p>กำหนดแบบฝึกว่าได้หุ้นครบหนึ่งพันด้วยโอกาส 20% หรือไม่ได้เลยอีก 80% research จ่าย \$100 ไม่ว่าจะได้หุ้นหรือไม่ แต่ trading cost เกิดเฉพาะโลกที่ได้หุ้น</p>
-    <p>คำนวณกำไรแต่ละโลกก่อนถ่วง probability จะได้ \$480 เท่ากับโอกาสได้หุ้นคูณกำไรซื้อขายหลัง fee แล้วหัก research ครั้งเดียว</p>
-    <p>ราคาออก \$23 ในแบบฝึกเป็นค่าที่กำหนด หากราคาวันแรกกับ allocation สัมพันธ์กันต้องใช้ joint scenarios โอกาสได้หุ้นอาจสูงในดีลที่ไม่ขึ้น จึงเอา probability เฉลี่ยคูณกำไรเฉลี่ยโดยสมมติ independence ไม่ได้</p>
+    <p>คำนวณกำไรแต่ละโลกก่อนถ่วงโอกาสจะได้ \$480 เท่ากับโอกาสได้หุ้นคูณกำไรซื้อขายหลัง fee แล้วหัก research ครั้งเดียว</p>
+    <p>ราคาออก \$23 ในแบบฝึกเป็นค่าที่กำหนด หากราคาวันแรกกับ allocation สัมพันธ์กันต้องใช้ joint scenarios โอกาสได้หุ้นอาจสูงในดีลที่ไม่ขึ้น จึงเอาโอกาสเฉลี่ยคูณกำไรเฉลี่ยโดยสมมติ independence ไม่ได้</p>
   </div>
 </section>
 
@@ -352,7 +352,7 @@ c&=c_{create}+c_{trade}+c_{funding}\\
 \]</div>
   <div class="reading">
     <p>ถ้าได้ allocation, ใส่จำนวนหุ้น $Q$ คูณส่วนต่างระหว่างราคาขาย $P_1$ กับราคา IPO แล้วหัก trading cost และ research cost นี่คือกำไรในโลกที่ได้หุ้นจริง</p>
-    <p>แต่ได้หุ้นไม่ทุกครั้ง จึงถ่วงกำไรด้วย probability ของ allocation $p_{alloc}$ การข้ามน้ำหนักนี้ทำให้ backtest ที่สมมติว่าได้หุ้นเต็มจำนวนโกงตัวเองแบบเนียน ๆ</p>
+    <p>แต่ได้หุ้นไม่ทุกครั้ง จึงถ่วงกำไรด้วยโอกาสของ allocation $p_{alloc}$ การข้ามน้ำหนักนี้ทำให้ backtest ที่สมมติว่าได้หุ้นเต็มจำนวนโกงตัวเองแบบเนียน ๆ</p>
   </div>
 </section>
 
@@ -454,7 +454,7 @@ r_{\mathrm{rebate}}&=r_c-f_b\\
 <section class="example">
   <h4>worked example — short sale ที่ดูดีแต่ fee กิน edge</h4>
   <p>กองทุน short 20,000 shares ของ GME ที่ 30.00 USD/share และตั้งใจซื้อคืนที่ 27.00 ภายใน 30/365 ปี (ค่ายืมหุ้นคิดตามวันปฏิทิน ถือ 30 วันจากปีละ 365 วัน รวมวันหยุด เพราะหุ้นถูกยืมอยู่ทุกวัน)</p>
-  <p>Gross trading profit คือ \$60,000. Borrow fee 36% ต่อปีบนมูลค่า short \$600,000 เป็น \$17,753.42 และ round-trip trading cost \$1,600 ถ้า recall บังคับ buy-in ที่ \$32.00 trading loss เป็น \$40,000; รวม fee และ cost ขาดทุน \$59,353.42 แม้ base case เหลือกำไร \$40,646.58 แต่ต้องมี locate status, borrow utilisation และ squeeze stress</p>
+  <p>Gross trading profit คือ \$60,000. Borrow fee 36% ต่อปีบนมูลค่า short \$600,000 เป็น \$17,753.42 และ round-trip trading cost \$1,600 ถ้า recall บังคับ buy-in ที่ \$32.00 trading loss เป็น \$40,000; รวม fee และต้นทุนขาดทุน \$59,353.42 แม้ base case เหลือกำไร \$40,646.58 แต่ต้องมี locate status, borrow utilisation และ squeeze stress</p>
 </section>
 
 <section class="formula">
@@ -510,7 +510,7 @@ S_0R&=100(1.02)=102\\[4pt]
 
 <section class="prose">
   <h4>บทสรุปปิดเล่ม</h4>
-  <p>เส้นทางทั้งเล่มจบที่นี่: probability และ inference บอกว่า signal น่าเชื่อแค่ไหน, optimization และ risk กำหนดขนาดที่รับได้, pricing บอกมูลค่าภายใต้สมมติฐาน, และ market structure บอกว่ากำไรนั้นส่งถึงบัญชีจริงหรือไม่. Quant ที่ใช้ได้ต้องตรวจทั้งสี่ชั้นพร้อมกัน.</p>
+  <p>เส้นทางทั้งเล่มจบที่นี่: probability และ inference บอกว่า signal น่าเชื่อแค่ไหน, optimization และความเสี่ยงกำหนดขนาดที่รับได้, pricing บอกมูลค่าภายใต้สมมติฐาน, และ market structure บอกว่ากำไรนั้นส่งถึงบัญชีจริงหรือไม่. Quant ที่ใช้ได้ต้องตรวจทั้งสี่ชั้นพร้อมกัน.</p>
 </section>
 
 <section class="takeaways">

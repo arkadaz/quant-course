@@ -47,7 +47,7 @@
     <dt>calibration</dt>
     <dd>การเลือก parameters ให้ model outputs ใกล้ market targets ตาม objective ที่กำหนด ใช้ส่ง model เข้าสู่ valuation date เดียวกับราคา</dd>
     <dt>objective function</dt>
-    <dd>scalar loss ที่รวม weighted differences ระหว่าง model กับ market ใช้บอก optimizer ว่า parameter set ใดดีกว่า</dd>
+    <dd>scalar loss ที่รวม weighted differences ระหว่าง model กับตลาดใช้บอก optimizer ว่า parameter set ใดดีกว่า</dd>
     <dt>residual</dt>
     <dd>model value ลบ market value ของ quote หนึ่งตัว ใช้ตรวจรูปแบบของ misfit แทนการดูเพียง loss รวม</dd>
     <dt>least squares</dt>
@@ -258,7 +258,7 @@ A_C(0,T)&=\left[\frac{2\gamma e^{(\kappa+\gamma)T/2}}{(\gamma+\kappa)(e^{\gamma 
 J(\kappa,\theta,\sigma)=\sum_{i=1}^{5}w_i\left[10^4\left(y_i^{mdl}-y_i^{mkt}\right)\right]^2
 \]</div>
   <div class="reading">
-    <p>คูณ yield difference ด้วยสิบยกกำลังสี่เพื่อแปลงจาก rate decimal เป็น basis points แล้ว square และ weight ก่อนรวม</p>
+    <p>คูณ yield difference ด้วยสิบยกกำลังสี่เพื่อแปลงจาก rate decimal เป็น basis points แล้ว square และน้ำหนักก่อนรวม</p>
   </div>
 </section>
 
@@ -535,7 +535,7 @@ e_s(30)&=\frac{2.3860}{2.5055}-1=-4.77\%
   <h4>implementation และ risk interpretation</h4>
   <p>เริ่มจาก freeze วันคิดราคาและแหล่ง curve แปลง quote เป็น discount factor แล้ว reprice กลับให้ได้ราคาเดิมก่อน.</p>
   <p>ค่อยลอง optimizer จากหลายจุดเริ่มและเก็บ parameter version ถ้าค่ากระโดดทุกวัน ให้ถามก่อนว่าข้อมูลแยก parameter ได้จริงไหม ไม่ใช่รีบเรียกว่า market event</p>
-  <p>งาน risk จึงแยก quote bump, parameter sensitivity และการเปลี่ยน model ไว้คนละรายงาน.</p>
+  <p>งานความเสี่ยงจึงแยก quote bump, parameter sensitivity และการเปลี่ยน model ไว้คนละรายงาน.</p>
 </section>
 
 <section class="example">

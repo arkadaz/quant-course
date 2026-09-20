@@ -41,7 +41,7 @@
     <dt>market impact</dt>
     <dd>การที่ order ของเราเองขยับราคาเสียเปรียบ ใช้เพิ่มต้นทุนที่โตตามขนาดและ liquidity ของ trade</dd>
     <dt>no-trade region</dt>
-    <dd>บริเวณน้ำหนักที่ expected improvement ยังไม่คุ้ม cost ใช้ป้องกันการ rebalance เล็กและถี่เกินไป</dd>
+    <dd>บริเวณน้ำหนักที่ expected improvement ยังไม่คุ้มต้นทุนใช้ป้องกันการ rebalance เล็กและถี่เกินไป</dd>
     <dt>turnover constraint</dt>
     <dd>ขอบบนของผลรวม absolute trades ตามนิยามที่ระบุ ใช้ควบคุม capacity, taxes และ operational load</dd>
     <dt>gross traded notional</dt>
@@ -95,7 +95,7 @@
 
 <section class="prose">
   <h4>โจทย์: ปรับพอร์ต \$50 ล้านไปหาเป้าหมายใหม่</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: mean-variance แบบมี friction ต้องตัดสินใจ trade จาก $w_0$ เพราะ cost ขึ้นกับระยะที่เดินไปหา $w$ ตัวอย่างใช้ portfolio value \$50 ล้าน, one-period annual forecasts และ linear cost 10 bp เท่ากันทุกกองเพื่อให้ตรวจเลขได้ ตลาดจริงต้องใช้ bid–ask, participation และ impact estimates รายสินทรัพย์</p>
+  <p>โจทย์ให้อะไรมาบ้าง: mean-variance แบบมี friction ต้องตัดสินใจ trade จาก $w_0$ เพราะต้นทุนขึ้นกับระยะที่เดินไปหา $w$ ตัวอย่างใช้ portfolio value \$50 ล้าน, one-period annual forecasts และ linear cost 10 bp เท่ากันทุกกองเพื่อให้ตรวจเลขได้ ตลาดจริงต้องใช้ bid–ask, participation และ impact estimates รายสินทรัพย์</p>
 </section>
 
 <section class="formula">
@@ -139,7 +139,7 @@ v_i &= \max(0, -\Delta w_i) \ge 0 \\
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — แปลง weights เป็น USD cost</h4>
+  <h4>ขั้นที่ 3 — แปลงน้ำหนักเป็น USD cost</h4>
   <p>น้ำหนักเป็นสัดส่วน แต่ค่าธรรมเนียมคิดเป็นเงิน จึงต้องคูณด้วยขนาดพอร์ตก่อน</p>
   <div class="math">\[
 \text{gross traded notional}=W\lVert\Delta w\rVert_1=50{,}000{,}000(0.40)=\$20{,}000{,}000
@@ -354,7 +354,7 @@ g_i(w_0)-\nu&=c_i\,s_i\ \ \text{with}\ -1\le s_i\le1\\
   <p>คำถาม: เปลี่ยนจาก 40/40/20 เป็น 60/30/10 เสียค่าซื้อขายเท่าไร และถ้า cap turnover 10% ต้องหยุดตรงไหน?</p>
   <p>ของที่มี: ขั้นที่ 1 ถึง 12</p>
   <p>ถ้าเดินเต็มทาง ซื้อขายรวม \$20 ล้าน turnover 20% จ่าย \$20,000 </p>
-  <p>คำตอบ: turnover cap 10% พา weights จาก [0.40,0.40,0.20] ไป [0.50,0.35,0.15] จึงซื้อ SPY \$5 ล้าน และขาย AGG กับ QQQ อย่างละ \$2.5 ล้าน รวม gross trade \$10 ล้าน และ cost \$10,000</p>
+  <p>คำตอบ: turnover cap 10% พาน้ำหนักจาก [0.40,0.40,0.20] ไป [0.50,0.35,0.15] จึงซื้อ SPY \$5 ล้าน และขาย AGG กับ QQQ อย่างละ \$2.5 ล้าน รวม gross trade \$10 ล้าน และ cost \$10,000</p>
   <p>ตรวจเองใน 10 วินาที: absolute weight changes รวม 0.20 ดังนั้น turnover แบบหารสองเท่ากับ 0.10; \$10 ล้าน × 0.001 ต้องได้ cost \$10,000</p>
   <p>ใช้ตัดสินใจ: ส่ง target ที่ถูก cap นี้แทนเป้าหมาย 60/30/10 เมื่อ mandate จำกัด turnover และต้องแทน 10 bp ด้วย cost rate รายสินทรัพย์ก่อนใช้งานจริง</p>
 </section>

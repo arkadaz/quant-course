@@ -57,7 +57,7 @@
     <dt>leverage</dt>
     <dd>อิทธิพลของ observation ที่ค่า input อยู่ไกลจากค่าเฉลี่ยต่อเส้น fitted ใช้ตรวจว่าจุดปลายช่วงกำลังดึง slope มากเกินไปหรือไม่</dd>
     <dt>volatility</dt>
-    <dd>ความผันผวนของ return ใน horizon ที่ระบุ ใช้ตรวจรูปแบบ variance ของ residual และเลือก standard error ที่เหมาะสม</dd>
+    <dd>ความผันผวนของผลตอบแทนใน horizon ที่ระบุ ใช้ตรวจรูปแบบ variance ของ residual และเลือก standard error ที่เหมาะสม</dd>
     <dt>total sum of squares (SST)</dt>
     <dd>ความผันผวนทั้งหมดของ $y$ รอบค่าเฉลี่ยตัวเอง ก่อนที่จะมีเส้นอะไรมาช่วยอธิบาย ใช้เป็นตัวตั้งว่าเส้นอธิบายไปได้กี่ส่วน</dd>
     <dt>regression sum of squares (SSR)</dt>
@@ -76,7 +76,7 @@
       <tr><td>$\hat y_t$</td><td>ค่าทำนายของ AAPL return</td><td>จุด ต่อเดือน</td></tr>
       <tr><td>$e_t$</td><td>residual ของ observation $t$</td><td>จุด ต่อเดือน</td></tr>
       <tr><td>$n$</td><td>จำนวน observations</td><td>เดือน</td></tr>
-      <tr><td>$\bar x,\bar y$</td><td>sample means ของ returns สองชุด</td><td>จุด ต่อเดือน</td></tr>
+      <tr><td>$\bar x,\bar y$</td><td>sample means ของผลตอบแทนสองชุด</td><td>จุด ต่อเดือน</td></tr>
       <tr><td>$R^2$</td><td>coefficient of determination ใน sample</td><td>unitless</td></tr>
       <tr><td>$\bar R^2$</td><td>adjusted coefficient of determination</td><td>unitless</td></tr>
       <tr><td>$\widehat{\mathrm{SE}}(\hat b)$</td><td>standard error ของ slope estimate</td><td>unitless</td></tr>
@@ -415,7 +415,7 @@ assert np.allclose(beta, [a, b])</code></pre>
 
 <section class="pitfall">
   <h4>กับดัก: ใช้ระดับราคาและเรียก fit ว่า signal</h4>
-  <p>ราคาที่มี trend สองเส้นอาจให้ $R^2$ สูงแม้ไม่มี tradeable relation ใช้ returns หรือ series ที่ทำให้ stationary ตามคำถาม และกันเวลาเรียงลำดับไว้สำหรับ test; OLS ไม่ซ่อมข้อมูลที่ถามผิด</p>
+  <p>ราคาที่มี trend สองเส้นอาจให้ $R^2$ สูงแม้ไม่มี tradeable relation ใช้ผลตอบแทนหรือ series ที่ทำให้ stationary ตามคำถาม และกันเวลาเรียงลำดับไว้สำหรับ test; OLS ไม่ซ่อมข้อมูลที่ถามผิด</p>
 </section>
 
 <section class="table">

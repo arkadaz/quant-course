@@ -40,11 +40,11 @@
     <dt>change of basis</dt>
     <dd>การเขียน vector เดิมด้วย coordinates ของ basis ชุดใหม่ ใช้แปลงรายชื่อ position เป็น factor exposure โดยไม่เปลี่ยน P&amp;L ของ portfolio</dd>
     <dt>factor</dt>
-    <dd>driver ร่วมที่ทำให้สินทรัพย์หลายตัวเคลื่อนไหวไปทางเดียวกัน ใช้รวม risk ที่กระจายอยู่ตาม ticker ให้เห็นเป็นไม่กี่ก้อนที่ hedge ได้</dd>
+    <dd>driver ร่วมที่ทำให้สินทรัพย์หลายตัวเคลื่อนไหวไปทางเดียวกัน ใช้รวมความเสี่ยงที่กระจายอยู่ตาม ticker ให้เห็นเป็นไม่กี่ก้อนที่ hedge ได้</dd>
     <dt>liquidity</dt>
     <dd>ความสามารถในการซื้อหรือขาย instrument ได้ตามขนาดที่ต้องการโดยไม่ทำให้ราคาเคลื่อนมาก ใช้ตัดสินว่า risk direction ใน basis มี hedge ที่ลงมือทำได้จริงหรือมีเพียงชื่อสวยบน dashboard</dd>
     <dt>chief investment officer (CIO)</dt>
-    <dd>ผู้บริหารที่รับผิดชอบภาพรวมการลงทุนและ risk ขององค์กร ใช้กำหนด mandate จัดสรร risk budget และตัดสินใจว่า exposure ใดควรถือหรือ hedge</dd>
+    <dd>ผู้บริหารที่รับผิดชอบภาพรวมการลงทุนและความเสี่ยงขององค์กร ใช้กำหนด mandate จัดสรร risk budget และตัดสินใจว่า exposure ใดควรถือหรือ hedge</dd>
   </dl>
 </details>
 
@@ -238,7 +238,7 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
   <p>2 เทียบ \$0.5 ล้าน กับ common \$5.5 ล้าน จะเห็นว่า relative view เล็กกว่ามาก</p>
   <p>เฉลย: ถ้าต้องลด market-like risk ให้ลด common direction \$5.5 ล้าน ก่อน ไม่ใช่เผลอปิด energy thesis \$4 ล้าน.</p>
   <p>เช็ก 10 วินาที: \$5.5 ล้าน + \$0.5 ล้าน = \$6.0 ล้าน.</p>
-  <p>งานจริง: basis เปลี่ยนรายการ holdings ให้กลายเป็นปุ่ม risk ที่ chief investment officer กดได้</p>
+  <p>งานจริง: basis เปลี่ยนรายการ holdings ให้กลายเป็นปุ่มความเสี่ยงที่ chief investment officer กดได้</p>
   <p>กับดัก: อย่าคิดว่า basis coefficient คือ cash bucket จริง; มันคือพิกัดของ exposure ที่เปลี่ยนได้ตาม basis ที่เลือก</p>
 </section>
 
@@ -252,7 +252,7 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
 
 <section class="pitfall">
   <h4>กับดัก: basis ที่สวยแต่ไม่สะท้อน tradeable risk</h4>
-  <p>เลือก basis อะไรก็ได้ทางคณิตศาสตร์ แต่ basis ที่ดีบน desk ต้องเชื่อมกับ instrument, liquidity, และ hedge ที่ทำได้จริง factor ที่ตีความไม่ได้คือ dashboard ที่มีสีสวยแต่ไม่มีปุ่มกด ก่อนใช้ basis ใหม่ถามว่า coordinate แต่ละตัว hedge ด้วยอะไรและเสีย cost เท่าไร</p>
+  <p>เลือก basis อะไรก็ได้ทางคณิตศาสตร์ แต่ basis ที่ดีบน desk ต้องเชื่อมกับ instrument, liquidity, และ hedge ที่ทำได้จริง factor ที่ตีความไม่ได้คือ dashboard ที่มีสีสวยแต่ไม่มีปุ่มกด ก่อนใช้ basis ใหม่ถามว่า coordinate แต่ละตัว hedge ด้วยอะไรและเสียต้นทุนเท่าไร</p>
 </section>
 
 <section class="table">
@@ -272,7 +272,7 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
 
 <section class="code">
   <details>
-    <summary>โค้ดหาพิกัดของพอร์ตในแกน risk ชุดใหม่</summary>
+    <summary>โค้ดหาพิกัดของพอร์ตในแกนความเสี่ยงชุดใหม่</summary>
     <pre><code>import numpy as np
 E = np.eye(3)
 x = 6 * E[0] + 5 * E[1] + 4 * E[2]
@@ -293,7 +293,7 @@ assert np.allclose(Binv, [[0.5, 0.5, 0], [0.5, -0.5, 0], [0, 0, 1]]) and np.allc
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
     <li>basis คือชุด directions ที่ใช้บรรยาย portfolio; vector เดิมไม่เปลี่ยน แต่คำถามที่ตอบได้เปลี่ยน</li>
-    <li>canonical basis เหมาะกับ positions รายชื่อหุ้น ส่วน factor basis เหมาะกับการคุย risk และ hedge</li>
+    <li>canonical basis เหมาะกับ positions รายชื่อหุ้น ส่วน factor basis เหมาะกับการคุยความเสี่ยงและ hedge</li>
     <li>coordinates ใหม่ได้จาก $\mathbf{c}=B^{-1}\mathbf{x}$ เมื่อ $B$ invertible; ต้องรักษาหน่วยให้เป็น USD exposure ตลอด</li>
     <li>basis ที่ใช้บน desk ต้องตีความได้และเชื่อมกับ hedge ที่ trade ได้จริง</li>
   </ul>

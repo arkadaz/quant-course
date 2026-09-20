@@ -36,15 +36,15 @@
     <dt>angle</dt>
     <dd>มุมเชิงเรขาคณิตระหว่าง vectors ใช้แปล inner product ให้เห็นภาพ: มุมเล็กคือเคลื่อนไปทางเดียว มุมใกล้ 180 degrees คือหักล้างกัน</dd>
     <dt>correlation</dt>
-    <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดการเคลื่อนไหวเชิงเส้นร่วมกันของ return สองชุด ใช้เลือก diversification candidate และประเมินว่า hedge จะช่วยในสภาวะปกติแค่ไหน</dd>
+    <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดการเคลื่อนไหวเชิงเส้นร่วมกันของผลตอบแทนสองชุด ใช้เลือก diversification candidate และประเมินว่า hedge จะช่วยในสภาวะปกติแค่ไหน</dd>
     <dt>cosine similarity</dt>
     <dd>cosine ของมุมระหว่างสอง vector คือ inner product หารด้วยผลคูณความยาว ใช้วัดว่าชี้ทางเดียวกันแค่ไหนโดยไม่สนว่าลูกศรไหนยาวกว่า</dd>
     <dt>orthogonal</dt>
     <dd>สอง vector ที่ตั้งฉากกัน inner product เป็นศูนย์ ใช้เรียกสินทรัพย์ที่ไม่ขยับตามกันเชิงเส้น ซึ่งเพิ่มทิศความเสี่ยงใหม่ให้พอร์ตแทนที่จะซ้ำทิศเดิม</dd>
     <dt>hedge ratio</dt>
-    <dd>ขนาดของ hedge instrument ต่อ position ที่ต้องการลดความเสี่ยง ใช้แปลงความคล้ายของ return เป็นจำนวน USD notional ที่ต้อง short หรือ long</dd>
+    <dd>ขนาดของ hedge instrument ต่อ position ที่ต้องการลดความเสี่ยง ใช้แปลงความคล้ายของผลตอบแทนเป็นจำนวน USD notional ที่ต้อง short หรือ long</dd>
     <dt>standard deviation</dt>
-    <dd>รากที่สองของ variance ซึ่งสรุปขนาดการกระจายของข้อมูลในหน่วยเดียวกับข้อมูลเดิม ใช้ปรับ return ต่าง volatility ให้เปรียบเทียบทิศทางกันได้</dd>
+    <dd>รากที่สองของ variance ซึ่งสรุปขนาดการกระจายของข้อมูลในหน่วยเดียวกับข้อมูลเดิม ใช้ปรับผลตอบแทนต่าง volatility ให้เปรียบเทียบทิศทางกันได้</dd>
     <dt>variance</dt>
     <dd>ค่าเฉลี่ยของ squared deviations จาก mean ใช้วัดการกระจายและเป็นตัวหารของ regression hedge ratio เมื่ออธิบายความไวต่อ hedge instrument</dd>
     <dt>standardized return</dt>
@@ -108,11 +108,11 @@
 
 <section class="prose">
   <h4>เริ่มจากการจับคู่วันเดียวกัน</h4>
-  <p>ใช้ return สามวันแบบ standardized ของ semiconductor basket และ hedge candidate โดยแถวที่ $i$ ต้องเป็นวันเดียวกันทั้งสอง series หากเลื่อนวันผิดหนึ่งแถว correlation จะดูเหมือนสัญญาณ แต่จริง ๆ เป็น timestamp bug ที่ใส่สูท</p>
+  <p>ใช้ผลตอบแทนสามวันแบบ standardized ของ semiconductor basket และ hedge candidate โดยแถวที่ $i$ ต้องเป็นวันเดียวกันทั้งสอง series หากเลื่อนวันผิดหนึ่งแถว correlation จะดูเหมือนสัญญาณ แต่จริง ๆ เป็น timestamp bug ที่ใส่สูท</p>
 </section>
 
 <section class="example">
-  <h4>โจทย์ตัวอย่าง: วัด co-movement จาก return สามวัน</h4>
+  <h4>โจทย์ตัวอย่าง: วัด co-movement จากผลตอบแทนสามวัน</h4>
   <p>semiconductor basket ให้ return 1.3%, -0.7%, 0.3% ขณะที่ hedge candidate ให้ 1.1%, 0.1%, -0.9% ในสามวันเดียวกัน ค่าเฉลี่ยคือ 0.3% และ 0.1% ตามลำดับ และ sample standard deviation ของทั้งคู่เท่ากับ 1 จุด เมื่อลบค่าเฉลี่ยแล้วหารด้วย sample standard deviation จึงได้ $\mathbf{x}=(1,-1,0)$ และ $\mathbf{y}=(1,0,-1)$ ด้านล่าง ชุดสาธิตนี้จงใจสั้นเพื่อให้ตรวจเลขได้ทุกขั้น ไม่ใช่ sample ที่ใหญ่พอสำหรับส่ง hedge จริง</p>
   <p>คำถาม: vector x มี entries 1, -1, 0 และ vector y มี entries 1, 0, -1 จะขยับทางเดียวกันแค่ไหน?</p>
   <p>ของที่มี: return สามวันที่ลบค่าเฉลี่ยแล้วจนได้ vector x และ y ตามตัวอย่างด้านบน.</p>
@@ -472,7 +472,7 @@ assert abs(np.sqrt(0.000162 * (1 - 0.8028)) - 0.00565) &lt; 5e-6</code></pre>
 <section class="takeaways">
   <h4>สรุปที่ใช้ได้จริง</h4>
   <ul>
-    <li>inner product รวมการจับคู่ return รายวัน; หลัง standardize แล้วมันแปลงเป็น cosine และ correlation</li>
+    <li>inner product รวมการจับคู่ผลตอบแทนรายวัน; หลัง standardize แล้วมันแปลงเป็น cosine และ correlation</li>
     <li>หุ้นห้าวันในโจทย์เปิดเรื่องมี correlation 0.778 ซึ่งคือมุม 38.9 องศา และทำให้พอร์ต 60/40 แกว่ง 1.00% ต่อวันแทน 0.77% ถ้าตั้งฉาก การกระจายความเสี่ยงคือการหาของที่ตั้งฉากกับของที่มี</li>
     <li>มุมเล็กหมายถึง co-movement สูง จึงทำให้ short hedge candidate มีโอกาสชดเชย long book มากขึ้น</li>
     <li>hedge ratio แปลง sensitivity เป็น USD notional; ในตัวอย่าง short QQQ \$10.2 ล้าน ต่อ basket \$12 ล้าน</li>

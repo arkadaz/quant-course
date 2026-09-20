@@ -32,9 +32,9 @@
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>linear program (LP), primal form</dt>
-    <dd>optimization problem ต้นทางที่เลือก hedge notionals เพื่อให้ผ่าน risk และ liquidity constraints ใช้ตอบว่า desk ควรส่ง orders ขนาดเท่าไร</dd>
+    <dd>optimization problem ต้นทางที่เลือก hedge notionals เพื่อให้ผ่านความเสี่ยงและ liquidity constraints ใช้ตอบว่า desk ควรส่ง orders ขนาดเท่าไร</dd>
     <dt>linear program (LP), dual form</dt>
-    <dd>optimization problem ที่ตั้งราคาต่อหนึ่งหน่วยของแต่ละ primal constraint ใช้สร้าง lower bound ของ cost และวัดมูลค่าของ capacity</dd>
+    <dd>optimization problem ที่ตั้งราคาต่อหนึ่งหน่วยของแต่ละ primal constraint ใช้สร้าง lower bound ของต้นทุนและวัดมูลค่าของ capacity</dd>
     <dt>dual variable</dt>
     <dd>ตัวเลขไม่ติดลบที่คูณกับ constraint หนึ่งแถวใน dual ใช้แปลงหน่วยของ constraint residual ให้เป็น USD</dd>
     <dt>shadow price</dt>
@@ -622,7 +622,7 @@ y^* s_B + u_Q^* s_Q + u_S^* s_S &= 0 + 0 + 0 = 0
 
 <section class="example">
   <h4>คำตอบ — capacity 1M ลด cost \$60</h4>
-  <p>คำตอบ: ถ้าเพิ่ม SPY cap เป็น \$7 ล้าน ให้ใช้ SPY \$7 ล้าน กับ QQQ $(10.8-7)/1.2=3.8/1.2=3.167$ USD million beta reduction ยังเท่ากับ 10.8 และ cost ใหม่คือ \$1,200 ต่ำกว่าเดิม \$60</p>
+  <p>คำตอบ: ถ้าเพิ่ม SPY cap เป็น \$7 ล้าน ให้ใช้ SPY \$7 ล้าน กับ QQQ $(10.8-7)/1.2=3.8/1.2=3.167$ USD million beta reduction ยังเท่ากับ 10.8 และต้นทุนใหม่คือ \$1,200 ต่ำกว่าเดิม \$60</p>
   <p>ตรวจเองใน 10 วินาที: แทน SPY 7 กับ QQQ 3.167 กลับใน beta constraint ต้องได้ประมาณ 10.8 และ 90×7 + 180×3.167 ต้องปิดใกล้ \$1,200 โดยส่วนต่างเล็กมาจากการปัดเศษ</p>
   <p>ใช้ตัดสินใจ: ขอ capacity เพิ่มเมื่อค่าใช้จ่ายจริงของ SPY capacity \$1 ล้าน ต่ำกว่า saving \$60; ถ้าแพงกว่านั้นให้ใช้ cap เดิม</p>
 </section>

@@ -41,7 +41,7 @@
     <dt>increment</dt>
     <dd>ผลต่างของ process ระหว่างเวลาเริ่มกับเวลาสิ้นสุด ใช้วัดการเปลี่ยนแปลงในช่วงนั้นโดยไม่สนใจระดับก่อนเริ่มช่วง</dd>
     <dt>Normal distribution</dt>
-    <dd>distribution รูประฆังที่กำหนดด้วย mean และ variance ใช้ระบุ probability ของ Brownian increment แต่เป็นเพียง approximation สำหรับผลตอบแทนตลาดจริงที่มี fat tails</dd>
+    <dd>distribution รูประฆังที่กำหนดด้วย mean และ variance ใช้ระบุโอกาสของ Brownian increment แต่เป็นเพียง approximation สำหรับผลตอบแทนตลาดจริงที่มี fat tails</dd>
     <dt>variance</dt>
     <dd>expected squared distance จาก mean ใช้วัดการกระจายที่บวกกันได้สำหรับ independent increments และเป็นฐานของ risk aggregation</dd>
     <dt>standard deviation</dt>
@@ -55,7 +55,7 @@
     <dt>random variable</dt>
     <dd>ตัวเลขที่ outcome ยังไม่แน่นอนแต่มี probability distribution กำกับ ใช้แทน increment หรือราคาปลายทางก่อนสังเกตจริง</dd>
     <dt>quantile</dt>
-    <dd>จุดตัดของ distribution ที่สะสม probability ถึงระดับกำหนด ใช้สร้างกรอบเช่นช่วง Normal 95%</dd>
+    <dd>จุดตัดของ distribution ที่สะสมโอกาสถึงระดับกำหนด ใช้สร้างกรอบเช่นช่วง Normal 95%</dd>
     <dt>drift</dt>
     <dd>อัตราการเปลี่ยนแปลงเฉลี่ยต่อหน่วยเวลา ใช้กำหนดแนวโน้มของ mean โดยไม่บอกทิศทางของ sample path แต่ละเส้น</dd>
     <dt>volatility</dt>
@@ -168,7 +168,7 @@ B_{t+s}-B_t&\sim\mathcal N(0,s)
 </figure>
 
 <section class="prose">
-  <h4>ทำไม risk โตตาม square-root-of-time</h4>
+  <h4>ทำไมความเสี่ยงโตตาม square-root-of-time</h4>
   <p>แบ่ง horizon ยาว s เป็น n ช่วงเท่ากัน แต่ละช่วงของ standard Brownian motion มี variance เท่ากับความยาวช่วงและเป็นอิสระ สมบัติข้อแรกจึงอนุญาตให้บวก variances ได้โดยไม่มี covariance terms; ถ้าสร้าง process ที่ scale ด้วย sigma ค่อยคูณ variance ทั้งก้อนด้วย sigma squared</p>
 </section>
 
@@ -324,7 +324,7 @@ print(f"Mean: {mean_change:.4f}, SD: {sd_change:.3f}, Band: [{lower:.2f}, {upper
 
 <section class="pitfall">
   <h4>กับดัก: independence ของ increments ไม่เท่ากับตลาดไม่มีสิ่งที่ทำนายได้</h4>
-  <p>Brownian motion สมมติว่าทั้งทิศและขนาดของ future increment ไม่ขึ้นกับอดีต แต่ตลาดจริงมักมี return direction ใกล้ไร้ autocorrelation พร้อม volatility ที่มาเป็นกลุ่ม การเห็น correlation ของ returns ใกล้ศูนย์จึงยังไม่พอ ต้องตรวจ squared returns, tails และ jumps แยกกัน</p>
+  <p>Brownian motion สมมติว่าทั้งทิศและขนาดของ future increment ไม่ขึ้นกับอดีต แต่ตลาดจริงมักมี return direction ใกล้ไร้ autocorrelation พร้อม volatility ที่มาเป็นกลุ่ม การเห็น correlation ของผลตอบแทนใกล้ศูนย์จึงยังไม่พอ ต้องตรวจ squared returns, tails และ jumps แยกกัน</p>
 </section>
 
 <section class="table">
