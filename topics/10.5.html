@@ -45,7 +45,7 @@
     <dt>Standard Brownian Motion (SBM)</dt>
     <dd>Brownian motion ที่เริ่มจาก 0 ไม่มี drift และมี variance เท่ากับเวลา ใช้เป็นกรณีฐานของ scaling และ quadratic variation</dd>
     <dt>realized volatility</dt>
-    <dd>square root ของ realized variance หลังปรับหน่วยเวลา ใช้รายงานขนาดการแกว่งที่เกิดขึ้นจริงให้เทียบกับ implied หรือ forecast volatility</dd>
+    <dd>square root ของ realized variance หลังปรับหน่วยเวลา ใช้รายงานความผันผวนที่เกิดขึ้นจริงให้เทียบกับ implied หรือ forecast volatility</dd>
     <dt>integrated variance</dt>
     <dd>integral ของ instantaneous variance ตลอดเวลา ใช้เป็นเป้าหมายประชากรที่ realized variance ประมาณเมื่อ volatility เปลี่ยนตามเวลา</dd>
     <dt>market microstructure noise</dt>
@@ -54,7 +54,7 @@
     <dd>
       <p>คืออะไร: ราคาสูงสุดที่มีคนพร้อมรับซื้ออยู่ในขณะนั้น</p>
       <p>ใช้ทำอะไร: ใช้เป็นหนึ่งในสองราคาที่ทำให้ราคาซื้อขายจริงเด้งไปมา</p>
-      <p>ทำไมถึงเกี่ยวกับหัวข้อนี้: เพราะการเด้งนี้ทำให้ข้อมูลความถี่สูงดูขรุขระกว่าความจริง และความขรุขระปลอมนั้นถูกนับรวมเป็นความเหวี่ยงโดยที่ไม่ใช่</p>
+      <p>ทำไมถึงเกี่ยวกับหัวข้อนี้: เพราะการเด้งนี้ทำให้ข้อมูลความถี่สูงดูขรุขระกว่าความจริง และความขรุขระปลอมนั้นถูกนับรวมเป็นความผันผวนโดยที่ไม่ใช่</p>
     </dd>
     <dt>ask</dt>
     <dd>
@@ -138,8 +138,8 @@ c=100&:\ \ W_{100t}/10\ \overset{d}{=}\ W_t
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.5a — nested zooms retain Brownian roughness</h4>
-  <img src="../figures/10.5-1.svg" alt="Figure 10.5a — nested zooms retain Brownian roughness" loading="lazy">
+  <h4>Figure 10.5a — ซูมเข้าไปกี่ชั้น ความขรุขระก็ยังเท่าเดิม</h4>
+  <img src="../figures/10.5-1.svg" alt="Figure 10.5a — ซูมเข้าไปกี่ชั้น ความขรุขระก็ยังเท่าเดิม" loading="lazy">
   <figcaption>
     <p>ช่วงเต็ม, 1/16 แรก และ 1/256 แรกถูก rescale ให้ยาวเท่ากันแล้ววางซ้อนคนละระดับ ทั้งสามยังหยักคล้ายกัน; random seed ก็วาด chart pattern ได้ แต่ยังไม่มีสิทธิ์ส่ง order</p>
   </figcaption>
@@ -147,7 +147,7 @@ c=100&:\ \ W_{100t}/10\ \overset{d}{=}\ W_t
 
 <section class="prose">
   <h4>path ต่อเนื่องไม่ได้แปลว่ามี derivative</h4>
-  <p>secant slope บนช่วง $h$ ใช้ Brownian increment ส่วนด้วยเวลา increment มี standard deviation $\sqrt h$ จึงทำให้ scale ของ slope โตเมื่อช่วงหดลง</p>
+  <p>secant slope บนช่วง $h$ ใช้ Brownian increment หารด้วยเวลา increment มี standard deviation $\sqrt h$ จึงทำให้ scale ของ slope โตเมื่อช่วงหดลง</p>
 </section>
 
 <section class="formula">
@@ -162,7 +162,7 @@ h=10^{-4}:\quad\operatorname{SD}&=100\\
 h=10^{-8}:\quad\operatorname{SD}&=10{,}000\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ถามคำถามของ calculus ตรง ๆ กับเส้นทางนี้ ความชันระหว่างเวลาสองเวลาที่อยู่ติดกันเป็นเท่าไร เมื่อระยะห่างหดลงเรื่อย ๆ เอา increment ส่วนด้วยช่วงเวลา ตัวหารเป็นค่าคงที่จึงออกมาเป็นกำลังสองตามหัวข้อ 6.5 ตัวเศษมี variance เท่ากับ $h$ ตัดทอนแล้วถอดราก</p>
+    <p>ถามคำถามของ calculus ตรง ๆ กับเส้นทางนี้ ความชันระหว่างเวลาสองเวลาที่อยู่ติดกันเป็นเท่าไร เมื่อระยะห่างหดลงเรื่อย ๆ เอา increment หารด้วยช่วงเวลา ตัวหารเป็นค่าคงที่จึงออกมาเป็นกำลังสองตามหัวข้อ 6.5 ตัวเศษมี variance เท่ากับ $h$ ตัดทอนแล้วถอดราก</p>
     <p>ลองด้วยเลขจริงจะเห็นภาพ ย่นช่วงเหลือหนึ่งในหมื่น ความชันเหวี่ยงระดับร้อย ย่นอีกเหลือหนึ่งในร้อยล้าน เหวี่ยงระดับหมื่น ยิ่งซูมยิ่งบาน ไม่ลู่เข้าหาอะไรเลย</p>
     <p>เส้นเรียบทุกเส้นที่เคยเจอทำตรงข้าม คือซูมแล้วความชันนิ่งลงจนกลายเป็นตัวเลขตัวเดียว นั่นคือความหมายของคำว่าหา derivative ไม่ได้ และเป็นเหตุผลที่ต้องมี calculus แบบใหม่ทั้งชุด</p>
   </div>
@@ -174,8 +174,8 @@ h=10^{-8}:\quad\operatorname{SD}&=10{,}000\end{aligned}
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.5b — slope scale explodes as the interval shrinks</h4>
-  <img src="../figures/10.5-2.svg" alt="Figure 10.5b — slope scale explodes as the interval shrinks" loading="lazy">
+  <h4>Figure 10.5b — ความชันพุ่งไม่มีที่สิ้นสุดเมื่อช่วงเวลาหดลง</h4>
+  <img src="../figures/10.5-2.svg" alt="Figure 10.5b — ความชันพุ่งไม่มีที่สิ้นสุดเมื่อช่วงเวลาหดลง" loading="lazy">
   <figcaption>
     <p>ลด $h$ จาก $10^{-2}$ เป็น $10^{-6}$ ทำให้ typical slope scale โตจาก 10 เป็น 1,000 เส้น log-log มี slope -1/2 ตามสูตร ไม่พบความเร็วทันทีที่นิ่งลง</p>
   </figcaption>
@@ -221,7 +221,7 @@ Q_n(T):=\sum_{i=1}^{n}(W_{t_i}-W_{t_{i-1}})^2\xrightarrow[|\Pi_n|\to0]{L^2}T
 
 <section class="formula">
   <h4>ขั้นที่ 5 — expected quadratic variation</h4>
-  <p>หาค่าเฉลี่ยของผลรวมนั้นก่อน คำตอบสะอาดมากและไม่ขึ้นกับว่าซอยละเอียดแค่ไหน แต่ค่าเฉลี่ยถูกอย่างเดียวยังไม่พอ ถ้ามันเหวี่ยงมาก ค่าเฉลี่ยก็ไม่มีความหมาย ขั้นถัดไปจึงต้องวัดความเหวี่ยง</p>
+  <p>หาค่าเฉลี่ยของผลรวมนั้นก่อน คำตอบสะอาดมากและไม่ขึ้นกับว่าซอยละเอียดแค่ไหน แต่ค่าเฉลี่ยถูกอย่างเดียวยังไม่พอ ถ้ามันเหวี่ยงมาก ค่าเฉลี่ยก็ไม่มีความหมาย ขั้นถัดไปจึงต้องวัดความผันผวน</p>
   <div class="math">\[
 \begin{aligned}
 Q_n(T)&=\sum_{i=1}^{n}(\Delta W_i)^{2}\\
@@ -246,7 +246,7 @@ Q_n(T)&=\sum_{i=1}^{n}(\Delta W_i)^{2}\\
 
 <section class="formula">
   <h4>ขั้นที่ 6 — variance ของผลรวมลู่เข้า 0</h4>
-  <p>ค่าเฉลี่ยถูกอย่างเดียวยังไม่พอ ต้องดูด้วยว่ามันเหวี่ยงรอบค่าเฉลี่ยแค่ไหน ขั้นนี้คำนวณความเหวี่ยงออกมา และคำตอบหดเข้าหาศูนย์ ซึ่งแปลว่าผลรวมกำลังสองไม่ใช่ตัวเลขสุ่ม มันเป็นค่าคงที่ที่รู้ล่วงหน้าได้</p>
+  <p>ค่าเฉลี่ยถูกอย่างเดียวยังไม่พอ ต้องดูด้วยว่ามันเหวี่ยงรอบค่าเฉลี่ยแค่ไหน ขั้นนี้คำนวณความผันผวนออกมา และคำตอบหดเข้าหาศูนย์ ซึ่งแปลว่าผลรวมกำลังสองไม่ใช่ตัวเลขสุ่ม มันเป็นค่าคงที่ที่รู้ล่วงหน้าได้</p>
   <div class="math">\[
 \begin{aligned}
 \varphi'(z)&=-z\varphi(z)\qquad(Z\sim\mathcal N(0,1))\\
@@ -280,7 +280,7 @@ Q_n(T)&=\sum_{i=1}^{n}(\Delta W_i)^{2}\\
 \]</div>
   <div class="reading">
     <p>$[W]_T$ คือ quadratic variation ของ Brownian path ถึงเวลา $T$; $(dW_t)^2=dt$ เป็น bookkeeping mnemonic สำหรับ limits ใน stochastic calculus ไม่ใช่สมการพีชคณิตของ infinitesimals ธรรมดา</p>
-    <p>ลูกศรหยักหมายถึง ‘เขียนย่อเป็น’ ไม่ใช่เครื่องหมายเท่ากับ ฝั่งซ้ายคือผลที่พิสูจน์แล้วในขั้นที่ 5 และ 6 ส่วนฝั่งขวาเป็นวิธีจดที่สั้นกว่า สำหรับใช้ในบทถัดไป อย่าอ่านมันเป็นการคูณของจำนวนเล็กจิ๋วธรรมดา</p>
+    <p>ลูกศรหยักหมายถึง “เขียนย่อเป็น” ไม่ใช่เครื่องหมายเท่ากับ ฝั่งซ้ายคือผลที่พิสูจน์แล้วในขั้นที่ 5 และ 6 ส่วนฝั่งขวาเป็นวิธีจดที่สั้นกว่า สำหรับใช้ในบทถัดไป อย่าอ่านมันเป็นการคูณของจำนวนเล็กจิ๋วธรรมดา</p>
   </div>
 </section>
 
@@ -299,14 +299,14 @@ n=10{,}000&:\ 0.7979(100)=79.79\ \to\ \infty
 \]</div>
   <div class="reading">
     <p>ถ้าเปลี่ยนจากผลรวมกำลังสองมาเป็นผลรวมความยาวจริง หรือ total variation ก้อน $|\Delta W_i|$ จะมี scale เท่ากับ $\sqrt{\Delta t}$ เสมอ โดยดึงค่าคงที่ $\sqrt{2/\pi}$ ที่คำนวณไว้ในหัวข้อ 10.2 ออกมาได้</p>
-    <p>เมื่อนำ $n$ ก้าวมาบวกกัน ตัวคูณ $n$ ด้านหน้าส่วนด้วย $\sqrt n$ ในตัวส่วน ไม่ได้ตัดกันหมดเหมือนตอนยกกำลังสอง แต่เหลือ $\sqrt n$ วิ่งขึ้นไปอยู่ข้างบน ทำให้ค่าเฉลี่ยของความยาวเส้นทางโตตามรากของจำนวนช่อง</p>
+    <p>เมื่อนำ $n$ ก้าวมาบวกกัน ตัวคูณ $n$ ด้านหน้าหารด้วย $\sqrt n$ ในตัวส่วน ไม่ได้ตัดกันหมดเหมือนตอนยกกำลังสอง แต่เหลือ $\sqrt n$ วิ่งขึ้นไปอยู่ข้างบน ทำให้ค่าเฉลี่ยของความยาวเส้นทางโตตามรากของจำนวนช่อง</p>
     <p>ลองแทนตัวเลขจริงที่ $T=1$ ซอยร้อยช่องได้ความยาวเฉลี่ยเกือบ 8 ซอยหนึ่งหมื่นช่องทะลุเกือบ 80 ยิ่งวัดละเอียดยิ่งยาวไม่มีที่สิ้นสุด นี่คือหลักฐานว่าเส้นทางนี้ไม่มีความยาวจำกัด และทำให้ calculus แบบเดิมที่ต้องการ bounded variation พังทลายทั้งหมด</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.5c — only the square lands on a finite nonzero limit</h4>
-  <img src="../figures/10.5-3.svg" alt="Figure 10.5c — only the square lands on a finite nonzero limit" loading="lazy">
+  <h4>Figure 10.5c — มีแต่กำลังสองที่ลงเอยที่ค่าจำกัดและไม่เป็นศูนย์</h4>
+  <img src="../figures/10.5-3.svg" alt="Figure 10.5c — มีแต่กำลังสองที่ลงเอยที่ค่าจำกัดและไม่เป็นศูนย์" loading="lazy">
   <figcaption>
     <p>บน nested Brownian path ผลรวม absolute increments โตไม่จำกัด, quadratic sum แกว่งเข้าใกล้ 1 และ cubic absolute sum หายไป; power 2 คือ scale ที่ตรงกับเวลา</p>
   </figcaption>
@@ -339,8 +339,8 @@ n=10{,}000&:\ 0.7979(100)=79.79\ \to\ \infty
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.5d — Brownian and smooth paths separate under quadratic variation</h4>
-  <img src="../figures/10.5-4.svg" alt="Figure 10.5d — Brownian and smooth paths separate under quadratic variation" loading="lazy">
+  <h4>Figure 10.5d — quadratic variation แยกเส้นทาง Brownian ออกจากเส้นเรียบ</h4>
+  <img src="../figures/10.5-4.svg" alt="Figure 10.5d — quadratic variation แยกเส้นทาง Brownian ออกจากเส้นเรียบ" loading="lazy">
   <figcaption>
     <p>quadratic sum ของ Brownian path เข้าหา 1 ขณะที่ function เรียบ $f(t)=t^2$ ลดสู่ 0 ความต่างนี้คือเหตุผลที่ ordinary chain rule ทิ้ง squared term ไม่ได้กับ Brownian motion</p>
   </figcaption>
@@ -353,7 +353,7 @@ n=10{,}000&:\ 0.7979(100)=79.79\ \to\ \infty
 
 <section class="formula">
   <h4>ขั้นที่ 10 — นิยามของ realized variance: ตัวเลขที่โต๊ะวัดจริงทุกวัน</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เราคำนวณจากข้อมูล ส่วนเครื่องหมายประมาณทางขวา คือสิ่งที่ขั้นที่ 5 กับ 6 พิสูจน์ไว้ว่ามันลู่เข้าหาอะไร ทั้งหมดข้างบนจึงไม่ใช่เรื่องนามธรรม มันคือฐานของตัวเลขที่ใช้ตั้งราคาสัญญาที่จ่ายตามความเหวี่ยงจริง ในหัวข้อ 13.8 และใช้ตรวจว่าแบบจำลอง volatility ทำงานถูกหรือไม่</p>
+  <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เราคำนวณจากข้อมูล ส่วนเครื่องหมายประมาณทางขวา คือสิ่งที่ขั้นที่ 5 กับ 6 พิสูจน์ไว้ว่ามันลู่เข้าหาอะไร ทั้งหมดข้างบนจึงไม่ใช่เรื่องนามธรรม มันคือฐานของตัวเลขที่ใช้ตั้งราคาสัญญาที่จ่ายตามความผันผวนจริง ในหัวข้อ 13.8 และใช้ตรวจว่าแบบจำลอง volatility ทำงานถูกหรือไม่</p>
   <div class="math">\[
 RV:=\sum_{i=1}^{n}r_i^2\;\approx\;\int_0^T\sigma_t^2\,dt
 \]</div>
@@ -380,8 +380,8 @@ RV_{\mathrm{day}}&=\sum_{i=1}^{78}r_i^2=0.000144\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 10.5e — sampling too finely can inflate realized variance</h4>
-  <img src="../figures/10.5-5.svg" alt="Figure 10.5e — sampling too finely can inflate realized variance" loading="lazy">
+  <h4>Figure 10.5e — เก็บข้อมูลถี่เกินไปทำให้ realized variance สูงเกินจริง</h4>
+  <img src="../figures/10.5-5.svg" alt="Figure 10.5e — เก็บข้อมูลถี่เกินไปทำให้ realized variance สูงเกินจริง" loading="lazy">
   <figcaption>
     <p>รูปนี้เป็น stylized illustration: เมื่อข้อมูลราคามี microstructure noise realized variance อาจสูงเกินเมื่อ sample ทุกไม่กี่วินาที แล้วดูนิ่งขึ้นที่ช่วง 5–15 นาที; ตัวเลขไม่ใช่กฎสากลของทุก ticker และ finer data ไม่ได้แปลว่า cleaner estimate เสมอ</p>
   </figcaption>
@@ -466,7 +466,7 @@ assert abs((1 - 2 * Phi(-0.01)) - np.sqrt(2 / (pi * 10_000))) &lt; 1e-5</code></
 
 <section class="pitfall">
   <h4>กับดัก: อ่าน mnemonic เป็น algebra และอ่านข้อมูลถี่เป็นข้อมูลดี</h4>
-  <p>$(dW_t)^2=dt$ สรุป limit ของ quadratic sums ไม่ได้อนุญาตให้ส่วนด้วย $dW_t$ แบบตัวเลข และ $[W]_T=T$ ใช้กับ SBM scale 1 เท่านั้น สำหรับ process ที่ volatility เปลี่ยนเป้าหมายคือ integrated variance ส่วน sampling ถี่เกินไปทำให้ market microstructure noise พองขึ้นแทนที่จะหาย</p>
+  <p>$(dW_t)^2=dt$ สรุป limit ของ quadratic sums ไม่ได้อนุญาตให้หารด้วย $dW_t$ แบบตัวเลข และ $[W]_T=T$ ใช้กับ SBM scale 1 เท่านั้น สำหรับ process ที่ volatility เปลี่ยนเป้าหมายคือ integrated variance ส่วน sampling ถี่เกินไปทำให้ market microstructure noise พองขึ้นแทนที่จะหาย</p>
 </section>
 
 <section class="table">

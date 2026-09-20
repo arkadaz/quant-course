@@ -24,7 +24,7 @@
 
 <div class="hook">
   <p>พอร์ตถือ AAPL \$1,000,000 มีผลตอบแทน 5 เดือนคู่กับ SPY: (2, 3.4), (−1.5, −2.8), (0.5, 0.2), (3, 5.1), (−1, −1.4)% อยาก hedge ความเสี่ยงตลาด ต้อง short SPY กี่ดอลลาร์ และเส้นนี้อธิบายความผันผวนได้กี่เปอร์เซ็นต์?</p>
-  <p>เฉลย: short SPY มูลค่า \$1,707,483 (จาก slope $\hat b = 1.7075$) และเส้นนี้มี $R^2 = 98.84\%$ อธิบายความแกว่งของ AAPL ได้เกือบทั้งหมด.</p>
+  <p>เฉลย: short SPY มูลค่า \$1,707,483 (จาก slope $\hat b = 1.7075$) และเส้นนี้มี $R^2 = 98.84\%$ อธิบายความผันผวนของ AAPL ได้เกือบทั้งหมด.</p>
 </div>
 
 <details class="jargon" open>
@@ -57,11 +57,11 @@
     <dt>leverage</dt>
     <dd>อิทธิพลของ observation ที่ค่า input อยู่ไกลจากค่าเฉลี่ยต่อเส้น fitted ใช้ตรวจว่าจุดปลายช่วงกำลังดึง slope มากเกินไปหรือไม่</dd>
     <dt>volatility</dt>
-    <dd>ขนาดการแกว่งของ return ใน horizon ที่ระบุ ใช้ตรวจรูปแบบ variance ของ residual และเลือก standard error ที่เหมาะสม</dd>
+    <dd>ความผันผวนของ return ใน horizon ที่ระบุ ใช้ตรวจรูปแบบ variance ของ residual และเลือก standard error ที่เหมาะสม</dd>
     <dt>total sum of squares (SST)</dt>
-    <dd>ความแกว่งทั้งหมดของ $y$ รอบค่าเฉลี่ยตัวเอง ก่อนที่จะมีเส้นอะไรมาช่วยอธิบาย ใช้เป็นตัวตั้งว่าเส้นอธิบายไปได้กี่ส่วน</dd>
+    <dd>ความผันผวนทั้งหมดของ $y$ รอบค่าเฉลี่ยตัวเอง ก่อนที่จะมีเส้นอะไรมาช่วยอธิบาย ใช้เป็นตัวตั้งว่าเส้นอธิบายไปได้กี่ส่วน</dd>
     <dt>regression sum of squares (SSR)</dt>
-    <dd>ส่วนของความแกว่งที่เส้น regression อธิบายได้ คำนวณจาก slope คูณผลรวมผลคูณระยะห่าง เหลือเท่าไรจึงตกไปเป็น SSE</dd>
+    <dd>ส่วนของความผันผวนที่เส้น regression อธิบายได้ คำนวณจาก slope คูณผลรวมผลคูณระยะห่าง เหลือเท่าไรจึงตกไปเป็น SSE</dd>
   </dl>
 </details>
 
@@ -70,13 +70,13 @@
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$x_t$</td><td>return ของกองทุน SPY ที่ตามดัชนี S&amp;P 500 ในเดือน $t$</td><td>percentage points ต่อเดือน</td></tr>
-      <tr><td>$y_t$</td><td>return ของหุ้น Apple (ticker AAPL) ในเดือน $t$</td><td>percentage points ต่อเดือน</td></tr>
-      <tr><td>$\hat a,\hat b$</td><td>intercept และ slope ที่ OLS ประมาณ</td><td>percentage points ต่อเดือน; unitless ตามลำดับ</td></tr>
-      <tr><td>$\hat y_t$</td><td>ค่าทำนายของ AAPL return</td><td>percentage points ต่อเดือน</td></tr>
-      <tr><td>$e_t$</td><td>residual ของ observation $t$</td><td>percentage points ต่อเดือน</td></tr>
+      <tr><td>$x_t$</td><td>return ของกองทุน SPY ที่ตามดัชนี S&amp;P 500 ในเดือน $t$</td><td>จุด ต่อเดือน</td></tr>
+      <tr><td>$y_t$</td><td>return ของหุ้น Apple (ticker AAPL) ในเดือน $t$</td><td>จุด ต่อเดือน</td></tr>
+      <tr><td>$\hat a,\hat b$</td><td>intercept และ slope ที่ OLS ประมาณ</td><td>จุด ต่อเดือน; unitless ตามลำดับ</td></tr>
+      <tr><td>$\hat y_t$</td><td>ค่าทำนายของ AAPL return</td><td>จุด ต่อเดือน</td></tr>
+      <tr><td>$e_t$</td><td>residual ของ observation $t$</td><td>จุด ต่อเดือน</td></tr>
       <tr><td>$n$</td><td>จำนวน observations</td><td>เดือน</td></tr>
-      <tr><td>$\bar x,\bar y$</td><td>sample means ของ returns สองชุด</td><td>percentage points ต่อเดือน</td></tr>
+      <tr><td>$\bar x,\bar y$</td><td>sample means ของ returns สองชุด</td><td>จุด ต่อเดือน</td></tr>
       <tr><td>$R^2$</td><td>coefficient of determination ใน sample</td><td>unitless</td></tr>
       <tr><td>$\bar R^2$</td><td>adjusted coefficient of determination</td><td>unitless</td></tr>
       <tr><td>$\widehat{\mathrm{SE}}(\hat b)$</td><td>standard error ของ slope estimate</td><td>unitless</td></tr>
@@ -90,7 +90,7 @@
   <p>ในปี 1801 นักดาราศาสตร์ค้นพบดาวเคราะห์น้อยชื่อ Ceres แล้วมันหายไปหลังดวงอาทิตย์ เหลือข้อมูลการสังเกตเพียงไม่กี่จุดที่ไม่ตรงกันเลยเพราะความคลาดเคลื่อนของเครื่องมือ</p>
   <p>คำถามคือจะลากเส้นโคจรที่ดีที่สุดผ่านจุดที่ขัดแย้งกันเองได้อย่างไร</p>
   <p>Adrien-Marie Legendre ตีพิมพ์วิธีกำลังสองน้อยที่สุดในปี 1805 ส่วน Carl Friedrich Gauss ระบุว่าเขาใช้วิธีนี้มาตั้งแต่ปี 1795 ซึ่งกลายเป็นข้อพิพาทที่มีชื่อเสียงในประวัติศาสตร์คณิตศาสตร์</p>
-  <p>สิ่งที่ทำให้วิธีนี้ชนะวิธีอื่นคือความเหวี่ยงบวกกันได้เมื่อยกกำลังสอง และหาคำตอบได้ด้วยสูตรปิด ซึ่งเป็นเหตุผลเดียวกับที่หัวข้อ 1.4 เลือกยกกำลังสองแทนค่าสัมบูรณ์</p>
+  <p>สิ่งที่ทำให้วิธีนี้ชนะวิธีอื่นคือความผันผวนบวกกันได้เมื่อยกกำลังสอง และหาคำตอบได้ด้วยสูตรปิด ซึ่งเป็นเหตุผลเดียวกับที่หัวข้อ 1.4 เลือกยกกำลังสองแทนค่าสัมบูรณ์</p>
 </section>
 
 <section class="prose">
@@ -148,7 +148,7 @@ L&=\prod_i\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{\left(y_i-a-bx_i\right)^{2}}{2\si
 
 <section class="formula">
   <h4>ขั้นที่ 3 — แก้ normal equations ทีละ coefficient</h4>
-  <p>หาจุดที่ความพลาดรวมต่ำที่สุดด้วยการให้ความชันเป็นศูนย์ สูตรข้างล่างแสดงว่าสองสูตรที่ใช้กันทุกวัน มาจากการหา derivative สองครั้งแล้วแก้สมการ และรูปของคำตอบก็คือ covariance ส่วนด้วย variance ซึ่งเป็นตัวเดียวกับ hedge ratio ในหัวข้อ 7.4</p>
+  <p>หาจุดที่ความพลาดรวมต่ำที่สุดด้วยการให้ความชันเป็นศูนย์ สูตรข้างล่างแสดงว่าสองสูตรที่ใช้กันทุกวัน มาจากการหา derivative สองครั้งแล้วแก้สมการ และรูปของคำตอบก็คือ covariance หารด้วย variance ซึ่งเป็นตัวเดียวกับ hedge ratio ในหัวข้อ 7.4</p>
   <div class="math">\[
 \begin{aligned}
 &\frac{\partial\operatorname{SSE}}{\partial a}=-2\sum_t\big(y_t-a-bx_t\big)=0\\
@@ -176,7 +176,7 @@ L&=\prod_i\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{\left(y_i-a-bx_i\right)^{2}}{2\si
 x=(2.0,-1.5,0.5,3.0,-1.0),\quad y=(3.4,-2.8,0.2,5.1,-1.4)\quad [\%/\mathrm{month}]
 \]</div>
   <div class="reading">
-    <p>ให้ $x$ เป็น SPY และ $y$ เป็น AAPL; ทั้งคู่ใช้ percentage points ต่อเดือนและจับคู่ด้วยเดือนเดียวกันก่อนคำนวณ</p>
+    <p>ให้ $x$ เป็น SPY และ $y$ เป็น AAPL; ทั้งคู่ใช้ จุด ต่อเดือนและจับคู่ด้วยเดือนเดียวกันก่อนคำนวณ</p>
   </div>
 </section>
 
@@ -187,7 +187,7 @@ x=(2.0,-1.5,0.5,3.0,-1.0),\quad y=(3.4,-2.8,0.2,5.1,-1.4)\quad [\%/\mathrm{month
 \bar x=\frac{2.0-1.5+0.5+3.0-1.0}{5}=\frac{3.0}{5}=0.60,\qquad \bar y=\frac{3.4-2.8+0.2+5.1-1.4}{5}=\frac{4.5}{5}=0.90
 \]</div>
   <div class="reading">
-    <p>บวก $x$ ทั้งห้าเดือนได้ 3.0 ส่วนด้วย 5 ได้ 0.60 และบวก $y$ ทั้งห้าเดือนได้ 4.5 ส่วนด้วย 5 ได้ 0.90 ทั้งคู่มีหน่วยเป็น percentage points ต่อเดือน</p>
+    <p>บวก $x$ ทั้งห้าเดือนได้ 3.0 หารด้วย 5 ได้ 0.60 และบวก $y$ ทั้งห้าเดือนได้ 4.5 หารด้วย 5 ได้ 0.90 ทั้งคู่มีหน่วยเป็น จุด ต่อเดือน</p>
   </div>
 </section>
 
@@ -229,20 +229,20 @@ S_{yy}&=6.25+13.69+0.49+17.64+5.29=43.36\end{aligned}
 \hat b=\frac{S_{xy}}{S_{xx}}=\frac{25.10}{14.70}=1.7075,\qquad \hat a=\bar y-\hat b\,\bar x=0.90-1.7075(0.60)=0.90-1.0245=-0.1245
 \]</div>
   <div class="reading">
-    <p>หน่วย percentage-points-squared ตัดกันใน slope จึงเหลือเป็นตัวเลขล้วน ส่วน intercept ยังมีหน่วย percentage points ต่อเดือน</p>
+    <p>หน่วย percentage-points-squared ตัดกันใน slope จึงเหลือเป็นตัวเลขล้วน ส่วน intercept ยังมีหน่วย จุด ต่อเดือน</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 8 — เส้นพลาดไปเท่าไร: SSE จาก SST</h4>
-  <p>$S_{yy}$ คือความแกว่งทั้งหมดของ $y$ ก่อนมีเส้น ส่วนที่เส้นอธิบายได้คือ $\hat b$ คูณ $S_{xy}$ ที่เหลือคือส่วนที่เส้นอธิบายไม่ได้</p>
+  <p>$S_{yy}$ คือความผันผวนทั้งหมดของ $y$ ก่อนมีเส้น ส่วนที่เส้นอธิบายได้คือ $\hat b$ คูณ $S_{xy}$ ที่เหลือคือส่วนที่เส้นอธิบายไม่ได้</p>
   <div class="math">\[
 \begin{aligned}\mathrm{SST}&=S_{yy}=43.36\\
 \mathrm{SSR}&=\hat b\,S_{xy}=1.707483(25.10)=42.8578\\
 \mathrm{SSE}&=43.36-42.8578=0.5022\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ความแกว่งทั้งหมด 43.36 ถูกเส้นอธิบายไป 42.8578 เหลือเป็นความผิดพลาด 0.5022 ทั้งสามตัวมีหน่วยเป็น percentage-points-squared</p>
+    <p>ความผันผวนทั้งหมด 43.36 ถูกเส้นอธิบายไป 42.8578 เหลือเป็นความผิดพลาด 0.5022 ทั้งสามตัวมีหน่วยเป็น percentage-points-squared</p>
     <p>ทำไม SSR เท่ากับ $\hat b\,S_{xy}$: ค่าทำนายห่างจากค่าเฉลี่ย $\hat y_t-\bar y=\hat b(x_t-\bar x)$ ยกกำลังสองแล้วบวกได้ $\hat b^2S_{xx}$ และเพราะ $\hat b=S_{xy}/S_{xx}$ จึงเท่ากับ $\hat b\,S_{xy}$ ตัวเลข: $1.7075^2\times14.70=42.86$ เท่ากัน</p>
   </div>
 </section>
@@ -284,7 +284,7 @@ t_{\hat b}&=\frac{\hat b}{\widehat{\mathrm{SE}}(\hat b)}=\frac{1.7075}{0.1067}=1
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>degrees of freedom คือ 5 จุดลบ 2 ตัวที่เราประมาณ เหลือ 3 ได้ค่าความผิดพลาดต่อเดือน $s_e = 0.4091$ percentage points ต่อเดือน</p>
+    <p>degrees of freedom คือ 5 จุดลบ 2 ตัวที่เราประมาณ เหลือ 3 ได้ค่าความผิดพลาดต่อเดือน $s_e = 0.4091$ จุด ต่อเดือน</p>
     <p>standard error ของ slope ได้ 0.1067 มาจาก variance ของ residual เทียบกับความกว้าง $S_{xx}$</p>
     <p>t-statistic เท่ากับ 16.00 แปลว่า slope ห่างจากศูนย์ถึง 16 standard errors ชี้ว่าความชันมีนัยสำคัญสูงมากใน sample 5 จุดนี้</p>
   </div>
@@ -352,8 +352,8 @@ X^\top\mathbf{y}&=\begin{pmatrix} 4.5 \\ 27.8 \end{pmatrix}\\
 </figure>
 
 <figure class="plot">
-  <h4>Figure 15.1c — residual diagnostic</h4>
-  <img src="../figures/15.1-3.svg" alt="Figure 15.1c — residual diagnostic" loading="lazy">
+  <h4>Figure 15.1c — ตรวจ residual</h4>
+  <img src="../figures/15.1-3.svg" alt="Figure 15.1c — ตรวจ residual" loading="lazy">
   <figcaption>
     <p>residual ในตัวอย่างสลับบวกและลบรอบศูนย์ แต่ห้าเดือนน้อยเกินไปจะประกาศว่า error เป็นอิสระหรือคงที่ได้ กราฟนี้คือคำถามตรวจ model ไม่ใช่คำตอบ</p>
   </figcaption>
@@ -375,7 +375,7 @@ X^\top\mathbf{y}&=\begin{pmatrix} 4.5 \\ 27.8 \end{pmatrix}\\
 <section class="example">
   <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
   <p>คำถาม: พอร์ตถือ AAPL \$1,000,000 อยาก hedge ความเสี่ยงตลาดด้วย SPY ต้อง short กี่ดอลลาร์ และเส้น OLS อธิบายความผันผวนได้กี่เปอร์เซ็นต์</p>
-  <p>ของที่มี (ขั้นที่ 1 ถึง 12): ผลตอบแทน 5 เดือนคู่กัน ได้ slope 1.7075, intercept −0.1245 percentage points ต่อเดือน, R² เท่ากับ 0.9884 และ adjusted R² เท่ากับ 0.9846</p>
+  <p>ของที่มี (ขั้นที่ 1 ถึง 12): ผลตอบแทน 5 เดือนคู่กัน ได้ slope 1.7075, intercept −0.1245 จุด ต่อเดือน, R² เท่ากับ 0.9884 และ adjusted R² เท่ากับ 0.9846</p>
   <p>คำตอบ: (1) short SPY มูลค่า \$1,707,483 เพื่อชดเชย market risk (2) เส้น OLS อธิบายความผันผวนของ AAPL ได้ 98.84% (หรือ 98.46% เมื่อปรับลดทอนด้วย degrees of freedom)</p>
   <p>ตรวจเองใน 10 วินาที: \$1,707,483 หาร \$1,000,000 ได้ 1.7075 เท่ากับ slope พอดี; และ correlation กำลังสองเท่ากับ 0.9884 ตรงกับ R²</p>
   <p>แปลว่าอะไรบนโต๊ะเทรด: แม้ R² จะสูงถึง 98.84% แต่ข้อมูลมีเพียง 5 เดือน (n = 5) ซึ่งเหลือ degrees of freedom แค่ 3 จุด ตัวเลขนี้จึงใช้ฝึกคำนวณเท่านั้น ในการเทรดจริงต้องใช้ข้อมูลอย่างน้อย 1-2 ปี ตรวจสอบ residual และระวัง regime shift</p>

@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>พอร์ตถือ AAPL USD 6M, JPM USD 5M และ XOM USD 4M ถ้าเขียนสองหุ้นแรกใหม่เป็น ขาที่ไปด้วยกัน บวก ขาที่สวนกัน แต่ละขาใหญ่เท่าไร?</p>
-  <p>เฉลย: ขาไปด้วยกัน 5.5 คือถือ AAPL และ JPM ข้างละ USD 5.5M ขาสวนกัน 0.5 คือ AAPL +0.5M กับ JPM −0.5M เพราะ 5.5 + 0.5 = 6 และ 5.5 − 0.5 = 5 ส่วน XOM คง 4 พอร์ตไม่เปลี่ยนเลย เปลี่ยนแค่แกนที่ใช้อ่าน</p>
+  <p>พอร์ตถือ AAPL \$6 ล้าน, JPM \$5 ล้าน และ XOM \$4 ล้าน ถ้าเขียนสองหุ้นแรกใหม่เป็น ขาที่ไปด้วยกัน บวก ขาที่สวนกัน แต่ละขาใหญ่เท่าไร?</p>
+  <p>เฉลย: ขาไปด้วยกัน 5.5 คือถือ AAPL และ JPM ข้างละ \$5.5 ล้าน ขาสวนกัน 0.5 คือ AAPL +0.5M กับ JPM −0.5M เพราะ 5.5 + 0.5 = 6 และ 5.5 − 0.5 = 5 ส่วน XOM คง 4 พอร์ตไม่เปลี่ยนเลย เปลี่ยนแค่แกนที่ใช้อ่าน</p>
   <p>Basis คือชุด vector ที่ไม่ซ้ำกันและผสมแล้วสร้างทุกจุดในพื้นที่ได้ quant ใช้ย่อ risk factor หรือแทน portfolio ด้วยพิกัดที่ควบคุมได้</p>
 </div>
 
@@ -87,8 +87,8 @@
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.3a — Same portfolio, two coordinate languages</h4>
-  <img src="../figures/3.3-1.svg" alt="Figure 3.3a — Same portfolio, two coordinate languages" loading="lazy">
+  <h4>Figure 3.3a — พอร์ตเดียวกัน อ่านได้สองระบบพิกัด</h4>
+  <img src="../figures/3.3-1.svg" alt="Figure 3.3a — พอร์ตเดียวกัน อ่านได้สองระบบพิกัด" loading="lazy">
   <figcaption>
     <p>จุดสีน้ำเงินคือ portfolio เดิมและไม่ขยับ สิ่งที่เปลี่ยนมีเพียงแกนพิกัด: ticker coordinates ตอบว่า “เราถืออะไร” ส่วน factor coordinates ตอบว่า “อะไรจะทำให้หลาย position เจ็บพร้อมกัน”</p>
   </figcaption>
@@ -184,15 +184,15 @@ B\mathbf{c}&=\begin{bmatrix}5.5+0.5\\
 4\end{bmatrix}\;\checkmark\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$c_1=5.5$ หมายถึงถือ AAPL และ JPM ข้างละ \$5.5M ตามทิศ ‘ไปด้วยกัน’ ไม่ใช่เงินก้อนรวม \$5.5M; $c_2=0.5$ เพิ่ม AAPL และลด JPM อย่างละ \$0.5M ตามทิศ ‘สวนกัน’; $c_3=4$ คือ XOM \$4M</p>
-    <p>บรรทัดสุดท้ายคือการตรวจ: ผสมกลับด้วย $B$ ต้องได้พอร์ตเดิม $[6,5,4]$ พอดี สัญลักษณ์ $B^{-1}$ ในตำราคือชื่อของ ‘การแก้สมการนี้’ ซึ่งหัวข้อ 4.5 จะทำเป็นกฎทั่วไป</p>
+    <p>$c_1=5.5$ หมายถึงถือ AAPL และ JPM ข้างละ \$5.5 ล้าน ตามทิศ “ไปด้วยกัน” ไม่ใช่เงินก้อนรวม \$5.5 ล้าน; $c_2=0.5$ เพิ่ม AAPL และลด JPM อย่างละ \$0.5 ล้าน ตามทิศ “สวนกัน”; $c_3=4$ คือ XOM \$4 ล้าน</p>
+    <p>บรรทัดสุดท้ายคือการตรวจ: ผสมกลับด้วย $B$ ต้องได้พอร์ตเดิม $[6,5,4]$ พอดี สัญลักษณ์ $B^{-1}$ ในตำราคือชื่อของ “การแก้สมการนี้” ซึ่งหัวข้อ 4.5 จะทำเป็นกฎทั่วไป</p>
     <p>สัญลักษณ์ $(1)+(2)$ หมายถึงเอาสมการบรรทัดแรกบวกบรรทัดที่สอง ซึ่งทำให้ $c_2$ หายไปพอดี เหลือตัวไม่รู้ค่าตัวเดียว ส่วนบรรทัดสุดท้ายคือการแทนคำตอบกลับเข้าไปตรวจ ต้องได้ของเดิมทุกช่อง</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 5 — คำนวณ Coordinates ผ่าน Matrix ผกผัน $B^{-1}$</h4>
-  <p>การใช้ matrix ผกผัน $B^{-1}$ แสดงให้เห็นว่าการเปลี่ยน basis คือการฉายพอร์ตโฟลิโอลงบนมุมมองความเสี่ยงใหม่ แถวของ $B^{-1}$ ทำหน้าที่เป็นตัววัดที่แยกแยะว่าพอร์ตเดิมมี exposure ต่อแต่ละความเสี่ยงอยู่เท่าใด โดยที่มูลค่ารวมของพอร์ตยังคงเท่ากับ $\$15M$ เท่าเดิมทุกประการ</p>
+  <p>การใช้ matrix ผกผัน $B^{-1}$ แสดงให้เห็นว่าการเปลี่ยน basis คือการฉายพอร์ตลงบนมุมมองความเสี่ยงใหม่ แถวของ $B^{-1}$ ทำหน้าที่เป็นตัววัดที่แยกแยะว่าพอร์ตเดิมมี exposure ต่อแต่ละความเสี่ยงอยู่เท่าใด โดยที่มูลค่ารวมของพอร์ตยังคงเท่ากับ $\$15M$ เท่าเดิมทุกประการ</p>
   <div class="math">\[
 \begin{aligned}
 B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
@@ -222,8 +222,8 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.3b — Positions become interpretable risk buckets</h4>
-  <img src="../figures/3.3-2.svg" alt="Figure 3.3b — Positions become interpretable risk buckets" loading="lazy">
+  <h4>Figure 3.3b — เปลี่ยนสถานะให้เป็นกลุ่มความเสี่ยงที่อ่านออก</h4>
+  <img src="../figures/3.3-2.svg" alt="Figure 3.3b — เปลี่ยนสถานะให้เป็นกลุ่มความเสี่ยงที่อ่านออก" loading="lazy">
   <figcaption>
     <p>coordinates $[5.5,0.5,4]^\top$ มีหน่วย USD millions แต่ห้ามบวกเป็นมูลค่า book: basis vector แรกถือ AAPL และ JPM พร้อมกัน. สิ่งที่ต้องอนุรักษ์คือ $B\mathbf{c}=\mathbf{x}=[6,5,4]^\top$ ไม่ใช่ผลรวม coordinates.</p>
   </figcaption>
@@ -231,20 +231,20 @@ B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
 
 <section class="example">
   <h4>กลับไปตอบ CIO</h4>
-  <p>คำตอบที่ดีไม่ใช่ “เราถือสามชื่อ” แต่คือ “coefficient ของ common AAPL-JPM direction เท่ากับ \$5.5M ซึ่งลงบนสอง legs ข้างละ \$5.5M, relative AAPL-versus-JPM เท่ากับ \$0.5M, และ XOM-specific เท่ากับ \$4M” จากนั้น chief investment officer เลือกได้ว่าจะลด market-like direction, ปิด relative view, หรือคง energy thesis ไว้ — basis เปลี่ยนรายการ holdings ให้เป็นปุ่มตัดสินใจโดยไม่แกล้งทำว่า coordinates คือ cash buckets</p>
-  <p>คำถาม: basis ที่แยก common AAPL-JPM USD 5.5M, relative USD 0.5M และ XOM-specific USD 4M ช่วยตัดสินใจอย่างไร?</p>
-  <p>ของที่มี: common direction USD 5.5M, relative direction USD 0.5M, XOM-specific direction USD 4M.</p>
-  <p>1. รวม USD 5.5M กับ USD 0.5M ได้ USD 6.0M ของ exposure ที่โยงกับคู่ AAPL-JPM.</p>
-  <p>2. เทียบ USD 0.5M กับ common USD 5.5M จะเห็นว่า relative view เล็กกว่ามาก.</p>
-  <p>เฉลย: ถ้าต้องลด market-like risk ให้ลด common direction USD 5.5M ก่อน ไม่ใช่เผลอปิด energy thesis USD 4M.</p>
-  <p>เช็ก 10 วินาที: USD 5.5M + USD 0.5M = USD 6.0M.</p>
+  <p>คำตอบที่ดีไม่ใช่ “เราถือสามชื่อ” แต่คือ “coefficient ของ common AAPL-JPM direction เท่ากับ \$5.5 ล้าน ซึ่งลงบนสอง legs ข้างละ \$5.5 ล้าน, relative AAPL-versus-JPM เท่ากับ \$0.5 ล้าน, และ XOM-specific เท่ากับ \$4 ล้าน” จากนั้น chief investment officer เลือกได้ว่าจะลด market-like direction, ปิด relative view, หรือคง energy thesis ไว้ — basis เปลี่ยนรายการ holdings ให้เป็นปุ่มตัดสินใจโดยไม่แกล้งทำว่า coordinates คือ cash buckets</p>
+  <p>คำถาม: basis ที่แยก common AAPL-JPM \$5.5 ล้าน, relative \$0.5 ล้าน และ XOM-specific \$4 ล้าน ช่วยตัดสินใจอย่างไร?</p>
+  <p>ของที่มี: common direction \$5.5 ล้าน, relative direction \$0.5 ล้าน, XOM-specific direction \$4 ล้าน.</p>
+  <p>1. รวม \$5.5 ล้าน กับ \$0.5 ล้าน ได้ \$6.0 ล้าน ของ exposure ที่โยงกับคู่ AAPL-JPM.</p>
+  <p>2. เทียบ \$0.5 ล้าน กับ common \$5.5 ล้าน จะเห็นว่า relative view เล็กกว่ามาก.</p>
+  <p>เฉลย: ถ้าต้องลด market-like risk ให้ลด common direction \$5.5 ล้าน ก่อน ไม่ใช่เผลอปิด energy thesis \$4 ล้าน.</p>
+  <p>เช็ก 10 วินาที: \$5.5 ล้าน + \$0.5 ล้าน = \$6.0 ล้าน.</p>
   <p>งานจริง: basis เปลี่ยนรายการ holdings ให้กลายเป็นปุ่ม risk ที่ chief investment officer กดได้.</p>
   <p>กับดัก: อย่าคิดว่า basis coefficient คือ cash bucket จริง; มันคือพิกัดของ exposure ที่เปลี่ยนได้ตาม basis ที่เลือก.</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.3c — Change of basis preserves the point, not the labels</h4>
-  <img src="../figures/3.3-3.svg" alt="Figure 3.3c — Change of basis preserves the point, not the labels" loading="lazy">
+  <h4>Figure 3.3c — เปลี่ยนฐานแล้วจุดเดิมอยู่ที่เดิม เปลี่ยนแค่ป้ายกำกับ</h4>
+  <img src="../figures/3.3-3.svg" alt="Figure 3.3c — เปลี่ยนฐานแล้วจุดเดิมอยู่ที่เดิม เปลี่ยนแค่ป้ายกำกับ" loading="lazy">
   <figcaption>
     <p>เปลี่ยน basis แล้ว coordinates เปลี่ยน แต่ position เดิมต้องผ่าน $B\mathbf{c}=\mathbf{x}$; coordinates เป็น coefficients ไม่ใช่ cash buckets ที่นำไป stack หรือบวกกันได้.</p>
   </figcaption>
@@ -285,7 +285,7 @@ Binv = np.linalg.inv(B)
 assert np.allclose(Binv, [[0.5, 0.5, 0], [0.5, -0.5, 0], [0, 0, 1]]) and np.allclose(Binv @ x, c)</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดยืนยันว่าแกนชุดใหม่ไม่ซ้ำกัน (determinant −2) แก้พิกัดได้ 5.5, 0.5, 4 ทั้งด้วยการแก้สมการและด้วย inverse และคูณกลับได้ exposure เดิม 6, 5, 4 ล้าน USD</p>
+    <p>โค้ดยืนยันว่าแกนชุดใหม่ไม่ซ้ำกัน (determinant −2) แก้พิกัดได้ 5.5, 0.5, 4 ทั้งด้วยการแก้สมการและด้วย inverse และคูณกลับได้ exposure เดิม 6, 5, \$4 ล้าน</p>
   </div>
 </section>
 

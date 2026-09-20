@@ -23,7 +23,7 @@
 </header>
 
 <div class="hook">
-  <p>call บนกระดานราคา 10.45 ดอลลาร์ หุ้น 100 strike 100 อายุ 1 ปี ดอกเบี้ย 2% ต้องหา volatility ที่ทำให้สูตรราคาให้ 10.45 พอดี เริ่มเดาที่ 30% gradient descent กับ Newton ต้องเดินกี่ก้าว?</p>
+  <p>call บนกระดานราคา \$10.45 หุ้น 100 strike 100 อายุ 1 ปี ดอกเบี้ย 2% ต้องหา volatility ที่ทำให้สูตรราคาให้ 10.45 พอดี เริ่มเดาที่ 30% gradient descent กับ Newton ต้องเดินกี่ก้าว?</p>
   <p>เฉลย: คำตอบคือ 23.92% ต่อปี gradient descent ที่ขนาดก้าว 0.0005 ต้องเดินราว 9 ก้าวจึงแม่น 6 หลัก เพราะแต่ละก้าวตัด error เหลือ 23.7% Newton ใช้ 2 ก้าว เพราะมันเลือกขนาดก้าวจากความโค้งเอง และถ้าเลือกขนาดก้าวใหญ่กว่า 0.00131 gradient descent จะระเบิดจน volatility ติดลบ</p>
   <p>gradient descent ใช้ทิศลงจาก gradient ส่วน Newton's method ใช้ Hessian เพิ่มข้อมูลความโค้งเพื่อเลือกก้าวและลด objective</p>
   <p>Newton ใช้แผนที่ท้องถิ่น จึงต้องมี line search, damping และหลายจุดเริ่มเพื่อลดการหลงทาง</p>
@@ -108,7 +108,7 @@ x_{1,\mathrm{Newton}}&=3-5/6=2.1667\end{aligned}
 
 <section class="prose">
   <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ลองใช้ price function ของสิทธิ์ที่ไม่จ่าย dividend โดยใส่ spot 100 USD, strike 100 USD, อายุหนึ่งปี, annual risk-free rate 2% และราคาตลาด 10.45 USD ต่อหุ้น ตัวเลขนี้เป็นภาพสมมติสำหรับฝึก algorithm ของจริงยังต้องใส่ dividend, early exercise และผลของ bid–ask ให้ตรงกับสัญญา</p>
+  <p>โจทย์ให้อะไรมาบ้าง: ลองใช้ price function ของสิทธิ์ที่ไม่จ่าย dividend โดยใส่ spot \$100, strike \$100, อายุหนึ่งปี, annual risk-free rate 2% และราคาตลาด \$10.45 ต่อหุ้น ตัวเลขนี้เป็นภาพสมมติสำหรับฝึก algorithm ของจริงยังต้องใส่ dividend, early exercise และผลของ bid–ask ให้ตรงกับสัญญา</p>
 </section>
 
 <section class="formula">
@@ -130,7 +130,7 @@ f''(\sigma)&=\mathcal V^2+g\,C''(\sigma)\approx\mathcal V^2\\
   <div class="reading">
     <p>Newton's method ในการหาจุดต่ำสุดมอง function ใกล้เคียงเป็นชามพาราโบลา โดยตัด Taylor series ไว้ที่กำลังสอง แล้วกระโดดตรงไปยังจุดต่ำสุดของชามจำลองนั้นทันที</p>
     <p>เมื่อหา derivative ของแบบจำลองกำลังสองเทียบกับระยะก้าว $p$ แล้วจับเท่ากับศูนย์ เราจะได้สมการที่คูณกลับด้วย inverse ของ Hessian ซึ่งจะชี้ทิศทางและระยะก้าวที่เหมาะสมโดยอัตโนมัติ</p>
-    <p>เมื่อนำมาใช้กับ loss กำลังสองของการหาราคาออปชัน พจน์ derivative อันดับสองจะมีค่าประมาณ vega กำลังสอง การหาร gradient ด้วยความโค้งจึงตัดทอนเหลือเพียงผลต่างราคาส่วนด้วย vega ตรงกับสูตรหารากสมการของ Newton พอดี</p>
+    <p>เมื่อนำมาใช้กับ loss กำลังสองของการหาราคาออปชัน พจน์ derivative อันดับสองจะมีค่าประมาณ vega กำลังสอง การหาร gradient ด้วยความโค้งจึงตัดทอนเหลือเพียงผลต่างราคาหารด้วย vega ตรงกับสูตรหารากสมการของ Newton พอดี</p>
   </div>
 </section>
 
@@ -177,7 +177,7 @@ g(\sigma_0)&=12.821581-10.45\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>$\ln(100/100)=0$ เพราะ spot เท่ากับ strike พอดี เหลือแค่ $0.02+0.045=0.065$ ส่วนด้วย $0.30$</p>
+    <p>$\ln(100/100)=0$ เพราะ spot เท่ากับ strike พอดี เหลือแค่ $0.02+0.045=0.065$ หารด้วย $0.30$</p>
     <p>ราคาที่ volatility 30% สูงกว่าราคาตลาด 10.45 อยู่ 2.371581 แปลว่าเราเดา volatility สูงเกินไป ต้องปรับลง</p>
     <p>$\Phi(0.216667)=0.585766$ และ $\Phi(-0.083333)=0.466793$ อ่านจากตาราง standard normal หรือ <code>norm.cdf</code> เหมือนหัวข้อ 1.9 ส่วน $e^{-0.02}=0.980199$ คือตัวคูณที่ย้ายเงินหนึ่งปีข้างหน้ามาเป็นค่าวันนี้ (หัวข้อ 18.1 จะอธิบายเต็ม) ทุกตัวเลขในบรรทัดจึงมาจากสองแหล่ง: ตารางระฆังคว่ำ กับเครื่องคิดเลข</p>
   </div>
@@ -208,7 +208,7 @@ f'(\sigma_0)&=g(\sigma_0)\,\mathcal V_0=2.371581(38.9687)\\
 \sigma_1=\sigma_0-\eta f'(\sigma_0)=0.30-0.0005(92.4174)=0.30-0.046209=0.253791
 \]</div>
   <div class="reading">
-    <p>$\eta=0.0005$ เป็นค่าที่เราเลือกเอง ไม่ได้มาจากสูตร เลือกใหญ่ไปจะกระโดดข้ามคำตอบ เลือกเล็กไปจะเดินช้า ก้าวนี้ขยับลงมาได้ราว 4.6 percentage points</p>
+    <p>$\eta=0.0005$ เป็นค่าที่เราเลือกเอง ไม่ได้มาจากสูตร เลือกใหญ่ไปจะกระโดดข้ามคำตอบ เลือกเล็กไปจะเดินช้า ก้าวนี้ขยับลงมาได้ราว 4.6 จุด</p>
   </div>
 </section>
 
@@ -219,8 +219,8 @@ f'(\sigma_0)&=g(\sigma_0)\,\mathcal V_0=2.371581(38.9687)\\
 \sigma_1=\sigma_0-\frac{C(\sigma_0)-C_{mkt}}{\mathcal V_0}=0.30-\frac{2.371581}{38.9687}=0.30-0.060859=0.239141
 \]</div>
   <div class="reading">
-    <p>ก้าวเดียวของ Newton ขยับลงมา 6.1 percentage points ซึ่งไกลกว่า gradient descent และเข้าใกล้คำตอบจริงทันที เพราะตัวหารคือความชันจริง ไม่ใช่ค่าที่เราเดา</p>
-    <p>ที่มาของเศษหาร: รอบค่า $x$ ประมาณ $g(x+\Delta)\approx g(x)+g^{\prime}(x)\Delta$ ต้องการให้ด้านขวาเป็นศูนย์ จึงได้ $g^{\prime}(x)\Delta=-g(x)$ ส่วนด้วย derivative ที่ไม่เป็นศูนย์ได้ $\Delta=-g(x)/g^{\prime}(x)$ นี่เป็น Newton สำหรับหาราก; Newton สำหรับลด loss โดยตรงจะใช้ $-f^{\prime}/f^{\prime\prime}$ ซึ่งไม่ใช่สูตรเดียวกันเสมอ</p>
+    <p>ก้าวเดียวของ Newton ขยับลงมา 6.1 จุด ซึ่งไกลกว่า gradient descent และเข้าใกล้คำตอบจริงทันที เพราะตัวหารคือความชันจริง ไม่ใช่ค่าที่เราเดา</p>
+    <p>ที่มาของเศษหาร: รอบค่า $x$ ประมาณ $g(x+\Delta)\approx g(x)+g^{\prime}(x)\Delta$ ต้องการให้ด้านขวาเป็นศูนย์ จึงได้ $g^{\prime}(x)\Delta=-g(x)$ หารด้วย derivative ที่ไม่เป็นศูนย์ได้ $\Delta=-g(x)/g^{\prime}(x)$ นี่เป็น Newton สำหรับหาราก; Newton สำหรับลด loss โดยตรงจะใช้ $-f^{\prime}/f^{\prime\prime}$ ซึ่งไม่ใช่สูตรเดียวกันเสมอ</p>
   </div>
 </section>
 
@@ -296,7 +296,7 @@ e_2&=1.4\times10^{-10}\ \ (9\ \text{digits})
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>เริ่มจาก 30% Newton ขยับไป 23.9141% แล้ว 23.9236% แทนกลับได้ราคา 10.45 ดอลลาร์ตรงกับตลาด หลักที่ถูกเพิ่มจาก 1 เป็น 4 เป็น 9 เรียกว่า quadratic convergence เพราะ Newton ประมาณ function ด้วยเส้นสัมผัส error ที่เหลือมาจากพจน์อันดับสองของ Taylor จึงเป็นกำลังสองของ error เดิม</p>
+    <p>เริ่มจาก 30% Newton ขยับไป 23.9141% แล้ว 23.9236% แทนกลับได้ราคา \$10.45 ตรงกับตลาด หลักที่ถูกเพิ่มจาก 1 เป็น 4 เป็น 9 เรียกว่า quadratic convergence เพราะ Newton ประมาณ function ด้วยเส้นสัมผัส error ที่เหลือมาจากพจน์อันดับสองของ Taylor จึงเป็นกำลังสองของ error เดิม</p>
     <p>เทียบจำนวนรอบเพื่อแม่น 6 หลัก gradient descent ที่ η = 0.0005 ต้องราว 9 รอบ Newton 2 รอบ พอ Newton เริ่มเกาะได้แล้วมันจบใน 2 ถึง 3 รอบเสมอ นี่คือเหตุผลที่เครื่องคิดราคา option ใช้วิธีนี้หลายล้านครั้งต่อวินาที</p>
   </div>
 </section>
@@ -349,32 +349,32 @@ b_3&=0.491557-0.002(374.407)=-0.257256
 </section>
 
 <figure class="plot">
-  <h4>Figure 8.7a — Price curve and implied-vol root</h4>
-  <img src="../figures/8.7-1.svg" alt="Figure 8.7a — Price curve and implied-vol root" loading="lazy">
+  <h4>Figure 8.7a — เส้นราคากับรากที่เป็น implied volatility</h4>
+  <img src="../figures/8.7-1.svg" alt="Figure 8.7a — เส้นราคากับรากที่เป็น implied volatility" loading="lazy">
   <figcaption>
-    <p>function ตัวอย่าง call price เพิ่มตาม volatility และตัดเส้น market price USD 10.45 ครั้งเดียวใกล้ 23.92%; ภาพนี้อธิบายว่าทำไม root มีเอกลักษณ์ในสมมติฐานตัวอย่าง</p>
+    <p>function ตัวอย่าง call price เพิ่มตาม volatility และตัดเส้น market price \$10.45 ครั้งเดียวใกล้ 23.92%; ภาพนี้อธิบายว่าทำไม root มีเอกลักษณ์ในสมมติฐานตัวอย่าง</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.7b — Squared-error valley</h4>
-  <img src="../figures/8.7-2.svg" alt="Figure 8.7b — Squared-error valley" loading="lazy">
+  <h4>Figure 8.7b — หุบเขาของความคลาดยกกำลังสอง</h4>
+  <img src="../figures/8.7-2.svg" alt="Figure 8.7b — หุบเขาของความคลาดยกกำลังสอง" loading="lazy">
   <figcaption>
     <p>การยก price residual เป็นกำลังสองเปลี่ยนจุดตัดให้เป็นก้นหุบที่ loss ศูนย์ จุดเริ่ม 30% อยู่ด้านขวาจึงมี gradient บวก</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.7c — Convergence paths</h4>
-  <img src="../figures/8.7-3.svg" alt="Figure 8.7c — Convergence paths" loading="lazy">
+  <h4>Figure 8.7c — เส้นทางที่ค่อย ๆ เข้าใกล้คำตอบ</h4>
+  <img src="../figures/8.7-3.svg" alt="Figure 8.7c — เส้นทางที่ค่อย ๆ เข้าใกล้คำตอบ" loading="lazy">
   <figcaption>
     <p>Newton method กระโดดใกล้คำตอบในก้าวเดียว ส่วน gradient descent ที่ learning rate 0.0005 เดินสั้นกว่าแต่ลด error สม่ำเสมอ; เร็วกว่าไม่แปลว่าปลอดภัยกว่าเมื่อ vega เล็ก</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.7d — Learning-rate regimes</h4>
-  <img src="../figures/8.7-4.svg" alt="Figure 8.7d — Learning-rate regimes" loading="lazy">
+  <h4>Figure 8.7d — ผลของขนาดก้าวที่ต่างกัน</h4>
+  <img src="../figures/8.7-4.svg" alt="Figure 8.7d — ผลของขนาดก้าวที่ต่างกัน" loading="lazy">
   <figcaption>
     <p>ก้าวเล็กเกินไปช้า ก้าวพอดีลู่เข้า และก้าวใหญ่เกินไปแกว่งหรือระเบิด—algorithm ก็เหมือนคนถือกาแฟ เดินเร็วได้แต่ไม่ควรวิ่งลงบันได</p>
   </figcaption>
@@ -382,8 +382,8 @@ b_3&=0.491557-0.002(374.407)=-0.257256
 
 <section class="example">
   <h4>คำตอบ — implied volatility อยู่ที่ 23.9236%</h4>
-  <p>คำตอบ: Newton เริ่มจาก volatility 30% กระโดดไป 23.9141% และรอบถัดไปปิดที่ประมาณ 23.9236% ซึ่งให้ option price 10.4500 USD ต่อหุ้นตรงกับ quote</p>
-  <p>ตรวจเองใน 10 วินาที: ก้าวแรกต้องเป็น 0.30 - 2.371581/38.9687 = 0.239141 แล้วแทน 0.239236 กลับใน price function ต้องได้ประมาณ 10.45 USD อยู่ใน bounds 1.980133 ถึง 100</p>
+  <p>คำตอบ: Newton เริ่มจาก volatility 30% กระโดดไป 23.9141% และรอบถัดไปปิดที่ประมาณ 23.9236% ซึ่งให้ option price \$10.4500 ต่อหุ้นตรงกับ quote</p>
+  <p>ตรวจเองใน 10 วินาที: ก้าวแรกต้องเป็น 0.30 - 2.371581/38.9687 = 0.239141 แล้วแทน 0.239236 กลับใน price function ต้องได้ประมาณ \$10.45 อยู่ใน bounds 1.980133 ถึง 100</p>
   <p>gradient descent ที่ η = 0.0005 เดิน 0.300 → 0.2538 → 0.2427 → 0.2401 → 0.2394 → 0.2393 หด error ×0.2366 ทุกรอบ ใช้ราว 9 รอบ Newton ใช้ 2 รอบเพราะมันคือ gradient descent ที่ η = 1/vega² = 0.000659 และถ้า η เกิน 0.00131 ระเบิด</p>
   <p>แปลว่าอะไร: นี่คือ algorithm เบื้องหลังทุกหน้าจอที่แสดง implied volatility ราคาเข้าไป 23.92% ออกมาในไมโครวินาที และเพราะทุกโต๊ะซื้อขายความผันผวน ไม่ใช่ราคา ความเร็วกับความเสถียรจึงเป็นเรื่องเป็นตาย Newton เร็วแต่ไม่รับประกันว่าลู่เข้า ระบบจริงใช้ Brent's method ที่ผสม bisection กับ Newton พร้อมล็อก σ ไว้ระหว่าง 0.001 ถึง 5.0 ยอมช้าลงนิดแลกกับการไม่มีวันพัง</p>
 </section>

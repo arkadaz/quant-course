@@ -23,8 +23,8 @@
 </header>
 
 <div class="hook">
-  <p>พอร์ต 50 ล้านดอลลาร์ถืออยู่ 40/40/20 optimizer ที่ไม่คิดต้นทุนสั่งให้เปลี่ยนเป็น 60/30/10 ค่าซื้อขาย 10 bp ต้องจ่ายเท่าไร และถ้ากองทุนจำกัด turnover ไว้ 10% ควรหยุดตรงไหน?</p>
-  <p>เฉลย: ต้องซื้อขายรวม 20 ล้านดอลลาร์ (turnover 20%) จ่าย 20,000 ดอลลาร์ cap 10% เดินได้ครึ่งทางที่ 50/35/15 จ่าย 10,000 และถ้ากำไรส่วนเพิ่มของสินทรัพย์ไหนชนะต้นทุนไม่ได้ทั้งขาซื้อและขาขาย ในช่องกว้าง 20 bp รอบพอร์ตเดิม คำตอบที่ดีที่สุดคืออย่าเทรดเลย</p>
+  <p>พอร์ต \$50 ล้านถืออยู่ 40/40/20 optimizer ที่ไม่คิดต้นทุนสั่งให้เปลี่ยนเป็น 60/30/10 ค่าซื้อขาย 10 bp ต้องจ่ายเท่าไร และถ้ากองทุนจำกัด turnover ไว้ 10% ควรหยุดตรงไหน?</p>
+  <p>เฉลย: ต้องซื้อขายรวม \$20 ล้าน (turnover 20%) จ่าย \$20,000 cap 10% เดินได้ครึ่งทางที่ 50/35/15 จ่าย 10,000 และถ้ากำไรส่วนเพิ่มของสินทรัพย์ไหนชนะต้นทุนไม่ได้ทั้งขาซื้อและขาขาย ในช่องกว้าง 20 bp รอบพอร์ตเดิม คำตอบที่ดีที่สุดคืออย่าเทรดเลย</p>
   <p>transaction cost คือค่าใช้จ่ายจากการปรับ position; mean-variance optimization with transaction costs ชั่ง expected return, variance และต้นทุนขยับพร้อมกัน</p>
   <p>portfolio ไม่ย้ายฟรี: optimizer ต้องให้ turnover ชนะ fee, spread และ price impact ก่อนเปลี่ยนน้ำหนัก</p>
 </div>
@@ -94,8 +94,8 @@
 </section>
 
 <section class="prose">
-  <h4>โจทย์: ปรับพอร์ต 50 ล้านดอลลาร์ไปหาเป้าหมายใหม่</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: mean-variance แบบมี friction ต้องตัดสินใจ trade จาก $w_0$ เพราะ cost ขึ้นกับระยะที่เดินไปหา $w$ ตัวอย่างใช้ portfolio value USD 50 million, one-period annual forecasts และ linear cost 10 bp เท่ากันทุกกองเพื่อให้ตรวจเลขได้ ตลาดจริงต้องใช้ bid–ask, participation และ impact estimates รายสินทรัพย์</p>
+  <h4>โจทย์: ปรับพอร์ต \$50 ล้านไปหาเป้าหมายใหม่</h4>
+  <p>โจทย์ให้อะไรมาบ้าง: mean-variance แบบมี friction ต้องตัดสินใจ trade จาก $w_0$ เพราะ cost ขึ้นกับระยะที่เดินไปหา $w$ ตัวอย่างใช้ portfolio value \$50 ล้าน, one-period annual forecasts และ linear cost 10 bp เท่ากันทุกกองเพื่อให้ตรวจเลขได้ ตลาดจริงต้องใช้ bid–ask, participation และ impact estimates รายสินทรัพย์</p>
 </section>
 
 <section class="formula">
@@ -134,7 +134,7 @@ v_i &= \max(0, -\Delta w_i) \ge 0 \\
   <div class="reading">
     <p>กฎข้อบังคับว่าเงินลงทุนต้องครบ 100% เสมอ บังคับให้ผลรวมน้ำหนักของพอร์ตใหม่และพอร์ตเดิมมีค่าเท่ากับ 1 ส่งผลให้ผลรวมสุทธิของ trade vector ทุกตัวต้องหักล้างกันจนเหลือศูนย์พอดี</p>
     <p>เมื่อแยกการปรับพอร์ตออกเป็นขาซื้อ $u_i$ และขาขาย $v_i$ จะพบความจริงทางบัญชีว่า เงินสดที่ใช้ซื้อสินทรัพย์ใหม่ต้องมาจากการขายสินทรัพย์เดิมออกไปในมูลค่าที่เท่ากันเป๊ะ ทำให้ผลรวมของขาซื้อเท่ากับผลรวมของขาขายเสมอ</p>
-    <p>มูลค่าการซื้อขายรวมสองขาจึงมีขนาดเป็นสองเท่าของเงินสดที่ถูกหมุนเวียน สูตร one-way turnover จึงต้องหารด้วยสองเพื่อวัดสัดส่วนสินทรัพย์ที่ถูกเปลี่ยนหน้าไปจริง ซึ่งในตัวอย่างนี้มีค่า 20% เท่ากับ 10 ล้านดอลลาร์</p>
+    <p>มูลค่าการซื้อขายรวมสองขาจึงมีขนาดเป็นสองเท่าของเงินสดที่ถูกหมุนเวียน สูตร one-way turnover จึงต้องหารด้วยสองเพื่อวัดสัดส่วนสินทรัพย์ที่ถูกเปลี่ยนหน้าไปจริง ซึ่งในตัวอย่างนี้มีค่า 20% เท่ากับ \$10 ล้าน</p>
   </div>
 </section>
 
@@ -145,7 +145,7 @@ v_i &= \max(0, -\Delta w_i) \ge 0 \\
 \text{gross traded notional}=W\lVert\Delta w\rVert_1=50{,}000{,}000(0.40)=\$20{,}000{,}000
 \]</div>
   <div class="reading">
-    <p>portfolio value คูณผลรวม absolute trades นับทั้ง buy และ sell legs; ตัวเลขนี้ต่างจาก one-way turnover notional ที่ USD 10 million</p>
+    <p>portfolio value คูณผลรวม absolute trades นับทั้ง buy และ sell legs; ตัวเลขนี้ต่างจาก one-way turnover notional ที่ \$10 ล้าน</p>
   </div>
 </section>
 
@@ -156,7 +156,7 @@ v_i &= \max(0, -\Delta w_i) \ge 0 \\
 c_i=10\ \mathrm{bp}=0.001:\qquad \operatorname{TC}=W\sum_i c_i|\Delta w_i|=50{,}000{,}000(0.001)(0.40)=\$20{,}000
 \]</div>
   <div class="reading">
-    <p>สิบ basis points แปลงเป็น decimal 0.001 แล้วคูณ gross traded notional USD 20 million ให้ cash cost USD 20,000</p>
+    <p>สิบ basis points แปลงเป็น decimal 0.001 แล้วคูณ gross traded notional \$20 ล้าน ให้ cash cost \$20,000</p>
   </div>
 </section>
 
@@ -251,7 +251,7 @@ w_i - w_{0i} &= u_i - v_i\\
 0.15\end{bmatrix}
 \]</div>
   <div class="reading">
-    <p>แนวตรงสู่ frictionless target ใช้ turnover 20%; cap 10% อนุญาต สัดส่วน 0.5 จึงซื้อ SPY 10 percentage points และขาย iShares Core U.S. Aggregate Bond exchange-traded fund (AGG) กับ QQQ อย่างละ 5 percentage points</p>
+    <p>แนวตรงสู่ frictionless target ใช้ turnover 20%; cap 10% อนุญาต สัดส่วน 0.5 จึงซื้อ SPY 10 จุด และขาย iShares Core U.S. Aggregate Bond exchange-traded fund (AGG) กับ QQQ อย่างละ 5 จุด</p>
   </div>
 </section>
 
@@ -262,7 +262,7 @@ w_i - w_{0i} &= u_i - v_i\\
 W\lVert w_{\rm cap}-w_0\rVert_1=50{,}000{,}000(0.20)=\$10{,}000{,}000,\qquad \operatorname{TC}_{\rm cap}=0.001(10{,}000{,}000)=\$10{,}000
 \]</div>
   <div class="reading">
-    <p>gross traded notional ลดครึ่งหนึ่งเป็น USD 10 million และ linear cost ลดเป็น USD 10,000 ภายใต้ cost rate คงที่</p>
+    <p>gross traded notional ลดครึ่งหนึ่งเป็น \$10 ล้าน และ linear cost ลดเป็น \$10,000 ภายใต้ cost rate คงที่</p>
   </div>
 </section>
 
@@ -318,34 +318,34 @@ g_i(w_0)-\nu&=c_i\,s_i\ \ \text{with}\ -1\le s_i\le1\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 8.8a — Current, capped, and frictionless weights</h4>
-  <img src="../figures/8.8-1.svg" alt="Figure 8.8a — Current, capped, and frictionless weights" loading="lazy">
+  <h4>Figure 8.8a — น้ำหนักปัจจุบัน แบบมีเพดาน และแบบไม่มีต้นทุน</h4>
+  <img src="../figures/8.8-1.svg" alt="Figure 8.8a — น้ำหนักปัจจุบัน แบบมีเพดาน และแบบไม่มีต้นทุน" loading="lazy">
   <figcaption>
     <p>แท่งกลางคือทางเลือกที่ทำได้เมื่อเดินครึ่งทางไปยัง target จึงใช้ turnover 10% พอดี ภาพนี้เปรียบเทียบขนาด trade และไม่ได้อ้างว่าการเดินครึ่งทางเป็นคำตอบดีที่สุดของทุก objective</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.8b — Cost grows with turnover</h4>
-  <img src="../figures/8.8-2.svg" alt="Figure 8.8b — Cost grows with turnover" loading="lazy">
+  <h4>Figure 8.8b — ต้นทุนโตตาม turnover</h4>
+  <img src="../figures/8.8-2.svg" alt="Figure 8.8b — ต้นทุนโตตาม turnover" loading="lazy">
   <figcaption>
-    <p>เมื่อ linear cost คงที่ 10 bp ของ gross notional cash cost เพิ่มเป็นเส้นตรง: one-way turnover 20% บน portfolio value USD 50 million เท่ากับ USD 20,000</p>
+    <p>เมื่อ linear cost คงที่ 10 bp ของ gross notional cash cost เพิ่มเป็นเส้นตรง: one-way turnover 20% บน portfolio value \$50 ล้าน เท่ากับ \$20,000</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.8c — Linear spread plus nonlinear impact</h4>
-  <img src="../figures/8.8-3.svg" alt="Figure 8.8c — Linear spread plus nonlinear impact" loading="lazy">
+  <h4>Figure 8.8c — ต้นทุน spread ที่เป็นเส้นตรง บวก impact ที่ไม่เป็นเส้นตรง</h4>
+  <img src="../figures/8.8-3.svg" alt="Figure 8.8c — ต้นทุน spread ที่เป็นเส้นตรง บวก impact ที่ไม่เป็นเส้นตรง" loading="lazy">
   <figcaption>
     <p>spread cost โตเส้นตรง แต่ market impact โค้งขึ้นเมื่อ trade ใหญ่ การใช้ 10 bp คงที่กับ order ทุกขนาดจึงมองโลกใจดีเกินไป</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.8d — Gross frontier versus net frontier</h4>
-  <img src="../figures/8.8-4.svg" alt="Figure 8.8d — Gross frontier versus net frontier" loading="lazy">
+  <h4>Figure 8.8d — frontier ก่อนหักต้นทุน เทียบกับหลังหักต้นทุน</h4>
+  <img src="../figures/8.8-4.svg" alt="Figure 8.8d — frontier ก่อนหักต้นทุน เทียบกับหลังหักต้นทุน" loading="lazy">
   <figcaption>
-    <p>ภาพสังเคราะห์แสดงว่าต้นทุนลด expected return อย่างไร ในภาพนี้สมมติต้นทุนต่อ gross notional เท่ากับ 1% จึงหักสองเท่าของ one-way turnover ในหน่วย percentage points ต่างจากตัวอย่างก่อนหน้าที่ใช้ 10 basis points ภาพไม่ได้เกิดจากการแก้ optimiser หรือข้อมูลผลตอบแทนจริง</p>
+    <p>ภาพสังเคราะห์แสดงว่าต้นทุนลด expected return อย่างไร ในภาพนี้สมมติต้นทุนต่อ gross notional เท่ากับ 1% จึงหักสองเท่าของ one-way turnover ในหน่วย จุด ต่างจากตัวอย่างก่อนหน้าที่ใช้ 10 basis points ภาพไม่ได้เกิดจากการแก้ optimiser หรือข้อมูลผลตอบแทนจริง</p>
   </figcaption>
 </figure>
 
@@ -353,9 +353,9 @@ g_i(w_0)-\nu&=c_i\,s_i\ \ \text{with}\ -1\le s_i\le1\\
   <h4>คำตอบ — turnover cap ลด trade เหลือ 10M USD</h4>
   <p>คำถาม: เปลี่ยนจาก 40/40/20 เป็น 60/30/10 เสียค่าซื้อขายเท่าไร และถ้า cap turnover 10% ต้องหยุดตรงไหน?</p>
   <p>ของที่มี: ขั้นที่ 1 ถึง 12</p>
-  <p>ถ้าเดินเต็มทาง ซื้อขายรวม 20 ล้านดอลลาร์ turnover 20% จ่าย 20,000 ดอลลาร์</p>
-  <p>คำตอบ: turnover cap 10% พา weights จาก [0.40,0.40,0.20] ไป [0.50,0.35,0.15] จึงซื้อ SPY 5 USD million และขาย AGG กับ QQQ อย่างละ 2.5 USD million รวม gross trade 10 USD million และ cost 10,000 USD</p>
-  <p>ตรวจเองใน 10 วินาที: absolute weight changes รวม 0.20 ดังนั้น turnover แบบหารสองเท่ากับ 0.10; 10 USD million × 0.001 ต้องได้ cost 10,000 USD</p>
+  <p>ถ้าเดินเต็มทาง ซื้อขายรวม \$20 ล้าน turnover 20% จ่าย \$20,000 </p>
+  <p>คำตอบ: turnover cap 10% พา weights จาก [0.40,0.40,0.20] ไป [0.50,0.35,0.15] จึงซื้อ SPY \$5 ล้าน และขาย AGG กับ QQQ อย่างละ \$2.5 ล้าน รวม gross trade \$10 ล้าน และ cost \$10,000</p>
+  <p>ตรวจเองใน 10 วินาที: absolute weight changes รวม 0.20 ดังนั้น turnover แบบหารสองเท่ากับ 0.10; \$10 ล้าน × 0.001 ต้องได้ cost \$10,000</p>
   <p>ใช้ตัดสินใจ: ส่ง target ที่ถูก cap นี้แทนเป้าหมาย 60/30/10 เมื่อ mandate จำกัด turnover และต้องแทน 10 bp ด้วย cost rate รายสินทรัพย์ก่อนใช้งานจริง</p>
 </section>
 
@@ -401,7 +401,7 @@ assert abs(W*c*np.abs(wc-w0).sum()-10_000)&lt;1e-6</code></pre>
   <ul>
     <li>transaction costs ทำให้คำตอบขึ้นกับ holdings ปัจจุบัน ไม่ใช่เพียง forecasts</li>
     <li>หัวข้อนี้นิยาม one-way turnover เป็น $\tfrac12\lVert w-w_0\rVert_1$ และแยกจาก gross traded notional</li>
-    <li>พอร์ตเต็มเป้าหมายใช้ gross USD 20 million กับ cost USD 20,000; cap 10% ลดทั้งคู่ครึ่งหนึ่ง</li>
+    <li>พอร์ตเต็มเป้าหมายใช้ gross \$20 ล้าน กับ cost \$20,000; cap 10% ลดทั้งคู่ครึ่งหนึ่ง</li>
     <li>production optimisation ต้องรวม asset-specific spread, impact, taxes และข้อจำกัดปฏิบัติการ</li>
     <li>no-trade band กว้าง $2c_i$ เกิดจาก subdifferential ของ absolute cost และ quadratic impact มาจากการ integrate linear price impact</li>
   </ul>

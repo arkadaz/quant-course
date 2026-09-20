@@ -38,7 +38,7 @@
     <dt>correlation</dt>
     <dd>ตัวเลขระหว่าง -1 ถึง 1 ที่วัดการเคลื่อนไหวเชิงเส้นร่วมกันของ return สองชุด ใช้เลือก diversification candidate และประเมินว่า hedge จะช่วยในสภาวะปกติแค่ไหน</dd>
     <dt>cosine similarity</dt>
-    <dd>cosine ของมุมระหว่างสอง vector คือ inner product ส่วนด้วยผลคูณความยาว ใช้วัดว่าชี้ทางเดียวกันแค่ไหนโดยไม่สนว่าลูกศรไหนยาวกว่า</dd>
+    <dd>cosine ของมุมระหว่างสอง vector คือ inner product หารด้วยผลคูณความยาว ใช้วัดว่าชี้ทางเดียวกันแค่ไหนโดยไม่สนว่าลูกศรไหนยาวกว่า</dd>
     <dt>orthogonal</dt>
     <dd>สอง vector ที่ตั้งฉากกัน inner product เป็นศูนย์ ใช้เรียกสินทรัพย์ที่ไม่ขยับตามกันเชิงเส้น ซึ่งเพิ่มทิศความเสี่ยงใหม่ให้พอร์ตแทนที่จะซ้ำทิศเดิม</dd>
     <dt>hedge ratio</dt>
@@ -48,7 +48,7 @@
     <dt>variance</dt>
     <dd>ค่าเฉลี่ยของ squared deviations จาก mean ใช้วัดการกระจายและเป็นตัวหารของ regression hedge ratio เมื่ออธิบายความไวต่อ hedge instrument</dd>
     <dt>standardized return</dt>
-    <dd>return ที่ลบค่าเฉลี่ยแล้วและส่วนด้วย standard deviation ใช้ทำให้ series คนละ volatility เปรียบเป็น direction เดียวกันได้โดยไม่ให้หน่วยหรือขนาดครอบงำ</dd>
+    <dd>return ที่ลบค่าเฉลี่ยแล้วและหารด้วย standard deviation ใช้ทำให้ series คนละ volatility เปรียบเป็น direction เดียวกันได้โดยไม่ให้หน่วยหรือขนาดครอบงำ</dd>
     <dt>regression</dt>
     <dd>วิธี fit ความสัมพันธ์เชิงเส้นระหว่างตัวแปรจากข้อมูล ใช้ estimate hedge ratio จาก sensitivity ของ basket ต่อ hedge instrument; เรียน derivation เต็มที่หัวข้อ 15.1</dd>
     <dt>basis risk</dt>
@@ -87,7 +87,7 @@
   <p>ก่อนที่ภาษาของ vector จะแพร่หลาย นักคณิตศาสตร์ในศตวรรษที่ 19 ต้องคำนวณผ่าน quaternion ของ William Rowan Hamilton ซึ่งมีสี่มิติและซับซ้อนเกินไปสำหรับการเคลื่อนที่ในปริภูมิสามมิติทั่วไป</p>
   <p>ราว ๆ ทศวรรษ 1880 Josiah Willard Gibbs ในสหรัฐอเมริกา และ Oliver Heaviside ในอังกฤษ แยกผลคูณ quaternion ออกเป็นสองระบบ คือ cross product ที่สร้างทิศทางใหม่ และ dot product หรือ inner product ที่ยุบลูกศรสองตัวให้กลายเป็นตัวเลข scalar ตัวเดียว เพื่อวัดงานเชิงกลที่แรงทำไปในแนวการเคลื่อนที่</p>
   <p>ทางฝั่งอสมการ Augustin-Louis Cauchy เสนอแนวคิดในปี 1821 Viktor Bunyakovsky ขยายสู่ integral ในปี 1859 และ Hermann Schwarz พิสูจน์ด้วยเรขาคณิตในปี 1888 จนกลายเป็น Cauchy-Schwarz inequality</p>
-  <p>เมื่อ quant ยืม inner product มาใช้กับข้อมูลการเงิน series ของผลตอบแทนจึงเปรียบเสมือนลูกศรในปริภูมิหลายมิติ และ inner product ก็คือเครื่องมือธรรมชาติที่สุดในการวัดว่า สินทรัพย์สองตัวกำลังออกแรงผลักพอร์ตโฟลิโอไปในทิศเดียวกันหรือไม่</p>
+  <p>เมื่อ quant ยืม inner product มาใช้กับข้อมูลการเงิน series ของผลตอบแทนจึงเปรียบเสมือนลูกศรในปริภูมิหลายมิติ และ inner product ก็คือเครื่องมือธรรมชาติที่สุดในการวัดว่า สินทรัพย์สองตัวกำลังออกแรงผลักพอร์ตไปในทิศเดียวกันหรือไม่</p>
 </section>
 
 <section class="prose">
@@ -99,8 +99,8 @@
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.5a — Angle is a picture of co-movement</h4>
-  <img src="../figures/3.5-1.svg" alt="Figure 3.5a — Angle is a picture of co-movement" loading="lazy">
+  <h4>Figure 3.5a — มุมระหว่างสองทิศคือภาพของการขยับไปด้วยกัน</h4>
+  <img src="../figures/3.5-1.svg" alt="Figure 3.5a — มุมระหว่างสองทิศคือภาพของการขยับไปด้วยกัน" loading="lazy">
   <figcaption>
     <p>ภาพฉายลงสองแกนให้ $\mathbf{x}=(1,-1,0)$: vector acute $\mathbf{y}=(1,0,-1)$ มี dot $1$, vector orthogonal $\mathbf{z}=(1,1,-2)$ มี dot $0$, และ vector obtuse $\mathbf{q}=(-1,2,-1)$ มี dot $-3$. เพราะ component ที่สามของ $\mathbf{x}$ เป็นศูนย์ การฉายนี้ยังรักษาเครื่องหมายของ dot ที่ใช้แยกทิศร่วม ทิศตั้งฉาก และทิศสวนกันไว้ครบ.</p>
   </figcaption>
@@ -113,7 +113,7 @@
 
 <section class="example">
   <h4>โจทย์ตัวอย่าง: วัด co-movement จาก return สามวัน</h4>
-  <p>semiconductor basket ให้ return 1.3%, -0.7%, 0.3% ขณะที่ hedge candidate ให้ 1.1%, 0.1%, -0.9% ในสามวันเดียวกัน ค่าเฉลี่ยคือ 0.3% และ 0.1% ตามลำดับ และ sample standard deviation ของทั้งคู่เท่ากับ 1 percentage point เมื่อลบค่าเฉลี่ยแล้วส่วนด้วย sample standard deviation จึงได้ $\mathbf{x}=(1,-1,0)$ และ $\mathbf{y}=(1,0,-1)$ ด้านล่าง ชุดสาธิตนี้จงใจสั้นเพื่อให้ตรวจเลขได้ทุกขั้น ไม่ใช่ sample ที่ใหญ่พอสำหรับส่ง hedge จริง</p>
+  <p>semiconductor basket ให้ return 1.3%, -0.7%, 0.3% ขณะที่ hedge candidate ให้ 1.1%, 0.1%, -0.9% ในสามวันเดียวกัน ค่าเฉลี่ยคือ 0.3% และ 0.1% ตามลำดับ และ sample standard deviation ของทั้งคู่เท่ากับ 1 จุด เมื่อลบค่าเฉลี่ยแล้วหารด้วย sample standard deviation จึงได้ $\mathbf{x}=(1,-1,0)$ และ $\mathbf{y}=(1,0,-1)$ ด้านล่าง ชุดสาธิตนี้จงใจสั้นเพื่อให้ตรวจเลขได้ทุกขั้น ไม่ใช่ sample ที่ใหญ่พอสำหรับส่ง hedge จริง</p>
   <p>คำถาม: vector x มี entries 1, -1, 0 และ vector y มี entries 1, 0, -1 จะขยับทางเดียวกันแค่ไหน?</p>
   <p>ของที่มี: return สามวันที่ลบค่าเฉลี่ยแล้วจนได้ vector x และ y ตามตัวอย่างด้านบน.</p>
   <p>1. คูณ component คู่กัน: 1 คูณ 1, ลบ 1 คูณ 0, และ 0 คูณลบ 1. รวมผลได้ dot product เท่ากับ 1.</p>
@@ -140,8 +140,8 @@ s_y&=\sqrt{\frac{(1.0)^{2}+0^{2}+(-1.0)^{2}}{2}}=1\\[4pt]
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ทำไมหักค่าเฉลี่ย: ถ้าไม่หัก ผลตอบแทนที่เป็นบวกทั้งคู่จะดู ‘ไปทางเดียวกัน’ ทั้งที่แค่ตลาดขึ้น เราอยากวัดว่าวันที่ตัวหนึ่งสูงกว่าปกติ อีกตัวก็สูงกว่าปกติไหม</p>
-    <p>ทำไมส่วนด้วย standard deviation: เพื่อให้ตัวที่เหวี่ยงแรงไม่ครอบงำ ตัวเลขที่เหลือบอกแค่ ‘ทิศ’ ตัวหาร $3-1=2$ คือ sample standard deviation ซึ่งหัวข้อ 14.3 จะอธิบายว่าทำไมไม่หาร 3</p>
+    <p>ทำไมหักค่าเฉลี่ย: ถ้าไม่หัก ผลตอบแทนที่เป็นบวกทั้งคู่จะดู “ไปทางเดียวกัน” ทั้งที่แค่ตลาดขึ้น เราอยากวัดว่าวันที่ตัวหนึ่งสูงกว่าปกติ อีกตัวก็สูงกว่าปกติไหม</p>
+    <p>ทำไมหารด้วย standard deviation: เพื่อให้ตัวที่เหวี่ยงแรงไม่ครอบงำ ตัวเลขที่เหลือบอกแค่ “ทิศ” ตัวหาร $3-1=2$ คือ sample standard deviation ซึ่งหัวข้อ 14.3 จะอธิบายว่าทำไมไม่หาร 3</p>
     <p>ตัวอย่างนี้ตั้งใจให้ทั้งสองมี standard deviation เท่ากับ 1 พอดี เพื่อให้ตัวเลขข้างล่างตรวจด้วยมือได้ทุกขั้น</p>
   </div>
 </section>
@@ -163,7 +163,7 @@ s_y&=\sqrt{\frac{(1.0)^{2}+0^{2}+(-1.0)^{2}}{2}}=1\\[4pt]
 
 <section class="formula">
   <h4>ขั้นที่ 3 — แปลง inner product เป็น angle</h4>
-  <p>ผลคูณดิบยังขึ้นกับสเกลของข้อมูล จึงต้องส่วนด้วยความยาวทั้งสองด้านตามกฎของโคไซน์ เพื่อเปลี่ยนผลคูณให้กลายเป็นมุมเรขาคณิตที่บอกทิศทางอย่างแท้จริง</p>
+  <p>ผลคูณดิบยังขึ้นกับสเกลของข้อมูล จึงต้องหารด้วยความยาวทั้งสองด้านตามกฎของโคไซน์ เพื่อเปลี่ยนผลคูณให้กลายเป็นมุมเรขาคณิตที่บอกทิศทางอย่างแท้จริง</p>
   <div class="math">\[
 \begin{aligned}\|\mathbf{x}-\mathbf{y}\|^{2}&=\|\mathbf{x}\|^{2}+\|\mathbf{y}\|^{2}-2\|\mathbf{x}\|\|\mathbf{y}\|\cos\theta\\[4pt]
 \|\mathbf{x}-\mathbf{y}\|^{2}&=\langle\mathbf{x}-\mathbf{y},\mathbf{x}-\mathbf{y}\rangle=\|\mathbf{x}\|^{2}-2\langle\mathbf{x},\mathbf{y}\rangle+\|\mathbf{y}\|^{2}\\[4pt]
@@ -173,7 +173,7 @@ s_y&=\sqrt{\frac{(1.0)^{2}+0^{2}+(-1.0)^{2}}{2}}=1\\[4pt]
 \]</div>
   <div class="reading">
     <p>สูตร cosine ไม่ได้ถูกตั้งขึ้นมาลอย ๆ แต่มาจากกฎของโคไซน์ในสามเหลี่ยมที่ประกอบด้วย $\mathbf{x}$, $\mathbf{y}$ และด้านตรงข้าม $\mathbf{x}-\mathbf{y}$ เมื่อกางความยาวด้านตรงข้ามด้วยนิยามของ inner product พจน์กำลังสองของทั้งสองข้างจะหักล้างกันพอดี เหลือเพียงความสัมพันธ์ระหว่างผลคูณเชิง scalar กับมุม</p>
-    <p>เมื่อจัดรูปจะได้ว่า cosine ของมุมคือ inner product ส่วนด้วยผลคูณความยาว แทนตัวเลขจากขั้นก่อนหน้า ตัวเศษคือ 1 ตัวหารคือ $\sqrt{2}\cdot\sqrt{2}=2$ ได้ค่า 0.5 ซึ่งตรงกับมุม 60 องศา แปลว่าข้อมูลสองชุดเอียงไปทางเดียวกันเพียงบางส่วน ต่อให้ hedge ก็ยังเหลือ basis risk จากทิศที่ตั้งฉากกัน</p>
+    <p>เมื่อจัดรูปจะได้ว่า cosine ของมุมคือ inner product หารด้วยผลคูณความยาว แทนตัวเลขจากขั้นก่อนหน้า ตัวเศษคือ 1 ตัวหารคือ $\sqrt{2}\cdot\sqrt{2}=2$ ได้ค่า 0.5 ซึ่งตรงกับมุม 60 องศา แปลว่าข้อมูลสองชุดเอียงไปทางเดียวกันเพียงบางส่วน ต่อให้ hedge ก็ยังเหลือ basis risk จากทิศที่ตั้งฉากกัน</p>
   </div>
 </section>
 
@@ -193,7 +193,7 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}\\
 \rho_{xy}&=\frac{1}{\sqrt2\cdot\sqrt2}=0.5=\cos 60^\circ\end{aligned}
 \]</div>
   <div class="reading">
-    <p>$\mathbf{x}$ กับ $\mathbf{y}$ ที่นี่คือข้อมูลที่หักค่าเฉลี่ยออกแล้วตามขั้นที่ 2 พอหักแล้ว sample covariance ก็คือ inner product ส่วนด้วย $n-1$ ส่วน standard deviation ก็คือความยาวส่วนด้วยรากของ $n-1$ เพราะผลรวมกำลังสองก็คือความยาวยกกำลังสองนั่นเอง</p>
+    <p>$\mathbf{x}$ กับ $\mathbf{y}$ ที่นี่คือข้อมูลที่หักค่าเฉลี่ยออกแล้วตามขั้นที่ 2 พอหักแล้ว sample covariance ก็คือ inner product หารด้วย $n-1$ ส่วน standard deviation ก็คือความยาวหารด้วยรากของ $n-1$ เพราะผลรวมกำลังสองก็คือความยาวยกกำลังสองนั่นเอง</p>
     <p>แทนสองอย่างนั้นลงในนิยามของ correlation แล้วจะเห็นว่า $n-1$ อยู่ทั้งบนและล่าง จึงตัดกันหมด เหลือ inner product หารผลคูณความยาว ซึ่งเป็นนิยามของ cosine พอดี สองบรรทัดสุดท้ายแทนเลขของขั้นที่ 2 และ 3 ได้ 0.5 ตรงกับมุม 60 องศาที่คำนวณไว้</p>
   </div>
 </section>
@@ -216,7 +216,7 @@ s_x&=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar x)^{2}}\\
     <p>ข้อเท็จจริงเดียวที่ใช้ทั้งการพิสูจน์คือ ผลบวกของกำลังสองติดลบไม่ได้ ความยาวยกกำลังสองของอะไรก็ตามจึงไม่ต่ำกว่าศูนย์ ไม่ว่าจะเลือก $t$ เป็นเท่าไรก็ตาม</p>
     <p>กางวงเล็บออกจะได้สมการกำลังสองใน $t$ ที่ไม่ยอมลงต่ำกว่าศูนย์เลยสักจุด พาราโบลาที่เปิดขึ้นและไม่ตัดแกน แปลว่า discriminant ของมันต้องไม่เป็นบวก นั่นคือเงื่อนไขที่บีบทุกอย่าง</p>
     <p>ที่เหลือเป็นการจัดรูป ตัดเลข 4 ทิ้งแล้วถอดราก ได้ว่าขนาดของ inner product ไม่มีทางเกินผลคูณของความยาวสองตัว</p>
-    <p>ส่วนด้วยความยาวทั้งสองก็ได้ผลที่ใช้ทั้งเล่ม correlation ติดอยู่ระหว่าง $-1$ กับ $1$ เสมอ ไม่ใช่เพราะนิยามบังคับไว้ แต่เพราะเรขาคณิตไม่ยอม และจะแตะขอบได้ก็ต่อเมื่อ $\mathbf{a}-t\mathbf{b}$ เป็นศูนย์พอดี คือสองตัวขนานกัน ซึ่งเป็นกรณี hedge ที่สมบูรณ์แบบ</p>
+    <p>หารด้วยความยาวทั้งสองก็ได้ผลที่ใช้ทั้งเล่ม correlation ติดอยู่ระหว่าง $-1$ กับ $1$ เสมอ ไม่ใช่เพราะนิยามบังคับไว้ แต่เพราะเรขาคณิตไม่ยอม และจะแตะขอบได้ก็ต่อเมื่อ $\mathbf{a}-t\mathbf{b}$ เป็นศูนย์พอดี คือสองตัวขนานกัน ซึ่งเป็นกรณี hedge ที่สมบูรณ์แบบ</p>
   </div>
 </section>
 
@@ -322,8 +322,8 @@ s_p&=\sqrt{2.3864/4}\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.5b — Correlation ranks hedge candidates, not guarantees</h4>
-  <img src="../figures/3.5-2.svg" alt="Figure 3.5b — Correlation ranks hedge candidates, not guarantees" loading="lazy">
+  <h4>Figure 3.5b — correlation จัดอันดับตัวเลือก hedge ได้ แต่ไม่รับประกัน</h4>
+  <img src="../figures/3.5-2.svg" alt="Figure 3.5b — correlation จัดอันดับตัวเลือก hedge ได้ แต่ไม่รับประกัน" loading="lazy">
   <figcaption>
     <p>โซ่เดียวกันคือ inner product $1$ → cosine $0.5$ → correlation $0.5$ เมื่อใช้ centered returns; normalization เอาขนาดออก เหลือ direction ที่ใช้เปรียบเทียบ co-movement.</p>
   </figcaption>
@@ -331,12 +331,12 @@ s_p&=\sqrt{2.3864/4}\\
 
 <section class="prose">
   <h4>จากความคล้ายไปสู่ hedge notional</h4>
-  <p>อย่าเอา correlation 0.5 จากตัวอย่างสามวันไปแปะเป็นขนาด order เพราะสามจุดมีไว้สอน geometry ไม่ได้มีไว้เสี่ยงเงินจริง สมมติ desk ใช้ daily returns อีกชุดยาว 60 sessions แล้วได้ sample covariance ระหว่าง basket กับ QQQ เท่ากับ 0.000153 และ sample variance ของ QQQ เท่ากับ 0.000180 จึงได้ regression hedge ratio 0.85 สำหรับ portfolio long \$12M</p>
+  <p>อย่าเอา correlation 0.5 จากตัวอย่างสามวันไปแปะเป็นขนาด order เพราะสามจุดมีไว้สอน geometry ไม่ได้มีไว้เสี่ยงเงินจริง สมมติ desk ใช้ daily returns อีกชุดยาว 60 sessions แล้วได้ sample covariance ระหว่าง basket กับ QQQ เท่ากับ 0.000153 และ sample variance ของ QQQ เท่ากับ 0.000180 จึงได้ regression hedge ratio 0.85 สำหรับ portfolio long \$12 ล้าน</p>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 10 — derive hedge ratio จาก estimation window แยกต่างหาก</h4>
-  <p>สูตร hedge ratio ไม่ได้มาจากการเดา แต่มาจากการหาจุดต่ำสุดของ variance เพื่อบีบความผันผวนรวมของพอร์ตโฟลิโอให้เหลือน้อยที่สุด</p>
+  <p>สูตร hedge ratio ไม่ได้มาจากการเดา แต่มาจากการหาจุดต่ำสุดของ variance เพื่อบีบความผันผวนรวมของพอร์ตให้เหลือน้อยที่สุด</p>
   <div class="math">\[
 \begin{aligned}&\operatorname{Var}(r_{\mathrm{portfolio}})\\
 &=\operatorname{Var}(r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}})\\[4pt]
@@ -349,9 +349,9 @@ h^*&=\frac{\sigma_{\mathrm{basket},\mathrm{QQQ}}}{\sigma_{\mathrm{QQQ}}^{2}}\\
 &=\frac{0.000153}{0.000180}=0.85\end{aligned}
 \]</div>
   <div class="reading">
-    <p>เราต้องการหาขนาดการ short hedge ที่ทำให้ variance ของพอร์ตโฟลิโอ $r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}}$ มีค่าต่ำที่สุด เมื่อกระจายสูตร variance ออกมา จะได้สมการกำลังสองในตัวแปร $h$ ซึ่งมีลักษณะเป็นพาราโบลาหงาย</p>
-    <p>หา derivative เทียบกับ $h$ แล้วกำหนดให้เท่ากับศูนย์ จุดต่ำสุดเกิดขึ้นเมื่ออัตราส่วน $h^*$ เท่ากับ covariance ส่วนด้วย variance ของตัว hedge พอดี ตรวจสอบ derivative อันดับสองได้ $2\sigma_{\mathrm{QQQ}}^{2}>0$ ซึ่งมากกว่าศูนย์ จึงรับประกันว่าเป็นจุดต่ำสุดจริง</p>
-    <p>แทนค่าตัวเลขจากหน้างาน 60 sessions ตัวเศษคือ sample covariance 0.000153 ตัวหารคือ sample variance 0.000180 หน่วยตัดกันหมดได้อัตราส่วน 0.85 หมายถึงการ short QQQ สัดส่วน 85 เซนต์ต่อทุก 1 ดอลลาร์ของ basket เพื่อหักล้างความผันผวนของตลาด</p>
+    <p>เราต้องการหาขนาดการ short hedge ที่ทำให้ variance ของพอร์ต $r_{\mathrm{basket}}-h\,r_{\mathrm{QQQ}}$ มีค่าต่ำที่สุด เมื่อกระจายสูตร variance ออกมา จะได้สมการกำลังสองในตัวแปร $h$ ซึ่งมีลักษณะเป็นพาราโบลาหงาย</p>
+    <p>หา derivative เทียบกับ $h$ แล้วกำหนดให้เท่ากับศูนย์ จุดต่ำสุดเกิดขึ้นเมื่ออัตราส่วน $h^*$ เท่ากับ covariance หารด้วย variance ของตัว hedge พอดี ตรวจสอบ derivative อันดับสองได้ $2\sigma_{\mathrm{QQQ}}^{2}>0$ ซึ่งมากกว่าศูนย์ จึงรับประกันว่าเป็นจุดต่ำสุดจริง</p>
+    <p>แทนค่าตัวเลขจากหน้างาน 60 sessions ตัวเศษคือ sample covariance 0.000153 ตัวหารคือ sample variance 0.000180 หน่วยตัดกันหมดได้อัตราส่วน 0.85 หมายถึงการ short QQQ สัดส่วน 85 เซนต์ต่อทุก \$1 ของ basket เพื่อหักล้างความผันผวนของตลาด</p>
   </div>
 </section>
 
@@ -409,14 +409,14 @@ h&=\frac{\langle\mathbf{b},\mathbf{q}\rangle}{\|\mathbf{q}\|^{2}}\\
 \]</div>
   <div class="reading">
     <p>ถ้ามองข้อมูลเป็น vector ในปริภูมิ $n$ มิติ การหา hedge ratio หรือ regression slope ก็คือการหาเงาฉายแบบตั้งฉากของ $\mathbf{b}$ ลงบนเส้นตรงที่ขึงโดย $\mathbf{q}$ โดย vector ความคลาดเคลื่อน $\mathbf{e}$ ต้องตั้งฉากกับทิศของ $\mathbf{q}$ ทำให้ inner product ระหว่างทั้งคู่เป็นศูนย์</p>
-    <p>เมื่อจัดรูปจะได้สูตรของ $h$ ทันทีโดยไม่ต้องหา derivative และเมื่อหารทั้งเศษและส่วนด้วย $n-1$ ก้อนบนจะกลายเป็น sample covariance ส่วนก้อนล่างจะกลายเป็น sample variance ซึ่งตรงกับผลลัพธ์จากการ minimize variance ในขั้นที่ 10 ทุกประการ</p>
+    <p>เมื่อจัดรูปจะได้สูตรของ $h$ ทันทีโดยไม่ต้องหา derivative และเมื่อหารทั้งเศษและหารด้วย $n-1$ ก้อนบนจะกลายเป็น sample covariance ส่วนก้อนล่างจะกลายเป็น sample variance ซึ่งตรงกับผลลัพธ์จากการ minimize variance ในขั้นที่ 10 ทุกประการ</p>
     <p>ทฤษฎีบทพีทาโกรัสยังยืนยันว่ากำลังสองของความยาวรวม เท่ากับกำลังสองของเงาฉายบวกกับกำลังสองของส่วนที่ตั้งฉาก เมื่อหารตลอดด้วยความยาวรวม จึงได้เอกลักษณ์ $\cos^{2}\theta+\sin^{2}\theta=1$ ซึ่งในทางสถิติคือการแยก variance ออกเป็นส่วนที่อธิบายได้และ residual risk</p>
   </div>
 </section>
 
 <figure class="plot">
-  <h4>Figure 3.5c — A hedge removes a direction, not all uncertainty</h4>
-  <img src="../figures/3.5-3.svg" alt="Figure 3.5c — A hedge removes a direction, not all uncertainty" loading="lazy">
+  <h4>Figure 3.5c — hedge ตัดได้หนึ่งทิศทาง ไม่ได้ตัดความไม่แน่นอนทั้งหมด</h4>
+  <img src="../figures/3.5-3.svg" alt="Figure 3.5c — hedge ตัดได้หนึ่งทิศทาง ไม่ได้ตัดความไม่แน่นอนทั้งหมด" loading="lazy">
   <figcaption>
     <p>short QQQ hedge ตัด common direction ออกมาก แต่ residual $(0.3,0.5)$ ไม่ขนานกับ basket $(2,1)$ เพราะ determinant $2(0.5)-1(0.3)=0.7\ne 0$; นี่คือ basis risk จริง ไม่ใช่ under-hedge บนเส้นเดิม.</p>
   </figcaption>
@@ -475,7 +475,7 @@ assert abs(np.sqrt(0.000162 * (1 - 0.8028)) - 0.00565) &lt; 5e-6</code></pre>
     <li>inner product รวมการจับคู่ return รายวัน; หลัง standardize แล้วมันแปลงเป็น cosine และ correlation</li>
     <li>หุ้นห้าวันในโจทย์เปิดเรื่องมี correlation 0.778 ซึ่งคือมุม 38.9 องศา และทำให้พอร์ต 60/40 แกว่ง 1.00% ต่อวันแทน 0.77% ถ้าตั้งฉาก การกระจายความเสี่ยงคือการหาของที่ตั้งฉากกับของที่มี</li>
     <li>มุมเล็กหมายถึง co-movement สูง จึงทำให้ short hedge candidate มีโอกาสชดเชย long book มากขึ้น</li>
-    <li>hedge ratio แปลง sensitivity เป็น USD notional; ในตัวอย่าง short QQQ \$10.2M ต่อ basket \$12M</li>
+    <li>hedge ratio แปลง sensitivity เป็น USD notional; ในตัวอย่าง short QQQ \$10.2 ล้าน ต่อ basket \$12 ล้าน</li>
     <li>correlation สูงช่วยเลือก hedge candidate แต่ไม่ลบ basis risk, liquidity risk, หรือ regime change</li>
   </ul>
 </section>

@@ -46,7 +46,7 @@
     <dt>complementary slackness</dt>
     <dd>เงื่อนไขที่จับคู่ primal slack กับ dual variable แล้วบังคับให้ผลคูณเป็นศูนย์ ใช้ระบุว่า constraint ใดมีราคาและ constraint ใดไม่มีราคา</dd>
     <dt>state price</dt>
-    <dd>ราคาวันนี้ของสัญญาที่จ่าย 1 ดอลลาร์ถ้าสภาวะหนึ่งเกิดและ 0 ถ้าไม่เกิด เรียกอีกชื่อว่า Arrow–Debreu price ใช้ตั้งราคาของใดก็ได้ที่เขียน payoff เป็นรายสภาวะ</dd>
+    <dd>ราคาวันนี้ของสัญญาที่จ่าย \$1 ถ้าสภาวะหนึ่งเกิดและ 0 ถ้าไม่เกิด เรียกอีกชื่อว่า Arrow–Debreu price ใช้ตั้งราคาของใดก็ได้ที่เขียน payoff เป็นรายสภาวะ</dd>
     <dt>risk-neutral probability</dt>
     <dd>state price ที่หารให้รวมกันได้ 1 ใช้คิดค่าเฉลี่ยของ payoff แล้วคิดลดด้วยดอกเบี้ยไร้ความเสี่ยงให้ได้ราคาตลาดพอดี ไม่ใช่โอกาสจริงที่สภาวะจะเกิด</dd>
     <dt>call option</dt>
@@ -74,14 +74,14 @@
       <tr><td>$x_Q,x_S$</td><td>short notionals ของ QQQ และ SPY ใน primal LP</td><td>USD million</td></tr>
       <tr><td>$b$</td><td>beta exposure ขั้นต่ำที่ hedge ต้องลด; ในโจทย์นี้เท่ากับ 10.8</td><td>beta-USD million</td></tr>
       <tr><td>$U_Q,U_S$</td><td>liquidity caps ของ QQQ และ SPY; เริ่มต้นเท่ากับ 6 ทั้งคู่</td><td>USD million</td></tr>
-      <tr><td>$c_Q,c_S$</td><td>execution costs ต่อ notional \$1M; เท่ากับ 180 และ 90</td><td>USD ต่อ USD million</td></tr>
+      <tr><td>$c_Q,c_S$</td><td>execution costs ต่อ notional \$1 ล้าน; เท่ากับ 180 และ 90</td><td>USD ต่อ USD million</td></tr>
       <tr><td>$y$</td><td>ราคาเงาของข้อจำกัดว่าต้องลด beta อย่างน้อยเท่าไร บอกว่าถ้าผ่อนเป้าลงหนึ่งหน่วย ต้นทุนจะลดลงกี่ USD</td><td>USD ต่อ beta-USD million</td></tr>
       <tr><td>$u_Q,u_S$</td><td>dual variables ของ QQQ และ SPY caps ใน sign convention แบบ greater-than</td><td>USD ต่อ USD million</td></tr>
       <tr><td>$y^*,u_Q^*,u_S^*$</td><td>ชุดราคาเงาที่ดันขอบล่างของต้นทุนขึ้นได้สูงสุด จึงเป็นคำตอบของโจทย์ฝั่ง dual</td><td>USD ต่อ native unit ของแต่ละ constraint</td></tr>
       <tr><td>$s_B$</td><td>beta exposure ที่ส่งมอบเกิน minimum requirement</td><td>beta-USD million</td></tr>
       <tr><td>$s_Q,s_S$</td><td>unused QQQ และ SPY capacity</td><td>USD million</td></tr>
       <tr><td>$V_P,V_D$</td><td>optimal objective values ของ primal และ dual</td><td>USD</td></tr>
-      <tr><td>$u=(u_1,u_2,u_3)$</td><td>dual variables หนึ่งตัวต่อหนึ่งสภาวะในตัวอย่างแรก อ่านเป็นราคาของเงิน 1 ดอลลาร์ในสภาวะนั้น</td><td>USD ต่อ USD ในสภาวะ</td></tr>
+      <tr><td>$u=(u_1,u_2,u_3)$</td><td>dual variables หนึ่งตัวต่อหนึ่งสภาวะในตัวอย่างแรก อ่านเป็นราคาของเงิน \$1 ในสภาวะนั้น</td><td>USD ต่อ USD ในสภาวะ</td></tr>
       <tr><td>$t$</td><td>ตัวแปรอิสระหนึ่งตัวที่เหลือเมื่อ dual มี 2 สมการ 3 ตัวแปร</td><td>USD ต่อ USD ในสภาวะ</td></tr>
       <tr><td>$q_i$</td><td>risk-neutral probability ของสภาวะ $i$</td><td>ไม่มีหน่วย</td></tr>
       <tr><td>$A^{\mathsf T}u \le c$</td><td>เงื่อนไข dual feasibility เมื่อตัวแปร primal ไม่ติดลบ</td><td>หน่วยของ $c$</td></tr>
@@ -241,13 +241,13 @@ D&=90.50=P
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>สภาวะที่ hedge พอดีมีราคาเป็นบวก สภาวะที่เหลือเงินทิ้งมีราคาเป็นศูนย์ เหตุผลเชิงเศรษฐศาสตร์: ถ้าสภาวะขาลงมีเงินเหลือ 10 อยู่แล้ว เงินเพิ่มอีก 1 ดอลลาร์ในสภาวะนั้นไม่ได้ช่วยอะไร จึงไม่มีใครยอมจ่ายเพื่อมัน</p>
+    <p>สภาวะที่ hedge พอดีมีราคาเป็นบวก สภาวะที่เหลือเงินทิ้งมีราคาเป็นศูนย์ เหตุผลเชิงเศรษฐศาสตร์: ถ้าสภาวะขาลงมีเงินเหลือ 10 อยู่แล้ว เงินเพิ่มอีก \$1 ในสภาวะนั้นไม่ได้ช่วยอะไร จึงไม่มีใครยอมจ่ายเพื่อมัน</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 7 — อ่าน u เป็นราคาเงา: เพิ่มภาระ 1 ดอลลาร์แล้วแก้ใหม่</h4>
-  <p>ถ้า u ในแต่ละสภาวะคือราคาจริง การเพิ่มภาระของสภาวะนั้น 1 ดอลลาร์ต้องทำให้ต้นทุน hedge เพิ่มเท่ากับ u พอดี ลองแก้ใหม่ทีละแถว</p>
+  <h4>ขั้นที่ 7 — อ่าน u เป็นราคาเงา: เพิ่มภาระ \$1 แล้วแก้ใหม่</h4>
+  <p>ถ้า u ในแต่ละสภาวะคือราคาจริง การเพิ่มภาระของสภาวะนั้น \$1 ต้องทำให้ต้นทุน hedge เพิ่มเท่ากับ u พอดี ลองแก้ใหม่ทีละแถว</p>
   <div class="math">\[
 \begin{aligned}
 &X_1:120\to121:\\
@@ -276,7 +276,7 @@ D&=90.50=P
 
 <section class="formula">
   <h4>ขั้นที่ 8 — อ่าน u เป็น state price แล้วตั้งราคาของใหม่</h4>
-  <p>uᵢ* คือราคาวันนี้ของสัญญาที่จ่าย 1 ดอลลาร์ถ้าสภาวะ i เกิด ตรวจก่อนว่ามันให้ราคาของที่มีในตลาดถูก แล้วค่อยตั้งราคา call</p>
+  <p>uᵢ* คือราคาวันนี้ของสัญญาที่จ่าย \$1 ถ้าสภาวะ i เกิด ตรวจก่อนว่ามันให้ราคาของที่มีในตลาดถูก แล้วค่อยตั้งราคา call</p>
   <div class="math">\[
 \begin{aligned}
 &\text{stock}:\\
@@ -297,7 +297,7 @@ q&=\frac{u^*}{0.95}=(0.17544,\ 0.82456,\ 0)\\
 \]</div>
   <div class="reading">
     <p>ห้าบรรทัดแรกคือข้อจำกัด Sᵀu = p นั่นเอง dual บังคับแค่ว่าราคาของแต่ละสภาวะต้องอธิบายราคาตลาดที่มีอยู่ได้ call จ่าย 30 เฉพาะขาขึ้น ราคาจึงเป็น 30 × 1/6 = 5.00</p>
-    <p>ผลรวมของ u คือราคาพันธบัตรต่อ 1 ดอลลาร์ ได้ดอกเบี้ยไร้ความเสี่ยง 5.26% หาร u ด้วย 0.95 ได้ risk-neutral probability 17.54%, 82.46%, 0% ใช้คิดค่าเฉลี่ยแล้วคิดลดได้ราคาหุ้น 100 พอดี ตัวเลขนี้มาจากราคาล้วน ๆ ไม่เคยถามเลยว่าโอกาสขาขึ้นจริงเท่าไร</p>
+    <p>ผลรวมของ u คือราคาพันธบัตรต่อ \$1 ได้ดอกเบี้ยไร้ความเสี่ยง 5.26% หาร u ด้วย 0.95 ได้ risk-neutral probability 17.54%, 82.46%, 0% ใช้คิดค่าเฉลี่ยแล้วคิดลดได้ราคาหุ้น 100 พอดี ตัวเลขนี้มาจากราคาล้วน ๆ ไม่เคยถามเลยว่าโอกาสขาขึ้นจริงเท่าไร</p>
   </div>
 </section>
 
@@ -461,7 +461,7 @@ b^{\mathsf T}u&\le(Ax)^{\mathsf T}u=x^{\mathsf T}A^{\mathsf T}u\\
 &-x_Q\ge-6,\qquad -x_S\ge-6.\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ใส่ short notional $x_Q$ กับ $x_S$ หน่วย USD million แล้วคูณด้วยต้นทุนของแต่ละตัวเพื่อหา $V_P$ หน่วย USD แถวแรกบังคับให้ลด beta อย่างน้อย 10.8 beta-USD million ส่วนสองแถวหลังกลับเครื่องหมายของ cap \$6M ให้อยู่ในรูป greater-than ผลคือ primal problem ที่คำนวณต้นทุนต่ำสุดและเทียบกับ dual ได้ตรงหน่วย</p>
+    <p>ใส่ short notional $x_Q$ กับ $x_S$ หน่วย USD million แล้วคูณด้วยต้นทุนของแต่ละตัวเพื่อหา $V_P$ หน่วย USD แถวแรกบังคับให้ลด beta อย่างน้อย 10.8 beta-USD million ส่วนสองแถวหลังกลับเครื่องหมายของ cap \$6 ล้าน ให้อยู่ในรูป greater-than ผลคือ primal problem ที่คำนวณต้นทุนต่ำสุดและเทียบกับ dual ได้ตรงหน่วย</p>
   </div>
 </section>
 
@@ -515,7 +515,7 @@ b^{\mathsf T}u&\le(Ax)^{\mathsf T}u=x^{\mathsf T}A^{\mathsf T}u\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ชุดแรกถูกกติกาแต่ให้ขอบล่างแค่ 972 ซึ่งต่ำกว่าต้นทุนจริง 1,260 มันบอกแค่ว่า ‘ไม่มีทางถูกกว่า 972’ ซึ่งจริงแต่ไม่คม</p>
+    <p>ชุดแรกถูกกติกาแต่ให้ขอบล่างแค่ 972 ซึ่งต่ำกว่าต้นทุนจริง 1,260 มันบอกแค่ว่า “ไม่มีทางถูกกว่า 972” ซึ่งจริงแต่ไม่คม</p>
     <p>ชุดที่สองดันขอบล่างขึ้นถึง 1,260 พอดี เท่ากับต้นทุนจริงของแผนที่ดีที่สุด ขอบล่างที่ดีที่สุดกับคำตอบจริงจึงชนกัน นี่คือสิ่งที่ strong duality สัญญาไว้</p>
     <p>ชุดที่สามพยายามดันสูงกว่านั้นแต่ผิดกติกา (coefficient ของ $x_Q$ จะติดลบ ทำให้ขอบล่างพังเป็นลบอนันต์ตามหัวข้อ 5.4) ขอบล่างจึงเกิน 1,260 ไม่ได้</p>
   </div>
@@ -556,8 +556,8 @@ V_P - V_D &= 1{,}260 - 1{,}260 = 0
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ต้นทุนจริงของ primal คำนวณจากการซื้อคำสั่ง short ของ QQQ จำนวน 4 ล้านและ SPY จำนวน 6 ล้านดอลลาร์ ได้ต้นทุนรวม 1,260 ดอลลาร์พอดี</p>
-    <p>ฝั่ง dual ประเมินมูลค่าของ beta requirement ไว้ที่ 1,620 ดอลลาร์ แล้วหักมูลค่าความขาดแคลนของโควตา SPY ออก 360 ดอลลาร์ เหลือยอดสุทธิ 1,260 ดอลลาร์เท่ากันเป๊ะ</p>
+    <p>ต้นทุนจริงของ primal คำนวณจากการซื้อคำสั่ง short ของ QQQ จำนวน 4 ล้านและ SPY จำนวน \$6 ล้าน ได้ต้นทุนรวม \$1,260 พอดี</p>
+    <p>ฝั่ง dual ประเมินมูลค่าของ beta requirement ไว้ที่ \$1,620 แล้วหักมูลค่าความขาดแคลนของโควตา SPY ออก \$360 เหลือยอดสุทธิ \$1,260 เท่ากันเป๊ะ</p>
     <p>เมื่อ duality gap ลดลงเหลือศูนย์ ทฤษฎี Strong Duality ยืนยันว่าเราพบจุด optimum ของทั้งสองฝั่งแล้วอย่างเด็ดขาด</p>
   </div>
 </section>
@@ -576,7 +576,7 @@ y^* s_B + u_Q^* s_Q + u_S^* s_S &= 0 + 0 + 0 = 0
   <div class="reading">
     <p>เงื่อนไข complementary slackness ระบุว่าผลคูณระหว่างราคาเงากับตัวแปร slack ต้องเป็นศูนย์เสมอในทุกแถว</p>
     <p>ข้อกำหนด beta และเพดาน SPY มี slack เป็นศูนย์เพราะถูกใช้จนเต็ม ทำให้ราคาเงา $y^*=150$ และ $u_S^*=60$ มีค่าเป็นบวกได้</p>
-    <p>ในทางกลับกัน QQQ เหลือโควตาสภาพคล่อง 2 ล้านดอลลาร์ ราคาเงา $u_Q^*$ จึงถูกบีบให้เป็นศูนย์โดยอัตโนมัติ สะท้อนว่าการขอขยายโควตา QQQ เพิ่มขึ้นจะไม่มีประโยชน์ในการลดต้นทุนเลย</p>
+    <p>ในทางกลับกัน QQQ เหลือโควตาสภาพคล่อง \$2 ล้าน ราคาเงา $u_Q^*$ จึงถูกบีบให้เป็นศูนย์โดยอัตโนมัติ สะท้อนว่าการขอขยายโควตา QQQ เพิ่มขึ้นจะไม่มีประโยชน์ในการลดต้นทุนเลย</p>
   </div>
 </section>
 
@@ -589,42 +589,42 @@ y^* s_B + u_Q^* s_Q + u_S^* s_S &= 0 + 0 + 0 = 0
 </section>
 
 <figure class="plot">
-  <h4>Figure 5.3a — Primal/dual optimum coincide</h4>
-  <img src="../figures/5.3-1.svg" alt="Figure 5.3a — Primal/dual optimum coincide" loading="lazy">
+  <h4>Figure 5.3a — คำตอบของ primal กับ dual ตรงกัน</h4>
+  <img src="../figures/5.3-1.svg" alt="Figure 5.3a — คำตอบของ primal กับ dual ตรงกัน" loading="lazy">
   <figcaption>
     <p>แท่ง primal และ dual ปิดยอดที่ \$1,260 เท่ากัน จึงเป็น checksum ว่า objective, constraint signs และ units ของ hedge LP สอดคล้องกัน</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.3b — Value of extra SPY capacity</h4>
-  <img src="../figures/5.3-2.svg" alt="Figure 5.3b — Value of extra SPY capacity" loading="lazy">
+  <h4>Figure 5.3b — มูลค่าของโควตา SPY ที่เพิ่มมาอีกหนึ่งหน่วย</h4>
+  <img src="../figures/5.3-2.svg" alt="Figure 5.3b — มูลค่าของโควตา SPY ที่เพิ่มมาอีกหนึ่งหน่วย" loading="lazy">
   <figcaption>
-    <p>เมื่อ coefficients เดิมยังใช้ได้ การเพิ่ม SPY cap จาก \$6M เป็น \$7M ลด optimal cost จาก \$1,260 เหลือ \$1,200 หรือประหยัด \$60 ตรงกับ shadow price</p>
+    <p>เมื่อ coefficients เดิมยังใช้ได้ การเพิ่ม SPY cap จาก \$6 ล้าน เป็น \$7 ล้าน ลด optimal cost จาก \$1,260 เหลือ \$1,200 หรือประหยัด \$60 ตรงกับ shadow price</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.3c — Slack and shadow-price pairs</h4>
-  <img src="../figures/5.3-3.svg" alt="Figure 5.3c — Slack and shadow-price pairs" loading="lazy">
+  <h4>Figure 5.3c — คู่ของ slack กับ shadow price</h4>
+  <img src="../figures/5.3-3.svg" alt="Figure 5.3c — คู่ของ slack กับ shadow price" loading="lazy">
   <figcaption>
     <p>constraint ที่ slack เป็นบวกอย่าง QQQ cap มี shadow price ศูนย์ ส่วน beta row และ SPY cap ที่ slack เป็นศูนย์มีราคาเป็นบวก นี่คือ complementary slackness ที่มองเห็นได้</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.3d — A slice of the dual feasible region</h4>
-  <img src="../figures/5.3-4.svg" alt="Figure 5.3d — A slice of the dual feasible region" loading="lazy">
+  <h4>Figure 5.3d — ภาพตัดของพื้นที่คำตอบฝั่ง dual</h4>
+  <img src="../figures/5.3-4.svg" alt="Figure 5.3d — ภาพตัดของพื้นที่คำตอบฝั่ง dual" loading="lazy">
   <figcaption>
     <p>เมื่อตรึง QQQ-cap price ที่ศูนย์ dual feasibility บังคับให้ $y\le150$ และ $u_S\ge y-90$ จุด (150,60) อยู่บนขอบที่ให้ lower bound สูงสุด</p>
   </figcaption>
 </figure>
 
 <section class="example">
-  <h4>คำตอบ — capacity 1M ลด cost 60 USD</h4>
-  <p>คำตอบ: ถ้าเพิ่ม SPY cap เป็น 7 USD million ให้ใช้ SPY 7 USD million กับ QQQ $(10.8-7)/1.2=3.8/1.2=3.167$ USD million beta reduction ยังเท่ากับ 10.8 และ cost ใหม่คือ 1,200 USD ต่ำกว่าเดิม 60 USD</p>
-  <p>ตรวจเองใน 10 วินาที: แทน SPY 7 กับ QQQ 3.167 กลับใน beta constraint ต้องได้ประมาณ 10.8 และ 90×7 + 180×3.167 ต้องปิดใกล้ 1,200 USD โดยส่วนต่างเล็กมาจากการปัดเศษ</p>
-  <p>ใช้ตัดสินใจ: ขอ capacity เพิ่มเมื่อค่าใช้จ่ายจริงของ SPY capacity 1 USD million ต่ำกว่า saving 60 USD; ถ้าแพงกว่านั้นให้ใช้ cap เดิม</p>
+  <h4>คำตอบ — capacity 1M ลด cost \$60</h4>
+  <p>คำตอบ: ถ้าเพิ่ม SPY cap เป็น \$7 ล้าน ให้ใช้ SPY \$7 ล้าน กับ QQQ $(10.8-7)/1.2=3.8/1.2=3.167$ USD million beta reduction ยังเท่ากับ 10.8 และ cost ใหม่คือ \$1,200 ต่ำกว่าเดิม \$60</p>
+  <p>ตรวจเองใน 10 วินาที: แทน SPY 7 กับ QQQ 3.167 กลับใน beta constraint ต้องได้ประมาณ 10.8 และ 90×7 + 180×3.167 ต้องปิดใกล้ \$1,200 โดยส่วนต่างเล็กมาจากการปัดเศษ</p>
+  <p>ใช้ตัดสินใจ: ขอ capacity เพิ่มเมื่อค่าใช้จ่ายจริงของ SPY capacity \$1 ล้าน ต่ำกว่า saving \$60; ถ้าแพงกว่านั้นให้ใช้ cap เดิม</p>
 </section>
 
 <section class="pitfall">
@@ -656,7 +656,7 @@ y^* s_B + u_Q^* s_Q + u_S^* s_S &= 0 + 0 + 0 = 0
     <li>dual LP ตั้งราคาของ primal constraints และสร้าง lower bound ของ execution cost</li>
     <li>dual optimum คือ $y^*=150$, $u_Q^*=0$, $u_S^*=60$ ภายใต้ sign convention ที่ระบุชัด</li>
     <li>strong duality ให้ $V_P=V_D=\$1{,}260$ และทำหน้าที่เป็น model checksum</li>
-    <li>SPY shadow price \$60 ต่อ capacity \$1M ใช้ได้เฉพาะในช่วงที่ active set ไม่เปลี่ยน</li>
+    <li>SPY shadow price \$60 ต่อ capacity \$1 ล้าน ใช้ได้เฉพาะในช่วงที่ active set ไม่เปลี่ยน</li>
   </ul>
 </section>
 </article>

@@ -78,7 +78,7 @@
       <tr><td>$\mu$</td><td>target mean vector</td><td>decimal return/day</td></tr>
       <tr><td>$n$</td><td>number of simulated scenarios</td><td>นับ scenarios</td></tr>
       <tr><td>$\ell_{ij}$</td><td>สมาชิกในแถวที่ $i$ หลักที่ $j$ ของ Cholesky factor $L$</td><td>return/day per shock</td></tr>
-      <tr><td>$M_r(s)$</td><td>ตัวช่วยที่ยุบทุก moment ของผลตอบแทนจำลองไว้ในสมการเดียว ใช้ตรวจว่าตัวเลขที่สุ่มออกมามีค่าเฉลี่ยและความแกว่งตรงกับที่สั่งไว้จริง</td><td>unitless</td></tr>
+      <tr><td>$M_r(s)$</td><td>ตัวช่วยที่ยุบทุก moment ของผลตอบแทนจำลองไว้ในสมการเดียว ใช้ตรวจว่าตัวเลขที่สุ่มออกมามีค่าเฉลี่ยและความผันผวนตรงกับที่สั่งไว้จริง</td><td>unitless</td></tr>
       <tr><td>$I$</td><td>identity matrix ขนาด $d \times d$</td><td>unitless</td></tr>
       <tr><td>$d$</td><td>จำนวนสินทรัพย์ คือจำนวนช่องของ $r$ และ $z$</td><td>นับสินทรัพย์</td></tr>
       <tr><td>$\sigma_1,\ \sigma_2,\ \rho$</td><td>ความผันผวนและ correlation เป้าหมายในโจทย์เปิดเรื่อง</td><td>decimal return/year, unitless</td></tr>
@@ -88,12 +88,12 @@
 </details>
 
 <section class="prose">
-  <h4>ที่มาและแรงผลักดัน: จากปัญหาการรังวัดแผนที่สู่การจำลองความเสี่ยงพอร์ตโฟลิโอ</h4>
+  <h4>ที่มาและแรงผลักดัน: จากปัญหาการรังวัดแผนที่สู่การจำลองความเสี่ยงพอร์ต</h4>
   <p>André-Louis Cholesky (อ็องเดร-หลุยส์ โชเลสกี) เป็นนายทหารปืนใหญ่และนักสำรวจทำแผนที่ชาวฝรั่งเศส ในช่วงทศวรรษ 1910 ก่อนสงครามโลกครั้งที่หนึ่ง เขาได้รับมอบหมายให้ทำแผนที่ภูมิประเทศด้วยการรังวัดโครงข่ายสามเหลี่ยม (triangulation) ในเกาะครีตและแอฟริกาเหนือ การวัดมุมและระยะทางจากยอดเขาสู่ยอดเขาทำให้เกิดระบบสมการเชิงเส้นที่ตัวแปรล้น (overdetermined system) จำนวนมาก ซึ่งต้องแก้ด้วยวิธีกำลังสองน้อยที่สุด (method of least squares)</p>
   <p>สมการปรกติ (normal equations) จากวิธีกำลังสองน้อยที่สุดมีรูป $A^{\mathsf T} A x = A^{\mathsf T} b$ ซึ่ง coefficient matrix ด้านซ้ายมีสมมาตรและบวกแน่นอน แต่นักคำนวณยุคนั้นต้องพึ่ง Gaussian elimination ทั่วไป ซึ่งต้องคิดเลขด้วยมือเป็นสัดส่วนตามกำลังสามของขนาดมิติ ทั้งยังต้องจดบันทึกตัวเลขลงกระดาษเต็มตารางทั้งสองฟาก และเสี่ยงต่อความผิดพลาดของทศนิยมสะสม</p>
   <p>โชเลสกีสังเกตว่าความสมมาตรและบวกแน่นอนทำให้ไม่จำเป็นต้องแปลงทั้ง matrix แต่สามารถแยกตัวประกอบออกมาเป็นผลคูณของ matrix สามเหลี่ยมล่างกับ transpose ของตัวเองในรูป $L L^{\mathsf T}$ ได้โดยตรง การค้นพบนี้ช่วยตัดจำนวนขั้นตอนการคำนวณลงครึ่งหนึ่ง ประหยัดเนื้อที่กระดาษจดบันทึกครึ่งหนึ่ง และมีเสถียรภาพเชิงตัวเลขสูงมากโดยไม่ต้องสลับแถว (no pivoting)</p>
   <p>น่าเสียดายที่โชเลสกีเสียชีวิตในสนามรบเมื่อเดือนสิงหาคมปี 1918 ในช่วงท้ายของสงครามโลกครั้งที่หนึ่ง พันโทเบอนัวต์ (Commandant Benoît) เพื่อนร่วมหน่วย จึงนำบันทึกของเขามาเรียบเรียงและตีพิมพ์ในปี 1924 ในวารสาร <em>Bulletin Géodésique</em> เพื่อเป็นเกียรติแก่เขา</p>
-  <p>หลายทศวรรษต่อมา ในโลกการเงินเชิงปริมาณ เมื่อต้องการจำลองวิกฤตและความเสี่ยงของพอร์ตโฟลิโอที่มีสินทรัพย์นับสิบตัวด้วยวิธี Monte Carlo นักคำนวณพบปัญหาว่าการสุ่มตัวเลขที่มี correlation จาก Multivariate Normal distribution โดยตรงนั้นทำได้ยากและช้ามาก แต่งานของโชเลสกีกลับมอบทางออกที่สมบูรณ์แบบ: สุ่ม shock อิสระด้วยวิธีมาตรฐานที่เร็วที่สุด แล้วคูณด้วย matrix $L$ เพียงครั้งเดียว ตัวแปรทั้งหมดจะถูกเหนี่ยวนำให้มี covariance ตามเป้าหมายทันที</p>
+  <p>หลายทศวรรษต่อมา ในโลกการเงินเชิงปริมาณ เมื่อต้องการจำลองวิกฤตและความเสี่ยงของพอร์ตที่มีสินทรัพย์นับสิบตัวด้วยวิธี Monte Carlo นักคำนวณพบปัญหาว่าการสุ่มตัวเลขที่มี correlation จาก Multivariate Normal distribution โดยตรงนั้นทำได้ยากและช้ามาก แต่งานของโชเลสกีกลับมอบทางออกที่สมบูรณ์แบบ: สุ่ม shock อิสระด้วยวิธีมาตรฐานที่เร็วที่สุด แล้วคูณด้วย matrix $L$ เพียงครั้งเดียว ตัวแปรทั้งหมดจะถูกเหนี่ยวนำให้มี covariance ตามเป้าหมายทันที</p>
 </section>
 
 <section class="prose">
@@ -130,7 +130,7 @@
   <div class="reading">
     <p>สมการ $L L^{\mathsf T} = \Sigma$ เกิดจากการจับคู่แถวของ $L$ กับหลักของ $L^{\mathsf T}$ ซึ่งก็คือแถวของ $L$ เอง เนื่องจาก $L$ เป็น lower triangular สมาชิกเหนือแนวทแยงจึงเป็นศูนย์ทั้งหมด ผลรวมจึงหยุดที่ตำแหน่ง $\min(i, j)$ เท่านั้น</p>
     <p>สำหรับช่องแนวทแยง ผลคูณคือผลบวกกำลังสองของสมาชิกในแถวเดียวกัน เราจึงย้ายพจน์ที่คำนวณไว้ก่อนหน้าไปลบ แล้วถอดรากที่สองเพื่อปลดล็อก $\ell_{jj}$ ค่าบวกเสมอ</p>
-    <p>สำหรับช่องใต้แนวทแยง เราแยกพจน์สุดท้ายที่มี $\ell_{ij} \ell_{jj}$ ออกมา ย้ายผลคูณสะสมจาก shock ก่อนหน้าไปลบออกจาก covariance เป้าหมาย แล้วส่วนด้วย $\ell_{jj}$ ที่เพิ่งหาได้ กลไกนี้ไล่แก้ทีละหลักจากซ้ายไปขวาจนเต็มตาราง</p>
+    <p>สำหรับช่องใต้แนวทแยง เราแยกพจน์สุดท้ายที่มี $\ell_{ij} \ell_{jj}$ ออกมา ย้ายผลคูณสะสมจาก shock ก่อนหน้าไปลบออกจาก covariance เป้าหมาย แล้วเอา $\ell_{jj}$ ที่เพิ่งหาได้ไปหาร กลไกนี้ไล่แก้ทีละหลักจากซ้ายไปขวาจนเต็มตาราง</p>
   </div>
 </section>
 
@@ -381,7 +381,7 @@ C_{\text{fix}}&=C+\tfrac{0.8}{3}\,vv^{\mathsf T}\\
   <p>ทำไมต้องแยกเป็นสามเหลี่ยมล่าง $L L^{\mathsf T}$ ไม่แยกเป็น matrix square root แบบสมมาตร? คำตอบคือประสิทธิภาพและลำดับขั้น: lower triangular matrix ทำให้เราคำนวณทีละสินทรัพย์เรียงลำดับได้เหมือนสายพาน สินทรัพย์แรกขึ้นกับ shock เดียว สินทรัพย์ที่สองใช้สอง shock ในขณะที่ matrix square root แบบสมมาตรทำให้ทุกสินทรัพย์พัวพันกับทุก shock พร้อมกัน และต้องใช้การแยก eigenvalue ที่ช้ากว่าถึงสามเท่า</p>
   <p>ทำไมต้องคูณ $L z$ แต่ห้ามเขียนสลับข้าง? เพราะ shock ตั้งต้นเป็น column vector การคูณจากซ้ายด้วย lower triangular matrix จะได้ผลตอบแทนเป็น column vector ตามต้องการ หากกลับด้านเป็นแถวคูณตาราง หรือคูณสลับข้าง covariance ที่เกิดขึ้นจริงจะกลายเป็น $L^{\mathsf T} L$ ซึ่งไม่ใช่ covariance matrix เป้าหมายที่ต้องการ</p>
   <p>ข้อผิดพลาดอันดับหนึ่งคือการพยายามสร้างความเกี่ยวพันด้วยการจับคู่ shock ตรง ๆ เช่น สั่งให้ shock สองตัวเท่ากันโดยตรง วิธีนี้จะทำให้ correlation กลายเป็น 1.0 ทันทีโดยไม่สามารถปรับระดับความเกี่ยวพันตามความเป็นจริงได้เลย</p>
-  <p>ข้อผิดพลาดอันดับสองคือการนำ Cholesky ไปใช้กับ correlation matrix โดยลืมคูณ standard deviation ของแต่ละสินทรัพย์กลับเข้าไป ส่งผลให้ทุกตัวแปรมีความแกว่งเท่ากับ 1.0 เสมอ หรือเท่ากับความผันผวน 100% ต่อวัน ซึ่งจะทำลายแบบจำลองความเสี่ยงทั้งระบบ</p>
+  <p>ข้อผิดพลาดอันดับสองคือการนำ Cholesky ไปใช้กับ correlation matrix โดยลืมคูณ standard deviation ของแต่ละสินทรัพย์กลับเข้าไป ส่งผลให้ทุกตัวแปรมีความผันผวนเท่ากับ 1.0 เสมอ หรือเท่ากับความผันผวน 100% ต่อวัน ซึ่งจะทำลายแบบจำลองความเสี่ยงทั้งระบบ</p>
   <p>ข้อผิดพลาดอันดับสามคือเมื่อ library แจ้งเตือนว่า matrix ไม่เป็น positive definite ผู้ใช้มักแก้ปัญหาผิดทางด้วยการบวกเลขคงที่เข้าแนวทแยงมั่ว ๆ ทางแก้ที่ถูกต้องคือการตรวจหาต้นตอ เช่น ข้อมูลราคาที่มีวันหยุดไม่ตรงกัน หรือจำนวนสินทรัพย์ที่มากกว่าจำนวนวันสังเกตการณ์ จนเกิดความซ้ำซ้อนเชิงเส้น</p>
 </section>
 
@@ -394,32 +394,32 @@ C_{\text{fix}}&=C+\tfrac{0.8}{3}\,vv^{\mathsf T}\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 7.6a — uncorrelated to correlated scatter</h4>
-  <img src="../figures/7.6-1.svg" alt="Figure 7.6a — uncorrelated to correlated scatter" loading="lazy">
+  <h4>Figure 7.6a — จากจุดที่ไม่สัมพันธ์กัน สู่จุดที่สัมพันธ์กัน</h4>
+  <img src="../figures/7.6-1.svg" alt="Figure 7.6a — จากจุดที่ไม่สัมพันธ์กัน สู่จุดที่สัมพันธ์กัน" loading="lazy">
   <figcaption>
     <p>panel ซ้ายคือ independent standard Normal shocks ส่วน panel ขวาคูณ Cholesky factor ของ correlation matrix แล้ว จึงมี correlation เป้าหมาย 0.40 โดย marginal variance ยังเท่ากับหนึ่ง</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 7.6b — Cholesky factor structure</h4>
-  <img src="../figures/7.6-2.svg" alt="Figure 7.6b — Cholesky factor structure" loading="lazy">
+  <h4>Figure 7.6b — โครงสร้างของตัวประกอบ Cholesky</h4>
+  <img src="../figures/7.6-2.svg" alt="Figure 7.6b — โครงสร้างของตัวประกอบ Cholesky" loading="lazy">
   <figcaption>
     <p>factor ของ covariance matrix จริงเท่ากับแถว SPX $(2.000\%,0)$ และแถว QQQ $(1.200\%,2.750\%)$; คูณ $L L^{\mathsf{T}}$ แล้วคืน variance 4, 9 และ covariance 2.4 ในหน่วย percentage-point squared</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 7.6c — sample covariance convergence</h4>
-  <img src="../figures/7.6-3.svg" alt="Figure 7.6c — sample covariance convergence" loading="lazy">
+  <h4>Figure 7.6c — covariance จากตัวอย่างเข้าใกล้ค่าจริง</h4>
+  <img src="../figures/7.6-3.svg" alt="Figure 7.6c — covariance จากตัวอย่างเข้าใกล้ค่าจริง" loading="lazy">
   <figcaption>
     <p>ใช้ random stream เดียวแล้วเพิ่ม sample size จาก 50 ถึง 25,000 จุด ค่า sample covariance เคลื่อนเข้าใกล้ target 2.40 percentage-point squared ต่อวัน</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 7.6d — scenario means and spreads</h4>
-  <img src="../figures/7.6-4.svg" alt="Figure 7.6d — scenario means and spreads" loading="lazy">
+  <h4>Figure 7.6d — ค่าเฉลี่ยและความกว้างของแต่ละฉากทัศน์</h4>
+  <img src="../figures/7.6-4.svg" alt="Figure 7.6d — ค่าเฉลี่ยและความกว้างของแต่ละฉากทัศน์" loading="lazy">
   <figcaption>
     <p>transformed sample ควรคืน mean ใกล้ 0.04% กับ 0.03% และ unequal daily spreads ใกล้ 2% กับ 3% ตาม target; moments ทั้งคู่ต้องอยู่ใน simulation review report</p>
   </figcaption>

@@ -23,7 +23,7 @@
 </header>
 
 <div class="hook">
-  <p>เดสก์มีงบ 10 ล้านดอลลาร์ hedge ขาแรกกินงบ 1 ต่อทุก 1 ล้านที่ส่งคำสั่ง ขาที่สองกินงบ 2 ต่อ 1 ล้าน แผน (4, 2) กับแผน (8, 3) ล้าน แผนไหนส่งได้ และแผนแรกขยายได้กี่เท่าก่อนชนงบ?</p>
+  <p>เดสก์มีงบ \$10 ล้าน hedge ขาแรกกินงบ 1 ต่อทุก 1 ล้านที่ส่งคำสั่ง ขาที่สองกินงบ 2 ต่อ 1 ล้าน แผน (4, 2) กับแผน (8, 3) ล้าน แผนไหนส่งได้ และแผนแรกขยายได้กี่เท่าก่อนชนงบ?</p>
   <p>เฉลย: แผน (4, 2) ใช้งบ 4 + 2(2) = 8 ผ่านและเหลือ 2 แผน (8, 3) ใช้ 8 + 2(3) = 14 เกินไป 4 ส่วนแผนแรกขยายได้ 1.25 เท่า เพราะงบที่ใช้โตเป็นเส้นตรง 8 × 1.25 = 10 พอดี</p>
   <p>linear function คือกฎที่ output เป็นผลรวมถ่วงน้ำหนักของ input linear constraint คือขอบเขตของกฎนั้น งานจริงใช้ matrix เขียน budget, limit และ mandate ให้ตรวจได้ด้วยการคูณครั้งเดียว</p>
 </div>
@@ -306,40 +306,40 @@ g(0,5)&=3(0)+2(5)=10\\[6pt]
 </section>
 
 <figure class="plot">
-  <h4>Figure 4.4a — bounded feasible triangle</h4>
-  <img src="../figures/4.4-1.svg" alt="Figure 4.4a — bounded feasible triangle" loading="lazy">
+  <h4>Figure 4.4a — สามเหลี่ยมของคำตอบที่เป็นไปได้</h4>
+  <img src="../figures/4.4-1.svg" alt="Figure 4.4a — สามเหลี่ยมของคำตอบที่เป็นไปได้" loading="lazy">
   <figcaption>
-    <p>เส้นแดงใช้ budget ครบ 10 USD million พอดี ส่วนพื้นที่เขียวเป็นสามเหลี่ยม bounded เพราะบังคับ $x_1$ และ $x_2$ ไม่ให้ติดลบ; ถ้าตัดสองเงื่อนไขนี้ทิ้ง half-plane จะ unbounded</p>
+    <p>เส้นแดงใช้ budget ครบ \$10 ล้าน พอดี ส่วนพื้นที่เขียวเป็นสามเหลี่ยม bounded เพราะบังคับ $x_1$ และ $x_2$ ไม่ให้ติดลบ; ถ้าตัดสองเงื่อนไขนี้ทิ้ง half-plane จะ unbounded</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.4b — feasible region and chosen hedge</h4>
-  <img src="../figures/4.4-2.svg" alt="Figure 4.4b — feasible region and chosen hedge" loading="lazy">
+  <h4>Figure 4.4b — พื้นที่คำตอบที่เป็นไปได้ กับ hedge ที่เลือก</h4>
+  <img src="../figures/4.4-2.svg" alt="Figure 4.4b — พื้นที่คำตอบที่เป็นไปได้ กับ hedge ที่เลือก" loading="lazy">
   <figcaption>
-    <p>จุดเขียว $(4,2)$ ใช้ budget 8 และเหลือ slack 2 USD million; จุดแดง $(8,3)$ ใช้ 14 จึงอยู่นอกสามเหลี่ยมและต้องถูก reject ก่อน execution</p>
+    <p>จุดเขียว $(4,2)$ ใช้ budget 8 และเหลือ slack \$2 ล้าน; จุดแดง $(8,3)$ ใช้ 14 จึงอยู่นอกสามเหลี่ยมและต้องถูก reject ก่อน execution</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.4c — constraint normal</h4>
-  <img src="../figures/4.4-3.svg" alt="Figure 4.4c — constraint normal" loading="lazy">
+  <h4>Figure 4.4c — ทิศตั้งฉากของเงื่อนไข</h4>
+  <img src="../figures/4.4-3.svg" alt="Figure 4.4c — ทิศตั้งฉากของเงื่อนไข" loading="lazy">
   <figcaption>
     <p>vector $a=(1,2)$ ตั้งฉากกับ boundary และชี้ไปทางที่ budget-use function เพิ่มเร็วที่สุด; component ที่สองจึงบอกว่า hedge leg สองกิน budget ต่อ USD million เป็นสองเท่า</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.4d — budget slack along a hedge path</h4>
-  <img src="../figures/4.4-4.svg" alt="Figure 4.4d — budget slack along a hedge path" loading="lazy">
+  <h4>Figure 4.4d — งบที่เหลือระหว่างเดินตามเส้นทาง hedge</h4>
+  <img src="../figures/4.4-4.svg" alt="Figure 4.4d — งบที่เหลือระหว่างเดินตามเส้นทาง hedge" loading="lazy">
   <figcaption>
-    <p>เมื่อ scale path $(4s,2s)$ ถึงหนึ่ง จุดเลือกยังเหลือ slack 2 USD million; ที่ $s=1.25$ slack เป็นศูนย์ และหลังจากนั้นค่าติดลบเตือนว่า trade หลุด constraint แล้ว</p>
+    <p>เมื่อ scale path $(4s,2s)$ ถึงหนึ่ง จุดเลือกยังเหลือ slack \$2 ล้าน; ที่ $s=1.25$ slack เป็นศูนย์ และหลังจากนั้นค่าติดลบเตือนว่า trade หลุด constraint แล้ว</p>
   </figcaption>
 </figure>
 
 <section class="example">
   <h4>คำตอบ — (4,2) ผ่าน แต่ (8,3) ใช้ทุนเกิน</h4>
-  <p>คำตอบ: point (4,2) ใช้ capital 8 USD million จึงผ่าน constraint และเหลือ slack 2 USD million ส่วน point (8,3) ใช้ 14 USD million จึงส่งไม่ได้</p>
+  <p>คำตอบ: point (4,2) ใช้ capital \$8 ล้าน จึงผ่าน constraint และเหลือ slack \$2 ล้าน ส่วน point (8,3) ใช้ \$14 ล้าน จึงส่งไม่ได้</p>
   <p>ตรวจเองใน 10 วินาที: แทนค่าใน x1 + 2x2 จุดแรกให้ 4 + 2×2 = 8 ซึ่งไม่เกิน 10; จุดที่สองให้ 8 + 2×3 = 14 ซึ่งเกินเพดาน 4</p>
   <p>ใช้ตัดสินใจ: ตัด point ที่ไม่ feasible ออกก่อนเรียก optimizer แม้มันจะลด market exposure ได้มากกว่า เพราะ order ที่ใช้ทุนเกินเพดานไม่ใช่ candidate ที่ desk ส่งได้</p>
 </section>

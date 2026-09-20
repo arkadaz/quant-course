@@ -317,7 +317,7 @@ assert (Ain@mid&lt;=bin_+1e-12).all() and abs(mid.sum()-1)&lt;1e-12</code></pre>
 \]</div>
   <div class="reading">
     <p>เป้าหมายความเสี่ยงของพอร์ตต้องการลด beta exposure รวมอย่างน้อย 10.8 beta-USD million ซึ่งเป็นข้อจำกัดแบบมากกว่าหรือเท่ากับที่ต้องทำให้ผ่าน</p>
-    <p>สภาพคล่องในตลาดจริงมีขีดจำกัด จึงต้องกำกับไม่ให้คำสั่งขาย QQQ และ SPY เกินเพดานตัวละ 6 ล้านดอลลาร์ตามนโยบายของ desk กลายเป็นข้อจำกัดแบบน้อยกว่าหรือเท่ากับ</p>
+    <p>สภาพคล่องในตลาดจริงมีขีดจำกัด จึงต้องกำกับไม่ให้คำสั่งขาย QQQ และ SPY เกินเพดานตัวละ \$6 ล้านตามนโยบายของ desk กลายเป็นข้อจำกัดแบบน้อยกว่าหรือเท่ากับ</p>
     <p>ขนาดการขาย short ต้องเป็นค่าบวกหรือศูนย์เท่านั้น เพื่อไม่ให้กลายเป็นการซื้อสินทรัพย์เสี่ยงเพิ่ม การจำแนกประเภทข้อกำหนดเหล่านี้คือขั้นตอนแรกของการจัดรูปสู่ standard form</p>
   </div>
 </section>
@@ -389,7 +389,7 @@ C(z) = c^{\mathsf T} z &= 180x_Q + 90x_S + 0s_B + 0s_Q + 0s_S \\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>vector ต้นทุน $c$ ใส่ค่าธรรมเนียม 180 ดอลลาร์สำหรับ QQQ และ 90 ดอลลาร์สำหรับ SPY ในสองตำแหน่งแรก</p>
+    <p>vector ต้นทุน $c$ ใส่ค่าธรรมเนียม \$180 สำหรับ QQQ และ \$90 สำหรับ SPY ในสองตำแหน่งแรก</p>
     <p>ตำแหน่งที่เหลืออีกสามช่องสำหรับตัวแปร surplus และ slacks ใส่ค่าเป็นศูนย์ เพราะตัวแปรเหล่านี้ทำหน้าที่บันทึกสถานะทางคณิตศาสตร์เท่านั้น ไม่ใช่คำสั่งซื้อขายจริงในตลาด</p>
     <p>ผลคูณภายใน $c^{\mathsf T}z$ จึงคืนค่าต้นทุนการทำรายการที่เป็นตัวเงินดอลลาร์ตามเดิมอย่างแม่นยำ</p>
   </div>
@@ -407,8 +407,8 @@ c^{\mathsf T}z^*&=180(4)+90(6)=720+540=\$1{,}260
 \]</div>
   <div class="reading">
     <p>แทนค่าคำตอบ $z^*=[4,6,0,2,0]^{\mathsf T}$ ลงในสมการแถวแรก ได้ผลลัพธ์ $4.8+6.0=10.8$ ปิดยอด beta constraint พอดี จึงมี surplus เป็นศูนย์</p>
-    <p>ตัวแปร slack ชี้ว่า QQQ ใช้โควตาไป 4 เหลือว่าง 2 ล้านดอลลาร์ ขณะที่ SPY ชนเพดานเต็มที่</p>
-    <p>ต้นทุนรวมคำนวณได้ 720 บวก 540 รวมเป็น 1,260 ดอลลาร์ เท่ากับต้นทุนเดิมทุกประการ ยืนยันว่าการแปลงเป็น standard form ไม่เปลี่ยนคำตอบของปัญหา</p>
+    <p>ตัวแปร slack ชี้ว่า QQQ ใช้โควตาไป 4 เหลือว่าง \$2 ล้าน ขณะที่ SPY ชนเพดานเต็มที่</p>
+    <p>ต้นทุนรวมคำนวณได้ 720 บวก 540 รวมเป็น \$1,260 เท่ากับต้นทุนเดิมทุกประการ ยืนยันว่าการแปลงเป็น standard form ไม่เปลี่ยนคำตอบของปัญหา</p>
   </div>
 </section>
 
@@ -422,32 +422,32 @@ c^{\mathsf T}z^*&=180(4)+90(6)=720+540=\$1{,}260
 </section>
 
 <figure class="plot">
-  <h4>Figure 5.2a — Standard-form geometry</h4>
-  <img src="../figures/5.2-1.svg" alt="Figure 5.2a — Standard-form geometry" loading="lazy">
+  <h4>Figure 5.2a — รูปทรงของ LP ในรูปมาตรฐาน</h4>
+  <img src="../figures/5.2-1.svg" alt="Figure 5.2a — รูปทรงของ LP ในรูปมาตรฐาน" loading="lazy">
   <figcaption>
     <p>Standard form ไม่เปลี่ยน feasible triangle ใน $(x_Q,x_S)$ projection; slack และ surplus เพียงบันทึกระยะจาก boundaries ของ triangle เดิม</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.2b — Constraint utilisation</h4>
-  <img src="../figures/5.2-2.svg" alt="Figure 5.2b — Constraint utilisation" loading="lazy">
+  <h4>Figure 5.2b — ใช้เงื่อนไขไปแล้วเท่าไร</h4>
+  <img src="../figures/5.2-2.svg" alt="Figure 5.2b — ใช้เงื่อนไขไปแล้วเท่าไร" loading="lazy">
   <figcaption>
-    <p>Beta requirement และ SPY cap ใช้ 100% จึง binding ส่วน QQQ ใช้ 4 จาก 6 หรือ 66.7% ทำให้เหลือ slack \$2M</p>
+    <p>Beta requirement และ SPY cap ใช้ 100% จึง binding ส่วน QQQ ใช้ 4 จาก 6 หรือ 66.7% ทำให้เหลือ slack \$2 ล้าน</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.2c — Equality-row audit</h4>
-  <img src="../figures/5.2-3.svg" alt="Figure 5.2c — Equality-row audit" loading="lazy">
+  <h4>Figure 5.2c — ตรวจแถวที่เป็นสมการเท่ากัน</h4>
+  <img src="../figures/5.2-3.svg" alt="Figure 5.2c — ตรวจแถวที่เป็นสมการเท่ากัน" loading="lazy">
   <figcaption>
     <p>ทั้งสาม left-hand sides ตรงกับ right-hand sides ที่ optimum การเทียบ row ต่อ row จับ coefficient, sign และ ordering errors ก่อนเรียก solver</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 5.2d — Solver answer read back against its limits</h4>
-  <img src="../figures/5.2-4.svg" alt="Figure 5.2d — Solver answer read back against its limits" loading="lazy">
+  <h4>Figure 5.2d — อ่านคำตอบของ solver เทียบกับขีดจำกัด</h4>
+  <img src="../figures/5.2-4.svg" alt="Figure 5.2d — อ่านคำตอบของ solver เทียบกับขีดจำกัด" loading="lazy">
   <figcaption>
     <p>คำตอบ 25/15/25/25/10 ของ solver อ่านกลับทีละสินทรัพย์เทียบกับกติกาของ prospectus เพดานรายตัว 0.25 ชนพอดีสามตัว และสินทรัพย์ 1 กับ 2 รวมกันใช้เพดาน 0.40 เต็ม ตัวเลขจะเอาไปส่งคำสั่งซื้อขายได้ก็ต่อเมื่อลำดับ column กับชื่อสินทรัพย์ตรงกัน สลับ column โดยไม่สลับชื่อจะได้คำตอบที่คำนวณได้แต่ซื้อขายผิดตัว</p>
   </figcaption>
@@ -455,9 +455,9 @@ c^{\mathsf T}z^*&=180(4)+90(6)=720+540=\$1{,}260
 
 <section class="example">
   <h4>คำตอบ — slack ชี้ว่า SPY cap เต็ม</h4>
-  <p>คำตอบ: standard-form solution คือ z = [4,6,0,2,0] โดย QQQ ใช้ 4 USD million, SPY ใช้เต็ม 6, surplus ของ beta constraint เป็นศูนย์, QQQ เหลือ capacity 2 และ SPY ไม่เหลือ capacity</p>
-  <p>ตรวจเองใน 10 วินาที: สาม equality rows ต้องให้ 1.2×4 + 6 - 0 = 10.8, 4 + 2 = 6 และ 6 + 0 = 6; objective 180×4 + 90×6 ต้องได้ 1,260 USD</p>
-  <p>ใช้ตัดสินใจ: SPY cap เป็น constraint ที่กำลังบีบคำตอบ ส่วน QQQ cap ยังผ่อนได้อีก 2 USD million ข้อมูลนี้บอกทันทีว่าควรตีราคา capacity ฝั่งใดใน dual</p>
+  <p>คำตอบ: standard-form solution คือ z = [4,6,0,2,0] โดย QQQ ใช้ \$4 ล้าน, SPY ใช้เต็ม 6, surplus ของ beta constraint เป็นศูนย์, QQQ เหลือ capacity 2 และ SPY ไม่เหลือ capacity</p>
+  <p>ตรวจเองใน 10 วินาที: สาม equality rows ต้องให้ 1.2×4 + 6 - 0 = 10.8, 4 + 2 = 6 และ 6 + 0 = 6; objective 180×4 + 90×6 ต้องได้ \$1,260</p>
+  <p>ใช้ตัดสินใจ: SPY cap เป็น constraint ที่กำลังบีบคำตอบ ส่วน QQQ cap ยังผ่อนได้อีก \$2 ล้าน ข้อมูลนี้บอกทันทีว่าควรตีราคา capacity ฝั่งใดใน dual</p>
 </section>
 
 <section class="pitfall">

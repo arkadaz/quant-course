@@ -50,7 +50,7 @@
     <dt>lognormal distribution</dt>
     <dd>รูปแบบของตัวเลขบวกที่ log ของมันเป็นรูประฆัง ใช้บอกว่าราคาปลายทางภายใต้ GBM กระจายอย่างไร</dd>
     <dt>volatility drag</dt>
-    <dd>การที่ความเหวี่ยงลดอัตราโตของจุดกึ่งกลางลงครึ่งหนึ่งของ σ² ใช้อธิบายว่าทำไมสินทรัพย์ที่เหวี่ยงแรงโตช้ากว่าที่ค่าเฉลี่ยบอก</dd>
+    <dd>การที่ความผันผวนลดอัตราโตของจุดกึ่งกลางลงครึ่งหนึ่งของ σ² ใช้อธิบายว่าทำไมสินทรัพย์ที่เหวี่ยงแรงโตช้ากว่าที่ค่าเฉลี่ยบอก</dd>
     <dt>gamma</dt>
     <dd>ความโค้งของมูลค่า option ต่อราคาหุ้น ใช้วัดว่าพจน์ความโค้งของ Itô ให้กำไรหรือขาดทุนแค่ไหน (บทที่ 13)</dd>
   </dl>
@@ -172,7 +172,7 @@ dt\,dW_t&=0\\
 &=a^{2}\cdot 0+2ab\cdot 0+b^{2}\cdot dt=b^{2}\,dt\end{aligned}
 \]</div>
   <div class="reading">
-    <p>สิ่งที่รอดมามีแต่ b ซึ่งเป็นขนาดของความสุ่ม ส่วน drift หายไปหมด พจน์พิเศษที่จะโผล่มาจึงเกิดจากความเหวี่ยงล้วน ๆ ไม่เกี่ยวกับทิศทางเลย</p>
+    <p>สิ่งที่รอดมามีแต่ b ซึ่งเป็นขนาดของความสุ่ม ส่วน drift หายไปหมด พจน์พิเศษที่จะโผล่มาจึงเกิดจากความผันผวนล้วน ๆ ไม่เกี่ยวกับทิศทางเลย</p>
   </div>
 </section>
 
@@ -190,7 +190,7 @@ df&=f_t\,dt+f_x\,dX_t+\tfrac12f_{xx}(dX_t)^{2}\\
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>แทนสมการของขั้นที่ 3 และผลของขั้นที่ 6 แล้วจัดกลุ่ม วงเล็บแรกคือส่วนที่คาดได้ ก้อนหลังคือความเหวี่ยง ของใหม่คือครึ่งหนึ่งของ b² คูณความโค้ง</p>
+    <p>แทนสมการของขั้นที่ 3 และผลของขั้นที่ 6 แล้วจัดกลุ่ม วงเล็บแรกคือส่วนที่คาดได้ ก้อนหลังคือความผันผวน ของใหม่คือครึ่งหนึ่งของ b² คูณความโค้ง</p>
     <p>สามบรรทัดล่างตรวจกับขั้นที่ 1 เส้นทาง W² ได้ dt เพิ่มมาต่อหน่วยเวลา ซึ่งคือส่วนที่หายไปจาก chain rule เดิมพอดี</p>
   </div>
 </section>
@@ -239,10 +239,10 @@ d\ln S_t&=\left(0+\mu-\tfrac12\sigma^{2}\right)dt+\sigma\,dW_t\\[4pt]
 </section>
 
 <figure class="plot">
-  <h4>Figure 12.2a — Ordinary versus Itô chain rule</h4>
-  <img src="../figures/12.2-1.svg" alt="Figure 12.2a — Ordinary versus Itô chain rule" loading="lazy">
+  <h4>Figure 12.2a — chain rule ธรรมดา เทียบกับของ Itô</h4>
+  <img src="../figures/12.2-1.svg" alt="Figure 12.2a — chain rule ธรรมดา เทียบกับของ Itô" loading="lazy">
   <figcaption>
-    <p>chain rule เดิมให้ log ราคาโต 12% ต่อปี Itô ให้ 8.08% ส่วนต่าง 3.92 percentage points คือพจน์ความโค้งของ log ที่ chain rule เดิมมองไม่เห็น</p>
+    <p>chain rule เดิมให้ log ราคาโต 12% ต่อปี Itô ให้ 8.08% ส่วนต่าง 3.92 จุด คือพจน์ความโค้งของ log ที่ chain rule เดิมมองไม่เห็น</p>
   </figcaption>
 </figure>
 
@@ -291,8 +291,8 @@ S_T&=S_0\,e^{\left(\mu-\tfrac12\sigma^{2}\right)T+\sigma\sqrt T\,Z}\end{aligned}
 </section>
 
 <figure class="plot">
-  <h4>Figure 12.2b — Mean and median separate</h4>
-  <img src="../figures/12.2-2.svg" alt="Figure 12.2b — Mean and median separate" loading="lazy">
+  <h4>Figure 12.2b — mean กับ median แยกจากกัน</h4>
+  <img src="../figures/12.2-2.svg" alt="Figure 12.2b — mean กับ median แยกจากกัน" loading="lazy">
   <figcaption>
     <p>ที่ volatility 28% ค่าเฉลี่ยของราคาปลายปีอยู่ที่ \$112.75 แต่จุดกึ่งกลางอยู่ที่ \$108.42 หางขวาดันค่าเฉลี่ยขึ้นโดยไม่ได้ย้ายจุดกึ่งกลางเท่ากัน</p>
   </figcaption>
@@ -315,7 +315,7 @@ S_T&=S_0\,e^{\left(\mu-\tfrac12\sigma^{2}\right)T+\sigma\sqrt T\,Z}\end{aligned}
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 15 — volatility drag: ความเหวี่ยงกัดการโตของจุดกึ่งกลาง</h4>
+  <h4>ขั้นที่ 15 — volatility drag: ความผันผวนกัดการโตของจุดกึ่งกลาง</h4>
   <p>ตรึง drift ของราคาไว้ที่ 12% แล้วเปลี่ยน volatility อัตราโตของจุดกึ่งกลางคือ drift ลบครึ่งหนึ่งของ σ²</p>
   <div class="math">\[
 \begin{aligned}
@@ -333,8 +333,8 @@ g(\sigma)&=0.12-\tfrac12\sigma^2\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 12.2c — Volatility drag on the median exponent</h4>
-  <img src="../figures/12.2-3.svg" alt="Figure 12.2c — Volatility drag on the median exponent" loading="lazy">
+  <h4>Figure 12.2c — volatility drag กดเลขชี้กำลังของ median</h4>
+  <img src="../figures/12.2-3.svg" alt="Figure 12.2c — volatility drag กดเลขชี้กำลังของ median" loading="lazy">
   <figcaption>
     <p>เมื่อ drift ของราคาตรึงที่ 12% การเพิ่ม volatility จาก 10% เป็น 60% ลดอัตราโตของจุดกึ่งกลางจาก 11.5% จนติดลบ และผ่านศูนย์ที่ราว 49%</p>
   </figcaption>
@@ -362,7 +362,7 @@ df&=f'(x)\,dx+\tfrac12 f''(x)\,(dx)^{2}+\cdots\\
 <section class="example">
   <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
   <p>โจทย์ให้อะไรมาบ้าง: หุ้น \$100 แบบ GBM drift 12% volatility 28% ต่อปี มองไปหนึ่งปี</p>
-  <p>คำตอบ: (ก) log ราคาเดินด้วย drift 0.12 − 0.0392 = 0.0808 และความเหวี่ยง 0.28 (ข) จุดกึ่งกลาง \$108.42 ค่าเฉลี่ย \$112.75 (ค) โอกาสจบต่ำกว่า \$100 คือ 38.6% (ง) ถ้าใช้ chain rule เดิม จะทำนายจุดกึ่งกลางเท่ากับค่าเฉลี่ย สูงเกินจริง \$4.33 ต่อหุ้น</p>
+  <p>คำตอบ: (ก) log ราคาเดินด้วย drift 0.12 − 0.0392 = 0.0808 และความผันผวน 0.28 (ข) จุดกึ่งกลาง \$108.42 ค่าเฉลี่ย \$112.75 (ค) โอกาสจบต่ำกว่า \$100 คือ 38.6% (ง) ถ้าใช้ chain rule เดิม จะทำนายจุดกึ่งกลางเท่ากับค่าเฉลี่ย สูงเกินจริง \$4.33 ต่อหุ้น</p>
   <p>ตรวจเองใน 10 วินาที: 0.28² = 0.0784 ครึ่งหนึ่งคือ 0.0392 และ $e^{0.0808}$ ประมาณ 1 + 0.0808 + 0.0033 = 1.0841</p>
   <p>แปลว่าอะไร: ค่าเฉลี่ยตอบคำถามว่าเฉลี่ยทุกเส้นทางได้เท่าไร จุดกึ่งกลางตอบว่านักลงทุนทั่วไปจะเจออะไร สองคำถามนี้ต่างกันเพราะพจน์ความโค้ง</p>
 </section>
@@ -426,7 +426,7 @@ assert abs(np.median(S) / 108.42 - 1) &lt; 0.02 and abs(S.mean() / 112.75 - 1) &
 assert np.abs(np.log(S / exact)).mean() &lt; 0.01</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดตรวจสี่ก้าวด้วยมือว่า chain rule เดิมทำหาย 1 หน่วย คิด median 108.42 mean 112.75 และโอกาสขาดทุน 38.6% แล้วเดินสมการ GBM ทีละก้าวเล็ก ๆ ได้ราคาตรงกับสูตรที่ได้จาก Itô's lemma</p>
+    <p>โค้ดตรวจสี่ก้าวด้วยมือว่า chain rule เดิมทำหาย 1 หน่วย คิด median 108.42 mean 112.75 และโอกาสขาดทุน 38.6% แล้วเดินสมการ GBM ทีละขั้นเล็ก ๆ ได้ราคาตรงกับสูตรที่ได้จาก Itô's lemma</p>
   </div>
 </section>
 

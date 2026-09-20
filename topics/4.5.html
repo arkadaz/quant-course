@@ -23,7 +23,7 @@
 </header>
 
 <div class="hook">
-  <p>ตลาดมีสองสภาวะ ขายสินทรัพย์สามตัวที่จ่าย (1, 2), (2, 4) และ (3, 6) ดอลลาร์ในสภาวะที่ 1 และ 2 คุณมีภาระจ่าย 10 ดอลลาร์ไม่ว่าสภาวะไหน hedge ได้พอดีไหม?</p>
+  <p>ตลาดมีสองสภาวะ ขายสินทรัพย์สามตัวที่จ่าย (1, 2), (2, 4) และ (3, 6) ดอลลาร์ในสภาวะที่ 1 และ 2 คุณมีภาระจ่าย \$10 ไม่ว่าสภาวะไหน hedge ได้พอดีไหม?</p>
   <p>เฉลย: ไม่ได้ ทั้งสามตัวคือทิศ (1, 2) เดียวกันแค่คนละขนาด payoff ที่สร้างได้จึงเป็นเส้นเดียว ภาระ (10, 10) ต้องการ λ = 10 กับ λ = 5 พร้อมกัน ถ้าตลาดเพิ่มสินทรัพย์ที่จ่าย (3, 1) ให้ซื้อตัวแรก 4 หน่วยกับตัวใหม่ 2 หน่วย ได้ 10 พอดีทั้งสองสภาวะ</p>
   <p>rank บอกจำนวนทิศทางที่ matrix ส่งต่อได้จริง range คือผลลัพธ์ทั้งหมดที่สร้างได้ invertibility คือการย้อนหา input ได้หนึ่งเดียว งาน quant ใช้ตรวจว่าตลาดให้ hedge อะไรได้บ้าง และตรวจ covariance ก่อนกลับด้าน</p>
 </div>
@@ -238,7 +238,7 @@ w+z&\ne w,\qquad A(w+z)=Aw\\
 
 <section class="formula">
   <h4>ขั้นที่ 7 — null space ทำให้ solution ไม่ unique</h4>
-  <p>ถ้าทำข้อมูลหาย จะมีทิศทางที่ถูกบีบเป็นศูนย์ ห้าบรรทัดนี้แสดงผลที่ตามมาทีละก้าว ในงานจริงนี่คือสาเหตุที่ optimizer คืนน้ำหนักพอร์ตคนละชุดทุกครั้งที่รัน ทั้งที่ข้อมูลเดิม เพราะ covariance ที่ป้อนเข้าไปมีทิศที่ซ้ำกัน</p>
+  <p>ถ้าทำข้อมูลหาย จะมีทิศทางที่ถูกบีบเป็นศูนย์ ห้าบรรทัดนี้แสดงผลที่ตามมาทีละขั้น ในงานจริงนี่คือสาเหตุที่ optimizer คืนน้ำหนักพอร์ตคนละชุดทุกครั้งที่รัน ทั้งที่ข้อมูลเดิม เพราะ covariance ที่ป้อนเข้าไปมีทิศที่ซ้ำกัน</p>
   <div class="math">\[
 \begin{aligned}Az&=0,\qquad z\ne0\\
 A(w+cz)&=Aw+A(cz)\\
@@ -288,7 +288,7 @@ A^{-1}&=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\
     <p>ตัวกลับไม่ได้มาจากการท่องจำ มันคือคำตอบของคำถามว่า ต้องคูณอะไรถึงจะได้หลักแรกของ identity กลับมา จึงตั้งเป็นระบบสมการสองบรรทัดแล้วแก้ตรง ๆ</p>
     <p>วิธีแก้คือกำจัดตัวแปรทีละตัว คูณไขว้แล้วลบกัน ตัวที่ไม่ต้องการหายไป และสิ่งที่โผล่ขึ้นมาเป็นตัวคูณหน้าตัวแปรทั้งสองรอบคือ $ad-bc$ ก้อนเดียวกัน</p>
     <p>ก้อนนั้นคือ determinant และตรงนี้เองที่เห็นว่าทำไมมันสำคัญ ถ้ามันเป็นศูนย์ สมการกลายเป็น $0=d$ ซึ่งแก้ไม่ได้ ตรงกับขั้นที่ 6 ที่บอกว่า rank ไม่เต็มแล้วกลับไม่ได้ ไม่ใช่กฎสองข้อ แต่เป็นข้อเดียวกันมองคนละมุม</p>
-    <p>ทำซ้ำกับหลักที่สองของ identity จะได้อีกสองช่องที่เหลือ ประกอบกันเป็นรูปที่จำง่าย สลับแนวทแยง กลับเครื่องหมายนอกแนวทแยง แล้วส่วนด้วย determinant</p>
+    <p>ทำซ้ำกับหลักที่สองของ identity จะได้อีกสองช่องที่เหลือ ประกอบกันเป็นรูปที่จำง่าย สลับแนวทแยง กลับเครื่องหมายนอกแนวทแยง แล้วหารด้วย determinant</p>
   </div>
 </section>
 
@@ -533,32 +533,32 @@ x=np.linalg.solve(St,np.ones(2)); assert np.allclose(x/x.sum(),[-1/3,4/3])</code
 </section>
 
 <figure class="plot">
-  <h4>Figure 4.5a — rank deficiency as collinear columns</h4>
-  <img src="../figures/4.5-1.svg" alt="Figure 4.5a — rank deficiency as collinear columns" loading="lazy">
+  <h4>Figure 4.5a — rank ไม่เต็มคือคอลัมน์ที่ซ้อนทับกัน</h4>
+  <img src="../figures/4.5-1.svg" alt="Figure 4.5a — rank ไม่เต็มคือคอลัมน์ที่ซ้อนทับกัน" loading="lazy">
   <figcaption>
     <p>column สองเป็นสองเท่าของ column หนึ่งทุก observation จุดทั้งหมดจึงอยู่บนเส้นเดียว แม้ matrix มีสอง columns แต่มี independent direction เพียงหนึ่ง</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.5b — range and null direction</h4>
-  <img src="../figures/4.5-2.svg" alt="Figure 4.5b — range and null direction" loading="lazy">
+  <h4>Figure 4.5b — ทิศที่สร้างได้ กับทิศที่หายไป</h4>
+  <img src="../figures/4.5-2.svg" alt="Figure 4.5b — ทิศที่สร้างได้ กับทิศที่หายไป" loading="lazy">
   <figcaption>
     <p>สำหรับ symmetric map $A=\begin{bmatrix}1&amp;1\\1&amp;1\end{bmatrix}$, output ไปได้เพียงตาม range $\operatorname{span}\{[1,1]^\top\}$ ส่วน input direction $[1,-1]^\top$ อยู่ใน null space และถูก map เป็นศูนย์ ภาพซ้อน input space กับ output space ซึ่งต่างหน้าที่กันไว้ในพิกัดเดียวเพื่อให้เห็นทิศตั้งฉาก; นี่คือเหตุผลที่ output ย้อนหา input เดียวไม่ได้</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.5c — singular covariance ellipse</h4>
-  <img src="../figures/4.5-3.svg" alt="Figure 4.5c — singular covariance ellipse" loading="lazy">
+  <h4>Figure 4.5c — วงรี covariance ที่แบนจนไม่มีความหนา</h4>
+  <img src="../figures/4.5-3.svg" alt="Figure 4.5c — วงรี covariance ที่แบนจนไม่มีความหนา" loading="lazy">
   <figcaption>
     <p>เมื่อ returns สองตัว correlated เท่ากับหนึ่ง risk ellipse ยุบเหลือเส้น $r_1=r_2$ และมีความกว้างศูนย์ในทิศตั้งฉาก จึงไม่มี inverse ให้คำนวณ</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.5d — rank versus usable information</h4>
-  <img src="../figures/4.5-4.svg" alt="Figure 4.5d — rank versus usable information" loading="lazy">
+  <h4>Figure 4.5d — rank บอกว่าข้อมูลที่ใช้ได้จริงมีกี่ทิศ</h4>
+  <img src="../figures/4.5-4.svg" alt="Figure 4.5d — rank บอกว่าข้อมูลที่ใช้ได้จริงมีกี่ทิศ" loading="lazy">
   <figcaption>
     <p>เพิ่ม asset ที่เป็นสำเนาทำให้จำนวน columns โตจากหนึ่งเป็นสาม แต่ rank ค้างที่หนึ่ง ข้อมูลมากช่องขึ้นจึงไม่ได้แปลว่ามี information direction มากขึ้น</p>
   </figcaption>

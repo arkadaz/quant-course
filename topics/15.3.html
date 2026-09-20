@@ -87,7 +87,7 @@
 
 <section class="formula">
   <h4>ขั้นที่ 1 — นิยามของสมการหลายแรงผลัก</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของแบบจำลองที่เราเลือกเขียน ไม่ใช่ผลที่พิสูจน์ แทนที่จะอธิบายผลตอบแทนด้วยตลาดอย่างเดียวแบบหัวข้อ 15.2 ขั้นนี้เปิดให้มีหลายแรงพร้อมกัน โดยแต่ละแรงมีน้ำหนักของตัวเอง การเลือกว่าจะใส่แรงอะไรบ้างเป็นการตัดสินใจ ไม่ใช่ข้อเท็จจริง และการใส่แรงเพิ่มย่อมทำให้อธิบายข้อมูลเก่าได้ดีขึ้นเสมอ ซึ่งเป็นกับดักที่หัวข้อ 15.5 เตือนไว้</p>
+  <p>บรรทัดนี้เป็น นิยาม ของแบบจำลองที่เราเลือกเขียน ไม่ใช่ผลที่พิสูจน์ แทนที่จะอธิบายผลตอบแทนด้วยตลาดอย่างเดียวแบบหัวข้อ 15.2 ขั้นนี้เปิดให้มีหลายแรงพร้อมกัน โดยแต่ละแรงมีน้ำหนักของตัวเอง การเลือกว่าจะใส่แรงอะไรบ้างเป็นการตัดสินใจ ไม่ใช่ข้อเท็จจริง และการใส่แรงเพิ่มย่อมทำให้อธิบายข้อมูลย้อนหลังได้ดีขึ้นเสมอ ซึ่งเป็นกับดักที่หัวข้อ 15.5 เตือนไว้</p>
   <div class="math">\[
 r_{i,t}=a_i+b_{i,M}f_{M,t}+b_{i,S}f_{S,t}+b_{i,V}f_{V,t}+b_{i,Mo}f_{Mo,t}+u_{i,t}
 \]</div>
@@ -298,24 +298,24 @@ w^{\mathsf T}\Sigma w&=w^{\mathsf T}B\Sigma_fB^{\mathsf T}w+w^{\mathsf T}Dw\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 15.3a — factor loadings heatmap</h4>
-  <img src="../figures/15.3-1.svg" alt="Figure 15.3a — factor loadings heatmap" loading="lazy">
+  <h4>Figure 15.3a — แผนที่ความร้อนของ factor loading</h4>
+  <img src="../figures/15.3-1.svg" alt="Figure 15.3a — แผนที่ความร้อนของ factor loading" loading="lazy">
   <figcaption>
     <p>heatmap เป็น exposures สมมติของสาม portfolios เพื่อสอนการอ่านเครื่องหมายและขนาด สีไม่ใช่ผลการประมาณจากตลาดสหรัฐฯ และไม่ควรใช้แทน regression report</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 15.3b — contribution ledger</h4>
-  <img src="../figures/15.3-2.svg" alt="Figure 15.3b — contribution ledger" loading="lazy">
+  <h4>Figure 15.3b — บัญชีส่วนร่วมของแต่ละ factor</h4>
+  <img src="../figures/15.3-2.svg" alt="Figure 15.3b — บัญชีส่วนร่วมของแต่ละ factor" loading="lazy">
   <figcaption>
-    <p>สำหรับ Fund A ตัวอย่าง contributions รวม 1.08 percentage points ต่อเดือน แท่งแสดง arithmetic attribution ภายใต้ premiums ที่สมมติ ไม่ได้แสดง realized cumulative performance</p>
+    <p>สำหรับ Fund A ตัวอย่าง contributions รวม 1.08 จุด ต่อเดือน แท่งแสดง arithmetic attribution ภายใต้ premiums ที่สมมติ ไม่ได้แสดง realized cumulative performance</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 15.3c — collinearity warning</h4>
-  <img src="../figures/15.3-3.svg" alt="Figure 15.3c — collinearity warning" loading="lazy">
+  <h4>Figure 15.3c — สัญญาณเตือนว่า factor ซ้ำกัน</h4>
+  <img src="../figures/15.3-3.svg" alt="Figure 15.3c — สัญญาณเตือนว่า factor ซ้ำกัน" loading="lazy">
   <figcaption>
     <p>เมื่อ factors สองตัวมี correlation ใกล้หนึ่ง model อาจ fit รวมได้ แต่แยก loading รายตัวไม่เสถียร เส้นนี้เป็น synthetic correlation sweep เพื่อชี้ uncertainty risk</p>
   </figcaption>
@@ -341,7 +341,7 @@ w^{\mathsf T}\Sigma w&=w^{\mathsf T}B\Sigma_fB^{\mathsf T}w+w^{\mathsf T}Dw\\
   <p>1. วิธีตรง 500 × 501 ÷ 2 = 125,250 ตัวเลข จากข้อมูล 125,000 จุด ได้ 0.998 จุดต่อตัว และ rank ไม่เกิน 249 จึงผกผันไม่ได้</p>
   <p>2. แบบจำลองห้าปัจจัย 2,500 + 15 + 500 = 3,015 ตัว ได้ 41.5 จุดต่อตัว ลดลง 97.6%</p>
   <p>3. ตัวอย่างสองหุ้นได้ covariance 3.69, 0.96, 4.64 correlation 0.232 ที่ไม่มีใครวัดตรง ๆ determinant 16.20 เป็นบวก</p>
-  <p>4. กองทุนที่มี loadings 1.0, 0.3, 0.4, 0.2 ได้ contribution 0.60 + 0.06 + 0.12 + 0.08 = 0.86 percentage points บวก intercept 0.10% เป็น 0.96% ต่อเดือน หรือ 96,000 USD บน 10 ล้าน USD</p>
+  <p>4. กองทุนที่มี loadings 1.0, 0.3, 0.4, 0.2 ได้ contribution 0.60 + 0.06 + 0.12 + 0.08 = 0.86 จุด บวก intercept 0.10% เป็น 0.96% ต่อเดือน หรือ \$96,000 บน \$10 ล้าน</p>
   <p>ตรวจเองใน 10 วินาที: 500 × 501 ÷ 2 = 125,250 และ 500 × 5 + 15 + 500 = 3,015</p>
   <p>แปลว่าอะไร: แบบจำลองปัจจัยไม่ได้จริงกว่า แต่ข้อมูลที่มีไม่พอประมาณทุกคู่ของหุ้น มันแลกความยืดหยุ่นกับ matrix ที่ใช้งานได้ และทำให้แยกฝีมือของผู้จัดการออกจาก exposure ที่ซื้อได้ถูก ๆ</p>
 </section>
@@ -371,7 +371,7 @@ R=np.random.default_rng(0).standard_normal((250,500))
 assert np.linalg.matrix_rank(np.cov(R,rowvar=False)) == 249             # 251 zero eigenvalues</code></pre>
   </details>
   <div class="note">
-    <p>โค้ดตรวจ contributions ราย factor, expected excess return 0.96%, ผลเงิน 96,000 USD และ covariance matrix สองหุ้น; การตรวจแบบนี้กันทั้งการบวกรวมผิดและการใส่ residual variance นอก diagonal</p>
+    <p>โค้ดตรวจ contributions ราย factor, expected excess return 0.96%, ผลเงิน \$96,000 และ covariance matrix สองหุ้น; การตรวจแบบนี้กันทั้งการบวกรวมผิดและการใส่ residual variance นอก diagonal</p>
   </div>
 </section>
 

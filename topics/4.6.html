@@ -94,7 +94,7 @@
 
 <section class="prose">
   <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>ตอนนี้ให้มอง $\Sigma$ เป็น symmetric matrix ที่สรุปการแกว่งของข้อมูลสองชุดก่อน ความหมายและวิธีสร้าง covariance matrix จาก returns จะเรียนเต็มในหัวข้อ 6.7</p>
+  <p>ตอนนี้ให้มอง $\Sigma$ เป็น symmetric matrix ที่สรุปความผันผวนของข้อมูลสองชุดก่อน ความหมายและวิธีสร้าง covariance matrix จาก returns จะเรียนเต็มในหัวข้อ 6.7</p>
   <p>โจทย์ให้อะไรมาบ้าง: $r_{SPX},r_{QQQ}$ เป็น daily returns แบบ decimal และ matrix นี้มีหน่วย decimal-return squared ต่อวัน เราต้องหาแกนที่ matrix ไม่เปลี่ยนทิศ และตรวจว่าทุก direction ให้ค่าความเสี่ยงเป็นบวก</p>
 </section>
 
@@ -250,7 +250,7 @@ x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(
 \lambda_2&=\frac{0.000303446}{10^{-8}}=30{,}344.55\;\mathrm{bp}^2\end{aligned}
 \]</div>
   <div class="reading">
-    <p>ส่วนด้วย $10^{-8}$ คือการเลื่อนจุดทศนิยมไปแปดตำแหน่ง เช็กได้ว่าสองตัวรวมกันได้ 130,000 ซึ่งตรงกับ trace 0.0013 ที่แปลงหน่วยแล้ว</p>
+    <p>หารด้วย $10^{-8}$ คือการเลื่อนจุดทศนิยมไปแปดตำแหน่ง เช็กได้ว่าสองตัวรวมกันได้ 130,000 ซึ่งตรงกับ trace 0.0013 ที่แปลงหน่วยแล้ว</p>
   </div>
 </section>
 
@@ -269,9 +269,9 @@ x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(
 \]</div>
   <div class="reading">
     <p>บรรทัดแรกคือสมการ $\Sigma v=\lambda_1 v$ ย้ายข้างเป็น $(\Sigma-\lambda_1 I)v=0$ แล้วอ่านแถวบน: มันบอกอัตราส่วน $v_2/v_1$ เท่านั้น เพราะ eigenvector ยาวเท่าไรก็ได้ ทิศคือสิ่งที่นับ</p>
-    <p>ทิศ $(1,\,2.486)$ เอียงไปทาง QQQ มากกว่า SPX แปลว่าความเสี่ยงก้อนใหญ่สุดของคู่นี้คือ ‘ทั้งคู่ขยับทางเดียวกัน โดย QQQ ขยับแรงกว่า 2.5 เท่า’</p>
+    <p>ทิศ $(1,\,2.486)$ เอียงไปทาง QQQ มากกว่า SPX แปลว่าความเสี่ยงก้อนใหญ่สุดของคู่นี้คือ “ทั้งคู่ขยับทางเดียวกัน โดย QQQ ขยับแรงกว่า 2.5 เท่า”</p>
     <p>บรรทัดสุดท้ายคือการตรวจแบบแผ่นยาง: คูณตารางเข้าไป ได้ลูกศรทิศเดิมที่ยาวขึ้น $\lambda_1$ เท่า ไม่หมุนเลย</p>
-    <p>การทำให้ยาวหนึ่งหน่วย: ความยาวของ $(1,2.486)$ คือ $\sqrt{1^2+2.486^2}\approx2.6796$ หารทั้งสองช่องด้วยความยาวเดียวกัน จึงได้ประมาณ $(0.3733,0.9277)$ ทิศไม่เปลี่ยนเพราะส่วนด้วยค่าบวกเดียวกัน</p>
+    <p>การทำให้ยาวหนึ่งหน่วย: ความยาวของ $(1,2.486)$ คือ $\sqrt{1^2+2.486^2}\approx2.6796$ หารทั้งสองช่องด้วยความยาวเดียวกัน จึงได้ประมาณ $(0.3733,0.9277)$ ทิศไม่เปลี่ยนเพราะหารด้วยค่าบวกเดียวกัน</p>
   </div>
 </section>
 
@@ -515,37 +515,37 @@ assert np.linalg.eigvalsh(bad).min()&lt;0</code></pre>
   <p>ในการจัดพอร์ตตามแนวคิด Markowitz เป้าหมายคือการหาจุดต่ำสุดของ objective function กำลังสองอย่าง $\frac{1}{2}x^{\mathsf{T}}\Sigma x - \frac{1}{\gamma}\mu^{\mathsf{T}}x$ ภายใต้เงื่อนไขงบประมาณ</p>
   <p>ในวิชา optimization เงื่อนไขที่รับประกันว่าจุด stationary ($\nabla f = 0$) จะเป็นจุดต่ำสุดระดับ global อย่างแท้จริง คือ Hessian matrix $\nabla^2 f(x) = \Sigma$ จะต้องเป็น positive definite</p>
   <p>เมื่อ covariance matrix เป็น positive definite ผิวโค้งของความเสี่ยงจะเป็นรูปชามหงาย (strictly convex) ที่มีก้นชามเพียงจุดเดียว ไม่ว่า algorithm จะเริ่มค้นหาจากตรงไหน ก็จะไหลลงสู่จุดต่ำสุดที่ถูกต้องเสมอ</p>
-  <p>แต่หาก covariance matrix ที่ประมาณมาจากข้อมูลในอดีตมีปัญหา เช่น มีข้อมูลขาดหายจนเกิด eigenvalue ติดลบ ผิวโค้งจะบิดกลายเป็นรูปอานม้า (saddle) ทันที</p>
+  <p>แต่หาก covariance matrix ที่ประมาณมาจากข้อมูลย้อนหลังมีปัญหา เช่น มีข้อมูลขาดหายจนเกิด eigenvalue ติดลบ ผิวโค้งจะบิดกลายเป็นรูปอานม้า (saddle) ทันที</p>
   <p>ในทิศทางของ eigenvector ที่มี eigenvalue ติดลบ การเพิ่มขนาดน้ำหนักจะทำให้พจน์ความเสี่ยงดิ่งลงสู่ลบอนันต์ ตัว optimizer จึงมองเห็นเป็นโอกาสที่ไร้ความเสี่ยง และเทน้ำหนัก long-short แบบสุดขั้วจนพอร์ตระเบิด นี่คือเหตุผลที่การตรวจ eigenvalues จึงเป็นขั้นตอนแรกก่อนรัน model เสมอ</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 4.6a — covariance eigenvectors on a scatter</h4>
-  <img src="../figures/4.6-1.svg" alt="Figure 4.6a — covariance eigenvectors on a scatter" loading="lazy">
+  <h4>Figure 4.6a — eigenvector ของ covariance บนกราฟกระจาย</h4>
+  <img src="../figures/4.6-1.svg" alt="Figure 4.6a — eigenvector ของ covariance บนกราฟกระจาย" loading="lazy">
   <figcaption>
     <p>เส้นสองเส้นคือ eigenvector axes ของ return cloud; แกนยาวตรงกับ eigenvalue 0.000996554 และชี้ risk direction ที่มี variance มากกว่าสำหรับ unit-norm portfolio</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.6b — covariance ellipse and axes</h4>
-  <img src="../figures/4.6-2.svg" alt="Figure 4.6b — covariance ellipse and axes" loading="lazy">
+  <h4>Figure 4.6b — วงรี covariance กับแกนของมัน</h4>
+  <img src="../figures/4.6-2.svg" alt="Figure 4.6b — วงรี covariance กับแกนของมัน" loading="lazy">
   <figcaption>
     <p>เมื่อหมุนพิกัดไปตาม eigenvectors covariance กลายเป็น diagonal และครึ่งแกนของ ellipse เท่ากับรากที่สองของ eigenvalues; ยกความยาวกำลังสองก็กลับมาเป็น variance พอดี</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.6c — eigenvalue risk budget</h4>
-  <img src="../figures/4.6-3.svg" alt="Figure 4.6c — eigenvalue risk budget" loading="lazy">
+  <h4>Figure 4.6c — งบความเสี่ยงที่แบ่งตาม eigenvalue</h4>
+  <img src="../figures/4.6-3.svg" alt="Figure 4.6c — งบความเสี่ยงที่แบ่งตาม eigenvalue" loading="lazy">
   <figcaption>
     <p>eigenvalue ใหญ่คิดเป็น 76.7% ของผลรวมสอง eigenvalues หรือ trace ของ covariance; แท่งใช้หน่วย basis-point-squared ที่แปลงด้วย factor $10^8$ อย่างถูกต้อง</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 4.6d — positive quadratic risk</h4>
-  <img src="../figures/4.6-4.svg" alt="Figure 4.6d — positive quadratic risk" loading="lazy">
+  <h4>Figure 4.6d — ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ</h4>
+  <img src="../figures/4.6-4.svg" alt="Figure 4.6d — ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ" loading="lazy">
   <figcaption>
     <p>เมื่อกวาด unit vector ครบรอบ quadratic risk อยู่ระหว่าง 30,344.55 กับ 99,655.45 basis-point-squared ซึ่งตรงกับ eigenvalues เล็กสุดและใหญ่สุด และไม่เคยแตะศูนย์</p>
   </figcaption>
@@ -560,7 +560,7 @@ assert np.linalg.eigvalsh(bad).min()&lt;0</code></pre>
 
 <section class="pitfall">
   <h4>กับดัก: eigenvalue ติดลบแล้วฝืน optimize</h4>
-  <p>sample covariance ที่คำนวณจาก complete data อย่างสอดคล้องต้องเป็น positive semidefinite ดังนั้น eigenvalue ติดลบไม่ใช่ ‘risk ติดลบ’ และไม่ควรโทษ sampling noise อย่างเดียว สาเหตุที่ต้องตรวจคือ pairwise missing-data estimates ที่ใช้คนละ sample, rounding หรือการปรับ matrix, numerical error, และ matrix ที่ไม่ symmetric ให้หยุด pipeline ตรวจต้นทางและใช้ repair method ที่ได้รับอนุมัติ</p>
+  <p>sample covariance ที่คำนวณจาก complete data อย่างสอดคล้องต้องเป็น positive semidefinite ดังนั้น eigenvalue ติดลบไม่ใช่ “risk ติดลบ” และไม่ควรโทษ sampling noise อย่างเดียว สาเหตุที่ต้องตรวจคือ pairwise missing-data estimates ที่ใช้คนละ sample, rounding หรือการปรับ matrix, numerical error, และ matrix ที่ไม่ symmetric ให้หยุด pipeline ตรวจต้นทางและใช้ repair method ที่ได้รับอนุมัติ</p>
 </section>
 
 <section class="table">
@@ -583,7 +583,7 @@ assert np.linalg.eigvalsh(bad).min()&lt;0</code></pre>
   <ul>
     <li>eigenvector คือ risk axis และ eigenvalue คือ scale ของ variance ตาม axis</li>
     <li>quadratic form $x^{\mathsf T}\Sigma x$ คือ portfolio variance</li>
-    <li>positive definite เทียบเท่ากับ positive quadratic risk และ positive eigenvalues</li>
+    <li>positive definite เทียบเท่ากับ ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ และ positive eigenvalues</li>
     <li>scatter พร้อม eigenvectors ทำให้ covariance geometry อ่านได้ทันที</li>
     <li>หุ้นแบงก์สามตัว σ 25% ρ 0.7 มี eigenvalue 0.150 / 0.01875 / 0.01875 คือ 80% / 10% / 10% ของความเสี่ยง ตรวจด้วย trace 0.1875 และ det; ทิศ long/short เสี่ยง 13.69% เทียบ 38.73% ของทิศซื้อเท่ากัน</li>
     <li>positive definite ตรวจได้สองทาง eigenvalue บวกทุกตัว หรือ minors 1, 0.51, 0.216 บวกทุกตัว และตารางแบบนี้พังเมื่อ ρ ออกนอก (−0.5, 1)</li>

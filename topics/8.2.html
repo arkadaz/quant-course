@@ -193,7 +193,7 @@ d=\begin{bmatrix}0.01\\
 0\end{bmatrix},\qquad \Delta q\approx \nabla q^{\mathsf{T}}d=0.0528(0.01)=0.000528
 \]</div>
   <div class="reading">
-    <p>$d$ เพิ่ม SPY 1 percentage point โดยยังไม่ลดสินทรัพย์อื่น; dot product กับ gradient ทำนายว่า annual variance เพิ่ม 0.000528</p>
+    <p>$d$ เพิ่ม SPY 1 จุด โดยยังไม่ลดสินทรัพย์อื่น; dot product กับ gradient ทำนายว่า annual variance เพิ่ม 0.000528</p>
   </div>
 </section>
 
@@ -355,32 +355,32 @@ d&=(-\delta,\ +\delta)\\
 </section>
 
 <figure class="plot">
-  <h4>Figure 8.2a — Gradient field on risk contours</h4>
-  <img src="../figures/8.2-1.svg" alt="Figure 8.2a — Gradient field on risk contours" loading="lazy">
+  <h4>Figure 8.2a — สนาม gradient บนเส้นระดับความเสี่ยง</h4>
+  <img src="../figures/8.2-1.svg" alt="Figure 8.2a — สนาม gradient บนเส้นระดับความเสี่ยง" loading="lazy">
   <figcaption>
     <p>ลูกศร gradient ตั้งฉากกับเส้นชั้นและชี้ขึ้น risk เร็วที่สุด; ทิศลงชันที่สุดจึงเป็นด้านตรงข้ามของลูกศร</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.2b — Marginal variance at 60/40</h4>
-  <img src="../figures/8.2-2.svg" alt="Figure 8.2b — Marginal variance at 60/40" loading="lazy">
+  <h4>Figure 8.2b — variance ส่วนเพิ่มที่น้ำหนัก 60/40</h4>
+  <img src="../figures/8.2-2.svg" alt="Figure 8.2b — variance ส่วนเพิ่มที่น้ำหนัก 60/40" loading="lazy">
   <figcaption>
     <p>SPY มี marginal annual variance 0.0528 เทียบกับ AGG 0.0152 จึงแพงกว่าราว 3.47 เท่า ณ พอร์ตนี้—ticker ไม่ได้เปลี่ยน แต่ใบเสร็จ risk เปลี่ยนตามของในตะกร้า</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.2c — Linear prediction error</h4>
-  <img src="../figures/8.2-3.svg" alt="Figure 8.2c — Linear prediction error" loading="lazy">
+  <h4>Figure 8.2c — ความคลาดของการประมาณเชิงเส้น</h4>
+  <img src="../figures/8.2-3.svg" alt="Figure 8.2c — ความคลาดของการประมาณเชิงเส้น" loading="lazy">
   <figcaption>
-    <p>สำหรับ trade SPY ตั้งแต่ศูนย์ถึง 5 percentage points เส้นสัมผัสเริ่มคลาดจากค่าจริงตาม curvature; trade ยิ่งใหญ่ยิ่งต้องคำนวณ quadratic term เต็ม</p>
+    <p>สำหรับ trade SPY ตั้งแต่ศูนย์ถึง 5 จุด เส้นสัมผัสเริ่มคลาดจากค่าจริงตาม curvature; trade ยิ่งใหญ่ยิ่งต้องคำนวณ quadratic term เต็ม</p>
   </figcaption>
 </figure>
 
 <figure class="plot">
-  <h4>Figure 8.2d — Budget line finds a useful optimum</h4>
-  <img src="../figures/8.2-4.svg" alt="Figure 8.2d — Budget line finds a useful optimum" loading="lazy">
+  <h4>Figure 8.2d — เส้นงบประมาณพาไปถึงจุดที่ดีที่สุดที่ใช้ได้จริง</h4>
+  <img src="../figures/8.2-4.svg" alt="Figure 8.2d — เส้นงบประมาณพาไปถึงจุดที่ดีที่สุดที่ใช้ได้จริง" loading="lazy">
   <figcaption>
     <p>คำตอบไร้ constraint อยู่ที่ไม่ถืออะไร ส่วนบนเส้นน้ำหนักรวมหนึ่ง จุดต่ำสุดย้ายมาเป็น SPY 10.53% และ AGG 89.47%</p>
   </figcaption>
@@ -419,7 +419,7 @@ assert abs(-0.01*(g[0]-g[1])+0.000376)&lt;1e-12</code></pre>
 
 <section class="pitfall">
   <h4>กับดัก: เอา derivative ของ variance ไปเรียกเป็น USD risk</h4>
-  <p>gradient มีหน่วย variance ต่อน้ำหนัก ไม่ใช่เงินและไม่ใช่ volatility หากต้องการ sensitivity ของ volatility ต้องส่วนด้วย $2\sigma_p$ ก่อน แล้วจึงคูณ notional ตามนิยาม risk report</p>
+  <p>gradient มีหน่วย variance ต่อน้ำหนัก ไม่ใช่เงินและไม่ใช่ volatility หากต้องการ sensitivity ของ volatility ต้องหารด้วย $2\sigma_p$ ก่อน แล้วจึงคูณ notional ตามนิยาม risk report</p>
   <p>ห้ามเอา 0.0528 ไปคูณมูลค่าพอร์ตแล้วเรียกว่าความเสี่ยงเป็นเงิน ต้องแปลงเป็น 0.19213 ตามขั้นที่ 9 ก่อน อีกจุดที่พลาดบ่อยคือลืมเลข 2 ถ้ารายงาน Vx เฉย ๆ ตัวเลขจะเล็กไปครึ่งหนึ่งทุกตัว แต่อัตราส่วนระหว่างสินทรัพย์ยังถูก การจัดอันดับจึงยังดูสมเหตุสมผล ความผิดพลาดนี้จึงรอดสายตาไปได้นาน</p>
 </section>
 
