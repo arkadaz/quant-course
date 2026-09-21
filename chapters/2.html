@@ -15,16 +15,81 @@
 </nav>
 <header class="chapter-landing">
   <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 2</h1>
+  <h1>บทที่ 2 — ใช้ข้อมูลที่รู้แล้ว แยกโจทย์สุ่มให้คิดได้ทีละชั้น</h1>
   <p>Conditional Expectation and Conditional Variance · 4 หัวข้อ</p>
-  <p class="chapter-sequence">ตอบคำถามว่าถ้ารู้อย่างหนึ่งแล้วอีกอย่างจะเป็นเท่าไร และแยกความผันผวนออกเป็นส่วนที่อธิบายได้กับส่วนที่เหลือ</p>
+  <p class="chapter-sequence">เริ่มจากค่าเฉลี่ยเมื่อรู้สภาวะ แยกความผันผวนสองส่วน แล้วนำวิธีเดียวกันไปใช้กับจำนวนรายการสุ่มและการแบ่งกระแส Poisson</p>
 </header>
+<article class="chapter-guide">
+<section class="hook">
+<h2>คำถามหลักของบท: ก่อนคำนวณ เรารู้อะไรแล้วบ้าง?</h2>
+<p>ค่าเฉลี่ยกำไรของพอร์ตในสภาวะที่เกิดบ่อยอาจเป็นบวก แต่ค่าเฉลี่ยรวมยังเป็นลบ จำนวนคำสั่งอาจสุ่มจนทำให้กำไรรวมเสี่ยงกว่าที่คิด และสองกลุ่มที่รวมกันเป็นยอดเดียวกันอาจอิสระก่อนรู้ยอด แต่พึ่งพากันทันทีหลังรู้ยอด สิ่งที่เชื่อมคำถามเหล่านี้คือ <strong>conditioning</strong>: ตรึงข้อมูลบางอย่างเพื่อทำโจทย์ให้เรียบง่าย แล้วเฉลี่ยกลับโดยไม่ทิ้งความไม่แน่นอนส่วนที่เหลือ</p>
+<p>เมื่อจบบท คุณควรเลือกตัวแปรที่จะใช้แบ่งกรณีได้ อธิบายแต่ละพจน์ในสูตรด้วยคำพูดได้ และรู้ว่าคำตอบใดต้องมี independence หรือ moment จำกัด ไม่ใช่จำสูตรโดยตัดเงื่อนไขออก</p>
+</section>
+<section>
+<h2>ก่อนเริ่ม: ทบทวนอะไรบ้าง?</h2>
+<ul><li><strong>ความน่าจะเป็นแบบมีเงื่อนไข:</strong> รู้ว่า $P(A\cap B)=P(A\mid B)P(B)$ เมื่อ $P(B)\gt0$ และแบ่งกรณีให้ไม่ทับกันพร้อมน้ำหนักรวมเป็น 1</li><li><strong>ค่าเฉลี่ยและ variance:</strong> บวกค่าเฉลี่ยได้ แต่ variance ของผลรวมอาจมี covariance และ $\operatorname{Var}(Y)=E[Y^2]-(E[Y])^2$</li><li><strong>Binomial และ Poisson:</strong> Binomial นับความสำเร็จจากจำนวนครั้งที่กำหนด ส่วน Poisson นับเหตุการณ์ในช่วงเวลา โดยพารามิเตอร์จำนวนคืออัตราคูณระยะเวลา</li><li><strong>หน่วย:</strong> ยอดกำไรขาดทุนในช่วงหนึ่งวันที่กำหนดมีหน่วย USD ค่าเฉลี่ยและ SD ก็ใช้ USD ส่วน variance ใช้ USD² ป้าย USD/day ในรูปเดิมเป็นคำบรรยายช่วงเวลาของข้อมูล ไม่ใช่การเปลี่ยนยอดกำไรให้เป็นอัตราต่อเวลา เปอร์เซ็นต์กับทศนิยมต่างกัน 100 เท่า จึงทำให้ variance ต่างกัน 10,000 เท่า</li></ul>
+<p>ถ้ายังสับสนประเด็นเหล่านี้ ให้ย้อนทบทวนหัวข้อพื้นฐานในบทที่ 1 ก่อน ไม่จำเป็นต้องรู้แคลคูลัสขั้นสูงเพื่อเริ่มตัวอย่างไม่ต่อเนื่อง ส่วนอินทิกรัลใน 2.1 และ PGF ใน 2.4 เป็นเส้นทางพิสูจน์เพิ่มเติมที่ควรกลับมาอ่านให้ครบ</p>
+</section>
+<section>
+<h2>เส้นทางอ่าน: สร้างเครื่องมือก่อน แล้วใช้กับจำนวนเหตุการณ์</h2>
+<h3>ช่วงที่หนึ่ง — รู้สภาวะแล้วคาดหวังอะไร และยังไม่รู้อะไร?</h3>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/2.1.html"><span class="toc-number">2.1</span><span class="toc-name">The Law of Iterated Expectations (Tower Property)<span class="toc-why">จากการเดาว่าพรุ่งนี้เป็นวันแบบไหน สู่ค่าเฉลี่ยกำไร–ขาดทุนที่มีเหตุผล</span></span></a></li>
-  <li><a href="../topics/2.2.html"><span class="toc-number">2.2</span><span class="toc-name">The Law of Total Variance (EVVE)<span class="toc-why">แยก variance ภายในแต่ละสภาวะ ออกจาก variance ระหว่างสภาวะตลาด</span></span></a></li>
-  <li><a href="../topics/2.3.html"><span class="toc-number">2.3</span><span class="toc-name">Random Sums and Wald's Identity<span class="toc-why">เมื่อจำนวนรายการเทรดไม่แน่นอน ยังหา expected P&amp;L รวมของวันได้อย่างไร</span></span></a></li>
-  <li><a href="../topics/2.4.html"><span class="toc-number">2.4</span><span class="toc-name">Poisson Thinning (Splitting)<span class="toc-why">สุ่มติดป้ายให้เหตุการณ์ แล้วแยกเป็นสองกลุ่มที่ยังนับโอกาสได้ง่าย</span></span></a></li>
+  <li><a href="../topics/2.1.html"><span class="toc-number">2.1</span><span class="toc-name">The Law of Iterated Expectations (Tower Property)<span class="toc-why">วันสงบ 80% ได้เฉลี่ย 100 แต่วันข่าวแรง 20% เสีย 600 ทำไมคำตอบเป็น −40 ไม่ใช่ −250? เรียนการถ่วงกลุ่ม การดึงข้อมูลที่รู้แล้วออก และพิสูจน์ทั้งผลรวมกับอินทิกรัล</span></span></a></li>
+  <li><a href="../topics/2.2.html"><span class="toc-number">2.2</span><span class="toc-name">The Law of Total Variance (EVVE)<span class="toc-why">แยก variance 461,875 เป็นภายใน 370,000 และระหว่าง 91,875 ตรวจด้วยแปดผลลัพธ์ และแยกความแม่นของค่าพยากรณ์ออกจากความเสี่ยงเงินจริง</span></span></a></li>
 </ol>
+<p><strong>จุดตรวจที่หนึ่ง:</strong> อธิบายได้หรือไม่ว่า $E[Y\mid X=x]$ เป็นตัวเลข แต่ $E[Y\mid X]$ เป็นตัวแปรสุ่ม? ถ้ารู้สภาวะแล้ว เหตุใด $Y$ ยังแกว่งได้? ก่อนเดินต่อให้ทำแบบฝึกที่ต้องหา $E[XY]$ และแบบฝึกที่ conditional means เท่ากันแต่ SD ต่างกัน</p>
+<h3>ช่วงที่สอง — ให้จำนวนเป็นเงื่อนไข แล้วเฉลี่ยกลับ</h3>
+<ol class="chapter-topics chapter-topics-full" start="3">
+  <li><a href="../topics/2.3.html"><span class="toc-number">2.3</span><span class="toc-name">Random Sums and Wald's Identity<span class="toc-why">เฉลี่ย 12 fills × กำไร 75 ให้ 900 ได้เมื่อไร? แยกความเสี่ยงของจำนวนกับกำไรต่อรายการ และดู stopping time ที่ Wald ให้ค่าเฉลี่ยถูกแต่สูตร variance ของจำนวนอิสระให้คำตอบผิด</span></span></a></li>
+  <li><a href="../topics/2.4.html"><span class="toc-number">2.4</span><span class="toc-name">Poisson Thinning (Splitting)<span class="toc-why">กระแส 20 คำสั่ง/นาที แบ่งด้วยโอกาส 0.6 เป็นอัตรา 12 และ 8 ทำไมอิสระก่อนรู้ยอดรวม แต่ไม่อิสระหลังรู้ยอด? พิสูจน์ด้วย marginal, joint pmf และ PGF</span></span></a></li>
+</ol>
+<p><strong>จุดตรวจที่สอง:</strong> ถ้า $N$ เป็นกฎหยุดตามผลที่ผ่านมา คุณยังเขียน $E[S_N\mid N=n]=n\mu$ ได้หรือไม่? ถ้ารู้ว่ากระแสแม่มี 20 เหตุการณ์ จำนวนที่ติดป้าย A ยังเป็น Poisson หรือเปลี่ยนเป็น Binomial? ตอบพร้อมเหตุผลก่อนเปิดสูตร</p>
+</section>
+<section>
+<h2>แผนที่เลือกสูตร พร้อมเงื่อนไขสำคัญ</h2>
+<div class="table-wrap"><table><thead><tr><th>โจทย์ที่กำลังถาม</th><th>เครื่องมือ</th><th>สิ่งที่ต้องตรวจ</th></tr></thead><tbody>
+<tr><td>ค่าเฉลี่ยรวมจากค่าเฉลี่ยย่อย</td><td>$E[Y]=E[E[Y\mid X]]$</td><td>$E[|Y|]\lt\infty$; ไม่ต้องให้ $X,Y$ อิสระกัน</td></tr>
+<tr><td>ความผันผวนภายในและระหว่างกลุ่ม</td><td>EVVE: $\operatorname{Var}(Y)=W+B$</td><td>$E[Y^2]\lt\infty$; บวก variance ก่อนถอดราก</td></tr>
+<tr><td>ผลรวมของจำนวนรายการสุ่ม</td><td>Condition บน $N$ แล้วใช้สองกฎแรก</td><td>สูตรมาตรฐานต้องให้จำนวนอิสระจากลำดับผลลัพธ์ และ increments อิสระเมื่อต้องการสูตร variance</td></tr>
+<tr><td>ผลรวมเมื่อหยุดตามข้อมูลอดีต</td><td>Wald ผ่านตัวบ่งชี้การไปถึงรายการถัดไป</td><td>ชุดเงื่อนไขในบทนี้: iid integrable increments, stopping time และ $E[N]\lt\infty$</td></tr>
+<tr><td>แบ่งเหตุการณ์ Poisson เป็นหลายประเภท</td><td>Binomial conditional แล้วพิสูจน์ joint</td><td>ป้ายอิสระกันและอิสระจากกระแสแม่; อัตรากับระยะเวลาต้องใช้หน่วยเดียวกัน</td></tr>
+</tbody></table></div>
+</section>
+<section class="exercise">
+<h2>โจทย์รวมบท: จากคำสั่งเข้า ไปถึงกำไรที่ต้องเตรียมรับความเสี่ยง</h2>
+<p>กำหนดแบบจำลองสมมติ: คำสั่งเข้าเป็น homogeneous Poisson process อัตรา 6 คำสั่ง/ชั่วโมง แต่ละคำสั่งได้จับคู่ด้วยโอกาสอิสระ 1/2 กำไรแต่ละ fill เป็น iid อิสระจากกระบวนการและป้าย มีค่าเฉลี่ย 40 และ SD 30 USD ให้ $N$ เป็นจำนวนคำสั่งทั้งหมด $K$ เป็นจำนวน fills และ $Q$ เป็นกำไรรวมในหนึ่งชั่วโมง</p>
+<ol>
+<li>หา $E[K]$, $\operatorname{Var}(K)$ และการแจกแจงของ $K$ แล้วเปรียบเทียบกับกรณีรู้ $N=6$
+<details><summary>เฉลยข้อ 1</summary><p>ก่อนรู้จำนวนรวม $K\sim\operatorname{Poisson}(3)$ จึงมีค่าเฉลี่ยและ variance 3 เมื่อรู้ $N=6$ จะได้ Binomial(6,1/2) มีค่าเฉลี่ย 3 เท่าเดิม แต่ variance $6(1/2)(1/2)=1.5$ เหตุผลคือเราเอาความสุ่มของจำนวนแม่ออกแล้ว</p></details></li>
+<li>หา $E[Q]$ และ $\operatorname{Var}(Q)$ โดย condition บน $K$
+<details><summary>เฉลยข้อ 2</summary><div class="math">\[
+\begin{aligned}
+E[Q\mid K]&=40K,\\
+\operatorname{Var}(Q\mid K)&=30^2K,\\
+E[Q]&=40(3)=120,\\
+\operatorname{Var}(Q)&=3(30^2)+3(40^2)\\
+&=2{,}700+4{,}800=7{,}500.
+\end{aligned}
+\]</div><p>กำไรเฉลี่ย 120 USD ต่อช่วงหนึ่งชั่วโมง และ SD $\sqrt{7{,}500}\approx86.60$ USD ไม่ใช่ $30\sqrt3$ เพราะยังมีความเสี่ยงจากจำนวน fills</p></details></li>
+<li>ตรวจคำตอบเดิมอีกทาง โดย condition บนจำนวนคำสั่งแม่ $N$ แทน $K$
+<details><summary>เฉลยข้อ 3</summary><p>คำสั่งหนึ่งให้กำไรศูนย์เมื่อไม่ได้ fill หรือกำไรสุ่ม $Z$ เมื่อได้ fill เขียน $H=IZ$ โดย $I$ เป็น Bernoulli(1/2) อิสระจาก $Z$ ดังนั้น $E[H]=20$ และ $E[H^2]=(1/2)(30^2+40^2)=1{,}250$ จึงมี variance $1{,}250-20^2=850$</p><div class="math">\[
+\begin{aligned}
+E[Q]&=6(20)=120,\\
+\operatorname{Var}(Q)&=6(850)+6(20^2)\\
+&=5{,}100+2{,}400=7{,}500.
+\end{aligned}
+\]</div><p>แบ่งกลุ่มด้วยคนละข้อมูลได้ $W,B$ คนละคู่ แต่ผลรวมต้องตรงกัน ส่วนประกอบ variance จึงขึ้นกับตัวแปรที่เลือกใช้ conditioning ด้วย</p></details></li>
+<li>จำนวน fills กับจำนวนที่ไม่ได้ fill อิสระกันหรือไม่? ถ้ารู้ $N=6$ ล่ะ?
+<details><summary>เฉลยข้อ 4</summary><p>ก่อนรู้จำนวนรวม สองสายเป็น Poisson(3) อิสระกัน หลังรู้ยอดรวมเป็น 6 อีกสายเท่ากับ $6-K$ จึงมี conditional covariance $-1.5$ ไม่อิสระกัน ไม่ขัดกับคำตอบแรกเพราะเปลี่ยนข้อมูลที่รู้แล้ว</p></details></li>
+<li>หากใช้เวลา 2 ชั่วโมงโดยแบบจำลองเดิมไม่เปลี่ยน ค่าเฉลี่ยและ variance ของกำไรเป็นเท่าไร? ถ้าหยุดทันทีที่กำไรถึงเกณฑ์ จะใช้สูตรเดียวกันแทนเวลา 2 ชั่วโมงได้ไหม?
+<details><summary>เฉลยข้อ 5</summary><p>ช่วงเวลาคงที่ 2 ชั่วโมงมี fills เฉลี่ย 6 จึงได้กำไรเฉลี่ย 240 USD และ variance 15,000 USD² ส่วนกฎหยุดตามกำไรเปลี่ยนความสัมพันธ์ของจำนวนกับผลลัพธ์ ต้องตรวจ stopping-time conditions ใหม่ และห้ามยกสูตร variance ของจำนวนอิสระมาใช้ทันที</p></details></li>
+</ol>
+</section>
+<section class="takeaways">
+<h2>ก่อนออกจากบท</h2>
+<ul><li>บอกให้ชัดว่าอะไรเป็นข้อมูลที่ตรึงไว้ อะไรยังสุ่ม และจะถ่วงกลับด้วยการแจกแจงใด</li><li>สูตรค่าเฉลี่ยไม่ใช่สูตรความเสี่ยง; moments และ independence ที่ต้องการอาจต่างกัน</li><li>การรู้ข้อมูลทำให้ค่าพยากรณ์ดีขึ้นได้ แต่การลดความเสี่ยงเงินจริงต้องระบุการเปลี่ยนพอร์ตหรือกลยุทธ์</li><li>ตรวจผลลัพธ์ด้วยอีกเส้นทางหนึ่ง เช่นข้อมูลแจกแจงตรง เทียบกับการ conditioning หรือ joint pmf เทียบกับ PGF</li><li>แต่ละหัวข้อมีแบบฝึกเฉลยซ่อนและ JavaScript ที่รันได้โดยไม่ใช้ไลบรารี ให้ลองรันและอธิบายว่าทำไมคำตอบตรงกัน ก่อนก้าวไปสู่กฎจำนวนมากในบทที่ 3</li></ul>
+</section>
+</article>
 </div>
 </body>
 </html>
