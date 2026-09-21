@@ -10,23 +10,109 @@
 <body>
 <div class="wrap">
 <nav class="book-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a>
 </nav>
 <header class="chapter-landing">
-  <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 5</h1>
-  <p>Multivariate Distributions · 6 หัวข้อ</p>
-  <p class="chapter-sequence">ดูความไม่แน่นอนสองก้อนพร้อมกัน ว่ามันเกี่ยวกันตรงไหน และรู้ผลของก้อนหนึ่งแล้วอีกก้อนเปลี่ยนไปแค่ไหน</p>
+<div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
+<h1>บทที่ 5 — Multivariate Distributions</h1>
+<p>การแจกแจงหลายตัวแปร · 6 หัวข้อ</p>
+<p class="chapter-sequence">รู้ความเสี่ยงของแต่ละตัวแล้ว ยังต้องรู้ว่าเกิดพร้อมกันอย่างไร และเมื่อมีข้อมูลเพิ่ม คำตอบส่วนใดต้องเปลี่ยน</p>
 </header>
+<article class="chapter-guide">
+<section class="hook">
+<h2>คำถามเดียวที่พาเดินทั้งบท</h2>
+<p>หุ้นสองตัวมีโอกาสลงแรงเท่ากัน แต่พอร์ตที่ถือทั้งคู่อาจเสี่ยงต่างกันมาก ข้อมูลรายตัวบอกไม่ครบ เพราะยังไม่รู้ว่า “ลงพร้อมกัน” บ่อยแค่ไหน บทนี้จึงไม่ได้เริ่มด้วยสูตรหลายมิติ แต่เริ่มจากการเลือกคำถามให้ถูก: สนใจคู่ผลลัพธ์ทั้งหมด สนใจเพียงตัวเดียว หรือสนใจตัวหนึ่งหลังรู้อีกตัว?</p>
+<p>ปลายทางคืออ่านแบบจำลองพอร์ตได้โดยแยกสามชั้น: <strong>marginal</strong> บอกความเสี่ยงรายตัว, <strong>dependence</strong> บอกโครงสร้างร่วม และ <strong>conditioning</strong> ระบุข้อมูลที่เรารู้แล้ว ตัวอย่างหุ้นและเครดิตทั้งหมดในบทเป็นข้อมูลหรือโมเดลสมมติ ไม่ใช่คำพยากรณ์ตลาด</p>
+</section>
+<section>
+<h2>ก่อนเริ่ม: เตรียมอะไรให้พร้อม</h2>
+<ul><li>อ่าน $P(A\cap B)$, $P(A\mid B)$ และสูตร Bayes ได้ โดยรู้ว่าตัวหารคือโอกาสของเหตุการณ์เงื่อนไข</li><li>แยก PMF, PDF และ CDF ของตัวแปรเดียวได้ โดยไม่เรียกความสูงของ density ว่าความน่าจะเป็น</li><li>คำนวณค่าเฉลี่ย variance และอินทิกรัลพหุนามพื้นฐานได้ หากยังไม่คล่อง ให้เริ่มจากตารางไม่ต่อเนื่องก่อนอินทิกรัล</li><li>สำหรับ 5.5–5.6 ควรรู้ standard normal, exponential และความหมายของ inverse CDF; derivation ที่ต้องใช้จะทบทวนในหัวข้อ</li></ul>
+<p>ใช้หน่วยอย่างสม่ำเสมอ: ผลตอบแทน −1% เขียนเป็น −1 เมื่อวัดเป็นจุดเปอร์เซ็นต์ แต่เป็น −0.01 เมื่อวัดแบบทศนิยม การแปลงแกน density ต้องเปลี่ยนตาม ส่วนตัวอย่างสามเหลี่ยมใช้ตัวแปรไร้หน่วยเพื่อแยกปัญหาแคลคูลัสออกจากการแปลงหน่วย</p>
+</section>
+<section>
+<h2>เส้นทางที่ 1: จากภาพรวมสู่คำถามที่ต้องการ — 5.1–5.3</h2>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/5.1.html"><span class="toc-number">5.1</span><span class="toc-name">Joint Cumulative Distribution Function (CDF) and Joint Probability Density Function (PDF)<span class="toc-why">จากโอกาสที่สองเหตุการณ์จะเกิดร่วมกัน สู่พื้นที่ความน่าจะเป็นบนระนาบสองมิติ</span></span></a></li>
-  <li><a href="../topics/5.2.html"><span class="toc-number">5.2</span><span class="toc-name">Marginal Distributions<span class="toc-why">จากการมองภาพรวมสองมิติ สู่การรวมผลกระทบเพื่อแยกดูสินทรัพย์รายตัว</span></span></a></li>
-  <li><a href="../topics/5.3.html"><span class="toc-number">5.3</span><span class="toc-name">Conditional Distributions<span class="toc-why">เมื่อได้ข้อมูลใหม่มาอยู่ในมือ ปรับการคาดการณ์สินทรัพย์ที่เหลืออย่างไรให้แม่นยำ</span></span></a></li>
-  <li><a href="../topics/5.4.html"><span class="toc-number">5.4</span><span class="toc-name">Independence<span class="toc-why">เมื่อข้อมูลของตัวหนึ่งไม่บอกอะไรเกี่ยวกับอีกตัว และวิธีทดสอบที่ไม่หลงกลภาพลวงตา</span></span></a></li>
-  <li><a href="../topics/5.5.html"><span class="toc-number">5.5</span><span class="toc-name">Consequences of Independence<span class="toc-why">ทางลัดคณิตศาสตร์เมื่อตัวแปรไม่เกี่ยวข้องกัน และจุดที่ห้ามเผลอใช้สูตรลัด</span></span></a></li>
-  <li><a href="../topics/5.6.html"><span class="toc-number">5.6</span><span class="toc-name">Conditional Independence and the Gaussian Copula<span class="toc-why">เมื่อตัวแปรดูเหมือนเกี่ยวข้องกันเพราะปัจจัยร่วม และการแยกโครงสร้างความเสี่ยงด้วยคอปูลา</span></span></a></li>
+<li><a href="../topics/5.1.html"><span class="toc-number">5.1</span><span class="toc-name">Joint CDF และ Joint PDF<span class="toc-why">เริ่มจาก 100 วันสมมติที่หุ้นลงพร้อมกัน 10 วัน แล้วเรียนรู้กฎสี่มุมและตรวจกรอบ probability 0.30 ด้วยทั้ง CDF และอินทิกรัล</span></span></a></li>
+<li><a href="../topics/5.2.html"><span class="toc-number">5.2</span><span class="toc-name">Marginal Distributions<span class="toc-why">รวมแถว–คอลัมน์ แล้วเปลี่ยนเป็น density บนสามเหลี่ยมที่ให้ marginal 2x และ 2(1−y): ขอบเขตสำคัญกว่าการจำสูตร</span></span></a></li>
+<li><a href="../topics/5.3.html"><span class="toc-number">5.3</span><span class="toc-name">Conditional Distributions<span class="toc-why">เลือกคอลัมน์ MSFT ลงแล้ว normalize; จากนั้นหาว่า X เมื่อรู้ Y=y เป็น Uniform(y,1) และตรวจ tower กับ total variance</span></span></a></li>
 </ol>
+<h3>จุดตรวจที่ 1</h3>
+<p>ตอบด้วยคำของตัวเอง: marginal ต่างจาก conditional อย่างไร และทำไมตัวแปรต่อเนื่องจึงไม่ใช้ $P(Y=y)$ เป็นตัวหารโดยตรง?</p>
+<details><summary>แนวตอบ</summary><p>marginal รวมทุกค่าของอีกตัว ส่วน conditional ตรึงข้อมูลแล้วปรับมวลรวมเป็นหนึ่ง สำหรับตัวแปรต่อเนื่อง $P(Y=y)=0$ เราใช้ conditional density เป็นอัตราส่วนของ densities เมื่อ marginal density เป็นบวก หรือเริ่มจากช่วงแคบแล้วพิจารณาลิมิต</p></details>
+</section>
+<section>
+<h2>เส้นทางที่ 2: ตรวจเงื่อนไขก่อนใช้ทางลัด — 5.4–5.5</h2>
+<ol class="chapter-topics chapter-topics-full" start="4">
+<li><a href="../topics/5.4.html"><span class="toc-number">5.4</span><span class="toc-name">Independence<span class="toc-why">เปรียบเทียบสองตารางที่ขอบเหมือนกันแต่โอกาสร่วมต่างกัน พร้อมตัวอย่างที่ผ่านเกณฑ์หนึ่งแต่ไม่ผ่านอีกเกณฑ์</span></span></a></li>
+<li><a href="../topics/5.5.html"><span class="toc-number">5.5</span><span class="toc-name">Consequences of Independence<span class="toc-why">แยกกฎบวก mean ออกจากกฎผลคูณและ variance แล้วคำนวณมูลค่าจำนวนหุ้นสุ่มคูณราคาที่เป็น lognormal</span></span></a></li>
+</ol>
+<h3>จุดตรวจที่ 2</h3>
+<p>สูตรใดต้องใช้ independence: $E[X+Y]=E[X]+E[Y]$, $E[XY]=E[X]E[Y]$ และ $\operatorname{Var}(X+Y)=\operatorname{Var}(X)+\operatorname{Var}(Y)$?</p>
+<details><summary>แนวตอบ</summary><p>สูตรแรกไม่ต้อง เมื่อค่าคาดหมายมีอยู่ สูตรผลคูณมี independence เป็นเงื่อนไขเพียงพอ แต่ความเท่ากันคู่เดียวไม่พิสูจน์ independence ส่วนสูตร variance ต้องมี second moments และ covariance ศูนย์ก็พอ; independence รับรอง covariance ศูนย์ แต่แรงกว่าเงื่อนไขที่ต้องใช้</p></details>
+</section>
+<section>
+<h2>เส้นทางที่ 3: ใส่ปัจจัยร่วมกลับเข้าไป — 5.6</h2>
+<ol class="chapter-topics chapter-topics-full" start="6">
+<li><a href="../topics/5.6.html"><span class="toc-number">5.6</span><span class="toc-name">Conditional Independence and the Gaussian Copula<span class="toc-why">เริ่มจากเศรษฐกิจสองภาวะ ก่อนสร้างพอร์ตหุ้นกู้ 100 ตัวที่ PD รายตัวคง 2% แต่โอกาสผิดนัดอย่างน้อย 10 ตัวเพิ่มจาก 0.00344% เป็น 2.14%</span></span></a></li>
+</ol>
+<h3>จุดตรวจที่ 3</h3>
+<p>ถ้าบริษัทอิสระเมื่อรู้เศรษฐกิจ ทำไมความเสี่ยงผิดนัดร่วมไม่มีเงื่อนไขยังไม่เท่ากับผลคูณ? และ Gaussian tail dependence ศูนย์หมายความว่าไม่มีการผิดนัดพร้อมกันหรือไม่?</p>
+<details><summary>แนวตอบ</summary><p>ต้องคูณโอกาสภายในภาวะก่อน แล้วเฉลี่ยข้ามภาวะ: $E[p_A(Z)p_B(Z)]$ ไม่จำเป็นต้องเท่ากับ $E[p_A(Z)]E[p_B(Z)]$ ส่วน tail dependence ศูนย์เป็นข้อความเกี่ยวกับลิมิตของโอกาสตามเงื่อนไขสุดหาง ไม่ได้ทำให้โอกาสหางร่วมที่เกณฑ์จำกัดเป็นศูนย์หรือเท่ากับผลคูณ</p></details>
+</section>
+<section>
+<h2>เลือกเครื่องมือจากคำถาม</h2>
+<div class="table-wrap">
+<table><thead><tr><th>คำถาม</th><th>เครื่องมือ</th><th>สิ่งที่ห้ามข้าม</th></tr></thead>
+<tbody><tr><td>ทั้งคู่ต่ำกว่าเกณฑ์?</td><td>Joint CDF</td><td>ต้องใช้เกณฑ์สองแกนพร้อมกัน</td></tr>
+<tr><td>คู่ผลลัพธ์ตกในบริเวณนี้?</td><td>อินทิกรัล joint PDF</td><td>วาดบริเวณและตรวจ support</td></tr>
+<tr><td>ตัวเดียวเป็นอย่างไร ไม่จำกัดอีกตัว?</td><td>Marginal</td><td>รวมทุกค่าของตัวที่ตัดออก</td></tr>
+<tr><td>ตัวหนึ่งเป็นอย่างไร เมื่อรู้อีกตัว?</td><td>Conditional</td><td>เลือกและ normalize; ตรวจตัวหาร</td></tr>
+<tr><td>ใช้ผลคูณแทน joint ได้ไหม?</td><td>นิยาม independence</td><td>ตรวจทั้ง distribution ไม่ใช่ correlation อย่างเดียว</td></tr>
+<tr><td>เปลี่ยนความเสี่ยงร่วมโดยคงรายตัว?</td><td>Copula หรือโมเดลปัจจัยร่วม</td><td>ระบุสมมติฐานของโครงสร้างร่วมและหาง</td></tr></tbody></table>
+</div>
+</section>
+<section class="exercises">
+<h2>แบบฝึกหัดประจำบท: ใช้โมเดลเดียวตอบห้าคำถาม</h2>
+<p>ให้ตัวแปรไร้หน่วยมี joint PDF เท่ากับ 2 บน $0\le y\le x\le1$ และศูนย์ที่อื่น ห้ามสมมติ independence ก่อนตรวจ</p>
+<ol><li>ตรวจ normalization แล้วหา $P(X\le0.5,Y\le0.25)$</li>
+<li>หา marginal ทั้งสองและค่าเฉลี่ยของแต่ละตัว</li>
+<li>เมื่อรู้ $Y=0.4$ หา conditional PDF, $E[X\mid Y=0.4]$ และ $P(X\le0.8\mid Y=0.4)$</li>
+<li>พิสูจน์ว่าไม่อิสระโดยใช้เหตุการณ์ที่มี marginal เป็นบวกแต่ joint เป็นศูนย์</li>
+<li>หา mean และ variance ของ $X+Y$ โดยไม่ละ covariance</li></ol>
+<details><summary>เฉลยข้อ 1: แบ่งอินทิกรัลตามขอบสามเหลี่ยม</summary>
+<p>มวลรวมคือ $\int_0^1\int_0^x2\,dy\,dx=1$ สำหรับเหตุการณ์ที่ถาม ช่วง $x\le0.25$ ขอบบนของ $y$ คือ $x$ แต่หลังจากนั้นขอบบนคือ 0.25:</p>
+<div class="math">\[
+\begin{aligned}
+P&=\int_0^{0.25}2x\,dx+\int_{0.25}^{0.5}2(0.25)\,dx\\
+ &=0.0625+0.125=0.1875=\frac3{16}.
+\end{aligned}
+\]</div></details>
+<details><summary>เฉลยข้อ 2–3: รวมทั้งแกนหรือเลือกแล้ว normalize?</summary>
+<p>$f_X(x)=2x$ และ $f_Y(y)=2(1-y)$ บน $[0,1]$ และศูนย์ที่อื่น ให้ $E[X]=2/3,E[Y]=1/3$ เมื่อ $Y=0.4$ เหลือ uniform บน $[0.4,1]$ จึงมี PDF $1/0.6=5/3$ ในช่วงนั้น mean 0.7 และโอกาสถึง 0.8 เท่ากับ $(0.8-0.4)/0.6=2/3$</p></details>
+<details><summary>เฉลยข้อ 4: ช่องว่างใน support หักล้างผลคูณ</summary>
+<p>$P(X\lt1/4)=1/16$ และ $P(Y\gt3/4)=1/16$ แต่สองเหตุการณ์เกิดพร้อมกันไม่ได้เพราะ $Y\le X$ ค่า joint จึงเป็น 0 ไม่ใช่ $1/256$</p></details>
+<details><summary>เฉลยข้อ 5: พจน์ไขว้มีค่าเท่าไร?</summary>
+<div class="math">\[
+\begin{aligned}
+E[XY]&=\int_0^1\int_0^x2xy\,dy\,dx
+ =\int_0^1x^3\,dx=\frac14,\\
+\operatorname{Cov}(X,Y)&=\frac14-\frac23\frac13=\frac1{36},\\
+E[X+Y]&=1,\\
+\operatorname{Var}(X+Y)&=\frac1{18}+\frac1{18}+2\frac1{36}
+ =\frac16.
+\end{aligned}
+\]</div><p>mean บวกได้โดยไม่ต้องอิสระ แต่ถ้าละ covariance จะได้ variance ผิดเป็น $1/9$ แทน $1/6$</p></details>
+<h3>คำถามต่อยอดถึงเครดิต</h3>
+<p>สมมติเศรษฐกิจดีโอกาส 0.7 แย่โอกาส 0.3 และบริษัทสองแห่งอิสระเมื่อรู้ภาวะ แต่มี PD 0.02 ในภาวะดีและ 0.20 ในภาวะแย่ จงหา PD รายตัวและโอกาสผิดนัดร่วม</p>
+<details><summary>เฉลย</summary><p>PD รายตัว $0.7(0.02)+0.3(0.20)=0.074$ ส่วน joint คือ $0.7(0.02^2)+0.3(0.20^2)=0.01228$ ไม่ใช่ $0.074^2=0.005476$ เฉลี่ยหลังคูณกับคูณหลังเฉลี่ยจึงตอบคนละโมเดล</p></details>
+</section>
+<section class="takeaways">
+<h2>ก่อนออกจากบทนี้</h2>
+<ul><li>แปลคำถามเป็นเหตุการณ์และบริเวณได้ก่อนหยิบสูตร</li><li>แยก density ออกจาก probability และตรวจ normalization พร้อมหน่วยได้</li><li>รู้ว่า marginal ทิ้งข้อมูลการเกิดร่วมบางส่วน และ conditional เปลี่ยนกลุ่มอ้างอิง</li><li>บอกได้ว่าบรรทัดไหนของการคำนวณต้องใช้ independence และเหตุใด covariance ศูนย์ยังไม่พอพิสูจน์ independence</li><li>เห็นว่า PD รายตัวหรือ correlation ค่าเดียวไม่พอระบุหางของพอร์ต และอ่านผล Gaussian copula พร้อมข้อจำกัดได้</li></ul>
+<p>ทุกหัวข้อมีตัวอย่าง JavaScript ที่รันด้วย Node ได้โดยไม่ติดตั้งแพ็กเกจ ใช้ตรวจตัวเลขและลองเปลี่ยนเงื่อนไข แต่อย่าให้ผลลัพธ์จากโปรแกรมมาแทนการระบุ support หน่วย และสมมติฐานของแบบจำลอง</p>
+</section>
+</article>
 </div>
 </body>
 </html>

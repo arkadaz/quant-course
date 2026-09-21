@@ -10,406 +10,257 @@
 <body>
 <div class="wrap">
 <nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/5.html">บทที่ 5</a>
-  <span class="topic-progress">หัวข้อ 28/158</span>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+<a href="../chapters/5.html">บทที่ 5</a>
 </nav>
-
 <article class="topic" data-number="5.3" data-depends-on="5.1 5.2">
 <header class="topic-header">
-  <h1><span class="tnum">5.3</span> Conditional Distributions</h1>
-  <p class="subtitle">เมื่อได้ข้อมูลใหม่มาอยู่ในมือ ปรับการคาดการณ์สินทรัพย์ที่เหลืออย่างไรให้แม่นยำ</p>
+<h1><span class="tnum">5.3</span> Conditional Distributions</h1>
+<p class="subtitle">เมื่อรู้ข้อมูลเพิ่ม ต้องเปลี่ยนทั้งกลุ่มอ้างอิงและมาตราส่วนความน่าจะเป็น</p>
 </header>
-
-<div class="hook">
-  <p>นักวิ่งสองคนใช้ลู่วิ่งเดียวกัน ถ้าเห็นคนหนึ่งลื่นจนช้ากว่าปกติ 3 นาที คุณยังทายเวลาอีกคนด้วยค่าเฉลี่ยวันแดดได้ไหม?</p>
-  <p>เฉลย: ไม่ได้ พื้นลื่นทำให้ทั้งคู่ช้าลงพร้อมกัน การที่คนแรกช้า 3 นาทีจึงเป็นข่าวว่าวันนี้พื้นลื่น คำทายของคนที่สองต้องขยับตาม ทั้งที่ยังไม่เห็นเขาวิ่ง หุ้นสองตัวในตลาดเดียวกันก็เหมือนกัน ขั้นที่ 2 จะแสดงว่าพอรู้ว่า MSFT ลง ค่าเฉลี่ยของ AAPL ขยับจาก +0.2% เป็น −0.5%</p>
-  <p>Conditional distribution คือ distribution ของผลลัพธ์หนึ่งหลังรู้ข้อมูลของอีกผลลัพธ์ ใช้ปรับความน่าจะเป็นให้ตรงกับเงื่อนไขที่เกิดขึ้นแล้ว</p>
+<section class="hook">
+<h2>จาก “วันทั่วไป” เป็น “วันที่ MSFT ลง”</h2>
+<p>ในหัวข้อก่อน เรารวมทุกสถานะของ MSFT เพื่อดู AAPL เพียงตัวเดียว คราวนี้คำถามเปลี่ยนเป็น “ในวันที่ MSFT ลง AAPL มีโอกาสลง 2% เท่าไร?” เราจะไม่รวมทั้งตาราง แต่เลือกเฉพาะคอลัมน์ที่ตรงเงื่อนไข แล้วปรับผลรวมของคอลัมน์นั้นให้เป็นหนึ่ง</p>
+<p><strong>Conditional distribution</strong> คือการแจกแจงภายใต้ข้อมูลที่ระบุ ไม่ใช่เพียงค่าเฉลี่ยใหม่ และไม่ได้บอกเหตุและผลด้วยตัวมันเอง ในตัวอย่างผลตอบแทนรายวันร่วม การรู้ผลตอบแทนของ MSFT ทั้งวันเป็นเงื่อนไขเชิงสถานการณ์ ไม่ใช่สัญญาณที่รู้ล่วงหน้าได้กลางวัน</p>
+</section>
+<section class="example">
+<h2>1. ตัดคอลัมน์ แล้วหารด้วยโอกาสของเงื่อนไข</h2>
+<p>ใช้ตารางสมมติเดียวกับ 5.2 ให้ $X$ เป็นผลตอบแทน AAPL หน่วยจุดเปอร์เซ็นต์ และ $Y$ เป็นสถานะ MSFT:</p>
+<div class="table-wrap">
+<table><thead><tr><th>$X$</th><th>MSFT ขึ้น</th><th>MSFT ลง</th><th>marginal</th></tr></thead>
+<tbody><tr><td>−2</td><td>0.05</td><td>0.15</td><td>0.20</td></tr><tr><td>0</td><td>0.30</td><td>0.20</td><td>0.50</td></tr><tr><td>2</td><td>0.25</td><td>0.05</td><td>0.30</td></tr><tr><th>รวม</th><td>0.60</td><td>0.40</td><td>1</td></tr></tbody></table>
 </div>
-
-<section class="prose">
-  <h4>เริ่มจากข่าวที่เพิ่งมาถึงกลางวัน</h4>
-  <p>เช้านี้คำทายผลตอบแทนของ AAPL คือ +0.2% ต่อวัน ซึ่งเป็นค่าเฉลี่ยของทุกวันในข้อมูลย้อนหลัง ตอนบ่าย MSFT ปิดลบ คำถามคือคำทายของ AAPL ยังเป็น +0.2% อยู่ไหม</p>
-  <p>ไม่ใช่แล้ว ถ้านับเฉพาะวันที่ MSFT ลง ค่าเฉลี่ยของ AAPL คือ −0.5% ข่าวชิ้นเดียวเลื่อนคำทายไป 0.7 จุด ทั้งที่เรายังไม่เห็นราคา AAPL เลยสักนิด</p>
-  <p>สิ่งที่เกิดขึ้นคือเราตัดตารางร่วมของหัวข้อ 5.1 ให้เหลือเฉพาะคอลัมน์ที่ตรงกับข่าว แล้วปรับสเกลใหม่ให้รวมได้ 1 หัวข้อนี้ทำให้การตัดนั้นเป็นสูตร ซึ่งเป็นฐานของทั้งการทำ hedge และการอัปเดต forecast ทุกแบบในเล่มนี้</p>
-</section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>conditional distribution</dt>
-    <dd>conditional distribution คือรูปแบบโอกาสของ Random Variable หนึ่งเมื่อทราบอีกตัวแล้ว ใช้ปรับการคาดการณ์เมื่อได้สัญญาณใหม่</dd>
-    <dt>conditional probability density function (PDF)</dt>
-    <dd>conditional density function คำนวณจากแผ่นตัดของ joint PDF หารด้วย marginal PDF เพื่อให้พื้นที่ใต้กราฟรวมเป็น 1</dd>
-    <dt>conditional cumulative distribution function (CDF)</dt>
-    <dd>conditional CDF บอก cumulative probability ภายใต้เงื่อนไข ใช้คำนวณโอกาสเหตุการณ์รุนแรงหลังได้ข้อมูลใหม่</dd>
-    <dt>joint PDF</dt>
-    <dd>joint density คือความสูงของโอกาสที่ตัวแปรทั้งสองเกิดร่วมกัน ใช้เป็นตัวตั้งก่อนปรับสเกล</dd>
-    <dt>marginal PDF</dt>
-    <dd>density ของตัวแปรที่ทราบค่าแล้ว ซึ่งทำหน้าที่เป็นตัวหาร (denominator) เพื่อปรับสเกลความน่าจะเป็นให้สมบูรณ์</dd>
-    <dt>AAPL (Apple Inc.)</dt>
-    <dd>หุ้นบริษัท Apple ในตลาดสหรัฐฯ ใช้แทนตัวแปรผลตอบแทนที่ต้องการปรับการคาดการณ์ ($X$)</dd>
-    <dt>MSFT (Microsoft Corp.)</dt>
-    <dd>หุ้นบริษัท Microsoft ในตลาดสหรัฐฯ ใช้แทนผลตอบแทนที่สังเกตเห็นแล้วในสนามจริง ($Y$)</dd>
-    <dt>conditional density</dt>
-    <dd>ใช้บอก density ของตัวแปรหนึ่งเมื่อรู้ค่าของอีกตัว ได้จากการหาร joint density ด้วย marginal ของตัวที่รู้แล้ว ขอบเขตที่เหลือต้องอ่านจากเงื่อนไขของผืน density</dd>
-    <dt>regression function</dt>
-    <dd>ค่าเฉลี่ยของตัวแปรหนึ่งในรูป function ของอีกตัว คือ $E[X\mid Y=y]$ ไม่ใช่ตัวเลขคงที่ แต่เป็นเส้นที่ใช้บอกว่าพอรู้ข้อมูลแล้วควรคาดหวังเท่าไร</dd>
-    <dt>hedge</dt>
-    <dd>position ที่เปิดเพิ่มเข้าไปเพื่อลดความไวของพอร์ตเดิมต่อการขยับของตลาด ใช้จำกัดขาดทุน แต่ไม่ได้ลบความเสี่ยงทุกชนิดออก</dd>
-  </dl>
-</details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$X,Y$</td><td>daily return ของ AAPL และ MSFT ในรูปทศนิยม</td><td>decimal return/day</td></tr>
-      <tr><td>$f_{X\mid Y}(x\mid y)$</td><td>conditional PDF ของ AAPL เมื่อทราบว่า MSFT มีผลตอบแทน $y$</td><td>1/return</td></tr>
-      <tr><td>$f_{X,Y}(x,y)$</td><td>joint PDF ที่จุด $(x,y)$</td><td>1/(return²)</td></tr>
-      <tr><td>$f_Y(y)$</td><td>marginal PDF ของตัวแปรเงื่อนไขที่จุด $y$</td><td>1/return</td></tr>
-      <tr><td>$u$</td><td>ตัวแปรหุ่นสำหรับอินทิเกรตผลตอบแทนของ AAPL</td><td>decimal return/day</td></tr>
-      <tr><td>$y$</td><td>ค่าผลตอบแทนของ MSFT ที่สังเกตเห็นแล้ว</td><td>decimal return/day</td></tr>
-    </tbody>
-  </table>
-</details>
-
-<section class="table">
-  <h4>ตารางร่วมหกช่องจากหัวข้อ 5.2</h4>
-  <table>
-    <thead><tr><th>$X$ (AAPL) ลง \ $Y$ (MSFT) →</th><th>up</th><th>down</th><th>รวมแถว = marginal ของ $X$</th></tr></thead>
-    <tbody>
-      <tr><td>$-2\%$</td><td>0.05</td><td>0.15</td><td>0.20</td></tr>
-      <tr><td>$0\%$</td><td>0.30</td><td>0.20</td><td>0.50</td></tr>
-      <tr><td>$+2\%$</td><td>0.25</td><td>0.05</td><td>0.30</td></tr>
-      <tr><td>รวมคอลัมน์ = marginal ของ $Y$</td><td>0.60</td><td>0.40</td><td>1.00</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>คราวนี้เราจะ *ตัด* ตารางเป็นคอลัมน์เดียว แล้วปรับสเกลให้รวมได้ 1</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — ตัดคอลัมน์ “down” ออกมา แล้วหารด้วยขนาดของมัน</h4>
-  <p>ยังไม่ต้อง integral: ถ้ารู้แล้วว่าวันนี้ MSFT ลง เราสนใจแค่คอลัมน์ down ของตาราง แต่คอลัมน์นั้นรวมไม่ได้ 1</p>
-  <div class="math">\[
+<p>คอลัมน์ลงมีมวลเพียง 0.40 ค่า 0.15 ในช่องแรกหมายถึง “AAPL ลง 2% และ MSFT ลง” จากทุกวัน แต่เมื่อกลุ่มอ้างอิงเหลือเฉพาะวัน MSFT ลง เราต้องหารด้วย 0.40:</p>
+<div class="math">\[
 \begin{aligned}
-&P(X=-2\%\mid Y=\text{down})\\
-&=\frac{0.15}{0.40}=0.375\\
-&P(X=0\%\mid\text{down})=\frac{0.20}{0.40}=0.500\\
-&P(X=+2\%\mid\text{down})=\frac{0.05}{0.40}=0.125\\
-&\text{check: }0.375+0.500+0.125=1\\
-&\text{compare unconditional: }\\
-&\quad 0.20,\;0.50,\;0.30
+P(X=-2\mid Y=\mathrm{down})&=0.15/0.40=0.375,\\
+P(X=0\mid Y=\mathrm{down})&=0.20/0.40=0.500,\\
+P(X=2\mid Y=\mathrm{down})&=0.05/0.40=0.125.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>คอลัมน์ down มีสามช่อง 0.15, 0.20, 0.05 รวมได้ 0.40 ซึ่งไม่ใช่ 1 เพราะมันคือแค่ 40% ของวันทั้งหมด พอหารทุกช่องด้วย 0.40 ผลรวมกลับเป็น 1 นี่คือการ “ปรับสเกลแผ่นตัด” ในสูตรข้างล่าง</p>
-    <p>เทียบกับตอนยังไม่รู้อะไร: โอกาสที่ AAPL ลง 2% เพิ่มจาก 0.20 เป็น 0.375 เกือบสองเท่า ข่าวว่า MSFT ลงเปลี่ยนคำทายจริง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — ค่าเฉลี่ยใหม่หลังรู้ข่าว เทียบกับค่าเฉลี่ยเดิม</h4>
-  <p>พอมี distribution ใหม่แล้ว ค่าเฉลี่ยใหม่ก็คำนวณแบบหัวข้อ 1.3 ได้ทันที ค่า × น้ำหนัก แล้วรวม</p>
-  <div class="math">\[
+<p>ผลรวมใหม่เป็นหนึ่ง จากนั้นคำนวณค่าเฉลี่ยด้วยน้ำหนักใหม่:</p>
+<div class="math">\[
 \begin{aligned}
-&E[X\mid\text{down}]\\
-&=(-2\%)(0.375)+(0\%)(0.500)\\
-&\quad+(+2\%)(0.125)\\
-&=-0.75\%+0+0.25\%=-0.50\%\\
-E[X]&=(-2\%)(0.20)+(0\%)(0.50)\\
-&\quad+(+2\%)(0.30)\\
-&=-0.40\%+0.60\%=+0.20\%
+E[X\mid Y=\mathrm{down}]&=(-2)(0.375)+2(0.125)=-0.5,\\
+E[X]&=(-2)(0.20)+2(0.30)=0.2.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ค่าเฉลี่ยของ AAPL ในวันที่ MSFT ลง คือ $-0.5\%$ ขณะที่ค่าเฉลี่ยรวมทุกวันคือ $+0.2\%$ ข่าวหนึ่งชิ้นเลื่อนคำทายไป 0.7 จุด นี่คือสิ่งที่ conditional expectation ในขั้นที่ 5 ทำในกรณีต่อเนื่อง</p>
-    <p>แปลว่าอะไร: ถ้ามีคนบอกแค่ว่า “MSFT แดง” คำทาย AAPL ที่ถูกไม่ใช่ $+0.2\%$ อีกต่อไป</p>
-  </div>
+<p>ทั้งสองค่ามีหน่วยจุดเปอร์เซ็นต์ต่อวัน ค่าเฉลี่ยตามเงื่อนไขเป็น −0.5% เทียบกับค่าเฉลี่ยทุกวัน 0.2% ไม่ได้แปลว่า AAPL จะให้ผลตอบแทน −0.5% ทุกครั้ง และอย่าสลับเป็น $P(Y=\mathrm{down}\mid X=-2)=0.15/0.20=0.75$ ซึ่งตอบอีกคำถามหนึ่ง</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 3 — ปรับสเกลแผ่นตัดด้วยกฎของเบย์สในรูป density</h4>
-  <p>ที่มาของสูตร conditional density จากการบีบแถบความน่าจะเป็นแคบ ๆ เข้าสู่ศูนย์ จนได้แผ่นตัดสองมิติที่ปรับสเกลด้วย marginal density</p>
-  <div class="math">\[
+<h2>2. กรณีต่อเนื่อง: ทำไมไม่หารด้วย $P(Y=y)$?</h2>
+<p>ถ้า $Y$ ต่อเนื่อง โอกาส $P(Y=y)$ เป็นศูนย์ เราจึงเริ่มจากช่วงแคบ $y\le Y\le y+h$ ที่มีโอกาสเป็นบวก แล้วค่อยลดความกว้างช่วง ไม่ใช้สูตรเหตุการณ์แบบตรง ๆ จนกลายเป็น $0/0$</p>
+<div class="math">\[
 \begin{aligned}
-&P(X \le x \mid y \le Y \le y+\Delta y)\\
-&= \frac{P(X \le x,\; y \le Y \le y+\Delta y)}{P(y \le Y \le y+\Delta y)} \\
-&= \frac{\int_{-\infty}^x \int_y^{y+\Delta y} f_{X,Y}(u,v)\,dv\,du}{\int_y^{y+\Delta y} f_Y(v)\,dv} \\[6pt]
-&= \frac{\int_{-\infty}^x \left[ \frac{1}{\Delta y} \int_y^{y+\Delta y} f_{X,Y}(u,v)\,dv \right] du}{\frac{1}{\Delta y} \int_y^{y+\Delta y} f_Y(v)\,dv} \\[6pt]
-&F_{X\mid Y}(x\mid y) = \lim_{\Delta y \to 0} P(\dots)\\
-&= \int_{-\infty}^x \frac{f_{X,Y}(u,y)}{f_Y(y)}\,du \\[6pt]
-&f_{X\mid Y}(x\mid y) = \frac{d}{dx} F_{X\mid Y}(x\mid y)\\
-&= \frac{f_{X,Y}(x,y)}{f_Y(y)}\qquad\text{if } f_Y(y) > 0
+&P(X\le x\mid y\le Y\le y+h)\\
+&=\frac{\displaystyle\int_{-\infty}^{x}\int_y^{y+h}
+ f_{X,Y}(u,v)\,dv\,du}
+ {\displaystyle\int_y^{y+h}f_Y(v)\,dv}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>สำหรับตัวแปรต่อเนื่อง ความน่าจะเป็นที่จุดเดี่ยว $P(Y=y)$ เท่ากับศูนย์เสมอ จึงต้องเริ่มจากแถบแคบ ๆ ความกว้าง $\Delta y$ แล้วใช้กฎความน่าจะเป็นมีเงื่อนไขพื้นฐาน</p>
-    <p>เมื่อหารทั้งเศษและหารด้วย $\Delta y$ แล้วส่งความกว้างเข้าสู่ศูนย์ เทอมส่วนจะลู่เข้าหา marginal density $f_Y(y)$ ขณะที่ตัวเศษจะกลายเป็น integral ของ joint density ตามแนวตัด</p>
-    <p>เมื่อหา derivative เทียบกับ $x$ เพื่อดึง density ออกมาจาก CDF จะได้สูตรแผ่นตัดหารด้วยตัวปรับสเกลตรง ๆ โดยมีเงื่อนไขว่าตัวหารต้องมากกว่าศูนย์</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — นิยามของ conditional CDF: สะสมแผ่นที่ปรับสเกลแล้ว</h4>
-  <p>เมื่อได้แผ่นที่ปรับสเกลแล้วในขั้นก่อนหน้า การสะสมก็ใช้ นิยาม เดียวกับกรณีตัวเดียว สิ่งเดียวที่ต่างคือ $y$ ถูกตรึงไว้ตลอดทาง ไม่ได้ถูกรวมทิ้ง</p>
-  <div class="math">\[
-F_{X\mid Y}(x\mid y)=\int_{-\infty}^{x}f_{X\mid Y}(u\mid y)\,du
-\]</div>
-  <div class="reading">
-    <p>สะสม conditional PDF ของ AAPL จากลบอนันต์จนถึง threshold $x$ โดยตรึงค่าของ $Y$ ไว้ที่ $y$ จะได้ค่าความน่าจะเป็นจริงแบบมีเงื่อนไขที่เป็นตัวเลขไร้หน่วยระหว่าง 0 ถึง 1</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — นิยามของ conditional expectation: ค่าเฉลี่ยใหม่หลังรู้ข้อมูล</h4>
-  <p>บรรทัดนี้คือ นิยาม ของ conditional expectation หน้าตาเหมือนค่าเฉลี่ยธรรมดาทุกอย่าง ต่างกันที่น้ำหนักเปลี่ยนจาก density เดิมเป็น conditional density นี่คือสิ่งที่ใช้จริงที่สุด คือพอรู้ตัวหนึ่งแล้ว คาดว่าอีกตัวจะเป็นเท่าไร</p>
-  <div class="math">\[
-E[X\mid Y=y]=\int_{-\infty}^{\infty}u\,f_{X\mid Y}(u\mid y)\,du
-\]</div>
-  <div class="reading">
-    <p>คูณผลลัพธ์ที่เป็นไปได้ $u$ ด้วย conditional density แล้วอินทิเกรตตลอดทั้งแกน จะได้ expected value ใหม่ของ AAPL ที่ปรับตามผลตอบแทน $y$ ของ MSFT มีหน่วยเป็น decimal return ต่อวัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ตรวจสอบว่าพื้นที่ density ใหม่รวมได้หนึ่งเสมอ</h4>
-  <p>ตรวจว่าการหารด้วยตัวปรับสเกลทำงานถูกต้อง ทำให้พื้นที่รวมใต้กราฟ conditional density กลับมาเป็นหนึ่งเสมอ</p>
-  <div class="math">\[
+<p>หารทั้งเศษและส่วนด้วย $h$ แล้วให้ $h\to0$ ที่จุดซึ่ง density มีพฤติกรรมเหมาะสมและ $f_Y(y)\gt0$ ค่าเฉลี่ยบนช่วงจะเข้าใกล้ density ที่ $y$:</p>
+<div class="math">\[
 \begin{aligned}
-\int_{-\infty}^{\infty} f_{X\mid Y}(x\mid y)\,dx &= \int_{-\infty}^{\infty} \frac{f_{X,Y}(x,y)}{f_Y(y)}\,dx \\
-&= \frac{1}{f_Y(y)} \int_{-\infty}^{\infty} f_{X,Y}(x,y)\,dx \\
-&= \frac{f_Y(y)}{f_Y(y)} = 1.00
+F_{X\mid Y}(x\mid y)&=\int_{-\infty}^{x}
+ \frac{f_{X,Y}(u,y)}{f_Y(y)}\,du,\\
+f_{X\mid Y}(x\mid y)&=\frac{f_{X,Y}(x,y)}{f_Y(y)},\\
+\int_{-\infty}^{\infty}f_{X\mid Y}(x\mid y)\,dx
+ &=\frac{\int f_{X,Y}(x,y)\,dx}{f_Y(y)}=1.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ดึงตัวหาร $f_Y(y)$ ออกมานอกเครื่องหมาย integral ได้เพราะตลอดการคำนวณนี้เราตรึงค่า $y$ ไว้คงที่</p>
-    <p>เทอม integral ที่เหลืออยู่คือการรวม joint density ตลอดทั้งแกน $x$ ซึ่งตามนิยามก็คือ marginal density $f_Y(y)$ ของตัวแปรเงื่อนไขนั่นเอง</p>
-    <p>เศษกับส่วนตัดกันเหลือ $1.00$ พอดี ยืนยันว่าแผ่นตัดที่ถูกปรับสเกลแล้วมีคุณสมบัติของ probability density ที่ถูกต้องสมบูรณ์</p>
-  </div>
+<p>นี่คือการเลือก <strong>รอยตัด</strong> ของ joint PDF แล้ว normalize ด้วยพื้นที่ใต้รอยตัด หน่วยของ joint PDF หารหน่วยของ $f_Y$ แล้วเหลือส่วนกลับของหน่วย $X$ ถูกต้องตาม density ของตัวแปรเดียว</p>
+<p>สูตรอัตราส่วนกำหนด conditional density ได้เกือบทุกค่าของเงื่อนไขที่เกี่ยวข้องกับการแจกแจง หาก $f_Y(y)=0$ สูตรนี้ใช้ไม่ได้ อย่าให้โปรแกรมแทนผลหารด้วยศูนย์เป็นการแจกแจงที่มีความหมายเอง</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 7 — กฎของ Bayes และการปรับเงื่อนไขระดับกลุ่มตัวแปร (vector partition)</h4>
-  <p>นี่คือสูตรที่ใช้ปรับมุมมองความเสี่ยงของพอร์ต เมื่อตลาดสังเกตเห็นราคาของกลุ่มสินทรัพย์นำตลาด $X_1$ แล้วต้องการประเมินกลุ่มสินทรัพย์ตาม $X_2$</p>
-  <div class="math">\[
+<h2>3. ค่าเฉลี่ยใหม่เป็นฟังก์ชันของข้อมูล</h2>
+<div class="math">\[
 \begin{aligned}
-&f_{X_2\mid X_1}(x_2\mid x_1)\\
-&=\frac{f_X(x)}{f_{X_1}(x_1)}\\
-&=\frac{f_{X_1\mid X_2}(x_1\mid x_2)\,f_{X_2}(x_2)}{f_{X_1}(x_1)}\\[6pt]
-&F_{X_2\mid X_1}(x_2\mid x_1)\\
-&=\frac{1}{f_{X_1}(x_1)}\int_{-\infty}^{x_{k+1}}\!\!\cdots\int_{-\infty}^{x_n}f_X(x_1,\dots,x_k,\\
-&\qquad u_{k+1},\dots,u_n)\,du_{k+1}\cdots du_n
+m(y)&=E[X\mid Y=y]
+ =\int_{-\infty}^{\infty}x f_{X\mid Y}(x\mid y)\,dx,\\
+v(y)&=\operatorname{Var}(X\mid Y=y)\\
+ &=\int_{-\infty}^{\infty}(x-m(y))^2 f_{X\mid Y}(x\mid y)\,dx.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>กฎของ Bayes ในรูปต่อเนื่องแสดงว่า เราสามารถสลับบทบาทระหว่างตัวสังเกตและตัวเป้าหมายได้ โดยคูณด้วย prior density แล้วหารด้วย marginal density</p>
-    <p>เมื่อระบบขยายเป็น vector ขนาด $n$ มิติ และแบ่งเป็นสองกลุ่ม $X_1$ และ $X_2$ การหา conditional density ของกลุ่มหลังเมื่อรู้ค่ากลุ่มแรกก็ยังใช้โครงสร้างเดิม</p>
-    <p>conditional CDF ได้จากการสะสม density ภายใต้เงื่อนไขผ่าน integral ซ้อนกัน $n-k$ มิติตามจำนวนตัวแปรในกลุ่มที่สอง</p>
-  </div>
+<p>เมื่อทราบ $y$ แล้ว $m(y)$ เป็นตัวเลข แต่ก่อนทราบค่า $m(Y)=E[X\mid Y]$ เป็นตัวแปรสุ่มที่เปลี่ยนตามข้อมูล ฟังก์ชันนี้เรียกว่า regression function และไม่จำเป็นต้องเป็นเส้นตรง หากต้องการค่าคาดหมาย ต้องมี $E[|X|]\lt\infty$ และหากต้องการใช้สูตร variance ต่อไป ต้องมี $E[X^2]\lt\infty$</p>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ตัวอย่างต่อเนื่อง: conditional density ของผืน density สามเหลี่ยม</h4>
-  <p>ผืน density ก้อนเดียวกับหัวข้อ 5.2 ใช้ต่อได้ทันที เพราะ conditional density คือการเอาค่าที่จุดหนึ่ง หารด้วย marginal ของตัวที่รู้แล้ว</p>
-  <p>ผลที่ออกมามีความหมายตรง ๆ: เมื่อรู้ว่า $Y$ เท่ากับค่าใด ค่าที่เป็นไปได้ของ $X$ จะเหลือเป็นช่วงที่สั้นลง และกระจายสม่ำเสมอตลอดช่วงนั้น</p>
-  <div class="math">\[
-\begin{aligned}f_{X,Y}(x,y)&=2\qquad\text{on }0\le y\le x\le1\\[4pt]
-f_{Y}(y)&=2(1-y)\qquad 0\le y\le1\\[4pt]
-f_{X\mid Y}(x\mid y)&=\frac{f_{X,Y}(x,y)}{f_{Y}(y)}=\frac{2}{2(1-y)}=\frac{1}{1-y}\\[4pt]
-&\qquad y\le x\le1\\[6pt]
-\int_{y}^{1}\frac{1}{1-y}\,dx&=\frac{1-y}{1-y}=1\\[4pt]
-X\mid Y=y&\sim\mathrm{Uniform}(y,1)\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ตัวหาร $f_Y(y)$ คือ marginal ที่คำนวณไว้แล้วในหัวข้อ 5.2 สิ่งที่ต้องระวังคือขอบเขต: พอรู้ว่า $Y=y$ แล้ว $X$ ต้องไม่ต่ำกว่า $y$ ตามเงื่อนไขของผืน density ขอบเขตจึงเริ่มที่ $y$ ไม่ใช่ที่ศูนย์</p>
-    <p>ตรวจว่าผลหารเป็น density จริงด้วยการอินทิเกรตตลอดช่วงที่เป็นไปได้ ได้หนึ่งพอดี การตรวจนี้สำคัญเพราะการหารด้วย marginal อาจทำให้พื้นที่รวมไม่เป็นหนึ่งได้ถ้าตั้งขอบเขตผิด</p>
-    <p>อ่านผลลัพธ์: conditional distribution คือ uniform บนช่วงจาก $y$ ถึง $1$ ยิ่ง $y$ สูง ช่วงยิ่งสั้น แปลว่ายิ่งรู้มาก ความไม่แน่นอนของ $X$ ยิ่งลดลง ซึ่งเป็นสิ่งที่เราคาดหวังและจะเห็นเป็นตัวเลขในขั้นถัดไป</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — conditional mean เป็น function ของ y และการตรวจ tower property</h4>
-  <p>conditional mean ออกมาเป็นสูตรที่ยังติด $y$ อยู่ ซึ่งไม่ใช่ความผิดพลาด แต่นี่คือคำตอบจริง: ค่าเฉลี่ยใหม่ขึ้นกับว่าเราเห็นค่าอะไร</p>
-  <p>เมื่อเอาสูตรนี้ไปเฉลี่ยทับ $Y$ ด้วย marginal ของมันเอง จะได้ค่าเฉลี่ยเดิมกลับคืนมา นี่คือ tower property ที่หัวข้อ 2.1 พิสูจน์ไว้ และที่นี่ตรวจด้วยเลข</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb{E}[X\mid Y=y]\\
-&=\int_{y}^{1}x\cdot\frac{1}{1-y}\,dx\\
-&=\frac{1}{1-y}\Bigl[\frac{x^{2}}{2}\Bigr]_{y}^{1}\\
-&=\frac{1-y^{2}}{2(1-y)}=\frac{1+y}{2}\\[6pt]
-&\mathbb{E}\bigl[\mathbb{E}[X\mid Y]\bigr]\\
-&=\mathbb{E}\Bigl[\frac{1+Y}{2}\Bigr]=\frac{1+\mathbb{E}[Y]}{2}\\
-&=\frac{1+\frac{1}{3}}{2}=\frac{2}{3}\\[4pt]
-\mathbb{E}[X]&=\int_{0}^{1}x\cdot2x\,dx=\frac{2}{3}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>อินทิเกรต $x$ คูณ conditional density ตามช่วงที่เหลืออยู่ ตัวส่วนตัดกับตัวเศษได้ผลสวยคือ $(1+y)/2$ ซึ่งเป็นเส้นตรงใน $y$ ไม่ใช่ตัวเลขคงที่</p>
-    <p>สูตร $(1+y)/2$ เรียกว่า regression function คือค่าที่เราคาดว่าจะได้ของ $X$ เมื่อรู้ $Y$ แล้ว ถ้า $y$ เข้าใกล้ศูนย์ ความคาดหวังเข้าใกล้ครึ่งหนึ่ง ถ้า $y$ เข้าใกล้หนึ่ง ความคาดหวังเข้าใกล้หนึ่ง แปลว่ารู้มากแล้วเดาถูกขึ้น</p>
-    <p>บรรทัดสุดท้ายคือการตรวจ tower property: เอา $(1+Y)/2$ ไปหาค่าเฉลี่ย ได้ $2/3$ เท่ากับค่าเฉลี่ยที่คำนวณตรง ๆ จาก marginal ของ $X$ ในหัวข้อ 5.2 พอดี</p>
-    <p>ทำไมเรื่องนี้สำคัญ: นี่คือเหตุผลที่การเดาสองชั้นไม่ให้คำตอบที่ดีขึ้นหรือแย่ลงกว่าการเดาชั้นเดียว ถ้าค่าเฉลี่ยของการเดาไม่เท่ากับค่าเฉลี่ยจริง แปลว่าคำนวณ conditional ผิดที่ใดที่หนึ่ง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — ตรวจ Law of Total Variance ด้วยเลขชุดเดียวกัน</h4>
-  <p>หัวข้อ 2.2 บอกว่า variance แยกได้เป็นสองก้อน: ก้อนที่อธิบายได้ด้วยข้อมูลที่รู้ กับก้อนที่ยังเหลืออยู่แม้รู้แล้ว ที่นี่แทนเลขลงไปทั้งสองก้อน</p>
-  <p>ถ้าแนวคิดถูก สองก้อนต้องบวกกันได้ variance รวมพอดี และตัวเลขข้างล่างยืนยันว่าได้</p>
-  <div class="math">\[
-\begin{aligned}
-\mathrm{Var}(X)&=\mathbb{E}[X^{2}]-(\mathbb{E}[X])^{2}\\
-&=\frac{1}{2}-\frac{4}{9}=\frac{1}{18}\\[6pt]
-&\mathrm{Var}\bigl(\mathbb{E}[X\mid Y]\bigr)\\
-&=\mathrm{Var}\Bigl(\frac{1+Y}{2}\Bigr)=\frac{1}{4}\cdot\frac{1}{18}=\frac{1}{72}\\[4pt]
-&\mathbb{E}\bigl[\mathrm{Var}(X\mid Y)\bigr]\\
-&=\mathbb{E}\Bigl[\frac{(1-Y)^{2}}{12}\Bigr]=\frac{1}{12}\cdot\frac{1}{2}=\frac{1}{24}\\[6pt]
-&\frac{1}{72}+\frac{1}{24}=\frac{1+3}{72}=\frac{4}{72}=\frac{1}{18}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>variance รวมคำนวณจาก marginal ของ $X$ ได้หนึ่งส่วนสิบแปด ส่วน conditional variance ของ uniform บนช่วงยาว $1-y$ คือกำลังสองของความยาวหารสิบสอง จึงเหลือรูป $(1-y)^2/12$</p>
-    <p>แยกเป็นสองก้อน: ก้อนแรกคือ variance ของ regression function ได้หนึ่งส่วนเจ็ดสิบสอง ก้อนที่สองคือค่าเฉลี่ยของ conditional variance ได้หนึ่งส่วนยี่สิบสี่</p>
-    <p>สองก้อนบวกกันได้สี่ส่วนเจ็ดสิบสอง ซึ่งย่อเป็นหนึ่งส่วนสิบแปด เท่ากับ variance รวมพอดี การที่ตัวเลขลงตัวเช่นนี้ไม่ใช่เรื่องบังเอิญ แต่เป็นเพราะ Law of Total Variance เป็นจริงเสมอ ถ้าคำตอบไม่ตรง ให้กลับไปตรวจขอบเขตการอินทิเกรตก่อนสงสัยสูตร</p>
-    <p>แปลว่าอะไรในงานจริง: ก้อนแรกคือความเสี่ยงที่ข้อมูลของ $Y$ อธิบายได้ ส่วนก้อนที่สองคือความเสี่ยงที่ยังเหลือ แม้รู้ $Y$ แล้ว การอ่านสองก้อนนี้คือวิธีบอกว่าตัวแปรที่เราวัดไปนั้นช่วยลดความเสี่ยงได้จริงเท่าไร</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การอัปเดตความคาดหวังเมื่อรู้ข้อมูลใหม่ คือสิ่งที่โต๊ะทำทุกครั้งที่ราคาขยับ</p>
-  <p>ใช้สร้าง hedge เพราะการรู้ว่าตัวหนึ่งขยับแล้วอีกตัวควรขยับเท่าไร คืออัตรา hedge พอดี ซึ่งเราจะทำเป็นตัวเลขจริงในหัวข้อ 8.7</p>
-  <p>ใช้ประเมินความเสี่ยงที่เหลือหลัง hedge แล้ว ซึ่งคือความไม่แน่นอนที่ยังค้างอยู่แม้รู้ข้อมูลแล้ว</p>
-  <p>ใช้ในการเทรดคู่ เพราะบอกว่าเมื่อตัวหนึ่งวิ่งไปแล้ว อีกตัวควรอยู่ตรงไหนถึงจะเรียกว่าผิดปกติ</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 5.3a — แผ่นตัดของ joint PDF เมื่อทราบค่า MSFT</h4>
-  <img src="../figures/5.3-1.svg" alt="Figure 5.3a — แผ่นตัดของ joint PDF เมื่อทราบค่า MSFT" loading="lazy">
-  <figcaption>
-    <p>เมื่อล็อกว่า MSFT ลง $-3\%$ เราจะได้แผ่นตัดตามแกน AAPL และเมื่อหารด้วย $f_Y(-3\%)$ กราฟจะถูกปรับสเกลจนมีพื้นที่ใต้เส้นเท่ากับ 1 กลายเป็น conditional PDF ที่พร้อมใช้งาน</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 5.3b — เปรียบเทียบ distribution ก่อนและหลังได้รับข้อมูล</h4>
-  <img src="../figures/5.3-2.svg" alt="Figure 5.3b — เปรียบเทียบ distribution ก่อนและหลังได้รับข้อมูล" loading="lazy">
-  <figcaption>
-    <p>เมื่อสังเกตว่า MSFT ติดลบ 3% ค่าเฉลี่ยของ AAPL จะถูกดึงจาก 0% ลงมาที่ -1.5% และความไม่แน่นอน (standard deviation) ก็ลดลงจาก 2.5% เหลือ 2.0% สะท้อนว่าข้อมูลช่วยลดความไม่แน่นอนลง</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 5.3c — การเปลี่ยนสัญญาณเป็นค่าคาดการณ์ (conditional mean)</h4>
-  <img src="../figures/5.3-3.svg" alt="Figure 5.3c — การเปลี่ยนสัญญาณเป็นค่าคาดการณ์ (conditional mean)" loading="lazy">
-  <figcaption>
-    <p>ในตัวแบบเชิงเส้น conditional mean $E[X\mid Y=y] = 0.5y$ จะขยับเป็นเส้นตรงตามสัญญาณที่ได้รับ หาก MSFT เป็น $-3\%$ expected value ของ AAPL จะเลื่อนไปอยู่ที่ $-1.5\%$ ทันที</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 5.3d — ตรวจสอบพื้นที่ใต้กราฟ density มีเงื่อนไข</h4>
-  <img src="../figures/5.3-4.svg" alt="Figure 5.3d — ตรวจสอบพื้นที่ใต้กราฟ density มีเงื่อนไข" loading="lazy">
-  <figcaption>
-    <p>ไม่ว่าผลตอบแทนของ MSFT จะออกมาเป็น $-3\%$, $0\%$ หรือ $+3\%$ พื้นที่ใต้กราฟ conditional PDF ของ AAPL ทุกเส้นต้องถูกปรับสเกลให้รวมได้เท่ากับ 1 เสมอ</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: AAPL กับ MSFT ลงพร้อมกัน 10% ของวัน และ MSFT ลง 25% ของวัน. ต้องหาโอกาสที่ AAPL ลงเมื่อรู้แล้วว่า MSFT ลง</p>
-  <p>คำตอบ: $0.10/0.25=0.40$ จึงมีโอกาส 40%</p>
-  <p>ตรวจเองใน 10 วินาที: พิมพ์ <code>0.10/0.25</code> ต้องได้ 0.40; คำตอบต้องอยู่ระหว่าง 0 กับ 1</p>
-  <p>แปลว่าอะไรบนโต๊ะ: หลังเห็น MSFT ลง ฐานเปรียบเทียบไม่ใช่ทุกวันอีกต่อไป กับดักคือสลับตัวเศษเป็น $P(Y\mid X)$ ซึ่งตอบคนละคำถาม</p>
+<h2>4. ตัวอย่างสามเหลี่ยม: คำนวณได้ทั้ง distribution และ mean</h2>
+<p>ให้ $f_{X,Y}(x,y)=2$ บน $0\le y\le x\le1$ และศูนย์ที่อื่น ตัวแปรไม่มีหน่วย จาก 5.2 เรามี $f_Y(y)=2(1-y)$ สำหรับ $0\le y\le1$ เมื่อ $0\le y\lt1$:</p>
+<div class="math">\[
+\begin{aligned}
+f_{X\mid Y}(x\mid y)&=\frac{1}{1-y},&&y\le x\le1,\\
+\int_y^1\frac{1}{1-y}\,dx&=1,\\
+X\mid Y=y&\sim\mathrm{Uniform}(y,1).
+\end{aligned}
+\]</div>
+<p>ส่วน conditional density เป็นศูนย์นอกช่วงนั้น การสะสมและการหาค่าเฉลี่ยให้</p>
+<div class="math">\[
+F_{X\mid Y}(x\mid y)=
+\begin{cases}
+0,&x\lt y,\\
+(x-y)/(1-y),&y\le x\le1,\\
+1,&x\gt1,
+\end{cases}
+\]</div>
+<div class="math">\[
+\begin{aligned}
+m(y)&=\frac{1}{1-y}\int_y^1x\,dx
+ =\frac{1-y^2}{2(1-y)}=\frac{1+y}{2},\\
+E[X^2\mid Y=y]&=\frac{1}{1-y}\int_y^1x^2\,dx
+ =\frac{1+y+y^2}{3},\\
+v(y)&=\frac{1+y+y^2}{3}-\left(\frac{1+y}{2}\right)^2\\
+ &=\frac{(1-y)^2}{12}.
+\end{aligned}
+\]</div>
+<p>เช่น เมื่อ $y=0.3$ เราเหลือ uniform บน $[0.3,1]$ มี density $10/7$ ค่าเฉลี่ย 0.65 และ variance $0.49/12\approx0.0408333$ โอกาส $X\le0.6$ เท่ากับ $0.3/0.7=3/7$ ที่ $y=1$ ตัวหารเป็นศูนย์ สูตรนี้จึงไม่กำหนดคำตอบ แม้อาจนิยามลิมิตให้เป็นมวลจุดที่ 1 ได้ แต่นั่นเป็นการเลือกต่อเติม ไม่ใช่ผลจากการหาร density</p>
 </section>
-
-<section class="example">
-  <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: เมื่อรู้ค่าของตัวแปรที่สองแล้ว distribution ของตัวแรกเหลือเป็น uniform บนช่วงที่สั้นลง ค่าเฉลี่ยใหม่เป็นเส้นตรงในค่านั้น และเมื่อเฉลี่ยทับด้วย marginal ของตัวที่รู้ ก็ได้ค่าเฉลี่ยเดิมกลับคืนมา</p>
-  <p>ตรวจเองใน 10 วินาที: อินทิเกรต conditional density ต้องได้ $1$ และผลบวกของสองก้อนใน Law of Total Variance ต้องเท่ากับ variance รวม ซึ่งในที่นี้คือ $1/18$</p>
-  <p>ใช้ตัดสินใจ: ถ้าต้องรายงานว่าการรู้ตัวแปรหนึ่งช่วยลดความเสี่ยงได้เท่าไร ให้รายงาน variance ของ regression function เทียบกับ variance รวม เพราะอัตราส่วนนั้นคือสัดส่วนที่อธิบายได้จริง</p>
+<section class="formula">
+<h2>5. เฉลี่ยกลับต้องได้ของเดิม: Tower property</h2>
+<p>ถ้าเอาค่าเฉลี่ยของแต่ละกลุ่มมาถ่วงด้วยความถี่ของกลุ่ม เราต้องได้ค่าเฉลี่ยรวม เห็นได้โดยแทน $m(y)$ แล้วคืน joint density:</p>
+<div class="math">\[
+\begin{aligned}
+E[m(Y)]&=\int\left[\int x f_{X\mid Y}(x\mid y)\,dx\right]f_Y(y)\,dy\\
+ &=\iint x f_{X,Y}(x,y)\,dx\,dy=E[X].
+\end{aligned}
+\]</div>
+<p>ในสามเหลี่ยม $E[Y]=1/3$ จึงได้ $E[(1+Y)/2]=(1+1/3)/2=2/3$ ตรงกับการอินทิเกรต $x f_X(x)=2x^2$ โดยตรง ห้ามเฉลี่ยค่า $m(y)$ แบบให้น้ำหนักทุก $y$ เท่ากัน เพราะ $Y$ ไม่ได้ uniform</p>
 </section>
-
-<section class="pitfall">
-  <h4>กับดักที่พบบ่อย: ลืมหารด้วย marginal PDF (ตัวหารหล่นหาย)</h4>
-  <p>ถ้าใช้คอลัมน์ MSFT ลงตรง ๆ โดยไม่หาร 0.40 จะได้โอกาสของ AAPL เป็น 0.15, 0.20, 0.05 ซึ่งรวมกันได้แค่ 0.40 และค่าเฉลี่ยจะออกมา −0.20% แทนที่จะเป็น −0.50% กรณีต่อเนื่องก็เหมือนกัน แผ่นตัด $f_{X,Y}(x,y)$ ที่ไม่หาร $f_Y(y)$ มีพื้นที่ไม่เท่ากับ 1 และทุกโอกาสกับทุกเพดานความเสี่ยงที่คำนวณจากมันจะผิด</p>
+<section class="formula">
+<h2>6. แยกความผันผวน “ภายในกลุ่ม” และ “ระหว่างกลุ่ม”</h2>
+<p>เขียน $X-E[X]=(X-m(Y))+(m(Y)-E[X])$ เมื่อยกกำลังสองแล้วเฉลี่ย พจน์คูณข้ามเป็นศูนย์ เพราะ $E[X-m(Y)\mid Y]=0$ จึงได้กฎความแปรปรวนรวม:</p>
+<div class="math">\[
+\operatorname{Var}(X)
+=E[\operatorname{Var}(X\mid Y)]
++\operatorname{Var}(E[X\mid Y]).
+\]</div>
+<p>สำหรับสามเหลี่ยม $E[X^2]=1/2$ และ $\operatorname{Var}(Y)=1/18$ ดังนั้น</p>
+<div class="math">\[
+\begin{aligned}
+\operatorname{Var}(X)&=\frac12-\left(\frac23\right)^2=\frac1{18},\\
+\operatorname{Var}(m(Y))&=\frac14\operatorname{Var}(Y)=\frac1{72},\\
+E[v(Y)]&=\int_0^1\frac{(1-y)^2}{12}\,2(1-y)\,dy=\frac1{24},\\
+\frac1{72}+\frac1{24}&=\frac1{18}.
+\end{aligned}
+\]</div>
+<p>ข้อสรุปคือ <strong>variance ตามเงื่อนไขลดลงโดยเฉลี่ย</strong> ไม่ใช่ทุกค่า $y$ ตัวอย่างเช่น $y=0.1$ ให้ $v(0.1)=0.81/12=0.0675$ มากกว่า variance รวม $1/18\approx0.05556$ ได้โดยไม่ขัดกับกฎนี้</p>
 </section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ข้อมูลใหม่มาถึงกลางวัน แล้วยังไงต่อ</h4>
-  <p>สถานการณ์ที่ทำให้เครื่องมือนี้จำเป็นเกิดขึ้นทุกวันบนโต๊ะ คือตลาดเปิดมาแล้วดัชนีร่วง 3% คำถามทันทีคือของที่เราถืออยู่ควรเป็นเท่าไร</p>
-  <p>ก่อนมีเครื่องมือนี้ คนตอบด้วยประสบการณ์และความรู้สึก ซึ่งใช้ได้จนกระทั่งพอร์ตใหญ่เกินกว่าจะรู้สึกไหว</p>
-  <p>สิ่งที่หัวข้อนี้ให้คือวิธีคำนวณคำตอบนั้นออกมาเป็นตัวเลข โดยการตัดผิวสองมิติออกมาเป็นแผ่นเดียว ตรงค่าที่เรารู้แล้ว</p>
-  <p>แต่แผ่นที่ตัดออกมายังใช้ไม่ได้ทันที เพราะพื้นที่ใต้มันไม่เท่ากับหนึ่ง ต้องปรับสเกลก่อน และการปรับสเกลนั้นเองคือหัวใจของทั้งหัวข้อ</p>
+<section class="figure">
+<h2>7. กรณี Gaussian: เห็นทั้งตำแหน่งและความกว้างที่เปลี่ยน</h2>
+<p>รูปทั้งสี่ใช้แบบจำลอง <strong>jointly Gaussian</strong> สมมติ ค่าเฉลี่ยทั้งคู่ศูนย์ ส่วนเบี่ยงเบนมาตรฐาน AAPL 2.5 และ MSFT 3 จุดเปอร์เซ็นต์ กับ $\rho=0.6$ ภายใต้เงื่อนไข Gaussian และ $|\rho|\lt1$:</p>
+<div class="math">\[
+\begin{aligned}
+X\mid Y=y&\sim N(m(y),s^2),\\
+m(y)&=\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y),\\
+s^2&=\sigma_X^2(1-\rho^2).
+\end{aligned}
+\]</div>
+<details><summary>ที่มาของสูตร: แยกส่วนที่รู้แล้วออกจากส่วนที่ยังสุ่ม</summary>
+<p>ให้ $U,V$ เป็น standard Normal ที่เป็นอิสระกัน และให้ $\sigma_X,\sigma_Y\gt0$ เราสร้าง jointly Gaussian ที่มี mean, SD และ correlation ตามต้องการได้ดังนี้:</p>
+<div class="math">\[
+\begin{aligned}
+Y&=\mu_Y+\sigma_Y U,\\
+X&=\mu_X+\sigma_X\bigl(\rho U+\sqrt{1-\rho^2}\,V\bigr),\\
+\operatorname{Var}(X)&=\sigma_X^2\bigl(\rho^2+1-\rho^2\bigr)=\sigma_X^2,\\
+\operatorname{Cov}(X,Y)&=\rho\sigma_X\sigma_Y.
+\end{aligned}
+\]</div>
+<p>joint Gaussian ถูกกำหนดด้วย mean และ covariance จึงใช้การสร้างนี้แทนโมเดลข้างต้นได้ เมื่อรู้ $Y=y$ เรารู้ $U=(y-\mu_Y)/\sigma_Y$ แต่ $V$ ยังเป็น standard Normal ตัวเดิม เพราะเป็นอิสระจาก $U$:</p>
+<div class="math">\[
+\begin{aligned}
+X\mid Y=y
+ &=\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y)\\
+ &\quad+\sigma_X\sqrt{1-\rho^2}\,V.
+\end{aligned}
+\]</div>
+<p>สองพจน์แรกเป็นค่าคงที่เมื่อรู้ $y$ จึงเป็น conditional mean ส่วนพจน์สุดท้ายมี mean ศูนย์และ variance $\sigma_X^2(1-\rho^2)$ นี่คือที่มาของทั้งสองสูตร ไม่ใช่กฎสำหรับข้อมูลที่เพียงแค่มี correlation เท่ากัน</p>
+</details>
+<p>เมื่อ $y=-3$ ได้ $m=-1.5$ จุดเปอร์เซ็นต์ และ $s=2$ จุดเปอร์เซ็นต์ เทียบกับ marginal ที่ mean 0 และ SD 2.5 จุดเปอร์เซ็นต์ สูตร variance ที่ไม่ขึ้นกับ $y$ เป็นคุณสมบัติเฉพาะของ Gaussian นี้ ไม่ใช่ของทุก conditional distribution</p>
+<figure class="plot">
+<img src="../figures/5.3-1.svg" alt="conditional density ของ AAPL หลัง normalize เมื่อ MSFT เท่ากับลบสามเปอร์เซ็นต์" loading="lazy">
+</figure>
+<p>รูป 5.3a แสดง density ที่ normalize แล้ว มีจุดกึ่งกลาง −1.5% และพื้นที่เกือบหนึ่งในช่วงที่วาด ไม่ใช่รอยตัดดิบของ joint PDF</p>
+<figure class="plot">
+<img src="../figures/5.3-2.svg" alt="เปรียบเทียบ marginal กับ conditional normal density ที่เลื่อนไปทางซ้ายและแคบลง" loading="lazy">
+</figure>
+<p>รูป 5.3b เทียบ marginal กับ conditional: เส้นตามเงื่อนไขเลื่อนไปซ้ายและแคบลงตามพารามิเตอร์ที่คำนวณข้างต้น</p>
+<figure class="plot">
+<img src="../figures/5.3-3.svg" alt="เส้น conditional mean ของ AAPL เท่ากับครึ่งหนึ่งของผลตอบแทน MSFT" loading="lazy">
+</figure>
+<p>รูป 5.3c แสดง $m(y)=0.5y$ จุดที่ $y=-3,0,3$ ให้ mean −1.5, 0, 1.5 ตามลำดับ ความสัมพันธ์นี้เป็นการคาดหมายตามเงื่อนไข ไม่ใช่ผลตอบแทนจริงทุกครั้งหรือข้อสรุปเชิงเหตุผล</p>
+<figure class="plot">
+<img src="../figures/5.3-4.svg" alt="แท่งพื้นที่ใต้ conditional densities สามกรณีของ MSFT เทียบเส้นหนึ่ง" loading="lazy">
+</figure>
+<p>รูป 5.3d เป็นกราฟแท่งของ <em>พื้นที่ใต้ density</em> ในกรณี MSFT −3%, 0%, +3% ทุกแท่งใกล้หนึ่ง เป็นการตรวจ normalization ไม่ใช่แผนภูมิโอกาสของสามค่าผลตอบแทน MSFT</p>
 </section>
-
-<section class="prose">
-  <h4>ภูมิหลังทางประวัติศาสตร์: จากแนวคิดของ Bayes สู่การปรับมุมมองความเสี่ยง</h4>
-  <p>แนวคิดความน่าจะเป็นมีเงื่อนไขเริ่มต้นจาก Thomas Bayes ในทศวรรษ 1760 และได้รับการขยายต่อโดย Pierre-Simon Laplace ในปี 1774 โดยตั้งคำถามว่า เมื่อสังเกตเห็นผลลัพธ์บางอย่างเกิดขึ้นแล้ว ความเชื่อมั่นต่อสาเหตุเดิมควรเปลี่ยนไปอย่างไร</p>
-  <p>สำหรับค่าต่อเนื่องมีปัญหาหนึ่งข้อ: โอกาสที่ MSFT จะลง −3.000% พอดีเป็นศูนย์ตามหัวข้อ 1.8 จึงหารด้วยโอกาสของจุดตรง ๆ ไม่ได้ ทางออกคือหารด้วย density แทน ซึ่งขั้นที่ 3 ทำ และปี 1933 Kolmogorov ทำให้วิธีนี้ใช้ได้อย่างรัดกุม</p>
-  <p>ในตลาดการเงิน โต๊ะเทรดไม่ได้อยู่ในโลกที่มีแต่ข้อมูลตั้งต้น เมื่อตัวเลขเงินเฟ้อหรือผลประกอบการประกาศออกมา distribution เดิมจะถูกอัปเดตทันทีเป็น conditional distribution เพื่อคำนวณการปรับพอร์ตและการทำ hedging ให้สะท้อนสถานการณ์จริง</p>
+<section class="formula">
+<h2>8. Bayes และเงื่อนไขที่เป็นกลุ่มตัวแปร</h2>
+<p>แบ่งเวกเตอร์เป็นข้อมูล $\mathbf A$ กับสิ่งที่สนใจ $\mathbf B$ หลักเลือกและ normalize ยังเหมือนเดิม เมื่อ $f_{\mathbf A}(\mathbf a)\gt0$:</p>
+<div class="math">\[
+\begin{aligned}
+f_{\mathbf B\mid\mathbf A}(\mathbf b\mid\mathbf a)
+ &=\frac{f_{\mathbf A,\mathbf B}(\mathbf a,\mathbf b)}{f_{\mathbf A}(\mathbf a)}\\
+ &=\frac{f_{\mathbf A\mid\mathbf B}(\mathbf a\mid\mathbf b)
+ f_{\mathbf B}(\mathbf b)}{f_{\mathbf A}(\mathbf a)},\\
+F_{\mathbf B\mid\mathbf A}(\mathbf b\mid\mathbf a)
+ &=\int_{\mathbf u\le\mathbf b}
+ f_{\mathbf B\mid\mathbf A}(\mathbf u\mid\mathbf a)\,d\mathbf u.
+\end{aligned}
+\]</div>
+<p>อสมการของเวกเตอร์หมายถึงทุกพิกัดผ่านเกณฑ์พร้อมกัน สูตร Bayes สลับทิศของเงื่อนไขด้วยน้ำหนัก marginal ไม่ใช่สลับชื่อในวงเล็บเฉย ๆ แนวคิดการปรับความเชื่อจากข้อมูลของ Bayes และ Laplace จึงเชื่อมต่อกับการ normalize density ได้โดยตรง</p>
 </section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>รูปของความสัมพันธ์</td><td>ความสัมพันธ์เป็นเส้นตรง</td><td>ของจริงโค้งและเปลี่ยนทิศตามระดับราคา</td><td>อัตรา hedge ที่คำนวณได้ใช้ได้เฉพาะรอบ ๆ ระดับปัจจุบัน</td></tr>
-      <tr><td>ความคงที่</td><td>ความสัมพันธ์คงที่</td><td>มันเปลี่ยนตามภาวะตลาด</td><td>ต้องคำนวณใหม่เป็นระยะ และต้องรู้ว่าจะคำนวณใหม่เมื่อไร</td></tr>
-      <tr><td>ข้อมูลที่ใช้</td><td>ข้อมูลที่เห็นเชื่อถือได้</td><td>ราคาที่เห็นอาจเป็นราคาที่ไม่มีคนเทรดจริง</td><td>การอัปเดตจากราคาที่ไม่จริงทำให้ hedge ผิดทาง</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวล่างเป็นปัญหาจริงในสินทรัพย์ที่สภาพคล่องต่ำ ซึ่งราคาที่ประกาศอาจค้างมาหลายวัน</p>
-  </div>
-</section>
-
 <section class="code">
-  <details>
-    <summary>โค้ดคิด conditional ของตารางและของผืนสามเหลี่ยม</summary>
-    <pre><code>import numpy as np
-from scipy import integrate
-joint = np.array([[0.05, 0.15], [0.30, 0.20], [0.25, 0.05]]); x = np.array([-2, 0, 2])
-cond = joint[:, 1] / joint[:, 1].sum()
-assert np.allclose(cond, [0.375, 0.5, 0.125]) and abs(cond.sum() - 1) &lt; 1e-12
-assert abs(x @ cond + 0.5) &lt; 1e-12 and abs(x @ joint.sum(1) - 0.2) &lt; 1e-12
-y = 0.4
-f_cond = lambda t: 2 / (2 * (1 - y))                # X | Y = y is Uniform(y, 1)
-assert abs(integrate.quad(f_cond, y, 1)[0] - 1) &lt; 1e-12
-assert abs(integrate.quad(lambda t: t * f_cond(t), y, 1)[0] - (1 + y) / 2) &lt; 1e-12
-assert abs((1 + 1 / 3) / 2 - 2 / 3) &lt; 1e-12          # tower property
-varX = integrate.quad(lambda t: t ** 3 * 2, 0, 1)[0] - (2 / 3) ** 2
-varY = integrate.quad(lambda t: t * t * 2 * (1 - t), 0, 1)[0] - (1 / 3) ** 2
-assert abs(varX - 1 / 18) &lt; 1e-12 and abs(varY / 4 - 1 / 72) &lt; 1e-12
-e_var = integrate.quad(lambda t: (1 - t) ** 2 / 12 * 2 * (1 - t), 0, 1)[0]
-assert abs(e_var - 1 / 24) &lt; 1e-12 and abs(1 / 72 + e_var - varX) &lt; 1e-12</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดตัดคอลัมน์ down ได้ 0.375, 0.500, 0.125 และค่าเฉลี่ย −0.50% เทียบกับ +0.20% ตรวจว่า density แบบมีเงื่อนไขรวมได้ 1 ค่าเฉลี่ยคือ (1 + y)/2 และ 1/72 + 1/24 = 1/18 ตาม Law of Total Variance</p>
-  </div>
+<h3>JavaScript: ตรวจ conditional, tower และ total variance</h3>
+<pre><code class="language-javascript" data-example="5.3">const down = [.15,.20,.05].map(p =&gt; p/.40);
+const values = [-2,0,2];
+const downMean = down.reduce((s,p,i) =&gt; s+p*values[i],0);
+function integrate(f,a,b,n=10000) {
+  const h=(b-a)/n; let s=0;
+  for(let i=0;i&lt;n;i++) s+=f(a+(i+.5)*h)*h;
+  return s;
+}
+function conditional(x,y) {
+  if(y&lt;0 || y&gt;=1) throw new RangeError('Need 0 &lt;= y &lt; 1');
+  return x&lt;y || x&gt;1 ? 0 : 1/(1-y);
+}
+const y=.3, m=(1+y)/2;
+const mean = integrate(x =&gt; x*conditional(x,y),y,1);
+const variance = integrate(x =&gt; (x-m)**2*conditional(x,y),y,1);
+const tower = integrate(t =&gt; ((1+t)/2)*2*(1-t),0,1);
+const within = integrate(t =&gt; ((1-t)**2/12)*2*(1-t),0,1);
+const between = integrate(t =&gt; (((1+t)/2)-2/3)**2*2*(1-t),0,1);
+let rejectsBoundary=false;
+try { conditional(1,1); } catch(e) { rejectsBoundary=e instanceof RangeError; }
+console.log({down,downMean,mean,variance,
+  area:integrate(x =&gt; conditional(x,y),y,1),
+  probability:integrate(x =&gt; conditional(x,y),y,.6),
+  tower,within,between,total:within+between,
+  gaussianMean:.6*2.5/3*(-3),
+  gaussianSD:2.5*Math.sqrt(1-.6**2),
+  largerConditionalVariance:(1-.1)**2/12,rejectsBoundary});</code></pre>
+<p>ผลสำคัญ: mean 0.65, variance ประมาณ 0.0408333, tower ประมาณ 0.666667 และผลรวม within กับ between ประมาณ 0.0555556 โค้ดตั้งใจปฏิเสธขอบ $y=1$ แทนการให้ค่าที่ดูใช้ได้แต่ผิดความหมาย</p>
 </section>
-
+<section class="exercises">
+<h2>ฝึกเปลี่ยนกลุ่มอ้างอิง</h2>
+<ol><li>จากตาราง หา $E[X\mid Y=\mathrm{up}]$ และใช้ตรวจค่าเฉลี่ยรวม
+<details><summary>เฉลย</summary><p>$( -2(0.05)+2(0.25))/0.60=2/3$ จุดเปอร์เซ็นต์ แล้ว $0.60(2/3)+0.40(-0.5)=0.2$ ตรงกับ marginal mean</p></details></li>
+<li>ในสามเหลี่ยม เมื่อ $Y=0.6$ โอกาส $X\gt0.8$ และค่าเฉลี่ยเป็นเท่าไร?
+<details><summary>เฉลย</summary><p>ช่วงใหม่คือ $[0.6,1]$ โอกาส $(1-0.8)/(1-0.6)=0.5$ และ mean $(1+0.6)/2=0.8$</p></details></li>
+<li>การ conditioning ทำให้ variance ลดลงทุกกรณีหรือไม่?
+<details><summary>เฉลย</summary><p>ไม่ กฎรวมรับรองเพียง $E[v(Y)]\le\operatorname{Var}(X)$ เมื่อ variance มีค่าจำกัด ตัวอย่าง $y=0.1$ ข้างต้นมี variance มากกว่าค่ารวม</p></details></li></ol>
+</section>
+<section class="pitfalls">
+<h2>ข้อจำกัดในการนำไปใช้</h2>
+<p>หากเงื่อนไขอยู่ในหางที่ $f_Y(y)$ เล็กมาก การประมาณ joint หรือ marginal ผิดเพียงเล็กน้อยอาจทำให้อัตราส่วนไม่นิ่ง ควรตรวจข้อมูลในบริเวณนั้นและทดสอบความไวของแบบจำลอง การสร้าง forecast ต้องกำหนดเวลาของ $X,Y$ ให้ชัดและใช้เฉพาะข้อมูลที่ทราบ ณ เวลาพยากรณ์ ไม่ใช่ผลตอบแทนอนาคตที่ยังไม่เกิด</p>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>conditional distribution คือ distribution ที่ปรับปรุงใหม่ทันทีหลังทราบข้อมูลของอีกตัวแปรหนึ่ง</li>
-    <li>สูตร $f_{X\mid Y} = f_{X,Y} / f_Y$ คือการปรับสเกลแผ่นตัดให้มีพื้นที่ใต้กราฟรวมเท่ากับ 1 พอดี</li>
-    <li>ข้อมูลที่สังเกตได้จะเปลี่ยนทั้งค่ากึ่งกลางที่คาดหวัง (mean) และบีบขนาดความไม่แน่นอน (variance) ให้แคบลง</li>
-    <li>ห้ามนำแผ่นตัดของ joint PDF ไปใช้คำนวณความน่าจะเป็นโดยไม่หารด้วย marginal PDF ของตัวแปรเงื่อนไข</li>
-    <li>conditional mean เป็น function ของค่าที่รู้ ไม่ใช่ตัวเลขคงที่ และเมื่อเฉลี่ยทับตัวที่รู้ด้วย marginal ของมัน จะได้ค่าเฉลี่ยเดิมกลับคืนมา</li>
-    <li>Law of Total Variance ตรวจได้ด้วยเลข: variance ของ regression function บวกค่าเฉลี่ยของ conditional variance ต้องเท่ากับ variance รวมเสมอ</li>
-  </ul>
+<h2>สิ่งที่ควรจำ</h2>
+<ul><li>conditional คือเลือกกลุ่มแล้ว normalize ส่วน marginal คือรวมทุกกลุ่ม</li><li>ตัวหารต้องเป็น marginal ของตัวแปรเงื่อนไข และต้องเป็นบวก</li><li>ค่าเฉลี่ยตามเงื่อนไขเป็นฟังก์ชันของข้อมูล; tower property ใช้น้ำหนักการแจกแจงของข้อมูลนั้น</li><li>Total variance แยกความผันผวนภายในกลุ่มกับระหว่างกลุ่ม ไม่ได้สัญญาว่าทุกกลุ่มจะมี variance ต่ำลง</li></ul>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="5.2.html">5.2 Marginal Distributions</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="5.4.html">5.4 Independence</a></div>
+<div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="5.2.html">5.2 Marginal Distributions</a></div>
+<div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="5.4.html">5.4 Independence</a></div>
 </nav>
 </div>
 </body>
