@@ -15,23 +15,83 @@
 </nav>
 <header class="chapter-landing">
   <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 1</h1>
+  <h1>บทที่ 1 — เริ่มวัดความไม่แน่นอน</h1>
   <p>Probability Foundations · 11 หัวข้อ</p>
-  <p class="chapter-sequence">อธิบายความไม่แน่นอนหนึ่งก้อนด้วยตัวเลขไม่กี่ตัว รู้ว่า distribution แต่ละแบบใช้กับอะไร และอ่านระดับขาดทุนที่แย่ที่สุดออกจากกราฟสะสมได้</p>
+  <p class="chapter-sequence">เราไม่รู้ว่าพรุ่งนี้พอร์ตจะกำไรหรือขาดทุน แต่เราตั้งคำถามให้ชัดได้: ผลลัพธ์แบบใดเป็นไปได้ แต่ละแบบมีโอกาสเท่าไร และหากตัดสินใจซ้ำภายใต้เงื่อนไขเดิม เราควรคาดหวังอะไร บทนี้สร้างวิธีตอบคำถามเหล่านี้ก่อนนำไปใช้กับแบบจำลองการเงิน</p>
 </header>
-<ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/1.1.html"><span class="toc-number">1.1</span><span class="toc-name">Random Variables and the Cumulative Distribution Function (CDF)<span class="toc-why">นับโอกาสสะสมจากซ้ายไปขวา เหมือนนับคนในลิฟต์ทีละชั้น</span></span></a></li>
-  <li><a href="../topics/1.2.html"><span class="toc-number">1.2</span><span class="toc-name">Discrete Random Variables and the Probability Mass Function (PMF)<span class="toc-why">แจกน้ำหนักให้ผลลัพธ์แต่ละค่า จนครบ 100% พอดี</span></span></a></li>
-  <li><a href="../topics/1.3.html"><span class="toc-number">1.3</span><span class="toc-name">Expected Value<span class="toc-why">คูณผลลัพธ์ด้วยโอกาส ก่อนตัดสินว่าเกมหนึ่งคุ้มแค่ไหน</span></span></a></li>
-  <li><a href="../topics/1.4.html"><span class="toc-number">1.4</span><span class="toc-name">Variance and Standard Deviation<span class="toc-why">ค่าเฉลี่ยเท่ากัน ไม่ได้แปลว่าเดาผลลัพธ์ได้ง่ายเท่ากัน</span></span></a></li>
-  <li><a href="../topics/1.5.html"><span class="toc-number">1.5</span><span class="toc-name">The Binomial Distribution<span class="toc-why">นับจำนวนครั้งที่สำเร็จจากการลองแบบเดิมหลายรอบ</span></span></a></li>
-  <li><a href="../topics/1.6.html"><span class="toc-number">1.6</span><span class="toc-name">The Poisson Distribution<span class="toc-why">นับเหตุการณ์ที่โผล่มาทีละครั้งในช่วงเวลาหนึ่ง</span></span></a></li>
-  <li><a href="../topics/1.7.html"><span class="toc-number">1.7</span><span class="toc-name">Bayes' Theorem<span class="toc-why">เมื่อได้ข้อมูลใหม่ เราควรขยับความเชื่อเดิมมากแค่ไหน</span></span></a></li>
-  <li><a href="../topics/1.8.html"><span class="toc-number">1.8</span><span class="toc-name">Continuous Random Variables and the Probability Density Function (PDF)<span class="toc-why">โอกาสของช่วงมาจากพื้นที่ใต้เส้น ไม่ใช่ความสูงที่จุดเดียว</span></span></a></li>
-  <li><a href="../topics/1.9.html"><span class="toc-number">1.9</span><span class="toc-name">The Normal (Gaussian) Distribution and Quantile-Quantile (QQ) Diagnostics<span class="toc-why">เส้นระฆังดูดีตรงกลาง แต่อาจพลาดข้อมูลที่ปลายหาง</span></span></a></li>
-  <li><a href="../topics/1.10.html"><span class="toc-number">1.10</span><span class="toc-name">The Lognormal Distribution<span class="toc-why">เริ่มจากราคา 200 หรือ 50 แล้วหาที่มาของพจน์ลบครึ่ง variance ทีละงาน</span></span></a></li>
-  <li><a href="../topics/1.11.html"><span class="toc-number">1.11</span><span class="toc-name">A Zoo of Distributions<span class="toc-why">เลือกรูปแบบโอกาสให้เข้ากับข้อมูล ไม่ใช่ยัดทุกอย่างลงสูตรเดียว</span></span></a></li>
-</ol>
+<main>
+<section class="prose">
+  <h2>โจทย์หลักของบท</h2>
+  <p>สมมติว่ามีกลยุทธ์ที่แพ้บ่อยกว่าชนะ แต่ครั้งที่ชนะได้กำไรมากกว่าเงินที่เสียครั้งละน้อย ๆ เราควรตัดสินจากอัตราชนะอย่างเดียวหรือไม่? ถ้ากำไรเฉลี่ยเป็นบวก ยังมีโอกาสขาดทุนหลายครั้งติดกันหรือเปล่า? แล้วเมื่อมีข้อมูลใหม่ เราควรปรับการประเมินอย่างไร?</p>
+  <p>เราจะไม่เริ่มจากการเลือกสูตรสำเร็จ แต่เริ่มจากระบุผลลัพธ์และโอกาสให้ครบ จากนั้นจึงคำนวณค่าเฉลี่ย ความผันผวน และโอกาสของเหตุการณ์ที่สนใจ เมื่อเข้าใจองค์ประกอบเหล่านี้แล้ว ชื่อ distribution ต่าง ๆ จะมีหน้าที่ชัดเจน ไม่ใช่รายการสูตรที่ต้องท่องจำ</p>
+</section>
+
+<section class="prose">
+  <h2>ก่อนเริ่ม ควรรู้อะไรบ้าง</h2>
+  <p>สี่หัวข้อแรกใช้การบวก ลบ คูณ หาร เศษส่วน เปอร์เซ็นต์ และรากที่สอง ส่วน exponential, logarithm และการหาพื้นที่ใต้กราฟจะเข้ามาภายหลังพร้อมคำอธิบาย ยังไม่ต้องรู้ vector หรือ matrix</p>
+  <p>เตรียมกระดาษกับเครื่องคิดเลขไว้ก็พอ เวลาเห็นสูตรให้ระบุก่อนว่าแต่ละสัญลักษณ์หมายถึงอะไร ตัวเลขมีหน่วยอะไร และสูตรนั้นกำลังตอบคำถามใด อย่าข้ามจากชื่อสูตรไปกดเครื่องคิดเลขทันที</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 1 — จากข้อมูลสู่โอกาส ค่าเฉลี่ย และความผันผวน</h2>
+  <p>เริ่มจากข้อมูลเล็ก ๆ ที่นับด้วยมือได้ หัวข้อ 1.1–1.2 เป็นสองมุมมองของ distribution เดียวกัน: มุมมองสะสมกับมุมมองทีละผลลัพธ์ จากนั้น 1.3–1.4 จึงย่อ distribution เป็นตัวเลขที่ใช้เปรียบเทียบการตัดสินใจ โดยไม่ลืมว่าการย่อข้อมูลย่อมทำให้รายละเอียดบางอย่างหายไป</p>
+  <ol class="chapter-topics chapter-topics-full">
+    <li><a href="../topics/1.1.html"><span class="toc-number">1.1</span><span class="toc-name">Random Variables and the Cumulative Distribution Function (CDF)<span class="toc-why">เริ่มจากนับวันขาดทุน สร้างยอดสะสม แล้วอ่านโอกาสของช่วงและระดับขาดทุนจากเกณฑ์ที่กำหนด</span></span></a></li>
+    <li><a href="../topics/1.2.html"><span class="toc-number">1.2</span><span class="toc-name">Discrete Random Variables and the Probability Mass Function (PMF)<span class="toc-why">แจกโอกาสให้ผลลัพธ์แต่ละค่า ตรวจว่ารวมกันครบหนึ่ง และแปลงระหว่างตารางโอกาสกับ CDF</span></span></a></li>
+    <li><a href="../topics/1.3.html"><span class="toc-number">1.3</span><span class="toc-name">Expected Value<span class="toc-why">ชั่งทั้งขนาดผลลัพธ์และโอกาส เพื่อหากำไรคาดหวัง แยกค่าเฉลี่ยออกจากผลที่จะเกิดขึ้นจริง</span></span></a></li>
+    <li><a href="../topics/1.4.html"><span class="toc-number">1.4</span><span class="toc-name">Variance and Standard Deviation<span class="toc-why">วัดการกระจายรอบค่าเฉลี่ย และดูว่าความผันผวนของผลรวมขึ้นกับจำนวนครั้งและความสัมพันธ์อย่างไร</span></span></a></li>
+  </ol>
+  <p>ก่อนอ่านต่อ ควรอธิบายได้ว่า “โอกาสชนะ 30%” กับ “กำไรคาดหวังเป็นบวก” ไม่ขัดกัน และเหตุใดกลยุทธ์สองแบบที่มีค่าเฉลี่ยเท่ากันจึงอาจเสี่ยงต่างกันมาก</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 2 — นับเหตุการณ์ และปรับโอกาสเมื่อได้ข้อมูลใหม่</h2>
+  <p>เมื่อรู้วิธีแจกโอกาสแล้ว เราจะสร้างแบบจำลองสำหรับงานที่พบบ่อย Binomial ใช้นับจำนวนสำเร็จจากจำนวนครั้งที่กำหนด ส่วน Poisson ใช้จำลองจำนวนเหตุการณ์ในช่วงที่กำหนด ทั้งสองต้องมีสมมติฐานรองรับ ไม่ใช่เลือกจากชื่อข้อมูลอย่างเดียว จากนั้น Bayes' theorem จะช่วยปรับโอกาสเมื่อมีหลักฐานใหม่</p>
+  <ol class="chapter-topics chapter-topics-full">
+    <li><a href="../topics/1.5.html"><span class="toc-number">1.5</span><span class="toc-name">The Binomial Distribution<span class="toc-why">ผู้จัดการชนะตลาด 8 ใน 10 ปีบอกว่ามีฝีมือแค่ไหน? สร้าง Binomial จากการนับลำดับ แล้วดูว่าการคัดคนเก่งที่สุดจากหลายคนเปลี่ยนคำตอบอย่างไร</span></span></a></li>
+    <li><a href="../topics/1.6.html"><span class="toc-number">1.6</span><span class="toc-name">The Poisson Distribution<span class="toc-why">ระบบรับคำสั่งได้ 25 รายการต่อวินาที แต่มีคำสั่งเฉลี่ย 20 รายการ จะเกินกำลังบ่อยแค่ไหน? เชื่อมอัตรากับจำนวน แล้วใช้ต่อกับจำนวนผิดนัดและระดับเงินรองรับความเสียหาย</span></span></a></li>
+    <li><a href="../topics/1.7.html"><span class="toc-number">1.7</span><span class="toc-name">Bayes' Theorem<span class="toc-why">ระบบจับวิกฤติได้ 90% ไม่ได้แปลว่าเมื่อเตือนแล้วจะเกิดวิกฤติ 90% เริ่มจากตารางนับและ base rate ก่อนเขียน Bayes แล้วแยก probability ออกจากการตัดสินใจที่มีต้นทุน</span></span></a></li>
+  </ol>
+  <p>ก่อนอ่านต่อ ลองแยกคำถาม “ใน 20 ครั้งจะสำเร็จกี่ครั้ง” ออกจาก “ในหนึ่งชั่วโมงจะเกิดเหตุการณ์กี่ครั้ง” และอธิบายว่าเหตุใดสัญญาณที่ดูแม่นยำจึงยังมีผลบวกลวงได้มากเมื่อเหตุการณ์จริงพบไม่บ่อย</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 3 — ผลลัพธ์ต่อเนื่องและการเลือก distribution</h2>
+  <p>ราคา เวลา และผลตอบแทนมักจำลองเป็นค่าต่อเนื่อง เราจึงเปลี่ยนจากการบวกโอกาสทีละจุดเป็นการหาพื้นที่ของช่วง เริ่มที่ PDF แล้วจึงศึกษา Normal และ Lognormal ก่อนเปรียบเทียบกับ distribution อื่นที่เหมาะกับหางหนัก ระยะเวลารอ หรือข้อมูลที่มีขอบเขตต่างกัน</p>
+  <ol class="chapter-topics chapter-topics-full">
+    <li><a href="../topics/1.8.html"><span class="toc-number">1.8</span><span class="toc-name">Continuous Random Variables and the Probability Density Function (PDF)<span class="toc-why">Density สูงถึง 21.11 ได้โดยโอกาสไม่เกินหนึ่ง เพราะโอกาสมาจากพื้นที่ ไม่ใช่ความสูงจุดเดียว ฝึกแปลงหน่วยและคำนวณช่วงก่อนใช้กับผลตอบแทน</span></span></a></li>
+    <li><a href="../topics/1.9.html"><span class="toc-number">1.9</span><span class="toc-name">The Normal (Gaussian) Distribution and Quantile-Quantile (QQ) Diagnostics<span class="toc-why">เหตุใดขาดทุนเกิน 4% จึงอาจหายากกว่าขาดทุนเกิน 2% ถึง 265 เท่า? คำนวณหางและ VaR ภายใต้ Normal แล้วใช้ QQ plot และข้อมูลจริงตรวจสมมติฐาน</span></span></a></li>
+    <li><a href="../topics/1.10.html"><span class="toc-number">1.10</span><span class="toc-name">The Lognormal Distribution<span class="toc-why">ราคาเฉลี่ยเพิ่มได้ทั้งที่โอกาสกำไรต่ำกว่า 50% เล็กน้อย เริ่มจากการคูณผลตอบแทน พิสูจน์เทอมครึ่ง variance แล้วแยก mean, median, mode และราคาปลายทางออกจากเส้นทางราคา</span></span></a></li>
+    <li><a href="../topics/1.11.html"><span class="toc-number">1.11</span><span class="toc-name">A Zoo of Distributions<span class="toc-why">เริ่มจากเวลารอที่ติดลบไม่ได้ เรียน Exponential และการสุ่มผ่าน CDF แล้วเปรียบเทียบ Student-t กับ Pareto โดยตรวจ scale และเงื่อนไขของ moment ก่อนใช้</span></span></a></li>
+  </ol>
+  <p>เมื่อจบส่วนนี้ ควรตอบได้ว่าเหตุใด density จึงสูงกว่า 1 ได้ ทั้งที่ความน่าจะเป็นเกิน 1 ไม่ได้ และเหตุใดแบบจำลองที่เข้ากับข้อมูลส่วนใหญ่จึงยังประเมินวันขาดทุนหนักผิดได้</p>
+</section>
+
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — ประเมินกลยุทธ์ก่อนนำไปใช้</h2>
+  <p>ให้ผลลัพธ์ต่อครั้งเป็น −1R, 0R และ +2R ด้วยโอกาส 0.55, 0.15 และ 0.30 ตามลำดับ โดย 1R คือเงินที่วางแผนเสี่ยงต่อครั้ง ตัวเลขนี้เป็นแบบจำลองก่อนหักค่าใช้จ่าย ไม่ใช่ข้อยืนยันว่าการซื้อขายจริงจะได้เพียงสามผลลัพธ์นี้</p>
+  <p>เริ่มจากตรวจ PMF แล้วหาโอกาสไม่ขาดทุน กำไรคาดหวัง และ standard deviation จากนั้นสมมติว่าทดลอง 20 ครั้งอย่างเป็นอิสระด้วยโอกาสเดิม ถามว่าจำนวนครั้งที่ได้ +2R ใช้ distribution ใดได้ สุดท้ายระบุว่าต้องตรวจอะไรเพิ่มก่อนใช้กับตลาดจริง</p>
+  <details>
+    <summary>เปิดแนวตรวจคำตอบ</summary>
+    <p>น้ำหนักรวม $0.55+0.15+0.30=1$ และทุกค่าไม่ติดลบ โอกาสไม่ขาดทุนคือ $0.15+0.30=0.45$ กำไรคาดหวังคือ $(-1)(0.55)+0(0.15)+2(0.30)=0.05R$</p>
+    <p>ค่าเฉลี่ยของผลลัพธ์ยกกำลังสองคือ $1(0.55)+0+4(0.30)=1.75$ จึงได้ variance $1.75-0.05^2=1.7475$ R² และ standard deviation ประมาณ $1.322R$ ค่าเฉลี่ยบวกจึงมีขนาดเล็กเมื่อเทียบกับการกระจายต่อครั้ง</p>
+    <p>จำนวนครั้งที่ได้ +2R ใน 20 ครั้งใช้ Binomial โดยมี $n=20$ และ $p=0.30$ ภายใต้สมมติฐานที่ให้ แต่จำนวนครั้งที่ชนะไม่ใช่กำไรรวม เพราะครั้งที่ไม่ชนะยังแบ่งเป็นแพ้กับเท่าทุน ต้องใช้ข้อมูลผลลัพธ์ให้ครบเมื่อต้องการหากำไรรวม</p>
+    <p>ก่อนใช้จริงต้องตรวจค่าธรรมเนียม ราคาที่ซื้อขายได้ ความสัมพันธ์ระหว่างครั้ง ผลลัพธ์รุนแรงที่แบบจำลองละไว้ และความเป็นไปได้ที่โอกาสเปลี่ยนตามตลาด การคำนวณถูกภายใต้สมมติฐานไม่เท่ากับสมมติฐานถูกในโลกจริง</p>
+  </details>
+</section>
+
+<section class="takeaways">
+  <h2>เมื่อจบบทนี้ คุณควรทำอะไรได้</h2>
+  <ul>
+    <li>บอกได้ว่าตัวแปรวัดอะไร ค่าที่เป็นไปได้คืออะไร และโอกาสมาจากสมมติฐานหรือจากข้อมูล</li>
+    <li>เลือกใช้ PMF, PDF หรือ CDF ให้ตรงกับคำถาม และอ่านเงื่อนไขที่ขอบช่วงได้ถูกต้อง</li>
+    <li>คำนวณและตีความ expected value, variance และ standard deviation โดยไม่สับสนกับผลจริงของครั้งถัดไป</li>
+    <li>เลือก distribution ที่เหมาะกับกลไกของโจทย์ พร้อมระบุเงื่อนไขที่ทำให้ใช้สูตรได้</li>
+    <li>อธิบายข้อจำกัดของค่าประมาณ โดยเฉพาะเมื่อมีข้อมูลหางน้อยหรือตลาดเปลี่ยนสภาวะ</li>
+  </ul>
+  <p>บทที่ 2 จะเพิ่มคำถามอีกชั้น: ถ้าเรารู้ข้อมูลบางอย่างแล้ว ค่าเฉลี่ยและความผันผวนที่เหลือควรเปลี่ยนอย่างไร พื้นฐานเรื่อง distribution และค่าเฉลี่ยในบทนี้จะช่วยให้เห็นว่าการใส่เงื่อนไขเปลี่ยนสิ่งที่เรากำลังเฉลี่ยอย่างไร</p>
+</section>
+</main>
 </div>
 </body>
 </html>
