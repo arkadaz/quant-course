@@ -7,372 +7,168 @@
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
-<body>
-<div class="wrap">
-<nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/3.html">บทที่ 3</a>
-  <span class="topic-progress">หัวข้อ 20/158</span>
-</nav>
-
+<body><div class="wrap">
+<nav class="book-nav top-nav"><a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span> <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span> <a href="../chapters/3.html">บทที่ 3</a><span class="topic-progress">หัวข้อ 20/158</span></nav>
 <article class="topic" data-number="3.5" data-depends-on="3.4" data-title-th="การทดสอบสมมติฐานและการอนุมาน Sharpe ratio">
-<header class="topic-header">
-  <h1><span class="tnum">3.5</span> Hypothesis Testing and Sharpe-Ratio Inference</h1>
-  <p class="subtitle">ถามว่าผลงานดีเกินกว่าจะอธิบายด้วยโชคหรือยัง</p>
-</header>
-
-<div class="hook">
-  <p>ทีมวิจัยทดสอบกลยุทธ์ momentum ย้อนหลัง 3 ปี ได้ Sharpe ratio 1.20 ถ้ากลยุทธ์ไม่มี edge เลย โอกาสเห็นผลห่างศูนย์ขนาดนี้คือเท่าไร และถ้ามี edge จริงเท่าที่เห็น การทดสอบนี้มีโอกาสจับได้เท่าไร?</p>
-  <p>เฉลย: โอกาส 3.77% จึงผ่านเกณฑ์ 5% แต่เฉียดมาก Sharpe ขั้นต่ำคือ 1.132 มีแค่ 1.20 ถ้า edge จริงเท่าที่เห็น การทดสอบสามปีจับได้แค่ 54.7% เกือบเท่าโยนเหรียญ และช่วง 95% ของ Sharpe จริงคือ −0.28 ถึง 2.68</p>
-  <p>hypothesis test แปลงคำถามว่าเก่งหรือโชคดีเป็นตัวเลขที่ตรวจได้ หัวข้อนี้สร้างทุกตัวเลขข้างบนทีละบรรทัด</p>
+<header class="topic-header"><h1><span class="tnum">3.5</span> Hypothesis Testing and Sharpe-Ratio Inference</h1><p class="subtitle">Sharpe 1.20 ในสามปีเป็นหลักฐานแค่ไหน ต้องรู้ความถี่และสมมติฐานก่อนตอบ</p></header>
+<div class="hook"><p>ทีมวิจัยส่ง backtest สามปีที่มี Sharpe รายปี 1.20 มาให้อนุมัติ คุณจะถามเพียงว่าตัวเลขเกินหนึ่งหรือไม่ หรือจะถามต่อว่าใช้ข้อมูลรายวัน รายเดือน หรือมีแค่สามจุดรายปี? ทั้งสามกรณีให้สถิติที่จัดรูปได้เหมือนกัน แต่การแจกแจงอ้างอิงและความไม่แน่นอนของ Sharpe ไม่เหมือนกัน</p></div>
+<section class="prose">
+<h2>1. เริ่มจากการทดลองที่นับด้วยมือได้</h2>
+<p>สมมติว่าผลตอบแทนภายใต้ “ไม่มี edge” ต่อเนื่อง สมมาตรรอบศูนย์ และปีต่าง ๆ เป็นอิสระ ปีบวกจึงมีโอกาสครึ่งหนึ่ง สามปีบวกติดกันมีโอกาส $(1/2)^3=12.5\%$; ห้าปีบวกติดกันมีโอกาส $(1/2)^5=3.125\%$ ในกองทุนไร้ edge 200 กอง คาดว่าจะมี $200/8=25$ กองที่โชว์สามปีบวกได้</p>
+<p>นี่คือการคำนวณภายใต้โลกสมมติศูนย์ ไม่ใช่โอกาสที่กองทุนไร้ฝีมือหลังเห็นสามปีบวก หากนับ “สุดโต่งได้ทั้งบวกและลบ” โอกาสที่ทั้งสามปีมีเครื่องหมายเดียวกันจะเป็น 25% จึงต้องกำหนดคำถามและด้านที่จะทดสอบก่อนดูผล</p>
+</section>
+<section class="prose">
+<h2>2. ล็อกคำถามก่อนคำนวณ p-value</h2>
+<p>ให้ $r_{e,i}$ เป็นผลตอบแทนส่วนเกินเหนืออัตราไร้ความเสี่ยงหลังหักค่าธรรมเนียม slippage และค่ายืมในงวด $i$ หน่วยทศนิยมต่องวด สมมติหนึ่งกลยุทธ์ถูกกำหนดล่วงหน้าและข้อมูล i.i.d. normal มี SD บวก</p>
+<ul><li>$H_0:\mu_e=0$ หรือ Sharpe จริงศูนย์ เป็นสมมติฐานอ้างอิง</li><li>$H_1:\mu_e\ne0$ เป็นทางเลือกสองด้าน: สนใจทั้งบวกและลบ หากต้องการด้านบวกอย่างเดียวต้องกำหนดไว้ล่วงหน้า</li><li>ระดับ $\alpha=0.05$ เป็นอัตราปฏิเสธผิดที่ออกแบบไว้ภายใต้ $H_0$ ไม่ใช่กฎธรรมชาติ</li><li>p-value คือโอกาสภายใต้ $H_0$ ของสถิติที่สุดโต่งอย่างน้อยเท่าที่พบ ตามนิยามด้านของการทดสอบ</li></ul>
+<p>p-value ไม่ใช่ $P(H_0\mid\text{ข้อมูล})$ การไม่ปฏิเสธไม่ได้ยืนยันว่า $H_0$ จริง และการปฏิเสธไม่ได้บอกขนาด edge ที่มีคุณค่าทางเศรษฐกิจ</p>
+</section>
+<section class="formula">
+<h2>3. แยกจำนวนงวด $n$ ออกจากจำนวนปี $T$</h2>
+<p>ให้หนึ่งปีมี $q$ งวด และมีประวัติ $T=n/q$ ปี นิยาม Sharpe ต่องวดเป็น $\hat s=\bar r_e/s_e$ และ Sharpe ที่ annualize แบบ i.i.d. เป็น $\widehat{\mathrm{SR}}_{\rm ann}=\sqrt q\,\hat s$ การ annualize นี้เป็นธรรมเนียม scaling ของ mean/SD ไม่ใช่ผลตอบแทนทบต้น</p>
+<div class="math">\[
+\begin{aligned}
+t_{\rm obs}&=\frac{\bar r_e}{s_e/\sqrt n}
+=\hat s\sqrt n
+=\widehat{\mathrm{SR}}_{\rm ann}\sqrt T,\\
+\widehat{\mathrm{SR}}_{\rm ann}=1.20,\ T=3
+&\Rightarrow t_{\rm obs}=1.20\sqrt3=2.078461.
+\end{aligned}
+\]</div>
+<p>ตัวเลข 2.078 เหมือนกันหลังจัดหน่วย แต่ภายใต้ $H_0$ การแจกแจง exact คือ Student $t_{n-1}$ ไม่ใช่ $t_{T-1}$ เว้นแต่ข้อมูลเป็นรายปีจริง การมีเพียง Sharpe กับจำนวนปีจึงยังไม่พอเลือก p-value แบบ exact</p>
+<div class="table-wrap">
+<table><thead><tr><th>ความถี่</th><th>จำนวนข้อมูล / df</th><th>p สองด้าน</th><th>ผลที่ระดับ 5%</th></tr></thead><tbody>
+<tr><td>รายวัน q = 252</td><td>756 / 755</td><td>ประมาณ 3.80%</td><td>ปฏิเสธแบบเฉียด</td></tr>
+<tr><td>รายเดือน q = 12</td><td>36 / 35</td><td>ประมาณ 4.51%</td><td>ปฏิเสธแบบเฉียด</td></tr>
+<tr><td>รายปี q = 1</td><td>3 / 2</td><td>ประมาณ 17.32%</td><td>ไม่ปฏิเสธ</td></tr>
+</tbody></table>
 </div>
-
-<section class="prose">
-  <h4>เริ่มจาก backtest ที่เพิ่งวางบนโต๊ะ</h4>
-  <p>ทีมวิจัยเอากลยุทธ์ momentum มาทดสอบย้อนหลัง 3 ปี ได้ Sharpe ratio 1.20 ตัวเลขนี้ดูดี และคำถามที่ต้องตอบก่อนเอาเงินจริงไปลงคือ มันเกิดจาก edge หรือเกิดจากดวง</p>
-  <p>คำถามนี้ตอบตรง ๆ ไม่ได้ เพราะเราไม่มีทางรู้ว่า edge จริงเป็นเท่าไร สิ่งที่ตอบได้คือคำถามพลิกกลับ คือถ้าสมมติว่าไม่มี edge เลย โอกาสเห็นผลดีขนาดนี้มีเท่าไร</p>
-  <p>การพลิกคำถามแบบนี้คือทั้งหมดของ hypothesis test เราจะเริ่มจากการนับด้วยมือว่าสามปีเขียวติดกันแปลว่าอะไร แล้วค่อยแทนตัวเลข Sharpe จริงลงไป และปิดท้ายด้วยคำถามที่คนมักลืมถาม คือถ้ากลยุทธ์นี้มี edge จริง การทดสอบสามปีจับมันได้บ่อยแค่ไหน</p>
+<p>ตารางเป็นสามชุดข้อมูลสมมติที่มีค่า Sharpe annualized เท่ากัน ไม่ใช่คำแนะนำให้ปรับความถี่เพื่อหา p ที่ถูกใจ ทุกแถวอาศัย normal อิสระและไม่มีการคัดเลือกย้อนหลัง</p>
 </section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>null hypothesis</dt>
-    <dd>ข้อความที่ตั้งไว้เพื่อพยายามล้ม มักคือกลยุทธ์ไม่มี edge ใช้เป็นโลกสมมติที่คำนวณได้ว่าผลแบบที่เห็นเกิดบ่อยแค่ไหน</dd>
-    <dt>alternative hypothesis</dt>
-    <dd>ข้อความที่จะยอมรับถ้า null ถูกล้ม ใช้กำหนดว่าดูหางเดียวหรือสองหาง ต้องประกาศก่อนดูข้อมูล</dd>
-    <dt>test statistic</dt>
-    <dd>ตัวเลขที่วัดว่าผลที่เห็นห่างจาก null กี่เท่าของความคลาด ใช้เทียบกับเกณฑ์ที่ตั้งไว้ล่วงหน้า</dd>
-    <dt>p-value</dt>
-    <dd>โอกาสภายใต้ null ที่จะเห็นผลสุดโต่งเท่าที่เห็นหรือยิ่งกว่า ใช้วัดว่าข้อมูลเข้ากับ null แค่ไหน ไม่ใช่โอกาสที่กลยุทธ์ไร้ค่า</dd>
-    <dt>significance level</dt>
-    <dd>เกณฑ์ p-value ที่ประกาศก่อนดูข้อมูล เช่น 5% ใช้ตัดสินว่าจะปฏิเสธ null หรือไม่</dd>
-    <dt>statistical power</dt>
-    <dd>โอกาสที่การทดสอบจะปฏิเสธ null เมื่อ edge มีอยู่จริงในขนาดที่กำหนด ใช้วางแผนระยะเวลาทดสอบก่อนเริ่ม</dd>
-    <dt>false negative</dt>
-    <dd>การไม่ปฏิเสธ null ทั้งที่ edge มีอยู่จริง โอกาสของมันเท่ากับหนึ่งลบ power ใช้บอกว่ากลยุทธ์ที่ดีจริงจะถูกตีตกบ่อยแค่ไหน</dd>
-    <dt>Sharpe ratio (SR)</dt>
-    <dd>ผลตอบแทนส่วนเกินเฉลี่ยหารความผันผวนในช่วงเวลาเดียวกัน ใช้สรุปผลตอบแทนต่อความเสี่ยง แต่ไม่บอกขาดทุนที่หาง สภาพคล่อง หรือขนาดเงินที่รับได้</dd>
-    <dt>standard error (SE)</dt>
-    <dd>ความผันผวนของค่าที่ประมาณได้ถ้าเก็บข้อมูลใหม่ (หัวข้อ 3.3) ใช้สร้างช่วงของ Sharpe จริง</dd>
-    <dt>Delta method</dt>
-    <dd>การประมาณความผันผวนของ function ของค่าประมาณด้วยความชันของมัน ใช้หาความคลาดของ Sharpe ที่เป็นอัตราส่วนของสองค่าประมาณ</dd>
-    <dt>autocorrelation</dt>
-    <dd>correlation ของผลตอบแทนกับตัวเองในงวดก่อน ใช้ตรวจว่าความคลาดแบบข้อมูลอิสระแคบเกินจริงหรือไม่</dd>
-    <dt>slippage</dt>
-    <dd>ส่วนต่างระหว่างราคาที่คาดว่าจะได้กับราคาที่ได้จริง ใช้หักออกจากผลตอบแทนก่อนทดสอบ เพราะการทดสอบไม่รู้ว่าตัวเลขหักต้นทุนแล้วหรือยัง</dd>
-    <dt>block bootstrap</dt>
-    <dd>การสุ่มข้อมูลซ้ำเป็นท่อนติดกันเพื่อรักษาความเกี่ยวกันข้ามเวลา ใช้ประมาณความคลาดเมื่อสูตรข้อมูลอิสระใช้ไม่ได้</dd>
-    <dt>paper trading</dt>
-    <dd>การรันกลยุทธ์กับราคาจริงโดยไม่ใช้เงินจริง ใช้เก็บหลักฐานเพิ่มก่อนเพิ่มขนาด</dd>
-  </dl>
-</details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$r_{e,t}$</td><td>ผลตอบแทนส่วนเกินของงวด $t$ หลังหักดอกเบี้ยไร้ความเสี่ยงและต้นทุน</td><td>ทศนิยม/งวด</td></tr>
-      <tr><td>$\bar r_e$, $s_e$</td><td>ค่าเฉลี่ยและความผันผวนของผลตอบแทนส่วนเกิน</td><td>ทศนิยม/ปี</td></tr>
-      <tr><td>$\mathrm{SR}$, $\widehat{\mathrm{SR}}$</td><td>Sharpe จริงที่มองไม่เห็น และค่าที่คำนวณได้</td><td>ต่อปี ไม่มีหน่วย</td></tr>
-      <tr><td>$T$</td><td>จำนวนปีที่ไม่เกี่ยวกันจริง</td><td>ปี</td></tr>
-      <tr><td>$H_0$, $H_1$</td><td>null และ alternative hypothesis</td><td>—</td></tr>
-      <tr><td>$t$</td><td>test statistic</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$p$</td><td>p-value</td><td>0 ถึง 1</td></tr>
-      <tr><td>$\alpha$</td><td>significance level ที่ประกาศก่อนดูข้อมูล</td><td>0 ถึง 1</td></tr>
-      <tr><td>$\rho_k$</td><td>autocorrelation ที่ห่าง $k$ งวด</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$\Phi$</td><td>พื้นที่ใต้ระฆังมาตรฐานทางซ้ายของจุดหนึ่ง</td><td>0 ถึง 1</td></tr>
-    </tbody>
-  </table>
-</details>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — นับด้วยมือ: สามปีเขียวติดกันพิสูจน์อะไรได้</h4>
-  <p>สมมติผลตอบแทนรายปีไม่มีฝีมือ สมมาตรรอบศูนย์ และปีต่าง ๆ ไม่เกี่ยวกัน ปีบวกจึงมีโอกาสครึ่งหนึ่ง เหมือนโยนเหรียญ</p>
-  <div class="math">\[
-\begin{aligned}P(3\ \text{green years})&=\big(\tfrac12\big)^{3}=\tfrac18=12.5\%\\
-P(5\ \text{green years})&=\big(\tfrac12\big)^{5}=\tfrac1{32}=3.1\%\\
-200\ \text{funds}\times\tfrac18&=25\end{aligned}
+<h2>4. Normal approximation เหมาะเป็นจุดอ้างอิง ไม่ใช่คำตอบทุกกรณี</h2>
+<p>เมื่อ $n$ มากพอ Student t เข้าใกล้ normal จึงประมาณได้ว่า</p>
+<div class="math">\[
+p\approx2[1-\Phi(2.078461)]=0.03767,
+\qquad \mathrm{SR}_{\rm crit}\approx\frac{1.96}{\sqrt3}=1.13161.
 \]</div>
-  <div class="reading">
-    <p>นี่คือหัวใจของ hypothesis test ในภาษานับนิ้ว สมมติว่าไม่มีฝีมือ แล้วถามว่าสิ่งที่เห็นเกิดบ่อยแค่ไหน สามปีเขียวเกิดหนึ่งในแปด ไม่แปลกเลย กองทุนไร้ฝีมือ 200 กองจะมีราว 25 กองที่โชว์สามปีเขียวได้ หัวข้อ 3.6 จะจัดการปัญหานี้</p>
-  </div>
+<p>Sharpe 1.20 สูงกว่าเส้นโดยประมาณเพียง 0.0684 ไม่ควรสรุปว่ามีหลักฐานแข็งแรง และอย่าใช้ 3.77% กับสามข้อมูลรายปีซึ่งมี df เพียงสอง หากกำหนดการทดสอบด้านบวกไว้ล่วงหน้า p ด้านเดียวจะประมาณครึ่งหนึ่งของ p สองด้านสำหรับสถิติบวกนี้ แต่เปลี่ยนด้านหลังเห็นผลไม่ได้</p>
+<p>ตัวอย่าง IR 0.5 และ 16 ปีให้สถิติ 2 เช่นกัน แต่ p = 4.55% เป็นหาง <strong>normal</strong> เท่านั้น ถ้ามีข้อมูลรายปี 16 จุดและใช้ sample SD ค่า Student $t_{15}$ จะให้ p ประมาณ 6.39% ซึ่งยังไม่ผ่าน 5% นี่สอดคล้องกับช่วง t ในหัวข้อ 3.4 ที่ยังครอบศูนย์</p>
 </section>
-
+<figure class="plot"><h4>ภาพ 3.5a — ตำแหน่งสถิติบนโค้งอ้างอิง normal</h4><img src="../figures/3.5-1.svg" alt="โค้ง normal กับเส้นตั้งที่บวกลบ 2.078" loading="lazy"><figcaption><p>เส้นตั้งอยู่ที่ $\pm2.078$ พื้นที่หางที่ต้องนับคือสองบริเวณนอกเส้นเหล่านี้ รวมประมาณ 3.77% การระบายสีของภาพเดิมอาจเชื่อมข้ามตรงกลางจากการรวม mask สองหางเป็นชุดเดียว อย่านับแถบเชื่อมเป็นพื้นที่ p และอย่าใช้โค้ง normal นี้แทน $t_2$ สำหรับสามจุดรายปี</p></figcaption></figure>
 <section class="formula">
-  <h4>ขั้นที่ 2 — จากค่าเฉลี่ยของผลตอบแทนส่วนเกินไปสู่การทดสอบ Sharpe</h4>
-  <p>null คือกลยุทธ์ไม่มี edge ค่าเฉลี่ยของผลตอบแทนส่วนเกินจึงเป็นศูนย์ ซึ่งก็คือ Sharpe จริงเป็นศูนย์ วัดว่าค่าเฉลี่ยที่เห็นห่างศูนย์กี่เท่าของความคลาด</p>
-  <div class="math">\[
+<h2>5. Power ถามคนละด้านกับ p-value</h2>
+<p>กำหนดค่าจริงเพื่อวางแผนก่อนทดลอง: ถ้า Sharpe annualized จริงเป็น $S$ ในแบบจำลอง normal ที่ทราบ $\sigma$ สถิติ $Z$ จะมีค่าเฉลี่ย $\delta=S\sqrt T$ และ variance หนึ่ง สำหรับการทดสอบสองด้านเกณฑ์ $c=1.96$</p>
+<div class="math">\[
 \begin{aligned}
-H_0&:\ \mu_e=0\qquad(\text{same as }\mathrm{SR}=0)\\
-t&=\frac{\bar r_e-0}{s_e/\sqrt T}=\frac{\bar r_e}{s_e}\sqrt T=\widehat{\mathrm{SR}}\sqrt T\\
-&\widehat{\mathrm{SR}}=1.20,\ T=3:\\
-&\quad t=1.20\sqrt3=1.20(1.73205)=2.0785
+\mathrm{Power}(S,T)
+&=P(Z\gt c)+P(Z\lt-c)\\
+&=\Phi(\delta-c)+\Phi(-\delta-c).
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ความคลาดของค่าเฉลี่ยคือความผันผวนหารรากของจำนวนปี จัดรูปแล้ว s_e ไปรวมกับค่าเฉลี่ยเป็น Sharpe ส่วนรากของจำนวนปีขึ้นไปคูณด้านบน การทดสอบนี้จึงต้องรู้แค่ Sharpe กับจำนวนปี ไม่ต้องรู้ค่าเฉลี่ยกับความผันผวนแยกกัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — p-value สองหาง และผ่านแบบเฉียดแค่ไหน</h4>
-  <p>ภายใต้ null ค่า t มีรูปราวระฆังมาตรฐาน alternative คือ edge ต่างจากศูนย์ทั้งสองทาง จึงนับทั้งสองหาง</p>
-  <div class="math">\[
-\begin{aligned}
-\Phi(2.0785)&=0.981168\\
-&1-0.981168=0.018832\\
-p&=2(0.018832)=0.0377=3.77\%\lt5\%\\
-\mathrm{SR}_{\rm crit}&=\frac{1.96}{\sqrt3}=\frac{1.96}{1.73205}=1.132\\
-&1.20-1.132=0.068
-\end{aligned}
+<p>Power คือโอกาสปฏิเสธเมื่อค่าจริงเป็นค่าทางเลือกที่กำหนด ส่วน $1-\mathrm{Power}$ คือโอกาสพลาดผลจริงหรือ false negative สำหรับ Student t ที่ประมาณ SD ต้องใช้ noncentral t; สูตรนี้เป็น known-SD calculation หรือ approximation เมื่อข้อมูลมาก ไม่ใช่ power exact ของทุกแถวในตาราง</p>
+<p>ถ้า $S=1.20,T=3$ จะได้ power ราว 54.72% ถ้า IR จริง 0.50 และ $T=16$ จะได้ราว 51.60% โดยรวมทั้งหางลบที่เล็กมากแล้ว การนำ estimate ที่เพิ่งเห็นมาแทนค่าจริงเป็นเพียงสถานการณ์สมมติ ไม่ได้แสดงว่า “โอกาสครึ่งหนึ่งเป็นโชค” หรือให้ความน่าจะเป็นว่ากลยุทธ์ดีจริง</p>
+<div class="math">\[
+0.5\sqrt T\approx1.96+0.8416
+\quad\Rightarrow\quad T\approx31.396\text{ years}.
 \]</div>
-  <div class="reading">
-    <p>Φ ไม่มีสูตรปิด ต้องเปิดตาราง ผ่านเกณฑ์ 5% ก็จริง แต่ Sharpe เกินเส้นแค่ 0.068 หรือราว 6% ของค่าที่ต้องการ ถ้าเดือนใดเดือนหนึ่งใน 36 เดือนแย่ลงนิดเดียว ผลจะพลิกเป็นไม่ผ่านทันที</p>
-  </div>
+<p>0.8416 เป็น normal quantile 80% การละหางลบเล็กมากให้แผนประมาณ 32 ปีสำหรับ IR 0.5 การได้สถิติถึงเส้นในค่าเฉลี่ยที่ 16 ปีจึงไม่เหมือนการวางแผนให้มี power 80%</p>
 </section>
-
-<figure class="plot">
-  <h4>ภาพ 3.5a — Sharpe 1.20 ในสามปีอยู่ตรงไหนใต้ null</h4>
-  <img src="../figures/3.5-1.svg" alt="ภาพ 3.5a — Sharpe 1.20 ในสามปีอยู่ตรงไหนใต้ null" loading="lazy">
-  <figcaption>
-    <p>Sharpe 1.20 ในสามปีให้ t = 2.078 พื้นที่สองหางเกินค่านี้ราว 3.77% ผลน่าสนใจ แต่ข้อมูลสามปีสั้นพอที่การประมาณด้วยระฆังและความเกี่ยวกันต้องถูกตรวจเข้มกว่าตัว p-value</p>
-  </figcaption>
-</figure>
-
 <section class="formula">
-  <h4>ขั้นที่ 4 — ผู้จัดการของหัวข้อ 3.2: 16 ปีให้ p = 4.55%</h4>
-  <p>active return 3% เหวี่ยง 6% ต่อปี มี Information ratio (IR) 0.5 จากหัวข้อ 3.2 ค่า t เท่ากับ 0.5 คูณรากของจำนวนปี ที่ 16 ปีได้ t = 2</p>
-  <div class="math">\[
-\begin{aligned}t&=0.5\sqrt{16}=2.00\\
-p&=2\big(1-\Phi(2)\big)=2(1-0.977250)=2(0.022750)=4.55\%\end{aligned}
+<h2>6. SE ของ Sharpe ต้องใช้ความถี่เดียวกับข้อมูล</h2>
+<p>Sharpe เป็นอัตราส่วนของ mean และ SD ที่ต่างก็ประมาณมา ให้ $s=\mu/\sigma$ เป็น Sharpe จริง <strong>ต่องวด</strong> ภายใต้ i.i.d. normal ใช้ delta method รอบ $(\mu,\sigma)$</p>
+<div class="math">\[
+\hat s-s\approx\frac{\bar r-\mu}{\sigma}
+-\frac{\mu}{\sigma^2}(\hat\sigma-\sigma).
 \]</div>
-  <div class="reading">
-    <p>ผ่านเกณฑ์ 5% แบบเฉียดเช่นกัน p = 4.55% แปลว่าถ้าผู้จัดการไม่มีฝีมือเลย โอกาสบังเอิญเห็นผลห่างศูนย์ขนาดนี้คือ 4.55% ไม่ได้แปลว่าโอกาสที่ผู้จัดการไม่มีฝีมือคือ 4.55%</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — power: ถ้ามีฝีมือจริง จะจับได้บ่อยแค่ไหน</h4>
-  <p>สมมติ active return 3% เป็นของจริง ค่า t ที่วัดได้จะแกว่งรอบค่าเฉลี่ย 2.00 ด้วยความผันผวน 1 ปฏิเสธ null เมื่อ t เกิน 1.96 เลื่อนจุดศูนย์ไปที่ 2.00 แล้วอ่านพื้นที่</p>
-  <div class="math">\[
-\begin{aligned}
-&P(t\gt1.96)=P(Z\gt1.96-2.00)\\
-&=P(Z\gt-0.04)=\Phi(0.04)=51.6\%\\
-&\text{false negative}=1-0.516=48.4\%\\
-&80\%\ \text{power}:\\
-&\quad 0.5\sqrt n=1.96+0.8416=2.8016\\
-&\quad\Rightarrow\ \sqrt n=5.603\ \Rightarrow\ n=31.4\approx32\ \text{years}
-\end{aligned}
+<p>ค่าเฉลี่ยกับ sample variance เป็นอิสระในกรณี normal จึงไม่มีพจน์ covariance และสำหรับ $n$ ใหญ่ ใช้ $\operatorname{Var}(\bar r)=\sigma^2/n$, $\operatorname{Var}(\hat\sigma)\approx\sigma^2/(2n)$ ได้</p>
+<div class="math">\[
+\operatorname{Var}(\hat s)\approx\frac{1+s^2/2}{n}.
 \]</div>
-  <div class="reading">
-    <p>ข้อมูล 16 ปีให้ p = 4.55% ก็จริง แต่ถ้าผู้จัดการเก่งจริง การทดสอบจับได้แค่ครึ่งเดียว โยนเหรียญก็ได้เท่านี้ 0.8416 คือจุดที่ระฆังมีพื้นที่ทางซ้าย 80% อยากจับได้ 80% ของเวลาต้องใช้ 32 ปี นี่คือครึ่งที่หายไปของการทดสอบ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — power ของ backtest สามปี: 54.7%</h4>
-  <p>ทำแบบเดียวกันกับ Sharpe 1.20 สามปี ค่า t ที่คาดคือ 2.0785 ความผันผวน 1</p>
-  <div class="math">\[
-P(t\gt1.96)=\Phi(2.0785-1.96)=\Phi(0.1185)=54.7\%,\qquad 1-0.547=45.3\%
+<p>จากนั้นค่อย annualize: variance ของ $\sqrt q\hat s$ ต้องคูณด้วย $q$ และ $s^2=\mathrm{SR}_{\rm ann}^2/q$</p>
+<div class="math">\[
+\operatorname{SE}(\widehat{\mathrm{SR}}_{\rm ann})
+\approx\sqrt{\frac{1+\mathrm{SR}_{\rm ann}^2/(2q)}{T}}.
 \]</div>
-  <div class="reading">
-    <p>ถ้า Sharpe จริงคือ 1.20 เท่าที่เห็น ทำ backtest สามปีซ้ำหลายครั้ง จะผ่านเกณฑ์แค่ 54.7% ของเวลา อีก 45.3% กลยุทธ์ที่ดีจริงจะถูกตีตกว่าไม่มีนัยสำคัญ ผ่านครั้งนี้จึงเป็นโชคพอ ๆ กับฝีมือ</p>
-  </div>
+<p>สำหรับ <strong>ข้อมูลรายวัน 756 จุด</strong> และ annualized estimate 1.20 ใช้ plug-in ได้ SE $\sqrt{(1+1.44/504)/3}=0.57817$ ช่วง Wald 95% โดยประมาณคือ $1.20\pm1.96(0.57817)=[0.0668,2.3332]$ หากเป็นรายเดือน SE จะเป็น 0.59442 และช่วง [0.0349, 2.3651] ทุกช่วงยังไวต่อ dependence และหางที่ไม่ normal</p>
+<p>สูตร $\sqrt{(1+1.20^2/2)/3}=0.75719$ และช่วง [−0.2841, 2.6841] จะตรงหน่วยเมื่อมีเพียง <strong>สามข้อมูลรายปี</strong> เท่านั้น แต่ delta approximation ที่ $n=3$ ไม่น่าเชื่อถือ จึงไม่ควรรายงานเป็นช่วงที่มี coverage 95% จริง สำหรับ normal ตัวอย่างเล็กสามารถกลับด้าน noncentral-t distribution เพื่ออนุมาน Sharpe แทนได้</p>
+<p>ภายใต้ศูนย์พจน์ $s^2/2$ หายไป ขณะที่ Wald CI แทนด้วยค่าประมาณไม่เป็นศูนย์ การทดสอบและช่วง Wald จึงอาจให้ข้อสรุปไม่ตรงกันเพราะใช้ variance คนละจุด ไม่ใช่เหตุผลให้เลือกวิธีที่ให้ผลตามใจ</p>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — ความคลาดของ Sharpe เอง: สองแหล่งรวมกัน</h4>
-  <p>ขั้นที่ 2 ทดสอบว่าค่าเฉลี่ยต่างจากศูนย์ไหม ตอนนี้ถามใหม่ว่า Sharpe จริงน่าจะเท่าไร Sharpe เป็นอัตราส่วนของค่าประมาณสองตัว ใช้ Delta method กระจายรอบค่าจริง</p>
-  <div class="math">\[
-\begin{aligned}
-&\widehat{\mathrm{SR}}-\mathrm{SR}\\
-&\approx\frac{1}{\sigma}(\bar r_e-\mu)-\frac{\mu}{\sigma^2}(\hat\sigma-\sigma)\\
-&\operatorname{Var}(\widehat{\mathrm{SR}})\\
-&\approx\frac{1}{\sigma^2}\cdot\frac{\sigma^2}{T}+\frac{\mu^2}{\sigma^4}\cdot\frac{\sigma^2}{2T}\\
-&=\frac{1}{T}+\frac{\mathrm{SR}^2}{2T}=\frac{1+\tfrac12\mathrm{SR}^2}{T}\\
-&\operatorname{SE}(\widehat{\mathrm{SR}})\\
-&\approx\sqrt{\frac{1+\tfrac12(1.44)}{3}}=\sqrt{\frac{1.72}{3}}=0.757\\
-&95\%\ \text{interval}:\\
-&\quad 1.20\pm1.96(0.757)=1.20\pm1.484\\
-&\quad=[-0.28,\ 2.68]
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ความชันตามค่าเฉลี่ยคือหนึ่งส่วน σ ตามความผันผวนคือ −μ/σ² variance ของความผันผวนคือ σ²/(2T) จากหัวข้อ 3.3 ผลตอบแทนแบบระฆังทำให้ค่าเฉลี่ยกับความผันผวนไม่เกี่ยวกัน พจน์ไขว้จึงเป็นศูนย์</p>
-    <p>เลข 1 มาจากความไม่แน่นอนของค่าเฉลี่ย 0.72 มาจากความไม่แน่นอนของความผันผวน ตอนทดสอบใช้ 0.577 เพราะภายใต้ null Sharpe เป็นศูนย์ พจน์หลังจึงหาย ช่วงครอบทั้ง Sharpe ติดลบและ 2.68 ข้อมูลสามปีไม่ได้ตัดความเป็นไปได้ไหนทิ้งเลย</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ต้องใช้ข้อมูลกี่ปี: พลิกสูตรกลับ</h4>
-  <p>จาก t = Sharpe คูณรากของจำนวนปี ได้จำนวนปีเท่ากับ t หาร Sharpe ทั้งก้อนกำลังสอง ตอบสามคำถามที่ต่างกัน</p>
-  <div class="math">\[
-\begin{aligned}
-&t=1.96:\\
-&\quad T=\Big(\frac{1.96}{1.20}\Big)^2=1.6333^2=2.67\ \text{years}\\
-&\text{interval above }0:\\
-&\quad 1.20\gt1.96\sqrt{\frac{1.72}{T}}\\
-&\quad\Rightarrow\ T\gt\frac{1.96^2(1.72)}{1.44}=\frac{6.6076}{1.44}=4.59\ \text{years}\\
-&t=3:\\
-&\quad T=\Big(\frac{3}{1.20}\Big)^2=2.5^2=6.25\ \text{years}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ผ่านเกณฑ์ 5% ต้องใช้แค่ 2.67 ปี จึงผ่านมาได้แบบเฉียด แต่ให้ช่วงของ Sharpe พ้นศูนย์ต้องใช้ 4.59 ปี และถ้าใช้เกณฑ์ที่เข้มกว่าอย่าง t = 3 ต้อง 6.25 ปี เกณฑ์ที่เข้มขึ้นต้องซื้อด้วยเวลา ไม่ใช่ด้วยการแปลงข้อมูลรายวันซ้ำ ๆ</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>ภาพ 3.5b — ความยาว track record เปลี่ยน evidence อย่างไร</h4>
-  <img src="../figures/3.5-2.svg" alt="ภาพ 3.5b — ความยาว track record เปลี่ยน evidence อย่างไร" loading="lazy">
-  <figcaption>
-    <p>เมื่อ Sharpe จริงเท่ากับ 1.20 ค่า t ที่คาดคือ 1.2 คูณรากของจำนวนปี เส้นตัด t = 2 ที่ 2.78 ปี และ t = 3 ที่ 6.25 ปี</p>
-  </figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — เมื่อผลตอบแทนงวดติดกันเกี่ยวกัน: ความคลาดต้องขยาย</h4>
-  <p>กาง variance ของผลรวมให้ครบรวมพจน์ไขว้ทุกคู่ คู่ที่ห่างกัน k งวดมี T − k คู่ แต่ละคู่มี covariance เท่ากับ variance คูณ autocorrelation</p>
-  <div class="math">\[
-\begin{aligned}
-&\operatorname{Var}\Big(\sum_{t=1}^{T}r_t\Big)\\
-&=T\gamma_0+2\sum_{k=1}^{T-1}(T-k)\,\gamma_0\,\rho_k\\
-&\operatorname{Var}(\bar r_e)\\
-&=\frac{\gamma_0}{T}\Big(1+2\sum_{k=1}^{T-1}\Big(1-\frac{k}{T}\Big)\rho_k\Big)\\
-&\rho_k=0.5^k,\ T\ \text{large}:\\
-&\quad 1+\frac{2(0.5)}{1-0.5}=3,\qquad \sqrt3=1.732
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>γ₀ คือ variance ของงวดเดียว ถ้าความเกี่ยวกันจางครึ่งหนึ่งทุกงวด ตัวคูณของ variance เป็นสามเท่า ความคลาดโต 1.732 เท่า ค่า t ที่รายงานไว้ต้องเอาเลขนั้นหาร t = 2.08 จะเหลือ 1.20 กลยุทธ์ที่ดูผ่านเกณฑ์อาจไม่ผ่านเลย</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>ภาพ 3.5c — smoothing ทำให้ Sharpe ที่รายงานดูสูงเกิน</h4>
-  <img src="../figures/3.5-3.svg" alt="ภาพ 3.5c — smoothing ทำให้ Sharpe ที่รายงานดูสูงเกิน" loading="lazy">
-  <figcaption>
-    <p>สำหรับ autocorrelation งวดติดกันแบบง่าย ตัวคูณของความคลาดระยะยาวคือรากของ (1 + ρ)/(1 − ρ) ที่ ρ = 0.5 ความคลาดโตรากของ 3 เท่า ผลตอบแทนรายเดือนจากราคาประเมินของสินทรัพย์สภาพคล่องต่ำจึงไม่ควรได้ประโยชน์จากสูตรข้อมูลอิสระ</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>ภาพ 3.5d — annualization ต้องระบุสมมติฐาน</h4>
-  <img src="../figures/3.5-4.svg" alt="ภาพ 3.5d — annualization ต้องระบุสมมติฐาน" loading="lazy">
-  <figcaption>
-    <p>เส้นน้ำเงินคือการคูณรากของจำนวนงวดสำหรับ Sharpe ต่องวด 0.10 เมื่อผลตอบแทนไม่เกี่ยวกัน เส้นแดงลดลงเมื่อ autocorrelation 0.3 การรายงาน Sharpe รายปีตัวเดียวโดยไม่บอกความถี่และความเกี่ยวกัน ทำให้ผู้รับรายงานตรวจเหตุผลไม่ได้</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: backtest momentum 3 ปี Sharpe 1.20 เกณฑ์ 5% สองหาง null คือไม่มี edge</p>
-  <p>คำตอบ: (ก) t = 2.0785 p-value 3.77% ผ่านเกณฑ์ แต่ Sharpe ขั้นต่ำคือ 1.132 (ข) ความคลาดของ Sharpe 0.757 ช่วง 95% คือ [−0.28, 2.68] (ค) ผ่านเกณฑ์ต้อง 2.67 ปี ช่วงพ้นศูนย์ต้อง 4.59 ปี t = 3 ต้อง 6.25 ปี (ง) power ที่สามปีคือ 54.7%</p>
-  <p>ตรวจเองใน 10 วินาที: 1.20 × 1.732 = 2.08 และ (3/1.2)² = 6.25</p>
-  <p>แปลว่าอะไร: ถือเป็นผู้สมัครสำหรับวิจัยต่อ ทดลอง paper trading แล้วเพิ่มขนาดตามหลักฐานที่สะสม ไม่ใช่ตามตัวเลข Sharpe ตัวเดียว</p>
+<h2>7. เวลาที่ต้องใช้: ระบุว่าใช้สูตรใด</h2>
+<p>ตรึง Sharpe ไว้ 1.20 เพื่อเทียบสเกลหลักฐาน สูตร normal ให้ $T=(1.96/1.20)^2=2.6678$ ปี และถ้าต้องการสถิติ 3 ให้ $T=(3/1.20)^2=6.25$ ปี ทั้งคู่เป็นการเทียบค่าของสถิติ ไม่ใช่การรับรอง power</p>
+<p>ให้ช่วง Wald พ้นศูนย์ต้องใช้ $T\gt1.96^2[1+1.44/(2q)]/1.44$ ถ้า $q=252$ ได้ประมาณ 2.6754 ปี ถ้า $q=1$ ได้ 4.5886 ปี แต่กรณีหลังยังใช้ asymptotic approximation กับเพียงไม่กี่ข้อมูลรายปี จึงห้ามเรียกว่าเวลาขั้นต่ำที่รับประกันช่วง 95% ถูกต้อง</p>
 </section>
-
-<section class="example">
-  <h4>ตัวอย่างที่สอง — ผู้จัดการ IR 0.5 ในอุตสาหกรรมจริง</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: active return 3% เหวี่ยง 6% ต่อปี ผู้จัดการอยู่ในตำแหน่งเฉลี่ยไม่ถึง 5 ปี</p>
-  <p>คำตอบ: ที่ 5 ปี t = 0.5 × 2.236 = 1.12 ยังไม่ถึง 1.96 ต้องใช้ 16 ปีถึงได้ p = 4.55% และ power แค่ 51.6% ถ้าอยากจับได้ 80% ต้อง 32 ปี</p>
-  <p>ตรวจเองใน 10 วินาที: (2.8016/0.5)² = 31.4 ปัดขึ้นเป็น 32</p>
-  <p>แปลว่าอะไร: ข้อมูลที่มีอยู่จริงในอุตสาหกรรมบอกอะไรเรื่องฝีมือของผู้จัดการระดับนี้ไม่ได้เลย ก่อนเถียงว่ากองไหนเก่งกว่า ให้คำนวณความคลาดก่อนเสมอ</p>
+<figure class="plot"><h4>ภาพ 3.5b — เส้นสัญญาณตามรากของเวลา</h4><img src="../figures/3.5-2.svg" alt="1.2 คูณรากจำนวนปีตัดระดับ 2 และ 3" loading="lazy"><figcaption><p>กราฟวาด $1.2\sqrt T$ ตัดระดับ 2 ที่ 2.7778 ปี และระดับ 3 ที่ 6.25 ปี ป้าย expected t-statistic เป็นชื่อย่อในภาพ; สูตรนี้คือ noncentrality หรือค่าเฉลี่ยของ z เมื่อทราบ SD ไม่ใช่ค่าเฉลี่ย exact ของ Student t</p></figcaption></figure>
+<section class="formula">
+<h2>8. Dependence ทำให้ทั้ง SE และ annualization เปลี่ยน</h2>
+<p>สำหรับข้อมูล stationary $n$ งวด ให้ $\gamma_0$ เป็น variance ต่องวด และ $\rho_k$ เป็น autocorrelation ที่ lag $k$ การรวมคู่ทั้งหมดให้</p>
+<div class="math">\[
+\begin{aligned}
+\operatorname{Var}\!\left(\sum_i r_i\right)
+&=n\gamma_0+2\gamma_0\sum_{k=1}^{n-1}(n-k)\rho_k,\\
+\operatorname{Var}(\bar r)
+&=\frac{\gamma_0}{n}
+\left[1+2\sum_{k=1}^{n-1}(1-k/n)\rho_k\right].
+\end{aligned}
+\]</div>
+<p>สำหรับ AR(1), $\rho_k=\rho^k$ และ $|\rho|\lt1$ ตัวคูณ variance ระยะยาวเป็น $(1+\rho)/(1-\rho)$ ถ้า $\rho=0.5$ จะได้ 3 จึงขยาย SE ของ mean ราว $\sqrt3$ และลดสถิติ 2.078 เหลือประมาณ 1.20 เมื่อใช้ approximation ระยะยาว ตัวคูณนี้ไม่ได้เป็นสูตรแก้ SE ของ Sharpe ทั้งอัตราส่วนอย่าง exact</p>
+<div class="math">\[
+\mathrm{SR}_{q,\mathrm{sum}}=
+\frac{\sqrt q\,s}{\sqrt{1+2\sum_{k=1}^{q-1}(1-k/q)\rho_k}}.
+\]</div>
+<p>สูตรนี้คือ mean/SD ของ <strong>ผลรวม</strong> $q$ งวด เมื่อ $q=1$ ต้องกลับเป็น $s$ เสมอ หากแทนตัวหารด้วยค่า long-run ก็เป็นเพียง proxy สำหรับหลายงวด สำหรับผลตอบแทนทบต้นต้องพิจารณานิยามใหม่ ไม่ใช้ผลรวมแทนโดยไม่บอก</p>
 </section>
-
-<section class="table">
-  <h4>ขั้นต่ำของรายงานการทดสอบ Sharpe</h4>
-  <table>
-    <thead><tr><th>ช่อง</th><th>ต้องล็อกก่อนดูผล</th><th>ตัวอย่าง</th></tr></thead>
-    <tbody>
-      <tr><td>null และจำนวนหาง</td><td>$H_0$ และหางเดียวหรือสองหาง</td><td>SR = 0 สองหาง</td></tr>
-      <tr><td>นิยามผลตอบแทน</td><td>ดอกเบี้ยไร้ความเสี่ยง ต้นทุน ค่ายืมหุ้น สกุลเงิน</td><td>ผลตอบแทนส่วนเกินสุทธิเป็น USD</td></tr>
-      <tr><td>ช่วงเวลา</td><td>ความถี่ จำนวนปี กติกาแปลงเป็นรายปี</td><td>รายเดือน 3 ปี</td></tr>
-      <tr><td>วิธีจัดการความเกี่ยวกัน</td><td>ข้อมูลอิสระ long-run variance หรือ block bootstrap</td><td>block bootstrap ท่อนละ 20 วัน</td></tr>
-      <tr><td>การตัดสินใจ</td><td>เกณฑ์และสิ่งที่ทำ</td><td>t ต่ำกว่า 3: paper trading เท่านั้น</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>การทดสอบ Sharpe ตัวเดียวไม่แก้ปัญหาการลองหลายแบบ บันทึกการวิจัยต้องส่งจำนวนแบบที่ลองไปหัวข้อ 3.6</p>
-  </div>
-</section>
-
-<section class="pitfall">
-  <h4>กับดัก: p-value ต่ำไม่ใช่งบความเสี่ยง</h4>
-  <p>p = 0.03 ไม่ได้แปลว่ามีโอกาส 3% ที่กลยุทธ์ไร้ค่า แต่แปลว่าถ้ากลยุทธ์ไร้ค่าจริง จะมีโอกาส 3% ที่เห็นผลดีขนาดนี้ p-value ไม่ใช่ขนาดของ alpha และไม่ใช่โอกาสทำเงินเดือนหน้า ผลที่ผ่านเกณฑ์ยังอาจขาดทุนหางหนัก ใช้เงินกู้สูง หรือมาจากการเลือก ราคาที่ค้างและการถือครองที่ซ้อนกันทำให้ความผันผวนต่ำและจำนวนปีดูมากเกินจริง</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: คำถามที่ต้องตอบก่อนใส่เงินจริง</h4>
-  <p>กรอบคิดของการทดสอบพัฒนาในต้นศตวรรษที่ยี่สิบโดยสองสำนักที่เถียงกันดุเดือด Fisher กับ Neyman และ Egon Pearson ทั้งสองเห็นตรงกันว่าต้องตั้งสมมติฐานตรงข้ามไว้ก่อน แล้วถามว่าข้อมูลค้านมันได้แรงแค่ไหน ค่า 5% เป็นธรรมเนียมที่ Fisher ตั้งไว้ในทศวรรษ 1920 ไม่ใช่กฎธรรมชาติ</p>
-  <p>William Sharpe เสนออัตราส่วนนี้ในปี 1966 แต่อุตสาหกรรมใช้มันเป็นตัวเลขแน่นอนมาอีกกว่าสามสิบปี จนราวปี 2002 Andrew Lo เตือนว่า Sharpe เป็นค่าประมาณที่มีความคลาดมหาศาลเมื่อประวัติสั้น ในการเงินมีข้อควรระวังเพิ่มอีกสองข้อ ผลตอบแทนงวดติดกันเกี่ยวกัน และเรามักทดสอบกลยุทธ์เป็นร้อยแล้วเลือกตัวที่ผ่าน</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>independence</td><td>ผลตอบแทนแต่ละช่วงไม่เกี่ยวกัน</td><td>เกี่ยวกัน โดยเฉพาะกลยุทธ์ที่ถือยาว</td><td>ความคลาดเคลื่อนที่คำนวณได้ต่ำเกินจริง จึงสรุปว่าเก่งทั้งที่หลักฐานไม่พอ</td></tr>
-      <tr><td>การตั้งเกณฑ์ล่วงหน้า</td><td>ตั้งเกณฑ์ก่อนดูข้อมูล</td><td>คนมักปรับเกณฑ์หลังเห็นผลแล้ว</td><td>การทดสอบเสียความหมายทันทีเมื่อทำแบบนั้น</td></tr>
-      <tr><td>การทดสอบครั้งเดียว</td><td>ทดสอบกลยุทธ์เดียว</td><td>เราทดสอบเป็นร้อยแล้วเลือกตัวที่ผ่าน</td><td>ค่าที่ได้ไม่มีความหมาย ต้องปรับด้วยวิธีในหัวข้อ 3.6</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวล่างเป็นเหตุผลที่ผลงานวิจัยกลยุทธ์จำนวนมากซ้ำไม่ได้ในการใช้งานจริง</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>ใช้ตัดสินว่ากลยุทธ์ผ่านเกณฑ์ที่ตั้งไว้ล่วงหน้าหรือไม่ ใช้คำนวณ power เพื่อวางแผนว่าต้องทดสอบกี่ปีก่อนเริ่ม และใช้เปรียบเทียบสองกลยุทธ์ว่าต่างกันจริงหรือแค่ตัวเลขต่างกัน</p>
-  <p>การทดสอบข้างต้นสมมติว่าเลือกสมมติฐานเดียวก่อนเห็นข้อมูล ถ้าลองหลายแบบแล้วเก็บตัวที่ดีที่สุด p = 3.77% ไม่ใช่หลักฐานเดิมอีกต่อไป หัวข้อ 3.6 นับจำนวนที่ลองและคุมการค้นพบปลอม</p>
-</section>
-
+<figure class="plot"><h4>ภาพ 3.5c — ตัวคูณความไม่แน่นอนในแบบ AR(1)</h4><img src="../figures/3.5-3.svg" alt="รากของหนึ่งบวก rho หารหนึ่งลบ rho เทียบ correlation" loading="lazy"><figcaption><p>กราฟคือ SE multiplier ระยะยาว $\sqrt{(1+\rho)/(1-\rho)}$ ค่า lag แรกเพียงค่าเดียวไม่พอให้สูตรนี้ทั่วไป ต้องสมมติรูปทั้งลำดับเป็น AR(1) ที่ $\rho=0.5$ ตัวคูณคือ 1.732</p></figcaption></figure>
+<figure class="plot"><h4>ภาพ 3.5d — การ annualize แบบ proxy</h4><img src="../figures/3.5-4.svg" alt="Sharpe ต่องวด 0.1 คูณรากจำนวนงวด และเส้นลดด้วยตัวคูณ AR1 rho 0.3" loading="lazy"><figcaption><p>เส้นอิสระคือ $0.10\sqrt q$ เส้นปรับคูณด้วย $\sqrt{0.7/1.3}$ ซึ่งใช้ตัวคูณระยะยาวตลอดแกน ไม่ใช่สูตร finite-q โดยเฉพาะที่ $q=1$ ค่าจริงของทั้งสองควรเป็น 0.10 ไม่ใช่ค่าที่ proxy ปรับลดแล้ว</p></figcaption></figure>
 <section class="code">
-  <details>
-    <summary>โค้ดทดสอบ Sharpe ratio: p-value, power และความคลาดของ Sharpe</summary>
-    <pre><code>import numpy as np
-from math import sqrt
-from statistics import NormalDist
-Phi = NormalDist().cdf
-assert 0.5 ** 3 == 0.125 and abs(0.5 ** 5 - 0.031) &lt; 5e-4 and 200 * 0.125 == 25
-t = 1.20 * sqrt(3)
-assert abs(t - 2.0785) &lt; 5e-5 and abs(Phi(t) - 0.981168) &lt; 5e-6 and abs(2 * (1 - Phi(t)) - 0.0377) &lt; 5e-5
-assert abs(1.96 / sqrt(3) - 1.132) &lt; 5e-4 and abs(2 * (1 - Phi(2)) - 0.0455) &lt; 5e-5
-assert abs(Phi(0.04) - 0.516) &lt; 5e-4 and abs(((1.96 + 0.8416) / 0.5) ** 2 - 31.4) &lt; 0.05 and abs(Phi(t - 1.96) - 0.547) &lt; 5e-4
-se = sqrt((1 + 0.5 * 1.44) / 3)
-assert abs(se - 0.757) &lt; 5e-4 and abs(1.20 - 1.96 * se + 0.28) &lt; 5e-3 and abs(1.20 + 1.96 * se - 2.68) &lt; 5e-3
-assert abs((1.96 / 1.2) ** 2 - 2.67) &lt; 5e-3 and abs(1.96 ** 2 * 1.72 / 1.44 - 4.59) &lt; 5e-3 and abs((3 / 1.2) ** 2 - 6.25) &lt; 1e-12
-assert abs(1 + 2 * 0.5 / (1 - 0.5) - 3) &lt; 1e-12
-r = np.random.default_rng(26).normal(1.2, 1.0, (40_000, 100))
-sr = r.mean(1) / r.std(1, ddof=1)
-assert abs(sr.std() - sqrt(1.72 / 100)) &lt; 0.01           # SE formula (1 + SR^2/2)/T at T = 100</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดคิด t = 2.0785 และ p = 3.77% ของ backtest สามปี power แค่ 54.7% ต้อง 32 ปีถึงจะได้ power 80% ช่วงของ Sharpe คือ −0.28 ถึง 2.68 และจำลองยืนยันสูตรความคลาดของ Sharpe</p>
-  </div>
+<h2>JavaScript: ตรวจความถี่ก่อนอ่านผล</h2>
+<p>โค้ดคำนวณ normal CDF และ Student-t tail ด้วย integration โดยตรง พร้อมแยก SE รายวัน รายเดือน และรายปี</p>
+<pre><code class="language-javascript" data-example="3.5">function integrate(f, a, b, steps = 4000) {
+  const h = (b - a) / steps;
+  let sum = f(a) + f(b);
+  for (let i = 1; i &lt; steps; i++) sum += (i % 2 ? 4 : 2) * f(a + i * h);
+  return sum * h / 3;
+}
+function Phi(z) {
+  const f = x =&gt; Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+  return 0.5 + Math.sign(z) * integrate(f, 0, Math.abs(z));
+}
+function twoSidedT(t, df) {
+  const f = theta =&gt; Math.cos(theta) ** (df - 1);
+  const theta = Math.atan(Math.abs(t) / Math.sqrt(df));
+  return integrate(f, theta, Math.PI / 2) / integrate(f, 0, Math.PI / 2);
+}
+const S = 1.2, years = 3, statistic = S * Math.sqrt(years);
+const se = q =&gt; Math.sqrt((1 + S * S / (2 * q)) / years);
+const power = d =&gt; Phi(d - 1.96) + Phi(-d - 1.96);
+const result = {
+  statistic, normalP: 2 * (1 - Phi(statistic)),
+  dailyP: twoSidedT(statistic, 755), monthlyP: twoSidedT(statistic, 35),
+  annualP: twoSidedT(statistic, 2), ir16P: twoSidedT(2, 15),
+  power3: power(statistic), powerIR: power(2),
+  years80: ((1.96 + 0.8416) / 0.5) ** 2,
+  seDaily: se(252), seMonthly: se(12), seAnnual: se(1),
+  ciDaily: [S - 1.96 * se(252), S + 1.96 * se(252)],
+  ciAnnual: [S - 1.96 * se(1), S + 1.96 * se(1)],
+  nullYears: (1.96 / S) ** 2,
+  waldDailyYears: 1.96 ** 2 * (1 + S * S / 504) / (S * S),
+  waldAnnualYears: 1.96 ** 2 * (1 + S * S / 2) / (S * S),
+  strictYears: (3 / S) ** 2, correctedStatistic: statistic / Math.sqrt(3)
+};
+console.log(JSON.stringify(result));</code></pre>
 </section>
-
-<section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>t = Sharpe × รากของจำนวนปี: Sharpe 1.20 สามปีได้ t = 2.08 p = 3.77% เกินเส้น 1.132 แค่ 0.068</li>
-    <li>power สำคัญเท่า p-value: ที่สามปีจับกลยุทธ์ที่ดีจริงได้แค่ 54.7% ผู้จัดการ IR 0.5 ที่ 16 ปีได้แค่ 51.6%</li>
-    <li>ความคลาดของ Sharpe คือรากของ (1 + ½SR²)/T: ช่วง 95% ของ Sharpe 1.20 สามปีคือ [−0.28, 2.68]</li>
-    <li>autocorrelation 0.5 ขยายความคลาด 1.73 เท่า t ที่รายงานต้องหารตามนั้น</li>
-    <li>p-value คือความเข้ากันได้กับ null ไม่ใช่โอกาสที่กลยุทธ์ดีจริง</li>
-  </ul>
+<section class="exercise">
+<h2>แบบฝึกหัด: ตัดสินตามหลักฐาน ไม่ใช่ป้ายผ่าน</h2>
+<p>1. มีเพียงผลตอบแทนสามปีสามจุด ได้ Sharpe 1.20 ใช้ p = 3.77% ได้หรือไม่?</p>
+<details><summary>เฉลย</summary><p>ไม่ได้ภายใต้การทดสอบ exact เมื่อประมาณ SD จากสามจุด ต้องใช้ $t_2$ ถ้าข้อมูล normal อิสระ ซึ่งให้ p สองด้านประมาณ 17.32% และหากไม่ normal สมมติฐาน exact ก็ใช้ไม่ได้อีก</p></details>
+<p>2. p = 0.03 แปลว่ากลยุทธ์มีโอกาสกำไร 97% ในเดือนหน้าหรือไม่?</p>
+<details><summary>เฉลย</summary><p>ไม่ใช่ p เป็นโอกาสของสถิติภายใต้ null ไม่ใช่ posterior ของสมมติฐานหรือการทำนายผลตอบแทน การคำนวณโอกาสกำไรต้องระบุ predictive model อีกชุดหนึ่ง</p></details>
+<p>3. ที่ $T=3,q=252$ จะใช้ SE 0.757 ของ Sharpe annualized ได้หรือไม่?</p>
+<details><summary>เฉลย</summary><p>ไม่ตรงความถี่ ต้อง annualize variance หลังคำนวณด้วย Sharpe ต่องวด ได้ SE ประมาณ 0.578 ส่วน 0.757 มาจากการถือว่ามีสามข้อมูลรายปีและยังเป็น approximation ตัวอย่างเล็กที่ไม่น่าเชื่อถือ</p></details>
 </section>
+<section class="pitfall"><h2>ขั้นต่ำของรายงานก่อนลงเงินจริง</h2><p>บันทึก null, ทางเลือก, จำนวนหาง, เกณฑ์และวันหยุดทดสอบล่วงหน้า ระบุความถี่ $q$, จำนวนข้อมูล $n$, จำนวนปี $T$, นิยามผลตอบแทนและต้นทุน วิธีแก้ dependence เช่น HAC หรือ block bootstrap พร้อมเกณฑ์เลือก lag/block แล้วรายงาน estimate, CI, p และ power ภายใต้ effect size ที่เลือกก่อนดูผล แยกความมีนัยสำคัญทางสถิติออกจาก capacity, liquidity, leverage และ tail risk</p><p>p ต่ำไม่ใช่งบความเสี่ยง การรัน paper trading อาจช่วยเก็บหลักฐานนอกตัวอย่างแต่ไม่พิสูจน์ว่าจะ fill ได้เหมือนเงินจริง ที่สำคัญต้องส่งบันทึกทุกแบบที่ลองไปหัวข้อ 3.6: การทดสอบกลยุทธ์ผู้ชนะด้วยสูตร single-test ไม่ได้ลบ selection bias การแยก evidence แบบ Fisher ออกจากการออกแบบ error rates/power แบบ Neyman–Pearson และข้อเตือนเรื่อง Sharpe inference ของ Lo ช่วยให้ไม่สรุปเกินคำถามที่คำนวณจริง</p></section>
+<section class="takeaways"><h2>สิ่งที่ควรจำ</h2><ul><li>$t=\widehat{\mathrm{SR}}_{\rm ann}\sqrt T$ แต่ df คือ $n-1$ ไม่ใช่จำนวนปีลบหนึ่งเสมอ</li><li>Sharpe 1.20 สามปีให้ p ประมาณ 3.80% จาก daily i.i.d. normal แต่ 17.32% หากมีเพียงสามจุดรายปี</li><li>Power ระบุค่าจริงสมมติก่อนทดลอง ไม่ใช่โอกาสที่ข้อสรุปหลังทดลองจะถูก</li><li>SE ของ Sharpe annualized ต้องใช้ $q$ ให้ตรงข้อมูล และ delta/Wald เป็น approximation</li><li>Dependence ต้นทุน และจำนวนการทดลองเปลี่ยนความน่าเชื่อถือของหลักฐานได้มากกว่าเลขทศนิยมของ p</li></ul></section>
 </article>
-
-<nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="3.4.html">3.4 Confidence Intervals</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="3.6.html">3.6 The Multiple Testing Problem</a></div>
-</nav>
-</div>
-</body>
-</html>
+<nav class="book-nav bottom-nav"><div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="3.4.html">3.4 Confidence Intervals</a></div><div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="3.6.html">3.6 The Multiple Testing Problem</a></div></nav>
+</div></body></html>

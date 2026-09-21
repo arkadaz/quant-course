@@ -7,26 +7,74 @@
 <link rel="stylesheet" href="../book.css">
 <script defer src="../book.js"></script>
 </head>
-<body>
-<div class="wrap">
-<nav class="book-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a>
-</nav>
+<body><div class="wrap">
+<nav class="book-nav"><a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span> <a href="../index.html#part-1">Part 1</a></nav>
 <header class="chapter-landing">
-  <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 3</h1>
-  <p>LLN, CLT, and Statistical Inference · 6 หัวข้อ</p>
-  <p class="chapter-sequence">รู้ว่าตัวเลขที่วัดจากข้อมูลย้อนหลังเชื่อได้แค่ไหน ทดสอบ Sharpe ว่าเป็นฝีมือหรือฟลุก และเห็นกับดักของการทดสอบหลายครั้ง</p>
+<div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
+<h1>บทที่ 3</h1>
+<p>LLN, CLT, and Statistical Inference · 6 หัวข้อ</p>
+<p class="chapter-sequence">จากค่าเฉลี่ยที่แกว่ง ไปสู่หลักฐานที่ตรวจสอบได้: ข้อมูลมากแค่ไหนจึงพอ ช่วงที่รายงานหมายถึงอะไร และผู้ชนะยังน่าเชื่อหรือไม่เมื่อรู้ทุกแบบที่เคยลอง</p>
 </header>
+<section class="hook">
+<h2>คำถามของบท: backtest ที่ดี แยกจากโชคได้หรือยัง</h2>
+<p>ลองนึกถึงรายงานสองฉบับ ฉบับแรกมีการเทรดหมื่นไม้ต่อวัน แต่อาจตอบสนองข่าวเดียวกัน ฉบับที่สองมี Sharpe 1.20 ในสามปี แต่ถูกเลือกจาก 200 แบบ ทั้งคู่มีตัวเลขดูดี แต่จำนวนแถวและตัวเลขผู้ชนะยังไม่ใช่หลักฐานเพียงพอ บทนี้จะฝึกแยกคำถามว่า “ค่าเฉลี่ยเข้าใกล้อะไร” “มันคลาดได้เท่าไร” และ “เราเลือกสิ่งที่เห็นมาอย่างไร”</p>
+</section>
+<section class="prose">
+<h2>ก่อนเริ่ม: เครื่องมือที่ควรหยิบใช้ได้</h2>
+<ul><li>ความคาดหวัง variance และ covariance: รู้ว่าความคาดหวังของผลรวมบวกกันได้ แต่ variance ต้องรวมพจน์ความสัมพันธ์ด้วย</li><li>ความน่าจะเป็นแบบมีเงื่อนไขและ Bayes: แยก $P(\text{ข้อมูล}\mid H_0)$ ออกจาก $P(H_0\mid\text{ข้อมูล})$</li><li>การแจกแจง normal และ CDF: $\Phi(z)$ คือพื้นที่ทางซ้าย ไม่ใช่ค่าความสูงของกราฟ</li><li>หน่วย: 0.03 เท่ากับ 3%; จาก 3% เป็น 4% เพิ่มหนึ่งจุดเปอร์เซ็นต์ และ variance มีหน่วยกำลังสอง</li></ul>
+<p>ถ้ายังสับสนเรื่องหน่วยหรือ covariance ให้ทบทวนพื้นฐานเหล่านี้ก่อน annualize ผลตอบแทน อนุพันธ์และอนุกรมที่ใช้ในบทมีคำอธิบายประกอบ ไม่จำเป็นต้องจำสูตรยาวล่วงหน้า</p>
+</section>
+<section class="prose">
+<h2>เส้นทางเรียนสามช่วง</h2>
+<h3>ช่วง A — เข้าใจข้อมูลที่ทำซ้ำ: 3.1 → 3.2</h3>
+<p>เริ่มจากค่าเฉลี่ยกำไรต่อไม้ที่มี edge เพียง \$0.005 แล้วดูว่าการสุ่มซ้ำทำให้ความไม่แน่นอนลดอย่างไร จากนั้นนับลูกเต๋าสี่ลูกด้วยมือและโค้ด เพื่อเห็นความต่างระหว่างคำตอบ exact กับ normal approximation <strong>จุดตรวจ:</strong> อธิบายให้ได้ว่า LLN ไม่ได้รับประกันว่าค่าเฉลี่ยนิ่งขึ้นทุกครั้ง และ CLT ไม่ได้ทำให้ข้อมูลรายตัวเป็น normal</p>
+<h3>ช่วง B — วัดความคลาดและรายงานช่วง: 3.3 → 3.4</h3>
+<p>พิสูจน์ตัวหาร $n-1$ แยก bias ออกจาก variance แล้วดูว่าการดึงค่าประมาณเข้าหาศูนย์ช่วย MSE ได้ภายใต้เงื่อนไขใด ต่อด้วยสร้างช่วงจากอสมการแทนการจำ “บวกลบสอง” <strong>จุดตรวจ:</strong> ระบุได้ว่า SD ที่ใช้ทราบจริงหรือประมาณจากข้อมูล และเหตุใดสี่ปีจึงให้ช่วง t กว้างกว่าช่วง z มาก</p>
+<h3>ช่วง C — ทดสอบแล้วตรวจรอยเท้าการค้นหา: 3.5 → 3.6</h3>
+<p>คำนวณ p-value กับ power โดยระบุจำนวนงวดและปีให้ชัด แล้วนับทั้งผู้แพ้และผู้ชนะใน family ของการทดสอบ <strong>จุดตรวจ:</strong> ก่อนอ่าน p ต้องรู้ด้านที่ทดสอบ ความถี่ จำนวนข้อมูล และก่อนเชื่อผู้ชนะต้องรู้จำนวนและกระบวนการของทุกแบบที่ลอง</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/3.1.html"><span class="toc-number">3.1</span><span class="toc-name">The Law of Large Numbers<span class="toc-why">นับการทดลองที่เป็นอิสระจริง ก่อนเชื่อว่าค่าเฉลี่ยจะนิ่ง</span></span></a></li>
-  <li><a href="../topics/3.2.html"><span class="toc-number">3.2</span><span class="toc-name">The Central Limit Theorem<span class="toc-why">ทำไมค่าเฉลี่ยจำนวนมากจึงเริ่มมีรูปคล้ายระฆังคว่ำ</span></span></a></li>
-  <li><a href="../topics/3.3.html"><span class="toc-number">3.3</span><span class="toc-name">Estimators, Bias, and Standard Error<span class="toc-why">แยก bias ที่ทำให้คำตอบเอนไปทางเดิม ออกจากความสั่นของคำตอบ</span></span></a></li>
-  <li><a href="../topics/3.4.html"><span class="toc-number">3.4</span><span class="toc-name">Confidence Intervals<span class="toc-why">รายงานช่วงที่ข้อมูลยังรองรับ แทนการฟันธงด้วยเลขเดียว</span></span></a></li>
-  <li><a href="../topics/3.5.html"><span class="toc-number">3.5</span><span class="toc-name">Hypothesis Testing and Sharpe-Ratio Inference<span class="toc-why">ถามว่าผลงานดีเกินกว่าจะอธิบายด้วยโชคหรือยัง</span></span></a></li>
-  <li><a href="../topics/3.6.html"><span class="toc-number">3.6</span><span class="toc-name">The Multiple Testing Problem<span class="toc-why">นับทุกแบบที่เคยลอง ก่อนเชื่อผู้ชนะ</span></span></a></li>
+<li><a href="../topics/3.1.html"><span class="toc-number">3.1</span><span class="toc-name">The Law of Large Numbers<span class="toc-why">ครึ่งเซนต์ต่อไม้กับ SD สองดอลลาร์: ทำไมหมื่นไม้ยังไม่พอ และ correlation 0.001 ทำให้เหลือข้อมูลเทียบเท่าเพียง 909 ไม้</span></span></a></li>
+<li><a href="../topics/3.2.html"><span class="toc-number">3.2</span><span class="toc-name">The Central Limit Theorem<span class="toc-why">นับผลรวมลูกเต๋าสี่ลูกอย่างน้อย 20 ได้ 70/1296 แล้วเทียบ normal approximation ก่อนใช้กับประวัติกองทุน</span></span></a></li>
+<li><a href="../topics/3.3.html"><span class="toc-number">3.3</span><span class="toc-name">Estimators, Bias, and Standard Error<span class="toc-why">ผลตอบแทน 1%, 3%, 8% ช่วยพิสูจน์ n−1; จากนั้นแยก SE ของ mean, volatility และข้อจำกัดของ oracle shrinkage</span></span></a></li>
+<li><a href="../topics/3.4.html"><span class="toc-number">3.4</span><span class="toc-name">Confidence Intervals<span class="toc-why">mean 3%, SD 6%, สี่ปี: ช่วง z เป็น [−2.88%, 8.88%] แต่ถ้าประมาณ SD ต้องเผื่อด้วย t และอ่าน coverage ให้ถูก</span></span></a></li>
+<li><a href="../topics/3.5.html"><span class="toc-number">3.5</span><span class="toc-name">Hypothesis Testing and Sharpe-Ratio Inference<span class="toc-why">Sharpe 1.20 ในสามปี: daily normal data ให้ p ราว 3.80% แต่สามจุดรายปีให้ 17.32% — ความถี่เปลี่ยนคำตอบ</span></span></a></li>
+<li><a href="../topics/3.6.html"><span class="toc-number">3.6</span><span class="toc-name">The Multiple Testing Problem<span class="toc-why">200 true null ที่เกณฑ์ 5% ให้ผู้ผ่านปลอมคาดหวังสิบตัว; ฝึก Bonferroni และ BH โดยไม่หยุดตรวจที่ p ตัวแรกที่ไม่ผ่าน</span></span></a></li>
 </ol>
+<section class="prose">
+<h2>เลือกเครื่องมือให้ตรงคำถาม</h2>
+<div class="table-wrap">
+<table><thead><tr><th>ต้องการรู้</th><th>เครื่องมือ</th><th>สิ่งที่ต้องตรวจ</th></tr></thead><tbody>
+<tr><td>ค่าเฉลี่ยมีปลายทางหรือไม่</td><td>LLN</td><td>ค่าเฉลี่ยมีอยู่ การพึ่งพา และความคงที่ของกระบวนการ</td></tr>
+<tr><td>ค่าเฉลี่ยคลาดเป็นรูปใด</td><td>CLT / sampling distribution</td><td>variance จำกัด ขนาดตัวอย่าง และหางที่สนใจ</td></tr>
+<tr><td>ตัวประมาณคุณภาพดีหรือไม่</td><td>Bias, SE, MSE</td><td>เป้าหมาย หน่วย และเกณฑ์ความเสียหาย</td></tr>
+<tr><td>ควรรายงานช่วงใด</td><td>Confidence interval</td><td>z หรือ t, dependence และ coverage</td></tr>
+<tr><td>ผลขัดกับ null แค่ไหน</td><td>p-value และ CI ที่สอดคล้อง</td><td>ด้านการทดสอบ นิยามข้อมูล และการออกแบบล่วงหน้า</td></tr>
+<tr><td>จะจับ edge สมมติได้บ่อยแค่ไหน</td><td>Power</td><td>effect size ที่กำหนดก่อนเห็นผลและระยะเวลา</td></tr>
+<tr><td>ผู้ชนะมาจากการค้นหาหรือไม่</td><td>FWER / FDR และ holdout</td><td>family ครบ valid p-values และเงื่อนไข dependence</td></tr>
+</tbody></table>
 </div>
-</body>
-</html>
+</section>
+<section class="exercise">
+<h2>โจทย์ท้ายบท: เขียนคำตัดสินหนึ่งย่อหน้า</h2>
+<p>ข้อมูลสมมติ: ทีมมีผลตอบแทนส่วนเกินสุทธิรายวัน 1,260 จุด จากห้าปี ปีละ 252 วัน ค่าเฉลี่ยรายวัน 0.05% และ sample SD รายวัน 1% ทีมเลือกกลยุทธ์นี้หลังลอง 200 แบบ สมมติ normal อิสระภายในแต่ละกลยุทธ์ก่อน แล้วค่อยพิจารณาว่าจะตรวจข้อสมมติใดเพิ่มเติม</p>
+<ol><li>หา daily Sharpe, annualized Sharpe และสถิติทดสอบ mean ศูนย์</li><li>ใช้ normal approximation หา SE และช่วง 95% ของ mean รายวัน ค่า p สองด้านผ่าน 5% หรือไม่?</li><li>ถ้าทุกแบบไม่มี edge และการทดสอบทั้ง 200 อิสระ คาดว่าจะมีผู้ผ่านปลอมกี่ตัว และมีโอกาสเจออย่างน้อยหนึ่งตัวเท่าไร?</li><li>ผู้ชนะผ่าน Bonferroni FWER 5% หรือไม่? ข้อใดสรุปไม่ได้จากการไม่ผ่าน?</li><li>ถ้ากลยุทธ์ใน grid สัมพันธ์กัน สูตรใดยังมีหลักประกัน และต้องขอข้อมูลอะไรเพิ่มก่อนตัดสิน?</li></ol>
+<details><summary>เฉลย 1–2: หน่วยและหลักฐานของการทดสอบเดียว</summary>
+<p>daily Sharpe คือ $0.0005/0.01=0.05$ และ annualized Sharpe คือ $0.05\sqrt{252}=0.793725$ สถิติ $t=0.05\sqrt{1260}=1.774824$ มี df 1259 ภายใต้ normal null</p>
+<p>SE ของ mean รายวันคือ $0.01/\sqrt{1260}=0.000281718$ หรือ 0.0281718 จุดเปอร์เซ็นต์ ช่วง normal 95% คือ $0.05\%\pm0.0552167\%=[-0.0052167\%,0.1052167\%]$ และ p สองด้านประมาณ 0.07593 จึงไม่ผ่าน 5% แม้ยังไม่ปรับการทดสอบหลายครั้ง Student t exact ก็ไม่ผ่านเช่นกัน อย่าอ่าน 0.07593 เป็นโอกาสที่กลยุทธ์ไร้ฝีมือ</p>
+</details>
+<details><summary>เฉลย 3–4: เปลี่ยนจากหนึ่งตัวเป็นทั้ง family</summary>
+<p>จำนวนผู้ผ่านปลอมคาดหวังคือ $200(0.05)=10$ ตัว ซึ่งสูตรนี้ไม่ต้องอิสระ แต่ FWER $1-0.95^{200}=99.9965\%$ ใช้ independence Bonferroni กำหนด p ไม่เกิน $0.05/200=0.00025$ จึงไม่ผ่านแน่นอน ขอบ Sharpe จาก normal proxy คือ $3.66226/\sqrt5=1.63781$ สูงกว่า 0.793725 มาก</p>
+<p>ไม่ผ่านไม่ได้พิสูจน์ว่าไม่มี edge หรือห้ามศึกษาต่อ หมายถึงหลักฐานยังไม่พอภายใต้วิธีและงบความผิดพลาดที่เลือก และการผ่านก็ยังไม่อนุมัติ leverage หรือรับประกันผลอนาคต</p>
+</details>
+<details><summary>เฉลย 5: ข้อสมมติที่ต้องตรวจและข้อมูลที่ต้องขอ</summary>
+<p>Bonferroni ยังให้ขอบ FWER ไม่เกิน 5% แม้ p-values สัมพันธ์กัน หากแต่ละ p valid และนับ family ถูก แต่สูตร FWER exact 99.9965% ใช้ไม่ได้ทั่วไป ส่วน BH ต้องตรวจเงื่อนไข dependence แยกต่างหาก</p>
+<p>ขอ log ทุกแบบที่ลอง ช่วงเวลาข้อมูล กฎการเลือก ต้นทุน นิยามผลตอบแทนและการแก้ข้อมูล ตรวจ autocorrelation/ช่วงถือครองซ้อนและหางของ returns แล้วคำนวณ SE ใหม่อย่างเหมาะสม ล็อกกลยุทธ์ก่อนใช้ holdout ที่ไม่เคยมีอิทธิพลต่อการออกแบบ พร้อมรายงานผลที่ไม่สำเร็จด้วย</p>
+</details>
+</section>
+<section class="takeaways">
+<h2>ก่อนออกจากบทนี้</h2>
+<ul><li>เพิ่มข้อมูลช่วยลด noise ภายใต้เงื่อนไข ไม่ได้ลบ bias, dependence หรือ regime change</li><li>รายงาน estimate คู่หน่วย SE เงื่อนไข และช่วงความไม่แน่นอน อย่าให้ตัวเลขหลายหลักแทนความมั่นใจ</li><li>แยก SD ของข้อมูลออกจาก SE ของตัวประมาณ แยกค่าเฉลี่ยจริงออกจาก estimate และแยกช่วงความเชื่อมั่นออกจากช่วงทำนาย</li><li>สถิติ Sharpe ต้องใช้จำนวนงวด ความถี่ และจำนวนปีที่สอดคล้องกัน สูตร annualization ไม่ซ่อม serial correlation</li><li>นับทุกการตัดสินใจในการค้นหา ไม่ใช่เฉพาะผู้ชนะ และให้หลักฐานนอกตัวอย่างเป็นส่วนของกระบวนการ ไม่ใช่ตราประทับหลังจูนเสร็จ</li></ul>
+<p>เมื่อตอบโจทย์ท้ายบทได้ คุณพร้อมแยก “ค่าเฉลี่ยที่ไม่รู้” ออกจาก “ข้อมูลที่มีอยู่ ณ เวลาใดเวลาหนึ่ง” ซึ่งจะเป็นพื้นฐานของ filtrations และ martingales ในบทถัดไป</p>
+</section>
+</div></body></html>
