@@ -17,15 +17,71 @@
   <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
   <h1>บทที่ 9</h1>
   <p>Brownian Motion · 5 หัวข้อ</p>
-  <p class="chapter-sequence">สร้างการเดินสุ่มแบบต่อเนื่อง ซึ่งเป็นฐานของทุกแบบจำลองราคาในบทถัดไป</p>
+  <p class="chapter-sequence">จากกติกาสามข้อของเส้นทางสุ่ม ไปสู่กฎรากที่สองของความเสี่ยง บัญชีว่ารู้อะไรเมื่อไร ความเกี่ยวกันของสองเวลา และเส้นทางที่ไม่มีความชันแต่ผลรวมกำลังสองนิ่ง: ทุกข้อจบที่ตัวเลขที่โต๊ะใช้จริง</p>
 </header>
+<section class="prose">
+  <h2>คำถามหลักของบท</h2>
+  <p>โต๊ะหนึ่งถือ SPY 10,000 หุ้นที่ \$520 คือ \$5.2 ล้าน แบบจำลองใช้ความผันผวน 18% ต่อปี วันนี้ต้องตอบห้าเรื่อง: กรอบเตือนของชั่วโมงหน้ากว้างแค่ไหน ความเสี่ยงรายปีของ position เท่าไร backtest ที่ทีมส่งมาเชื่อได้ไหม ผลเดือนแรกบอกอะไรเกี่ยวกับทั้งปี และความผันผวนที่เกิดจริงวันนี้วัดอย่างไร</p>
+  <p>บทนี้ตอบทั้งห้าด้วยวัตถุเดียว คือ Brownian motion เริ่มจากกติกาสามข้อที่บังคับให้ variance โตตามเวลา สร้างก้อนมาตรฐานที่เลื่อนและยืดเป็นแบบจำลองทุกขนาด เขียนให้ชัดว่า ณ เวลาหนึ่งรู้อะไรแล้ว แล้วซูมเข้าไปในเส้นทางจนเห็นว่าทำไม calculus ธรรมดาใช้กับมันไม่ได้</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับค่าเฉลี่ย variance และ SD จากบทที่ 1 รวมถึง Normal distribution, tower rule จาก 2.1, ความเป็นอิสระและผลของมันจากบทที่ 5 และการจำลองด้วยเลขสุ่มอิสระจาก 8.9 ไม่จำเป็นต้องเคยเห็น stochastic process หรือ filtration มาก่อน</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 1 — กติกาสามข้อ และก้อนสุ่มมาตรฐาน</h2>
+  <p>เริ่มจากสิ่งที่นิยาม Brownian motion แล้วรีดผลออกมา: variance เป็นเส้นตรงกับเวลา SD จึงโตตามราก และรูปทรงถูกบังคับให้เป็นระฆัง จากนั้นตรึงกรณีมาตรฐานไว้เป็นก้อนเดียว ใช้แปลงความเสี่ยงข้ามช่วงเวลา จำลองบนคอมพิวเตอร์ และตั้งราคา straddle</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/9.1.html"><span class="toc-number">9.1</span><span class="toc-name">Three Defining Properties of Brownian Motion<span class="toc-why">สุ่มทีละขั้น แต่รูปแบบรวมมีสามกติกาที่ตรวจสอบได้</span></span></a></li>
-  <li><a href="../topics/9.2.html"><span class="toc-number">9.2</span><span class="toc-name">Standard Brownian Motion (SBM)<span class="toc-why">เริ่มจาก random walk มาตรฐาน แล้วอ่านค่าเฉลี่ยกับความผันผวน</span></span></a></li>
-  <li><a href="../topics/9.3.html"><span class="toc-number">9.3</span><span class="toc-name">Filtrations in Continuous Time<span class="toc-why">เมื่อเวลาเดินต่อ ข้อมูลที่รู้แล้วจะเปลี่ยนอย่างไร</span></span></a></li>
-  <li><a href="../topics/9.4.html"><span class="toc-number">9.4</span><span class="toc-name">Worked Computation — $\mathbb E_0[W_{t+s}W_s]$<span class="toc-why">คำนวณผลคูณของค่าจากสองเวลาโดยไม่เดาเส้นทางทั้งเส้น</span></span></a></li>
-  <li><a href="../topics/9.5.html"><span class="toc-number">9.5</span><span class="toc-name">Strange Properties of Brownian Paths<span class="toc-why">เส้นทางที่ดูเรียบในทุกช่วงสั้น ๆ กลับมีนิสัยประหลาดเมื่อซูม</span></span></a></li>
+  <li><a href="../topics/9.1.html"><span class="toc-number">9.1</span><span class="toc-name">Three Defining Properties of Brownian Motion<span class="toc-why">SD ของ SPY ใน 30 นาทีคือ \$1.635 ไม่ใช่ \$0.029: กรอบที่คูณ SD ด้วยเวลาแคบไป 57 เท่าและถูกทะลุ 97% ของเวลา เพราะกติกาสามข้อบังคับให้ variance โตตามเวลา</span></span></a></li>
+  <li><a href="../topics/9.2.html"><span class="toc-number">9.2</span><span class="toc-name">Standard Brownian Motion (SBM)<span class="toc-why">ความผันผวนรายวัน 1.15% ของพอร์ต \$25 ล้านคือ \$4.56 ล้านต่อปี ไม่ใช่ \$72.45 ล้าน และ ATM straddle 30 วันราว \$21.71 จาก $\mathbb E|Z|=0.798$</span></span></a></li>
 </ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมใน 30 นาที SD ของ SPY (\$1.635) ใหญ่กว่าค่าเฉลี่ยที่ drift ให้ (\$0.0127) ถึง 129 เท่า แต่ในหนึ่งปีเหลือแค่ 2.25 เท่า? และถ้าโค้ดจำลองลืมคูณเลขสุ่มด้วย $\sqrt{\Delta t}$ บน grid รายวัน SD ปลายปีจะเป็นเท่าไร?</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 2 — รู้อะไรเมื่อไร และสองเวลาเกี่ยวกันแค่ไหน</h2>
+  <p>ทุกคำทำนายต้องบอกว่าทำ ณ เวลาไหนด้วยข้อมูลอะไร เส้นทางนี้เขียนบัญชีนั้นโดยไม่ใช้สัญลักษณ์เซต พิสูจน์ว่าการทำนายที่ดีที่สุดของ Brownian motion คือค่าปัจจุบัน แล้วใช้ทริกเดียวกันแยกส่วนที่รู้แล้วออกจากส่วนใหม่ เพื่อหาว่าค่าที่สองเวลาเกาะกันแค่ไหน</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="3">
+  <li><a href="../topics/9.3.html"><span class="toc-number">9.3</span><span class="toc-name">Filtrations in Continuous Time<span class="toc-why">backtest ที่เห็นราคาปิดตั้งแต่ 10:00 ได้ Sharpe 21 และไม่ขาดทุนสักวัน ส่วนกฎที่ใช้แต่ข้อมูลถึง 10:00 ได้เฉลี่ยศูนย์ เพราะ Brownian motion เป็น martingale</span></span></a></li>
+  <li><a href="../topics/9.4.html"><span class="toc-number">9.4</span><span class="toc-name">Worked Computation — $\mathbb E_0[W_{t+s}W_s]$<span class="toc-why">มกราคม +\$2 ล้านให้คำทำนายทั้งปี \$2 ล้าน ไม่ใช่ \$24 ล้าน: correlation 0.289 อธิบายได้แค่ 8.33% เพราะค่าเฉลี่ยของผลคูณเท่ากับเวลาที่ใช้ร่วมกัน</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ถ้า position $h$ ตัดสินจากข้อมูลถึง 10:00 เท่านั้น ทำไม $\mathbb E[h(S_{16}-S_{10})]=0$ ทุกครั้ง? และทำไมมกราคมอธิบายผลทั้งปีได้ 8.33% แต่อธิบายกุมภาพันธ์ถึงธันวาคมได้ 0%?</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 3 — เส้นทางที่ไม่มีความชัน แต่ผลรวมกำลังสองนิ่ง</h2>
+  <p>ซูมเข้าไปในเส้นทางด้วยตัวเลข: ความชันระเบิด ความยาวโตไม่สิ้นสุด แต่ผลรวมของการขยับยกกำลังสองนิ่งเท่ากับเวลา ของที่นิ่งนี้คือ realized volatility ที่โต๊ะวัดทุกวัน และเป็นเหตุผลที่บทที่ 13 ต้องสร้าง calculus ใหม่</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="5">
+  <li><a href="../topics/9.5.html"><span class="toc-number">9.5</span><span class="toc-name">Strange Properties of Brownian Paths<span class="toc-why">ซอยแท่งจาก 5 นาทีเป็น 1 วินาที ความยาวเส้นทางโตจาก \$46 เป็น \$759 แต่รากของผลรวมกำลังสองนิ่งราว \$6.24 และวัดถี่เกินไปบนหุ้นที่ spread กว้างทำให้ RV พอง 82 เท่า</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ผลรวมของ $|\Delta W|^p$ บน $n$ ท่อนโตตาม $n^{1-p/2}$ แล้ว $p=1$, 2 และ 3 ให้อะไร และทำไมผลของ $p=1$ จึงบอกว่าเส้นทางไม่มีความชันที่จำกัด?</p>
+</section>
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — SPY 10,000 หุ้นหนึ่งวัน</h2>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ถือ SPY 10,000 หุ้นที่ \$520 แบบจำลองดอลลาร์ของ 9.2 ใช้ $\sigma=520\times0.18=93.60$ ดอลลาร์ต่อ $\sqrt{\text{yr}}$ ต่อหุ้น ไม่คิด drift หนึ่งปีมี $252\times390=98{,}280$ นาทีซื้อขาย (9.1) และ $z_{0.975}=1.96$</p>
+  <p><strong>1.</strong> SD ของ P&amp;L ของ position ในหนึ่งชั่วโมงข้างหน้าเป็นเท่าไร และกรอบ 95% กว้างแค่ไหน?</p>
+  <details><summary>ดูเฉลยข้อ 1</summary><p>ต่อหุ้น $93.60\sqrt{60/98{,}280}\approx\$2.3127$ คูณ 10,000 หุ้นได้ราว \$23,127 กรอบ 95% คือ $\pm1.96\times23{,}127\approx\pm\$45{,}329$ (9.1 ขั้นที่ 4 และ 9) ถ้าคูณ SD ด้วยสัดส่วนเวลาแทนราก จะได้กรอบที่แคบไป $\sqrt{98{,}280/60}\approx40$ เท่า</p></details>
+  <p><strong>2.</strong> SD ของ P&amp;L หนึ่งวัน และหนึ่งปี เป็นเท่าไร ตรวจด้วยกฎรากที่สองได้อย่างไร?</p>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>หนึ่งวัน 390 นาที: $93.60\sqrt{390/98{,}280}\approx\$5.8962$ ต่อหุ้น หรือ \$58,962 หนึ่งปีคือ $93.60\times10{,}000=\$936{,}000$ ตรวจ: $58{,}962\times\sqrt{252}\approx936{,}000$ ตรงกันพอดี (9.2 ขั้นที่ 3) ถ้าคูณ 252 จะได้ราว \$14.86 ล้าน เกือบสามเท่าของ position ทั้งก้อน</p></details>
+  <p><strong>3.</strong> ตอน 13:00 SPY อยู่ที่ \$523 คำทำนายมูลค่า position ตอนปิดคือเท่าไร คลาดได้เท่าไร และถ้า backtest ใช้กฎ “ซื้อถ้าราคาปิดสูงกว่าตอนนี้” จะรายงานกำไรเฉลี่ยต่อวันเท่าไร?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>คำทำนายคือ $10{,}000\times523=\$5.23$ ล้าน เพราะ SBM เป็น martingale (9.3) ส่วนที่เหลือ 180 นาทีมี SD $93.60\sqrt{180/98{,}280}\approx\$4.006$ ต่อหุ้น หรือ \$40,057 กฎที่รั่วได้ $\mathbb E|\Delta S|=4.006\times0.7979\approx\$3.196$ ต่อหุ้น คือราว \$31,961 ต่อวันโดยไม่ขาดทุนเลย ส่วนกฎใดที่ใช้ข้อมูลถึง 13:00 เท่านั้นได้เฉลี่ย \$0</p></details>
+  <p><strong>4.</strong> เดือนแรก (21 วันทำการ) position ได้กำไร \$150,000 คำทำนาย P&amp;L ทั้งปีคือเท่าไร SD ที่เหลือเท่าไร และเดือนแรกอธิบาย P&amp;L ทั้งปีได้กี่ %?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary><p>เดือนแรกคือ $21/252=1/12$ ปี มี SD $936{,}000\sqrt{1/12}\approx\$270{,}200$ กำไร \$150,000 จึงแค่ 0.56 SD คำทำนายทั้งปีคือ \$150,000 ไม่ใช่ \$1.8 ล้าน SD ที่เหลือคือ $936{,}000\sqrt{11/12}\approx\$896{,}152$ และ $R^2=1/12\approx8.33\%$ ซึ่งมาจากการที่เดือนแรกอยู่ในทั้งปี (9.4)</p></details>
+  <p><strong>5.</strong> วันนี้แท่ง 5 นาที 78 แท่งมีผลรวม log return ยกกำลังสอง 0.000144 ตัวเลขนี้บอกว่าความผันผวน 18% ของแบบจำลองผิดหรือไม่?</p>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>realized volatility รายวันคือ 1.20% รายปี $1.20\%\times\sqrt{252}\approx19.05\%$ แต่ RV จาก 78 แท่งคลาดได้ราว $\sqrt{2/78}\approx16\%$ ของตัวมันเอง ความผันผวนรายปีจึงคลาดราว ±1.53 จุด (9.5 ขั้นที่ 9) ส่วนต่าง 1.05 จุดจาก 18% คือราว 0.69 SD วันเดียวจึงยังไม่ใช่หลักฐานว่าแบบจำลองผิด</p></details>
+</section>
+<section class="takeaways">
+  <h2>ก่อนเดินต่อบท 10</h2>
+  <ul>
+    <li>กติกาสามข้อบังคับให้ variance เป็นเส้นตรงกับเวลา SD ของช่วง $s$ จึงเป็น $\sigma\sqrt s$ และการขยับเป็น Normal</li>
+    <li>SBM ก้อนเดียวสร้างแบบจำลองทุกขนาดด้วย $x+\mu t+\sigma W_t$ และจำลองด้วยก้าว $\sqrt{\Delta t}\,Z$</li>
+    <li>ข้อมูลถึงเวลา $t$ คือเส้นทางจนถึง $t$ การทำนายที่ดีที่สุดคือค่าปัจจุบัน และ position ที่ตัดสินจากข้อมูลนั้นได้ผลเฉลี่ยศูนย์ในแบบจำลองนี้</li>
+    <li>$\operatorname{Cov}(W_u,W_v)=\min(u,v)$: ความเกี่ยวกันของสองเวลามาจากประวัติที่ใช้ร่วมกัน ไม่ใช่การทำนาย</li>
+    <li>เส้นทางไม่มีความชันและยาวไม่สิ้นสุด แต่ผลรวมกำลังสองเท่ากับเวลา ซึ่งคือ realized variance ที่ต้องวัดด้วยความถี่ที่ noise ยังไม่ชนะ</li>
+  </ul>
+  <p>บทที่ 10 จะเอา Brownian motion ไปเป็นเลขชี้กำลังของราคา ได้ geometric Brownian motion ที่ราคาติดลบไม่ได้และผลตอบแทนทบต้น แล้วถามว่าทำไม drift ของราคาคาดหวังจึงเป็น $\mu$ พอดี</p>
+</section>
 </div>
 </body>
 </html>
