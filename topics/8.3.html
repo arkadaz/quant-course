@@ -15,368 +15,389 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 45/158</span>
 </nav>
-
-<article class="topic" data-number="8.3" data-depends-on="5.4 5.5 8.2">
+<article class="topic" data-number="8.3" data-depends-on="1.4 1.9 3.3 5.4 5.6 8.1 8.2">
 <header class="topic-header">
   <h1><span class="tnum">8.3</span> Zero Covariance ≠ Independence</h1>
-  <p class="subtitle">เมื่อค่าความสัมพันธ์เชิงเส้นเป็นศูนย์ แต่ตัวแปรยังผูกพันกันอย่างแนบแน่น</p>
+  <p class="subtitle">covariance เป็นศูนย์บอกว่าพจน์ไขว้หายไป ไม่ได้บอกว่าอีกตัวแปรไม่มีข้อมูลให้เรา</p>
 </header>
-
 <div class="hook">
-  <p>หักพวงมาลัยซ้ายสุดหรือขวาสุด ยางส่งเสียงดังเท่ากัน แต่ถ้าคิดความสัมพันธ์แบบเส้นตรง ผลบวกกับลบอาจหักล้างจนได้ศูนย์ คุณเชื่อไหมว่าสองอย่างไม่เกี่ยวกัน?</p>
-  <p>เฉลย: ไม่ควรเชื่อ สมมติเสียงยางเท่ากับมุมคูณตัวเอง ลองมุม −2, −1, 0, 1, 2 อย่างละเท่ากัน covariance ของมุมกับเสียงออกมาศูนย์พอดี เพราะฝั่งซ้ายกับฝั่งขวาหักกัน ทั้งที่รู้มุมแล้วรู้เสียงเป๊ะทุกครั้ง covariance วัดได้แค่ความสัมพันธ์แบบเส้นตรง ขั้นที่ 1 จะนับให้ดูทีละค่า</p>
-  <p>Zero covariance ไม่เท่ากับ independence: covariance วัดการขยับร่วมแบบเส้นตรง ส่วน independence บอกว่า distribution หนึ่งไม่เปลี่ยนเมื่อรู้อีกตัว ใช้แยกสองข้ออ้างที่หน้าตาคล้ายกันแต่แรงไม่เท่ากัน</p>
+  <p>ให้ market shock $X\sim N(0,1)$ และกำไรขาดทุนสมมติ $\Pi=1000(1-X^2)$ USD เมื่อ $X=2$ หรือ $X=-2$ พอร์ตขาดทุน \$3,000 เหมือนกัน แต่ covariance ระหว่าง $X$ กับ $\Pi$ เป็นศูนย์ รายงานผิดหรือไม่?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่จำเป็น รายงาน covariance อาจถูก แต่การตีความว่า “พอร์ตไม่ขึ้นกับตลาด” ผิด ด้านบวกกับด้านลบของ shock หักล้างกันในการคำนวณ covariance ขณะที่ขนาด $|X|$ กำหนดกำไรขาดทุนอย่างแน่นอน นี่คือ toy payoff ไม่ใช่สูตรกำไรขาดทุนของออปชันจริงทุกชนิด</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากรายงานความเสี่ยงที่บอกว่าไม่มีความเสี่ยง</h4>
-  <p>ระบบความเสี่ยงรายงานว่า correlation ระหว่างสองสถานะเป็นศูนย์พอดี ทุกคนในห้องอ่านว่าสองสถานะนี้ไม่เกี่ยวกัน จึงกระจายความเสี่ยงให้กันได้ดี</p>
-  <p>นั่นอาจผิดทั้งหมด ลองสถานะที่กำไรขึ้นกับขนาดของการขยับ ไม่ใช่ทิศทาง เช่นการขาย option ตลาดขยับขึ้นแรงก็เสีย ลงแรงก็เสีย นิ่งก็ได้กำไร ความสัมพันธ์แบบนี้แน่นมาก รู้การขยับของตลาดแล้วรู้กำไรเลย แต่ฝั่งบวกกับฝั่งลบหักล้างกันจน covariance ออกมาเป็นศูนย์พอดี</p>
-  <p>covariance วัดได้แค่ความสัมพันธ์ที่เป็นเส้นตรง ส่วนคำว่าไม่เกี่ยวกันจริงต้องแรงกว่านั้นมาก หัวข้อนี้นับตัวอย่างข้างบนให้เห็นทีละค่า แล้วบอกว่าเมื่อไรเลขศูนย์ตัวนั้นเชื่อได้ และเมื่อไรเชื่อไม่ได้</p>
+  <h4>แยกคำถามสองข้อที่หน้าตาคล้ายกัน</h4>
+  <p>คำถามแรกคือ deviations ของ $X$ กับ $Y$ มีผลคูณเฉลี่ยเป็นเท่าไร อีกคำถามคือ เมื่อรู้ $X$ แล้ว distribution ของ $Y$ เปลี่ยนหรือไม่ covariance ตอบข้อแรก ส่วน independence ตอบข้อหลังซึ่งเข้มกว่ามาก</p>
+  <p>เราจะเริ่มจาก distribution ห้าค่าที่นับด้วยมือได้ จากนั้นค่อยไปหา Normal ตัวอย่างทุกข้อที่คำนวณ covariance/correlation สมมติว่ามี moments ที่จำเป็น อย่านำเหตุผลเรื่องสมมาตรไปสรุป covariance ของ Cauchy ทั้งที่ moments ไม่ได้มีอยู่</p>
 </section>
-
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>zero covariance</dt>
-    <dd>zero covariance คือภาวะที่ covariance ระหว่างสองตัวแปรเท่ากับศูนย์ ใช้บอกว่าไม่มีความสัมพันธ์เชิงเส้น แต่ไม่ตัดความสัมพันธ์รูปแบบอื่น</dd>
-    <dt>independence</dt>
-    <dd>independence คือการรู้ค่าตัวแปรหนึ่งแล้วไม่ให้เบาะแสถึงอีกตัว ใช้รับรองว่า joint distribution แยกเป็นผลคูณของ distribution เดี่ยวได้</dd>
-    <dt>nonlinear dependence</dt>
-    <dd>ความสัมพันธ์แบบไม่เป็นเส้นตรง เช่น รูปตัวยู ที่ค่าของตัวแปรหนึ่งขึ้นอยู่กับขนาด (magnitude) ของอีกตัวแปรหนึ่ง ทำให้เครื่องมือวัดเชิงเส้นตรวจไม่พบ</dd>
-    <dt>U-shape</dt>
-    <dd>รูปทรงความสัมพันธ์ที่ตัวแปรตอบสนองต่อความผันผวนโดยไม่สนใจทิศทางเครื่องหมาย ใช้เป็นตัวอย่างคลาสสิกที่หักล้างความเชื่อเรื่อง covariance</dd>
-    <dt>quality assurance (QA)</dt>
-    <dd>กระบวนการตรวจสอบคุณภาพและความถูกต้องของแบบจำลอง เพื่อดักจับความเสี่ยงและความสัมพันธ์ที่มาตรวัดทั่วไปมองไม่เห็น</dd>
-    <dt>convexity</dt>
-    <dd>ความโค้งของความสัมพันธ์ ไม่ใช่ความชัน ใช้บอกว่าผลลัพธ์เร่งขึ้นหรือชะลอลง เมื่อตัวแปรขยับไกลจากจุดอ้างอิง และเป็นเหตุผลที่ค่าเฉลี่ยของผลลัพธ์ ไม่เท่ากับผลลัพธ์ของค่าเฉลี่ย</dd>
+    <dt>Uncorrelated</dt><dd>มี covariance ศูนย์ เมื่อ variance ของทั้งคู่เป็นบวกและจำกัด จึงพูดเทียบเท่าว่า correlation ศูนย์ได้</dd>
+    <dt>Independent</dt><dd>เหตุการณ์เกี่ยวกับตัวหนึ่งไม่เปลี่ยนโอกาสของเหตุการณ์เกี่ยวกับอีกตัว โดยต้องเป็นจริงสำหรับทุกคู่เหตุการณ์ ไม่ใช่ผ่านการตรวจเพียงคู่เดียว</dd>
+    <dt>Conditional mean</dt><dd>ค่าเฉลี่ยของ $Y$ เมื่อกำหนดข้อมูลเกี่ยวกับ $X$ ใช้ถามว่าศูนย์กลางของผลลัพธ์เปลี่ยนตามข้อมูลหรือไม่</dd>
+    <dt>Jointly Normal</dt><dd>ทั้ง vector มี joint distribution แบบ Multivariate Normal ไม่ใช่แค่ histogram ของแต่ละคอลัมน์ดูคล้าย Normal</dd>
+    <dt>Marginal distribution</dt><dd>distribution ของตัวแปรหนึ่งตัวโดยไม่กำหนดค่าของอีกตัว การรู้ marginals ยังไม่กำหนดว่าตัวแปรเคลื่อนไหวร่วมกันอย่างไร</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$X$</td><td>สัญญาณตลาดที่มี distribution แบบปกติมาตรฐาน</td><td>unitless</td></tr>
-      <tr><td>$Y$</td><td>ผลตอบรับที่มีความสัมพันธ์แบบไม่เป็นเส้นตรงกับ $X$</td><td>unitless</td></tr>
-      <tr><td>$\operatorname{Cov}(X,Y)$</td><td>ค่า covariance เชิงเส้นระหว่างตัวแปรทั้งสอง</td><td>unitless²</td></tr>
-      <tr><td>$\rho_{X,Y}$</td><td>correlation coefficient เชิงเส้น</td><td>-1 ถึง 1</td></tr>
-      <tr><td>$\varepsilon$</td><td>สัญญาณรบกวนสุ่มที่ค่าเฉลี่ยเป็นศูนย์และเป็นอิสระจาก $X$</td><td>unitless</td></tr>
-      <tr><td>$W$</td><td>ตัวแปรสลับเครื่องหมายแบบทวิภาค มีค่าเป็น -1 หรือ 1 ด้วยโอกาสเท่ากัน</td><td>unitless</td></tr>
-      <tr><td>$\boldsymbol\Sigma$</td><td>covariance matrix ของ random variables สองมิติ</td><td>unitless</td></tr>
-    </tbody>
-  </table>
+  <summary>สัญลักษณ์และบทบาท</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>$X,Y$</td><td>ตัวแปรสุ่ม; ต้องอ่าน distribution ที่กำหนดในแต่ละตัวอย่าง ไม่ใช้ห้าค่าปะกับ Normal</td></tr>
+    <tr><td>$\phi,\Phi$</td><td>density และ CDF ของ standard Normal</td></tr>
+    <tr><td>$\varepsilon,\tau^2$</td><td>noise อิสระจาก $X$ มี mean ศูนย์และ variance $\tau^2$</td></tr>
+    <tr><td>$W$</td><td>เครื่องหมายสุ่ม $+1,-1$ อย่างละครึ่ง อิสระจาก $X$</td></tr>
+  </tbody></table></div>
 </details>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — ห้าจุดด้วยมือ: covariance ศูนย์เป๊ะ แต่รู้ตัวหนึ่งแล้วรู้อีกตัวทันที</h4>
-  <p>ก่อนใช้ระฆังคว่ำ ลองกับห้าจุดที่นับนิ้วได้ ผลลัพธ์เดียวกันเป๊ะ</p>
+  <h4>ขั้นที่ 1 — Independence ให้ zero covariance แต่ย้อนลูกศรไม่ได้ทั่วไป</h4>
+  <p>independence กำหนดความน่าจะเป็นร่วมสำหรับทุกคู่ของเซตค่าที่สนใจ เมื่อ moments มีอยู่ จึงแยกค่าเฉลี่ยของผลคูณได้ แต่ covariance ศูนย์บังคับเพียงสมการเดียว</p>
   <div class="math">\[
 \begin{aligned}
-X&=-2,\,-1,\,0,\,1,\,2\\
-&\quad(\text{each }\tfrac15)\\
-Y=X^{2}&=4,\,1,\,0,\,1,\,4\\
-\mathbb{E}[X]&=(-2-1+0+1+2)/5=0\\
-\mathbb{E}[Y]&=(4+1+0+1+4)/5=2\\
-\mathbb{E}[XY]&=\mathbb{E}[X^{3}]\\
-&=(-8-1+0+1+8)/5=0\\
-&\mathrm{Cov}(X,Y)\\
-&=\mathbb{E}[XY]-\mathbb{E}[X]\,\mathbb{E}[Y]\\
-&=0-0(2)=0\\
-&P(Y=4\mid X=2)=1\\
-&\ne P(Y=4)=\tfrac25
+X\perp Y:\quad &P(X\in A,Y\in B)\\
+&=P(X\in A)P(Y\in B)\quad\text{ทุก }A,B,\\
+X\perp Y&\Longrightarrow\mathbb E[XY]=\mathbb E[X]\mathbb E[Y],\\
+\operatorname{Cov}(X,Y)&=\mathbb E[XY]-\mathbb E[X]\mathbb E[Y]\\
+&=0.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ผลคูณ $X\cdot Y=X^3$ ให้ $-8,-1,0,1,8$ ซึ่งหักล้างกันพอดีเพราะสมมาตร covariance จึงเป็นศูนย์แบบไม่มีเศษ ไม่ใช่เกือบศูนย์</p>
-    <p>แต่ถ้ารู้ว่า $X=2$ เรารู้ทันทีว่า $Y=4$ โอกาสเป็น 1 ขณะที่ถ้าไม่รู้ $X$ โอกาสที่ $Y=4$ มีแค่ 2 ใน 5 ข่าวส่งถึงกันเต็มที่ นี่คือนิยามของ “ไม่อิสระ” จากหัวข้อ 5.4</p>
-  </div>
+  <div class="reading"><p>การที่ผลคูณเฉลี่ยเท่ากับผลคูณของค่าเฉลี่ยไม่ได้ทำให้สมการ probability ทุกคู่ตามมา เราจะหาคู่เหตุการณ์เพียงคู่เดียวที่คูณ probability แล้วผิด ก็เพียงพอจะหักล้าง independence</p></div>
+  <p>อย่าสับสน population covariance ศูนย์กับ sample correlation ที่ประมาณได้ใกล้ศูนย์ ค่าจากข้อมูลมี sampling error และแม้เรารู้ population covariance แน่นอนแล้ว ก็ยังมีปัญหาย้อนลูกศรนี้อยู่</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 2 — ตัวอย่างค้านคลาสสิก (canonical counterexample)</h4>
-  <p>หัวข้อนี้มีเป้าหมายเดียว คือหักล้างความเชื่อที่ว่า correlation เป็นศูนย์แปลว่าไม่เกี่ยวกัน วิธีที่ดีที่สุดคือยกตัวอย่างค้านหนึ่งตัวอย่าง</p>
-  <div class="math">\[
-X\sim\mathcal N(0,1),\qquad Y=X^2
-\]</div>
-  <div class="reading">
-    <p>กำหนดให้ $X$ มี distribution แบบ standard Normal และให้ $Y$ เป็นกำลังสองของ $X$ ความสัมพันธ์ระหว่างทั้งสองตัวแปรจึงเป็นรูปตัวยู (U-shape) ที่สมมาตรรอบแกนตั้งอย่างสมบูรณ์</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — พิสูจน์ว่า covariance มีค่าเป็นศูนย์พอดี</h4>
-  <p>คำนวณให้เห็นว่าเป็นศูนย์จริง ๆ ไม่ใช่เกือบศูนย์</p>
-  <div class="math">\[
-\operatorname{Cov}(X,Y)=\operatorname{Cov}(X,X^2)=E[X^3]-E[X]E[X^2]=0
-\]</div>
-  <div class="reading">
-    <p>เนื่องจาก $X$ มี distribution ที่สมมาตรรอบศูนย์ โมเมนต์คี่ $E[X^3]$ และค่าเฉลี่ย $E[X]$ จึงเป็นศูนย์ทั้งคู่ ทำให้ค่า covariance ออกมาเท่ากับศูนย์เป๊ะ แม้ว่า $Y$ จะถูกกำหนดจาก $X$ ทั้งหมดก็ตาม</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — พิสูจน์ว่า independence ล้มเหลวโดยสิ้นเชิง</h4>
-  <p>แต่รู้ตัวหนึ่งแล้วรู้อีกตัวทันทีแบบไม่มีความไม่แน่นอนเหลือเลย ซึ่งเป็นการผูกพันที่แน่นที่สุดเท่าที่จะเป็นไปได้</p>
-  <div class="math">\[
-P(Y\le1\mid X=0.5)=1\ne P(Y\le1)=P(|X|\le1)=2\Phi(1)-1\approx0.6827
-\]</div>
-  <div class="reading">
-    <p>ของที่โจทย์ให้: $X=0.5$ และ $Y=X^2$ ยกกำลังสองได้ $Y=0.25$ จึงทำให้ $P(Y\le1\mid X=0.5)=1$ แต่โอกาสแบบไม่รู้ $X$ เท่ากับ $2\Phi(1)-1\approx0.6827$; สองค่านี้ไม่เท่ากันจึงไม่ independent</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — เมื่อเพิ่มสัญญาณรบกวนในโลกความเป็นจริง</h4>
-  <p>ในข้อมูลจริงที่มี noise ปน ความสัมพันธ์แบบนี้จะซ่อนตัวได้ดีมาก และเครื่องมือที่ดูแค่ correlation จะมองไม่เห็นเลย</p>
-  <div class="math">\[
-Y=X^2+\varepsilon,\qquad E[\varepsilon]=0,\quad \varepsilon\ \text{independent of}\ X
-\]</div>
-  <div class="reading">
-    <p>แม้จะเติมสัญญาณรบกวนสุ่ม $\varepsilon$ ที่เป็นอิสระและมีค่าเฉลี่ยศูนย์เข้าไป ความสัมพันธ์แบบไม่เป็นเส้นตรงระหว่าง $X$ กับ $Y$ ก็ยังคงอยู่ และค่า covariance ก็ยังคงมีแนวโน้มเป็นศูนย์เช่นเดิม</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ข้อยกเว้นเดียว: ทำไม Joint Normal จึงคืนชีพให้กฎนี้</h4>
-  <p>ข้อยกเว้นเพียงหนึ่งเดียวที่ covariance เท่ากับศูนย์จะรับประกัน independence (independence) คือเมื่อ random variables ทั้งคู่มี joint Normal distribution ร่วมกัน โครงสร้างทางพีชคณิตของ density ระฆังคว่ำจะตัดพจน์เชื่อมโยงข้ามตัวแปรออกจนหมด ทำให้ joint density แยกตัวเป็นผลคูณของ density เดี่ยวสองตัวได้พอดี</p>
+  <h4>ขั้นที่ 2 — ห้าค่าที่ covariance ศูนย์ แต่รู้ $X$ แล้วรู้ $Y$ ทันที</h4>
+  <p>กำหนดให้ $X$ รับค่า $-2,-1,0,1,2$ อย่างละ $1/5$ และให้ $Y=X^2$ นี่เป็น probability model ที่กำหนดให้ ไม่ใช่ sample ห้าวันที่กำลังประมาณ covariance จึงใช้ probability $1/5$ ไม่ใช่ตัวหาร $T-1$ ของ 8.1</p>
+  <div class="table-wrap"><table><thead><tr><th>$X$</th><th>$Y=X^2$</th><th>$XY=X^3$</th></tr></thead><tbody>
+    <tr><td>−2</td><td>4</td><td>−8</td></tr><tr><td>−1</td><td>1</td><td>−1</td></tr>
+    <tr><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>4</td><td>8</td></tr>
+  </tbody></table></div>
   <div class="math">\[
 \begin{aligned}
-(X,Y)&\sim\mathcal N_2(\boldsymbol\mu,\,\boldsymbol\Sigma)\\
-\boldsymbol\Sigma&=\begin{bmatrix}\sigma_X^2&\operatorname{Cov}(X,Y)\\
-\operatorname{Cov}(X,Y)&\sigma_Y^2\end{bmatrix}\\[4pt]
-&\operatorname{Cov}(X,Y)=0\\
-&\;\Longrightarrow\;\boldsymbol\Sigma=\begin{bmatrix}\sigma_X^2&amp;0\\
-0&\sigma_Y^2\end{bmatrix}\\
-&\quad \det(\boldsymbol\Sigma)=\sigma_X^2\sigma_Y^2\\[4pt]
-\boldsymbol\Sigma^{-1}&=\begin{bmatrix}1/\sigma_X^2&amp;0\\
-0&amp;1/\sigma_Y^2\end{bmatrix}\\[4pt]
-&(x-\mu)^{\mathsf T}\boldsymbol\Sigma^{-1}(x-\mu)\\
-&=\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\\[4pt]
-&f_{X,Y}(x,y)\\
-&=\frac{1}{2\pi\sqrt{\sigma_X^2\sigma_Y^2}}\\
-&\quad\exp\left(-\frac12\left[\frac{(x-\mu_X)^2}{\sigma_X^2}+\frac{(y-\mu_Y)^2}{\sigma_Y^2}\right]\right)\\[4pt]
-&=\left(\frac{1}{\sqrt{2\pi\sigma_X^2}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\right)\\
-&\quad\left(\frac{1}{\sqrt{2\pi\sigma_Y^2}}e^{-\frac{(y-\mu_Y)^2}{2\sigma_Y^2}}\right)\\[4pt]
-&=f_X(x)\,f_Y(y)\\
-&\quad\Longrightarrow\quad X,\,Y\ \text{independent}
+\mathbb E[X]&=(-2-1+0+1+2)/5=0,\\
+\mathbb E[Y]&=(4+1+0+1+4)/5=2,\\
+\mathbb E[XY]&=(-8-1+0+1+8)/5=0,\\
+\operatorname{Cov}(X,Y)&=0-(0)(2)=0,\\
+P(Y=1\mid X=1)&=1\ne P(Y=1)=2/5.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ถ้า zero covariance ไม่ได้แปลว่าอิสระเสมอไป ทำไมทุกคนถึงยังจำสับสน คำตอบคือมันเป็นจริงในกรณีเดียว: เมื่อตัวแปรทั้งสองมี joint Normal distribution ร่วมกัน</p>
-    <p>เมื่อ covariance เป็นศูนย์ matrix ผกผัน $\boldsymbol\Sigma^{-1}$ จะกลายเป็น diagonal matrix ทำให้พจน์ไขว้ในเลขชี้กำลังของ function ระฆังคว่ำหายไปทั้งหมด</p>
-    <p>เลขชี้กำลังที่ไม่มีพจน์ไขว้แยกออกเป็นผลบวกสองก้อน ซึ่งทำให้ $e^{A+B}$ แตกตัวเป็น $e^A e^B$ และส่งผลให้ joint density แยกเป็นผลคูณของ density เดี่ยวสองก้อนพอดี</p>
-  </div>
+  <div class="reading"><p>เมื่อ $X=1$ ค่า $Y$ ต้องเป็น 1 แต่ถ้าไม่รู้ $X$ โอกาสได้ $Y=1$ มีเพียง 40% จึงไม่อิสระกัน ทั้งสองตัวมี variance เป็นบวกด้วย ไม่ใช่กรณี correlation นิยามไม่ได้เพราะมีตัวหนึ่งคงที่</p></div>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — กับดักตัวแปรเดี่ยว: แต่ละตัวเป็น Normal ไม่ได้รับประกัน Joint Normal</h4>
-  <p>แม้ตัวแปรทั้งสองจะมี marginal distribution เป็น Normal ทั้งคู่ และมี covariance เป็นศูนย์ แต่หากไม่ได้มี joint Normal distribution ร่วมกัน ตัวแปรทั้งสองอาจผูกพันกันอย่างสมบูรณ์แบบไม่เป็นเส้นตรง ดังเช่นกรณี $Y = W\,X$ ที่ขนาดกำลังสองของทั้งคู่เท่ากันเสมอ</p>
-  <div class="math">\[
-\begin{aligned}
-X&\sim\mathcal N(0,1)\\
-&W=+1\ \text{or}\ -1\\
-&P(W=1)=P(W=-1)=\tfrac12\\
-&W\ \text{separate from}\ X\\[4pt]
-Y&=W\cdot X\\
-&\quad\Longrightarrow\quad Y\sim\mathcal N(0,1)\\[4pt]
-\mathbb E[XY]&=\mathbb E[W X^{2}]=\mathbb E[W]\,\mathbb E[X^{2}]\\
-&=0\times 1=0\\[4pt]
-&\operatorname{Cov}(X,Y)\\
-&=\mathbb E[XY]-\mathbb E[X]\mathbb E[Y]\\
-&=0-0(0)=0\\[4pt]
-&P(Y^{2}=X^{2})=P(W^{2}X^{2}=X^{2})=1\\
-&\quad\Longrightarrow\quad X,\,Y\ \text{not independent}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ผู้อ่านมักถามต่อว่า ถ้า $X$ เป็น Normal และ $Y$ ก็เป็น Normal แล้ว covariance เป็นศูนย์ ทั้งสองจะอิสระต่อกันหรือไม่ คำตอบที่น่าตกใจคือยังไม่พอ</p>
-    <p>ให้ $W$ เป็นตัวสลับเครื่องหมายสุ่ม จะได้ว่า $Y$ มี distribution เป็น Normal มาตรฐานเป๊ะ และ covariance ระหว่าง $X$ กับ $Y$ เป็นศูนย์อย่างสมบูรณ์</p>
-    <p>แต่เมื่อดูขนาด จะพบว่า $Y^2$ เท่ากับ $X^2$ เสมอด้วยโอกาส 100% ทั้งสองจึงผูกติดกันอย่างแนบแน่น นี่คือเหตุผลที่ต้องระบุว่าต้องเป็น joint Normal ไม่ใช่แค่ marginal Normal</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ขยายการพิสูจน์: ทำไม $E[X^3]$ ต้องเป็นศูนย์</h4>
-  <p>การบอกว่าเป็นศูนย์เพราะสมมาตรเป็นคำตอบที่ถูก แต่ยังไม่ใช่คำอธิบาย บรรทัดข้างล่างเขียนเหตุผลนั้นออกมาเป็นสมการ</p>
-  <p>ตัวที่ถูกยกกำลังสามทำให้เครื่องหมายพลิก ส่วน Normal density สมมาตรจึงไม่พลิกตาม สองอย่างรวมกันแล้วได้ function คี่ ซึ่งพื้นที่สองฝั่งหักล้างกันเสมอ</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb{E}[X^{3}]&=\int_{-\infty}^{\infty}x^{3}\,\varphi(x)\,dx\\
-\varphi(x)&=\tfrac{1}{\sqrt{2\pi}}e^{-x^{2}/2}\\[4pt]
-g(-x)&=(-x)^{3}\varphi(-x)=-x^{3}\varphi(x)\\
-&=-g(x)\\[4pt]
-&\int_{-\infty}^{0}g+\int_{0}^{\infty}g\\
-&=-\int_{0}^{\infty}g+\int_{0}^{\infty}g=0\\[6pt]
-&\text{five points: }\\
-&(-8)+(-1)+0+1+8=0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เขียนค่าเฉลี่ยของ $X^3$ ออกมาเป็น integral ตามนิยาม แล้วดูที่ integrand เมื่อแทน $-x$ จะได้ค่าติดลบของเดิม เพราะ $(-x)^3=-x^3$ และ density ของ Normal สมมาตร</p>
-    <p>function ที่มีสมบัติดังกล่าวเรียกว่า function คี่ พื้นที่ทางซ้ายของศูนย์จึงเป็นเงาสะท้อนของทางขวา บวกกันแล้วหายไปพอดี ไม่ใช่หักล้างแบบเกือบหมด</p>
-    <p>ห้าจุดในขั้นที่ 1 ให้คำตอบเดียวกัน: ยกกำลังสามแล้วได้ $-8,-1,0,1,8$ ซึ่งรวมกันเป็นศูนย์ ทั้งสองวิธีจึงยืนยันกันเอง</p>
-    <p>ทำไมต้องเขียนให้เห็น: ถ้า density ไม่สมมาตร ข้อสรุปนี้ใช้ไม่ได้ทันที และในตลาดจริง density ของผลตอบแทนเบ้จนสมมาตรไม่จริง ซึ่งเป็นเหตุผลว่าทำไม covariance จึงเป็นเครื่องมือที่ไม่พอ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — ตัวเลขจริง: สมมติอิสระแล้วประเมินความเสี่ยงร่วมต่ำไปเท่าไร</h4>
-  <p>หัวข้อนี้เตือนว่าห้ามคูณความน่าจะเป็นเมื่อ covariance เป็นศูนย์ ตัวเลขข้างล่างคือราคาของการไม่เชื่อคำเตือนนั้น</p>
-  <p>โจทย์ข้อนี้มีห้าจุดเท่านั้น จึงนับด้วยมือได้ว่าเหตุการณ์ร่วมเกิดขึ้นจริงบ่อยกว่าที่การสมมติอิสระบอกไว้เท่าไร</p>
-  <div class="math">\[
-\begin{aligned}
-P(X\le-1)&=\tfrac{2}{5}=0.40\\
-P(Y\ge4)&=\tfrac{2}{5}=0.40\\[4pt]
-&\text{if independent: }\\
-&P(X\le-1,\,Y\ge4)\\
-&=0.40\times0.40=0.16\\[4pt]
-&\text{actually: }\\
-&P(X\le-1,\,Y\ge4)\\
-&=P(X=-2)=\tfrac{1}{5}=0.20\\[6pt]
-&\frac{0.20}{0.16}=1.25
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เหตุการณ์ฝั่งซ้ายคือ $X$ ต่ำกว่าหรือเท่ากับ $-1$ เกิดกับสองค่าในห้า คิดเป็น $0.40$ ส่วนเหตุการณ์ฝั่งขวาคือ $Y$ อย่างน้อย $4$ ก็เกิดกับสองค่าในห้าเท่ากัน</p>
-    <p>ถ้าคิดแบบอิสระก็คูณกันได้ $0.16$ แต่ของจริงมีเพียงกรณีเดียวที่เข้าเงื่อนไขทั้งสองพร้อมกันคือ $X=-2$ เพราะ $X=-1$ ให้ $Y=1$ ซึ่งไม่ถึงเกณฑ์ จึงได้ $0.20$</p>
-    <p>อัตราส่วนคือ $1.25$ แปลว่าการสมมติอิสระประเมินเหตุการณ์ร่วมต่ำไปหนึ่งในสี่ และตัวเลขนี้มาจากตัวอย่างห้าจุดธรรมดา ไม่ใช่กรณีสุดขั้วที่สร้างขึ้นมา</p>
-    <p>แปลว่าอะไร: ถ้าใช้ zero covariance เป็นใบอนุญาตให้คูณความน่าจะเป็น ตัวเลขความเสี่ยงร่วมในรายงาน จะต่ำกว่าความจริงทันที และความคลาดเคลื่อนนี้จะโตขึ้นเมื่อสนใจหางมากขึ้น</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การรู้ว่าตัวเลขความสัมพันธ์เป็นศูนย์ยังไม่พอ ป้องกันความผิดพลาดที่มีราคาแพงมาก</p>
-  <p>ใช้ตรวจแบบจำลองความเสี่ยง เพราะการเห็นค่าเป็นศูนย์แล้วสรุปว่าไม่เกี่ยวกัน ทำให้ประเมินความเสี่ยงต่ำเกินจริงได้มาก</p>
-  <p>ใช้กับพอร์ตที่มี option เพราะกำไรขาดทุนของ option สัมพันธ์กับราคาหุ้นแบบโค้ง ซึ่งตัวเลข correlation มองไม่เห็นเลย</p>
-  <p>ใช้เลือกเครื่องมือวัดความสัมพันธ์ให้เหมาะกับข้อมูล แทนการใช้ตัวเดียวกับทุกอย่าง กลยุทธ์ที่ทำเงินสม่ำเสมอหลายแบบ เช่นขาย option, carry trade, convergence trade และ market making มีกำไรขาดทุนขึ้นกับขนาดของการขยับ ไม่ใช่ทิศทาง จึงขึ้นรายงานว่า correlation กับตลาดเกือบศูนย์ทั้งหมด</p>
-  <p>สิ่งที่ต้องทำเพิ่มมีสามอย่าง: ขอกราฟกำไรขาดทุนเทียบผลตอบแทนตลาดทั้งเส้น คำนวณ correlation ใหม่เฉพาะวันที่ตลาดขยับเกินสองเท่าของความผันผวน และดู correlation กับผลตอบแทนตลาดที่คูณตัวเองคู่กันเสมอ ถ้าสองตัวเลขต่างกันมาก ความเสี่ยงจริงซ่อนอยู่ในความโค้ง</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 8.3a — กราฟรูปตัวยูที่ covariance คำนวณได้ศูนย์</h4>
-  <img src="../figures/8.3-1.svg" alt="Figure 8.3a — กราฟรูปตัวยูที่ covariance คำนวณได้ศูนย์" loading="lazy">
-  <figcaption>
-    <p>จุดข้อมูลเรียงตัวเป็นรูปตัวยูอย่างชัดเจน แต่ค่า sample covariance ออกมาเป็นศูนย์พอดี เพราะการเพิ่มขึ้นของ $Y$ ทางฝั่งซ้ายและขวาของแกน $X$ หักล้างกันหมดในการคำนวณเชิงเส้น</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.3b — conditional mean เผยโครงสร้างที่แท้จริง</h4>
-  <img src="../figures/8.3-2.svg" alt="Figure 8.3b — conditional mean เผยโครงสร้างที่แท้จริง" loading="lazy">
-  <figcaption>
-    <p>เมื่อพล็อตกราฟค่าเฉลี่ย $E[Y\mid X=x] = x^2$ เส้นจะโค้งขึ้นอย่างเด่นชัด และเมื่อเขียนด้วยขนาด $|X|$ จะเห็นได้ชัดว่าข้อมูลของสัญญาณกำหนดพฤติกรรมของตัวแปรตามอย่างสมบูรณ์</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.3c — linear regression ไม่สามารถจับความสัมพันธ์แบบไม่เป็นเส้นตรงได้</h4>
-  <img src="../figures/8.3-3.svg" alt="Figure 8.3c — linear regression ไม่สามารถจับความสัมพันธ์แบบไม่เป็นเส้นตรงได้" loading="lazy">
-  <figcaption>
-    <p>เส้นตรงจากการทำ linear regression มีความชันเป็นศูนย์ราบเรียบราวกับไม่มีอะไรเกิดขึ้น ขณะที่เส้นพาราโบลาสีแดงสามารถจับโครงสร้างความเสี่ยงที่แท้จริงได้ทั้งหมด</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.3d — ค่าความเสี่ยงเฉลี่ยตามความผันผวน</h4>
-  <img src="../figures/8.3-4.svg" alt="Figure 8.3d — ค่าความเสี่ยงเฉลี่ยตามความผันผวน" loading="lazy">
-  <figcaption>
-    <p>เมื่อแบ่งกลุ่มตามขนาดสัญญาณ $|X|$ ค่าเฉลี่ยของ $Y$ จะพุ่งขึ้นจาก 0.081 สู่ 0.925 และ 3.908 สะท้อนให้เห็นว่าความเสี่ยงที่ปลายหางขึ้นอยู่กับความผันผวน แม้ correlation จะเป็นศูนย์ก็ตาม</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: X มี standard Normal distribution และ Y เท่ากับ X คูณตัวเอง ต้องตรวจว่า covariance ศูนย์ทำให้ independent หรือไม่</p>
-  <p>คำตอบ: symmetry ทำให้ covariance เป็น 0 แต่เมื่อ X เท่ากับ 0.5 เรารู้ว่า Y เท่ากับ 0.25 แน่นอน; conditional probability จึงเป็น 1 ต่างจาก 0.6827 ตอนยังไม่รู้ X</p>
-  <p>ตรวจเองใน 10 วินาที: กด 0.5 คูณ 0.5 ต้องได้ 0.25 และเปิดตาราง standard Normal ที่ 1 จะได้พื้นที่กึ่งกลางประมาณ 0.6827</p>
-  <p>แปลว่าอะไรบนโต๊ะ: correlation ศูนย์ตัดได้เฉพาะความสัมพันธ์เส้นตรง กับดักคือใช้ correlation matrix ตัวเดียวตรวจกลยุทธ์ที่ payoff โค้ง</p>
+  <h4>ตัวอย่าง — การคูณ marginal probabilities ผิดได้ทั้งสองทิศทาง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้ห้าค่าข้างบน ต้องการโอกาสที่ $X\le-1$ และ $Y\ge4$ พร้อมกัน นับจากตารางก่อน แล้วค่อยเทียบกับคำตอบที่สมมติ independence</p>
+  <div class="math">\[
+\begin{aligned}
+P(X\le-1)&=2/5=0.40,\\
+P(Y\ge4)&=2/5=0.40,\\
+0.40(0.40)&=0.16,\\
+&P(X\le-1,Y\ge4)\\
+&=P(X=-2)=1/5=0.20,\\
+0.20/0.16&=1.25,\\
+(0.20-0.16)/0.20&=20\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ค่าจริง 20% สูงกว่าค่าที่คูณได้ 16% อยู่ 4 percentage points หรือสูงกว่า 25% เมื่อเทียบกับค่าที่คูณได้ หากพูดว่าแบบจำลองประเมินต่ำไปเท่าไรเมื่อเทียบกับค่าจริง ต้องตอบ 20% ไม่ใช่ 25%</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> จากสองค่าที่ทำให้ $X\le-1$ มีเพียง $X=-2$ ที่ทำให้ $Y\ge4$ ดังนั้น conditional probability เป็น $1/2$ ไม่ใช่ marginal probability $2/5$</p>
+  <div class="table-wrap"><table><thead><tr><th>คู่เหตุการณ์</th><th>โอกาสร่วมจริง</th><th>ผลคูณ marginals</th></tr></thead><tbody>
+    <tr><td>$X\le-1,\ Y\ge4$</td><td>0.20</td><td>0.16</td></tr>
+    <tr><td>$X\le-1,\ Y\le1$</td><td>0.20</td><td>0.24</td></tr>
+    <tr><td>$X\le-2,\ Y\ge4$</td><td>0.20</td><td>0.08</td></tr>
+  </tbody></table></div>
+  <p>แถวที่สองกลับเป็นการประเมินสูงไป จึงไม่มีข้อสรุปทั่วไปว่าใช้ independence ผิดแล้วต้องประเมินความเสี่ยงต่ำเสมอ หรือยิ่งเลือก tail ลึกขึ้นอัตราความผิดต้องโตเสมอ ต้องคำนวณเหตุการณ์ที่สนใจจริง</p>
 </section>
 
-<section class="example">
-  <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: เหตุการณ์ร่วมของตัวอย่างห้าจุดมีโอกาสเกิดขึ้น $0.20$ ขณะที่การสมมติอิสระให้เพียง $0.16$ จึงต่ำไปหนึ่งในสี่</p>
-  <p>ตรวจเองใน 10 วินาที: นับกรณีที่เข้าเงื่อนไขทั้งสองพร้อมกันในห้าจุด ต้องได้หนึ่งกรณี แล้วเทียบกับผลคูณของสองความน่าจะเป็นขอบ</p>
-  <p>ใช้ตัดสินใจ: ถ้าแบบจำลองความเสี่ยงรายงานความน่าจะเป็นที่ขาดทุนพร้อมกัน ให้ถามว่าได้มาจากการคูณ หรือมาจากการนับเหตุการณ์ร่วมจริง เพราะตัวเลขที่ได้จะต่างกันทันทีที่ความสัมพันธ์ไม่เป็นเส้นตรง</p>
-</section>
-
-<section class="pitfall">
-  <h4>กับดักที่พบบ่อย: นำ covariance เป็นศูนย์ไปใช้เป็นใบอนุญาตคูณความน่าจะเป็น</h4>
-  <p>การจับความน่าจะเป็นของเหตุการณ์มาคูณกันจะทำได้ก็ต่อเมื่อพิสูจน์แล้วว่าตัวแปรเป็นอิสระต่อกันจริง ๆ (independence) ห้ามนำค่า covariance หรือ correlation ที่เป็นศูนย์มาใช้เป็นใบอนุญาตคูณความน่าจะเป็นเด็ดขาด เพราะกราฟรูปตัวยูเป็นหลักฐานชัดเจนว่า $Y$ ถูกล็อกไว้ด้วย $X$ อย่างสมบูรณ์แบบ</p>
-</section>
-
-<section class="pitfall">
-  <h4>กับดัก: correlation ในวันปกติไม่ใช่ correlation ในวันวิกฤติ</h4>
-  <p>สินทรัพย์สองตัวอาจมี correlation 0.1 ในวันปกติ แต่ 0.9 ในวันที่ตลาดร่วงหนัก ตัวเลขตัวเดียวที่เฉลี่ยทุกวันจึงมองไม่เห็นข้อนี้ วิธีตรวจคือคำนวณ correlation เฉพาะวันที่แย่ที่สุด 10% แล้วเทียบกับค่ารวม ถ้าต่างกันมาก การกระจายความเสี่ยงที่เห็นในรายงานเป็นภาพลวงตาในวันที่ต้องใช้มันที่สุด</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ตัวอย่างค้านที่ทุกคนควรเห็นสักครั้ง</h4>
-  <p>หัวข้อนี้มีเป้าหมายเดียวคือหักล้างความเชื่อที่แพร่หลายที่สุดเรื่องหนึ่งในงานความเสี่ยง คือความเชื่อว่าถ้าตัวเลขความสัมพันธ์เป็นศูนย์ แปลว่าสองสิ่งไม่เกี่ยวกัน</p>
-  <p>ความเชื่อนี้อันตรายเพราะมันนำไปสู่การเอาความเสี่ยงมาบวกกันตรง ๆ และสรุปว่าพอร์ตกระจายความเสี่ยงดีแล้ว</p>
-  <p>วิธีหักล้างที่ตรงที่สุดคือยกตัวอย่างเดียวที่ตัวเลขเป็นศูนย์เป๊ะ ๆ แต่รู้ตัวหนึ่งแล้วรู้อีกตัวทันที แบบไม่เหลือความไม่แน่นอนเลย ซึ่งเป็นการผูกพันที่แน่นที่สุดเท่าที่เป็นไปได้</p>
-  <p>กรณีนี้ไม่ใช่เรื่องสมมติในตำรา พอร์ตที่มี option อยู่ด้วยมีความสัมพันธ์แบบโค้งกับราคาหุ้นเสมอ และตัวเลขความสัมพันธ์เชิงเส้นมองไม่เห็นมันเลย</p>
-</section>
-
-<section class="prose">
-  <h4>ประวัติศาสตร์และที่มา: ภาพลวงตาของ Galton และ Pearson สู่ความเสี่ยง nonlinear</h4>
-  <p>ราว ๆ ปี 1888 Francis Galton ได้คิดค้นแนวคิดเรื่องความสัมพันธ์ระหว่างตัวแปร และต่อมาในปี 1896 Karl Pearson ได้พัฒนาสูตรคำนวณ correlation coefficient ซึ่งกลายเป็นเครื่องมือวัดความเกี่ยวพันที่แพร่หลายที่สุดในโลก แต่ทั้ง Galton และ Pearson ทำงานภายใต้สมมติฐาน normal distribution เป็นหลัก ซึ่งในโลกของ normal distribution นั้น zero covariance มีความหมายเทียบเท่ากับ independence จริง ๆ</p>
-  <p>ข้อเท็จจริงนี้ทำให้เกิดความเข้าใจผิดตกทอดมาหลายทศวรรษ ผู้คนเริ่มทึกทักว่าเมื่อคำนวณ covariance หรือ correlation ได้ศูนย์ แปลว่าตัวแปรสองตัวไม่มีความเกี่ยวข้องกัน จนกระทั่งนักคณิตศาสตร์ในทศวรรษ 1920 และ 1930 เช่น Maurice Fréchet ได้ชี้ให้เห็นตัวอย่างค้านมากมายที่ตัวแปรมีความสัมพันธ์กันแบบตายตัว เช่น $Y = X^2$ แต่ correlation กลับเป็นศูนย์เป๊ะ</p>
-  <p>ในตลาดการเงินยุคใหม่ ความเข้าใจผิดนี้สร้างความเสียหายมหาศาล เช่น กลยุทธ์ option แบบ delta-neutral ถูกออกแบบให้มี covariance กับหุ้นอ้างอิงใกล้ศูนย์ แต่มีความเสี่ยงความผันผวนจาก convexity สูงสุด การพึ่งพาเพียงตัวเลข correlation จึงเปรียบเสมือนการขับรถโดยมองเพียงเส้นตรง แต่มองไม่เห็นโค้งหักศอกที่รออยู่ข้างหน้า</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>สิ่งที่ตรวจได้</td><td>มีวิธีตรวจความสัมพันธ์ทุกแบบ</td><td>ไม่มีวิธีเดียวที่จับได้ทุกแบบ</td><td>ต้องดูกราฟกระจายเสมอ ไม่ใช่ดูแค่ตัวเลขสรุป</td></tr>
-      <tr><td>จำนวนข้อมูล</td><td>มีข้อมูลพอจะเห็นรูปแบบ</td><td>ความสัมพันธ์แบบโค้งต้องใช้ข้อมูลมากกว่ามาก</td><td>รูปแบบที่มีจริงอาจมองไม่เห็นเลยด้วยข้อมูลไม่กี่ร้อยจุด</td></tr>
-      <tr><td>สัญญาณรบกวน</td><td>ข้อมูลสะอาดพอ</td><td>noise ในข้อมูลการเงินสูงมาก</td><td>ความสัมพันธ์ที่ชัดเจนในตัวอย่างสอน มักมองไม่เห็นในข้อมูลจริง</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>หัวข้อนี้เป็นคำเตือน ไม่ใช่เครื่องมือ และคำเตือนนั้นคือห้ามสรุปจากตัวเลขเดียว</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดยืนยันว่า covariance ศูนย์ไม่ได้แปลว่าอิสระ</summary>
-    <pre><code>import numpy as np
-from scipy import stats, integrate
-X = np.array([-2, -1, 0, 1, 2]); Y = X ** 2
-assert X.mean() == 0 and Y.mean() == 2 and (X * Y).mean() == 0
-assert (X * Y).mean() - X.mean() * Y.mean() == 0
-assert abs(np.mean(Y == 4) - 0.4) &lt; 1e-12                    # P(Y=4) = 0.4 but P(Y=4 | X=2) = 1
-p_joint = np.mean((X &lt;= -1) &amp; (Y &gt;= 4))
-assert np.mean(X &lt;= -1) == 0.4 and np.mean(Y &gt;= 4) == 0.4 and p_joint == 0.2 and abs(p_joint / 0.16 - 1.25) &lt; 1e-12
-assert abs(integrate.quad(lambda x: x ** 3 * stats.norm.pdf(x), -np.inf, np.inf)[0]) &lt; 1e-12
-assert abs(2 * stats.norm.cdf(1) - 1 - 0.6827) &lt; 5e-5
-rng = np.random.default_rng(6)
-x = rng.standard_normal(400_000); y = rng.choice([-1, 1], x.size) * x
-assert abs(np.corrcoef(x, y)[0, 1]) &lt; 0.01 and abs(y.std() - 1) &lt; 0.01 and np.allclose(y ** 2, x ** 2)</code></pre>
+<section class="formula">
+  <h4>ขั้นที่ 3 — เปลี่ยนเป็น Normal แล้วการหักล้างยังอยู่</h4>
+  <p>เริ่มตัวอย่างใหม่: $X\sim N(0,1)$ และ $Y=X^2$ ซึ่งไม่ใช่ Normal เพราะ $Y\ge0$ จากสมมาตร $\mathbb E[X]=\mathbb E[X^3]=0$ และจาก variance หนึ่งได้ $\mathbb E[X^2]=1$</p>
+  <div class="math">\[
+\begin{aligned}
+\phi(x)&=\frac1{\sqrt{2\pi}}e^{-x^2/2},\qquad\phi(-x)=\phi(x),\\
+\mathbb E[X^3]&=\int_{-\infty}^{\infty}x^3\phi(x)\,dx=0,\\
+\mathbb E[Y]&=\mathbb E[X^2]=1,\\
+\operatorname{Cov}(X,Y)&=\mathbb E[X^3]-\mathbb E[X]\mathbb E[X^2]=0.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>integrand $x^3\phi(x)$ เป็น odd function ส่วนบวกกับส่วนลบหักล้างกัน และ moments ของ Normal มีอยู่จริง เราไม่ได้เพียงจัดการให้อินทิกรัลที่ลู่ออกดูเหมือนศูนย์ด้วยการตัดสองข้างเท่ากัน</p></div>
+  <p>หากใส่ $X=0.5$ ในกฎของแบบจำลอง จะได้ $Y=0.25$ นี่เป็นการแทนค่า ไม่ใช่การหารด้วย $P(X=0.5)$ ซึ่งเป็นศูนย์ ในกรณีต่อเนื่อง เราพิสูจน์ dependence ด้วยเหตุการณ์ที่มี probability บวกได้ชัดกว่า</p>
+  <div class="math">\[
+\begin{aligned}
+A&:=\{|X|\le0.5\},\qquad B:=\{Y\le1\},\\
+A&\subseteq B,\qquad P(A)=2\Phi(0.5)-1\approx0.382925,\\
+P(B\mid A)&=1,\\
+P(B)&=P(|X|\le1)=2\Phi(1)-1\approx0.682689\ne1.
+\end{aligned}
+\]</div>
+  <details><summary>หา variance ของ $Y=X^2$ ให้ครบ</summary>
+    <p>ใช้ $\phi'(x)=-x\phi(x)$ และ integration by parts พจน์ขอบเขตหายไปเพราะ Gaussian density ลดเร็วกว่าพหุนาม จึงได้ fourth moment ที่เคยพบใน 1.9</p>
+    <div class="math">\[
+\begin{aligned}
+\mathbb E[X^4]&=-\int_{-\infty}^{\infty}x^3\phi'(x)\,dx\\
+&=[-x^3\phi(x)]_{-\infty}^{\infty}
++3\int_{-\infty}^{\infty}x^2\phi(x)\,dx=3,\\
+\operatorname{Var}(Y)&=\mathbb E[X^4]-(\mathbb E[X^2])^2=3-1=2.
+\end{aligned}
+\]</div>
   </details>
-  <div class="note">
-    <p>โค้ดนับห้าจุดได้ covariance ศูนย์แต่รู้ X แล้วรู้ Y ทันที โอกาสร่วมจริง 0.20 มากกว่า 0.16 ที่คิดแบบอิสระ 1.25 เท่า และจำลองกรณีที่แต่ละตัวเป็น Normal แต่ไม่ใช่ joint Normal</p>
-  </div>
+</section>
+<section class="prose">
+  <h4>ขั้นที่ 4 — เส้นตรงมองไม่เห็นอะไร และ noise เปลี่ยนอะไร</h4>
+  <p>สำหรับตัวอย่าง Normal นี้ ถ้าจำกัดการทำนายเป็นเส้นตรง $a+bX$ เส้นที่ลด mean squared error ได้มากที่สุดคือค่าคงที่ 1 แต่ถ้าอนุญาตเส้นโค้ง $X^2$ จะทำนาย $Y$ ได้ตรงทุกครั้ง ความผิดอยู่ที่ข้อจำกัดของเส้นทำนาย ไม่ใช่เพราะ $X$ ไม่มีข้อมูล</p>
+  <details><summary>ทำไม slope ของเส้นตรงเท่ากับ covariance หาร variance</summary>
+    <div class="math">\[
+\begin{aligned}
+L(a,b)&:=\mathbb E[(Y-a-bX)^2],\\
+L(a,b)&=\sigma_Y^2+b^2\sigma_X^2-2b\operatorname{Cov}(X,Y)\\
+&\quad+(\mu_Y-a-b\mu_X)^2,\\
+a_*&=\mu_Y-b_*\mu_X,\\
+b_*&=\operatorname{Cov}(X,Y)/\sigma_X^2\quad(\sigma_X^2\gt0),\\
+Y=X^2:\quad a_*&=1,\quad b_*=0,\\
+\mathbb E[(Y-1)^2]&=2,\\
+\mathbb E[(Y-X^2)^2]&=0.
+\end{aligned}
+\]</div>
+  </details>
+  <p>ถ้าเพิ่ม noise อิสระที่มี mean ศูนย์ เป็น $Y=X^2+\varepsilon$ เราจะได้ $\operatorname{Cov}(X,Y)=0$ เหมือนเดิม และ conditional mean ยังเป็น $\mathbb E[Y\mid X=x]=x^2$ แต่ไม่รู้ค่าจริงของ $Y$ แน่นอนอีกแล้ว</p>
+  <p>เมื่อ $\operatorname{Var}(\varepsilon)=\tau^2$ เส้นตรงมี MSE $2+\tau^2$ ส่วนการทำนายด้วย $X^2$ มี MSE $\tau^2$ สำหรับ noise SD 0.08 จะได้ variance ของ $Y$ เท่ากับ 2.0064 และ correlation ระหว่าง $X^2$ กับ $Y$ ประมาณ 0.9984 ไม่ใช่ระหว่าง $X$ กับ $Y$</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.3a — รูปตัว U ที่ sample covariance ถูกจัดให้ใกล้ศูนย์</h4>
+  <img src="../figures/8.3-1.svg" alt="จุดรูปตัว U ของ Y เท่ากับ X squared บวก noise" loading="lazy">
+  <figcaption>ผู้สร้างรูปสุ่ม 350 จุดฐานด้วย noise SD 0.08 แล้วเพิ่มคู่สะท้อน $(x,y),(-x,y)$ ให้ครบ 700 จุด จึงเกิดการหักล้างใน sample covariance โดยการจัดคู่ ไม่ใช่สิ่งที่จะเกิดตรงศูนย์เสมอในการสุ่ม IID ทั่วไป ส่วน noise ทำให้จุดไม่อยู่บนเส้น $x^2$ ทุกจุด</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 8.3c — Slope ศูนย์ไม่เท่ากับไม่มีโครงสร้าง</h4>
+  <img src="../figures/8.3-3.svg" alt="เส้น regression เกือบราบเทียบกับโครงสร้าง quadratic" loading="lazy">
+  <figcaption>รูปนี้ใช้ 250 จุดฐานแล้วสะท้อนเป็น 500 จุด เส้นตรงจึงมี slope ใกล้ศูนย์ใน floating-point ขณะที่เส้นแดงแสดง conditional mean แบบ quadratic ไม่ใช่คำทำนาย noise รายจุด และไม่ใช่หลักฐานเชิงเหตุ–ผลจากข้อมูลตลาดจริง</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 8.3b — แยกเครื่องหมายออกจากขนาดของ shock</h4>
+  <img src="../figures/8.3-2.svg" alt="Conditional mean ของ Y เป็น x squared หรือ magnitude squared" loading="lazy">
+  <figcaption>ทั้ง $\mathbb E[Y\mid X=x]=x^2$ และ $\mathbb E[Y\mid |X|=a]=a^2$ แสดงศูนย์กลางของผลลัพธ์ภายใต้แบบจำลอง หากมี noise ศูนย์กลางยังเป็นเส้นนี้แต่ผลลัพธ์จริงกระจายรอบเส้น</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — Normal ทีละคอลัมน์ ยังไม่ใช่ jointly Normal</h4>
+  <p>สร้างตัวอย่างใหม่อีกครั้ง: $X\sim N(0,1)$ ให้ $W$ เป็นเครื่องหมายสุ่มอิสระจาก $X$ โดยเป็น $+1,-1$ อย่างละครึ่ง แล้วกำหนด $Y=WX$ ทุกสถานการณ์จึงมี $|Y|=|X|$ แม้เราจะยังไม่รู้เครื่องหมายของ $Y$</p>
+  <div class="math">\[
+\begin{aligned}
+P(Y\le y)&=\tfrac12P(X\le y)+\tfrac12P(-X\le y)\\
+&=\tfrac12\Phi(y)+\tfrac12[1-\Phi(-y)]=\Phi(y),\\
+\mathbb E[Y]&=\mathbb E[W]\mathbb E[X]=0,\\
+\operatorname{Var}(Y)&=\mathbb E[W^2X^2]=1,\\
+\operatorname{Cov}(X,Y)&=\mathbb E[WX^2]
+=\mathbb E[W]\mathbb E[X^2]=0.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ทั้งสอง marginals เป็น standard Normal จริง ไม่ใช่แค่ดูคล้าย และ covariance matrix เป็น identity แต่ยังไม่อิสระ เพราะขนาดของตัวหนึ่งกำหนดขนาดของอีกตัว</p></div>
+  <div class="math">\[
+\begin{aligned}
+p&:=P(|X|\le1),\\
+p&=2\Phi(1)-1\approx0.682689,\\
+&P(|X|\le1,|Y|\le1)=p,\\
+&P(|X|\le1)P(|Y|\le1)\\
+&=p^2\approx0.466065\ne p,\\
+X+Y&=(1+W)X,\\
+P(X+Y=0)&=1/2,\\
+\operatorname{Var}(X+Y)&=2.
+\end{aligned}
+\]</div>
+  <p>ผลรวมมี probability mass ครึ่งหนึ่งที่ศูนย์ จึงไม่ใช่ Normal ที่มี variance 2 ดังนั้นคู่ $(X,Y)$ ไม่ได้ jointly Normal จุดทั้งหมดอยู่บนสองเส้น $y=x$ กับ $y=-x$ และไม่มี joint density สองมิติแบบปกติ แม้ covariance matrix จะเป็น PD</p>
+  <p>เมื่อกำหนด $W=1$ สองตัวเคลื่อนไหวด้วยกันเต็มที่ เมื่อกำหนด $W=-1$ จะสวนทางเต็มที่ การรวมสองสถานะทำให้ covariance หักล้างกัน นี่เป็นอีกเหตุผลที่ต้องระวังสัมประสิทธิ์สุ่มในสูตรของ 8.2</p>
+</section>
+<section class="prose">
+  <h4>ขั้นที่ 6 — เมื่อไรจึงใช้ zero covariance สรุป independence ได้</h4>
+  <p><strong>เงื่อนไขสำคัญคือ joint distribution</strong>: ถ้าทั้ง vector เป็น Multivariate Normal แล้ว covariance เป็นศูนย์ระหว่างส่วนที่สนใจจะให้ independence ได้ สำหรับกรณีสองตัวที่มี variance บวก ดูจาก density ที่แยกเป็นผลคูณเมื่อพจน์ covariance หายไป</p>
+  <details><summary>ดูการแยก joint Normal density เมื่อ covariance ศูนย์</summary>
+    <p>ใช้สูตรของแบบจำลอง joint Normal ซึ่ง 8.4 จะอธิบายรายละเอียด เมื่อ covariance เป็นศูนย์ inverse covariance เป็น diagonal จึงแยก exponent ออกเป็นผลบวกสองก้อนได้</p>
+    <div class="math">\[
+\begin{aligned}
+u&:=\frac{x-\mu_X}{\sigma_X},\qquad v:=\frac{y-\mu_Y}{\sigma_Y},\\
+f_{X,Y}(x,y)&=\frac{e^{-(u^2+v^2)/2}}{2\pi\sigma_X\sigma_Y}\\
+&=\left[\frac{e^{-u^2/2}}{\sqrt{2\pi}\sigma_X}\right]
+\left[\frac{e^{-v^2/2}}{\sqrt{2\pi}\sigma_Y}\right]\\
+&=f_X(x)f_Y(y).
+\end{aligned}
+\]</div>
+    <p>นี่ใช้สมมติฐาน jointly Normal อยู่ตั้งแต่บรรทัดแรก ไม่ใช่ข้อพิสูจน์ว่า covariance ศูนย์ของข้อมูลใด ๆ ทำให้ density แยกได้ หาก variance ตัวหนึ่งเป็นศูนย์ ตัวนั้นเป็นค่าคงที่เกือบแน่นอนและอิสระจากอีกตัวอยู่แล้ว ไม่ควรแทนศูนย์ลงในสูตร density ที่ต้องหารด้วย SD</p>
+  </details>
+  <p>Joint Normal เป็นเงื่อนไขที่เพียงพอที่ใช้บ่อย ไม่ใช่ distribution ชนิดเดียวที่มีผลนี้ เช่น Bernoulli สองตัว $X,Y\in\{0,1\}$ ก็มี $\operatorname{Cov}(X,Y)=P(X=1,Y=1)-pq$ เมื่อ $p=P(X=1),q=P(Y=1)$</p>
+  <p>ถ้า covariance ศูนย์ ช่อง $(1,1)$ จึงเป็น $pq$ อีกสามช่องถูกกำหนดเป็น $p(1-q),(1-p)q,(1-p)(1-q)$ ซึ่งคือ independence ของตาราง 2×2 ทั้งตาราง ประเด็นจึงไม่ใช่จำคำว่า “Normal เท่านั้น” แต่ต้องรู้สมมติฐานที่ทำให้สมการเดียวกำหนดโครงสร้างร่วมได้</p>
 </section>
 
+<section class="example">
+  <h4>ขั้นที่ 7 — แบ่งตามขนาด shock แล้วตรวจ conditional mean</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กลับไปใช้ $X\sim N(0,1),Y=X^2$ หรือ $X^2+\varepsilon$ ที่มี noise อิสระ mean ศูนย์ แบ่ง $|X|$ เป็นสามช่วง แล้วคำนวณค่าเฉลี่ยของ $Y$ ภายในช่วง ไม่ใช่ดูแต่ correlation ของ $X$ กับ $Y$</p>
+  <p>ที่มาของการคำนวณคือ $\phi'(x)=-x\phi(x)$ ซึ่งให้ $\int_a^b x^2\phi(x)\,dx=[-x\phi(x)]_a^b+\Phi(b)-\Phi(a)$ ใช้สมมาตรสองข้าง แล้วหารด้วย probability ของช่วง</p>
+  <div class="math">\[
+\begin{aligned}
+m_1&:=\mathbb E[X^2\mid |X|\lt a],\\
+m_1&=1-\frac{a\phi(a)}{\Phi(a)-1/2},\\
+m_2&:=\mathbb E[X^2\mid a\le|X|\lt b],\\
+m_2&=1+\frac{a\phi(a)-b\phi(b)}{\Phi(b)-\Phi(a)},\\
+m_3&:=\mathbb E[X^2\mid |X|\ge b],\\
+m_3&=1+\frac{b\phi(b)}{1-\Phi(b)},\\
+a&=0.5,\qquad b=1.5,\\
+m_1&\approx0.080589,\\
+m_2&\approx0.924529,\\
+m_3&\approx3.908016.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> เมื่อขนาด shock ใหญ่ขึ้น conditional mean ของผลลัพธ์กำลังสองเพิ่มชัดเจน ทั้งที่ unconditional covariance ของ $X,Y$ ยังเป็นศูนย์ ตัวเลข $|X|$ ที่นี่คือขนาด shock ไม่ใช่ volatility parameter ที่เปลี่ยนไป</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ในช่วง $|X|\lt0.5$ เรามี $X^2\lt0.25$ ค่าเฉลี่ย 0.080589 จึงอยู่ในช่วงที่เป็นไปได้ ส่วนช่วง $|X|\ge1.5$ ต้องมีค่าเฉลี่ยอย่างน้อย $1.5^2=2.25$ ซึ่ง 3.908016 ผ่านเงื่อนไขนี้</p>
+  <p>แต่ถ้าเลือกเฉพาะ tail สมมาตร เช่น $|X|\gt2$ แล้วคำนวณ covariance ระหว่าง $X$ กับ $X^2$ อีกครั้ง ก็ยังได้ศูนย์ เพราะ odd moment ยังหักล้างกัน การคำนวณ “tail correlation” จึงไม่ได้รับประกันว่าจะตรวจพบโครงสร้างนี้</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.3d — ค่าเฉลี่ยของผลลัพธ์เปลี่ยนตามขนาด shock</h4>
+  <img src="../figures/8.3-4.svg" alt="Conditional means ของ X squared ในสาม magnitude buckets" loading="lazy">
+  <figcaption>แท่งเป็นผลคำนวณ truncated-Normal moments ไม่ใช่ค่าเฉลี่ยจากจุดในรูปก่อนหน้า ได้ประมาณ 0.081, 0.925 และ 3.908 สำหรับสามช่วงของ $|X|$ การแบ่งช่วงของค่าที่สังเกตไม่ใช่การเปลี่ยน variance ของ Normal ต้นทาง</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 8 — กลับมาดูความเสี่ยงของ payoff ที่ไม่เป็นเส้นตรง</h4>
+  <p>ในคำถามเปิดใช้ standard Normal จริง จึงมี $\mathbb E[X^2]=1$ และ $\operatorname{Var}(X^2)=2$ กำไรขาดทุนมี mean ศูนย์ แต่ไม่ได้มีความเสี่ยงศูนย์</p>
+  <div class="math">\[
+\begin{aligned}
+\Pi&=1000(1-X^2)\text{ USD},\\
+\mathbb E[\Pi]&=1000(1-1)=0,\\
+\operatorname{Cov}(X,\Pi)&=-1000\operatorname{Cov}(X,X^2)=0,\\
+\operatorname{Var}(\Pi)&=1000^2\operatorname{Var}(X^2)\\
+&=2{,}000{,}000\text{ USD}^2,\\
+\operatorname{SD}(\Pi)&=1000\sqrt2\approx1414.21\text{ USD},\\
+P(\Pi\lt0)&=P(|X|\gt1)\\
+&=2[1-\Phi(1)]\approx31.73\%.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ถ้าใช้ feature vector $(X,X^2)$ จะมี mean $(0,1)$ และ covariance $\operatorname{diag}(1,2)$ กำไรขาดทุนเป็น affine function ของ features เหล่านี้ จึงใช้สูตร 8.2 คำนวณ variance ได้ถูกต้อง ปัญหาคือการละพจน์กำลังสอง ไม่ใช่สูตร covariance ใช้กับตัวแปร dependent ไม่ได้</p></div>
+  <p>รูปแบบนี้ช่วยนึกถึงความเสี่ยงที่ไวต่อการเคลื่อนไหวทั้งสองทิศทาง แต่ delta neutrality เป็นเรื่องความไวเชิงเส้นเฉพาะจุด ไม่ใช่ independence หรือ zero covariance โดยอัตโนมัติ ออปชันจริงยังมีเวลา implied volatility การ hedge กระโดดของราคาและต้นทุน จึงห้ามเหมารวมว่ากลยุทธ์ออปชันหรือ carry ทุกแบบมีรูปเดียวกัน</p>
+</section>
+<section class="pitfall">
+  <h4>อะไรยังคำนวณได้ถูก แม้ตัวแปรไม่อิสระ</h4>
+  <p><strong>สูตร variance ของ linear combination ยังถูก</strong> หาก covariance เป็นศูนย์จริงและ moments มีอยู่ เรามี $\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)$ แม้ $X,Y$ dependent กัน บทนี้ไม่ได้หักล้างสูตรของ 8.2</p>
+  <p>สิ่งที่ทำไม่ได้จาก covariance ศูนย์เพียงอย่างเดียวคือคูณ probability ของเหตุการณ์ใด ๆ เสมือนอิสระ หรือแทน joint distribution ด้วย Normal เพราะ marginals ดู Normal ต้องตรวจสมมติฐานของงานที่กำลังทำแยกกัน</p>
+  <p>ในข้อมูลจริง ให้ดู scatter, conditional means, ขนาดและกำลังสองของตัวแปร รวมถึงความไม่แน่นอนของแต่ละช่วง กำหนดสิ่งที่จะตรวจล่วงหน้าหรือยืนยันบนข้อมูลที่กันไว้ ตามข้อควรระวังเรื่อง multiple testing ใน 3.6 การไม่พบ pattern ยังไม่ใช่หลักฐานยืนยัน independence</p>
+</section>
+<section class="example">
+  <h4>ตรวจเองก่อนผ่านไป 8.4</h4>
+  <p><strong>1.</strong> สำหรับ distribution ห้าค่า $X$ กับ $Y=X^2$ ในขั้นที่ 2 variance ของ $X+Y$ เป็นเท่าไร? ต้องเพิ่ม “ค่าปรับเพราะไม่อิสระ” หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>$\operatorname{Var}(X)=2$ และ $\operatorname{Var}(Y)=2.8$ จึงได้ 4.8 เพราะ covariance ศูนย์ ไม่ต้องเพิ่มค่าปรับใด ๆ ตรวจตรง ๆ จากค่าของ $X+Y$ คือ $(2,0,0,2,6)$ ซึ่งมี mean 2 และ variance $(0+4+4+0+16)/5=4.8$ นี่ไม่ใช่การยืนยันว่าผลรวมเป็น Normal</p></details>
+  <p><strong>2.</strong> ในตัวอย่าง standard Normal หาก $Y=X^2+\varepsilon$ และ noise อิสระมี variance 1 ค่า covariance กับ $X$ และความผิดของตัวทำนาย $X^2$ เป็นเท่าไร?</p>
+  <details><summary>เฉลย</summary><p>covariance ยังเป็นศูนย์ ตัวทำนาย $X^2$ มี MSE 1 จาก noise ส่วนตัวทำนายเชิงเส้นที่ดีที่สุดคือ 1 มี MSE $2+1=3$ ศูนย์กลางของรูปตัว U ยังอยู่ แต่รู้ $X$ ไม่ได้ทำให้รู้ noise</p></details>
+  <p><strong>3.</strong> ให้ $A,B$ เป็น Bernoulli อิสระที่มีโอกาสเป็น 1 อย่างละครึ่ง ถ้าเก็บเฉพาะกรณีที่ $A+B\ge1$ ทั้งสองยังอิสระหรือไม่?</p>
+  <details><summary>เฉลย</summary><p>เหลือ $(0,1),(1,0),(1,1)$ อย่างละ $1/3$ จึงมี mean ทั้งคู่ $2/3$, variance $2/9$ และ covariance $1/3-4/9=-1/9$ ให้ correlation $-1/2$ การคัดเลือกข้อมูลสร้าง dependence ได้ แม้ตัวแปรเดิมอิสระ ดังนั้น conditional correlation ที่เปลี่ยนไม่จำเป็นต้องแปลว่ากลไกเดิมเปลี่ยน</p></details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>ใช้ Node.js ได้โดยไม่ติดตั้งแพ็กเกจ ห้าค่าเป็น distribution ที่ให้โอกาสเท่ากัน ส่วน Normal ใช้ numerical integration แบบกำหนดแน่นอน ไม่ใช่อ้างว่าตัวอย่างสุ่มต้องให้ covariance ตรงศูนย์ โค้ด CDF นี้จำกัดช่วงที่ใช้สาธิต ไม่ใช่ routine สำหรับ extreme tails</p>
+  <pre><code class="language-javascript" data-example="8.3">function finiteVector(a) {
+  if (!Array.isArray(a) || !a.length || ![...a].every(Number.isFinite)) {
+    throw new TypeError('Need a nonempty finite vector');
+  }
+}
+function average(a) {
+  finiteVector(a);
+  const value = a.reduce((s, x) =&gt; s + x, 0) / a.length;
+  if (!Number.isFinite(value)) throw new RangeError('Average overflow');
+  return value;
+}
+function population(x, y) {
+  finiteVector(x); finiteVector(y);
+  if (x.length !== y.length) throw new RangeError('Lengths do not match');
+  const ox = x.map(v =&gt; v - x[0]), oy = y.map(v =&gt; v - y[0]);
+  const ax = average(ox), ay = average(oy);
+  const dx = ox.map(v =&gt; v - ax), dy = oy.map(v =&gt; v - ay);
+  const varianceX = average(dx.map(v =&gt; v * v));
+  const varianceY = average(dy.map(v =&gt; v * v));
+  const covariance = average(dx.map((v, i) =&gt; v * dy[i]));
+  return { meanX: x[0] + ax, meanY: y[0] + ay, varianceX, varianceY, covariance,
+    correlation: varianceX &gt; 0 &amp;&amp; varianceY &gt; 0 ? covariance / Math.sqrt(varianceX) / Math.sqrt(varianceY) : null };
+}
+function probability(values, event) {
+  finiteVector(values);
+  return values.filter(event).length / values.length;
+}
+function integral(f, a, b, n = 8192) {
+  if (![a, b].every(Number.isFinite) || a &gt; b ||
+      !Number.isSafeInteger(n) || n &lt; 2 || n % 2 !== 0) {
+    throw new RangeError('Invalid integration interval or subdivision count');
+  }
+  const h = (b - a) / n;
+  let sum = 0, correction = 0;
+  for (let i = 0; i &lt;= n; i++) {
+    const weight = i === 0 || i === n ? 1 : i % 2 ? 4 : 2;
+    // Compensated summation reduces cancellation and accumulated rounding.
+    const value = weight * f(a + i * h) - correction;
+    const total = sum + value;
+    correction = (total - sum) - value;
+    sum = total;
+  }
+  const result = h * sum / 3;
+  if (!Number.isFinite(result)) throw new RangeError('Integration overflow');
+  return result;
+}
+const phi = x =&gt; Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+function Phi(x) {
+  if (!Number.isFinite(x) || Math.abs(x) &gt; 6) throw new RangeError('CDF demo requires finite |x| up to 6');
+  if (x === 0) return 0.5;
+  const tail = integral(phi, Math.abs(x), 10);
+  return x &lt; 0 ? tail : 1 - tail;
+}
+function binaryTable(p, q, joint11) {
+  if (![p, q, joint11].every(Number.isFinite) || p &lt; 0 || p &gt; 1 || q &lt; 0 || q &gt; 1) {
+    throw new RangeError('Invalid binary probabilities');
+  }
+  // Group complements first: p + 1 - 1 can round above p and reject a valid table.
+  const gap = (1 - Math.max(p, q)) - Math.min(p, q);
+  if (joint11 &lt; Math.max(0, -gap) || joint11 &gt; Math.min(p, q)) {
+    throw new RangeError('Invalid binary probabilities');
+  }
+  return [joint11, p - joint11, q - joint11, joint11 + gap];
+}
+const x = [-2, -1, 0, 1, 2], y = x.map(v =&gt; v * v);
+const discrete = population(x, y);
+const eventPairs = [
+  [v =&gt; v &lt;= -1, v =&gt; v * v &gt;= 4],
+  [v =&gt; v &lt;= -1, v =&gt; v * v &lt;= 1],
+  [v =&gt; v &lt;= -2, v =&gt; v * v &gt;= 4]
+].map(([a, b]) =&gt; ({ actual: probability(x, v =&gt; a(v) &amp;&amp; b(v)),
+  product: probability(x, a) * probability(x, b) }));
+const sum = x.map((v, i) =&gt; v + y[i]);
+const pnl = x.map(v =&gt; 1000 * (1 - v * v));
+const moments = [0, 1, 2, 3, 4].map(k =&gt; integral(v =&gt; v ** k * phi(v), -10, 10));
+const varianceSquare = moments[4] - moments[2] ** 2;
+const center = 2 * Phi(1) - 1;
+const a = 0.5, b = 1.5;
+const buckets = [1 - a * phi(a) / (Phi(a) - 0.5),
+  1 + (a * phi(a) - b * phi(b)) / (Phi(b) - Phi(a)),
+  1 + b * phi(b) / (1 - Phi(b))];
+const marginalCheck = [-2, -1, 0, 1, 2].map(z =&gt;
+  [z, Phi(z), 0.5 * Phi(z) + 0.5 * (1 - Phi(-z))]);
+const binaryPairs = [[0, 0], [0, 1], [1, 0], [1, 1]];
+const selected = binaryPairs.filter(([u, v]) =&gt; u + v &gt;= 1);
+const selection = population(selected.map(r =&gt; r[0]), selected.map(r =&gt; r[1]));
+const mirroredX = [-2, -1, -0.5, 2, 1, 0.5];
+const mirroredY = [4.1, 0.9, 0.3, 4.1, 0.9, 0.3];
+console.log(JSON.stringify({ discrete, eventPairs, sumVariance: population(sum, sum).varianceX,
+  pnl, pnlFive: population(pnl, pnl), moments,
+  normalCovariance: moments[3] - moments[1] * moments[2], varianceSquare,
+  linearMSE: integral(v =&gt; (v * v - 1) ** 2 * phi(v), -10, 10),
+  normalPnLMean: 1000 * (1 - moments[2]), normalPnLSD: 1000 * Math.sqrt(varianceSquare),
+  normalLossProbability: 1 - center, halfInterval: 2 * Phi(0.5) - 1,
+  noisyVariance: varianceSquare + 0.08 ** 2,
+  featureCorrelation: Math.sqrt(varianceSquare / (varianceSquare + 0.08 ** 2)),
+  center, centerProduct: center ** 2, marginalCheck, buckets,
+  independentBinary: binaryTable(0.3, 0.6, 0.3 * 0.6), selection,
+  mirrored: population(mirroredX, mirroredY) }));</code></pre>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>covariance หรือ correlation เป็นศูนย์บอกได้เพียงว่าไม่มีความสัมพันธ์เชิงเส้นตรงเท่านั้น</li>
-    <li>ตัวแปรสามารถผูกพันกันอย่างสมบูรณ์แบบไม่เป็นเส้นตรง (เช่น $Y=X^2$) แม้ covariance จะมีค่าเป็นศูนย์เป๊ะ</li>
-    <li>การตรวจสอบความสัมพันธ์ต้องใช้กราฟ scatter, conditional mean หรือการแบ่งกลุ่มตามขนาดความผันผวน (magnitude bucketing)</li>
-    <li>ห้ามนำ zero covariance ไปอ้างเพื่อแยกคูณความน่าจะเป็นหรือตัดความเสี่ยงทิ้งเด็ดขาด</li>
-    <li>ความสมมาตรที่ทำให้ covariance เป็นศูนย์คือการที่ integrand เป็น function คี่ ถ้า density ไม่สมมาตร ข้อสรุปนี้ใช้ไม่ได้ทันที</li>
-    <li>บนตัวอย่างห้าจุด การสมมติอิสระให้เหตุการณ์ร่วม 0.16 แต่ของจริงคือ 0.20 คือต่ำไปหนึ่งในสี่ และความคลาดเคลื่อนโตขึ้นเมื่อสนใจหาง</li>
+    <li>Independence ให้ zero covariance เมื่อ moments มีอยู่ แต่ย้อนกลับไม่ได้ทั่วไป และ near-zero sample correlation ยิ่งไม่ใช่หลักฐาน independence</li>
+    <li>covariance ศูนย์อาจอยู่ร่วมกับความสัมพันธ์แบบกำหนดแน่นอน การทำนายเชิงเส้นราบไม่ได้แปลว่าค่าเฉลี่ยแบบมีเงื่อนไขราบ</li>
+    <li>สูตร variance ของ linear combination ยังใช้ได้กับตัวแปร dependent สิ่งที่ต้องระวังคือการสมมติ joint probabilities หรือ distribution เกินกว่าที่รู้</li>
+    <li>Normal marginals ไม่พอ ต้องมี jointly Normal จึงใช้ทฤษฎี Gaussian เพื่อเชื่อม zero covariance กับ independence และนี่ไม่ใช่ family เดียวที่มีคุณสมบัตินี้</li>
+    <li>ตรวจความสัมพันธ์ตามชนิด payoff และเหตุการณ์ที่สนใจ พร้อมระวังการเลือกข้อมูลและ multiple testing ก่อนนำผลไปใช้จัดการความเสี่ยง</li>
   </ul>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="8.2.html">8.2 Linear Transformations and Portfolio Risk</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.4.html">8.4 The Multivariate Normal Density</a></div>

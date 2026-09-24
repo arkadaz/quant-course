@@ -15,515 +15,395 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 49/158</span>
 </nav>
-
-<article class="topic" data-number="8.7" data-depends-on="5.3 8.4 8.2">
+<article class="topic" data-number="8.7" data-depends-on="2.1 2.2 5.3 6.5 7.5 7.6 8.2 8.3 8.4 8.6">
 <header class="topic-header">
   <h1><span class="tnum">8.7</span> The MVN Conditional Distribution and the Hedge Ratio</h1>
-  <p class="subtitle">ใช้ผลตอบแทนของ asset หนึ่งอัปเดตค่าเฉลี่ยและสร้าง hedge ของอีก asset</p>
+  <p class="subtitle">อัปเดตเมื่อมีข้อมูล กับเลือก hedge ก่อนเกิดผลตอบแทน: ใช้ slope เดียวกัน แต่เป็นคนละงาน</p>
 </header>
-
 <div class="hook">
-  <p>คืนนี้ S&amp;P 500 ปิดลบ 2% คุณถือหุ้นเล็กสหรัฐฯ \$100 ล้าน ผลตอบแทนรายวันของสองตลาดมี correlation 0.70 พรุ่งนี้ดัชนี Russell 2000 จะปิดลบด้วยโอกาสเท่าไร และต้องกันเงินเผื่อขาดทุนเพิ่มเท่าไร?</p>
-  <p>เฉลย: โอกาสปิดลบขยับจาก 48.8% เป็น 94.4% เพราะค่าเฉลี่ยเลื่อนจาก +0.03% เป็น −1.14% ขณะที่ความผันผวนหดจาก 1.00% เหลือ 0.71% VaR 99% หนึ่งวันแย่ลงจาก 2.296 เป็น 2.798 ล้าน ต้องกันเงินเพิ่มราว \$502,000 </p>
-  <p>MVN conditional distribution คือ distribution ของตัวแปรหนึ่งหลังเห็นอีกตัวในแบบจำลอง Multivariate Normal (MVN); ใช้อัปเดตค่าเฉลี่ยและหา hedge ratio ซึ่งเป็นสัดส่วนชดเชยการขยับร่วมของสองตำแหน่ง</p>
+  <p>ถือ QQQ มูลค่า \$10 ล้าน ในโมเดลสมมติที่ QQQ มี daily SD 3%, SPX มี SD 2% และ correlation 0.40 ถ้าจะลด variance ด้วย hedge ที่อ้างอิง SPX ควร short notional \$4 ล้าน ตาม correlation หรือ \$6 ล้าน? ขนาดนี้รับประกันไม่ขาดทุนหรือไม่?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>Unconstrained minimum-variance hedge คือ \$6 ล้าน เพราะ $\beta=\rho\sigma_Y/\sigma_X=0.40(3/2)=0.60$ ไม่ใช่ 0.40 ความเสี่ยงยังเหลือ SD ประมาณ 2.7495% ของมูลค่า QQQ เดิม ไม่มีการรับประกันกำไร และต้องวาง hedge ก่อน return ของช่วงนั้นเกิดขึ้น</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากข่าวเมื่อคืนที่ต้องแปลงเป็นตัวเลขก่อนตลาดเปิด</h4>
-  <p>เมื่อคืน S&amp;P 500 ปิดลบ 2% เราถือพอร์ตหุ้นเล็กสหรัฐฯ \$100 ล้าน ซึ่งเกาะกับ S&amp;P ที่ correlation 0.70 ก่อนตลาดเปิดต้องตอบสองข้อ วันนี้พอร์ตมีโอกาสปิดลบเท่าไร และต้องกันเงินเผื่อขาดทุนเพิ่มเท่าไร</p>
-  <p>ก่อนได้ข่าว โอกาสปิดลบคือ 48.8% แทบเท่าโยนเหรียญ หลังได้ข่าวมันคือ 94.4% ข่าวชิ้นเดียวเปลี่ยนคำตอบจากไม่รู้เป็นเกือบแน่</p>
-  <p>ที่น่าสนใจกว่านั้นคือความผันผวนก็เปลี่ยนด้วย มันหดจาก 1.00% เหลือ 0.71% เพราะส่วนหนึ่งของความไม่แน่นอนถูกข่าวอธิบายไปแล้ว หัวข้อนี้คำนวณทั้งสองอย่าง แล้วดึงต่อไปอีกขั้นเป็นสัดส่วน hedge ที่ถูกต้อง ซึ่งหล่นออกมาจากสูตรเดียวกันพอดี</p>
+  <h4>เริ่มจากระบุว่า X คือข้อมูลของช่วงไหน</h4>
+  <p>ในตัวอย่างหลัก X คือ SPX return และ Y คือ QQQ return <em>ของช่วงหนึ่งวันเดียวกัน</em> การถามว่า Y เป็นอย่างไรเมื่อรู้ X เป็นโจทย์ข้อมูลร่วม ไม่ใช่การใช้ X วันนี้ทำนาย Y พรุ่งนี้โดยอัตโนมัติ หากจะถามข้ามวัน ต้องสร้างและตรวจโมเดลของคู่ข้ามวันนั้นแยกต่างหาก</p>
+  <p>SPX เป็นดัชนี ไม่ใช่หลักทรัพย์ที่สั่ง short ได้โดยตรง คำว่า hedge อ้างอิง SPX ในตัวอย่างหมายถึงเครื่องมือซื้อขายได้ที่สมมติให้ return ตรงกับ X โดยยังละ basis risk, ค่าธรรมเนียม, ดอกเบี้ย และข้อจำกัดการซื้อขายออกก่อน</p>
 </section>
-
 <details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <summary>ศัพท์ที่จะใช้</summary>
   <dl>
-    <dt>Multivariate Normal (MVN) distribution</dt>
-    <dd>joint Normal distribution ของ return vector ที่กำหนดด้วยค่าเฉลี่ยและ covariance ใช้ทำ conditional forecast ที่คำนวณได้ปิดรูป</dd>
-    <dt>conditional distribution</dt>
-    <dd>distribution ของตัวแปรเป้าหมายเมื่อรู้ค่าของตัวแปรที่สังเกต ใช้ update forecast หลังเห็น market move</dd>
-    <dt>hedge ratio</dt>
-    <dd>จำนวน exposure ของ hedge asset ต่อหนึ่งหน่วยของ risk asset ที่ลด conditional residual variance ใช้กำหนด hedge size</dd>
-    <dt>conditional mean</dt>
-    <dd>expected value หลังล็อก observed return แล้ว ใช้เป็น updated forecast ของ target asset</dd>
-    <dt>normal distribution</dt>
-    <dd>distribution รูประฆังที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็นรูปของ conditional MVN slice</dd>
-    <dt>expected value</dt>
-    <dd>ค่าเฉลี่ยถ่วงโอกาสใช้เป็น centre ของ conditional forecast</dd>
-    <dt>variance</dt>
-    <dd>ค่ากระจายรอบค่าเฉลี่ยใช้บอก residual risk หลัง hedge</dd>
-    <dt>covariance</dt>
-    <dd>ค่า co-movement ระหว่าง SPX กับ QQQ ใช้คำนวณ hedge ratio</dd>
-    <dt>notional</dt>
-    <dd>มูลค่าเงินของ position ที่ใช้แปลง return hedge ratio เป็น USD P&amp;L</dd>
-    <dt>short position</dt>
-    <dd>position ที่ได้กำไรเมื่อสินทรัพย์อ้างอิงลงและขาดทุนเมื่อขึ้น ใช้หักล้าง market exposure ของ QQQ book ในตัวอย่าง</dd>
-    <dt>basis risk</dt>
-    <dd>ความเสี่ยงที่ target กับ hedge เคลื่อนไม่ตรงกัน แม้ hedge ratio ถูกตามข้อมูลอดีต ใช้เตือนว่า SPX hedge ไม่สามารถลบ QQQ risk ได้หมด</dd>
-    <dt>beta</dt>
-    <dd>slope ของ conditional mean ต่อผลตอบแทนที่เห็นแล้ว ใช้กำหนด hedge ratio</dd>
-    <dt>Value at Risk (VaR)</dt>
-    <dd>ขาดทุนที่จะไม่เกินด้วยความมั่นใจที่กำหนด เช่น 99% ในหนึ่งวัน ใช้บอกว่าต้องกันเงินไว้รองรับความเสี่ยงเท่าไร</dd>
-    <dt>exchange-traded fund (ETF)</dt>
-    <dd>กองทุนที่ซื้อขายในตลาดเหมือนหุ้นและเดินตามดัชนี ใช้ short เพื่อ hedge ความเสี่ยงตลาดของพอร์ตหุ้นทั้งก้อน</dd>
-    <dt>Russell 2000 และกองทุน iShares Russell 2000 ETF (IWM)</dt>
-    <dd>Russell 2000 คือดัชนีหุ้นขนาดเล็กของสหรัฐฯ ราวสองพันตัว ใช้เป็นผลตอบแทนที่ต้องพยากรณ์ในตัวอย่าง ส่วน IWM คือ ETF ที่ซื้อขายได้เหมือนหุ้นและเคลื่อนไหวตามดัชนีนั้น ใช้ hedge พอร์ตหุ้นเล็กทั้งก้อนโดยไม่ต้องขายหุ้นทีละตัว</dd>
-    <dt>law of iterated expectations</dt>
-    <dd>หลักที่ว่าเอา conditional mean ของทุกกรณีมาเฉลี่ยรวมกันแล้วต้องได้ค่าเฉลี่ยเดิม ใช้ตรวจว่าสูตร conditional mean ไม่ได้เลื่อนค่าเฉลี่ยรวมผิด</dd>
-    <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ของตลาดสหรัฐฯ ใช้เป็น observed market return</dd>
-    <dt>QQQ</dt>
-    <dd>กองทุน Nasdaq-100 ของตลาดสหรัฐฯ ใช้เป็น target return ที่ต้อง hedge</dd>
+    <dt>Conditional mean</dt><dd>Mean ของ Y หลังให้ข้อมูล X=x ไม่ใช่ผลลัพธ์จริงที่ Y ต้องเท่ากับค่านี้</dd>
+    <dt>Innovation</dt><dd>ส่วนที่ X ต่างจาก mean ของมัน คือ $x-\mu_X$ ใช้อัปเดต mean ของ Y; แม้ innovation เป็นศูนย์ การรู้ X ก็ยังให้ข้อมูลเกี่ยวกับความไม่แน่นอน</dd>
+    <dt>Residual</dt><dd>ส่วนของ Y ที่เหลือหลังหักการคาดการณ์จาก X; การไม่ correlated กับ X ไม่รับประกัน independence หากไม่ได้มี joint Gaussianity</dd>
+    <dt>Hedge ratio</dt><dd>Coefficient b ใน $Y-bX$ เมื่อทั้งคู่เป็น returns หน่วยเดียวกันและช่วงเดียวกัน b จึงแปลงเป็น notional hedge ต่อ notional ของ target ได้ภายใต้สมมติฐานที่ระบุ</dd>
+    <dt>Schur complement</dt><dd>Matrix $\Sigma_{YY}-\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}$ ซึ่งเป็น covariance ของ Gaussian residual ใน derivation นี้</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$X,Y$</td><td>SPX และ QQQ daily returns</td><td>decimal return/day</td></tr>
-      <tr><td>$\mu_X,\mu_Y$</td><td>unconditional means</td><td>decimal return/day</td></tr>
-      <tr><td>$\sigma_X^2,\sigma_Y^2$</td><td>variances</td><td>return²/day²</td></tr>
-      <tr><td>$\sigma_{X,Y}$</td><td>covariance ระหว่าง SPX และ QQQ</td><td>return²/day²</td></tr>
-      <tr><td>$\beta$</td><td>hedge ratio หรือ conditional slope</td><td>unitless</td></tr>
-      <tr><td>$X_1,X_2$</td><td>ในสองตัวอย่างจากตลาด: ตัวที่รู้ค่าแล้ว (S&amp;P หรือ ETF ดัชนี) และตัวที่ต้องพยากรณ์ (Russell 2000 หรือพอร์ต)</td><td>% ต่อวัน</td></tr>
-      <tr><td>$V$</td><td>มูลค่าพอร์ตหุ้นเล็กสหรัฐฯ</td><td>USD</td></tr>
-      <tr><td>$x$</td><td>observed SPX return</td><td>decimal return/day</td></tr>
-    </tbody>
-  </table>
+  <summary>กำหนดทิศของ regression ก่อนใช้ตัวเลข</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>$X,Y$</td><td>X คือ observed/predictor หรือ hedge return; Y คือ target ที่ต้องการอธิบายหรือ hedge</td></tr>
+    <tr><td>$\Sigma_{XX},\Sigma_{YY}$</td><td>Covariance ภายใน X และ Y; กรณี scalar คือ $\sigma_X^2,\sigma_Y^2$</td></tr>
+    <tr><td>$\Sigma_{YX}$</td><td>Cross-covariance:แถวของ Y, คอลัมน์ของ X</td></tr>
+    <tr><td>$B,\beta$</td><td>B คือ coefficient matrix; beta คือกรณี scalar</td></tr>
+    <tr><td>$V$</td><td>มูลค่า target book เริ่มต้นใน USD; ผลตอบแทน hedge ในบทคิดต่อ V ไม่ใช่ต่อ gross exposure หรือ margin ที่วางจริง</td></tr>
+  </tbody></table></div>
 </details>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — อ่านคำตอบออกมาจากกำลังสองสมบูรณ์ของหัวข้อ 8.6</h4>
-  <p>ไม่ต้องพิสูจน์ใหม่ สูตรทั้งสามของหัวข้อนี้อ่านออกมาจากก้อนที่สองของกำลังสองสมบูรณ์ในหัวข้อ 8.6 ได้ตรง ๆ</p>
+  <h4>ขั้นที่ 1 — สร้าง residual ที่ไม่ correlated กับข้อมูล</h4>
+  <p>ให้คู่ vector $(X,Y)$ เป็น joint Gaussian ที่มี means $\mu_X,\mu_Y$ และ covariance blocks ตามชื่อข้างบน สมมติ $\Sigma_{XX}$ invertible กำหนด B ให้ $B\Sigma_{XX}=\Sigma_{YX}$ แล้วหักส่วนที่อธิบายจาก X ออกจาก Y</p>
   <div class="math">\[
 \begin{aligned}
-&Y\mid X=x\\
-&\sim\mathcal{N}\!\Big(\mu_Y+\rho\,\sigma_Y\,\frac{x-\mu_X}{\sigma_X},\\
-&\qquad\sigma_Y^{2}(1-\rho^{2})\Big)\\[4pt]
-&\text{slope: }\ \rho\frac{\sigma_Y}{\sigma_X}\\
-&=\frac{\sigma_{X,Y}}{\sigma_X\sigma_Y}\cdot\frac{\sigma_Y}{\sigma_X}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}\\
-&=0.40\times\frac{0.03}{0.02}=0.60\\
-&\text{residual variance: }\\
-&\sigma_Y^{2}(1-\rho^{2})\\
-&=0.0009(1-0.16)=0.000756
+B&:=\Sigma_{YX}\Sigma_{XX}^{-1},\\
+\varepsilon&:=Y-\mu_Y-B(X-\mu_X),\\
+\mathbb E[\varepsilon]&=0,\\
+\operatorname{Cov}(\varepsilon,X)
+&=\Sigma_{YX}-B\Sigma_{XX}\\
+&=0.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>หัวข้อ 8.6 แยกผิวเป็น ‘ระฆังคว่ำของ $X$’ คูณ ‘ระฆังคว่ำของ $Y$ ที่จุดกลางเลื่อนตาม $z_X$’ ก้อนหลังนั่นแหละคือ distribution ของ $Y$ เมื่อรู้ $X$ (หารด้วย $f_X$ ตามหัวข้อ 5.3 แล้วเหลือแค่มัน)</p>
-    <p>ความชันคือ $\rho\sigma_Y/\sigma_X$: correlation บอกทิศและความแรงแบบไร้หน่วย แล้วคูณอัตราส่วนความผันผวนเพื่อแปลงเป็น ‘$Y$ ขยับกี่หน่วยต่อ $X$ หนึ่งหน่วย’ นี่คือเหตุผลที่ hedge ratio ไม่ใช่ correlation</p>
-    <p>ความผันผวนที่เหลือคือ $\sigma_Y^2(1-\rho^2)$: correlation 0.4 ลบความไม่แน่นอนได้แค่ $\rho^2=16\%$ อีก 84% ยังอยู่</p>
-  </div>
+  <div class="reading"><p>คู่ $(\varepsilon,X)$ ยังเป็น joint Gaussian เพราะสร้างด้วย affine transformation ดังนั้น covariance block ศูนย์จึงให้ independence ตาม 8.3 เมื่อรู้ X จึงไม่เปลี่ยน distribution ของ residual นี้</p></div>
+  <p>ในคอมพิวเตอร์ควรแก้ linear system เพื่อหา B แทนการสร้าง inverse แล้วคูณ โดยเฉพาะเมื่อ predictors หลายตัวเกือบซ้ำกัน เขียน inverse ในสูตรเพื่อระบุความสัมพันธ์ทางคณิตศาสตร์ ไม่ใช่สั่งให้คำนวณด้วยวิธีนั้นเสมอ</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 2 — conditional mean</h4>
-  <p>คำถามที่ใช้จริงคือ พอเห็น SPX วันนี้แล้ว ควรคาดหวัง QQQ เท่าไร คำตอบไม่ได้มาจากสูตรที่ต้องท่อง มันคือก้อนที่เหลืออยู่แล้วหลังหัวข้อ 8.6 หารเอา marginal ออกไป ทั้งหัวข้อนี้จึงเป็นการอ่านก้อนเดียวกันนั้นให้ละเอียดขึ้น</p>
-  <div class="math">\[
-\begin{aligned}u=\frac{x-\mu_X}{\sigma_X},&\qquad v=\frac{y-\mu_Y}{\sigma_Y}\\
-\rho&=\frac{\sigma_{X,Y}}{\sigma_X\sigma_Y}\\[4pt]
-f_{Y\mid X}&=\frac{f_{X,Y}}{f_X}\\
-&=\frac{1}{\sigma_Y\sqrt{2\pi}\sqrt{1-\rho^{2}}}e^{-\frac{(v-\rho u)^{2}}{2(1-\rho^{2})}}\\[4pt]
-\Longrightarrow\;v\mid u&\sim\mathcal N\big(\rho u,\;1-\rho^{2}\big)\\[4pt]
-\mathbb{E}[Y\mid X=x]&=\mu_Y+\sigma_Y\,\mathbb{E}[v\mid u]=\mu_Y+\sigma_Y\rho u\\
-&=\mu_Y+\sigma_Y\rho\,\frac{x-\mu_X}{\sigma_X}\\
-&=\mu_Y+\frac{\sigma_{X,Y}}{\sigma_X^{2}}(x-\mu_X)\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>หัวข้อ 8.6 แยก joint density ออกเป็นสองก้อนไว้แล้ว และก้อนซ้ายคือ $f_X$ พอดี เมื่อหารออกไปจึงเหลือก้อนขวาก้อนเดียว ทั้งหัวข้อนี้คือการอ่านก้อนนั้นให้ละเอียดขึ้น ไม่ได้คำนวณอะไรใหม่เลย</p>
-    <p>หน้าตาของก้อนที่เหลือคือระฆังในตัวแปร $v$ ที่จุดกลางเลื่อนไปอยู่ที่ $\rho u$ และแคบลงเหลือ $1-\rho^{2}$ แปลงกลับเป็นหน่วยเดิมด้วย $Y=\mu_Y+\sigma_Y v$ แล้วแทนนิยามของ $\rho$ จากหัวข้อ 6.5 $\sigma_Y$ ตัดกัน ส่วน $\sigma_X$ สองตัวรวมเป็น $\sigma_X^{2}$ จึงได้รูปที่ใช้งานจริง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — นิยามของ hedge ratio: ตั้งชื่อให้ความชันที่เพิ่งคำนวณได้</h4>
-  <p>ตัวคูณที่โผล่ในสูตรขั้นที่ 2 มีความหมายบนโต๊ะ เราจึงตั้งชื่อให้มัน บรรทัดนี้จึงเป็น นิยาม ของชื่อ ไม่ใช่ผลใหม่ ตัวเลขมันถูกคำนวณไปแล้วในขั้นก่อนหน้า จุดที่ต้องระวังคือมันไม่ใช่ correlation ต่างกันตรงที่ตัวนี้หารด้วย variance ของตัวที่ใช้ hedge จึงมีหน่วยเป็นจำนวนหน่วยที่ต้องขาย ไม่ใช่ตัวเลขระหว่างลบหนึ่งถึงหนึ่ง</p>
-  <div class="math">\[
-\beta=\frac{\sigma_{X,Y}}{\sigma_X^2}
-\]</div>
-  <div class="reading">
-    <p>$\beta$ คือ hedge ratio: การเปลี่ยน SPX return หนึ่งหน่วยเปลี่ยน conditional mean ของ QQQ ประมาณ $\beta$ หน่วย</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — conditional variance</h4>
-  <p>การรู้ตัวหนึ่งช่วยลดความไม่แน่นอนของอีกตัวได้เท่าไร ตอบด้วยห้าบรรทัดนี้ และคำตอบมาจากความผันผวนของก้อนที่เหลือในขั้นที่ 2 ไม่ได้มาจากสูตรใหม่</p>
-  <div class="math">\[
-\begin{aligned}v\mid u&\sim\mathcal N\big(\rho u,\;1-\rho^{2}\big)\qquad\text{(step 2)}\\
-\operatorname{Var}(Y\mid X)&=\sigma_Y^{2}\operatorname{Var}(v\mid u)=\sigma_Y^{2}\big(1-\rho^{2}\big)\\
-&=\sigma_Y^{2}-\sigma_Y^{2}\rho^{2}\\
-\rho^{2}&=\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}\sigma_Y^{2}}\\
-&=\sigma_Y^{2}-\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ความผันผวนของก้อนที่เหลือจากขั้นที่ 2 คือ $1-\rho^{2}$ แปลงกลับเป็นหน่วยเดิมโดยตัวคูณ $\sigma_Y$ ถูกยกกำลังสอง เพราะ variance วัดระยะยกกำลังสอง ซึ่งเป็นกฎเดียวกับหัวข้อ 5.5 แล้วแทนนิยามของ $\rho$ ลงไป $\sigma_Y^{2}$ ตัดกัน เหลือรูปที่ใช้งานได้</p>
-    <p>จุดที่ควรสังเกตที่สุดคือไม่มี $x$ อยู่ในคำตอบเลย แปลว่าความไม่แน่นอนที่เหลือเท่าเดิม ไม่ว่าวันนี้ SPX จะออกมาเท่าไร นี่เป็นสมบัติเฉพาะของระฆัง ไม่ใช่ของทุก distribution</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>อ่านผลลัพธ์ให้ออก — ทำไมความไม่แน่นอนลดลงเสมอ และลดเท่าไรรู้ล่วงหน้า</h4>
-  <p>ก้อน $\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}$ นี้มีชื่อทางพีชคณิตว่า Schur complement และเป็นตัวเดียวกับที่โผล่มาในการกลับ matrix แบบแบ่งบล็อก ความหมายทางการเงินของมันคือ ส่วนของความเสี่ยงที่อธิบายได้ด้วยสิ่งที่เรารู้แล้ว จึง hedge ทิ้งได้</p>
-  <p>ตรวจเองใน 10 วินาที ใส่ correlation เป็นศูนย์ ก้อนที่ลบต้องหายไปทั้งก้อน และความไม่แน่นอนต้องเท่าเดิมเป๊ะ ถ้าไม่เท่า แปลว่าแทนค่าผิด</p>
+  <h4>ขั้นที่ 2 — Conditional covariance คือ covariance ของ residual</h4>
+  <p>ขยาย covariance ของผลต่าง แล้วใช้ $B\Sigma_{XX}=\Sigma_{YX}$ เพื่อลดรูป พจน์ที่เหลือเป็น PSD เพราะเป็น covariance ของตัวแปรสุ่มจริง</p>
   <div class="math">\[
 \begin{aligned}
-\Sigma_{2\cdot 1}&=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\\[4pt]
-&\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\\
-&=\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)^{\mathsf T}\left(\Sigma_{11}^{-1/2}\Sigma_{12}\right)\\
-&\ \succeq\ 0\\[4pt]
-&\Longrightarrow\quad\Sigma_{2\cdot 1}\preceq\Sigma_{22}\\[4pt]
-&\text{scalar case}:\\
-\sigma_{2\cdot 1}^{2}&=\sigma_2^{2}\left(1-\rho^{2}\right)\\[4pt]
-&\rho=0.6:\\
-\sigma_{2\cdot 1}^{2}&=0.64\,\sigma_2^{2}
+\Omega&:=\operatorname{Cov}(\varepsilon)\\
+&=\Sigma_{YY}-B\Sigma_{XY}\\
+&\quad-\Sigma_{YX}B^{\mathsf T}+B\Sigma_{XX}B^{\mathsf T}\\
+&=\Sigma_{YY}-B\Sigma_{XY},\\
+m(x)&:=\mu_Y+B(x-\mu_X),\\
+Y\mid X=x&\sim\mathcal N(m(x),\Omega).
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ก้อนที่ถูกลบออกไปเขียนใหม่ได้เป็นของบางอย่างคูณกับทรานสโพสของตัวมันเอง ของแบบนั้นไม่มีทางติดลบ เหมือนกำลังสองที่ไม่มีทางน้อยกว่าศูนย์</p>
-    <p>แปลว่าสิ่งที่เหลือหลังลบ ไม่มีวันมากกว่าของเดิม การรู้ข้อมูลเพิ่มจึงลดความไม่แน่นอนเสมอ หรืออย่างแย่ที่สุดก็เท่าเดิม ตอนที่สองกลุ่มไม่เกี่ยวกันเลย</p>
-    <p>จุดที่คนมองข้ามอยู่ตรงนี้ ในสูตรของความไม่แน่นอนที่เหลือ ไม่มี $x_1$ โผล่มาเลยสักตัว มีแต่ตัวโครงสร้างความสัมพันธ์ ค่าที่สังเกตได้จริงไม่มีผลต่อขนาดของความไม่แน่นอน มันมีผลแค่ว่าค่าเฉลี่ยจะเลื่อนไปไหน</p>
-    <p>ผลในทางปฏิบัติคือ desk คำนวณความเสี่ยงที่จะเหลือหลัง hedge ได้ตั้งแต่เมื่อวาน โดยไม่ต้องรอดูว่าตลาดจะเปิดมาที่ราคาไหน กรณีสองตัวแปรยิ่งอ่านง่าย correlation 0.6 เหลือความผันผวน 64% ของเดิม ตัดออกได้ 36%</p>
-  </div>
+  <div class="reading"><p>Conditional law จึงเป็น Gaussian ที่มี mean ตาม x และ covariance เท่ากับ Omega โดยใน <em>fixed Gaussian model นี้</em> ค่า covariance ไม่ขึ้นกับ x ที่สังเกตได้ ไม่ใช่กฎว่า uncertainty ของข้อมูลจริงต้องคงที่ทุกสถานการณ์</p></div>
+  <p>Full covariance อาจเป็น PSD แต่ singular ได้: ถ้า Omega เป็นศูนย์บางทิศ Y ในทิศนั้นถูกกำหนดแน่นอนเมื่อรู้ X แล้ว แต่ถ้า $\Sigma_{XX}$ singular ต้องจัดการข้อมูลซ้ำและตรวจ support ก่อน เช่น predictors $(Z,Z)$ ต้องมีค่าที่สังเกตสอดคล้องกัน ไม่ควรใช้ pseudoinverse กลบ observation ที่โมเดลเกิดไม่ได้</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 5 — hedge P&amp;L</h4>
-  <p>แปลงทั้งหมดเป็นผลลัพธ์ที่วัดได้ คือหลัง hedge แล้วเหลือความเสี่ยงเท่าไร คำตอบตรงกับความไม่แน่นอนที่เหลือในขั้นที่ 4 พอดี ซึ่งไม่ใช่เรื่องบังเอิญ มันคือความหมายของคำว่า hedge ด้วยอัตราที่ดีที่สุด</p>
+  <h4>ขั้นที่ 3 — ย่อเป็น scalar แล้วตรวจ denominator</h4>
+  <p>เมื่อ X, Y เป็น scalar และ $\sigma_X\gt0$ เราเขียน covariance เป็น $\rho\sigma_X\sigma_Y$ แล้วเห็นทั้ง slope และส่วน variance ที่เหลือชัดเจน</p>
   <div class="math">\[
 \begin{aligned}
-&\operatorname{Var}(Y-\beta X)\\
-&=\sigma_Y^{2}+\beta^{2}\sigma_X^{2}-2\beta\sigma_{X,Y}\\
-&\quad\text{(step 5 of 6.5)}\\
-\beta&=\frac{\sigma_{X,Y}}{\sigma_X^{2}}\\
-\beta^{2}\sigma_X^{2}&=\frac{\sigma_{X,Y}^{2}}{\sigma_X^{4}}\sigma_X^{2}=\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
-2\beta\sigma_{X,Y}&=\frac{2\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
-&\operatorname{Var}(Y-\beta X)\\
-&=\sigma_Y^{2}+\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}-\frac{2\sigma_{X,Y}^{2}}{\sigma_X^{2}}\\
-&=\sigma_Y^{2}-\frac{\sigma_{X,Y}^{2}}{\sigma_X^{2}}
+\beta&=\frac{\operatorname{Cov}(Y,X)}{\sigma_X^2}\\
+&=\rho\frac{\sigma_Y}{\sigma_X},\\
+m(x)&:=\mathbb E[Y\mid X=x]\\
+&=\mu_Y+\beta(x-\mu_X),\\
+v_{\rm res}&:=\operatorname{Var}(Y\mid X=x)\\
+&=\sigma_Y^2-\frac{(\rho\sigma_X\sigma_Y)^2}{\sigma_X^2}\\
+&=\sigma_Y^2(1-\rho^2),\\
+\sigma_{\rm res}&=\sigma_Y\sqrt{1-\rho^2}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>คราวนี้เดินอีกทางเพื่อตรวจ: กางความเสี่ยงของพอร์ตที่ถือ $Y$ และขาย $X$ ตามอัตรา $\beta$ น้ำหนักของ $X$ เป็นลบเพราะเป็นการขาย พจน์ไขว้จึงติดลบ รูปนี้มาจากหัวข้อ 5.5 ไม่ใช่ของใหม่</p>
-    <p>สามบรรทัดกลางแทนค่า $\beta$ ลงไปทีละพจน์ แล้วตัดทอนกำลังของ $\sigma_X$ สองพจน์ที่หน้าตาเหมือนกันรวมกัน หนึ่งบวกหนึ่งลบสอง เหลือลบหนึ่ง ผลตรงกับ conditional variance ในขั้นที่ 4 ทุกตัวอักษร ทั้งที่ทางหนึ่งมาจากการหาร density อีกทางมาจากการกางกำลังสอง</p>
-  </div>
+  <div class="reading"><p>Denominator เป็น variance ของ predictor/hedge X ไม่ใช่ variance ของ target Y Correlation บอกทิศและความแรงเชิงเส้นใน standardized units แต่ต้องคูณอัตราส่วน SD เพื่อกลับมาเป็น slope ในหน่วย Y ต่อ X</p></div>
+  <p>กลับทิศ regression แล้ว slope ไม่ใช่ reciprocal:ใน primary model นี้ $\beta_{Y\mid X}=0.60$ แต่ $\beta_{X\mid Y}=0.40(2/3)\approx0.266667$ ผลคูณเท่ากับ $\rho^2=0.16$ ไม่ใช่ 1 การมี residual ทำให้ไม่สามารถกลับสมการเหมือนเป็นความสัมพันธ์เชิงเส้นแบบแน่นอนได้</p>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ทำไม 0.60 คือขนาด hedge ที่ดีที่สุด: ลองสามขนาดแล้วดูรูปตัว U</h4>
-  <p>hedge ratio มาจากสองที่: จาก conditional distribution และจากการถามว่า “ขนาดไหนทำให้ความเสี่ยงที่เหลือน้อยที่สุด” ลองทางที่สองด้วยมือ</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathrm{Var}(Y-bX)\\
-&=\sigma_Y^{2}-2b\,\sigma_{X,Y}+b^{2}\sigma_X^{2}\\
-&\quad(\text{expand the square as in 6.5})\\
-&b=0.3:\\
-&\quad 0.0009-2(0.3)(0.00024)\\
-&\quad+0.3^{2}(0.0004)\\
-&\quad=0.0009-0.000144+0.000036\\
-&\quad=0.000792\\
-&b=0.6:\\
-&\quad 0.0009-0.000288+0.000144\\
-&\quad=0.000756\quad(\text{lowest})\\
-&b=0.9:\\
-&\quad 0.0009-0.000432+0.000324\\
-&\quad=0.000792\\[4pt]
-&\frac{d}{db}:\\
-&\quad -2\sigma_{X,Y}+2b\,\sigma_X^{2}=0\\
-&\;\Longrightarrow\;b^{*}=\frac{\sigma_{X,Y}}{\sigma_X^{2}}=0.60
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>hedge น้อยไป (0.3) เหลือความเสี่ยงตลาดค้าง hedge มากไป (0.9) สร้างความเสี่ยงใหม่จากตัว SPY เอง ทั้งสองให้ 0.000792 เท่ากันพอดี จุดต่ำสุดอยู่ตรงกลางที่ 0.6 นี่คือเส้น U ในรูป 7.4c</p>
-    <p>สามบรรทัดสุดท้ายหาจุดต่ำสุดด้วยการหา derivative ตาม $b$ (หัวข้อ 12.2 จะทำเรื่องนี้เป็นระบบ) ได้สูตรเดิมของ hedge ratio จากอีกทางหนึ่ง สองเส้นทางให้ 0.60 เท่ากัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — แทนค่าจาก joint model</h4>
-  <p>รู้ $X$ แล้วสองอย่างเปลี่ยน: จุดกลางของ $Y$ ขยับตาม $\beta$ และความไม่แน่นอนที่เหลือหดลง ขั้นนี้คำนวณทั้งสองอย่าง</p>
-  <div class="math">\[
-\begin{aligned}
-\beta&=\frac{\sigma_{XY}}{\sigma_X^2}=\frac{0.00024}{0.0004}=0.60\\[4pt]
-&E[Y\mid X=-0.03]\\
-&=0.0003+0.60(-0.03-0.0004)\\
-&=0.0003+0.60(-0.0304)\\
-&=0.0003-0.01824=-0.01794\\[4pt]
-&\operatorname{Var}(Y\mid X)\\
-&=\sigma_Y^2-\beta\,\sigma_{XY}\\
-&=0.0009-0.60(0.00024)\\
-&=0.0009-0.000144=0.000756\\
-\sigma_{Y\mid X}&=\sqrt{0.000756}=0.02750=2.75\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$X$ ต่ำกว่าค่าเฉลี่ยอยู่ 0.0304 และ $Y$ ตามไปด้วยอัตรา 0.60 จุดกลางของ $Y$ จึงตกลงมาที่ $-1.794\%$</p>
-    <p>ความไม่แน่นอนเดิมของ $Y$ คือ $\sqrt{0.0009}=3\%$ พอรู้ $X$ แล้วเหลือ 2.75% การรู้ $X$ จึงช่วยได้จริง แต่ไม่ได้ช่วยมาก เพราะสองตัวนี้เกี่ยวกันไม่แน่นนัก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — โจทย์เปิดเรื่อง: S&amp;P ปิดลบ 2% แล้วค่าเฉลี่ยกับความผันผวนของ Russell 2000 เป็นเท่าไร</h4>
-  <p>ของที่โจทย์ให้: S&amp;P คืนเดียว X₁ ~ N(0.00%, 1.2%²) Russell 2000 พรุ่งนี้ X₂ ~ N(0.03%, 1.0%²) correlation 0.70 และสองตัวเป็น bivariate normal ประกอบ Σ จาก σ สองตัวกับ ρ แล้วใช้สูตรของขั้นที่ 2 และ 4</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma&=\begin{bmatrix}1.2^2 & 0.70(1.2)(1.0)\\ 0.84 & 1.0^2\end{bmatrix}=\begin{bmatrix}1.44 & 0.84\\ 0.84 & 1.00\end{bmatrix}\ (\%^2)\\[4pt]
-\beta&=\frac{0.84}{1.44}=0.58333=0.70\times\frac{1.0}{1.2}\\
-\mu_{2\mid1}&=0.03+0.58333(-2.0-0)=0.03-1.16667=-1.1367\%\\[4pt]
-\Sigma_{2\mid1}&=1.00-0.58333(0.84)=1.00-0.49=0.51,\qquad \sigma_{2\mid1}=\sqrt{0.51}=0.7141\%\\
-&=1.0\sqrt{1-0.70^2}\ \Longrightarrow\ \text{variance cut }49\%,\ \ \sigma\ \text{cut }1-0.7141=28.6\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>0.84 มาจาก Cov = ρσ₁σ₂ ตัว ρ ไม่มีหน่วย σ₁σ₂ ใส่หน่วยกลับเข้ามา รายงานความเสี่ยงชอบให้ ρ เพราะอ่านง่าย แต่สูตรทุกสูตรกิน covariance ตัวหารต้องเป็น variance ของตัวที่รู้ค่าแล้ว สลับเมื่อไรได้ตัวเลขคนละตัว</p>
-    <p>ข่าวอธิบาย variance ของ Russell 2000 ได้ ρ² = 49% ตัวเดียวกับ R² ของ regression แต่ระวังหน่วย variance หด 49% ขณะที่ σ หดแค่ 28.6% เพราะ σ คือรากของ variance ตัวเลขที่บอกว่าลดความเสี่ยงได้ครึ่งหนึ่งมักอ่านหน่วย variance มาพูดเป็นหน่วย σ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — สองการตรวจที่บอกว่าไม่ได้คิดผิด</h4>
-  <p>การตรวจแรกดูว่าความผันผวนใหม่ขึ้นกับขนาดของข่าวไหม การตรวจที่สองเฉลี่ยค่าพยากรณ์ทุกแบบของข่าว แล้วต้องได้ค่าเฉลี่ยเดิมกลับมา</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma_{2\mid1}&=1.00-0.49\\
-&\quad\text{no }x_1\ \text{inside}\\[4pt]
-&\mathbb{E}[X_2]=\mathbb{E}\big[\mathbb{E}[X_2\mid X_1]\big]\\
-&=\mathbb{E}\big[0.03+0.58333(X_1-0)\big]\\
-&=0.03+0.58333\,\mathbb{E}[X_1]\\
-&=0.03+0.58333(0)=0.03\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สูตรความผันผวนไม่มี x₁ อยู่เลย S&amp;P ลง 0.5% หรือ 5% σ ของ Russell 2000 ก็ยังเป็น 0.71% ข่าวเลื่อนจุดกลางอย่างเดียว ไม่บีบความผันผวนตามขนาดข่าว</p>
-    <p>การตรวจที่สองคือ law of iterated expectations ได้ 0.03% ตรงกับค่าเฉลี่ยเดิม มันจับความผิดพลาดที่พบบ่อยที่สุดคือลืมลบ μ₁ ที่นี่ μ₁ = 0 พอดีจึงมองไม่เห็นความต่าง แต่ในตลาดที่ μ₁ ไม่ใช่ศูนย์จะพังทันที</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — แปลงเป็นโอกาสและ VaR: ก่อนกับหลังรู้ข่าว</h4>
-  <p>ใช้ค่าจาก Φ ในตารางระฆังคว่ำ และค่า z ที่ทิ้งพื้นที่ซ้าย 1% คือ −2.326 พอร์ตมีมูลค่า \$100 ล้าน</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{before}:\ P(X_2\lt0)\\
-&=\Phi\Big(\frac{0-0.03}{1.00}\Big)=48.8\%\\
-&\text{after}:\ P(X_2\lt0)\\
-&=\Phi\Big(\frac{0+1.1367}{0.7141}\Big)=\Phi(1.592)=94.4\%\\[4pt]
-&\text{before}:\ P(X_2\lt-1)\\
-&=\Phi(-1.03)=15.2\%\\
-&\text{after}:\ P(X_2\lt-1)\\
-&=\Phi\Big(\frac{-1+1.1367}{0.7141}\Big)=\Phi(0.191)=57.6\%\\[4pt]
-&\text{VaR}_{99}\ \text{before}\\
-&=0.03-2.326(1.00)=-2.296\%\\
-&\text{VaR}_{99}\ \text{after}\\
-&=-1.1367-2.326(0.7141)\\
-&=-1.1367-1.6611=-2.798\%\\
-&2{,}798{,}000-2{,}296{,}000\\
-&=502{,}000\quad(+21.9\%)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ก่อนได้ข่าว โอกาส Russell 2000 ปิดลบคือ 48.8% แทบเป็นการโยนเหรียญ พอเสียบข่าวเข้าไปตัวเดียวกลายเป็น 94.4% ทั้งที่ σ ยังเหลือ 0.71% เพราะค่าเฉลี่ยเลื่อนลง 1.17 จุดขณะที่ไม้บรรทัดยาวแค่ 0.71 จุด ศูนย์จึงอยู่ห่างจากค่าเฉลี่ย 1.59σ</p>
-    <p>VaR แย่ลงทั้งที่ σ หดลง เพราะ VaR มีสองส่วนคือค่าเฉลี่ยกับความผันผวน ข่าวช่วยเรื่องความผันผวน หางสั้นลง 0.665 จุด แต่ทำร้ายเรื่องค่าเฉลี่ย เลื่อนลง 1.167 จุด สุทธิแย่ลง 0.502 จุด ใครรายงาน VaR ด้วย σ ในอดีตอย่างเดียวคืนนี้จะกันเงินขาดไปราวครึ่งล้าน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 11 — hedge พอร์ตหุ้นเล็กสหรัฐฯด้วย ETF ดัชนี Russell 2000: β = 1.0592 จากสามทาง</h4>
-  <p>ของที่โจทย์ให้: ETF σ₁ = 1.20% μ₁ = 0.03% พอร์ต σ₂ = 1.55% μ₂ = 0.05% ต่อวัน ρ = 0.82 และพอร์ตมูลค่า \$100 ล้าน ทำงานในหน่วยทศนิยมแล้วเก็บเลขไว้ 8 หลักจนจบ</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma_{11}&=0.0120^2=0.00014400\\
-\Sigma_{22}&=0.0155^2=0.00024025\\
-\Sigma_{21}&=0.82(0.0120)(0.0155)\\
-&=0.82(0.000186)=0.00015252\\[4pt]
-&\beta=\Sigma_{21}\Sigma_{11}^{-1}\\
-&=\frac{0.00015252}{0.00014400}=\frac{15{,}252}{14{,}400}=1.0592\\
-&\beta=\rho\frac{\sigma_2}{\sigma_1}\\
-&=0.82\times\frac{1.55}{1.20}\\
-&=0.82\times1.291667=1.0592\\[4pt]
-&\text{short ETF}\\
-&=1.0592\times100{,}000{,}000\\
-&=105{,}920{,}000\\
-&\text{wrong denominator}:\\
-&\quad\frac{0.00015252}{0.00024025}=0.635
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>กรณี 1 × 1 การกลับ matrix คือการหารธรรมดา β เป็นตัวเดียวกับ Cov หารด้วย Var ของตัวที่รู้ค่าในวิชา regression ทั้งสามทางได้ 1.0592 เท่ากัน β มากกว่า 1 เพราะพอร์ตผันผวนกว่าดัชนี จึงต้อง short ETF มากกว่ามูลค่าพอร์ต</p>
-    <p>ดูหน่วยจะไม่สลับตัวหาร: β ต้องเป็นหน่วยของพอร์ตต่อหนึ่งหน่วยของ ETF covariance มีหน่วยพอร์ตคูณ ETF จึงต้องเอา variance ของ ETF เป็นตัวหาร ถ้าใช้ variance ของพอร์ตเป็นตัวหารจะได้ 0.635 ซึ่งคือ β ของ regression กลับทาง short น้อยไป 40%</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 12 — ETF ร่วง 3%: พอร์ตคาดว่าเป็นเท่าไร และช่วง 95%</h4>
-  <p>แทน x₁ = −3.00% ในสูตร conditional mean ส่วนที่เกินความคาดหมายต้องลบค่าเฉลี่ย μ₁ ก่อน</p>
-  <div class="math">\[
-\begin{aligned}
-x_1-\mu_1&=-3.00-0.03=-3.03\%\\
-\mu_{2\mid1}&=0.05+1.0592(-3.03)\\
-&=0.05-3.2093=-3.1593\%\\
-&\Rightarrow\ -3{,}159{,}275\\[4pt]
-\sigma_{2\mid1}&=1.55\sqrt{1-0.82^2}=1.55\sqrt{0.3276}\\
-&=1.55(0.57236)=0.887\%\\[4pt]
-95\%&=-3.159\pm1.96(0.887)\\
-&=-3.159\pm1.739=[-4.90\%,\ -1.42\%]\\[4pt]
-\text{forgot }\mu_1&=0.05+1.0592(-3.00)=-3.13\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ค่าเฉลี่ยใหม่คือค่าเฉลี่ยเดิมบวก β คูณส่วนที่เซอร์ไพรส์ ถ้า ETF ออกมาตรงกับที่คาด วงเล็บเป็นศูนย์ ไม่ต้องอัปเดตอะไร ข้อมูลมีค่าเมื่อมันเซอร์ไพรส์เท่านั้น โครงเดียวกันนี้กลับมาในชื่อ Kalman filter gain และ Bayesian update</p>
-    <p>ถ้าลืมลบ μ₁ ได้ −3.13% ผิดไป 3 basis point ที่นี่เล็กเพราะ μ₁ เล็ก แต่ในสินทรัพย์ที่มีผลตอบแทนเฉลี่ยรายวันสูงชัด การลืมลบทำให้ hedge เอียงสะสมทุกวัน ช่วง ±1.74% คือ basis risk ต่อให้ทายทิศถูก พอร์ตยังจบได้ตั้งแต่ −1.4% ถึง −4.9% บนพอร์ต 100 ล้านคือช่วงกว้างราว 3.5 ล้านที่ hedge ไม่ช่วย</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 13 — ลดความเสี่ยงได้ 42.8% หรือ 67.2% และ VaR ก่อนกับหลัง hedge</h4>
-  <p>วัดความเสี่ยงที่เหลือสองหน่วย แล้วแปลงเป็น VaR 99% หนึ่งวัน ค่าเฉลี่ยหลัง hedge คือ μ₂ − βμ₁</p>
-  <div class="math">\[
-\begin{aligned}
-&\sigma:\\
-&\quad \frac{0.887}{1.55}=0.5724\ \Rightarrow\ \text{cut }42.8\%\\
-&\text{variance}:\\
-&\quad \frac{0.00007871}{0.00024025}=0.3276\\
-&\quad\Rightarrow\ \text{cut }67.2\%=\rho^2\\[4pt]
-&\text{VaR}_{99}\ \text{before}\\
-&=0.05-2.326(1.550)=-3.555\%\\
-&\ \Rightarrow\ -3{,}555{,}300\\
-&\text{after}\\
-&=\big(0.05-1.0592(0.03)\big)-2.326(0.887)\\
-&=0.0182-2.063=-2.045\%\\
-&\ \Rightarrow\ -2{,}045{,}317\\
-&\text{capital saved}\\
-&\approx1.51\ \text{million per day}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>variance เป็น σ ยกสอง เปอร์เซ็นต์จึงไม่ส่งผ่านราก √0.3276 = 0.5724 ไม่ใช่ 0.3276 ฝ่ายขายชอบ 67.2% เพราะฟังดูดีกว่า ฝ่ายความเสี่ยงต้องใช้ 42.8% เพราะ VaR และ limit คิดในหน่วย σ รายงานทั้งสองตัวพร้อมบอกหน่วย</p>
-    <p>กฎที่ตามมา: จะตัดความเสี่ยงในหน่วย σ ลงครึ่งหนึ่งต้องมี √(1 − ρ²) = 0.5 คือ ρ สูงถึง 0.866 hedge ที่ดูดีจึงมักลดความเสี่ยงได้น้อยกว่าที่ใจคิด</p>
-  </div>
-</section>
-
 <section class="example">
-  <h4>คำตอบ — สูตรเงื่อนไขของ MVN คือใบสั่งงานสองบรรทัด</h4>
-  <p>คำถาม: Russell 2000 หลัง S&amp;P ลง 2% และ hedge พอร์ตด้วย ETF ดัชนี Russell 2000 ได้ตัวเลขอะไรบ้าง?</p>
-  <p>ของที่มี: ขั้นที่ 8 ถึง 13</p>
-  <p>1. Russell 2000 พรุ่งนี้ ~ N(−1.14%, 0.71%²) variance หด 49% σ หด 28.6% โอกาสปิดลบ 48.8% → 94.4% VaR 99% แย่ลง 502,000</p>
-  <p>2. β = 1.0592 short ETF 105,920,000 ถ้า ETF −3% พอร์ตคาดว่า −3.16% ช่วง 95% [−4.90%, −1.42%]</p>
-  <p>3 ความเสี่ยงที่เหลือ 0.887% ต่อวัน ลด 42.8% ในหน่วย σ หรือ 67.2% ในหน่วย variance</p>
-  <p>เฉลย: บรรทัดแรกของสูตรบอกว่าต้อง short เท่าไร บรรทัดที่สองบอกว่ายังต้องกันทุนไว้เท่าไร เดสก์ที่รายงานแค่บรรทัดแรกแล้วบอกว่าพอร์ต hedge แล้ว กำลังซ่อนบรรทัดที่สองไว้</p>
-  <p>เช็ก 10 วินาที: 0.84/1.44 = 0.5833, √0.51 = 0.714, 0.82 × 1.55/1.20 = 1.0592, 1.55 × √0.3276 = 0.887</p>
-  <p>งานจริง: ρ คือราคาของข้อมูล ถ้า ρ = 0.20 การเลื่อนเหลือ 0.167 × (−2) = −0.33 จุดและ σ หดแค่ 2% ข่าวเดียวกันแทบไร้ค่า β และ ρ ประมาณจากอดีตและเคลื่อนที่ ρ ที่วัดจากปีที่แล้วมักสูงเกินจริงในวันวิกฤต และสูตรนี้ให้ hedge ที่ variance ต่ำสุด ซึ่งไม่ใช่ hedge ที่ขาดทุนสูงสุดต่ำสุดเมื่อหางไม่เป็นระฆังคว่ำ</p>
-  <p>กับดัก: สามจุดที่พลาดบ่อย สลับตัวหารได้ 0.635 แทน 1.059 ลืมลบ μ₁ และปัด Σ₂₁ เร็วเกินไป ถ้าปัดเป็น 0.00015 จะได้ β = 1.0417 short ขาดไปราว 1.75 ล้าน และ σ ใหม่ที่ไม่ขึ้นกับขนาดข่าวเป็นสมบัติของ bivariate normal เท่านั้น ตลาดจริงมี volatility clustering วันที่ S&amp;P ลง 5% Russell 2000 พรุ่งนี้จะแกว่งกว้างกว่า 0.71% แน่นอน</p>
+  <h4>ขั้นที่ 4 — SPX ลง 3% บอกอะไรเกี่ยวกับ QQQ ของช่วงเดียวกัน</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> daily model มี $\mu_X=0.0004,\mu_Y=0.0003$, SDs 0.02 และ 0.03, correlation 0.40 และให้ข้อมูล $x=-0.03$ ตัวเลขทั้งหมดในสูตรนี้เป็น decimal returns</p>
+  <div class="math">\[
+\begin{aligned}
+\beta&=0.40(0.03/0.02)=0.60,\\
+x-\mu_X&=-0.03-0.0004=-0.0304,\\
+m(x)&=0.0003+0.60(-0.0304)\\
+&=-0.01794=-1.794\%,\\
+v_{\rm res}&=0.03^2(1-0.40^2)=0.000756,\\
+\sigma_{\rm res}&=\sqrt{0.000756}\approx2.7495\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> mean QQQ เปลี่ยนจาก +0.03% เป็น −1.794% ส่วน SD จาก 3% เหลือประมาณ 2.7495% ยังมี uncertainty มาก ไม่ใช่คำทำนายว่า QQQ ต้องปิดตรง mean</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> variance ลด 16% แต่ SD ลดเพียง $1-\sqrt{0.84}\approx8.35\%$ และต้องหัก mean ของ X ก่อนคูณ beta ไม่ใช่แทน innovation ด้วย x เฉย ๆ</p>
+  <p>Conditioning ที่ค่าแน่นอนของตัวแปรต่อเนื่องใช้นิยามผ่าน density/regular conditional law หรือขีดจำกัดของช่วงแคบ ไม่ใช่หารด้วย $P(X=x)$ ซึ่งเป็นศูนย์ ตัวอย่างนี้เป็นเรื่องข้อมูลของช่วงเดียวกัน ไม่ได้สร้างสิทธิให้เทรดย้อนเวลากลับไปก่อน SPX ลง</p>
 </section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดตรวจสองตัวอย่างจากตลาด</summary>
-    <pre><code>import numpy as np
-from scipy.stats import norm
-m=0.03+0.84/1.44*(-2.0); s=np.sqrt(1.00-0.84**2/1.44)
-assert abs(m+1.136667)&lt;1e-6 and abs(s-0.714143)&lt;1e-6
-assert abs(norm.cdf(0,m,s)-0.9443)&lt;1e-4 and abs(norm.cdf(-0.03)-0.4880)&lt;1e-4
-assert abs((m-2.326*s)-(-2.7978))&lt;1e-3
-S=np.array([[0.012**2,0.82*0.012*0.0155],[0.82*0.012*0.0155,0.0155**2]])
-b=S[1,0]/S[0,0]; r=np.sqrt(S[1,1]-S[1,0]**2/S[0,0])
-assert abs(b-1.0591667)&lt;1e-7 and abs(r-0.0088716)&lt;1e-7
-assert abs(0.0005+b*(-0.03-0.0003)-(-0.0315927))&lt;1e-7</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดนี้ตรวจค่าเฉลี่ย −1.1367% ความผันผวน 0.7141% โอกาสปิดลบ 94.4% VaR หลังข่าว −2.798% และในตัวอย่าง hedge ตรวจ β 1.0592 ความเสี่ยงที่เหลือ 0.887% กับค่าเฉลี่ย −3.159% เมื่อ ETF ร่วง 3%</p>
-  </div>
+<figure class="plot">
+  <h4>Figure 8.7a — เส้น mean ไม่ใช่เส้นที่ outcomes ต้องเกาะอยู่</h4>
+  <img src="../figures/8.7-1.svg" alt="Conditional QQQ mean มี slope 0.60 และให้ mean ลบ1.794เปอร์เซ็นต์ที่SPXลบ3เปอร์เซ็นต์" loading="lazy">
+  <figcaption>เส้นสีแดงมี slope 0.60 ผ่านจุด means (0.04%,0.03%) จุด SPX −3% จึงให้ conditional QQQ mean −1.794% Contours รอบเส้นยังแสดงการกระจาย ไม่ใช่ความสัมพันธ์ที่กำหนด Y แน่นอนจาก X</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 8.7b — Mean ขยับและ density แคบลง เป็นคนละผล</h4>
+  <img src="../figures/8.7-2.svg" alt="QQQ marginal density เทียบ conditional density หลังข้อมูลSPXลบ3เปอร์เซ็นต์" loading="lazy">
+  <figcaption>สองเส้นคือ densities ไม่ใช่แท่ง variance:conditional mean อยู่ที่ −1.794%, SD ประมาณ 2.7495 percentage points แม้ distribution แคบลง ตำแหน่งที่เลื่อนไปทางขาดทุนก็ทำให้ loss risk บางเกณฑ์แย่ลงได้</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 5 — หา hedge ด้วย variance โดยไม่ต้องสมมติ Gaussian</h4>
+  <p>คราวนี้เลือก b <em>ก่อน</em> returns เกิด ให้ target P&amp;L หลัง hedge เท่ากับ $V(Y-bX)$ ก่อนต้นทุน โดยทั้ง X, Y เป็น returns ของช่วงเดียวกันและหน่วยเดียวกัน สมมติมี second moments finite กับ $\sigma_X^2\gt0$</p>
+  <div class="math">\[
+\begin{aligned}
+c&:=\operatorname{Cov}(Y,X),\\
+v(b)&:=\operatorname{Var}(Y-bX)\\
+&=\sigma_Y^2-2bc+b^2\sigma_X^2,\\
+\beta&:=c/\sigma_X^2,\\
+v(b)&=\sigma_X^2(b-\beta)^2\\
+&\quad+\sigma_Y^2-\beta^2\sigma_X^2,\\
+b^*&=\beta,\\
+v(b^*)&=\sigma_Y^2(1-\rho^2).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>พจน์กำลังสองไม่ติดลบและต่ำสุดที่ b=beta จึงได้ unique unconstrained minimum นี่เป็นผลเรื่อง second moments ไม่ต้องใช้ joint Normal ส่วนการเรียก variance นี้ว่า conditional variance ของ Y ทุกค่า x ต้องมีเงื่อนไขเพิ่มแบบที่พิสูจน์ในขั้นที่ 1–2</p></div>
+  <p>สำหรับ QQQ \$10 ล้าน, ให้ b=0.60 จึง short SPX-linked instrument notional \$6 ล้าน ตามโมเดลอุดมคติ หากลอง b=0.30,0.60,0.90 จะได้ variances 0.000792,0.000756,0.000792 ตามลำดับ จึงเห็น minimum ไม่ใช่แค่จำสูตร beta</p>
+  <p>ถ้า covariance ติดลบ beta ก็ติดลบ: การลบ $bX$ กลายเป็นถือ X เพิ่ม ไม่ใช่ short หากข้อจำกัดบังคับ short เท่านั้นหรือจำกัด notional ต้องแก้ปัญหาที่มีข้อจำกัด ไม่ใช่เรียก beta เดิมว่า optimum ภายใต้ข้อจำกัดใหม่</p>
 </section>
-
+<figure class="plot">
+  <h4>Figure 8.7c — ลด variance ไม่ได้กำจัดทุกแหล่งขาดทุน</h4>
+  <img src="../figures/8.7-3.svg" alt="Residual daily volatility ต่ำสุดเมื่อSPX hedgeประมาณ0.60ของQQQ notional" loading="lazy">
+  <figcaption>ค่า minimum ทางวิเคราะห์คือ 0.60 ส่วนจุดแดงมาจากกริด 260 จุดจึงอยู่ใกล้ค่านี้ ที่ optimum ยังมี SD ประมาณ 2.7495% ของ target notional เดิม รูปไม่ได้รวมค่า hedge, funding, basis หรือ liquidity risk</figcaption>
+</figure>
 <section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การอัปเดตความคาดหวังของตัวหนึ่งเมื่อเห็นอีกตัว คือสูตร hedge ที่ใช้จริงบนโต๊ะ</p>
-  <p>ใช้คำนวณว่าต้องขายดัชนีเท่าไรเพื่อกลบความเสี่ยงตลาดของหุ้นที่ถืออยู่</p>
-  <p>ใช้บอกว่าหลัง hedge แล้วยังเหลือความเสี่ยงเท่าไร ซึ่งเป็นตัวเลขที่ต้องรายงานคู่กันเสมอ</p>
-  <p>ใช้ตัดสินว่าการ hedge คุ้มหรือไม่ ถ้าลดความเสี่ยงได้น้อยแต่มีต้นทุนซื้อขายสูง ก็ไม่ควรทำ</p>
+  <h4>ใช้ coefficient เดียวกัน ไม่ได้ทำให้สองงานเป็นงานเดียวกัน</h4>
+  <div class="table-wrap"><table><thead><tr><th>งาน</th><th>รู้/ทำอะไรเมื่อไร</th><th>ผลที่อ่านได้</th></tr></thead><tbody>
+    <tr><td>วาง hedge</td><td>เลือก b ก่อน X, Y ของช่วงนั้นเกิด</td><td>เปลี่ยน payoff เป็น $Y-bX$ และลด ex-ante variance ภายใต้โมเดล</td></tr>
+    <tr><td>Condition</td><td>มีข้อมูล X=x แล้ว ถาม Y ของคู่ที่กำหนดไว้</td><td>เปลี่ยนข้อมูลที่ใช้ประเมิน Y ไม่ได้สร้าง hedge ย้อนหลัง</td></tr>
+    <tr><td>Forecast ข้ามเวลา</td><td>กำหนดคู่ $X_t,Y_{t+1}$ และ fit ความสัมพันธ์นั้น</td><td>ใช้ past observation กับ future target ได้เมื่อโมเดลรองรับ ไม่ใช่เอา same-day covariance มาสวม</td></tr>
+  </tbody></table></div>
+  <p>ถ้ารู้ X=x แล้ว การหักค่าคงที่ bx ไม่ลด $\operatorname{Var}(Y\mid X=x)$ เพิ่ม เพราะ X ไม่สุ่มอีกใน conditional question นั้น การลด ex-ante variance ของ hedge เกิดจากออกแบบ payoff ของสอง legs ก่อนผลตอบแทนเกิด ไม่ใช่จากหักเลขที่รู้แล้วภายหลัง</p>
 </section>
-
-<figure class="plot">
-  <h4>Figure 8.7a — เส้นค่าเฉลี่ยหลังรู้ข่าว พาดผ่านเส้นระดับร่วม</h4>
-  <img src="../figures/8.7-1.svg" alt="Figure 8.7a — เส้นค่าเฉลี่ยหลังรู้ข่าว พาดผ่านเส้นระดับร่วม" loading="lazy">
-  <figcaption>
-    <p>เส้น conditional mean ใช้ slope 0.60 จาก covariance matrix จริง; เมื่อ SPX เท่ากับ -3.00% จุด forecast ของ QQQ อยู่ที่ -1.794%</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.7b — variance ก่อนรู้ข่าว เทียบกับหลังรู้ข่าว</h4>
-  <img src="../figures/8.7-2.svg" alt="Figure 8.7b — variance ก่อนรู้ข่าว เทียบกับหลังรู้ข่าว" loading="lazy">
-  <figcaption>
-    <p>หลังเห็น SPX เท่ากับ -3.00% conditional QQQ mean เลื่อนไป -1.794% และ daily volatility ลดจาก 3.00% เหลือ 2.75%; ความเสี่ยงแคบลงแต่ไม่หายไป</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.7c — hedge ratio กับความเสี่ยงที่เหลือ</h4>
-  <img src="../figures/8.7-3.svg" alt="Figure 8.7c — hedge ratio กับความเสี่ยงที่เหลือ" loading="lazy">
-  <figcaption>
-    <p>เส้น U แสดง residual daily volatility ของ $Y-bX$ ซึ่งต่ำสุดที่ $b=0.60$; hedge น้อยหรือมากกว่านี้เพิ่มความเสี่ยงทั้งคู่</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.7d — จากสัญญาณที่เห็น สู่การสั่ง hedge</h4>
-  <img src="../figures/8.7-4.svg" alt="Figure 8.7d — จากสัญญาณที่เห็น สู่การสั่ง hedge" loading="lazy">
-  <figcaption>
-    <p>ทุก observed SPX return เลื่อน conditional QQQ mean ตาม slope 0.60 ขณะที่แถบหนึ่ง conditional standard deviation กว้างคงที่ประมาณ 2.75% ภายใต้ MVN</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: SPX surprise เท่ากับ -3.04 จุด, hedge ratio 0.60 และ QQQ book มี exposure \$10 ล้าน.</p>
-  <p>คำตอบ: conditional QQQ mean เลื่อนเป็น -1.794% และ minimum-variance hedge เริ่มที่ short SPX \$6 ล้าน.</p>
-  <p>ตรวจเองใน 10 วินาที: กด <code>0.60*10</code> ต้องได้ \$6 ล้าน; ทิศ hedge ต้องเป็น short เพื่อหัก market exposure</p>
-  <p>แปลว่าอะไรบนโต๊ะ: hedge ratio แปลง shock ของ SPX เป็นขนาด hedge ของ QQQ กับดักคือใช้ ratio เดิมเมื่อ covariance regime เปลี่ยน.</p>
+  <h4>ขั้นที่ 6 — สมมติโมเดลข้ามวันให้ชัด แล้วดู VaR ที่อาจแย่ลง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กำหนด <em>hypothetical lagged model</em> โดย $X_t$ คือ S&amp;P 500 return วันนี้ และ $Y_{t+1}$ คือ Russell 2000 return พรุ่งนี้ ใช้หน่วย percentage points:means 0 และ 0.03, SDs 1.20 และ 1.00, lagged correlation 0.70 ตัวเลขนี้เป็นสมมติฐานฝึกคำนวณ ไม่ใช่ผลวัด predictive correlation ของตลาด</p>
+  <p>หากค่าที่คุณมีเป็น correlation ของ returns วันเดียวกัน ตัวอย่างนี้ใช้ทำนายวันถัดไปไม่ได้ ต้องประมาณและทดสอบคู่ข้ามวันจริง รวมถึงแยก training period กับช่วงทดสอบ</p>
+  <div class="math">\[
+\begin{aligned}
+x&=-2\quad\text{percentage points},\\
+\beta&=0.70(1/1.20)=7/12,\\
+m(x)&=0.03+(7/12)(-2-0)\\
+&=-1.136667,\\
+v_{\rm res}&=1^2(1-0.70^2)=0.51,\\
+\sigma_{\rm res}&=\sqrt{0.51}\approx0.714143,\\
+P(Y\lt0)&=\Phi(-0.03)\approx48.8034\%,\\
+p_*&:=P(Y\lt0\mid X=-2),\\
+p_*&=\Phi\left(\frac{1.136667}{0.714143}\right)\\
+&\approx94.4269\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> conditional variance ลด 49%, SD ลดประมาณ 28.59% แต่ mean ติดลบมากขึ้นจนโอกาสขาดทุนในโมเดลสูงขึ้น ไม่ควรดูแค่ variance แล้วสรุปว่าทุก risk metric ดีขึ้น</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> เปลี่ยนเกณฑ์เป็น return ต่ำกว่า −1% จะได้ probability เดิมประมาณ 15.15% และหลังข้อมูลประมาณ 57.59% แม้ส่วน SD ลดลงก็ตาม</p>
+  <p>กำหนด loss VaR 99% เป็น quantile 99% ของ loss ไม่ใช่ worst loss ใช้ $z_{0.99}\approx2.326347874$ จึงต้องแยก quantile ของ <em>return</em> ซึ่งอาจติดลบ ออกจาก VaR ใน USD</p>
+  <div class="math">\[
+\begin{aligned}
+q_{\rm pp}^{\rm prior}&=0.03-z_{0.99}(1)\\
+&\approx-2.296347874,\\
+q_{\rm pp}^{\rm cond}&=m(-2)-z_{0.99}\sqrt{0.51}\\
+&\approx-2.798011351,\\
+\operatorname{VaR}_{0.99}&=-V(q_{\rm pp}/100),\\
+V&=100{,}000{,}000\ \mathrm{USD}.
+\end{aligned}
+\]</div>
+  <p>ที่นี่ $q_{\rm pp}$ คือค่าตัวเลขของ return quantile ในหน่วย percentage points จึงต้องหาร 100 ก่อนคูณ V เช่น −2.296347874 percentage points เท่ากับ decimal return −0.02296347874</p>
+  <p>ได้ loss VaR จากประมาณ \$2,296,348 เป็น \$2,798,011 เพิ่มราว \$501,663 หรือ 21.85% ตัวเลขเต็มใช้ quantile ที่ละเอียดกว่า 2.326 จึงอาจต่างเล็กน้อยจากคำตอบที่ปัดระหว่างทาง และยังเป็น risk measure ตามโมเดล ไม่ใช่ขอบเขตขาดทุนสูงสุด</p>
 </section>
-
+<section class="example">
+  <h4>ขั้นที่ 7 — แปลง beta เป็นเงิน โดยไม่สลับ predictor กับ target</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> อีกโมเดลหนึ่งของช่วงวันเดียวกัน: ถือ small-cap book Y มูลค่า \$100 ล้าน, hedge ด้วย Russell 2000 ETF X สมมติ $\mu_X=0.0003,\mu_Y=0.0005$, SDs 0.0120 และ 0.0155, correlation 0.82 ทั้งคู่เป็น decimal returns นี่ไม่ใช่ชุด parameters ข้ามวันเมื่อครู่</p>
+  <div class="math">\[
+\begin{aligned}
+c&:=\operatorname{Cov}(Y,X)\\
+&=0.82(0.0120)(0.0155)=0.00015252,\\
+\beta&=\frac{0.00015252}{0.0120^2}\\
+&=1271/1200\approx1.059166667,\\
+N_{\rm short}&=\beta V\\
+&\approx105{,}916{,}666.67\ \mathrm{USD},\\
+v_{\rm res}&=0.0155^2(1-0.82^2)\\
+&=0.0000787059,\\
+\sigma_{\rm res}&\approx0.8871635\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> short notional ประมาณ \$105.917 ล้าน หากปัด beta เป็น 1.0592 ก่อนคูณ จะได้ \$105.920 ล้าน ซึ่งต่างราว \$3,333 ไม่ใช่ค่า exact เดียวกัน ที่ beta มากกว่าหนึ่งมาจากผลคูณ correlation กับ SD ratio ไม่ใช่เพียงรู้ว่า target มี SD สูงกว่า hedge</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าใช้ denominator ผิดเป็น $0.0155^2$ จะได้ประมาณ 0.634839 และ hedge น้อยกว่าที่โมเดลกำหนดราว 40.06% ส่วนการปัด covariance เป็น 0.00015 จะลด beta เหลือ 1.041667 ทำให้ short notional น้อยไป \$1.75 ล้าน</p>
+  <p>Variance ลด 67.24% แต่ SD ลด 42.7636% การรายงาน “ลดความเสี่ยง 67%” โดยไม่บอก metric จึงทำให้เข้าใจผิด และ notional short ที่มากกว่า NAV ยังต้องตรวจ margin, funding, availability และข้อจำกัดของ mandate ก่อนใช้จริง</p>
+  <p>หาก ETF return ของช่วงนั้นเป็น −3%, แบบจำลอง conditional ของ <em>unhedged target</em> ให้ mean กับช่วง prediction 95% ดังนี้ ไม่ใช่ช่วง confidence ของค่า mean</p>
+  <div class="math">\[
+\begin{aligned}
+m_*&:=m(-0.03)\\
+&=0.0005+\beta(-0.03-0.0003)\\
+&=-0.03159275=-3.159275\%,\\
+P_*&:=\mathbb E[VY\mid X=-0.03]\\
+&=-3{,}159{,}275\ \mathrm{USD},\\
+z_{0.975}&\approx1.959963985,\\
+I_{0.95}&:=m_*\pm z_{0.975}\sigma_{\rm res}\\
+&\approx[-4.8981\%,\,-1.4205\%].
+\end{aligned}
+\]</div>
+  <p>ภายใต้โมเดลที่ parameters ถูกต้องยังมี conditional probability 5% นอกช่วงนี้ และหากโมเดลผิด coverage จริงอาจต่างไปด้วย ส่วน book ที่ <em>วาง hedge ไว้ก่อนแล้ว</em> มี conditional mean หลัง hedge เท่ากับ $m(x)-\beta x=\mu_Y-\beta\mu_X$ ไม่ใช่ −3.159275% ของ unhedged target</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 8 — เปรียบเทียบ VaR หลัง hedge ต้องใช้ mean หลัง hedgeด้วย</h4>
+  <p>สำหรับ Gaussian same-period model ข้างบน payoff $H=Y-\beta X$ ยัง Gaussian ใช้ mean ใหม่กับ residual SD และคิด loss quantile ต่อ target NAV เดิม โดยยังละ funding/costs</p>
+  <div class="math">\[
+\begin{aligned}
+\mu_H&=\mu_Y-\beta\mu_X\\
+&=0.0005-\beta(0.0003)\\
+&=0.00018225,\\
+L_{99}^{\rm prior}&:=V(z_{0.99}\sigma_Y-\mu_Y)\\
+&\approx3{,}555{,}839\ \mathrm{USD},\\
+L_{99}^{\rm hedge}&:=V(z_{0.99}\sigma_{\rm res}-\mu_H)\\
+&\approx2{,}045{,}626\ \mathrm{USD},\\
+\Delta L_{99}&\approx1{,}510{,}213\ \mathrm{USD}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>นี่คือการลด modeled one-day loss VaR ไม่ใช่กำไร \$1.51 ล้าน ต่อวัน และไม่ได้บอกว่าจะถอนเงินทุนตามกฎกำกับได้เท่านี้ทันที การใช้ mean ของ unhedged target กับ SD ของ hedged payoff เป็นการผสมสองพอร์ต</p></div>
+  <p>Minimum-variance hedge ไม่จำเป็นต้องเป็น hedge ที่ลด VaR ได้มากที่สุดเมื่อ means, costs หรือ constraints สำคัญ เช่นหากจำกัด short notional ไม่เกิน \$100 ล้าน ต้องใช้ $b\le1$; ในตัวอย่างนี้ optimum ภายใต้ขอบเขตดังกล่าวอยู่ที่ b=1 ให้ SD 0.8900% แทน 0.8872%</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.7d — ข้อมูลเปลี่ยน mean แต่ residual ยังอยู่</h4>
+  <img src="../figures/8.7-4.svg" alt="QQQ conditional mean และแถบหนึ่งconditionalSDตามค่าSPXที่สังเกต" loading="lazy">
+  <figcaption>รูปกลับมาใช้ primary SPX/QQQ model ของขั้นที่ 4 แถบคือ mean ±1conditionalSD จึงครอบคลุมประมาณ 68.27% ตาม Gaussian model ไม่ใช่ 95%, ไม่ใช่ confidence interval ของ mean และไม่ใช่กรอบที่ return ออกนอกไม่ได้ ความกว้างคงที่มาจาก fixed covariance assumption</figcaption>
+</figure>
 <section class="pitfall">
-  <h4>กับดัก: ใช้ beta จาก regression โดยไม่เช็ก covariance model</h4>
-  <p>hedge ratio นี้มาจาก covariance และ target/hedge order ต้องตรงกัน สลับ numerator หรือใช้ covariance จากคนละ window จะให้ hedge ที่ดูเหมือนมีเหตุผลแต่เพิ่ม residual risk</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: สูตร hedge ที่โต๊ะใช้จริง มาจากตรงนี้</h4>
-  <p>งาน hedge พื้นฐานที่สุดคือ ถือหุ้นตัวหนึ่งอยู่ แล้วอยากตัดความเสี่ยงตลาดออก ต้องขายดัชนีเท่าไร</p>
-  <p>คนมักตอบด้วยตัวเลข correlation ซึ่งผิด เพราะ correlation ปรับสเกลไปแล้ว จึงบอกแค่ทิศ ไม่บอกขนาด</p>
-  <p>ตัวเลขที่ถูกต้องคือค่าที่โผล่ออกมาจากการถามว่า เมื่อรู้ค่าของตัวหนึ่งแล้ว ค่าเฉลี่ยของอีกตัวขยับไปเท่าไร ซึ่งเป็นคำถามที่หัวข้อนี้ตอบ</p>
-  <p>ของแถมที่มีค่าไม่แพ้กันคือ สูตรเดียวกันบอกด้วยว่าหลัง hedge แล้วเหลือความไม่แน่นอนเท่าไร ซึ่งเป็นตัวเลขที่ต้องรายงานคู่กันเสมอ เพราะ hedge ไม่เคยทำให้ความเสี่ยงเป็นศูนย์</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>ความเป็นเส้นตรง</td><td>ความสัมพันธ์เป็นเส้นตรง</td><td>ในวันที่ตลาดเหวี่ยงแรงมันไม่เป็นเส้นตรง</td><td>hedge ที่คำนวณไว้ทำงานได้แย่ที่สุดในวันที่ต้องการมันมากที่สุด</td></tr>
-      <tr><td>ความคงที่</td><td>อัตรา hedge คงที่</td><td>มันเปลี่ยนตามภาวะตลาด</td><td>ต้องคำนวณใหม่เป็นระยะ และการคำนวณใหม่บ่อยก็มีต้นทุน</td></tr>
-      <tr><td>ข้อมูลที่ใช้ประมาณ</td><td>ประมาณอัตรา hedge ได้แม่น</td><td>ค่าที่ได้เหวี่ยงตามช่วงข้อมูลที่เลือก</td><td>hedge ที่ใช้ค่าผิดอาจเพิ่มความเสี่ยงแทนที่จะลด</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวแรกคือเหตุผลที่ต้องมีการทดสอบ hedge ในภาวะวิกฤติแยกต่างหาก</p>
-  </div>
-</section>
-
-<section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>คำรับรองทางพีชคณิตไปได้ไกลแค่ไหน</h4>
   <ul>
-    <li>MVN conditional mean เป็นเส้นตรงใน observed return</li>
-    <li>hedge ratio คือ $\sigma_{X,Y}/\sigma_X^2$</li>
-    <li>conditional variance คือ residual risk หลังใช้ hedge</li>
-    <li>hedge ratio ต้อง map ต่อ notional USD เพื่อคุม P&amp;L</li>
-    <li>S&amp;P ลง 2% ทำให้โอกาส Russell 2000 ปิดลบขึ้นจาก 48.8% เป็น 94.4% และ hedge ด้วย correlation 0.866 ลดความผันผวนได้ครึ่งเดียว ไม่ใช่เกือบหมด</li>
+    <li><strong>Outside Gaussian:</strong> ให้ X เป็น standard Normal และ $Y=X^2$ จะได้ covariance ศูนย์และ best linear hedge beta ศูนย์ แต่ $\mathbb E[Y\mid X=x]=x^2$ และ conditional variance เป็นศูนย์ ไม่ใช่ residual variance 2 ของ linear fit</li>
+    <li><strong>Time alignment:</strong> same-period hedge, conditional inference และ lagged forecast ต้องมีวันที่/ช่วงถือครองถูกคู่ ความสัมพันธ์ร่วมไม่ได้ยืนยันเหตุและผลหรือให้ข้อมูลอนาคตฟรี</li>
+    <li><strong>Estimated parameters:</strong> covariance ที่ประมาณมี error และเปลี่ยนได้ตาม regime เส้น Gaussian ที่สวยไม่ใช่หลักฐานว่าความเสี่ยงในวิกฤตเท่าเดิม ต้องตรวจ stress, out-of-sample และ basis risk</li>
+    <li><strong>Trading constraints:</strong> frictionless continuous notional เป็นโจทย์อุดมคติ; fees, funding, lot sizes, availability และ bounds อาจเปลี่ยนคำตอบ</li>
   </ul>
+  <p>Regression และ conditional Gaussian formulas อธิบายว่าทำไม linear hedge ใช้ covariance เดียวกับ linear prediction ได้ แต่ไม่มีเหตุผลให้ตีความ statistical slope เป็นผลเชิงสาเหตุ หรือให้เรียก VaR ว่า maximum loss</p>
+</section>
+<section class="example">
+  <h4>สามคำถามที่แยกความเข้าใจออกจากการจำ beta</h4>
+  <p><strong>1.</strong> ใน primary model เมื่อรู้ว่า SPX return เท่ากับ mean 0.04% พอดี ไม่มี innovation แล้ว ข้อมูลนี้ไม่มีค่าเลยหรือ?</p>
+  <details><summary>เฉลย</summary><p>Mean QQQ ยังคง 0.03% แต่ conditional variance ลดจาก 0.0009 เป็น 0.000756 จึงไม่ใช่ “ไม่ได้รู้อะไรเพิ่ม” ข้อมูลที่ไม่เลื่อน mean ยังลด uncertainty ภายใต้โมเดลได้</p></details>
+  <p><strong>2.</strong> ต้องการลด SD เหลือครึ่งหนึ่งด้วย unconstrained linear hedge ต้องมี correlation เท่าไร? ถ้า correlation เท่ากับ −0.90 ต้อง short หรือ long?</p>
+  <details><summary>เฉลย</summary><p>จาก $\sqrt{1-\rho^2}\le1/2$ ได้ $|\rho|\ge\sqrt{3/4}\approx0.8660$ ถ้า rho ติดลบ beta ก็ติดลบ จึงเพิ่ม long hedge instrument ไม่ใช่ short หากบังคับ short-only ผลการลด SD นี้ใช้ไม่ได้โดยอัตโนมัติ</p></details>
+  <p><strong>3.</strong> ใช้ predictors สองตัวในหน่วย percentage points ที่ mean ศูนย์, covariance $\begin{bmatrix}1&amp;0.5\\0.5&amp;1\end{bmatrix}$ ส่วน target mean 0.1, variance 1, cross-covariance $(0.6,0.4)$ จงหา coefficients แล้ว condition ที่ $x=(1,-1)^{\mathsf T}$</p>
+  <details><summary>เฉลยแบบแก้สมการ</summary>
+    <div class="math">\[
+\begin{aligned}
+b_1+0.5b_2&=0.6,\\
+0.5b_1+b_2&=0.4,\\
+0.75b_2&=0.1,\\
+b_2&=2/15,\qquad b_1=8/15,\\
+m(x)&=0.1+8/15-2/15=0.5,\\
+v_{\rm res}&=1-(8/15)(0.6)-(2/15)(0.4)\\
+&=47/75\approx0.626667,\\
+\sigma_{\rm res}&\approx0.791623.
+\end{aligned}
+\]</div>
+    <p>ผลเป็น mean 0.5 percentage points และ SD ประมาณ 0.7916 percentage points ภายใต้ joint Gaussian ที่กำหนด ไม่ใช่เอา scalar betas ของแต่ละ predictor มาบวกโดยไม่สนใจ covariance ระหว่าง predictors</p>
+  </details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>รันใน Node.js ได้โดยไม่ใช้แพ็กเกจ ทุกชุด parameters เป็นตัวอย่างสมมติ โค้ดไม่อาจตรวจว่าคุณจับคู่ return dates ถูกหรือว่าโมเดลเป็น Gaussian จริง การใช้ variance-only hedge ไม่ต้อง Gaussian แต่ loss probabilities, prediction intervals และ Gaussian VaR ต้องมีสมมติฐาน distribution เพิ่ม</p>
+  <p>Loss VaR ในโค้ดเป็น signed loss quantile ไม่ตัดค่าติดลบเป็นศูนย์ ส่วน covariance/variance ต้องคำนวณได้ใน Number โดยไม่ overflow/underflow ตัวอย่างแยก zero residual variance ที่ถูกต้องเมื่อ $|\rho|=1$ ออกจากศูนย์ที่เกิดจากเครื่องปัดเศษ</p>
+  <pre><code class="language-javascript" data-example="8.7">function finite(x) {
+  if (!Number.isFinite(x)) throw new RangeError('Arithmetic overflow or invalid input');
+  return x;
+}
+function model(muX, muY, sx, sy, rho) {
+  if (![muX, muY, sx, sy, rho].every(Number.isFinite) || sx &lt;= 0 || sy &lt;= 0 || Math.abs(rho) &gt; 1) {
+    throw new RangeError('Need finite means, positive SDs and correlation in [-1,1]');
+  }
+  const vx = finite(sx * sx), vy = finite(sy * sy);
+  if (vx === 0 || vy === 0) throw new RangeError('Variance underflow');
+  const covariance = finite((rho * Math.max(sx, sy)) * Math.min(sx, sy));
+  const beta = finite((rho * sy) / sx);
+  const residualSD = finite(sy * Math.sqrt((1 - rho) * (1 + rho)));
+  const residualVariance = finite(residualSD * residualSD);
+  if (residualVariance === 0 &amp;&amp; Math.abs(rho) !== 1) throw new RangeError('Residual variance underflow');
+  const intercept = finite(muY - beta * muX);
+  return {muX, muY, sx, sy, rho, vx, vy, covariance, beta, residualVariance, residualSD, intercept};
+}
+function conditional(m, x) {
+  finite(x);
+  return {mean: finite(m.muY + m.beta * finite(x - m.muX)), variance: m.residualVariance, sd: m.residualSD};
+}
+function hedge(m, b) {
+  finite(b);
+  const extra = finite(m.sx * finite(b - m.beta));
+  const variance = finite(m.residualVariance + extra * extra);
+  return {b, mean: finite(m.muY - b * m.muX), variance, sd: Math.sqrt(variance),
+    covarianceWithX: finite((m.beta - b) * m.vx)};
+}
+function Phi(x) {
+  if (!Number.isFinite(x) || Math.abs(x) &gt; 6) throw new RangeError('CDF demo requires finite scores within 6');
+  const n = 12000, h = Math.abs(x) / n;
+  const phi = z =&gt; Math.exp(-.5 * z * z) / Math.sqrt(2 * Math.PI);
+  let total = 0, correction = 0;
+  for (let i = 0; i &lt;= n; i++) {
+    const term = (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * phi(i * h) - correction;
+    const next = total + term;
+    correction = (next - total) - term; total = next;
+  }
+  return .5 + Math.sign(x) * total * h / 3;
+}
+function probabilityBelow(bound, mean, sd) {
+  if (![bound, mean, sd].every(Number.isFinite) || sd &lt; 0) throw new RangeError('Invalid Normal threshold inputs');
+  if (sd === 0) return Number(mean &lt; bound); // Strict event, including deterministic endpoints.
+  return Phi(finite((bound - mean) / sd));
+}
+const z99 = 2.3263478740408408, z975 = 1.959963984540054;
+function lossVaR99(V, mean, sd) {
+  if (![V, mean, sd].every(Number.isFinite) || V &lt; 0 || sd &lt; 0) throw new RangeError('Invalid VaR inputs');
+  return finite(V * finite(z99 * sd - mean));
+}
+function twoPredictors(meanX, meanY, S, c, varianceY, observed) {
+  const vector2 = v =&gt; Array.isArray(v) &amp;&amp; v.length === 2 &amp;&amp; [...v].every(Number.isFinite);
+  if (!vector2(meanX) || !vector2(c) || !vector2(observed) || !Number.isFinite(meanY) ||
+      !Number.isFinite(varianceY) || varianceY &lt; 0 || !Array.isArray(S) || S.length !== 2 ||
+      ![...S].every(vector2)) throw new TypeError('Need finite two-predictor inputs');
+  const a = S[0][0], d = S[1][1], off = S[0][1];
+  if (off !== S[1][0] || a &lt;= 0 || d &lt;= 0) throw new RangeError('Predictor covariance must be symmetric PD');
+  const l11 = Math.sqrt(a), l21 = finite(off / l11), remainder = finite(d - l21 * l21);
+  if (remainder &lt;= 0) throw new RangeError('Predictor covariance must be symmetric PD');
+  const l22 = Math.sqrt(remainder);
+  const y1 = finite(c[0] / l11), y2 = finite((c[1] - l21 * y1) / l22);
+  const b2 = finite(y2 / l22), b1 = finite((y1 - l21 * b2) / l11);
+  const variance = finite(varianceY - (y1 * y1 + y2 * y2));
+  if (variance &lt; 0) throw new RangeError('Negative Schur complement: inspect covariance or numerical precision');
+  const mean = finite(meanY + b1 * finite(observed[0] - meanX[0]) + b2 * finite(observed[1] - meanX[1]));
+  return {beta: [b1, b2], mean, variance, sd: Math.sqrt(variance)};
+}
+const primary = model(.0004, .0003, .02, .03, .4);
+const primaryGiven = conditional(primary, -.03), primaryHedge = hedge(primary, primary.beta);
+const lagged = model(0, .03, 1.2, 1, .7); // Percentage points; hypothetical X_t and Y_(t+1).
+const laggedGiven = conditional(lagged, -2), V = 1e8;
+const laggedPriorVaR = lossVaR99(V, lagged.muY / 100, lagged.sy / 100);
+const laggedConditionalVaR = lossVaR99(V, laggedGiven.mean / 100, laggedGiven.sd / 100);
+const book = model(.0003, .0005, .012, .0155, .82);
+const bookGiven = conditional(book, -.03), bookHedge = hedge(book, book.beta);
+const beforeVaR = lossVaR99(V, book.muY, book.sy), afterVaR = lossVaR99(V, bookHedge.mean, bookHedge.sd);
+console.log(JSON.stringify({primary, primaryGiven, primaryHedge,
+  primaryAtMean: conditional(primary, primary.muX), primaryNotional: 1e7 * primary.beta,
+  primaryResidualDollars: 1e7 * primary.residualSD,
+  primaryTrial: [.3, .6, .9].map(b =&gt; hedge(primary, b)),
+  primaryCuts: {variance: primary.rho ** 2, sd: 1 - primary.residualSD / primary.sy},
+  reversePrimaryBeta: model(primary.muY, primary.muX, primary.sy, primary.sx, primary.rho).beta,
+  lagged: {given: laggedGiven, lossBefore: probabilityBelow(0, lagged.muY, lagged.sy),
+    lossAfter: probabilityBelow(0, laggedGiven.mean, laggedGiven.sd),
+    belowMinus1Before: probabilityBelow(-1, lagged.muY, lagged.sy),
+    belowMinus1After: probabilityBelow(-1, laggedGiven.mean, laggedGiven.sd),
+    priorReturnQuantile: lagged.muY - z99 * lagged.sy,
+    conditionalReturnQuantile: laggedGiven.mean - z99 * laggedGiven.sd,
+    priorVaR: laggedPriorVaR, conditionalVaR: laggedConditionalVaR,
+    difference: laggedConditionalVaR - laggedPriorVaR,
+    relativeIncrease: laggedConditionalVaR / laggedPriorVaR - 1},
+  book: {parameters: book, given: bookGiven, hedge: bookHedge, shortNotional: V * book.beta,
+    roundedNotional: V * 1.0592, reverseBeta: model(book.muY, book.muX, book.sy, book.sx, book.rho).beta,
+    relativeUndersize: 1 - book.vx / book.vy, varianceCut: book.rho ** 2, sdCut: 1 - book.residualSD / book.sy,
+    conditionalDollars: V * bookGiven.mean,
+    interval95: [bookGiven.mean - z975 * bookGiven.sd, bookGiven.mean + z975 * bookGiven.sd],
+    alreadyHedgedConditionalMean: bookGiven.mean - book.beta * (-.03),
+    priorVaR: beforeVaR, hedgedVaR: afterVaR, reduction: beforeVaR - afterVaR,
+    roundedCovarianceBeta: .00015 / book.vx, roundedCovarianceShortfall: V * (book.beta - .00015 / book.vx),
+    cappedHedge: hedge(book, 1)},
+  twoPredictors: twoPredictors([0,0], .1, [[1,.5],[.5,1]], [.6,.4], 1, [1,-1]),
+  halfSDThreshold: Math.sqrt(.75), quantileChecks: [Phi(z99), Phi(z975)]}));</code></pre>
+</section>
+<section class="takeaways">
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>Conditional Gaussian mean อัปเดตด้วย innovation $x-\mu_X$ ส่วน conditional covariance เป็น Schur complement และไม่ขึ้นกับ x ใน fixed model นี้</li>
+    <li>การกลับทิศ regression เปลี่ยน denominator; correlation ไม่เท่ากับ hedge ratio และ reverse slope ไม่ใช่ reciprocal โดยทั่วไป</li>
+    <li>Minimum-variance linear hedge ใช้ finite second moments ก็พอ แต่ conditional Normal probabilities/intervals ต้องมี distribution assumptions เพิ่ม</li>
+    <li>วาง hedge ก่อน returns เกิด, condition หลังได้รับข้อมูล และ forecast คู่ข้ามเวลาเป็นคนละงาน ต้องไม่สลับวันที่เพื่อสร้างข้อมูลอนาคต</li>
+    <li>ลด variance ไม่เท่ากับลด SD ในสัดส่วนเดียวกัน และ adverse mean อาจทำให้ VaR แย่ลงแม้ distribution แคบลง</li>
+    <li>แปลง beta เป็น notional ด้วยหน่วยและฐานเงินที่ตรงกัน; VaR reduction ไม่ใช่ profit, funding หรือ maximum-loss guarantee</li>
+  </ul>
+  <p>8.8 จะกลับมาดู linear combinations ของ MVN อย่างเป็นระบบ เพื่อระบุ distribution ของ payoff เช่นพอร์ตหรือ spread ไม่ใช่คำนวณเฉพาะ mean กับ variance</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="8.6.html">8.6 Marginals of the Multivariate Normal</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.8.html">8.8 Linear Combinations</a></div>

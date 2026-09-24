@@ -10,26 +10,108 @@
 <body>
 <div class="wrap">
 <nav class="book-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a>
 </nav>
 <header class="chapter-landing">
-  <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 8</h1>
-  <p>Covariance Matrices and the Multivariate Normal · 9 หัวข้อ</p>
-  <p class="chapter-sequence">ย่อความเสี่ยงของทั้งพอร์ตให้เหลือตารางเดียว แล้วใช้ distribution หลายมิติที่งานจริงใช้บ่อยที่สุดกับตารางนั้น</p>
+<div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
+<h1>บทที่ 8</h1>
+<p>Covariance Matrices and the Multivariate Normal · 9 หัวข้อ</p>
+<p class="chapter-sequence">จากตารางความเสี่ยงที่มีชื่อ หน่วย และลำดับชัดเจน ไปสู่ Gaussian หลายมิติที่ตอบได้ทั้ง SD, โอกาสขาดทุน, hedge และการจำลอง: แต่ละคำตอบใช้สมมติฐานไม่เท่ากัน</p>
 </header>
+<section class="prose">
+<h2>คำถามหลักของบท</h2>
+<p>โต๊ะหนึ่งถือ SPX \$6 ล้าน และ QQQ \$4 ล้าน วันนี้ต้องตอบสี่คำถาม: P&amp;L รายวันเหวี่ยงได้แค่ไหน วันแย่หนึ่งในร้อยขาดทุนเท่าไร ถ้าเห็นแล้วว่า SPX ลง 3% ควรคาด QQQ เท่าไร และถ้าอยากทดสอบพอร์ตด้วย scenarios หลายหมื่นชุด จะสร้างผลตอบแทนที่ขยับร่วมกันถูกต้องได้อย่างไร</p>
+<p>บทนี้ตอบทั้งสี่ด้วยเครื่องมือชุดเดียว คือ mean vector กับ covariance matrix และเพิ่มสมมติฐานทีละชั้น: SD ของพอร์ตใช้แค่ covariance, โอกาสขาดทุนต้องรู้รูปทรงของ distribution, การอัปเดตหลังเห็นข้อมูลต้องใช้ conditional distribution และการจำลองต้องสร้าง Gaussian จากก้อนสุ่มอิสระ เราจะบอกทุกครั้งว่าคำตอบไหนใช้สมมติฐานชั้นไหน</p>
+<p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ variance, covariance และ correlation จากบท 5 รวมถึงการคูณ matrix, transpose และ PSD/PD จากบท 7 ไม่จำเป็นต้องเคยเห็น MGF หรือ density หลายมิติมาก่อน</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 1 — ตารางความเสี่ยง และสิ่งที่มันไม่ได้บอก</h2>
+<p>เริ่มจากสร้าง mean vector และ covariance ด้วยมือ ใช้มันคำนวณความเสี่ยงของพอร์ตผ่านการแปลงเชิงเส้น แล้วดูว่าทำไม covariance เป็นศูนย์ยังไม่ได้แปลว่าสองตัวแปรไม่เกี่ยวกัน ทั้งเส้นทางนี้ยังไม่ต้องสมมติ Normal</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/8.1.html"><span class="toc-number">8.1</span><span class="toc-name">The Mean Vector and the Covariance Matrix<span class="toc-why">จัดระเบียบจุดศูนย์กลางและความสัมพันธ์ของหลายสินทรัพย์ให้อยู่ในรูป vector และ matrix</span></span></a></li>
-  <li><a href="../topics/8.2.html"><span class="toc-number">8.2</span><span class="toc-name">Linear Transformations and Portfolio Risk<span class="toc-why">คำนวณผลตอบแทนและความเสี่ยงพอร์ตผ่านการแปลงเชิงเส้น และพิสูจน์พลังของการกระจายความเสี่ยง</span></span></a></li>
-  <li><a href="../topics/8.3.html"><span class="toc-number">8.3</span><span class="toc-name">Zero Covariance ≠ Independence<span class="toc-why">เมื่อค่าความสัมพันธ์เชิงเส้นเป็นศูนย์ แต่ตัวแปรยังผูกพันกันอย่างแนบแน่น</span></span></a></li>
-  <li><a href="../topics/8.4.html"><span class="toc-number">8.4</span><span class="toc-name">The Multivariate Normal Density<span class="toc-why">รูปทรงเดียวที่บอก mean, covariance และ joint probability ของ returns</span></span></a></li>
-  <li><a href="../topics/8.5.html"><span class="toc-number">8.5</span><span class="toc-name">The Moment Generating Function (MGF)<span class="toc-why">เครื่องกำเนิด moments ที่ย่อ distribution ให้คำนวณค่าเฉลี่ยและ variance ได้</span></span></a></li>
-  <li><a href="../topics/8.6.html"><span class="toc-number">8.6</span><span class="toc-name">Marginals of the Multivariate Normal<span class="toc-why">ฉาย joint Normal ลงแกนเดียวแล้วได้ Normal ที่ใช้ทำ single-name risk</span></span></a></li>
-  <li><a href="../topics/8.7.html"><span class="toc-number">8.7</span><span class="toc-name">The MVN Conditional Distribution and the Hedge Ratio<span class="toc-why">ใช้ผลตอบแทนของ asset หนึ่งอัปเดตค่าเฉลี่ยและสร้าง hedge ของอีก asset</span></span></a></li>
-  <li><a href="../topics/8.8.html"><span class="toc-number">8.8</span><span class="toc-name">Linear Combinations<span class="toc-why">รวม correlated Normal returns ให้เป็น P&amp;L scalar ที่คำนวณค่าเฉลี่ยและ variance ได้</span></span></a></li>
-  <li><a href="../topics/8.9.html"><span class="toc-number">8.9</span><span class="toc-name">Simulating the MVN with the Cholesky Decomposition<span class="toc-why">สร้าง correlated scenarios จาก independent shocks ด้วย factorization ที่ตรวจได้</span></span></a></li>
+<li><a href="../topics/8.1.html"><span class="toc-number">8.1</span><span class="toc-name">The Mean Vector and the Covariance Matrix<span class="toc-why">ตัวเลขชุดเดียวกันแต่เรียงชื่อต่างกัน ทำให้ SD รายวันเปลี่ยนจาก 1.6571% เป็น 1.8958%: ตารางต้องมีชื่อ หน่วย และช่วงเวลากำกับ</span></span></a></li>
+<li><a href="../topics/8.2.html"><span class="toc-number">8.2</span><span class="toc-name">Linear Transformations and Portfolio Risk<span class="toc-why">เพิ่มหุ้นจาก 10 เป็น 100 ตัวที่ correlation 0.35 ลด SD จาก 12.88% เหลือ 11.94% เท่านั้น: กฎ $1/\sqrt N$ ต้องใช้ covariance เป็นศูนย์</span></span></a></li>
+<li><a href="../topics/8.3.html"><span class="toc-number">8.3</span><span class="toc-name">Zero Covariance ≠ Independence<span class="toc-why">พอร์ตที่ขาดทุน \$3,000 ทั้งตอนตลาดขึ้นและลงแรงมี covariance กับตลาดเป็นศูนย์: พจน์ไขว้หาย ไม่ได้แปลว่าไม่เกี่ยวกัน</span></span></a></li>
 </ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> ถ้าได้ SD 2% และ 3% กับ correlation 0.4 มาเป็นสามตัวเลข จะสร้าง covariance matrix อย่างไร และถ้ามีคนส่งตารางที่เรียง QQQ ก่อน SPX มา ต้องสลับอะไรบ้างก่อนคูณกับน้ำหนัก?</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 2 — Gaussian หลายมิติ: รูปทรง เครื่องมือ และการตัดมิติ</h2>
+<p>เมื่ออยากรู้มากกว่าสอง moments ต้องมีรูปทรงของ distribution หลายมิติ เรียน density ของ MVN ผ่านระยะ Mahalanobis ใช้ MGF เป็นเครื่องมือที่พิสูจน์สมบัติของ Gaussian ได้ในไม่กี่บรรทัด แล้วตัดมิติที่ไม่สนใจออกโดยไม่แอบเปลี่ยนคำถาม</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="4">
+<li><a href="../topics/8.4.html"><span class="toc-number">8.4</span><span class="toc-name">The Multivariate Normal Density<span class="toc-why">หุ้นสองตัวที่แต่ละตัวห่าง mean เพียง 1.5 SD แต่สวนทางกันที่ correlation 0.82 อยู่ไกลถึงระยะ Mahalanobis 5: ความแปลกดูที่คู่ ไม่ใช่ทีละตัว</span></span></a></li>
+<li><a href="../topics/8.5.html"><span class="toc-number">8.5</span><span class="toc-name">The Moment Generating Function (MGF)<span class="toc-why">ราคาเฉลี่ยปลายปีคือ \$112.10 ไม่ใช่ \$109.42: MGF หาค่าเฉลี่ยของ $e^{tR}$ ให้ และเป็นเครื่องมือพิสูจน์หลักของทั้งบท</span></span></a></li>
+<li><a href="../topics/8.6.html"><span class="toc-number">8.6</span><span class="toc-name">Marginals of the Multivariate Normal<span class="toc-why">ไม่ถือ QQQ ให้ SD ของ SPX 2% แต่รู้ว่า QQQ ใกล้ศูนย์ให้ 1.833%: การตัดมิติ (marginal) กับการรู้ค่า (conditional) เป็นคนละคำถาม</span></span></a></li>
+</ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> ใน MVN ทำไมการตั้งน้ำหนัก QQQ เป็นศูนย์ไม่เปลี่ยน distribution ของ SPX แต่การตั้ง<em>ผลตอบแทน</em> QQQ เป็นศูนย์กลับเปลี่ยน? ความต่างนี้จะกลับมาเป็นหัวใจของ 8.7</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 3 — ใช้งานบนโต๊ะ: อัปเดต รวม และจำลอง</h2>
+<p>สามหัวข้อสุดท้ายเอาทุกอย่างมาทำงาน: ใช้ conditional distribution อัปเดต QQQ หลังเห็น SPX และหา hedge ratio, รวมหลายสินทรัพย์เป็นตัวเลขตัวเดียวแล้วอ่าน VaR และสร้าง scenarios ที่ขยับร่วมกันถูกต้องจากเลขสุ่มอิสระด้วย Cholesky</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="7">
+<li><a href="../topics/8.7.html"><span class="toc-number">8.7</span><span class="toc-name">The MVN Conditional Distribution and the Hedge Ratio<span class="toc-why">hedge QQQ \$10 ล้าน ด้วย SPX ต้อง short \$6 ล้าน ไม่ใช่ \$4 ล้าน เพราะ beta คือ $0.4\times3/2=0.6$ และยังเหลือ SD 2.75% ที่ hedge ไม่ได้</span></span></a></li>
+<li><a href="../topics/8.8.html"><span class="toc-number">8.8</span><span class="toc-name">Linear Combinations<span class="toc-why">mean 6.4% กับ SD 9.6% ให้ VaR 99% \$15.93 ล้าน ได้ก็ต่อเมื่อสมมติ joint Gaussian: สองเลขเดียวกันกับสมมติฐานต่างกันให้คำตอบต่างกัน</span></span></a></li>
+<li><a href="../topics/8.9.html"><span class="toc-number">8.9</span><span class="toc-name">Simulating the MVN with the Cholesky Decomposition<span class="toc-why">ผสมเลขสุ่มด้วย 0.6 กับ 0.4 ได้ correlation 0.832 แทน 0.6: น้ำหนักต้องยกกำลังสองแล้วรวมได้ 1 และ Cholesky ทำสิ่งนี้ให้ทุกมิติ</span></span></a></li>
+</ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> ทำไม residual SD 2.7495% ใน 8.7, ความเสี่ยงที่เหลือหลัง hedge และช่อง $\ell_{22}$ ของ Cholesky factor ใน 8.9 จึงเป็นตัวเลขเดียวกัน?</p>
+</section>
+<section class="example">
+<h2>โจทย์เชื่อมทั้งบท — หนึ่งพอร์ต ตั้งแต่ตารางถึงการจำลอง</h2>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> NAV \$10 ล้าน ถือ SPX \$6 ล้าน และ QQQ \$4 ล้าน แบบจำลองรายวันเดียวกับ 8.6–8.9: mean $(0.0004, 0.0003)$, SD 2% และ 3%, correlation 0.4 ให้ $e=(6, 4)^{\mathsf T}$ เป็นมูลค่าแต่ละขาในหน่วยล้าน USD (ในสูตรเขียนย่อเป็น M USD) และ $z_{0.99}\approx2.326348$</p>
+<p><strong>1.</strong> covariance matrix ของผลตอบแทนรายวันคืออะไร?</p>
+<details><summary>ดูเฉลยข้อ 1</summary><p>ทแยงคือ $0.02^2=0.0004$ และ $0.03^2=0.0009$ นอกทแยงคือ $0.4(0.02)(0.03)=0.00024$ เรียง SPX ก่อน QQQ ตามลำดับของ $e$ (8.1)</p></details>
+<p><strong>2.</strong> mean และ SD ของ P&amp;L รายวันเป็นเท่าไรในหน่วย USD?</p>
+<details><summary>ดูเฉลยข้อ 2 พร้อมหน่วย</summary>
+<div class="math">\[
+\begin{aligned}
+\mathbb E[\text{P\&amp;L}]&=6(0.0004)+4(0.0003)\\
+&=0.0036\ \text{M USD}=3{,}600\ \text{USD},\\
+\operatorname{Var}&=6^2(0.0004)+2(6)(4)(0.00024)\\
+&\quad+4^2(0.0009)\\
+&=0.0144+0.01152+0.0144\\
+&=0.04032\ (\text{M USD})^2,\\
+\text{SD}&=\sqrt{0.04032}\approx0.200798\ \text{M USD}.
+\end{aligned}
+\]</div>
+<p>SD ประมาณ \$200,798 ต่อวัน หรือ 2.008% ของ NAV พจน์กลาง 0.01152 คือส่วนที่มาจาก covariance ถ้าลืมจะได้ SD แค่ \$169,706 (8.2 และ 8.8)</p>
+</details>
+<p><strong>3.</strong> VaR 99% หนึ่งวันเป็นเท่าไร และใช้สมมติฐานอะไรเพิ่มจากข้อ 2?</p>
+<details><summary>ดูเฉลยข้อ 3</summary><p>ต้องสมมติเพิ่มว่าผลตอบแทนทั้งสองเป็น joint Gaussian พอร์ตจึงเป็น Normal (8.8) แล้ว quantile 1% ของ P&amp;L คือ $3{,}600-2.326348(200{,}798)\approx-463{,}527$ USD VaR 99% จึงประมาณ \$463,527 ข้อ 2 ใช้ได้กับทุก distribution ที่มี variance จำกัด แต่ข้อนี้ไม่ใช่</p></details>
+<p><strong>4.</strong> ตอนบ่ายเห็นแล้วว่า SPX ของวันนี้ลง 3% พอร์ตควรคาด P&amp;L วันนี้เท่าไร และยังไม่แน่นอนแค่ไหน?</p>
+<details><summary>ดูเฉลยข้อ 4</summary><p>ขา SPX รู้ผลแล้ว: $6\times(-0.03)=-0.18$ ล้าน ขา QQQ ใช้ conditional distribution จาก 8.7: mean $0.0003+0.6(-0.03-0.0004)=-0.01794$ และ SD $0.03\sqrt{1-0.4^2}\approx0.0274955$ ขา QQQ จึงคาด $4(-0.01794)=-0.07176$ ล้าน รวมคาด −\$251,760 ความไม่แน่นอนเหลือแค่ขา QQQ คือ SD $4(0.0274955)\approx\$109{,}982$ ไม่ใช่ \$200,798 เดิม</p></details>
+<p><strong>5.</strong> ถ้าต้องการลดความเสี่ยงของขา QQQ ขาเดียวด้วย SPX futures ก่อนตลาดเปิด ต้อง short เท่าไร และ SD ของขานั้นลดลงเท่าไร?</p>
+<details><summary>ดูเฉลยข้อ 5</summary><p>beta $=0.00024/0.0004=0.6$ จึง short SPX $0.6\times4=\$2.4$ ล้าน SD ของขา QQQ ลดจาก $4(0.03)=\$120{,}000$ เหลือ \$109,982 variance ลด $\rho^2=16\%$ แต่ SD ลดเพียงราว 8.35% ตัวเลข \$109,982 เท่ากับข้อ 4 เพราะความเสี่ยงที่ hedge ไม่ได้คือส่วนที่ SPX อธิบายไม่ได้ ตัวเดียวกัน (8.7)</p></details>
+<p><strong>6.</strong> ระบบ Monte Carlo สุ่มได้ $z=(-1.5, 0.5)$ ใช้ Cholesky factor ของข้อ 1 สร้างผลตอบแทนและ P&amp;L ของเส้นทางนี้</p>
+<details><summary>ดูเฉลยข้อ 6</summary>
+<div class="math">\[
+\begin{aligned}
+L&=\begin{bmatrix}0.02&amp;0\\0.012&amp;0.0274955\end{bmatrix},\\
+r_1&=0.0004+0.02(-1.5)=-0.0296,\\
+r_2&=0.0003+0.012(-1.5)\\
+&\quad+0.0274955(0.5)\approx-0.003952,\\
+\text{P\&amp;L}&=6(-0.0296)+4(-0.003952)\\
+&\approx-0.193409\ \text{M USD}.
+\end{aligned}
+\]</div>
+<p>เส้นทางนี้ขาดทุนประมาณ \$193,409 ห่าง mean ราว 0.98 SD ของ P&amp;L คือวันแย่ระดับที่เกิดราว 1 ใน 6 วันตามโมเดล ไม่ใช่ stress ทั้งที่ SPX ลงเกือบ 3% เพราะ shock ของ QQQ เองเป็นบวก ถ้าต้องการ tail ต้องสุ่มหลายเส้นทางแล้วนับ ไม่ใช่เลือกเส้นเดียว (8.9)</p>
+</details>
+</section>
+<section class="takeaways">
+<h2>ก่อนเดินต่อบท 9</h2>
+<ul>
+<li>ตรวจชื่อ ลำดับ หน่วย และช่วงเวลาของ mean vector กับ covariance ก่อนคูณทุกครั้ง</li>
+<li>SD ของพอร์ตต้องการแค่ covariance แต่ VaR, conditional forecast และการจำลองแบบ Gaussian ต้องการสมมติฐาน joint Gaussian เพิ่ม</li>
+<li>covariance เป็นศูนย์ไม่เท่ากับ independent ยกเว้นเมื่อ joint distribution เป็น Gaussian</li>
+<li>beta, residual SD, ความเสี่ยงที่เหลือหลัง hedge และ pivot ของ Cholesky คือการมองเรื่องเดียวกันจากคนละมุม</li>
+</ul>
+<p>บท 9 จะเอา shock อิสระแบบเดียวกับ 8.9 มาเรียงต่อกันตามเวลา แทนการเรียงตามสินทรัพย์ แล้วสร้าง Brownian motion ซึ่งเป็นแบบจำลองพื้นฐานของเส้นทางราคา</p>
+</section>
 </div>
 </body>
 </html>

@@ -15,385 +15,355 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 46/158</span>
 </nav>
-
-<article class="topic" data-number="8.4" data-depends-on="5.1 8.1 7.6">
+<article class="topic" data-number="8.4" data-depends-on="1.8 1.9 5.1 7.5 7.6 8.1 8.2 8.3">
 <header class="topic-header">
   <h1><span class="tnum">8.4</span> The Multivariate Normal Density</h1>
-  <p class="subtitle">รูปทรงเดียวที่บอก mean, covariance และ joint probability ของ returns</p>
+  <p class="subtitle">เปลี่ยนระฆังคว่ำหลายใบให้เป็นแบบจำลองร่วม แล้วแยกความสูงของ density ออกจาก probability</p>
 </header>
-
 <div class="hook">
-  <p>หุ้นสองตัวผันผวนวันละ 2% เท่ากันและ correlation 0.82 วันนี้ตัวแรกขึ้น 3% ตัวที่สองลง 3% แต่ละตัวขยับแค่ 1.5 เท่าของความผันผวน วันนี้แปลกแค่ไหน?</p>
-  <p>เฉลย: แปลกมาก เมื่อคิด correlation ด้วย ระยะที่ถูกต้องคือ √(4.5/0.18) = 5 เท่ากับเหตุการณ์ 5σ วันแบบนี้เกิดราว 1 ใน 270,000 วัน ส่วนวันที่ทั้งคู่ขึ้น 3% พร้อมกันมีระยะแค่ 1.57 เกิดราว 29% ของวัน</p>
-  <p>Multivariate Normal density คือแบบจำลองรูประฆังหลายมิติที่เก็บค่าเฉลี่ยและการขยับร่วมไว้พร้อมกัน ใช้คำนวณความน่าจะเป็นของหลายตัวแปรที่สัมพันธ์กัน</p>
+  <p>สมมติหุ้นสหรัฐสองตัวมี mean รายวันศูนย์, SD ตัวละ 2% และ joint Normal correlation 0.82 วันนี้ตัวหนึ่งขึ้น 3% อีกตัวลง 3% แต่ละตัวห่าง mean เพียง 1.5 SD แล้วเหตุใดคู่นี้จึงดูแปลกมากในแบบจำลองร่วม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>แบบจำลองคาดให้สองตัวเคลื่อนไหวไปด้วยกัน การสวนทางจึงมี squared Mahalanobis distance $q=25$ หรือระยะ $d=5$ โอกาสอยู่ภายนอกวงรีที่ไกลอย่างน้อยเท่านี้ในทุกทิศทางคือประมาณ $3.73\times10^{-6}$ ไม่ใช่ probability ของจุดที่เห็น และไม่ใช่ univariate “5-sigma tail”</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากวันที่ดูธรรมดา แต่ไม่ธรรมดาเลย</h4>
-  <p>หุ้นสองตัวผันผวนวันละ 2% เท่ากัน และเกาะกันแน่นที่ correlation 0.82 วันนี้ตัวแรกขึ้น 3% ตัวที่สองลง 3% ดูทีละตัวแล้วไม่มีอะไรน่าตกใจ แต่ละตัวขยับแค่ 1.5 เท่าของความผันผวนของมันเอง</p>
-  <p>แต่ทั้งคู่ควรจะเดินไปทางเดียวกัน วันนี้มันเดินสวนกันคนละทาง ถ้าวัดระยะโดยนับความเกี่ยวกันเข้าไปด้วย วันนี้อยู่ห่างจากปกติถึง 5 เท่า ซึ่งเป็นวันที่เกิดราวครั้งเดียวใน 270,000 วัน</p>
-  <p>เครื่องมือที่วัดระยะแบบนั้นได้คือรูประฆังหลายมิติ มันเก็บค่าเฉลี่ยกับตารางความเกี่ยวกันจากหัวข้อ 8.1 ไว้ในสูตรเดียว แล้วตอบได้ว่าจุดไหนบนแผนที่หายากแค่ไหน หัวข้อนี้สร้างสูตรนั้นขึ้นมา</p>
+  <h4>เรากำลังเพิ่มสมมติฐานอะไรจาก covariance matrix</h4>
+  <p>บทก่อนแสดงว่า mean และ covariance ชุดเดียวกันอยู่ร่วมกับ joint distributions ได้หลายแบบ ในหัวข้อนี้เราเลือกแบบจำลอง <em>jointly Gaussian</em> เพิ่มเข้ามา จึงคำนวณ density และ probability ของบริเวณต่าง ๆ ได้ ไม่ใช่ให้ covariance ตัดสินรูปร่าง distribution เอง</p>
+  <p>คำถามเปิดใช้หุ้นสมมติ SD เท่ากันและ correlation 0.82 ส่วนตัวอย่างหลักกับรูปใช้ SPX/QQQ สมมติที่ SD 2%/3% และ correlation 0.40 เราจะระบุค่าทั้งชุดก่อนคำนวณ ไม่สลับสองแบบจำลองนี้ระหว่างทาง</p>
 </section>
-
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Multivariate Normal (MVN) distribution</dt>
-    <dd>distribution ของ vector ที่ทุก linear combination มี Normal distribution ใช้เป็น joint return model ที่สรุปด้วย mean vector และ covariance matrix</dd>
-    <dt>Normal distribution</dt>
-    <dd>distribution รูประฆังที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็น building block ของ MVN และ return scenario</dd>
-    <dt>probability density function (PDF)</dt>
-    <dd>density ที่ต้อง integrate เหนือพื้นที่จึงได้โอกาสใช้แสดงความสูงของ joint distribution</dd>
-    <dt>covariance matrix</dt>
-    <dd>matrix ที่เก็บ variance และ co-movement ของผลตอบแทนใช้กำหนดทิศทางและความกว้างของ MVN ellipse</dd>
-    <dt>correlation</dt>
-    <dd>covariance ที่หารด้วย standard deviations ของทั้งสองตัว จึงอยู่ระหว่าง -1 ถึง 1 ใช้สื่อความแรงและทิศของ co-movement โดยไม่ติดหน่วย</dd>
-    <dt>variance</dt>
-    <dd>ค่ากระจายรอบค่าเฉลี่ยที่ใช้วัดความกว้างของ return distribution และกำหนด diagonal ของ covariance matrix</dd>
-    <dt>spread</dt>
-    <dd>ขนาดการกระจายของผลตอบแทนรอบค่าเฉลี่ยใช้ตีความความกว้างของ density และความผันผวนในหน่วย return</dd>
-    <dt>factor</dt>
-    <dd>ตัวแปรร่วมที่ขับเคลื่อนผลตอบแทนหลายสินทรัพย์ ใช้สรุป source ของ co-movement ใน joint model</dd>
-    <dt>volatility</dt>
-    <dd>ขนาดความผันผวนที่อ่านจาก standard deviation ใช้แปลง spread ของ return distribution เป็น risk number</dd>
-    <dt>standard deviation</dt>
-    <dd>รากที่สองของ variance ใช้รายงาน spread กลับมาในหน่วย return/day ที่ trader อ่านได้</dd>
-    <dt>Mahalanobis distance</dt>
-    <dd>ระยะจากค่าเฉลี่ยที่วัดหลังปรับตามความผันผวนและ correlation ของข้อมูลแล้ว ใช้บอกว่าจุดหนึ่งน่าประหลาดใจแค่ไหน เป็นหลักของระบบจับความผิดปกติในเดสก์ความเสี่ยง</dd>
-    <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ของตลาดสหรัฐฯ ใช้เป็นผลตอบแทนตัวแรกใน joint model</dd>
-    <dt>QQQ</dt>
-    <dd>กองทุนที่ติดตาม Nasdaq-100 ของตลาดสหรัฐฯ ใช้เป็นผลตอบแทนตัวที่สองใน joint model</dd>
+    <dt>Multivariate Normal (MVN)</dt><dd>joint Gaussian distribution สร้างได้จาก affine transformation ของ standard Normals ที่เป็นอิสระกัน ไม่ใช่แค่แต่ละ marginal เป็น Normal</dd>
+    <dt>Mahalanobis distance</dt><dd>ระยะจาก mean หลังปรับทั้งความกว้างและ co-movement ใช้ covariance เป็นเกณฑ์เทียบระยะ</dd>
+    <dt>Whitening</dt><dd>เปลี่ยนพิกัดให้ covariance เป็น identity ในกรณี joint Normal จะได้ Gaussian components อิสระด้วย แต่ covariance identity อย่างเดียวไม่ได้ให้ผลนี้สำหรับทุก distribution</dd>
+    <dt>Jacobian / volume scaling</dt><dd>ตัวคูณที่บอกว่าการเปลี่ยนพิกัดยืดพื้นที่หรือปริมาตรเท่าไร density ต้องปรับกลับเพื่อให้ probability คงเดิม</dd>
+    <dt>Probability ellipse</dt><dd>บริเวณวงรีที่ครอบคลุมสัดส่วนหนึ่งของผลลัพธ์ภายใต้แบบจำลอง ไม่ใช่ confidence region ของ mean ที่ยังไม่รู้ค่า</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$r$</td><td>vector ของ SPX และ QQQ returns</td><td>decimal return/day</td></tr>
-      <tr><td>$\mu$</td><td>mean vector ของ $r$</td><td>decimal return/day</td></tr>
-      <tr><td>$\Sigma$</td><td>covariance matrix ของ $r$</td><td>return²/day²</td></tr>
-      <tr><td>$d$</td><td>จำนวน dimensions ของ return vector</td><td>นับสินทรัพย์</td></tr>
-      <tr><td>$f(r)$</td><td>MVN joint PDF</td><td>$1/\text{return}^d$</td></tr>
-    </tbody>
-  </table>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>บทบาท</th></tr></thead><tbody>
+    <tr><td>$R,r$</td><td>vector ผลตอบแทนสุ่ม และค่าที่นำมาประเมิน ใช้ decimal returns เช่น 2% = 0.02</td></tr>
+    <tr><td>$\mu,\Sigma$</td><td>mean และ covariance ของผลตอบแทนช่วงถือครองเดียวกัน; covariance มีหน่วย decimal-return²</td></tr>
+    <tr><td>$s_i$</td><td>marginal standard score $(r_i-\mu_i)/\sigma_i$ ซึ่งยังสัมพันธ์กันได้</td></tr>
+    <tr><td>$z,L$</td><td>พิกัด whitened และ matrix ที่ทำให้ $\Sigma=LL^{\mathsf T}$</td></tr>
+    <tr><td>$q(r),d(r)$</td><td>ระยะยกกำลังสองและระยะ Mahalanobis โดย $d=\sqrt q$ ทั้งคู่ไม่มีหน่วย</td></tr>
+  </tbody></table></div>
 </details>
 
 <section class="formula">
-  <h4>ขั้นที่ 1 — ที่มาและการสร้าง MVN density จาก Standard Normal</h4>
-  <p>แทนที่จะจำสูตร density สำเร็จรูป ขั้นนี้สร้างขึ้นจากจุดเริ่มต้นที่ง่ายที่สุด นั่นคือ vector ของ Standard Normal ที่เป็นอิสระต่อกัน แล้วแปลงเชิงเส้นผ่าน matrix เพื่อกำหนด mean vector และ covariance matrix ตามต้องการ</p>
+  <h4>ขั้นที่ 1 — เริ่มจากแหล่งสุ่มอิสระ แล้วผสมด้วย matrix</h4>
+  <p>กำหนด $Z_1,\ldots,Z_n$ เป็น standard Normal ที่อิสระกัน จึงมี joint density เป็นผลคูณของ density รายตัว จากนั้นให้ $R=\mu+LZ$ โดย $L$ เป็น matrix คงที่</p>
   <div class="math">\[
 \begin{aligned}
-f_Z(z) &= \prod_{i=1}^d \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2} z_i^2}\\
-&= \frac{1}{(2\pi)^{d/2}} e^{-\frac{1}{2} z^\top z} \\
-r &= \mu + L z\\
-&\implies z = L^{-1}(r - \mu) \quad (L L^\top = \Sigma) \\
-J &= \frac{\partial r}{\partial z} = L\\
-&\implies |\det J| = |\det L|\\
-&= \sqrt{\det(L L^\top)} = |\Sigma|^{1/2} \\
-z^\top z &= (r - \mu)^\top (L^{-1})^\top L^{-1} (r - \mu)\\
-&= (r - \mu)^\top (L L^\top)^{-1} (r - \mu)\\
-&= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
-f(r) &= f_Z(L^{-1}(r - \mu)) \cdot |\det J|^{-1}\\
-&= \frac{1}{(2\pi)^{d/2} |\Sigma|^{1/2}} e^{-\frac{1}{2}(r - \mu)^\top \Sigma^{-1} (r - \mu)}
+Z_i&\sim N(0,1)\quad\text{อย่างอิสระ},\\
+f_Z(z)&=\prod_{i=1}^n\frac1{\sqrt{2\pi}}e^{-z_i^2/2}\\
+&=(2\pi)^{-n/2}e^{-z^{\mathsf T}z/2},\\
+R&:=\mu+LZ,\\
+\mathbb E[R]&=\mu+L\mathbb E[Z]=\mu,\\
+\operatorname{Cov}(R)&=L I_n L^{\mathsf T}=LL^{\mathsf T}=\Sigma.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>เริ่มต้นจาก vector $Z$ ขนาด $d$ มิติ ที่แต่ละแกนเป็น Standard Normal อิสระต่อกัน joint density จึงเขียนเป็นผลคูณของแต่ละแกน และรวมเลขชี้กำลังเป็นผลบวกกำลังสอง $-\frac{1}{2} z^\top z$</p>
-    <p>เมื่อแปลงพิกัด $r = \mu + Lz$ จุดศูนย์กลางจะเลื่อนไปที่ mean vector $\mu$ และรูปทรงจะถูกยืดหมุนตาม matrix $L$ ที่สอดคล้องกับ $L L^\top = \Sigma$ โดยเราหาตัวแปรมาตรฐานเดิมกลับคืนมาได้จากสมการ $z = L^{-1}(r - \mu)$</p>
-    <p>การเปลี่ยนตัวแปรหลายมิติต้องหารด้วยปริมาตรที่ยืดออกผ่าน Jacobian determinant $|\det L|$ ซึ่งมีค่าเท่ากับ $|\Sigma|^{1/2}$ เพราะ determinant ของ $L L^\top$ เท่ากับ determinant ของ $\Sigma$</p>
-    <p>เมื่อแทน $z$ ลงในพจน์กำลังสอง ผลคูณ inverse $(L^{-1})^\top L^{-1}$ ยุบรวมเป็น $\Sigma^{-1}$ ทำให้เกิด Mahalanobis distance ในเลขชี้กำลังทันที</p>
-    <p>สูตรนี้ใช้ได้เมื่อ $\Sigma$ เป็น positive definite เท่านั้น หาก determinant เป็นศูนย์ ปริมาตร variance จะแบนราบลงสู่มิติที่ต่ำกว่า และไม่มี density บนปริมาตรเต็มของ $\mathbb{R}^d$</p>
-  </div>
+  <div class="reading"><p>mean เลื่อนตำแหน่ง ส่วน $L$ หมุน ยืด หรือผสมการแกว่ง สูตร covariance มาจาก 8.2 ความเป็น Gaussian มาจากการเลือกแหล่งสุ่ม Gaussian ตั้งแต่ต้น ไม่ได้มาจากการมี covariance matrix เพียงอย่างเดียว</p></div>
+  <p>สำหรับ density เต็มมิติที่จะใช้ต่อไป ให้ $\Sigma$ เป็น symmetric positive definite จึงเลือก $L$ ที่ invertible ได้ เช่น Cholesky ซึ่งจะสร้างละเอียดใน 8.9 ถ้า $L$ ลด rank ก็ยังสร้าง Gaussian vector ได้ แต่ผลลัพธ์อยู่บนพื้นที่มิติต่ำกว่า และต้องแยกจากกรณี density เต็มมิติ</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 2 — ที่มาของ Mahalanobis distance: ระยะ Euclidean ในระบบพิกัดมาตรฐาน</h4>
-  <p>Mahalanobis distance คือระยะทาง Euclidean ธรรมดาหลังขจัดความผันผวนและ correlation ออกไป โดยหมุนและปรับสเกลข้อมูลให้กลับไปอยู่บนแกนของตัวแปรมาตรฐาน</p>
+  <h4>ขั้นที่ 2 — ทำไมมี determinant อยู่ใต้ density</h4>
+  <p>บริเวณเล็ก ๆ ในพิกัด $z$ ถูก $L$ เปลี่ยนปริมาตรด้วยตัวคูณ $|\det L|$ probability ของบริเวณนั้นต้องเท่าเดิม เมื่อพื้นที่กว้างขึ้น density จึงต้องต่ำลงตามสัดส่วน ไม่ใช่เพิ่ม probability ขึ้นเอง</p>
   <div class="math">\[
 \begin{aligned}
-q(r) &= (r - \mu)^\top \Sigma^{-1} (r - \mu) \\
-&= (r - \mu)^\top (L L^\top)^{-1} (r - \mu) \\
-&= [L^{-1}(r - \mu)]^\top [L^{-1}(r - \mu)] \\
-&= z^\top z = \sum_{i=1}^d z_i^2
+z&=L^{-1}(r-\mu),\\
+dr&=|\det L|\,dz,\\
+\det\Sigma&=\det(LL^{\mathsf T})=(\det L)^2,\\
+|\det L|&=\sqrt{\det\Sigma},\\
+f_R(r)&=\frac{f_Z(L^{-1}(r-\mu))}{|\det L|},\\
+q(r)&:=z^{\mathsf T}z\\
+&=(r-\mu)^{\mathsf T}\Sigma^{-1}(r-\mu),\\
+f_R(r)&=\frac{e^{-q(r)/2}}{(2\pi)^{n/2}\sqrt{\det\Sigma}}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>เมื่อแยกตัวประกอบ covariance matrix เป็น $\Sigma = L L^\top$ และกระจาย inverse จะสามารถแยก matrix ตรงกลางออกเป็นสองฟากประกบ vector ทั้งหน้าและหลัง</p>
-    <p>พจน์ $L^{-1}(r - \mu)$ แท้จริงแล้วคือ vector $z$ ในระบบพิกัดที่ไร้ correlation และมี standard deviation เท่ากับหนึ่งในทุกทิศทาง</p>
-    <p>ผลคูณ inner product จึงยุบลงเหลือเพียงผลรวมของ $z_i^2$ แสดงว่า Mahalanobis distance คือระยะห่าง Euclidean บนพิกัดมาตรฐานนั่นเอง</p>
-    <p>จุดทุกจุดที่มีค่า $q(r)$ เท่ากันจึงเป็นทรงกลมบนพิกัด $z$ ซึ่งเมื่อมองย้อนกลับมาบนพิกัดเดิม $r$ จะปรากฏเป็นทรงรี contour ที่เอียงตาม covariance</p>
-  </div>
+  <div class="reading"><p>$dr,dz$ หมายถึงปริมาตรย่อย $n$ มิติ เช่นพื้นที่เมื่อ $n=2$ ไม่ใช่ระยะตามแกนเพียงเส้นเดียว พจน์ $q$ วัดความไกล ส่วน determinant ปรับความสูงให้ probability รวมยังเป็น 1</p></div>
+  <p>ตรวจ normalization ด้วยการเปลี่ยนกลับไปพิกัดเดิม: $\int f_R(r)\,dr=\int f_Z(z)\,dz=1$ จาก density ของแหล่งสุ่มอิสระ นี่คือเหตุผลเชิงโครงสร้าง ไม่ใช่เพียงผลรวมบนกริดที่ปัดแล้วใกล้หนึ่ง</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 3 — bivariate parameter set</h4>
-  <p>แทนตัวเลขของโจทย์สองสินทรัพย์ลงไป</p>
-  <div class="math">\[
-\mu=\begin{bmatrix}0.0004\\
-0.0003\end{bmatrix},\qquad \Sigma=\begin{bmatrix}0.0004&amp;0.00024\\
-0.00024&amp;0.0009\end{bmatrix}
-\]</div>
-  <div class="reading">
-    <p>ก้อนแรกเก็บผลตอบแทนที่คาดว่าจะได้ต่อวันของ SPX และ QQQ เขียนเป็นทศนิยมต่อวัน</p>
-    <p>ก้อนที่สองคือตารางความเสี่ยง ช่องบนเส้นทแยงคือ variance ของแต่ละตัว ช่องนอกเส้นทแยงคือ covariance ระหว่างสองตัว หน่วยเป็นผลตอบแทนยกกำลังสองต่อวัน</p>
-    <p>แกะกลับเป็นตัวเลขที่อ่านออกได้ ชุดนี้คือความผันผวน 2% กับ 3% ต่อวัน และ correlation 0.40</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — กลับ matrix 2×2 ด้วยมือ แล้วดูว่า determinant ทำอะไรใน density</h4>
-  <p>สูตรมี $\Sigma^{-1}$ กับ $|\Sigma|$ ซึ่งสำหรับสองสินทรัพย์คำนวณด้วยมือได้ ทำให้เห็นว่ามันไม่ใช่กล่องดำ</p>
+  <h4>ขั้นที่ 3 — ใส่ค่าของแบบจำลอง SPX/QQQ ให้ครบก่อน</h4>
+  <p>กำหนดผลตอบแทนหนึ่งวันสมมติ: SPX มี mean 0.04% และ SD 2%; QQQ มี mean 0.03% และ SD 3%; correlation 0.40 ตัวเลขนี้เป็น parameter ของตัวอย่าง ไม่ใช่ค่าประมาณตลาดปัจจุบัน</p>
   <div class="math">\[
 \begin{aligned}
-|\Sigma|&=0.0004(0.0009)-0.00024^{2}\\
-&=3.6\times10^{-7}-5.76\times10^{-8}\\
-&=3.024\times10^{-7}\\
-\Sigma^{-1}&=\frac{1}{|\Sigma|}\begin{bmatrix}0.0009&-0.00024\\
--0.00024&amp;0.0004\end{bmatrix}\\
-&=\begin{bmatrix}2{,}976.19&-793.65\\
--793.65&amp;1{,}322.75\end{bmatrix}\\
-&\text{front constant: }\\
-&\frac{1}{(2\pi)^{1}|\Sigma|^{1/2}}=\frac{1}{6.2832\times0.00054991}\\
-&=\frac{1}{0.0034551}=289.4
+\mu&=\begin{bmatrix}0.0004\\0.0003\end{bmatrix},\\
+\Sigma_{12}&=(0.40)(0.02)(0.03)=0.00024,\\
+\Sigma&=\begin{bmatrix}0.0004&amp;0.00024\\0.00024&amp;0.0009\end{bmatrix},\\
+\det\Sigma&=(0.0004)(0.0009)-(0.00024)^2\\
+&=3.024\times10^{-7},\\
+\sqrt{\det\Sigma}&\approx0.000549909,\\
+f_R(\mu)&=\frac1{2\pi\sqrt{\det\Sigma}}\approx289.4205.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>กฎกลับ 2×2 จากหัวข้อ 12.5 ก็ใช้ที่นี่: สลับสองช่องแนวทแยง กลับเครื่องหมายสองช่องนอกแนวทแยง แล้วเอา determinant มาหารทุกช่อง</p>
-    <p>determinant ที่เล็ก (ความกว้างของก้อนเมฆเล็ก) ทำให้ค่าคงที่ข้างหน้าใหญ่ (289.4) เพราะพื้นที่ใต้ผิวต้องรวมเป็น 1: เมฆแคบต้องสูง เหมือนหัวข้อ 1.8 ที่ density เกิน 1 ได้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — กระจายเลขชี้กำลังเป็น z-score และคำนวณตัวเลขจริงสองกรณี</h4>
-  <p>Mahalanobis distance ในขั้นก่อนหน้าดูเป็นนามธรรม ลองแทนตัวเลขสองมุมของเมฆแล้วเทียบกัน</p>
-  <div class="math">\[
+  <div class="reading"><p>mean กับ SD ใช้ decimal returns ส่วน covariance ใช้ decimal-return² ของผลตอบแทนหนึ่งวัน ไม่ต้องเติมตัวหาร day² เพียงเพราะข้อมูลวัดรายวัน การใส่ correlation 0.40 ลงช่อง covariance ตรง ๆ จะผิดทั้งขนาดและหน่วย</p></div>
+  <details><summary>ตรวจ positive definiteness และ inverse ด้วยมือ</summary>
+    <p>ช่อง variance แรกเป็นบวกและ determinant เป็นบวก จึงผ่านเกณฑ์ PD สำหรับ symmetric 2×2 จาก 7.6 ใช้ inverse ของ 2×2 มาคำนวณได้ดังนี้</p>
+    <div class="math">\[
 \begin{aligned}
-\Sigma^{-1}&=\frac{1}{\sigma_1^2\sigma_2^2(1-\rho^2)}\\
-&\quad\begin{bmatrix}\sigma_2^2&-\rho\sigma_1\sigma_2\\-\rho\sigma_1\sigma_2&\sigma_1^2\end{bmatrix}\\
-&=\frac{1}{1-\rho^2}\begin{bmatrix}\frac{1}{\sigma_1^2}&-\frac{\rho}{\sigma_1\sigma_2}\\-\frac{\rho}{\sigma_1\sigma_2}&\frac{1}{\sigma_2^2}\end{bmatrix}\\[4pt]
-q(r)&=\begin{bmatrix}r_1-\mu_1&r_2-\mu_2\end{bmatrix}\Sigma^{-1}\begin{bmatrix}r_1-\mu_1\\r_2-\mu_2\end{bmatrix}\\
-&=\frac{1}{1-\rho^2}\Bigl[\frac{(r_1-\mu_1)^2}{\sigma_1^2}\\
-&\qquad-2\rho\frac{(r_1-\mu_1)(r_2-\mu_2)}{\sigma_1\sigma_2}\\
-&\qquad+\frac{(r_2-\mu_2)^2}{\sigma_2^2}\Bigr]\\
-&=\frac{z_1^2-2\rho z_1z_2+z_2^2}{1-\rho^2}\\
-&\quad z_i=\frac{r_i-\mu_i}{\sigma_i}\\[4pt]
-z=(1,\,1)&:\ q=\frac{1-0.80+1}{0.84}\\
-&\quad=\frac{1.20}{0.84}=1.4286\\
-&\quad e^{-q/2}=e^{-0.7143}=0.4895\\
-z=(1,\,-1)&:\ q=\frac{1+0.80+1}{0.84}\\
-&\quad=\frac{2.80}{0.84}=3.3333\\
-&\quad e^{-q/2}=e^{-1.6667}=0.1889
+\Sigma^{-1}&=\frac1{3.024\times10^{-7}}
+\begin{bmatrix}0.0009&amp;-0.00024\\-0.00024&amp;0.0004\end{bmatrix}\\
+&\approx\begin{bmatrix}2976.1905&amp;-793.6508\\-793.6508&amp;1322.7513\end{bmatrix}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>เมื่อแทน inverse matrix ขนาดสองคูณสองลงในสมการกำลังสอง การคูณแถวกับคอลัมน์จะแยกออกเป็นสามพจน์ คือกำลังสองของแต่ละตัวแปรและพจน์ไขว้ตรงกลาง</p>
-    <p>เมื่อแปลงเป็น $z$-score สัดส่วนความกว้างจะถูกแทนที่ด้วยระยะห่างมาตรฐาน โดยมีตัวคูณ $-2\rho$ เป็นตัวกำหนดผลกระทบของทิศทางการเคลื่อนที่ร่วมกัน</p>
-    <p>กรณีที่สินทรัพย์ทั้งสองขึ้นพร้อมกันหนึ่ง standard deviation เครื่องหมายพจน์ไขว้จะมาช่วยลดค่า $q$ เหลือเพียง 1.4286 ทำให้ density ของโอกาสสูงถึง 0.4895</p>
-    <p>แต่หากตัวหนึ่งขึ้นและอีกตัวลง พจน์ไขว้จะกลายเป็นบวกและดันค่า $q$ พุ่งไปถึง 3.3333 ส่งผลให้โอกาสลดฮวบเหลือเพียง 0.1889 แสดงให้เห็นว่า correlation เชิงบวกทำให้เหตุการณ์สวนทางเกิดขึ้นยากมาก</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — โจทย์เปิดเรื่อง: ขยับ 1.5σ ทั้งคู่ แต่ระยะจริงคือ 5</h4>
-  <p>ใช้รูป z-score จากขั้นที่ 5 กับหุ้นสองตัวที่ ρ = 0.82 เทียบวันที่สวนทางกันกับวันที่ไปทางเดียวกัน โดยทั้งสองวันแต่ละตัวขยับ 3% หรือ 1.5 เท่าของ σ = 2%</p>
-  <div class="math">\[
-\begin{aligned}
-z&=(1.5,\ -1.5)\\
-q&=\frac{2.25-2(0.82)(1.5)(-1.5)+2.25}{1-0.82^2}\\
-&=\frac{4.5+3.69}{0.3276}=\frac{8.19}{0.3276}=25.0\\
-\sqrt q&=5\\[4pt]
-z&=(1.5,\ 1.5)\\
-q&=\frac{4.5-3.69}{0.3276}=\frac{0.81}{0.3276}=2.4725\\
-\sqrt q&=1.572\\[4pt]
-&P(q\gt25)=e^{-25/2}\\
-&=e^{-12.5}=3.7\times10^{-6}\\
-&P(q\gt2.4725)=e^{-1.236}=0.29
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ตัวเศษเหมือนกันสองก้อน 2.25 + 2.25 = 4.5 ต่างกันแค่พจน์ไขว้ วันสวนทาง z₁z₂ ติดลบ พจน์ไขว้จึงบวกเพิ่ม 3.69 วันไปทางเดียวกันพจน์ไขว้ลบออก 3.69 แล้วตัวหาร 1 − ρ² = 0.3276 ขยายความต่างนั้นอีกสามเท่า</p>
-    <p>ก้อนสุดท้ายใช้ความน่าจะเป็นนอกวงรีจากขั้นที่ 8 วันสวนทางเกิดราว 1 ใน 270,000 วัน วันไปทางเดียวกันเกิด 29% ของวัน ระยะธรรมดาถามว่าห่างจากค่าเฉลี่ยกี่หน่วย ระยะ Mahalanobis ถามว่าน่าประหลาดใจแค่ไหน ระบบจับความผิดปกติจึงใช้ตัวหลัง เพราะวันแบบนี้บอกว่า correlation กำลังพังหรือข้อมูลผิด</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — พิสูจน์ว่าเมื่อ correlation เป็นศูนย์ density จะแตกตัวเป็นผลคูณ</h4>
-  <p>เมื่อตัดความเกี่ยวพันออกด้วยการกำหนดให้ correlation เป็นศูนย์ โครงสร้างของ Multivariate Normal จะลดรูปลงมาเป็นผลคูณของระฆังคว่ำสองใบที่เป็นอิสระต่อกันทันที</p>
-  <div class="math">\[
-\begin{aligned}
-&\rho = 0 \implies q(r)\\
-&= \frac{z_1^2 - 2(0)z_1 z_2 + z_2^2}{1 - 0^2} = z_1^2 + z_2^2 \\
-|\Sigma| &= \sigma_1^2 \sigma_2^2 (1 - 0^2) = \sigma_1^2 \sigma_2^2\\
-&\implies |\Sigma|^{1/2} = \sigma_1 \sigma_2 \\
-&f(r_1, r_2)\\
-&= \frac{1}{2\pi \sigma_1 \sigma_2} \exp\left(-\frac{1}{2}(z_1^2 + z_2^2)\right) \\
-&= \left( \frac{1}{\sigma_1 \sqrt{2\pi}} e^{-\frac{1}{2} z_1^2} \right)\\
-&\quad\cdot \left( \frac{1}{\sigma_2 \sqrt{2\pi}} e^{-\frac{1}{2} z_2^2} \right)\\
-&= f_1(r_1) \cdot f_2(r_2)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เมื่อกำหนด $\rho = 0$ พจน์ไขว้ใน Mahalanobis distance จะสลายไป และตัวหาร $1 - \rho^2$ กลายเป็นหนึ่ง ทำให้ระยะทางเหลือเพียงผลบวกกำลังสอง $z_1^2 + z_2^2$</p>
-    <p>ทางด้าน determinant พจน์ covariance นอกแนวทแยงหายไป ส่งผลให้ $|\Sigma|^{1/2}$ ถอดรากได้เป็นผลคูณ $\sigma_1 \sigma_2$ พอดี</p>
-    <p>สมบัติของ exponential เปลี่ยนผลบวกของเลขชี้กำลังให้กลายเป็นผลคูณของสอง function และค่าคงที่ด้านหน้าแยกตัวคูณ $\sqrt{2\pi}$ ไปแจกจ่ายให้แต่ละตัวอย่างลงตัว</p>
-    <p>นี่คือข้อพิสูจน์ว่าสำหรับ Multivariate Normal เงื่อนไข covariance เป็นศูนย์ มีความหมายเทียบเท่ากับ independence ทางสถิติอย่างสมบูรณ์แบบ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — อินทิเกรตบน contour วงรีและความเชื่อมโยงกับ Chi-Square distribution</h4>
-  <p>การหาโอกาสของบริเวณวงรี Mahalanobis ไม่จำเป็นต้องคำนวณ integral สองชั้นโดยตรง เพราะระยะทางกำลังสอง $q(r)$ มี distribution แบบ Chi-Square ที่มี 2 degrees of freedom ซึ่งมีสูตรสะสมแบบปิด</p>
-  <div class="math">\[
-\begin{aligned}
-&P(\text{inside }B)\\
-&= \iint_B f(r_1, r_2) \, dr_1 \, dr_2 \\
-&B_c:\ q(r) \le c^2\\
-&\text{same as}\ z_1^2 + z_2^2 \le c^2 \\
-&q(r) \sim \chi^2_2\\
-&\implies f_Q(q) = \frac{1}{2} e^{-q/2} \quad (q \ge 0) \\
-&P(q \le c^2)\\
-&= \int_0^{c^2} \frac{1}{2} e^{-q/2} \, dq = \left[ -e^{-q/2} \right]_0^{c^2}\\
-&= 1 - e^{-c^2/2} \\
-&c = 1:\\
-&P(q \le 1) = 1 - e^{-0.5} \approx 1 - 0.6065\\
-&= 0.3935 \quad (39.35\%) \\
-&c^2 = 5.991:\\
-&P(q \le 5.991) = 1 - e^{-2.9955}\\
-&\approx 1 - 0.0500 = 0.9500 \quad (95.00\%)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>นิยามพื้นฐานของโอกาสคือการ integrate พื้นที่ใต้ joint density เหนืออาณาบริเวณ $B$ แต่เมื่อบริเวณดังกล่าวถูกตีกรอบด้วยเส้น contour รูปวงรี $q(r) \le c^2$ เราสามารถเปลี่ยนตัวแปรไปสู่ระบบพิกัด $z$</p>
-    <p>เนื่องจาก $z_1, z_2$ เป็น Standard Normal อิสระต่อกัน ผลบวกกำลังสอง $z_1^2 + z_2^2$ จึงมี distribution เป็น Chi-Square ที่มี 2 degrees of freedom ซึ่งมี density function แบบ exponential</p>
-    <p>การ integrate จึงลดรูปลงมาเหลือเพียงตัวแปรเดียวในหนึ่งมิติ และได้ผลลัพธ์แบบปิด $1 - e^{-c^2/2}$ ทันที</p>
-    <p>เมื่อแทน $c = 1$ หรือกรอบหนึ่ง standard deviation จะครอบคลุม probability 39.35% และหากต้องการ confidence interval 95% จะต้องขยายกรอบวงรีออกไปที่ $c^2 = 5.991$ เสมอ</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>รูปทรงร่วมของหลายสินทรัพย์เป็นแบบจำลองที่ใช้มากที่สุดในงานความเสี่ยง</p>
-  <p>ใช้จำลองสถานการณ์ทั้งพอร์ตพร้อมกัน โดยรักษาความสัมพันธ์ระหว่างสินทรัพย์ไว้</p>
-  <p>ใช้คำนวณความเสี่ยงของพอร์ตแบบมีสูตรปิด โดยไม่ต้องสุ่ม ซึ่งเร็วพอจะทำได้ทุกนาที</p>
-  <p>ใช้เป็นฐานของ Value at Risk แบบ parameter ซึ่งเป็นวิธีที่ธนาคารส่วนใหญ่ใช้รายงาน</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 8.4a — แผนที่ความร้อนของผิว bivariate Normal</h4>
-  <img src="../figures/8.4-1.svg" alt="Figure 8.4a — แผนที่ความร้อนของผิว bivariate Normal" loading="lazy">
-  <figcaption>
-    <p>จุดที่ density สูงสุดอยู่ใกล้ mean vector $(0.04\%,0.03\%)$; covariance ที่ให้ correlation 0.40 ทำให้ surface เอียงและยืดตาม parameter ชุดเดียวกับสูตร</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.4b — เส้นระดับของ bivariate Normal</h4>
-  <img src="../figures/8.4-2.svg" alt="Figure 8.4b — เส้นระดับของ bivariate Normal" loading="lazy">
-  <figcaption>
-    <p>เส้น contour จาก density จริงเป็น ellipse เอียงรอบ mean; ความเอียงมาจาก covariance 0.00024 และไม่ใช่ภาพวาดที่ใช้ scale คนละชุดกับสมการ</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.4c — covariance หมุนทิศของวงรี</h4>
-  <img src="../figures/8.4-3.svg" alt="Figure 8.4c — covariance หมุนทิศของวงรี" loading="lazy">
-  <figcaption>
-    <p>เมื่อ marginal volatility คงที่ 2% กับ 3% การเปลี่ยน correlation จากศูนย์เป็น 0.40 จะหมุน ellipse โดยยังยึดค่าเฉลี่ยจุดเดิม</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.4d — ปรับ density ให้พื้นที่รวมเป็น 1</h4>
-  <img src="../figures/8.4-4.svg" alt="Figure 8.4d — ปรับ density ให้พื้นที่รวมเป็น 1" loading="lazy">
-  <figcaption>
-    <p>integral บน grid กว้างหลาย standard deviations เข้าใกล้หนึ่ง และ theoretical total เท่ากับหนึ่ง; check นี้จับ normalization หรือ covariance scaling ที่ผิดได้</p>
-  </figcaption>
-</figure>
-
-<section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: SPX มี daily volatility 2%, QQQ มี 3% และ correlation 0.40 ต้องหาช่อง covariance ใน covariance matrix</p>
-  <p>คำตอบ: covariance คือ $0.02\times0.03\times0.40=0.00024$ return²/day².</p>
-  <p>ตรวจเองใน 10 วินาที: กด <code>0.02*0.03*0.40</code> ต้องได้ 0.00024 และค่านี้ต้องอยู่ทั้งสองช่องนอกแนวทแยง</p>
-  <p>แปลว่าอะไร: ช่องนี้ทำให้ ellipse เอียงและเปลี่ยนโอกาสของการขยับพร้อมกัน. กับดักคือใส่ correlation 0.40 ลง covariance matrix โดยไม่คูณ volatilities</p>
-</section>
-
-<section class="pitfall">
-  <h4>กับดัก: ใช้ covariance ที่ไม่ positive definite</h4>
-  <p>ถ้า $\Sigma^{-1}$ หรือ determinant ใช้ไม่ได้ density จะไม่ใช่ MVN ที่ถูกต้อง ตรวจ symmetry, eigenvalues และ positive definiteness ก่อนส่ง matrix เข้า simulator</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ขยายระฆังคว่ำให้รับหลายตัวพร้อมกัน</h4>
-  <p>ระฆังคว่ำในบทที่หนึ่งจัดการได้ทีละตัว แต่พอร์ตต้องการมากกว่านั้น คือต้องการรูปทรงเดียวที่บอกทั้งค่าเฉลี่ยของแต่ละตัว ความกว้างของแต่ละตัว และความเกี่ยวพันทุกคู่ พร้อมกัน</p>
-  <p>สิ่งที่ทำให้การขยายนี้คุ้มค่าคือมันเก็บสมบัติดี ๆ ของต้นฉบับไว้ได้หมด ผลรวมถ่วงน้ำหนักของมันยังเป็นระฆังคว่ำ การมองทีละตัวก็ยังเป็นระฆังคว่ำ และการอัปเดตเมื่อรู้ข้อมูลใหม่ก็ยังเป็นระฆังคว่ำ</p>
-  <p>สมบัติสามข้อนี้เองที่ทำให้มันกลายเป็นแบบจำลองมาตรฐานของงานความเสี่ยงทั้งอุตสาหกรรม เพราะทุกอย่างที่ต้องคำนวณมีสูตรปิดหมด</p>
-  <p>ราคาที่จ่ายคือหางที่บางเกินจริง ซึ่งเป็นข้อจำกัดที่ต้องรู้ไว้ตลอดเวลาที่ใช้มัน</p>
-</section>
-
-<section class="prose">
-  <h4>ความเป็นมา: จากปัญหาทางพันธุกรรมของ Galton สู่แบบจำลอง Multivariate Normal</h4>
-  <p>ราว ๆ ทศวรรษ 1880 Francis Galton ศึกษาการถ่ายทอดลักษณะทางพันธุกรรมของสิ่งมีชีวิต โดยเฉพาะความสูงของพ่อแม่เปรียบเทียบกับบุตร ก่อนหน้านั้นนักคณิตศาสตร์สายดาราศาสตร์ เช่น Gauss และ Laplace มักตั้งสมมติฐานว่าความคลาดเคลื่อนในแต่ละมิติเป็นอิสระ (independence) ต่อกัน ซึ่งเหมาะกับการวัดตำแหน่งดวงดาว แต่ใช้ไม่ได้กับสิ่งมีชีวิตหรือราคาสินทรัพย์ที่มีความเชื่อมโยงกัน</p>
-  <p>เมื่อ Galton พล็อตจุดข้อมูลความสูงร่วมกัน เขาค้นพบว่าเส้นระดับ density ไม่ได้เป็นวงกลม แต่เป็นรูปวงรีเอียง และค่าของรุ่นลูกมีแนวโน้มร่นกลับเข้าหาค่าเฉลี่ยเสมอ ปรากฏการณ์นี้กระตุ้นให้ Karl Pearson พัฒนาสูตรทางคณิตศาสตร์อย่างเป็นทางการในปี 1896 โดยนิยาม correlation coefficient และสร้าง density function หลายมิติบนพื้นฐานของ covariance matrix ขึ้นมา</p>
-  <p>การค้นพบนี้ได้เปลี่ยนกระบวนทัศน์ทางสถิติจากการพิจารณาตัวแปรเดี่ยวแยกขาดจากกัน มาสู่การอธิบายระบบที่มีความเกี่ยวพันกันทั้งยวง ซึ่งต่อมากลายเป็นเสาหลักของทฤษฎีการเงินสมัยใหม่ ที่ช่วยให้นักลงทุนสามารถวัดความเสี่ยงของ portfolio ที่ประกอบด้วยสินทรัพย์นับร้อยตัวพร้อมกันได้</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>รูปของหาง</td><td>หางบางแบบระฆังคว่ำ</td><td>ตลาดมีหางอ้วนกว่ามาก</td><td>ประเมินโอกาสของวันวิกฤติต่ำเกินจริงหลายเท่า</td></tr>
-      <tr><td>ความสมมาตร</td><td>ขึ้นกับลงเหมือนกัน</td><td>ตลาดลงเร็วและพร้อมกันมากกว่าขึ้น</td><td>มองไม่เห็นความเสี่ยงขาลงที่แท้จริง</td></tr>
-      <tr><td>ความเกี่ยวพันคงที่</td><td>ความสัมพันธ์คงที่</td><td>พุ่งเข้าใกล้หนึ่งในวิกฤติ</td><td>ประโยชน์ของการกระจายความเสี่ยงที่คำนวณไว้หายไปพอดีตอนที่ต้องใช้</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>สามแถวนี้คือเหตุผลที่การทดสอบภาวะวิกฤติต้องทำแยก และห้ามพึ่งแบบจำลองนี้อย่างเดียว</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดตรวจ MVN density และ Mahalanobis distance</summary>
-    <pre><code>import numpy as np
-from scipy import stats
-mu = np.array([0.0004, 0.0003]); S = np.array([[0.0004, 0.00024], [0.00024, 0.0009]])
-det = np.linalg.det(S)
-assert abs(det - 3.024e-7) &lt; 1e-12
-Si = np.linalg.inv(S)
-assert np.allclose(Si, [[2976.19, -793.65], [-793.65, 1322.75]], atol=0.01)
-assert abs(1 / (2 * np.pi * np.sqrt(det)) - 289.4) &lt; 0.05
-assert abs(stats.multivariate_normal(mu, S).pdf(mu) - 1 / (2 * np.pi * np.sqrt(det))) &lt; 1e-9
-q = lambda z1, z2, rho: (z1 ** 2 - 2 * rho * z1 * z2 + z2 ** 2) / (1 - rho ** 2)
-assert abs(q(1, 1, 0.4) - 1.4286) &lt; 5e-5 and abs(np.exp(-q(1, 1, 0.4) / 2) - 0.4895) &lt; 5e-5
-assert abs(q(1, -1, 0.4) - 3.3333) &lt; 5e-5 and abs(np.exp(-q(1, -1, 0.4) / 2) - 0.1889) &lt; 5e-5
-assert abs(q(1.5, -1.5, 0.82) - 25.0) &lt; 1e-9 and abs(q(1.5, 1.5, 0.82) - 2.4725) &lt; 5e-5
-assert abs(np.exp(-12.5) - 3.7e-6) &lt; 5e-8 and abs(np.exp(-2.4725 / 2) - 0.29) &lt; 5e-3
-L = np.linalg.cholesky(S); r = np.array([0.03, -0.02])
-z = np.linalg.solve(L, r - mu)
-assert abs(z @ z - (r - mu) @ Si @ (r - mu)) &lt; 1e-9          # Mahalanobis = z'z
-assert abs(stats.chi2.cdf(1, 2) - 0.3935) &lt; 5e-5 and abs(stats.chi2.cdf(5.991, 2) - 0.95) &lt; 5e-5</code></pre>
+    <p>ในโค้ดเราจะ solve ผ่าน $L$ แทนการสร้าง inverse เพราะต้องการ $z$ และ $q$ ไม่ใช่ทุกช่องของ inverse นี่ไม่ใช่การเปลี่ยนสูตร แต่เป็นวิธีคำนวณสูตรเดียวกัน</p>
   </details>
-  <div class="note">
-    <p>โค้ดกลับ matrix ได้ determinant 3.024 × 10⁻⁷ และค่าคงที่ 289.4 ตรงกับ scipy ตรวจระยะ q ของทั้งสองทิศ ยืนยันว่าวันที่ขยับสวนกัน 1.5σ อยู่ไกลถึง 5 หน่วย และวงรี 95% ใช้เกณฑ์ 5.991</p>
-  </div>
 </section>
+<section class="example">
+  <h4>ขั้นที่ 4 — Density 289 ไม่ได้แปลว่า probability เกิน 100%</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้แบบจำลองข้างบน หาความน่าจะเป็นที่ผลตอบแทนแต่ละตัวอยู่ห่าง mean ไม่เกิน 0.1 percentage point หรือ 0.001 ในหน่วย decimal</p>
+  <p>กล่องนี้มีด้านยาว 0.002 ทั้งสองแกน ถ้า density เปลี่ยนไม่มากภายในกล่อง สามารถประมาณ probability ด้วยความสูงที่ mean คูณพื้นที่ได้ การ integrate ทั้งกล่องให้ค่าที่ละเอียดกว่า</p>
+  <div class="math">\[
+\begin{aligned}
+I_i&:=[\mu_i-0.001,\mu_i+0.001],\quad i=1,2,\\
+B&:=I_1\times I_2,\\
+\operatorname{area}(B)&=(0.002)^2=0.000004,\\
+P(R\in B)&=\iint_B f_R(r_1,r_2)\,dr_1\,dr_2\\
+&\approx f_R(\mu)\operatorname{area}(B)\\
+&\approx0.001157682=0.1157682\%,\\
+\text{numerical integral}&\approx0.001156853=0.1156853\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> probability ประมาณ 0.116% ไม่ใช่ 289 เท่าของโอกาสอะไร และ $P(R=\mu)=0$ เพราะจุดเดียวไม่มีพื้นที่ใน distribution ต่อเนื่องเต็มมิติ</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> หากเปลี่ยนหน่วยแกนเป็น percentage points พื้นที่กล่องจะเพิ่ม $100^2$ เท่า แต่ density ลดลง $100^2$ เท่า ผลคูณและ probability ต้องเท่าเดิม</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.4a — ความสูงของ joint density</h4>
+  <img src="../figures/8.4-1.svg" alt="Joint Normal density ของแบบจำลอง SPX และ QQQ" loading="lazy">
+  <figcaption>สีคำนวณจาก density ในพิกัด decimal returns แต่ตัวเลขแกนแสดงเป็นเปอร์เซ็นต์ จุด mean อยู่ที่ (0.04%,0.03%) หากจะคูณด้วยพื้นที่ที่อ่านเป็น percentage-point² ต้องหารค่าความสูงด้วย 10,000 ก่อน</figcaption>
+</figure>
 
+<section class="formula">
+  <h4>ขั้นที่ 5 — ทำไมการขึ้นพร้อมกันต่างจากการสวนทาง</h4>
+  <p>ให้ $s_i=(r_i-\mu_i)/\sigma_i$ เป็น marginal standard scores อย่าเพิ่งเรียกสองค่านี้ว่า independent coordinates เพราะยังมี correlation $\rho$ อยู่ ขยาย quadratic form ของ symmetric 2×2 จะได้</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma&=\begin{bmatrix}\sigma_1^2&amp;\rho\sigma_1\sigma_2\\
+\rho\sigma_1\sigma_2&amp;\sigma_2^2\end{bmatrix},\\
+\det\Sigma&=\sigma_1^2\sigma_2^2(1-\rho^2),\\
+q(r)&=\frac{s_1^2-2\rho s_1s_2+s_2^2}{1-\rho^2},\\
+\rho&=0.40,\\
+(s_1,s_2)&=(1,1):\\
+q&=\frac{1-0.8+1}{0.84}\approx1.428571,\\
+(s_1,s_2)&=(1,-1):\\
+q&=\frac{1+0.8+1}{0.84}\approx3.333333,\\
+\frac{f_R(r)}{f_R(\mu)}&=e^{-q(r)/2}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>สำหรับ positive correlation พจน์ไขว้ลดระยะเมื่อ signs ตรงกัน และเพิ่มระยะเมื่อ signs สวนกัน แต่ต้องเทียบคะแนนที่ระบุ ไม่ใช่สรุปว่าเหตุการณ์สวนทางทุกชนิดแทบเป็นไปไม่ได้</p></div>
+  <div class="table-wrap"><table><thead><tr><th>Marginal scores</th><th>$q$</th><th>$f/f(\mu)$</th><th>Density ในหน่วย decimal</th></tr></thead><tbody>
+    <tr><td>$(1,1)$</td><td>1.428571</td><td>0.489542</td><td>141.6834</td></tr>
+    <tr><td>$(1,-1)$</td><td>3.333333</td><td>0.188876</td><td>54.6645</td></tr>
+  </tbody></table></div>
+  <p>0.4895 กับ 0.1889 เป็น <strong>สัดส่วนความสูงเทียบกับ peak</strong> ไม่ใช่ความสูงของ density เอง และไม่ใช่ probability ของแต่ละจุด ต่อให้จุดสองจุดมี density เท่ากัน แต่ละจุดก็ยังมี probability ศูนย์</p>
+  <p>ถ้า $\rho=0$ เราจะได้ $q=s_1^2+s_2^2$ และ normalizer เป็น $1/(2\pi\sigma_1\sigma_2)$ จึงแยก $f_R(r)=f_1(r_1)f_2(r_2)$ ได้ตาม 8.3 ข้อนี้อาศัย joint Normal อยู่แล้ว ไม่ใช่ทฤษฎีของทุกคู่ตัวแปรที่ correlation ศูนย์</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 6 — Whitening ทำให้วัดระยะด้วยวงกลมได้</h4>
+  <p>สำหรับตัวอย่างหลัก เลือก $L$ เป็นสามเหลี่ยมล่าง จาก $\Sigma=LL^{\mathsf T}$ ช่องแรกให้ $L_{11}=0.02$ ช่อง covariance ให้ $L_{21}=0.012$ และ variance ที่เหลือให้ $L_{22}=\sqrt{0.000756}$</p>
+  <div class="math">\[
+\begin{aligned}
+L&=\begin{bmatrix}0.02&amp;0\\0.012&amp;\sqrt{0.000756}\end{bmatrix},\\
+Lz&=r-\mu,\\
+z_1&=(r_1-0.0004)/0.02,\\
+z_2&=\frac{r_2-0.0003-0.012z_1}{\sqrt{0.000756}},\\
+q(r)&=z_1^2+z_2^2,\qquad d(r)=\sqrt{q(r)}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>พจน์ $0.012z_1$ เอาส่วนที่เคลื่อนไหวร่วมกับแกนแรกออกก่อนปรับ SD ของส่วนที่เหลือ นี่ต่างจากการหาร SD รายตัวอย่างเดียว $z$ เป็นพิกัด whitened ส่วน $s$ ในขั้นก่อนยังเป็นคะแนนที่ correlated กัน</p></div>
+  <p>ที่ผลตอบแทน $(3\%,-2\%)$ เราได้ $z\approx(1.48,-1.384229)$, $q\approx4.106489$ และ density ประมาณ 37.1378 การคำนวณด้วย inverse ในขั้นที่ 3 ต้องให้ $q$ เดียวกัน จึงใช้ตรวจการเรียงแกนและหน่วยได้</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.4b — เส้นระดับคือระยะ $q$ คงที่</h4>
+  <img src="../figures/8.4-2.svg" alt="Contour lines ของ bivariate Normal density" loading="lazy">
+  <figcaption>รูปนี้คำนวณ density หลังเปลี่ยนข้อมูลเป็นหน่วย percentage points จริงแล้ว ตัวเลขบนเส้นจึงเป็น 1/10,000 ของ density ในพิกัด decimal ที่ตำแหน่งเดียวกัน รูปทรงของวงรีไม่เปลี่ยนเพราะการเปลี่ยนหน่วยอย่างสอดคล้อง</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 7 — วงรีหนึ่งหน่วยไม่ได้ครอบคลุม 68% ในสองมิติ</h4>
+  <p>เมื่อ joint model ถูกและใช้ $\mu,\Sigma$ จริงที่กำหนดคงที่ พิกัด whitened เป็น independent standard Normals ดังนั้น $Q=q(R)=\sum_i Z_i^2$ มี distribution $\chi_n^2$ ในสองมิติหาความน่าจะเป็นในวงกลมด้วย polar coordinates ได้โดยตรง</p>
+  <div class="math">\[
+\begin{aligned}
+P(Q\le c^2)&=\int_0^{2\pi}\int_0^c
+\frac1{2\pi}e^{-u^2/2}u\,du\,d\theta\\
+&=\int_0^c u e^{-u^2/2}\,du\\
+&=1-e^{-c^2/2},\\
+P(Q\le1)&=1-e^{-1/2}\approx39.35\%,\\
+1-e^{-c^2/2}&=0.95,\\
+c^2&=-2\ln(0.05)\approx5.991465,\\
+c&\approx2.447747.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ตัวคูณ $u$ ในอินทิกรัลมาจากพื้นที่ polar ไม่ใช่ปรับค่าคงที่ตามใจ สูตร $e^{-q/2}$ สำหรับ probability ภายนอกเป็นผลเฉพาะ $n=2$ หากเปลี่ยนจำนวนมิติ ต้องใช้ distribution $\chi_n^2$ ที่ตรงกัน</p></div>
+  <p>ในพิกัดเดิม วงกลมเปลี่ยนเป็นวงรี ถ้า eigenvalues เป็น $\lambda_i$ ความยาวครึ่งแกนของวงรีระดับ $q=c^2$ คือ $c\sqrt{\lambda_i}$ ตามแกน eigenvectors ตัวอย่างนี้วงรี 95% มีครึ่งแกนประมาณ 7.7271 และ 4.2639 percentage points</p>
+  <p>บริเวณนี้ครอบคลุมผลตอบแทนใหม่จากแบบจำลอง 95% ไม่ใช่ช่วงความเชื่อมั่นของ mean ที่ยังไม่รู้ หากประมาณ mean/covariance จากข้อมูลแล้วนำกลับมาวัดข้อมูลชุดเดียวกัน การกระจายของสถิติเปลี่ยนไป อย่าใช้ค่า $\chi_n^2$ แบบ exact โดยละเงื่อนไขการประมาณ</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.4c — เปลี่ยน correlation แล้วรูปทรงเปลี่ยน</h4>
+  <img src="../figures/8.4-3.svg" alt="วงรี q เท่ากับหนึ่งสำหรับ correlation ศูนย์และ 0.4" loading="lazy">
+  <figcaption>ทั้งสองเส้นเป็น $q=1$ จึงครอบคลุมประมาณ 39.35% ภายใต้ joint Normal ของแต่ละชุด parameter ไม่ใช่วงรี 95% แม้ marginal SD คงที่ 2%/3% การเปลี่ยน correlation เปลี่ยนทั้งแนวและขนาดของ principal axes ไม่ได้เพียงหมุนรูปเดิมแข็ง ๆ</figcaption>
+</figure>
+<section class="example">
+  <h4>ขั้นที่ 8 — ตอบคำถามเปิดโดยไม่เปลี่ยน tail probability เป็นเรื่องของจุด</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กลับไปใช้หุ้นสองตัว mean ศูนย์, SD 2% เท่ากัน, correlation 0.82 และ joint Normal ผลตอบแทน $(3\%,-3\%)$ จึงมี marginal scores $(1.5,-1.5)$</p>
+  <div class="math">\[
+\begin{aligned}
+-2\rho s_1s_2&=-2(0.82)(1.5)(-1.5)=3.69,\\
+q&=\frac{2.25+3.69+2.25}{1-0.82^2}\\
+&=\frac{8.19}{0.3276}=25,\qquad d=5,\\
+P(Q\ge25)&=e^{-25/2}\approx3.72665\times10^{-6},\\
+1/P(Q\ge25)&\approx268{,}337.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> แบบจำลองให้ probability ประมาณ 0.000373% สำหรับผลลัพธ์ที่ไกลอย่างน้อยเท่านี้เมื่อรวมทุกทิศทาง ตัวเลขนี้ไม่ได้ระบุ probability ของจุด $(3\%,-3\%)$ ซึ่งเป็นศูนย์ และไม่ใช่ probability ของทุกเหตุการณ์ที่หุ้นสวนทางกัน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าทั้งคู่ขึ้น 3% scores จะเป็น $(1.5,1.5)$ ทำให้ $q=2.472527$ และ radial tail ประมาณ 0.290467 แม้ขนาด marginal scores เท่าเดิม ทิศทางร่วมเปลี่ยนความหมายของระยะ</p>
+  <p>ค่ากลับประมาณ 268,337 เป็นจำนวนครั้งรอเฉลี่ยได้ภายใต้การสุ่มอิสระซ้ำจากแบบจำลองเดิมที่ parameter คงที่เท่านั้น ไม่ใช่คำพยากรณ์ปฏิทินของตลาด เหตุการณ์ที่มี model probability ต่ำอาจเป็น draw ที่หายาก ความคลาดเคลื่อนของ parameter การเปลี่ยนสภาวะ หรือปัญหาข้อมูล ต้องแยกตรวจ ไม่ใช่สรุปสาเหตุจากตัวเลขเดียว</p>
+</section>
+<section class="prose">
+  <h4>ขั้นที่ 9 — Covariance singular ไม่ได้ทำให้ Gaussian model ทุกแบบเป็นไปไม่ได้</h4>
+  <p>ให้ $R=(Z,Z)$ เมื่อ $Z\sim N(0,1)$ เป็น Gaussian vector ที่ถูกต้อง แต่ covariance เป็น $\begin{bmatrix}1&amp;1\\1&amp;1\end{bmatrix}$ ซึ่ง rank 1 ผลลัพธ์อยู่บนเส้น $r_1=r_2$ ทั้งหมด เส้นนี้มีพื้นที่สองมิติศูนย์ แต่มี probability หนึ่ง</p>
+  <p>จึงไม่มี density เทียบกับพื้นที่สองมิติทั่วไปให้ใช้สูตรข้างบน ต้องทำงานในพิกัดอิสระบนเส้นนั้น ไม่ควรเปลี่ยน inverse เป็น pseudoinverse แล้วอ้างว่าสูตร density เต็มมิติได้รับการซ่อมแล้ว</p>
+  <p>ส่วนตัวอย่าง $Y=WX$ ของ 8.3 มี covariance identity ซึ่งเป็น PD แต่ joint distribution ไม่ใช่ Gaussian ทั้งสองกรณีสอนคนละเรื่อง: PD ช่วยให้สูตรของ Gaussian ที่เลือกไว้ใช้ได้ ไม่ได้พิสูจน์ว่าข้อมูลมาจาก Gaussian</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.4d — ตรวจ numerical integration เทียบกับทฤษฎี</h4>
+  <img src="../figures/8.4-4.svg" alt="ผล integrate บน finite grid ใกล้ probability รวมหนึ่ง" loading="lazy">
+  <figcaption>กริด 501×501 ครอบคลุมช่วง SPX −12% ถึง 12% และ QQQ −18% ถึง 18% แล้วใช้ trapezoid rule ค่าใกล้หนึ่งถึงหกตำแหน่งทศนิยม แต่ขอบเขตจำกัดกับความละเอียดกริดยังทำให้เป็นค่าประมาณ หลักฐาน normalization คือการเปลี่ยนพิกัดในขั้นที่ 2 ไม่ใช่แท่งนี้เพียงอย่างเดียว</figcaption>
+</figure>
+<section class="pitfall">
+  <h4>ก่อนใช้ density หรือระยะตัดสินความเสี่ยง</h4>
+  <div class="table-wrap"><table><thead><tr><th>ต้องแยกให้ชัด</th><th>สิ่งที่ตรวจ</th></tr></thead><tbody>
+    <tr><td>แบบจำลองกับข้อมูล</td><td>marginals ดู Normal และ covariance ผ่าน PD ยังไม่ยืนยัน jointly Normal; ตรวจ joint tails และข้อมูลนอกชุดที่ใช้ fit</td></tr>
+    <tr><td>density กับ probability</td><td>density เปลี่ยนเมื่อเปลี่ยนหน่วย; probability ต้อง integrate บริเวณที่นิยามชัดเจน</td></tr>
+    <tr><td>ระยะกับการสอบเทียบ</td><td>$q$ คำนวณได้ไม่ได้แปลว่าใช้ $\chi_n^2$ ได้ทันที; ต้องตรวจ distribution, parameter estimation และการทดสอบหลายครั้ง</td></tr>
+    <tr><td>ค่าศูนย์จากเครื่องกับเหตุการณ์เป็นไปไม่ได้</td><td>density อาจ underflow เป็นศูนย์ ใช้ log-density เมื่อเปรียบเทียบ likelihood ที่เล็กมาก</td></tr>
+  </tbody></table></div>
+  <p>ชื่อ Mahalanobis distance เตือนว่าระยะต้องเทียบกับความแปรปรวนและความสัมพันธ์ร่วม ไม่ใช่ไม้บรรทัด Euclidean อย่างเดียว แต่การปรับระยะไม่สามารถแก้ทุกปัญหาของแบบจำลอง เช่น skewness, jumps, heavy tails หรือ covariance ที่เปลี่ยนไป</p>
+</section>
+<section class="example">
+  <h4>ตรวจเองก่อนผ่านไป 8.5</h4>
+  <p><strong>1.</strong> เปลี่ยนพิกัดเป็น $U=100R$ ซึ่งตัวเลข 1 หมายถึง 1 percentage point ค่า covariance, peak density และ $q$ เปลี่ยนอย่างไร?</p>
+  <details><summary>เฉลย</summary><p>mean คูณ 100, covariance คูณ 10,000; density ต้องหาร 10,000 จึงได้ peak ประมาณ 0.0289420 ส่วน $q$ ไม่เปลี่ยนเมื่อเปลี่ยนทั้งค่าที่ประเมิน mean และ covariance อย่างสอดคล้อง จึงได้ probability ของบริเวณทางเศรษฐกิจเดิมเท่าเดิม</p></details>
+  <p><strong>2.</strong> ใช้รัศมี Mahalanobis 1.96 ในสองมิติ จะครอบคลุม 95% เหมือน univariate Normal หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่ใช่ ได้ $1-e^{-1.96^2/2}\approx85.3510\%$ ต้องใช้รัศมีประมาณ 2.447747 สำหรับ 95% ภายใต้ joint Normal สองมิติที่ parameter กำหนดไว้</p></details>
+  <p><strong>3.</strong> ใน sign-mixture จาก 8.3 คือ $Y=WX$ โดย $X\sim N(0,1)$ เรามี covariance identity จึงคำนวณ $Q=X^2+Y^2$ ได้ จะใช้ $\chi_2^2$ กับ $Q$ ได้หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่ได้ เพราะ $Q=2X^2$ มี variance $4\operatorname{Var}(X^2)=8$ ส่วน $\chi_2^2$ เป็นผลรวมกำลังสองของ standard Normals อิสระสองตัว จึงมี variance $2+2=4$ ทั้งคู่มี mean 2 แต่ distribution ต่างกัน การ whitening ให้ covariance identity ไม่ได้สร้าง Gaussian independence ขึ้นเอง</p></details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>ใช้ Node.js ได้โดยไม่ติดตั้งแพ็กเกจ ตัวอย่างนี้รับเฉพาะ covariance symmetric PD ขนาด 2×2 และใช้ triangular solve/log-density ไม่แก้ covariance ให้ผ่านเงียบ ๆ การตรวจ symmetry ใช้ exact equality สำหรับตัวเลขที่กำหนดตรงกัน; ข้อมูลจริงต้องแยก rounding error ด้วย tolerance ที่เหมาะกับขนาดข้อมูล</p>
+  <p>การ integrate ใช้กริดจำกัด ต้องตรวจทั้งความละเอียดและขอบเขต ไม่ใช่ว่าโค้ดคำนวณได้แล้ว error จะเล็กสำหรับทุก covariance</p>
+  <pre><code class="language-javascript" data-example="8.4">function vector2(v) {
+  if (!Array.isArray(v) || v.length !== 2 || ![...v].every(Number.isFinite)) {
+    throw new TypeError('Need two finite coordinates');
+  }
+}
+function normal2(mean, covariance) {
+  vector2(mean);
+  if (!Array.isArray(covariance) || covariance.length !== 2 ||
+      [...covariance].some(row =&gt; !Array.isArray(row) || row.length !== 2 || ![...row].every(Number.isFinite))) {
+    throw new TypeError('Need a finite 2 by 2 covariance');
+  }
+  const mu = [...mean], a = covariance[0][0], c = covariance[0][1], d = covariance[1][1];
+  if (c !== covariance[1][0]) throw new RangeError('Covariance must be symmetric');
+  if (a &lt;= 0 || d &lt;= 0) throw new RangeError('Positive definite covariance required');
+  const s1 = Math.sqrt(a), s2 = Math.sqrt(d), rho = c / s1 / s2;
+  if (!Number.isFinite(rho) || Math.abs(rho) &gt;= 1) throw new RangeError('Positive definite covariance required');
+  const residualScale = Math.sqrt((1 - rho) * (1 + rho));
+  const L = [[s1, 0], [rho * s2, s2 * residualScale]];
+  const logPeak = -Math.log(2 * Math.PI) - Math.log(s1) - Math.log(s2) - Math.log(residualScale);
+  function whiten(r) {
+    vector2(r);
+    const z1 = (r[0] - mu[0]) / s1;
+    const z2 = ((r[1] - mu[1]) / s2 - rho * z1) / residualScale;
+    if (![z1, z2].every(Number.isFinite)) throw new RangeError('Whitening overflow');
+    return [z1, z2];
+  }
+  function transform(z) {
+    vector2(z);
+    const r = [mu[0] + s1 * z[0], mu[1] + L[1][0] * z[0] + L[1][1] * z[1]];
+    if (!r.every(Number.isFinite)) throw new RangeError('Transformation overflow');
+    return r;
+  }
+  function q(r) {
+    const z = whiten(r), value = z[0] * z[0] + z[1] * z[1];
+    if (!Number.isFinite(value)) throw new RangeError('Distance overflow');
+    return value;
+  }
+  const logDensity = r =&gt; logPeak - q(r) / 2;
+  function density(r) {
+    const value = Math.exp(logDensity(r));
+    if (!Number.isFinite(value)) throw new RangeError('Density overflow: use logDensity');
+    return value;
+  }
+  return {rho, L, logPeak, whiten, transform, q, logDensity, density};
+}
+function coverage2(q) {
+  if (!Number.isFinite(q) || q &lt; 0) throw new RangeError('Need nonnegative finite squared distance');
+  return -Math.expm1(-q / 2);
+}
+function threshold2(p) {
+  if (!Number.isFinite(p) || p &lt;= 0 || p &gt;= 1) throw new RangeError('Coverage must lie strictly between zero and one');
+  return -2 * Math.log1p(-p);
+}
+function rectangleMass(model, x, y, n = 200) {
+  vector2(x); vector2(y);
+  if (x[0] &gt; x[1] || y[0] &gt; y[1]) throw new RangeError('Integration bounds out of order');
+  if (!Number.isInteger(n) || n &lt; 2 || n &gt; 1000 || n % 2) throw new RangeError('Need an even grid from 2 to 1000');
+  if (x[0] === x[1] || y[0] === y[1]) return 0;
+  const hx = (x[1] - x[0]) / n, hy = (y[1] - y[0]) / n;
+  if (![hx, hy].every(Number.isFinite)) throw new RangeError('Integration overflow');
+  const weight = i =&gt; i === 0 || i === n ? 1 : i % 2 ? 4 : 2;
+  let sum = 0;
+  for (let i = 0; i &lt;= n; i++) for (let j = 0; j &lt;= n; j++) {
+    sum += weight(i) * weight(j) * model.density([x[0] + i * hx, y[0] + j * hy]);
+  }
+  const result = sum * hx * hy / 9;
+  if (!Number.isFinite(result)) throw new RangeError('Integration overflow');
+  return result;
+}
+const mu = [0.0004, 0.0003], S = [[0.0004, 0.00024], [0.00024, 0.0009]];
+const model = normal2(mu, S), peak = model.density(mu);
+const scorePoint = s =&gt; [mu[0] + 0.02 * s[0], mu[1] + 0.03 * s[1]];
+const scores = [[1, 1], [1, -1]].map(s =&gt; {
+  const r = scorePoint(s);
+  return {s, q: model.q(r), ratio: model.density(r) / peak, density: model.density(r)};
+});
+const point = [0.03, -0.02], q95 = threshold2(0.95), radius95 = Math.sqrt(q95);
+const hook = normal2([0, 0], [[0.0004, 0.000328], [0.000328, 0.0004]]);
+const hookQ = hook.q([0.03, -0.03]);
+const percentage = normal2(mu.map(x =&gt; 100 * x), S.map(row =&gt; row.map(x =&gt; 10000 * x)));
+const smallBounds = [[mu[0] - .001, mu[0] + .001], [mu[1] - .001, mu[1] + .001]];
+const eigenGap = Math.hypot(S[0][0] - S[1][1], 2 * S[0][1]);
+const eigenvalues = [(S[0][0] + S[1][1] + eigenGap) / 2, (S[0][0] + S[1][1] - eigenGap) / 2];
+console.log(JSON.stringify({rho: model.rho, L: model.L,
+  determinant: S[0][0] * S[1][1] - S[0][1] ** 2, peak, scores,
+  point: {r: point, z: model.whiten(point), q: model.q(point), density: model.density(point)},
+  q95, radius95, coverage1: coverage2(1), coverage196: coverage2(1.96 ** 2),
+  axes95: eigenvalues.map(v =&gt; Math.sqrt(q95 * v)),
+  boundaryQ: [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2].map(t =&gt;
+    model.q(model.transform([radius95 * Math.cos(t), radius95 * Math.sin(t)]))),
+  hook: {oppositeQ: hookQ, sameQ: hook.q([.03, .03]),
+    tail: Math.exp(-hookQ / 2), reciprocal: Math.exp(hookQ / 2)},
+  percentage: {peak: percentage.density(mu.map(x =&gt; 100 * x)), q: percentage.q(point.map(x =&gt; 100 * x))},
+  smallSquareApprox: peak * .002 ** 2,
+  smallSquareMass: rectangleMass(model, ...smallBounds),
+  gridMass: rectangleMass(model, [-.12, .12], [-.18, .18]),
+  nonGaussianQVariance: 4 * 2, gaussianQVariance: 2 + 2 }));</code></pre>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>MVN density ถูกกำหนดด้วย $\mu$ และ $\Sigma$</li>
-    <li>Mahalanobis distance ปรับระยะตาม covariance geometry: สองหุ้น ρ = 0.82 ขยับสวนกันตัวละ 1.5σ ได้ระยะ 5 (1 ใน 270,000 วัน) แต่ขยับทางเดียวกันได้แค่ 1.57</li>
-    <li>joint probability คือพื้นที่ใต้ density</li>
-    <li>covariance กำหนดการเอียงและการยืดของ ellipse</li>
+    <li>MVN เป็น joint-model assumption เพิ่มจาก mean/covariance สูตร density เต็มมิติต้องมี symmetric PD covariance</li>
+    <li>density เกิดจาก Gaussian coordinates และการปรับปริมาตร; determinant คุม normalizer ส่วน quadratic form คุมระยะ</li>
+    <li>marginal standard scores ยังสัมพันธ์กันได้; whitening ต่างออกไป และไม่ได้สร้าง independence สำหรับทุก distribution</li>
+    <li>probability ต้องเป็นของบริเวณ ไม่ใช่ความสูงที่จุด; เปลี่ยนหน่วยแล้ว density เปลี่ยนแต่ probability ของบริเวณเดิมต้องคงเดิม</li>
+    <li>วงรี 95% ในสองมิติใช้ $q\le5.991465$ ไม่ใช่รัศมี 1 หรือ 1.96 และไม่ใช่ confidence region ของ mean ที่กำลังประมาณ</li>
+    <li>Gaussian singular อาจเป็นแบบจำลองที่ถูกต้องบนมิติต่ำกว่า ส่วน covariance PD ก็ไม่ได้พิสูจน์ Gaussianity; ก่อนใช้ tail threshold ต้องตรวจทั้งสองเรื่อง</li>
   </ul>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="8.3.html">8.3 Zero Covariance ≠ Independence</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.5.html">8.5 The Moment Generating Function (MGF)</a></div>

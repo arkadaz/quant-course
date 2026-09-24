@@ -15,427 +15,423 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 47/158</span>
 </nav>
-
-<article class="topic" data-number="8.5" data-depends-on="2.1 5.5 8.4">
+<article class="topic" data-number="8.5" data-depends-on="1.3 1.4 1.10 2.1 5.5 8.3 8.4">
 <header class="topic-header">
   <h1><span class="tnum">8.5</span> The Moment Generating Function (MGF)</h1>
-  <p class="subtitle">เครื่องกำเนิด moments ที่ย่อ distribution ให้คำนวณค่าเฉลี่ยและ variance ได้</p>
+  <p class="subtitle">เก็บ moments ใน function เดียว แล้วใช้ให้ถูกตัวแปร ถูกหน่วย และอยู่ในช่วงที่มีค่าจำกัด</p>
 </header>
-
 <div class="hook">
-  <p>นักวิเคราะห์บอกว่าผลตอบแทนแบบ log ของหุ้นตัวหนึ่งปีหน้าเฉลี่ย 9% ผันผวน 22% ลงเงิน \$100 วันนี้ ปีหน้าคาดว่าจะมีเงินเท่าไร?</p>
-  <p>เฉลย: \$112.10 ไม่ใช่ 109.42 median คือ $e^{0.09}=1.0942$ แต่ค่าเฉลี่ยที่คาดไว้หรือ expected value คือ $e^{0.09+0.22^2/2}=e^{0.1142}=1.1210$ ส่วนต่าง 0.0242 คือครึ่งหนึ่งของ σ² ซึ่งหัวข้อนี้จะสร้างออกมาจาก MGF</p>
-  <p>Moment Generating Function (MGF) คือค่าเฉลี่ยของ $e^{tX}$ ซึ่งเก็บค่าเฉลี่ยของ X, X กำลังสอง, X กำลังสาม ไว้ใน function เดียว ดึงออกมาทีละชั้นด้วย derivative และที่ t = 1 มันคือ expected value ของตัวคูณราคาพอดี งาน quant ใช้มันทุกครั้งที่ต้องหาค่าเฉลี่ยของ exponential</p>
+  <p>หุ้นสมมติราคา \$100 มี log return หนึ่งปี $R\sim N(0.09,0.22^2)$ ราคาเฉลี่ยปลายปีควรเป็น \$109, \$109.42 หรือ \$112.10? ทำไม “เอาค่าเฉลี่ยไปใส่ใน exponential” จึงไม่ใช่คำตอบเดียวกับ “เฉลี่ยราคาที่ผ่าน exponential แล้ว”?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ได้ประมาณ \$112.10 เพราะ $\mathbb E[e^R]=e^{0.09+0.22^2/2}$ ในแบบจำลอง Normal นี้ ส่วน $100e^{\mathbb E[R]}\approx\$109.42$ เป็น median ของราคา ไม่ใช่ mean เครื่องมือที่หาค่า $\mathbb E[e^{tR}]$ ให้เราได้คือ MGF โดยต้องตรวจว่าค่านี้มีอยู่ก่อนใช้</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากคำถามที่ตอบผิดกันบ่อยที่สุดข้อหนึ่ง</h4>
-  <p>นักวิเคราะห์บอกว่าผลตอบแทนแบบ log ของหุ้นตัวหนึ่งปีหน้าเฉลี่ย 9% ผันผวน 22% ลงเงิน \$100 วันนี้ ปีหน้าคาดว่าจะมีเงินเท่าไร</p>
-  <p>คำตอบที่คนตอบคือ \$109.42 ซึ่งมาจาก $e^{0.09}$ คำตอบจริงคือ \$112.10 ส่วนต่าง \$2.68 ไม่ได้มาจากการปัดเลข มันคือครึ่งหนึ่งของ variance ที่โผล่ขึ้นมาเพราะเราเอาค่าเฉลี่ยใส่เข้าไปใน exponential แทนที่จะเอา exponential มาเฉลี่ย</p>
-  <p>เราต้องการเครื่องมือที่หาค่าเฉลี่ยของ $e^{X}$ ได้ตรง ๆ เครื่องมือนั้นชื่อ Moment Generating Function และของแถมของมันคือมันเก็บค่าเฉลี่ย ความผันผวน และความเอียงของหางไว้ในสูตรเดียว ดึงออกมาทีละชั้นด้วยการหา derivative</p>
-
-  <p>ตัวเลขที่จะใช้ฝึกในหัวข้อนี้คือกำไรขาดทุนรายวันที่มีค่าเฉลี่ย \$75 ต่อวัน และความผันผวน \$300 ต่อวัน</p>
-  <p>เราต้องใช้ MGF ตอบสองคำถาม: derivative ครั้งแรกที่ศูนย์ได้อะไร และ derivative ครั้งที่สองได้เลขเท่าไร จากนั้นตรวจย้อนกลับว่าเลขเหล่านี้คืนความผันผวน 300 USD/day จริงหรือไม่</p>
+  <h4>MGF ไม่ใช่ PDF และ $t$ ไม่ใช่เวลา</h4>
+  <p>MGF เปลี่ยนคำถามเกี่ยวกับ distribution ให้เป็นคำถามเกี่ยวกับ function เช่น derivative ที่ศูนย์ หรือผลคูณของ functions เราจะเริ่มจากตัวแปรที่มีสามค่า เพื่อเห็นกลไกก่อนขยับไป Normal และ vector</p>
+  <p>สัญลักษณ์ $t$ เป็น argument ที่เราเลือกป้อน ไม่ใช่ตัวแปรสุ่ม ไม่ใช่ probability และไม่ใช่เวลา หาก $X$ มีหน่วย USD ตัว $t$ ต้องมีหน่วย USD$^{-1}$ เพื่อให้ $tX$ ไม่มีหน่วย ส่วน $M_X(t)$ เองไม่มีหน่วย</p>
 </section>
-
 <details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <summary>ศัพท์ที่ต้องใช้</summary>
   <dl>
-    <dt>Moment Generating Function (MGF)</dt>
-    <dd>สูตรเดียวที่เก็บค่าเฉลี่ยของ $X,X^2,X^3,\ldots$ ไว้ด้วยกัน เขียนเป็น $M_X(t)=E[e^{tX}]$ แล้วใช้ derivative ที่ $t=0$ ดึงข้อมูลแต่ละชั้นออกมา</dd>
-    <dt>moment</dt>
-    <dd>ค่าเฉลี่ยของกำลังของ random variable เช่น moment แรกคือค่าเฉลี่ยและ moment ที่สองช่วยหา variance</dd>
-    <dt>derivative</dt>
-    <dd>ตัววัดว่า function เปลี่ยนเร็วแค่ไหนเมื่อขยับ input เล็กน้อย ในหัวข้อนี้ใช้ดึง moment จาก MGF ที่จุดศูนย์</dd>
-    <dt>cumulant</dt>
-    <dd>ค่าที่ดึงจาก derivative ของ log MGF ใช้แยกจุดกลาง ความผันผวน และรูปทรงของ distribution</dd>
-    <dt>expected value</dt>
-    <dd>ค่าเฉลี่ยถ่วงโอกาสของ P&amp;L ใช้เป็น first moment และ benchmark กลางของ strategy</dd>
-    <dt>variance</dt>
-    <dd>ค่ากระจายรอบ expected value ใช้เปลี่ยน second raw moment ให้เป็นความเสี่ยงในหน่วย USD²/day²</dd>
-    <dt>standard deviation</dt>
-    <dd>รากที่สองของ variance ใช้รายงานความผันผวนกลับมาในหน่วย USD/day</dd>
-    <dt>random variable</dt>
-    <dd>ตัวเลขที่ outcome ยังไม่รู้แต่มี distribution ใช้แทน daily P&amp;L ที่ MGF transform</dd>
-    <dt>log return</dt>
-    <dd>ln ของอัตราส่วนราคาปลายทางต่อราคาต้นทาง ใช้ใน model เพราะบวกกันข้ามเวลาได้ และเป็นตัวที่สมมติให้แจกแจงแบบระฆังคว่ำ</dd>
-    <dt>median</dt>
-    <dd>median ที่แบ่งผลลัพธ์ครึ่งต่อครึ่ง ใช้บอกผลลัพธ์แบบทั่วไปของราคา ซึ่งต่ำกว่าค่าเฉลี่ยเมื่อหางขวายาว</dd>
-    <dt>Jensen's inequality</dt>
-    <dd>ข้อเท็จจริงว่าค่าเฉลี่ยของ function นูนไม่น้อยกว่า function ของค่าเฉลี่ย ใช้อธิบายว่าทำไมค่าเฉลี่ยของ $e^R$ สูงกว่า $e^{\mathbb E[R]}$</dd>
-    <dt>factor</dt>
-    <dd>ตัวคูณที่อยู่หน้าตัวแปรใน linear expression ใช้สร้าง derivative term และ weighted P&amp;L</dd>
-    <dt>USD</dt>
-    <dd>ดอลลาร์สหรัฐฯ ใช้เป็นหน่วยของ daily P&amp;L ในตัวอย่าง MGF</dd>
+    <dt>Raw moment</dt><dd>ค่า $\mathbb E[X^k]$ วัดกำลังรอบศูนย์ ไม่เหมือน central moment $\mathbb E[(X-\mathbb E[X])^k]$ ที่วัดรอบ mean</dd>
+    <dt>Moment generating function (MGF)</dt><dd>$M_X(t)=\mathbb E[e^{tX}]$ ในบริเวณที่ expectation มีค่าจำกัด การมี MGF รอบศูนย์เป็นเงื่อนไขที่แรงกว่าการมี mean กับ variance</dd>
+    <dt>Cumulant generating function (CGF)</dt><dd>$K_X(t)=\ln M_X(t)$ ทำให้ derivative แรกที่ศูนย์เป็น mean และ derivative ที่สองเป็น variance โดยตรง</dd>
+    <dt>Exponential integrability</dt><dd>ส่วนหางต้องเบาพอให้ expectation ของ exponential มีค่าจำกัดในช่วง argument ที่ต้องการ ไม่ใช่เพียงมีข้อมูลจำกัดจำนวนแถวให้คำนวณ</dd>
+    <dt>Numeraire</dt><dd>สิ่งที่เลือกเป็นหน่วยนับมูลค่า การกลับราคา USD ต่อหุ้นเป็นหุ้นต่อ USD เปลี่ยนหน่วยนับ ไม่ได้เท่ากับเปิด short หุ้นหนึ่งหุ้น</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$X$</td><td>daily P&amp;L random variable</td><td>USD/day</td></tr>
-      <tr><td>$t$</td><td>MGF argument</td><td>day/USD</td></tr>
-      <tr><td>$M_X(t)$</td><td>MGF ของ $X$</td><td>unitless</td></tr>
-      <tr><td>$M_X^{(k)}(0)$</td><td>derivative order $k$ ที่ศูนย์</td><td>$\text{USD}^k/\text{day}^k$</td></tr>
-      <tr><td>$R$</td><td>log return รายปี $\ln(S_T/S_0)$ ในตัวอย่างหุ้น</td><td>ไม่มีหน่วย ต่อปี</td></tr>
-      <tr><td>$S_0,S_T$</td><td>ราคาวันนี้และราคาปีหน้า</td><td>USD</td></tr>
-      <tr><td>$\mu,\sigma^2$</td><td>mean และ variance ของ $X$</td><td>USD/day และ USD²/day²</td></tr>
-    </tbody>
-  </table>
+  <summary>ตัวแปรไหน หน่วยอะไร</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>$X,t,M_X$</td><td>ตัวแปรที่ศึกษา, argument, MGF ของตัวแปรนั้น</td></tr>
+    <tr><td>$M_X^{(k)}(0)$</td><td>derivative ลำดับ $k$ ที่ศูนย์ ให้ raw moment เมื่อเงื่อนไขรองรับ</td></tr>
+    <tr><td>$\mu,\sigma^2$</td><td>mean และ variance ของ Normal ที่ระบุในแต่ละตัวอย่าง อย่าสลับ parameter ระหว่างตัวอย่าง</td></tr>
+    <tr><td>$R,S_0,S_T$</td><td>log return หนึ่งปี กับราคาเริ่ม/ปลายปีของหุ้นสมมติ</td></tr>
+    <tr><td>$X\in\mathbb R^n,s\in\mathbb R^n$</td><td>ในส่วน multivariate ใช้ vector $X$ และ vector argument $s$ เพื่อไม่ปนกับ scalar $t$</td></tr>
+  </tbody></table></div>
 </details>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — ลองกับถุงบัตร 1, 2, 3 ก่อน: สร้างเครื่องมือด้วยมือแล้วกดปุ่ม</h4>
-  <p>ก่อนนิยามอะไร ลองกับบัตรสามใบ: เขียน $e^{tX}$ ของแต่ละใบ เฉลี่ยกัน แล้วหา derivative</p>
+  <h4>ขั้นที่ 1 — สร้าง MGF ของบัตร 1, 2, 3 แล้ว differentiate</h4>
+  <p>สุ่มบัตรหนึ่งใบจากสามใบที่มีโอกาสเท่ากัน แต่ละค่าจึงมี probability $1/3$ นี่คือ distribution ที่กำหนดไว้ ไม่ใช่ตัวอย่างข้อมูลที่กำลังประมาณ variance จึงไม่ใช้ตัวหาร $n-1$</p>
   <div class="math">\[
 \begin{aligned}
-M(t)&=\mathbb{E}[e^{tX}]\\
-&=\tfrac13\big(e^{t}+e^{2t}+e^{3t}\big)\\
-M'(t)&=\tfrac13\big(e^{t}+2e^{2t}+3e^{3t}\big)\\
-&\;\Longrightarrow\;M'(0)=\tfrac13(1+2+3)\\
-&=2=\mathbb{E}[X]\\
-M''(t)&=\tfrac13\big(e^{t}+4e^{2t}+9e^{3t}\big)\\
-&\;\Longrightarrow\;M''(0)=\tfrac13(1+4+9)\\
-&=\tfrac{14}{3}=\mathbb{E}[X^{2}]
+M_X(t)&:=\mathbb E[e^{tX}]\\
+&=\tfrac13e^t+\tfrac13e^{2t}+\tfrac13e^{3t},\\
+M_X(0)&=1,\\
+M_X'(t)&=\tfrac13e^t+\tfrac23e^{2t}+e^{3t},\\
+M_X'(0)&=(1+2+3)/3=2,\\
+M_X''(0)&=(1^2+2^2+3^2)/3=14/3,\\
+\operatorname{Var}(X)&=M_X''(0)-[M_X'(0)]^2\\
+&=14/3-4=2/3.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>หา derivative ของ $e^{2t}$ ได้ $2e^{2t}$: เลข 2 ที่โดดออกมาคือค่าของบัตร พอแทน $t=0$ ทุก $e^{0}=1$ เหลือแค่ค่าบัตรถ่วงน้ำหนักเท่า ๆ กัน คือค่าเฉลี่ย</p>
-    <p>หา derivative อีกครั้ง เลขโดดออกมาอีกตัว จึงได้ $2^2=4$, $3^2=9$ นั่นคือค่าเฉลี่ยของกำลังสอง เครื่องมือชิ้นเดียวให้ทั้งค่าเฉลี่ย 2 และค่าเฉลี่ยของกำลังสอง $14/3$ โดยไม่ต้องนับใหม่</p>
-  </div>
+  <div class="reading"><p>การ differentiate ทำให้เลขชี้กำลังดึง $X$ ลงมาทีละตัว แล้วแทน $t=0$ เพื่อให้ exponential เหลือ 1 ดังนั้นครั้งที่สองให้ raw second moment ไม่ใช่ variance และยิ่งไม่ใช่ SD</p></div>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 2 — ที่มาของ MGF จาก Taylor series: ทำไม $e^{tX}$ จึงสร้าง moment ได้</h4>
-  <p>นิยามของ MGF ไม่ได้ถูกตั้งขึ้นมาลอย ๆ แต่สร้างขึ้นมาจาก Taylor series ของ exponential เพื่อทำหน้าที่เป็นคลังเก็บค่า expected value ของกำลังต่าง ๆ $\mathbb{E}[X^n]$ ไว้หน้าตัวคูณ $t^n / n!$</p>
+  <h4>ขั้นที่ 2 — Generalize ได้เมื่อ expectation รองรับการสลับลำดับ</h4>
+  <p>ให้ $M_X(t)$ finite บนช่วงเปิดรอบศูนย์ เราจึงเลือก $a\gt0$ ที่ $M_X(a),M_X(-a)$ finite ได้ เงื่อนไขนี้ช่วยควบคุมส่วนหาง ก่อนนำ Taylor series ไปไว้ใน expectation</p>
   <div class="math">\[
 \begin{aligned}
-e^u &= \sum_{n=0}^\infty \frac{u^n}{n!}\\
-&= 1 + u + \frac{u^2}{2!} + \frac{u^3}{3!} + \cdots \\
-&u = tX \implies e^{tX}\\
-&= \sum_{n=0}^\infty \frac{(tX)^n}{n!}\\
-&= 1 + tX + \frac{t^2 X^2}{2!} + \frac{t^3 X^3}{3!} + \cdots \\
-&M_X(t) = \mathbb{E}[e^{tX}]\\
-&= \mathbb{E}\left[\sum_{n=0}^\infty \frac{t^n X^n}{n!}\right] = \sum_{n=0}^\infty \frac{t^n}{n!} \mathbb{E}[X^n] \\
-&= 1 + t\,\mathbb{E}[X] + \frac{t^2}{2!}\,\mathbb{E}[X^2]\\
-&\quad + \frac{t^3}{3!}\,\mathbb{E}[X^3] + \cdots \\
-&\left.\frac{d^n}{dt^n} M_X(t)\right|_{t=0} = \mathbb{E}[X^n]
+e^{tX}&=\sum_{k=0}^{\infty}\frac{t^kX^k}{k!},\\
+M_X(t)&=\sum_{k=0}^{\infty}\frac{t^k\mathbb E[X^k]}{k!},\quad |t|\lt a,\\
+M_X^{(k)}(0)&=\mathbb E[X^k],\\
+\mathbb E[X]&=M_X'(0),\\
+\operatorname{Var}(X)&=M_X''(0)-[M_X'(0)]^2.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>จุดเริ่มต้นมาจาก Taylor series ของ $e^u$ รอบจุดศูนย์ ซึ่งกระจายออกเป็นผลบวกอนันต์ของกำลัง $u$</p>
-    <p>เมื่อแทน $u = tX$ ตัว random variable $X$ แต่ละกำลังจะถูกผูกติดกับตัวแปรช่วย $t$ ในรูป $(tX)^n / n!$</p>
-    <p>เมื่อใส่ expected value เราสามารถสลับเครื่องหมาย $\mathbb{E}$ เข้าไปข้างในอนุกรมได้ เพราะอนุกรมนี้มี absolute convergence ในย่านรอบจุดศูนย์</p>
-    <p>ผลลัพธ์ที่ได้แสดงโครงสร้างที่ชัดเจน: moment ลำดับที่ $n$ คือตัวคูณ coefficient ที่อยู่คู่กับ $t^n / n!$ ดังนั้นเมื่อหา derivative เทียบกับ $t$ จำนวน $n$ ครั้ง แล้วแทน $t = 0$ พจน์อื่นทั้งหมดจะดับไป เหลือเพียง $\mathbb{E}[X^n]$ ออกมาอย่างแม่นยำ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — derivative ครั้งแรกให้ค่าเฉลี่ย</h4>
-  <p>การกดปุ่มครั้งแรกแล้วได้ค่าเฉลี่ยดูเหมือนเวทมนตร์ สูตรข้างล่างบอกว่ามันคือกฎลูกโซ่ บวกกับการแทนศูนย์ครั้งเดียว และบอกด้วยว่าขั้นตอนไหนคือขั้นที่ต้องขอเงื่อนไข</p>
-  <div class="math">\[
+  <div class="reading"><p>การเขียน Taylor series ของ exponential ได้ทุกจุด ไม่ได้อนุญาตให้สลับ expectation กับผลรวมอนันต์ในทุก distribution เราใส่เงื่อนไข finite รอบศูนย์ก่อนใช้สูตรดึง moments</p></div>
+  <details><summary>ทำไมเงื่อนไขนี้ควบคุมผลรวมได้</summary>
+    <div class="math">\[
 \begin{aligned}
-M_X(t)&=\mathbb{E}[e^{tX}]\\
-\frac{d}{dt}e^{tX}&=Xe^{tX}\\
-M_X'(t)&=\frac{d}{dt}\mathbb{E}\big[e^{tX}\big]\\
-&=\mathbb{E}\Big[\frac{d}{dt}e^{tX}\Big]=\mathbb{E}\big[Xe^{tX}\big]\\
-&t=0:\\
-M_X'(0)&=\mathbb{E}\big[Xe^{0}\big]=\mathbb{E}[X]=\mu
+\sum_{k=0}^{\infty}\frac{|t|^k|X|^k}{k!}&=e^{|t||X|}\\
+&\le e^{a|X|}\le e^{aX}+e^{-aX},\\
+\mathbb E[e^{a|X|}]&\le M_X(a)+M_X(-a)\lt\infty.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>การกดปุ่มครั้งเดียวแล้วได้ค่าเฉลี่ยออกมาดูเหมือนเวทมนตร์ แต่มันคือกฎลูกโซ่ล้วน ๆ หา derivative ของ $e^{tX}$ เทียบ $t$ ตัวที่คูณ $t$ อยู่คือ $X$ มันจึงหล่นออกมาข้างหน้า</p>
-    <p>บรรทัดที่สามถึงสี่สลับลำดับระหว่างการหา derivative กับการเฉลี่ย ทำได้ในช่วงที่เครื่องมือนี้มีค่าจำกัดรอบศูนย์ ซึ่งเป็นเงื่อนไขเดียวที่ขั้นนี้ขอ แล้วแทน $t=0$ ทุก $e^{0}$ กลายเป็น 1 เหลือ $\mathbb{E}[X]$ พอดี</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — derivative ครั้งที่สองให้ความผันผวน</h4>
-  <p>กดปุ่มอีกครั้งได้ moment ที่สอง แล้วจึงแปลงเป็น variance ด้วยสูตรลัดของหัวข้อ 1.4 ห้าบรรทัดล่างคือใบเสร็จ: ถ้าเครื่องมือถูก มันต้องคืนความผันผวนเดิมที่โจทย์ให้มา</p>
-  <div class="math">\[
-\begin{aligned}
-M_X''(t)&=\frac{d}{dt}\mathbb{E}\big[Xe^{tX}\big]\\
-&=\mathbb{E}\big[X^{2}e^{tX}\big]\\
-&t=0:\\
-M_X''(0)&=\mathbb{E}\big[X^{2}\big]\\[4pt]
-\operatorname{Var}(X)&=\mathbb{E}[X^{2}]-\mu^{2}\\
-&=M_X''(0)-\big(M_X'(0)\big)^{2}\\[4pt]
-&\mu=75,\ \sigma=300:\\
-M_X''(0)&=300^{2}+75^{2}\\
-&=90{,}000+5{,}625=95{,}625\\
-\operatorname{Var}(X)&=95{,}625-5{,}625\\
-&=90{,}000=300^{2}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>กดปุ่มอีกครั้งด้วยวิธีเดียวกับขั้นที่ 3 คราวนี้กับ $Xe^{tX}$ จึงได้ $X$ หล่นออกมาอีกตัว แทน $t=0$ ก็เหลือค่าเฉลี่ยของกำลังสอง จากนั้นใช้สูตรลัดของ variance ที่สร้างไว้ในหัวข้อ 1.4 ไม่ใช่ของใหม่ เขียนใหม่ให้เห็นว่าทั้งสองก้อนมาจากเครื่องมือชิ้นเดียวกัน</p>
-    <p>ห้าบรรทัดล่างคือใบเสร็จ เครื่องมือคืน 95,625 ลบกำลังสองของค่าเฉลี่ยได้ 90,000 ถอดรากกลับเป็น \$300 ต่อวันพอดีตามที่โจทย์บอก หน่วยของ variance คือ USD²/day² และของ standard deviation คือ USD/day</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — พิสูจน์ MGF ของผลรวมตัวแปรอิสระ: เปลี่ยน convolution เป็นผลคูณ</h4>
-  <p>จุดเด่นที่สุดของ MGF คือการเปลี่ยนการคำนวณ convolution integral ของผลรวมตัวแปร ให้กลายเป็นการคูณ function ธรรมดาเมื่อ random variable มี independence ต่อกัน</p>
-  <div class="math">\[
-\begin{aligned}
-M_{X+Y}(t) &= \mathbb{E}\left[e^{t(X+Y)}\right] \\
-&= \mathbb{E}\left[e^{tX} \cdot e^{tY}\right] \\
-&= \mathbb{E}\left[e^{tX}\right] \cdot \mathbb{E}\left[e^{tY}\right]\\
-&\quad (X,\ Y\ \text{independent}) \\
-&= M_X(t) \cdot M_Y(t) \\
-&X_1, \dots, X_n \text{ i.i.d.}\\
-&\implies M_{\sum X_i}(t) = \prod_{i=1}^n M_{X_i}(t)\\
-&= \big(M_{X_1}(t)\big)^n
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แทนผลรวม $X+Y$ เข้าไปในเลขชี้กำลัง สมบัติพื้นฐานของเลขยกกำลังทำให้แยกตัวแปรออกเป็นสองก้อนคูณกัน</p>
-    <p>เงื่อนไข independence ทำให้ expected value ของผลคูณแยกออกเป็นผลคูณของ expected value แต่ละก้อน</p>
-    <p>ผลลัพธ์จึงยุบลงเป็น $M_X(t) M_Y(t)$ ซึ่งไม่ต้องผ่าน convolution integral ที่ยุ่งยากเลย</p>
-    <p>หากเป็นผลรวมของ $n$ ตัวแปรที่เหมือนและเป็นอิสระต่อกัน (i.i.d.) MGF ของผลรวมจะเท่ากับ MGF ก้อนเดียวยกกำลัง $n$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ที่มาของ MGF ระฆังคว่ำจากการจัดกำลังสองสมบูรณ์ และคำนวณค่าจริง</h4>
-  <p>ระฆังคว่ำคือ distribution ที่ใช้บ่อยที่สุด เครื่องมือของมันจึงควรมีสูตรปิด และเรามีชิ้นส่วนครบแล้วตั้งแต่บทที่ 1</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb{E}[e^{a Z}]\\
-&= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{az - z^2/2} \, dz\\
-&= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2 + \frac{a^2}{2}} \, dz \\
-&= e^{a^2/2} \left( \frac{1}{\sqrt{2\pi}} \int_{-\infty}^\infty e^{-\frac{1}{2}(z - a)^2} \, dz \right)\\
-&= e^{a^2/2} \\
-&X = \mu + \sigma Z \implies M_X(t)\\
-&= \mathbb{E}\left[e^{t(\mu + \sigma Z)}\right] = e^{\mu t} \mathbb{E}\left[e^{(t\sigma)Z}\right]\\
-&= e^{\mu t + \frac{1}{2} \sigma^2 t^2} \\
-&M_X'(t) = (\mu + \sigma^2 t) M_X(t)\\
-&\implies M_X'(0) = \mu \\
-&M_X''(t) = \sigma^2 M_X(t)\\
-&\quad + (\mu + \sigma^2 t)^2 M_X(t)\\
-&\implies M_X''(0) = \sigma^2 + \mu^2 \\
-&\mu = 75,\, \sigma = 300:\\
-&M_X''(0) = 300^2 + 75^2\\
-&= 90{,}000 + 5{,}625 = 95{,}625\\
-&\implies \operatorname{Var}(X) = 90{,}000 = 300^2
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>จุดชี้ขาดของระฆังคว่ำคือการจัดกำลังสองสมบูรณ์ใน integral เลขชี้กำลัง $az - z^2/2$ ถูกแปลงเป็น $-\frac{1}{2}(z-a)^2 + a^2/2$</p>
-    <p>พจน์ $e^{a^2/2}$ ไม่มีตัวแปร $z$ จึงดึงออกมานอก integral ได้ ส่วน integral ที่เหลือคือพื้นที่ใต้กราฟระฆังคว่ำที่มีค่าเท่ากับหนึ่งพอดี</p>
-    <p>เมื่อเลื่อนจุดกึ่งกลางเป็น $\mu$ และขยายสเกลด้วย $\sigma$ เราได้สูตรปิด $e^{\mu t + \sigma^2 t^2 / 2}$ อย่างสมบูรณ์</p>
-    <p>การหา derivative ครั้งแรกและครั้งที่สองคืนค่าค่าเฉลี่ยและ second moment ตรงตามนิยาม</p>
-    <p>เมื่อแทนตัวเลขจริง $\mu = 75$ และ $\sigma = 300$ จะได้ second moment 95,625 ซึ่งเมื่อหักลบ $75^2$ จะคืนค่า variance $90{,}000 = 300^2$ พอดี</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — หุ้นจากโจทย์เปิดเรื่อง: ค่าเฉลี่ย 9% ของ log return กลายเป็นราคาโต 12.10%</h4>
-  <p>log return $R\sim N(0.09,\,0.22^2)$ และราคาปีหน้าคือ $S_T=S_0e^{R}$ คำถามคือค่าเฉลี่ยของ $e^R$ ซึ่งคือ MGF ของ R ที่ t = 1 พอดี ใช้สูตรปิดจากขั้นที่ 6 ได้เลย ไม่ต้องอินทิเกรตใหม่</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb{E}\Big[\frac{S_T}{S_0}\Big]=\mathbb{E}[e^{R}]=M_R(1)\\
-&=e^{\mu+\sigma^2/2}\\
-\sigma^2&=0.22^2=0.0484\\
-\frac{\sigma^2}{2}&=0.0242\\
-&\mu+\frac{\sigma^2}{2}=0.1142\\
-&e^{0.1142}=1.1210\quad(\text{mean})\\
-&e^{0.09}=1.0942\quad(\text{median})\\[4pt]
-&100\times1.1210=112.10\\
-&100\times1.0942=109.42\\
-&112.10-109.42=2.68
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ความผิดพลาดที่พบบ่อยที่สุดคือเอา μ ยัดเข้า exp ตรง ๆ ได้ $e^{0.09}$ แล้วเรียกว่า expected value แต่ค่าเฉลี่ยเดินผ่าน function ที่เป็นเส้นตรงได้เท่านั้น exponential โค้งขึ้น Jensen's inequality จึงบอกว่าค่าเฉลี่ยของ $e^R$ ไม่น้อยกว่า $e^{\mathbb E[R]}$ และเท่ากันเมื่อ σ = 0 เท่านั้น</p>
-    <p>ตัวเลขสามตัวนี้ถูกทั้งหมดแต่ตอบคนละคำถาม: 9% คือค่าเฉลี่ยของ log return ซึ่งไม่ใช่หน่วยที่บัญชีใช้ 9.42% คือ median ของการโตของราคา เพราะ exp ไม่สลับลำดับ median ของ R จึงกลายเป็น median ของราคา และ 12.10% คือค่าเฉลี่ยที่ถูกหางขวาไม่กี่กรณีลากขึ้น</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ใช้ MGF ตัวเดิมที่ t = −1: ฝั่ง short ก็เห็น expected value เป็นบวก</h4>
-  <p>ถ้าถือ short สนใจค่าเฉลี่ยของ $S_0/S_T=e^{-R}$ ซึ่งคือ MGF ที่ t = −1 ไม่ต้องพิสูจน์ใหม่ แล้วลองคูณสองทางเข้าด้วยกัน</p>
-  <div class="math">\[
-\begin{aligned}
-&\mathbb{E}[e^{-R}]=M_R(-1)\\
-&=e^{-\mu+\sigma^2/2}=e^{-0.09+0.0242}\\
-&=e^{-0.0658}=0.9363\\[4pt]
-&\mathbb{E}[e^{R}]\times\mathbb{E}[e^{-R}]\\
-&=e^{\mu+\sigma^2/2}\times e^{-\mu+\sigma^2/2}\\
-&=e^{\sigma^2}=e^{0.0484}=1.0496\\
-&e^{R}\times e^{-R}=1\quad\text{every outcome}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>(−1)² = +1 พจน์ σ²/2 จึงยังเป็นบวก ผลคูณของสองค่าเฉลี่ยได้ 1.0496 ทั้งที่ผลคูณในทุกกรณีเป็น 1 เป๊ะ ไม่มีอะไรผิด ค่าเฉลี่ยของผลคูณไม่เท่ากับผลคูณของค่าเฉลี่ย ส่วนเกิน 4.96% คือความผันผวนล้วน ๆ</p>
-    <p>ผลทางปฏิบัติ: ฝั่ง long และฝั่ง short ต่างเห็น expected value เป็นบวกในหน่วยของตัวเอง ทั้งคู่ไม่ได้โกหก และทั้งคู่ไม่ได้กำไรฟรี นี่คือรากของ Siegel's paradox ใน carry trade ค่าเงิน</p>
-  </div>
-</section>
-
-<section class="example">
-  <h4>ตัวอย่างจากตลาด — 9%, 9.42%, 12.10% และกับดักเรื่อง σ²</h4>
-  <p>คำถาม: log return เฉลี่ย 9% ผันผวน 22% ตัวคูณราคาเฉลี่ยที่คาดไว้เท่าไร median เท่าไร และช่องว่างมาจากไหน?</p>
-  <p>ของที่มี: สูตรปิดของ MGF ระฆังคว่ำจากขั้นที่ 6</p>
-  <p>1. expected value คือ MGF ที่ t = 1 ได้ exp ของ 0.1142 = 1.1210 ราคาโต 12.10%</p>
-  <p>2 median คือ exp ของ 0.09 = 1.0942 ราคาโต 9.42%</p>
-  <p>3 ช่องว่างคือ $\sigma^2/2=0.0242$ ในเลขชี้กำลัง หรือตัวคูณ 1.0245 คิดเป็น 2.68 จุด</p>
-  <p>เฉลย: ต่อทุน \$100 expected value 112.10 median 109.42</p>
-  <p>เช็ก 10 วินาที: 0.1142 ต้องมากกว่า 0.09 เสมอ เพราะ σ²/2 เป็นบวก ถ้าคิดออกมาแล้ว expected value ต่ำกว่า median แปลว่าใส่เครื่องหมายผิด</p>
-  <p>งานจริง: เห็นตัวเลขผลตอบแทนในเอกสารกองทุน ให้ถามก่อนว่าเป็นค่าเฉลี่ยของอะไร ช่องว่าง σ²/2 โตตาม σ² พอร์ตที่ σ = 22% ต่างกันราว 2.4 จุด แต่ที่ σ = 60% ต่างกันถึง 18 จุด สูตรทั้งหมดตั้งบนสมมติฐานว่า R เป็นระฆังคว่ำ ถ้าหางหนากว่านี้ MGF อาจไม่มีเลย เช่น Student-t</p>
-  <p>กับดัก: ต้องใส่ σ² ไม่ใช่ σ ถ้าเผลอใส่ 0.22 แทน 0.0484 จะได้ $e^{0.09+0.11}=e^{0.20}=1.2214$ คือ 22.1% ผิดไปเกือบเท่าตัว และอย่าใช้สูตรนี้กับตัวแปรที่ไม่ใช่ระฆังคว่ำ เพราะมันมาจากการจัดกำลังสองสมบูรณ์ของ density แบบนี้โดยเฉพาะ</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — ขยายสู่ Multivariate Normal MGF: vector และ covariance matrix</h4>
-  <p>จากสูตรหนึ่งมิติ เราขยายสู่หลายมิติได้อย่างเป็นธรรมชาติ โดยมองว่าการคูณ inner product $s^\top X$ คือการแปลงเป็นตัวแปรแบบ scalar หนึ่งมิติที่มีค่าเฉลี่ยและ variance ตามโครงสร้าง matrix</p>
-  <div class="math">\[
-\begin{aligned}
-X &\sim \mathcal{MN}_d(\mu, \Sigma)\\
-&\implies X = \mu + L z\\
-&\quad (L L^\top = \Sigma,\, Z \sim \mathcal{N}_d(0, I)) \\
-s^\top X &= s^\top \mu + s^\top L z\\
-&= s^\top \mu + (L^\top s)^\top Z \\
-\mathbb{E}[s^\top X] &= s^\top \mu\\
-&\operatorname{Var}(s^\top X) = (L^\top s)^\top (L^\top s)\\
-&= s^\top L L^\top s = s^\top \Sigma s \\
-s^\top X &\sim \mathcal{N}\left(s^\top \mu,\, s^\top \Sigma s\right) \\
-M_X(s) &= \mathbb{E}\left[e^{s^\top X}\right]\\
-&= \exp\left(s^\top \mu + \frac{1}{2} s^\top \Sigma s\right)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สำหรับ Multivariate Normal เราเขียน $X$ ในรูปการแปลงเชิงเส้น $\mu + Lz$ จากตัวแปร Standard Normal อิสระ $Z$</p>
-    <p>เมื่อนำ vector $s$ มาทำ inner product $s^\top X$ ผลรวมเชิงเส้นของตัวแปร Normal ยังคงเป็น Normal เสมอในหนึ่งมิติ</p>
-    <p>expected value คือ $s^\top \mu$ และ variance คำนวณผ่าน matrix ได้เป็น $s^\top \Sigma s$</p>
-    <p>เมื่อนำผลลัพธ์ของระฆังคว่ำหนึ่งมิติมาใช้กับตัวแปร $s^\top X$ ที่จุด $t = 1$ จะได้ MGF หลายมิติ $\exp(s^\top \mu + \frac{1}{2} s^\top \Sigma s)$ ในทันที โดยไม่ต้อง integrate ในหลายมิติโดยตรง</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>เครื่องมือที่ย่อ distribution ทั้งอันไว้ในสมการเดียว ประหยัดงานได้มากในบทถัดไป</p>
-  <p>ใช้คำนวณค่าเฉลี่ยและความผันผวนโดยไม่ต้องทำ integral ทุกครั้ง แค่หา derivative แล้วแทนศูนย์</p>
-  <p>ใช้หาค่าเฉลี่ยของ exponential ซึ่งโผล่มาตลอดในการตั้งราคา และเป็นที่มาของพจน์ครึ่ง variance ในสูตรราคาของหัวข้อ 1.10 และในแบบจำลองราคาเต็มรูปของบทที่ 10</p>
-  <p>ใช้รวมตัวแปรอิสระหลายตัว เพราะของชิ้นนี้แค่คูณกัน ซึ่งง่ายกว่ารวม distribution ตรง ๆ มาก</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 8.5a — MGF เก็บ moment ไว้ตรงไหน</h4>
-  <img src="../figures/8.5-1.svg" alt="Figure 8.5a — MGF เก็บ moment ไว้ตรงไหน" loading="lazy">
-  <figcaption>
-    <p>มองที่ $t=0$ ก่อน เส้นเริ่มที่ 1 ความชันตรงนั้นให้ค่าเฉลี่ยส่วนความโค้งให้ค่าเฉลี่ยของ $X^2$</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.5b — ความชันกับความโค้ง</h4>
-  <img src="../figures/8.5-2.svg" alt="Figure 8.5b — ความชันกับความโค้ง" loading="lazy">
-  <figcaption>
-    <p>ซูมใกล้ศูนย์แล้วอ่านสองอย่าง ความชันคือค่าเฉลี่ยความโค้งคือค่าเฉลี่ยของ $X^2$ เมื่อลบค่าเฉลี่ยยกกำลังสองจึงได้ variance</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.5c — MGF ของผลรวม</h4>
-  <img src="../figures/8.5-3.svg" alt="Figure 8.5c — MGF ของผลรวม" loading="lazy">
-  <figcaption>
-    <p>ถ้า $X$ กับ $Y$ เป็นอิสระ เส้นของผลรวมสร้างจากการคูณ MGF ของแต่ละตัว ไม่ต้องกลับไปคำนวณ density ของผลรวมใหม่</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.5d — ตรวจ derivative ใกล้ศูนย์</h4>
-  <img src="../figures/8.5-4.svg" alt="Figure 8.5d — ตรวจ derivative ใกล้ศูนย์" loading="lazy">
-  <figcaption>
-    <p>ลองคำนวณ derivative ด้วยช่วงก้าวเล็กหลายค่า แล้วเทียบกับค่าเฉลี่ยและ moment ที่รู้คำตอบ ถ้าความคลาดเคลื่อนไม่ลดตามรูป เส้นทางคำนวณใน library มีจุดผิด</p>
-  </figcaption>
-</figure>
-
-<section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>derivative ครั้งแรกที่ศูนย์ต้องคืน $M_X'(0)=75$ USD/day</p>
-  <p>สำหรับครั้งที่สอง คำนวณทีเดียว: $300^2=90{,}000,\quad 75^2=5{,}625,\quad M_X''(0)=90{,}000+5{,}625=95{,}625$ หน่วย USD²/day²</p>
-  <p>ตรวจย้อนกลับด้วย $\sqrt{95{,}625-75^2}=300$ USD/day ซึ่งตรงกับโจทย์ ถ้า library คืนเลขอื่น แปลว่าการหา derivative หรือการจัดหน่วยผิด — MGF เป็นลายนิ้วมือ ไม่ใช่ตู้สุ่มเลข</p>
-</section>
-
-<section class="pitfall">
-  <h4>กับดัก: MGF มีอยู่เสมอ</h4>
-  <p>heavy-tailed distributions บางชนิดไม่มี MGF รอบศูนย์ แม้ moments บางลำดับจะมีอยู่ อย่า assume transform finite เพียงเพราะ simulation ให้ตัวเลขออกมา</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: เครื่องมือที่ย่อ distribution ทั้งอันไว้ในสมการเดียว</h4>
-  <p>ปัญหาที่ทำให้เครื่องมือนี้จำเป็นคือ การหาค่าเฉลี่ยของอะไรก็ตามที่ผ่าน function ต้องทำ integral ใหม่ทุกครั้ง ซึ่งน่าเบื่อและผิดพลาดง่าย</p>
-  <p>แนวคิดคือถ้าเราคำนวณของชิ้นเดียวไว้ล่วงหน้า ที่เก็บข้อมูลของ distribution ไว้ครบ แล้วดึงสิ่งที่ต้องการออกมาทีหลังด้วยการหา derivative ก็จะประหยัดงานได้มาก</p>
-  <p>ในหัวข้อนี้เราสนใจการใช้งานแบบเดียวเป็นหลัก คือหาค่าเฉลี่ยของ exponential ของตัวแปรที่เป็นระฆังคว่ำ ซึ่งเป็นสิ่งที่โผล่มาตลอดในการตั้งราคา และเป็นที่มาโดยตรงของพจน์ครึ่ง variance ในสูตรราคาหุ้นที่จะเจอในบทที่ 10</p>
-  <p>ข้อควรระวังคือไม่ใช่ทุก distribution ที่มีเครื่องมือนี้ ตัวที่หางอ้วนมาก ๆ หลายตัวไม่มีเลย</p>
-</section>
-
-<section class="prose">
-  <h4>ความเป็นมา: จาก Pierre-Simon Laplace สู่การแปลงโจทย์ convolution เป็นพีชคณิต</h4>
-  <p>ราว ๆ ปี 1810 Pierre-Simon Laplace ได้พัฒนาแนวคิด generating function ซึ่ง Leonhard Euler เคยริเริ่มไว้กับลำดับจำนวนเต็ม นำมาขยายสู่ทฤษฎีความน่าจะเป็นแบบต่อเนื่อง ในหนังสือระดับตำนาน Théorie analytique des probabilités</p>
-  <p>ปัญหาใหญ่ในยุคนั้นคือ เมื่อนำตัวแปรสองตัวมาบวกกัน การหา distribution ของผลรวม $X+Y$ จำเป็นต้องคำนวณ convolution integral หลายชั้น ซึ่งมีความซับซ้อนสูงและมักหาคำตอบแบบปิดไม่ได้ Laplace สังเกตเห็นว่า หากนำตัวแปรไปวางบนเลขชี้กำลัง $e^{tX}$ สมบัติเลขยกกำลังจะเปลี่ยน การบวกของตัวแปร ให้กลายเป็นผลคูณของ expected value ทันที</p>
-  <p>แนวคิดนี้แปลงโจทย์ calculus ที่ยากลำบาก ให้กลายเป็นเพียงการคูณพีชคณิตธรรมดา แบบเดียวกับ Laplace transform ในงานวิศวกรรม ต่อมาในต้นศตวรรษที่ 20 Sergei Bernstein และ Ronald Fisher ได้นำ MGF มาใช้วิเคราะห์ moment และ cumulant อย่างกว้างขวาง จนกลายเป็นแกนหลักในการพิสูจน์ Central Limit Theorem (CLT) และทฤษฎีการเงินสมัยใหม่</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>การมีอยู่</td><td>ทุก distribution มีเครื่องมือนี้</td><td>บาง distribution ไม่มีเลย</td><td>distribution หางอ้วนที่ใช้จำลองวิกฤติหลายตัวใช้เครื่องมือนี้ไม่ได้</td></tr>
-      <tr><td>ขอบเขต</td><td>ใช้ได้ทุกค่าของตัวแปรช่วย</td><td>ใช้ได้เฉพาะช่วงแคบ ๆ รอบศูนย์สำหรับหลายตัว</td><td>ต้องตรวจก่อนว่าค่าที่จะใช้อยู่ในช่วงที่ใช้ได้</td></tr>
-      <tr><td>การตีความ</td><td>ค่าที่ได้ตีความทางธุรกิจได้</td><td>มันเป็นเครื่องมือคำนวณล้วน ๆ</td><td>อย่าพยายามหาความหมายให้ตัวแปรช่วย มันไม่มี</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวแรกคือเหตุผลที่บทเรื่องหางอ้วนต้องใช้เครื่องมืออีกชนิดแทน</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดกดปุ่ม MGF ด้วย numerical derivative และตรวจราคาเฉลี่ย</summary>
-    <pre><code>import numpy as np
-from math import exp
-M = lambda t: (np.exp(t) + np.exp(2 * t) + np.exp(3 * t)) / 3
-h = 1e-5
-assert abs((M(h) - M(-h)) / (2 * h) - 2) &lt; 1e-8 and abs((M(h) - 2 * M(0) + M(-h)) / h ** 2 - 14 / 3) &lt; 1e-4
-mu, s = 75, 300
-MN = lambda t: np.exp(mu * t + 0.5 * s ** 2 * t ** 2)
-h = 1e-6
-d1 = (MN(h) - MN(-h)) / (2 * h); d2 = (MN(h) - 2 * MN(0) + MN(-h)) / h ** 2
-assert abs(d1 - 75) &lt; 1e-4 and abs(d2 / 95_625 - 1) &lt; 1e-3 and abs((d2 - d1 ** 2) / 90_000 - 1) &lt; 1e-3
-R_mu, R_s = 0.09, 0.22
-assert abs(exp(R_mu + R_s ** 2 / 2) - 1.1210) &lt; 5e-5 and abs(exp(R_mu) - 1.0942) &lt; 5e-5
-assert abs(100 * (exp(0.1142) - exp(0.09)) - 2.68) &lt; 5e-3
-assert abs(exp(-R_mu + R_s ** 2 / 2) - 0.9363) &lt; 5e-5 and abs(exp(0.1142) * exp(-0.0658) - exp(0.0484)) &lt; 1e-12
-rng = np.random.default_rng(8)
-R = R_mu + R_s * rng.standard_normal(1_000_000)
-assert abs(np.exp(R).mean() - 1.1210) &lt; 2e-3 and abs(np.exp(-R).mean() - 0.9363) &lt; 2e-3
-S = np.array([[0.04, 0.01], [0.01, 0.09]]); m = np.array([0.05, 0.08]); sv = np.array([1.0, -0.5])
-X = rng.multivariate_normal(m, S, 1_000_000)
-assert abs(np.exp(X @ sv).mean() - np.exp(sv @ m + 0.5 * sv @ S @ sv)) &lt; 3e-3</code></pre>
+    <p>จึงมีตัวครอบที่ integrate ได้สำหรับค่าสัมบูรณ์ของ series ภายในช่วงดังกล่าว ผลรวมมีสัมประสิทธิ์ $\mathbb E[X^k]/k!$ และ differentiate ที่ศูนย์ได้ นี่เป็นเงื่อนไขที่สะดวกและเพียงพอ ไม่ได้อ้างว่าเป็นวิธีเดียวที่จะหา moment บางลำดับ</p>
   </details>
-  <div class="note">
-    <p>โค้ดหา derivative ของ MGF ด้วยตัวเลขแล้วได้ 2 กับ 14/3 ของถุงบัตร และ 75 กับ 95,625 ของ Normal ตรวจว่าราคาเฉลี่ยโต 12.10% ขณะที่ median โต 9.42% ฝั่ง short ก็เห็น 0.9363 และจำลองยืนยัน MGF แบบหลายตัวแปร</p>
-  </div>
+  <p>ทฤษฎีเอกลักษณ์ของ MGF ระบุว่า distributions ที่มี MGF finite และเท่ากันตลอดช่วงเปิดรอบศูนย์ต้องเป็น distribution เดียวกัน การตรงกันแค่ $t$ จุดเดียว หรือแค่ mean/variance ไม่พอ ข้อนี้ทำให้เราใช้ MGF ระบุ distribution ของผลรวมได้ภายใต้เงื่อนไขดังกล่าว</p>
 </section>
-
-<section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+<section class="formula">
+  <h4>ขั้นที่ 3 — Normal MGF มาจากการจัดกำลังสองสมบูรณ์</h4>
+  <p>เริ่มจาก $Z\sim N(0,1)$ แล้วค่อย scale/shift เป็น $X=\mu+\sigma Z$ การเลื่อนกึ่งกลางใน integral ไม่เปลี่ยนพื้นที่รวมของ Normal density</p>
+  <div class="math">\[
+\begin{aligned}
+M_Z(t)&=\frac1{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{tz-z^2/2}\,dz,\\
+tz-z^2/2&=-\tfrac12(z-t)^2+\tfrac12t^2,\\
+M_Z(t)&=e^{t^2/2}\underbrace{\int_{-\infty}^{\infty}
+\frac{e^{-(z-t)^2/2}}{\sqrt{2\pi}}\,dz}_{=1}\\
+&=e^{t^2/2},\\
+M_X(t)&=e^{\mu t}M_Z(\sigma t)\\
+&=e^{\mu t+\sigma^2t^2/2},\quad t\in\mathbb R.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>Normal MGF finite สำหรับทุก real $t$ จึงใช้ทั้งการ differentiate ใกล้ศูนย์และการประเมินที่ $t=1$ ได้ แต่ตัวแปรชนิดอื่นอาจมี domain แคบกว่านี้</p></div>
+  <p>ต่อไปให้ $X$ เป็น P&amp;L รวมตลอดหนึ่งวันใน USD โดย $X\sim N(75,300^2)$ มันเป็นจำนวนเงินของหนึ่งช่วง ไม่ใช่อัตรา USD/day เราจึงได้ mean \$75, SD \$300 และ raw second moment 95,625 USD² ดังนี้</p>
+  <div class="math">\[
+\begin{aligned}
+M_X'(t)&=(\mu+\sigma^2t)M_X(t),\\
+M_X''(t)&=\{\sigma^2+(\mu+\sigma^2t)^2\}M_X(t),\\
+M_X'(0)&=75,\\
+M_X''(0)&=300^2+75^2=95{,}625,\\
+\operatorname{Var}(X)&=95{,}625-75^2=90{,}000\ \mathrm{USD}^2.
+\end{aligned}
+\]</div>
+</section>
+<figure class="plot">
+  <h4>Figure 8.5a — กราฟ MGF ไม่ใช่กราฟ probability density</h4>
+  <img src="../figures/8.5-1.svg" alt="MGF ของ Normal P&amp;L mean 75 และ SD 300 ผ่านจุดศูนย์หนึ่ง" loading="lazy">
+  <figcaption>เส้นผ่าน $(0,1)$ เพราะ $M(0)=\mathbb E[1]=1$ ไม่ได้หมายความว่าศูนย์เป็นจุดต่ำสุดหรือว่าพื้นที่ใต้กราฟเท่ากับหนึ่ง ป้ายแกนเดิม day/USD ให้ตีความเป็น USD$^{-1}$ สำหรับนิยาม P&amp;L จำนวนเงินหนึ่งวันที่ใช้ในบทนี้</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 4 — ถ้าอยากได้ variance ตรง ๆ ใช้ log-MGF</h4>
+  <p>MGF เป็นบวกเมื่อ finite จึงนิยาม $K_X(t)=\ln M_X(t)$ ได้ Differentiation ของ log หักกำลังสองของ mean ให้เองที่ศูนย์</p>
+  <div class="math">\[
+\begin{aligned}
+K_X(t)&:=\ln M_X(t),\\
+K_X'(t)&=M_X'(t)/M_X(t),\\
+K_X''(t)&=\frac{M_X''(t)}{M_X(t)}-\left(\frac{M_X'(t)}{M_X(t)}\right)^2,\\
+K_X'(0)&=\mathbb E[X],\\
+K_X''(0)&=\operatorname{Var}(X),\\
+K_X(t)&=\mu t+\tfrac12\sigma^2t^2\quad(\text{Normal}).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>สำหรับ Normal, derivatives ของ $K$ ลำดับสามขึ้นไปเป็นศูนย์ นั่นคือ higher cumulants เป็นศูนย์ ไม่ใช่ raw moments เช่น standard Normal ยังมี $\mathbb E[Z^4]=3$</p></div>
+  <p>กราฟ MGF ไม่จำเป็นต้องต่ำสุดที่ศูนย์: ในตัวอย่าง P&amp;L $M'(0)=75\gt0$ จุดต่ำสุดอยู่ที่ $t=-\mu/\sigma^2=-1/1200$ และ $M(t)=e^{-1/32}\approx0.969233$ ค่า MGF ต่ำกว่า 1 ได้โดยไม่มีความผิดปกติ</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.5b — เส้นสัมผัสอ่าน mean แต่ second derivative อ่าน raw moment</h4>
+  <img src="../figures/8.5-2.svg" alt="MGF และเส้นสัมผัสหนึ่งบวก 75t ใกล้ศูนย์" loading="lazy">
+  <figcaption>เส้นประคือ $1+75t$ ความชันที่ศูนย์เท่ากับ 75 USD ส่วน $M''(0)$ เท่ากับ 95,625 USD² ไม่ใช่ variance 90,000 USD² ป้ายหน่วย t เดิม day/USD ควรอ่านเป็น USD$^{-1}$ เมื่อ X คือจำนวนเงินของหนึ่งวัน</figcaption>
+</figure>
+<section class="example">
+  <h4>ขั้นที่ 5 — ใช้ MGF ของ log return เพื่อหาราคาเฉลี่ย</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้นสมมติ \$100 ไม่มีเงินปันผลในตัวอย่าง มี log return หนึ่งปี $R\sim N(0.09,0.22^2)$ เรากำลังหาค่าเฉลี่ยตาม distribution ที่สมมติ ไม่ใช่สูตรตั้งราคายุติธรรมแบบ risk-neutral</p>
+  <div class="math">\[
+\begin{aligned}
+S_T&=100e^R,\\
+\mathbb E[S_T]&=100M_R(1)\\
+&=100e^{0.09+0.22^2/2}\\
+&\approx112.097630\ \mathrm{USD},\\
+m_S&:=\operatorname{median}(S_T),\\
+m_S&=100e^{0.09}\\
+&\approx109.417428\ \mathrm{USD},\\
+\mathbb E[S_T/100-1]&=e^{0.1142}-1\approx12.0976\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ราคาเฉลี่ยประมาณ \$112.10 ส่วน \$109.42 เป็น median เพราะ Normal $R$ มี median เท่ากับ 0.09 และ exponential เพิ่มตาม $R$ ค่า 9% เป็น mean ของ log return ไม่ใช่ expected simple return</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\sigma^2/2=0.0242$ คือส่วนเพิ่มใน exponent ไม่ใช่ส่วนต่างของราคาโดยตรง ช่องว่าง mean กับ median จริงคือประมาณ \$2.6802 บนราคาเริ่ม \$100</p>
+  <p>Jensen’s inequality บอกว่า $\mathbb E[e^R]\ge e^{\mathbb E[R]}$ แต่ไม่ได้ให้สูตรส่วนเพิ่มครึ่ง variance ในทุก distribution ผลเท่ากับ $e^{\mu+\sigma^2/2}$ มาจาก Normal MGF ที่เพิ่งพิสูจน์ ไม่ใช่รู้แค่ mean และ SD แล้วใช้ได้ทันที</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 6 — การแทน $t=-1$ ไม่ใช่การคำนวณกำไรจาก short</h4>
+  <p>$e^{-R}=S_0/S_T$ เป็น reciprocal price ratio ไม่ใช่กำไรหรือ gross return ของการ short หุ้นหนึ่งหุ้น ความผิดพลาดเกิดจากเห็นเครื่องหมายลบแล้วเปลี่ยนความหมายของ payoff โดยไม่ได้เขียนกระแสเงินจริง</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E[e^{-R}]&=M_R(-1)\\
+&=e^{-0.09+0.0242}\approx0.936318,\\
+\Pi_{\text{short}}&=S_0-S_T\quad\text{ก่อนต้นทุน},\\
+\mathbb E[\Pi_{\text{short}}]&=100-112.097630\\
+&\approx-12.097630\ \mathrm{USD},\\
+M_R(1)M_R(-1)&=e^{\sigma^2}\approx1.049590,\\
+C&:=\operatorname{Cov}(e^R,e^{-R}),\\
+C&=\mathbb E[1]-M_R(1)M_R(-1)\\
+&=1-e^{\sigma^2}\approx-0.049590.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ผลคูณของค่าคาดหมายไม่เท่ากับค่าคาดหมายของผลคูณ เพราะตัวแปรสองตัวนี้ไม่ได้เป็นอิสระกัน ส่วนกำไร short ต้องรวมค่าหุ้นที่ต้องซื้อคืน และในงานจริงยังมีดอกเบี้ย ค่ายืมหุ้น และเงินปันผลที่ต้องชดเชย</p></div>
+  <p>แม้ตั้ง mean ของ log return เป็นศูนย์จน $M_R(1)=M_R(-1)=e^{\sigma^2/2}\gt1$ ก็ไม่ได้หมายถึงมีกำไร USD ทั้ง long และ short ค่า reciprocal เปลี่ยนหน่วยนับหรือ payoff ประเด็นการกลับ quote แบบนี้เกี่ยวข้องกับ Siegel’s paradox แต่ไม่ใช่สูตรสร้าง arbitrage</p>
+  <p>ในตัวอย่างเดิม expected inverse-ratio return คือ $0.936318-1\approx-6.3682\%$ ขณะที่ expected short P&amp;L หารด้วยราคาเริ่มเป็น $-12.0976\%$ สองตัวนี้คนละ payoff และตัวหลังยังไม่ใช่ผลตอบแทนบน margin capital จริง ซึ่งต้องกำหนดแยกต่างหาก</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 7 — ผลรวมอิสระเปลี่ยน convolution เป็นผลคูณ</h4>
+  <p>ให้ $X,Y$ เป็นอิสระกัน และ MGFs finite ที่ argument ที่ใช้ การ factor expectation อาศัย independence โดยตรง ไม่ใช่แค่ covariance ศูนย์</p>
+  <div class="math">\[
+\begin{aligned}
+M_{X+Y}(t)&=\mathbb E[e^{t(X+Y)}]\\
+&=\mathbb E[e^{tX}e^{tY}]\\
+&=\mathbb E[e^{tX}]\mathbb E[e^{tY}]\\
+&=M_X(t)M_Y(t),\\
+K_{X+Y}(t)&=K_X(t)+K_Y(t).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>แทนที่จะ convolve densities ก่อนแล้วค่อยหา moments เราสามารถคูณ MGFs หรือบวก log-MGFs ได้ ถ้าเงื่อนไข independence ไม่จริง ต้องใช้ joint distribution แทนการคูณ marginal MGFs</p></div>
+  <p>Figure 8.5c ใช้ P&amp;L สอง desk ที่อิสระ: $X\sim N(50,220^2)$ และ $Y\sim N(25,180^2)$ ของช่วงหนึ่งวัน ผลรวมจึงมี mean 75 USD แต่ variance เป็น 80,800 USD² ไม่ใช่ 90,000 ของตัวอย่างก่อน</p>
+  <div class="math">\[
+\begin{aligned}
+M_X(t)M_Y(t)&=e^{50t+220^2t^2/2}\\
+&\quad\times e^{25t+180^2t^2/2}\\
+&=e^{75t+(80{,}800)t^2/2},\\
+X+Y&\sim N(75,80{,}800),\\
+\operatorname{SD}(X+Y)&=\sqrt{80{,}800}\\
+&\approx284.2534\ \mathrm{USD}.
+\end{aligned}
+\]</div>
+  <p>บรรทัดระบุ distribution ใช้ทฤษฎีเอกลักษณ์: MGF ของผลรวมตรงกับ Normal MGF สำหรับทุก $t$ ถ้า desk มี correlation ต้องใส่ covariance และตรวจ joint model ใหม่ ไม่ใช่ใช้กราฟผลคูณนี้ต่อโดยไม่เปลี่ยนสมมติฐาน</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.5c — Mean เดียวกันไม่จำเป็นต้อง variance เดียวกัน</h4>
+  <img src="../figures/8.5-3.svg" alt="MGFs ของสอง desk และผลคูณภายใต้ independence" loading="lazy">
+  <figcaption>ผลคูณในรูปเป็น MGF ของ Normal mean 75, SD ประมาณ 284.25 ไม่ใช่ SD 300 ของ 8.5a–b ตัว t สำหรับ P&amp;L หนึ่งวันใน USD มีหน่วย USD$^{-1}$; ป้าย day/USD เป็นข้อความเดิมของรูป ไม่ใช่นิยามหน่วยใหม่</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 8 — Multivariate MGF สร้างจาก independent Gaussian coordinates</h4>
+  <p>ให้ $X=\mu+LZ$ ตาม 8.4 โดย $Z$ มี independent standard Normal components และ $LL^{\mathsf T}=\Sigma$ กำหนด vector argument $s$ และ $a=L^{\mathsf T}s$ แล้วใช้ univariate MGF ที่พิสูจน์แล้วทีละ component</p>
+  <div class="math">\[
+\begin{aligned}
+M_X(s)&:=\mathbb E[e^{s^{\mathsf T}X}]\\
+&=e^{s^{\mathsf T}\mu}\mathbb E[e^{a^{\mathsf T}Z}]\\
+&=e^{s^{\mathsf T}\mu}\prod_j M_{Z_j}(a_j)\\
+&=e^{s^{\mathsf T}\mu+\frac12\sum_j a_j^2},\\
+\sum_j a_j^2&=s^{\mathsf T}LL^{\mathsf T}s=s^{\mathsf T}\Sigma s,\\
+M_X(s)&=e^{s^{\mathsf T}\mu+\frac12s^{\mathsf T}\Sigma s}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ไม่มี inverse หรือ determinant ในสูตรนี้ จึงใช้กับ Gaussian ที่ covariance เป็น PSD แต่ singular ได้ด้วย ต่างจาก density เต็มมิติของ 8.4 อย่างไรก็ตามยังต้องเป็น joint Gaussian ไม่ใช่รู้เพียงว่า marginal แต่ละตัวเป็น Normal</p></div>
+  <details><summary>Gradient กับ Hessian เก็บอะไร</summary>
+    <div class="math">\[
+\begin{aligned}
+K_X(s)&=s^{\mathsf T}\mu+\tfrac12s^{\mathsf T}\Sigma s,\\
+\nabla K_X(s)&=\mu+\Sigma s,\\
+\nabla^2K_X(s)&=\Sigma,\\
+\nabla M_X(s)&=(\mu+\Sigma s)M_X(s),\\
+\nabla M_X(0)&=\mu,\\
+\nabla^2M_X(0)&=\Sigma+\mu\mu^{\mathsf T}=\mathbb E[XX^{\mathsf T}].
+\end{aligned}
+\]</div>
+    <p>Gradient รวบรวม derivatives แรก ส่วน Hessian รวบรวม derivatives ที่สอง: Hessian ของ $M$ ที่ศูนย์ให้ raw second-moment matrix แต่ Hessian ของ $K$ ให้ covariance matrix โดยตรง</p>
+  </details>
+  <p>ตัวอย่างใหม่ ให้ $\mu=(0.05,0.08)^{\mathsf T}$ และ $\Sigma=\begin{bmatrix}0.04&amp;0.01\\0.01&amp;0.09\end{bmatrix}$ เป็น parameters ของ Gaussian log returns ช่วงหนึ่งปี เมื่อ $s=(1,-0.5)^{\mathsf T}$ จะได้</p>
+  <div class="math">\[
+\begin{aligned}
+s^{\mathsf T}\mu&=0.05-0.5(0.08)=0.01,\\
+s^{\mathsf T}\Sigma s&=0.04+0.25(0.09)-0.01=0.0525,\\
+M_X(s)&=e^{0.01+0.0525/2}\approx1.036915.
+\end{aligned}
+\]</div>
+  <p>$e^{s^{\mathsf T}X}$ ในที่นี้เป็น exponential ของ linear combination ของ log returns หรือผลคูณ geometric ของ gross returns ไม่ใช่ simple return ของพอร์ตลงทุนเงินตาม weights $s$ โดยอัตโนมัติ การสร้างพอร์ตจริงต้องเริ่มจาก payoff/เงินลงทุนเช่นใน 8.2</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 9 — เช็ก domain ก่อนกดปุ่มหา moment</h4>
+  <p>ตัวอย่างง่ายที่ไม่ได้ finite ทุก $t$ คือ $X\sim\operatorname{Exponential}(\lambda)$ โดย $\lambda\gt0$ เลขชี้กำลังที่เหลือหลังรวมกับ density ต้องลดลงเมื่อ $x$ เพิ่ม</p>
+  <div class="math">\[
+\begin{aligned}
+M_X(t)&=\int_0^{\infty}e^{tx}\lambda e^{-\lambda x}\,dx\\
+&=\lambda\int_0^{\infty}e^{-(\lambda-t)x}\,dx,\\
+t\lt\lambda:\quad M_X(t)&=\frac{\lambda}{\lambda-t},\\
+t\ge\lambda:\quad M_X(t)&=\infty.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ที่ $t=\lambda$ integrand เป็นค่าคงที่บวกตลอดครึ่งเส้นจำนวน จึง diverge แล้ว ถ้า $\lambda=2$ จะได้ $M(1)=2$ แต่ $M(2)$ ไม่ใช่ตัวเลข finite ให้เอาไปใช้งานต่อ</p></div>
+  <p>Student-t ไม่มี MGF finite รอบศูนย์ แม้เลือก degrees of freedom มากพอให้ variance finite แล้วก็ตาม เพราะ exponential เอาชนะ polynomial tails ส่วนการที่ข้อมูลจำลองมีจำนวนแถวจำกัดและให้ empirical MGF finite ไม่ใช่หลักฐานว่า expectation ของ population finite</p>
+  <details><summary>มีทุก polynomial moment ก็ยังไม่มี MGF รอบศูนย์ได้</summary>
+    <p>ให้ $Z\sim N(0,1)$ และ $Y=e^Z$ ซึ่งเป็น Lognormal สำหรับทุกจำนวนเต็มไม่ติดลบ $k$ เรามี $\mathbb E[Y^k]=M_Z(k)=e^{k^2/2}\lt\infty$ แต่เมื่อ $t\gt0$</p>
+    <div class="math">\[
+\begin{aligned}
+M_Y(t)&=\frac1{\sqrt{2\pi}}\int_{-\infty}^{\infty}
+ e^{t e^z-z^2/2}\,dz\\
+&=\infty\qquad(t\gt0).
+\end{aligned}
+\]</div>
+    <p>เมื่อ $z$ โต พจน์ $t e^z$ โตเร็วกว่าพจน์ลบ $z^2/2$ จน integrand ไม่ลดลงให้ integrate ได้ นี่ไม่ขัดกับราคาหุ้นตัวอย่าง: ที่นั่นใช้ <em>MGF ของ log return</em> ที่ 1 ไม่ใช่ MGF ของตัวราคา Lognormal ที่ argument บวก</p>
+  </details>
+  <p>เครื่องมือ transform อีกตัวคือ characteristic function $\mathbb E[e^{iuX}]$ ซึ่งมีอยู่เสมอสำหรับ real $u$ เพราะ $|e^{iuX}|=1$ ส่วน MGF แบบ real exponent ต้องตรวจ integrability แยก แนวคิด transform เหล่านี้เชื่อมกับ Laplace transform: เปลี่ยนปัญหา expectation/convolution ให้จัดการด้วย function โดยรักษาเงื่อนไขของ transform นั้นไว้</p>
+</section>
+<section class="example">
+  <h4>ตรวจ derivative ด้วยตัวเลขอย่างรู้ข้อจำกัด</h4>
+  <p>Central differences ประมาณ derivatives ด้วยค่าที่อยู่ใกล้ศูนย์ แต่ $h$ ใหญ่ทำให้ truncation error มาก ขณะที่ $h$ เล็กเกินไปทำให้ลบตัวเลขที่เกือบเท่ากันจนเสียความละเอียด จึงไม่ใช่ว่ายิ่งลด $h$ ยิ่งแม่นเสมอ</p>
+  <div class="math">\[
+\begin{aligned}
+D_1(h)&:=\frac{M(h)-M(-h)}{2h}\approx M'(0),\\
+D_2(h)&:=\frac{M(h)-2M(0)+M(-h)}{h^2}\approx M''(0).
+\end{aligned}
+\]</div>
+  <div class="table-wrap"><table><thead><tr><th>$h$</th><th>$D_1$ เทียบกับ 75</th><th>$D_2$ เทียบกับ 95,625</th></tr></thead><tbody>
+    <tr><td>$1.6\times10^{-4}$</td><td>75.0883</td><td>95,683.41</td></tr>
+    <tr><td>$10^{-6}$</td><td>75.0000034</td><td>95,625.0021</td></tr>
+    <tr><td>$10^{-8}$</td><td>ประมาณ 75</td><td>ประมาณ 95,624.62</td></tr>
+  </tbody></table></div>
+  <p>ตัวเลขปลาย ๆ อาจต่างเล็กน้อยตาม arithmetic implementation การทดสอบหลักควรเทียบสูตรวิเคราะห์กับการคำนวณอิสระและ error budget ไม่ใช่บังคับ finite difference ให้ตรงทุกหลัก หรือสรุปว่า library ผิดทันทีเมื่อผลหยุดดีขึ้น</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.5d — Numerical derivative เป็นค่าประมาณ</h4>
+  <img src="../figures/8.5-4.svg" alt="Central differences เทียบกับ mean 75 และ raw second moment 95625" loading="lazy">
+  <figcaption>รูปใช้ h ตั้งแต่ $2\times10^{-5}$ ถึง $1.6\times10^{-4}$ เส้นสองเส้นมีหน่วยต่างกัน: derivative แรกเป็น USD ส่วนครั้งที่สองเป็น USD² จึงไม่ใช่กราฟเปรียบเทียบความเสี่ยงสองชนิด การลด h ต่อไปมากเกินช่วงรูปอาจทำให้ rounding error แย่ลง</figcaption>
+</figure>
+<section class="pitfall">
+  <h4>อย่ารวมสี่คำถามเป็นคำถามเดียว</h4>
   <ul>
-    <li>MGF คือ $E[e^{tX}]$ และต้องมี $tX$ unitless</li>
-    <li>first derivative ที่ศูนย์ให้ mean; second derivative ให้ second raw moment</li>
-    <li>variance ได้จาก second raw moment ลบ mean squared</li>
-    <li>independent sums เปลี่ยนเป็น product ของ MGFs</li>
-    <li>MGF ของระฆังคว่ำที่ t = 1 คือ expected value ของตัวคูณราคา: log return 9% ผันผวน 22% ให้ median 1.0942 แต่ expected value 1.1210 ส่วนต่างคือ σ²/2 = 0.0242 และที่ t = −1 ฝั่ง short ก็ได้ 0.9363 ผลคูณ 1.0496 คือความผันผวนล้วน ๆ</li>
+    <li><strong>ตัวแปรอะไร:</strong> P&amp;L, log return, ราคาหุ้น และ reciprocal price เป็นคนละตัวแปร มี MGFs/payoffs คนละความหมาย</li>
+    <li><strong>moment อะไร:</strong> $M''(0)$ คือ raw second moment ส่วน variance ต้องหัก mean² หรือใช้ $K''(0)$</li>
+    <li><strong>domain ไหน:</strong> มี moments บางลำดับหรือคำนวณ finite sample ได้ ไม่ยืนยัน MGF finite ในช่วงที่ต้องการ</li>
+    <li><strong>independence ไหน:</strong> คูณ marginal MGFs ได้เมื่อมี independence ไม่ใช่แค่แต่ละ marginal ดู Normal หรือ covariance ศูนย์</li>
   </ul>
 </section>
+<section class="example">
+  <h4>ลองสามคำถามก่อนอ่าน marginals</h4>
+  <p><strong>1.</strong> $A$ มีค่า $-1,+1$ อย่างละครึ่ง ส่วน $B\sim N(0,1)$ ทั้งคู่ mean ศูนย์และ variance หนึ่ง แล้ว $\mathbb E[e^A]$ กับ $\mathbb E[e^B]$ เท่ากันหรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่เท่า: $M_A(1)=(e+e^{-1})/2\approx1.543081$ ส่วน $M_B(1)=e^{1/2}\approx1.648721$ ข้อมูล mean/variance เท่ากันไม่ทำให้ MGF ทั้ง function เท่ากัน และไม่ทำให้ Gaussian half-variance formula ใช้กับ A ได้</p></details>
+  <p><strong>2.</strong> เปลี่ยน P&amp;L จาก USD เป็นพัน USD โดย $Y=X/1000$ เมื่อ $X\sim N(75,300^2)$ MGF และ raw second moment เปลี่ยนอย่างไร?</p>
+  <details><summary>เฉลย</summary><p>$M_Y(u)=M_X(u/1000)$ ดังนั้น mean เป็น 0.075, variance 0.09, raw second moment 0.095625 และ $M_Y(1)=M_X(0.001)\approx1.127497$ การเปลี่ยนหน่วยเปลี่ยน argument scale ไม่ได้เปลี่ยน payoff ทางเศรษฐกิจ</p></details>
+  <p><strong>3.</strong> กลับไปคู่ $X\sim N(0,1),Y=WX$ ของ 8.3 โดย W เป็นเครื่องหมายอิสระ $\pm1$ อย่างละครึ่ง แม้ covariance ศูนย์ จะคูณ MGFs เพื่อหา $\mathbb E[e^{X+Y}]$ ได้หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่ได้ เมื่อ $W=-1$ จะได้ $X+Y=0$ และเมื่อ $W=1$ จะได้ $2X$ ดังนั้น $\mathbb E[e^{X+Y}]=(1+M_X(2))/2=(1+e^2)/2\approx4.194528$ แต่การคูณ marginal MGFs ให้ $e^{1/2}e^{1/2}=e\approx2.718282$ ความต่างมาจาก dependence ที่ covariance มองไม่เห็น</p></details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>รันด้วย Node.js โดยไม่ต้องติดตั้งแพ็กเกจ log-MGF ช่วยเลี่ยงการสร้าง exponential ที่ใหญ่เกินเครื่อง แต่ไม่ได้ทำให้ MGF ที่ diverge ทางคณิตศาสตร์กลับมามีค่า โค้ดแยกกรณี Exponential นอก domain ออกจาก numeric overflow</p>
+  <p>ส่วน finite law รับ outcomes ที่มีโอกาสเท่ากันเท่านั้น การใช้ log-sum-exp ป้องกัน overflow ระหว่างบวก exponentials; ไม่ได้พิสูจน์ว่า population ที่นำข้อมูลมาจากนั้นมี MGF finite</p>
+  <pre><code class="language-javascript" data-example="8.5">function finiteVector(v, size = null) {
+  if (!Array.isArray(v) || !v.length || (size !== null &amp;&amp; v.length !== size) ||
+      ![...v].every(Number.isFinite)) throw new TypeError('Need a finite vector of the required size');
+}
+function finiteResult(value) {
+  if (!Number.isFinite(value)) throw new RangeError('Numerical overflow or invalid arithmetic');
+  return value;
+}
+function expChecked(logValue) {
+  finiteResult(logValue);
+  const value = Math.exp(logValue);
+  if (!Number.isFinite(value)) throw new RangeError('MGF overflow: retain the log-MGF');
+  return value;
+}
+function normalLogMGF(t, mean, variance) {
+  if (![t, mean, variance].every(Number.isFinite) || variance &lt; 0) {
+    throw new RangeError('Normal inputs must be finite with nonnegative variance');
+  }
+  const u = Math.sqrt(variance) * t;
+  return finiteResult(mean * t + 0.5 * u * u);
+}
+const normalMGF = (t, mean, variance) =&gt; expChecked(normalLogMGF(t, mean, variance));
+function equalLogMGF(t, values) {
+  finiteVector(values);
+  if (!Number.isFinite(t)) throw new RangeError('Need a finite argument');
+  const a = values.map(x =&gt; finiteResult(t * x));
+  const peak = a.reduce((m, x) =&gt; Math.max(m, x), -Infinity);
+  return finiteResult(peak + Math.log(a.reduce((s, x) =&gt; s + Math.exp(x - peak), 0) / a.length));
+}
+function exponentialLogMGF(t, rate) {
+  if (![t, rate].every(Number.isFinite) || rate &lt;= 0) throw new RangeError('Invalid exponential arguments');
+  if (t &gt;= rate) return Infinity; // Mathematical divergence, not machine overflow.
+  if (t &gt;= -rate) return -Math.log1p(-t / rate);
+  return Math.log(rate) - Math.log(-t) - Math.log1p(rate / (-t));
+}
+function projectNormal(mean, covariance, w) {
+  finiteVector(mean, 2); finiteVector(w, 2);
+  if (!Array.isArray(covariance) || covariance.length !== 2 ||
+      [...covariance].some(row =&gt; !Array.isArray(row) || row.length !== 2 || ![...row].every(Number.isFinite))) {
+    throw new TypeError('Need a finite 2 by 2 covariance');
+  }
+  const a = covariance[0][0], c = covariance[0][1], d = covariance[1][1];
+  if (c !== covariance[1][0]) throw new RangeError('Covariance must be symmetric');
+  if (a &lt; 0 || d &lt; 0) throw new RangeError('Covariance must be PSD');
+  let first = 0, second = 0;
+  if (a === 0 || d === 0) {
+    if (c !== 0) throw new RangeError('Covariance must be PSD');
+    first = Math.sqrt(a) * w[0]; second = Math.sqrt(d) * w[1];
+  } else {
+    const s1 = Math.sqrt(a), s2 = Math.sqrt(d), rho = c / s1 / s2;
+    if (!Number.isFinite(rho) || Math.abs(rho) &gt; 1) throw new RangeError('Covariance must be PSD');
+    first = s1 * w[0] + rho * s2 * w[1];
+    second = s2 * Math.sqrt((1 - rho) * (1 + rho)) * w[1];
+  }
+  return {mean: finiteResult(w[0] * mean[0] + w[1] * mean[1]),
+    variance: finiteResult(first * first + second * second)};
+}
+function jointLogMGF(s, mean, covariance) {
+  const p = projectNormal(mean, covariance, s);
+  return finiteResult(p.mean + 0.5 * p.variance);
+}
+function differences(mean, variance, h) {
+  if (!Number.isFinite(h) || h &lt;= 0 || !Number.isFinite(h * h) || h * h === 0) {
+    throw new RangeError('Invalid difference step');
+  }
+  const plus = normalMGF(h, mean, variance), minus = normalMGF(-h, mean, variance);
+  return {h, first: finiteResult((plus - minus) / (2 * h)),
+    second: finiteResult((plus - 2 + minus) / (h * h))};
+}
+const cards = [1, 2, 3];
+const raw = [1, 2, 3, 4].map(k =&gt; cards.reduce((s, x) =&gt; s + x ** k, 0) / cards.length);
+const mean = 75, variance = 300 ** 2, logMean = .09, logVariance = .22 ** 2;
+const gross = normalMGF(1, logMean, logVariance), inverse = normalMGF(-1, logMean, logVariance);
+const median = 100 * Math.exp(logMean), expectedPrice = 100 * gross;
+const multiMean = [.05, .08], S = [[.04, .01], [.01, .09]], s = [1, -.5];
+const projected = projectNormal(multiMean, S, s);
+const hValues = [.00016, .00008, .00004, .00002, 1e-6, 1e-8, 1e-10];
+console.log(JSON.stringify({cards: {raw, variance: raw[1] - raw[0] ** 2,
+    mgf0: expChecked(equalLogMGF(0, cards)), mgf1: expChecked(equalLogMGF(1, cards))},
+  pnl: {mean, rawSecond: variance + mean ** 2, variance,
+    mgfPositive: normalMGF(.001, mean, variance), mgfNegative: normalMGF(-.001, mean, variance),
+    minimumArgument: -mean / variance, minimum: normalMGF(-mean / variance, mean, variance),
+    cumulants: [mean, variance, 0, 0]},
+  stock: {expectedPrice, median, dollarGap: expectedPrice - median,
+    expectedSimpleReturn: gross - 1, inverse, inverseReturn: inverse - 1,
+    ordinaryShortDollars: 100 - expectedPrice, shortPerInitialPrice: 1 - gross,
+    productOfMeans: gross * inverse, covariance: 1 - gross * inverse,
+    zeroLogMeanBoth: normalMGF(1, 0, logVariance)},
+  independent: {mean: 50 + 25, variance: 220 ** 2 + 180 ** 2, sd: Math.hypot(220, 180),
+    productMGF: normalMGF(.001, 50, 220 ** 2) * normalMGF(.001, 25, 180 ** 2)},
+  multivariate: {projected, mgf: expChecked(jointLogMGF(s, multiMean, S)),
+    rawSecond: S.map((row, i) =&gt; row.map((x, j) =&gt; x + multiMean[i] * multiMean[j]))},
+  domain: {exponentialAt1: Math.exp(exponentialLogMGF(1, 2)),
+    exponentialAtBoundaryInfinite: exponentialLogMGF(2, 2) === Infinity},
+  differences: hValues.map(h =&gt; differences(mean, variance, h)),
+  exercise: {twoPoint: expChecked(equalLogMGF(1, [-1, 1])), normal: normalMGF(1, 0, 1),
+    thousandsMGF: normalMGF(1, .075, .09), thousandsRawSecond: .09 + .075 ** 2,
+    mixtureJoint: (1 + normalMGF(2, 0, 1)) / 2,
+    productOfMarginals: normalMGF(1, 0, 1) ** 2}}));</code></pre>
+</section>
+<section class="takeaways">
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>MGF คือ expectation ของ exponential ไม่ใช่ density และ t ไม่ใช่เวลา; ต้องดูหน่วยของตัวแปรก่อนเลือก argument</li>
+    <li>เมื่อ finite รอบศูนย์ $M^{(k)}(0)$ ให้ raw moments; variance เท่ากับ $M''(0)-[M'(0)]^2$ หรือ $K''(0)$</li>
+    <li>Normal MGF มาจากการจัดกำลังสองสมบูรณ์ การอ่าน expected price จาก log return ต้องอาศัย distribution ที่ระบุ ไม่ใช่แค่ mean/SD</li>
+    <li>Reciprocal price ratio ไม่ใช่ ordinary short payoff และการคูณค่าคาดหมายไม่เหมือน expectation ของผลคูณเมื่อ dependent</li>
+    <li>MGF ของผลรวมอิสระเป็นผลคูณ; multivariate Gaussian MGF ใช้ mean/covariance รวม off-diagonals และยังใช้กับ singular Gaussian ได้</li>
+    <li>มี polynomial moments ไม่รับประกัน MGF รอบศูนย์; ตรวจ domain และแยก mathematical divergence จาก numerical overflow/rounding</li>
+  </ul>
+  <p>ต่อไป 8.6 จะเลือกเก็บเพียงบาง components ของ MVN แล้วใช้โครงสร้างเดียวกันพิสูจน์ว่า marginal เหลือ mean กับ covariance ส่วนไหน</p>
+</section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="8.4.html">8.4 The Multivariate Normal Density</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.6.html">8.6 Marginals of the Multivariate Normal</a></div>

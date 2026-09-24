@@ -15,344 +15,375 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 43/158</span>
 </nav>
-
-<article class="topic" data-number="8.1" data-depends-on="5.1 5.5 7.3">
+<article class="topic" data-number="8.1" data-depends-on="3.3 5.1 5.5 7.3 7.5 7.6">
 <header class="topic-header">
   <h1><span class="tnum">8.1</span> The Mean Vector and the Covariance Matrix</h1>
-  <p class="subtitle">จัดระเบียบจุดศูนย์กลางและความสัมพันธ์ของหลายสินทรัพย์ให้อยู่ในรูป vector และ matrix</p>
+  <p class="subtitle">ตารางความเสี่ยงต้องบอกว่าเลขของใคร ใช้หน่วยอะไร และคำนวณจากช่วงเวลาไหน</p>
 </header>
-
 <div class="hook">
-  <p>โค้ชบันทึกคะแนนนักกีฬา 3 คน แต่ต้องการรู้ว่าเวลาคนหนึ่งฟอร์มตก อีกสองคนตกตามหรือไม่ คอลัมน์ค่าเฉลี่ยเดียวพอไหม?</p>
-  <p>เฉลย: ไม่พอ ค่าเฉลี่ยสามตัวบอกระดับของแต่ละคน แต่ไม่บอกว่าใครตกพร้อมใคร ต้องมีความผันผวนของแต่ละคน 3 ตัว กับการขยับร่วมของ 3 คู่ รวม 6 ตัวเลขที่ต่างกัน วางเป็นตาราง 3 คูณ 3 ที่ซ้ายล่างเหมือนขวาบน ตารางนั้นคือ covariance matrix</p>
-  <p>Mean vector เก็บค่าเฉลี่ยของหลายตัวแปรเป็นแถวหรือคอลัมน์เดียว; covariance matrix เก็บความผันผวนเดี่ยวและการขยับร่วมกัน ใช้เป็นข้อมูลตั้งต้นของการวิเคราะห์หลายตัวแปร</p>
+  <p>สองทีมส่ง covariance matrix ของหุ้นสามกลุ่มมาให้ ตัวเลขชุดเดียวกัน แต่ทีมหนึ่งเรียง Technology–Energy–Financials อีกทีมเรียง Energy–Technology–Financials ทั้งสองตารางสมมาตรและมี eigenvalue บวก ถ้าใส่น้ำหนัก $(0.5,0.3,0.2)$ เหมือนกัน จะได้ความเสี่ยงเท่ากันไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่จำเป็น เพราะน้ำหนักตัวแรกจะไปจับคนละสินทรัพย์ ในตัวอย่างท้ายบท SD รายวันเปลี่ยนจาก 1.6571% เป็น 1.8958% ทั้งที่โปรแกรมคูณ matrix ได้ตามปกติ ต้องเรียงชื่อ ค่าเฉลี่ย covariance และน้ำหนักให้ตรงกัน ไม่ใช่ตรวจเพียงขนาดตาราง</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากคำถามว่าต้องเก็บเลขกี่ตัวถึงจะพอ</h4>
-  <p>พอร์ตถือกองทุนดัชนีสามกลุ่ม คือเทคโนโลยี พลังงาน และการเงิน ถ้าจะสรุปพฤติกรรมของทั้งสามตัวให้คนอื่นอ่าน ต้องส่งตัวเลขไปกี่ตัว</p>
-  <p>ค่าเฉลี่ยสามตัวไม่พอ มันบอกแค่ว่าแต่ละกลุ่มวิ่งขึ้นเฉลี่ยเท่าไร ไม่บอกว่ากลุ่มไหนเหวี่ยงแรงกว่า และไม่บอกเลยว่าเวลาเทคร่วง การเงินร่วงตามไหม ซึ่งเป็นคำถามที่ตัดสินว่าพอร์ตนี้ปลอดภัยหรือไม่</p>
-  <p>ของที่ต้องเก็บจริงคือค่าเฉลี่ย 3 ตัว ความผันผวนรายตัวอีก 3 ตัว และการขยับร่วมของทั้ง 3 คู่อีก 3 ตัว หกตัวหลังวางลงในตาราง 3 คูณ 3 ได้พอดี โดยที่มุมซ้ายล่างสะท้อนมุมขวาบน ตารางนั้นคือ covariance matrix และหัวข้อนี้สร้างมันขึ้นมาจากข้อมูลดิบ</p>
+  <h4>สิ่งที่เราจะสร้าง</h4>
+  <p>บทที่ 7 สอนวิธีคูณตาราง บทนี้เริ่มจากสิ่งที่ตารางแทน: ผลตอบแทนที่ยังไม่รู้ล่วงหน้า เราจะสร้างค่าเฉลี่ยและ covariance จากข้อมูลสามวัน แล้วแยกให้ชัดว่าค่าที่คำนวณจากตัวอย่างต่างจากค่าของแบบจำลองอย่างไร</p>
+  <p>ข้อมูลที่ดีต้องมีทั้งตัวเลขและป้ายกำกับ ตลอดบทให้ผลตอบแทนเป็น simple return ของช่วงเวลาที่ระบุ ตัวอย่างทั้งหมดเป็นข้อมูลสมมติของสินทรัพย์สหรัฐฯ ไม่ใช่ค่าประมาณล่าสุดจากตลาด</p>
 </section>
-
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>mean vector</dt>
-    <dd>vector คอลัมน์ที่เก็บ expected value หรือผลตอบแทนเฉลี่ยของสินทรัพย์แต่ละตัว ใช้ระบุจุดศูนย์กลางของ distribution หลายมิติ</dd>
-    <dt>covariance matrix</dt>
-    <dd>matrix จัตุรัสที่แนวทแยงมุมเก็บค่า variance ของแต่ละสินทรัพย์ และช่องนอกแนวทแยงเก็บค่า covariance ระหว่างคู่สินทรัพย์ ใช้คำนวณความเสี่ยงรวมของพอร์ต</dd>
-    <dt>covariance</dt>
-    <dd>ค่าที่วัดการเคลื่อนไหวร่วมกันเชิงเส้นระหว่างสินทรัพย์สองตัวในหน่วยของผลตอบแทนยกกำลังสอง</dd>
-    <dt>exchange-traded fund (ETF)</dt>
-    <dd>กองทุนรวมดัชนีที่จดทะเบียนซื้อขายในตลาดหลักทรัพย์เหมือนหุ้น ใช้เป็นตัวแทนการลงทุนในกลุ่มอุตสาหกรรมต่าง ๆ ของสหรัฐฯ</dd>
-    <dt>Technology ETF</dt>
-    <dd>กองทุน ETF กลุ่มเทคโนโลยีของตลาดสหรัฐฯ ใช้เป็นสินทรัพย์ตัวแรกใน vector ($r_1$)</dd>
-    <dt>Energy ETF</dt>
-    <dd>กองทุน ETF กลุ่มพลังงานของตลาดสหรัฐฯ ใช้เป็นสินทรัพย์ตัวที่สองใน vector ($r_2$)</dd>
-    <dt>Financials ETF</dt>
-    <dd>กองทุน ETF กลุ่มการเงินของตลาดสหรัฐฯ ใช้เป็นสินทรัพย์ตัวที่สามใน vector ($r_3$)</dd>
-    <dt>basis point (bp)</dt>
-    <dd>หน่วยวัดผลตอบแทนทางการเงิน โดย $1\text{ bp} = 0.01\% = 0.0001$ ในรูปทศนิยม ช่วยให้อ่านตัวเลขขนาดเล็กได้สะดวก</dd>
-    <dt>positive semi-definite</dt>
-    <dd>คุณสมบัติของ matrix ที่ทำให้ผลคูณรูปแบบกำลังสอง $x^{\mathsf T}\Sigma x \ge 0$ เสมอสำหรับทุก vector $x$ ซึ่งรับประกันว่า variance ของพอร์ตจะไม่มีวันติดลบ</dd>
+    <dt>Mean vector</dt><dd>vector ที่รวมค่าเฉลี่ยของแต่ละตัวแปรตามลำดับที่กำหนด ไม่ใช่รายการผลตอบแทนที่จะเกิดขึ้นแน่นอน</dd>
+    <dt>Covariance matrix</dt><dd>ตารางที่เก็บ variance บนแนวทแยง และ covariance ของแต่ละคู่นอกแนวทแยง ใช้สรุปความกระจายและการเคลื่อนไหวร่วมเชิงเส้น</dd>
+    <dt>Population moment / sample estimate</dt><dd>ค่าของ distribution ที่กำลังศึกษา เทียบกับค่าที่เราประมาณจากข้อมูลจำนวนจำกัด เราใส่หมวกบนค่าประมาณเพื่อไม่ให้สับสนกัน</dd>
+    <dt>Basis point (bp)</dt><dd>$1\text{ bp}=0.01\%=10^{-4}$ ในรูปทศนิยม เมื่อแปลง covariance ต้องยกกำลังสองตัวคูณหน่วยด้วย</dd>
+    <dt>ETF</dt><dd>กองทุนที่ซื้อขายในตลาดหลักทรัพย์ ในตัวอย่างใช้กองทุนกลุ่มอุตสาหกรรมเป็นตัวแทนหุ้น Technology, Energy และ Financials ของสหรัฐฯ</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$r$</td><td>vector ของ daily returns ของแต่ละกลุ่มอุตสาหกรรม</td><td>decimal return/day</td></tr>
-      <tr><td>$\mu$</td><td>mean vector ที่เก็บ expected value ของผลตอบแทน</td><td>decimal return/day</td></tr>
-      <tr><td>$\Sigma$</td><td>covariance matrix ขนาด $3 \times 3$</td><td>return²/day²</td></tr>
-      <tr><td>$\Sigma_{ij}$</td><td>covariance ระหว่างสินทรัพย์กลุ่มที่ $i$ และ $j$</td><td>return²/day²</td></tr>
-      <tr><td>$T$</td><td>จำนวนวันของข้อมูลที่ใช้ใน estimation ตัวอย่าง</td><td>days (จำนวนเต็ม)</td></tr>
-      <tr><td>$x$</td><td>vector น้ำหนักการลงทุนในพอร์ต</td><td>unitless</td></tr>
-      <tr><td>$\mathbf R$</td><td>correlation matrix ที่ปรับสเกลของ covariance matrix ให้อยู่ในช่วง -1 ถึง 1</td><td>unitless</td></tr>
-    </tbody>
-  </table>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>$R,\ R_t$</td><td>random vector ของผลตอบแทน; $R_t$ คือ vector ในวัน $t$ ส่วน $r_t$ คือค่าที่สังเกตจริง</td></tr>
+    <tr><td>$\mu,\Sigma$</td><td>mean vector และ covariance ของ distribution ที่ระบุ</td></tr>
+    <tr><td>$\hat\mu,\hat\Sigma$</td><td>ค่าประมาณจากข้อมูล $T$ แถว แต่ละแถวมีสินทรัพย์ $n$ ตัว</td></tr>
+    <tr><td>$w,D,C$</td><td>น้ำหนักคงที่ในช่วงที่ศึกษา; diagonal matrix ของ SD; correlation matrix</td></tr>
+  </tbody></table></div>
+  <p>ค่าเฉลี่ยและ SD ใช้หน่วยเดียวกับ returns ส่วน covariance ใช้ผลคูณหน่วยของสองตัวแปร สำหรับ returns หน่วยเดียวกันจึงเป็น return² หรือ bp² คำว่า “รายวัน” ระบุช่วงถือครอง ไม่ได้สั่งให้หาร covariance ด้วยจำนวนวันอีกครั้ง</p>
 </details>
 
-<section class="table">
-  <h4>สามวันด้วยมือ: ผลตอบแทนรายวัน (basis points)</h4>
-  <table>
-    <thead><tr><th>วัน</th><th>Tech</th><th>Energy</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td>4</td><td>1</td></tr>
-      <tr><td>2</td><td>6</td><td>4</td></tr>
-      <tr><td>3</td><td>5</td><td>1</td></tr>
-      <tr><td>ค่าเฉลี่ย</td><td>5</td><td>2</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>สามวันพอให้ทำทุกขั้นด้วยมือ ตัวเลขสมมติเพื่อฝึก ไม่ใช่ข้อมูลจริง</p>
-  </div>
-</section>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — รวบรวมค่าเฉลี่ยลงใน mean vector</h4>
-  <p>พอมีหลายสินทรัพย์ การเขียนทีละตัวจะยาวเกินไป ต้องรวบเป็นก้อนเดียวก่อน</p>
-  <div class="math">\[
-\mu=E[r]=\begin{bmatrix}E[r_1]\\
-E[r_2]\\
-E[r_3]\end{bmatrix}
-\]</div>
-  <div class="reading">
-    <p>ของที่โจทย์ให้: ผลตอบแทน Tech สองวันเท่ากับ 4 และ 6 bp รวมก่อนเป็น 10 bp แล้วหาร $T=2$ ได้ mean 5 bp/day; ขั้นนี้จึงวาง 5 เป็นช่องแรกของ mean vector เหตุผลที่เรียงช่องต้องคงที่คือ covariance matrix ใช้ลำดับเดียวกัน.</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — นิยามของ covariance matrix: รวบความสัมพันธ์ทุกคู่เป็นตารางเดียว</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของตารางที่จะใช้ตลอดทั้งเล่ม ไม่ได้พิสูจน์มาจากอะไร ช่องแนวทแยงคือความเสี่ยงของตัวเอง และช่องนอกแนวทแยงคือความสัมพันธ์ระหว่างคู่ ประโยชน์ของการเขียนเป็นตารางคือคำนวณความเสี่ยงพอร์ตได้ด้วยการคูณครั้งเดียว</p>
-  <div class="math">\[
-\Sigma=E[(r-\mu)(r-\mu)^{\mathsf T}],\qquad \Sigma_{ij}=\operatorname{Cov}(r_i,r_j)
-\]</div>
-  <div class="reading">
-    <p>นำ vector ส่วนเบี่ยงเบน $(r-\mu)$ คูณด้วยทรานสโพสของตัวเอง จะได้ matrix ขนาด $3 \times 3$ โดยสมาชิกบนแนวทแยงมุมคือ variance ของแต่ละตัว ส่วนนอกแนวทแยงคือ covariance ระหว่างคู่ใด ๆ มีหน่วยเป็น $\text{return}^2/\text{day}^2$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — นิยามของ sample estimate: สูตรที่เลือกใช้แทนค่าจริงที่ไม่มีวันรู้</h4>
-  <p>สองก้อนนี้เป็น นิยาม ของสูตรที่เราเลือกใช้เดาค่าจริง ไม่ใช่ความจริงที่พิสูจน์ได้ ในทางปฏิบัติเราไม่รู้ค่าจริง จึงต้องเลือกสูตรสักอันมาประมาณจากข้อมูล ตัวหาร $T-1$ แทนที่จะเป็น $T$ มีเหตุผลของมัน ซึ่งพิสูจน์ในหัวข้อ 3.3</p>
-  <div class="math">\[
-\hat\mu=\frac1T\sum_{t=1}^{T}r_t,\qquad \hat\Sigma=\frac1{T-1}\sum_{t=1}^{T}(r_t-\hat\mu)(r_t-\hat\mu)^{\mathsf T}
-\]</div>
-  <div class="reading">
-    <p>คำนวณค่าเฉลี่ยตัวอย่างจากผลรวม $T$ วัน และประมาณ covariance matrix ด้วยตัวหาร $T-1$ เพื่อปรับลด bias (degrees of freedom correction)</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — สร้าง covariance matrix จากสามวันนี้ ทีละช่อง</h4>
-  <p>สูตร outer product ในขั้นถัดไปดูน่ากลัว แต่กับสามวันมันคือการลบ คูณ บวก หาร ที่ทำในหัวได้</p>
+  <h4>ขั้นที่ 1 — กำหนดความหมายของทุกช่องก่อนคำนวณ</h4>
+  <p>ให้ $R$ เป็นคอลัมน์ที่เรียง Technology, Energy, Financials ทุกช่องวัดผลตอบแทนหนึ่งวันตรงกัน ค่าเฉลี่ยของ vector คือค่าเฉลี่ยทีละช่อง โดยสมมติว่าค่าเฉลี่ยของผลตอบแทนยกกำลังสองของแต่ละตัวมีค่าจำกัด</p>
   <div class="math">\[
 \begin{aligned}
-\text{Tech}&:\ (4-5,\,6-5,\,5-5)=(-1,\,1,\,0)\\
-\text{Energy}&:\ (1-2,\,4-2,\,1-2)=(-1,\,2,\,-1)\\[4pt]
-\hat\Sigma_{T,T}&=\frac{(-1)^{2}+1^{2}+0^{2}}{3-1}=\frac{2}{2}=1\\
-\hat\Sigma_{E,E}&=\frac{(-1)^{2}+2^{2}+(-1)^{2}}{2}=\frac{6}{2}=3\\
-\hat\Sigma_{T,E}&=\frac{(-1)(-1)+(1)(2)+(0)(-1)}{2}=\frac{3}{2}=1.5\\[4pt]
-\hat\Sigma&=\begin{bmatrix}1&1.5\\1.5&3\end{bmatrix}\ \mathrm{bp}^{2}\\
-\rho&=1.5/\sqrt{1\times3}=0.866
+R&=(R_1,R_2,R_3)^{\mathsf T},\\
+\mu:=\mathbb E[R]&=(\mathbb E[R_1],\mathbb E[R_2],\mathbb E[R_3])^{\mathsf T},\\
+\text{ตัวอย่างกำหนดให้ }\mu&=(0.0005,0.0002,0.00035)^{\mathsf T}\\
+&=(5,2,3.5)^{\mathsf T}\ \text{bp}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ช่องแนวทแยงคือ variance ของแต่ละตัว (ค่าเฉลี่ยของกำลังสองของระยะห่าง เหมือนหัวข้อ 1.4) ช่องนอกแนวทแยงคือ covariance: จับคู่ระยะห่างของสองตัว *วันเดียวกัน* คูณกันแล้วเฉลี่ย</p>
-    <p>วันที่ 2 ทั้งคู่สูงกว่าค่าเฉลี่ย ($+1$ กับ $+2$) วันที่ 1 ต่ำกว่าทั้งคู่ ($-1$ กับ $-1$) ผลคูณจึงเป็นบวกทั้งสองวัน covariance จึงเป็นบวก: สองกลุ่มขยับตามกัน</p>
-    <p>ตัวหาร $3-1=2$ แทน 3 คือ sample correction ที่หัวข้อ 3.3 อธิบาย ช่อง $(T,E)$ กับ $(E,T)$ เท่ากันเสมอเพราะการคูณสลับที่ได้ นี่คือที่มาของความสมมาตรในขั้นที่ 5</p>
-  </div>
+  <div class="reading"><p>สามค่านี้บอกศูนย์กลางสามตำแหน่ง ไม่ได้บอกว่า returns ของแต่ละกลุ่มกระจายแค่ไหน หรือสองกลุ่มมักเบี่ยงจากค่าเฉลี่ยไปทางเดียวกันหรือไม่ ตัวอย่างในขั้นนี้เป็นค่าที่กำหนดให้ ไม่ได้ประมาณจากตารางสามวันที่เราจะใช้ต่อไป</p></div>
+</section>
+<figure class="plot">
+  <h4>Figure 8.1b — ค่าเฉลี่ยหนึ่งค่าต่อหนึ่งกลุ่ม</h4>
+  <img src="../figures/8.1-2.svg" alt="ค่าเฉลี่ยรายวันของ Technology, Energy และ Financials เท่ากับ 5, 2 และ 3.5 bp" loading="lazy">
+  <figcaption>แท่งแสดง mean vector ที่กำหนดให้ในแบบจำลอง ไม่ใช่ผลตอบแทนวันพรุ่งนี้ และไม่ได้แสดง SD ของแต่ละกลุ่ม</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 2 — หักค่าเฉลี่ย แล้วเก็บผลคูณของทุกคู่</h4>
+  <p>เขียน $Z=R-\mu$ เพื่อวัดการเบี่ยงจากศูนย์กลาง ถ้า $Z_i$ กับ $Z_j$ เป็นบวกพร้อมกันหรือติดลบพร้อมกัน ผลคูณเป็นบวก ถ้าไปคนละทาง ผลคูณเป็นลบ covariance คือค่าเฉลี่ยของผลคูณนี้</p>
+  <div class="math">\[
+\begin{aligned}
+Z&:=R-\mu,\\
+\Sigma&:=\mathbb E[ZZ^{\mathsf T}],\\
+ZZ^{\mathsf T}&=\begin{bmatrix}Z_1^2&amp;Z_1Z_2\\Z_2Z_1&amp;Z_2^2\end{bmatrix}\quad\text{กรณีสองตัวแปร},\\
+\Sigma_{ij}&=\mathbb E[(R_i-\mu_i)(R_j-\mu_j)]\\
+&=\mathbb E[R_iR_j]-\mu_i\mu_j,\\
+\Sigma_{ii}&=\mathbb E[(R_i-\mu_i)^2]=\operatorname{Var}(R_i).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ต้องใช้ outer product $ZZ^{\mathsf T}$ ซึ่งให้ตาราง $n\times n$ ไม่ใช่ $Z^{\mathsf T}Z$ ที่รวมทุกช่องเป็น scalar covariance เป็นบวกหมายถึงผลคูณของการเบี่ยงมีค่าเฉลี่ยบวก ไม่ได้แปลว่าทั้งสองตัวต้องขึ้นลงพร้อมกันทุกวัน</p></div>
+  <p>ด้วย second moment ที่จำกัด นิยามนี้ใช้ได้โดยไม่ต้องสมมติ Normal แต่ mean กับ covariance ยังไม่บอก distribution ทั้งหมด เช่น ไม่กำหนดโอกาสขาดทุนรุนแรงหรือความสัมพันธ์ที่ไม่เป็นเส้นตรง</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 5 — ตรวจสอบคุณสมบัติความสมมาตร (symmetry check)</h4>
-  <p>ตารางนี้ต้องสมมาตรเสมอ และเหตุผลสั้นกว่าที่คิด คือการคูณสลับที่ได้ นี่เป็นการตรวจที่เร็วที่สุดว่าคำนวณถูก และเป็นสมบัติที่หัวข้อ 7.6 ต้องการ ก่อนจะพูดเรื่อง eigenvalue ได้เลย</p>
+  <h4>ขั้นที่ 3 — สร้างตารางจาก returns สามวันด้วยมือ</h4>
+  <p>คราวนี้เปลี่ยนเป็นข้อมูลจำลองขนาดเล็กของสองกลุ่ม Technology และ Energy หน่วย bp ใช้วันเดียวกันทั้งสองคอลัมน์ และให้แต่ละวันมีน้ำหนักเท่ากัน</p>
+  <div class="table-wrap"><table><thead><tr><th>วัน</th><th>Technology</th><th>Energy</th><th>เบี่ยงจากค่าเฉลี่ย</th></tr></thead><tbody>
+    <tr><td>1</td><td>4</td><td>1</td><td>$(-1,-1)$</td></tr>
+    <tr><td>2</td><td>6</td><td>4</td><td>$(1,2)$</td></tr>
+    <tr><td>3</td><td>5</td><td>1</td><td>$(0,-1)$</td></tr>
+  </tbody></table></div>
   <div class="math">\[
 \begin{aligned}
-\Sigma_{ij}&=\operatorname{Cov}(r_i,r_j)\\
-&=\mathbb E\big[(r_i-\mu_i)(r_j-\mu_j)\big]\\
-&(r_i-\mu_i)(r_j-\mu_j)\\
-&=(r_j-\mu_j)(r_i-\mu_i)\\
-\Sigma_{ij}&=\mathbb E\big[(r_j-\mu_j)(r_i-\mu_i)\big]\\
-&=\Sigma_{ji}\\
-&\Longrightarrow\;\Sigma=\Sigma^{\mathsf T}
+\hat\mu&=\frac13\sum_{t=1}^{3}r_t
+=\begin{bmatrix}(4+6+5)/3\\(1+4+1)/3\end{bmatrix}
+=\begin{bmatrix}5\\2\end{bmatrix}\text{ bp},\\
+\hat\Sigma&:=\frac1{T-1}\sum_{t=1}^{T}(r_t-\hat\mu)(r_t-\hat\mu)^{\mathsf T},\\
+\hat\Sigma_{11}&=\frac{(-1)^2+1^2+0^2}{2}=1,\\
+\hat\Sigma_{22}&=\frac{(-1)^2+2^2+(-1)^2}{2}=3,\\
+\hat\Sigma_{12}&=\frac{(-1)(-1)+(1)(2)+(0)(-1)}2=1.5,\\
+\hat\Sigma&=\begin{bmatrix}1&amp;1.5\\1.5&amp;3\end{bmatrix}\text{ bp}^2.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ตารางนี้ต้องสมมาตรเสมอ และเหตุผลสั้นกว่าที่คิด อยู่บรรทัดที่สามถึงสี่: การคูณเลขสองตัวสลับที่กันได้ ไม่ว่าสองตัวนั้นจะเป็นอะไร ช่อง $ij$ กับช่อง $ji$ จึงคำนวณจากของชิ้นเดียวกัน ย่อมเท่ากันเสมอ</p>
-    <p>อ่านในภาษาของตารางคือ สะท้อนข้ามแนวทแยงแล้วได้ตารางเดิม ใช้ประโยชน์ได้ทันที: ถ้าโปรแกรมคืนตารางที่ไม่สมมาตร แปลว่าเขียนโค้ดผิดแน่นอน ไม่ใช่เรื่องของข้อมูล เพราะสี่บรรทัดบนเป็นจริงเสมอ</p>
-  </div>
+  <div class="reading"><p>ค่าเฉลี่ยใช้ตัวหาร 3 แต่ sample covariance สูตรนี้ใช้ 2 เพราะประมาณค่าเฉลี่ยจากข้อมูลชุดเดียวกันด้วย อย่าเอา variance หน่วย bp² ในตารางเล็กนี้ไปปะกับแบบจำลองสามกลุ่มหน่วยทศนิยมในขั้นที่ 7 แม้ชื่อสินทรัพย์จะตรงกัน</p></div>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — พิสูจน์ positive semi-definite: ทำไม variance ของพอร์ตห้ามติดลบ</h4>
-  <p>matrix ใด ๆ ที่จะเป็น covariance matrix ได้ จะต้องมีคุณสมบัติ positive semi-definite เสมอ เพราะค่า $x^{\mathsf T}\Sigma x$ คือ variance ของพอร์ตที่มีสัดส่วนการลงทุน $x$ หากค่านี้ติดลบ จะทำให้ standard deviation ของพอร์ตกลายเป็นจำนวนจินตภาพซึ่งเป็นไปไม่ได้ในความเป็นจริง</p>
-  <div class="math">\[
-\begin{aligned}
-&x^{\mathsf T}\Sigma x\\
-&=x^{\mathsf T}\,\mathbb E\big[(r-\mu)(r-\mu)^{\mathsf T}\big]x\\[4pt]
-&=\mathbb E\big[x^{\mathsf T}(r-\mu)(r-\mu)^{\mathsf T}x\big]\\[4pt]
-&=\mathbb E\Big[\big(x^{\mathsf T}(r-\mu)\big)\big(x^{\mathsf T}(r-\mu)\big)^{\mathsf T}\Big]\\[4pt]
-&=\mathbb E\Big[\big(x^{\mathsf T}(r-\mu)\big)^2\Big]\\[4pt]
-&=\operatorname{Var}(x^{\mathsf T}r)\ge 0\\
-&\quad\text{for any weights }x\\[4pt]
-&x=\begin{bmatrix}0.5\\
-0.5\end{bmatrix}:\\
-&x^{\mathsf T}\hat\Sigma x=\begin{bmatrix}0.5&amp;0.5\end{bmatrix}\begin{bmatrix}1&amp;1.5\\
-1.5&amp;3\end{bmatrix}\begin{bmatrix}0.5\\
-0.5\end{bmatrix}\\
-&=1.75\;\mathrm{bp}^{2}\ge 0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ทำไม matrix ในโลกการเงินจึงเป็นเลขสุ่มสี่สุ่มห้าไม่ได้ คำตอบคือ $x^{\mathsf T}\Sigma x$ มีความหมายทางกายภาพเป็น variance ของพอร์ตที่ถือน้ำหนักตาม vector $x$</p>
-    <p>เมื่อนำ $x$ ประกบหัวท้ายแล้วดึงเข้าไปใน expected value ก้อนตรงกลางจะยุบเป็นตัวเลข scalar ตัวเดียวคูณกับตัวเอง และค่าเฉลี่ยของจำนวนจริงยกกำลังสองย่อมไม่มีวันติดลบ</p>
-    <p>หาก matrix หลุดคุณสมบัตินี้ จะเกิดพอร์ตที่มี variance ติดลบ ซึ่งหมายถึง standard deviation เป็นจำนวนจินตภาพ สำหรับน้ำหนักอย่างละครึ่ง จะได้ variance เท่ากับ 1.75 และ standard deviation ราว 1.32 bp</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — แปลง covariance matrix เป็น correlation matrix ด้วย scaling</h4>
-  <p>การแปลง covariance matrix ให้เป็น correlation matrix ทำได้โดยใช้ inverse ของ diagonal matrix ที่บรรจุ standard deviation ประกบหัวท้าย ซึ่งช่วยขจัดหน่วยของผลตอบแทนและทำให้เปรียบเทียบระดับความสัมพันธ์ระหว่างสินทรัพย์ได้อย่างเป็นกลางบนสเกล -1 ถึง 1</p>
-  <div class="math">\[
-\begin{aligned}
-D&=\operatorname{diag}\big(\sqrt{\Sigma_{11}},\,\sqrt{\Sigma_{22}}\big)=\begin{bmatrix}1&amp;0\\
-0&\sqrt{3}\end{bmatrix}\\[4pt]
-D^{-1}&=\begin{bmatrix}1&amp;0\\
-0&amp;1/\sqrt{3}\end{bmatrix}\\[4pt]
-\mathbf R&=D^{-1}\Sigma D^{-1}=\begin{bmatrix}1&amp;0\\
-0&amp;1/\sqrt{3}\end{bmatrix}\begin{bmatrix}1&amp;1.5\\
-1.5&amp;3\end{bmatrix}\begin{bmatrix}1&amp;0\\
-0&amp;1/\sqrt{3}\end{bmatrix}\\[4pt]
-&=\begin{bmatrix}1&amp;1.5/\sqrt{3}\\
-1.5/\sqrt{3}&amp;1\end{bmatrix}\approx\begin{bmatrix}1&amp;0.866\\
-0.866&amp;1\end{bmatrix}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เรามักต้องการปลดหน่วยของผลตอบแทนออก เพื่อดูความเชื่อมโยงที่บริสุทธิ์ ทำได้โดยสร้าง diagonal matrix $D$ ที่เก็บ standard deviation ของแต่ละสินทรัพย์ไว้บนแนวทแยง</p>
-    <p>การคูณ $D^{-1}$ ประกบหน้าหลัง เทียบเท่ากับการหารแต่ละช่อง $\Sigma_{ij}$ ด้วยผลคูณ $\sigma_i\sigma_j$ ซึ่งปรับสเกลให้แนวทแยงมุมกลายเป็นเลข 1 เสมอ</p>
-    <p>ช่องนอกแนวทแยงของ matrix ผลลัพธ์ $\mathbf R$ คือค่า correlation ซึ่งถูกบีบให้อยู่ระหว่าง -1 ถึง 1 พอดี สำหรับสองกลุ่มนี้จะได้ correlation สูงถึง 0.866</p>
-  </div>
-</section>
-
 <section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การรวบค่าเฉลี่ยและความเกี่ยวพันทั้งหมดไว้ในที่เดียว ทำให้จัดการพอร์ตขนาดใหญ่ได้</p>
-  <p>ใช้เป็น input หลักของการจัดพอร์ตทุกวิธีในเล่มนี้ ตั้งแต่หัวข้อ 12.5 เป็นต้นไป</p>
-  <p>ใช้คำนวณความเสี่ยงของพอร์ตในการคูณครั้งเดียว ไม่ว่าจะมีสินทรัพย์กี่ตัว</p>
-  <p>ใช้เป็นรูปแบบมาตรฐานที่ระบบความเสี่ยงทุกระบบรับและส่งต่อกัน</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 8.1a — แผนผังความร้อนของ covariance matrix</h4>
-  <img src="../figures/8.1-1.svg" alt="Figure 8.1a — แผนผังความร้อนของ covariance matrix" loading="lazy">
-  <figcaption>
-    <p>แผนผังความร้อนแสดงค่าในหน่วย basis points กำลังสอง ($10^8 \times \text{decimal}$) แนวทแยงมุมคือ variance เดี่ยวของแต่ละกลุ่ม ส่วนช่องอื่นแสดงการเคลื่อนไหวร่วมกันระหว่างคู่สินทรัพย์</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.1b — แท่งแสดงค่าใน mean vector</h4>
-  <img src="../figures/8.1-2.svg" alt="Figure 8.1b — แท่งแสดงค่าใน mean vector" loading="lazy">
-  <figcaption>
-    <p>mean vector สรุปจุดศูนย์กลางของผลตอบแทนรายวัน โดยเทคโนโลยีอยู่ที่ $5.0$, พลังงาน $2.0$ และการเงิน $3.5$ basis points ลำดับของสินทรัพย์ต้องตรงกับลำดับใน matrix เสมอ</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.1c — ภาพความสัมพันธ์ร่วมระหว่างสองกลุ่มอุตสาหกรรม</h4>
-  <img src="../figures/8.1-3.svg" alt="Figure 8.1c — ภาพความสัมพันธ์ร่วมระหว่างสองกลุ่มอุตสาหกรรม" loading="lazy">
-  <figcaption>
-    <p>กลุ่มจุดผลตอบแทนระหว่างกลุ่มเทคโนโลยีและการเงินเอียงชี้ขึ้น สะท้อนให้เห็นว่าค่า covariance นอกแนวทแยงที่เป็นบวกนั้นมีที่มาจากเรขาคณิตของการขยับขึ้นลงตามกันในตลาดจริง</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.1d — ตรวจสอบความสมมาตรของข้อมูล</h4>
-  <img src="../figures/8.1-4.svg" alt="Figure 8.1d — ตรวจสอบความสมมาตรของข้อมูล" loading="lazy">
-  <figcaption>
-    <p>ผลรวมของค่า covariance ในสามเหลี่ยมบนและล่างต้องเท่ากันพอดี การตรวจสอบความสมมาตรเป็นด่านแรกที่ช่วยจับบั๊กจากการสลับคอลัมน์ข้อมูลได้อย่างมีประสิทธิภาพ</p>
-  </figcaption>
-</figure>
-
-<section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: mean รายวันของ Tech, Energy และ Financial เท่ากับ 5.0, 2.0 และ 3.5 bp ต้องสร้าง mean vector และตรวจลำดับ</p>
-  <p>คำตอบ: $mu=(5.0,2.0,3.5)^{\mathsf T}$ bp/day; ถ้า Tech มาจากสองวัน 4 กับ 6 bp ค่าเฉลี่ยคือ $(4+6)/2=5$ bp.</p>
-  <p>ตรวจเองใน 10 วินาที: ใน Excel ใส่ <code>=AVERAGE(4,6)</code> ต้องได้ 5 และ vector ต้องมีสามช่องตรงกับสามกลุ่ม</p>
-  <p>แปลว่าอะไร: mean vector บอกระดับกลางทีละกลุ่ม ส่วน covariance matrix บอกว่ากลุ่มใดขยับด้วยกัน. กับดักคือสลับลำดับ asset ระหว่าง vector กับ matrix</p>
-</section>
-
-<section class="example">
-  <h4>ตัวอย่างที่สอง — สร้าง covariance matrix จากความผันผวนกับ correlation</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: พอร์ตสามสินทรัพย์ หุ้นเหวี่ยงปีละ 18% หุ้นกู้ 6% ทองคำ 15% correlation หุ้นกับหุ้นกู้ −0.20 หุ้นกับทอง +0.05 หุ้นกู้กับทอง +0.25 มีตัวเลขแค่ 6 ตัว แต่ตารางมี 9 ช่อง</p>
-  <div class="math">\[
+  <h4>ขั้นที่ 4 — ตัวหาร $T-1$ แก้อะไร และไม่ได้แก้อะไร</h4>
+  <p>ถ้า returns แต่ละวันเป็น IID มีค่าเฉลี่ย $\mu$ และ covariance $\Sigma$ เดียวกัน การใช้ sample mean ทำให้ความกระจายที่คำนวณรอบมันเล็กลงโดยเฉลี่ย ตัวหาร $T-1$ ชดเชยผลนี้จน $\mathbb E[\hat\Sigma]=\Sigma$ เรียกว่า unbiased estimator</p>
+  <details><summary>พิสูจน์ว่าทำไมเหลือ $T-1$</summary>
+    <p>ให้ $\bar R=T^{-1}\sum_t R_t$ ขยายวงเล็บแล้วใช้ $\sum_t(R_t-\mu)=T(\bar R-\mu)$ ภายใต้ IID เรามี $\operatorname{Cov}(\bar R)=\Sigma/T$ จึงได้</p>
+    <div class="math">\[
 \begin{aligned}
-\Sigma_{ii}&=\sigma_i^{2},\qquad\Sigma_{ij}=\rho_{ij}\,\sigma_i\,\sigma_j\\[4pt]
-\Sigma_{12}&=-0.20(0.18)(0.06)=-0.00216\\
-\Sigma_{13}&=0.05(0.18)(0.15)=0.00135\\
-\Sigma_{23}&=0.25(0.06)(0.15)=0.00225\\[4pt]
-\Sigma&=10^{-5}\begin{bmatrix}3240&-216&135\\-216&360&225\\135&225&2250\end{bmatrix}
+&\sum_t(R_t-\bar R)(R_t-\bar R)^{\mathsf T}\\
+&=\sum_t(R_t-\mu)(R_t-\mu)^{\mathsf T}
+-T(\bar R-\mu)(\bar R-\mu)^{\mathsf T},\\
+\mathbb E[(T-1)\hat\Sigma]&=T\Sigma-T(\Sigma/T)=(T-1)\Sigma,\\
+\mathbb E[\hat\Sigma]&=\Sigma\quad(T\ge2).
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ช่องทแยงคือความผันผวนคูณตัวเอง ช่องนอกทแยงคือ correlation คูณความผันผวนของสองตัว ขั้นที่ 7 ทำกลับทางนี้พอดี ช่องซ้ายล่างเหมือนขวาบนตามขั้นที่ 5 ตัวเลข 6 ตัวจึงเติมได้ครบ 9 ช่อง</p>
-    <p>ตรวจง่าย ๆ: ช่องนอกทแยงต้องไม่เกินผลคูณความผันผวนของสองตัว เช่นหุ้นกับหุ้นกู้ต้องอยู่ระหว่าง −0.0108 ถึง +0.0108 เพราะ correlation ไม่เกิน 1 ถ้าเกิน แปลว่าคูณผิดหน่วย เช่นลืมแปลง 18% เป็น 0.18</p>
-  </div>
-</section>
-
-<section class="pitfall">
-  <h4>กับดักที่พบบ่อย: ลำดับสินทรัพย์ไม่ตรงกันระหว่าง vector และ matrix</h4>
-  <p>บั๊กที่เงียบและอันตรายที่สุดในการเขียนโค้ดคือ การเรียงลำดับสินทรัพย์ใน mean vector ไม่ตรงกับแถวและคอลัมน์ของ covariance matrix คอมพิวเตอร์จะไม่ส่ง error ใด ๆ ออกมาเตือนเมื่อคุณเผลอนำความผันผวนของหุ้นซิ่งไปคูณกับผลตอบแทนของพันธบัตรที่นิ่งสนิท จึงต้องกำกับชื่อคอลัมน์และตรวจสอบความสมมาตรเสมอ</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: เมื่อเขียนทีละตัวไม่ไหวอีกต่อไป</h4>
-  <p>พอสินทรัพย์เกินสิบตัว การเขียนค่าเฉลี่ยและความสัมพันธ์ทีละตัวกลายเป็นงานที่ทำไม่ไหว และตรวจความถูกต้องแทบไม่ได้</p>
-  <p>ทางออกคือรวบทุกอย่างเป็นสองก้อน ก้อนหนึ่งเก็บค่าเฉลี่ยทั้งหมด อีกก้อนเก็บความสัมพันธ์ทุกคู่</p>
-  <p>ก้อนที่สองมีโครงสร้างที่สวยงาม คือช่องแนวทแยงเป็นความเสี่ยงของตัวเอง ส่วนช่องนอกแนวทแยง เป็นความสัมพันธ์ระหว่างคู่ และตารางต้องสมมาตรเสมอ ซึ่งใช้เป็นเครื่องตรวจได้ฟรี</p>
-  <p>ราคาที่ต้องจ่ายคือจำนวนช่องโตตามกำลังสองของจำนวนสินทรัพย์ พอร์ตห้าร้อยตัวมีมากกว่าแสนช่อง ซึ่งประมาณจากข้อมูลไม่กี่ปีไม่ได้เลย และเป็นปัญหาที่หัวข้อ 17.8 ต้องแก้</p>
-</section>
-
-<section class="prose">
-  <h4>ประวัติศาสตร์และที่มา: จาก Pearson สู่การปฏิวัติพอร์ตของ Markowitz</h4>
-  <p>ราว ๆ ปี 1896 Karl Pearson นักสถิติชาวอังกฤษ ได้พัฒนาสูตรคำนวณ correlation coefficient และต่อมาในปี 1901 ได้วางรากฐานการวิเคราะห์แกนหลัก ซึ่งทำให้ covariance matrix กลายเป็นหัวใจของการจัดการข้อมูลหลายมิติ แต่ในยุคแรก ตารางสี่เหลี่ยมนี้ถูกจำกัดอยู่เพียงในแวดวงชีวสถิติและการวัดสัดส่วนร่างกายมนุษย์</p>
-  <p>จนกระทั่งในปี 1952 Harry Markowitz นักเศรษฐศาสตร์หนุ่มวัย 25 ปี ได้ตีพิมพ์บทความ Portfolio Selection ใน Journal of Finance ก่อนหน้า Markowitz นักลงทุนประเมินหุ้นทีละตัวตามผลตอบแทนและเงินปันผลที่คาดหวัง โดยไม่มีใครสนใจความสัมพันธ์ข้ามตัวแปร Markowitz ชี้ให้เห็นว่าความเสี่ยงของพอร์ตไม่ได้ขึ้นกับความผันผวนของหุ้นเดี่ยว ๆ แต่ถูกกำหนดโดย covariance matrix ผ่านรูปแบบ quadratic form $x^{\mathsf T}\Sigma x$</p>
-  <p>การค้นพบนี้เปลี่ยนการลงทุนจากการเลือกหุ้นรายตัว ไปสู่การบริหารความเสี่ยงระดับพอร์ต และทำให้ Markowitz ได้รับรางวัลโนเบลสาขาเศรษฐศาสตร์ในปี 1990 ในระบบเทรดสมัยใหม่ ทุกระบบคำนวณความเสี่ยงและตั้งขนาดการลงทุน (position sizing) ต้องอาศัย covariance matrix เป็นข้อมูลตั้งต้นเสมอ</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>จำนวนตัวเลข</td><td>ประมาณทุกช่องได้</td><td>จำนวนช่องโตตามกำลังสองของจำนวนสินทรัพย์</td><td>พอร์ตห้าร้อยตัวมีมากกว่าแสนช่อง ซึ่งประมาณจากข้อมูลไม่กี่ปีไม่ได้</td></tr>
-      <tr><td>ความน่าเชื่อถือ</td><td>ทุกช่องแม่นเท่ากัน</td><td>ช่องนอกแนวทแยงคลาดเคลื่อนมากกว่าช่องแนวทแยงมาก</td><td>ความผิดพลาดกระจุกอยู่ตรงส่วนที่การจัดพอร์ตไวที่สุด</td></tr>
-      <tr><td>ความคงที่</td><td>ค่าคงที่ในช่วงที่ใช้</td><td>เปลี่ยนตลอด โดยเฉพาะช่วงเปลี่ยนภาวะตลาด</td><td>ต้องเลือกว่าจะใช้ข้อมูลย้อนหลังนานแค่ไหน ซึ่งไม่มีคำตอบที่ถูกที่สุด</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>สามแถวนี้รวมกันคือเหตุผลทั้งหมดของหัวข้อ 17.8 เรื่องการผสมค่าเพื่อลดสัญญาณรบกวน</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดสร้าง covariance และ correlation matrix จากสามวัน</summary>
-    <pre><code>import numpy as np
-r = np.array([[4, 1], [6, 4], [5, 1]], dtype=float)     # three days: Tech, Energy in bp
-mu = r.mean(0)
-assert np.allclose(mu, [5, 2])
-S = np.cov(r, rowvar=False)                              # divides by T - 1
-dev = r - mu
-assert np.allclose(S, [[1, 1.5], [1.5, 3]]) and np.allclose(S, S.T) and np.allclose(dev.T @ dev / 2, S)
-x = np.array([0.5, 0.5])
-assert abs(x @ S @ x - 1.75) &lt; 1e-12 and abs(np.var(r @ x, ddof=1) - x @ S @ x) &lt; 1e-12
-assert np.all(np.linalg.eigvalsh(S) &gt;= -1e-12)
-D_inv = np.diag(1 / np.sqrt(np.diag(S)))
-R = D_inv @ S @ D_inv
-assert np.allclose(np.diag(R), 1) and abs(R[0, 1] - 0.866) &lt; 5e-4 and np.allclose(R, np.corrcoef(r, rowvar=False))</code></pre>
   </details>
-  <div class="note">
-    <p>โค้ดสร้าง covariance ของสามวันได้ 1, 1.5, 3 bp² ตรงกับ np.cov ตรวจว่าสมมาตร variance ของพอร์ตครึ่งต่อครึ่ง 1.75 ไม่ติดลบ และหารด้วย standard deviation ได้ correlation 0.866</p>
-  </div>
+  <p>IID เป็นเงื่อนไขที่เพียงพอสำหรับผลข้างต้น ไม่ใช่สิ่งที่ข้อมูลตลาดทำตามโดยอัตโนมัติ ถ้าข้อมูลสัมพันธ์ข้ามเวลา ค่าเฉลี่ยเปลี่ยน หรือเลือกแต่วันที่มีข้อมูลครบจนเกิด selection bias ต้องทบทวนวิธีประมาณอีกครั้ง</p>
+  <p>ถ้าต้องการ covariance ของ empirical distribution ที่ให้โอกาสแต่ละแถว $1/T$ ให้หารด้วย $T$ แทน นั่นเป็นคนละเป้าหมาย ไม่ใช่ตัวหารผิด ส่วน “unbiased” ก็ไม่ได้รับประกันว่าตัวอย่างเพียงสามวันใกล้ความจริง</p>
 </section>
 
+<section class="formula">
+  <h4>ขั้นที่ 5 — ทำไมตารางนี้สมมาตร และให้ variance ติดลบไม่ได้</h4>
+  <p>การคูณจำนวนจริงสลับที่กันได้ จึงมี $\Sigma_{ij}=\Sigma_{ji}$ ส่วนเงื่อนไข PSD มาจากการที่ variance ของผลรวมเชิงเส้นต้องไม่ติดลบ สำหรับน้ำหนัก $w$ ที่กำหนดคงที่ในช่วงที่ศึกษา</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma_{ij}&=\mathbb E[Z_iZ_j]=\mathbb E[Z_jZ_i]=\Sigma_{ji},\\
+w^{\mathsf T}\Sigma w
+&=\mathbb E[w^{\mathsf T}ZZ^{\mathsf T}w]\\
+&=\mathbb E[(w^{\mathsf T}Z)^2]
+=\operatorname{Var}(w^{\mathsf T}R)\ge0,\\
+w=(1/2,1/2)^{\mathsf T}:\quad
+w^{\mathsf T}\hat\Sigma w
+&=\tfrac14(1)+2\tfrac14(1.5)+\tfrac14(3)\\
+&=1.75\text{ bp}^2,\\
+\hat\sigma_p&=\sqrt{1.75}\approx1.3229\text{ bp}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ตรวจจากอีกทางได้ทันที: returns ของพอร์ตครึ่งต่อครึ่งคือ $(2.5,5,3)$ bp มีค่าเฉลี่ย 3.5 bp และ sample variance $[(-1)^2+1.5^2+(-0.5)^2]/2=1.75$ bp² ตรงกับการคูณ matrix</p></div>
+  <p>PSD ไม่จำเป็นต้องเป็น PD ถ้าตัวแปรบางตัวซ้ำกันหรือมีข้อมูลน้อย ตารางอาจมีทิศทาง variance ศูนย์ สำหรับ centered data matrix $X$ ขนาด $T\times n$ สูตร $\hat\Sigma=X^{\mathsf T}X/(T-1)$ ให้ rank ไม่เกิน $\min(n,T-1)$ ตามเหตุผลใน 7.5</p>
+  <p>ดังนั้น 500 สินทรัพย์จาก 250 วันได้ rank ไม่เกิน 249 แม้โปรแกรมสร้างตาราง 500×500 ครบทุกช่องก็ตาม และ matrix ที่สมมาตรเพียงอย่างเดียวก็ยังไม่ใช่หลักฐานว่าเป็น covariance ที่ใช้ได้</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.1d — ผลรวมเท่ากันเป็นเพียงการตรวจเบื้องต้น</h4>
+  <img src="../figures/8.1-4.svg" alt="ผลรวม covariance นอกแนวทแยงด้านบนและด้านล่างเท่ากับ 38000 bp squared" loading="lazy">
+  <figcaption>ตารางสามกลุ่มในขั้นที่ 7 มีผลรวมค่าสัมบูรณ์นอกแนวทแยงด้านละ 38,000 bp² แต่แท่งสูงเท่ากันยังพิสูจน์ symmetry ไม่ได้ เช่น เพิ่มช่องบนหนึ่งช่อง 1,000 แล้วลดอีกช่อง 1,000 ผลรวมยังเดิม ต้องเทียบแต่ละคู่ $\Sigma_{ij}$ กับ $\Sigma_{ji}$ ด้วย</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 6 — หารด้วย SD เพื่อเปรียบเทียบ correlation</h4>
+  <p>covariance ใหญ่ขึ้นได้เพราะสินทรัพย์เหวี่ยงแรงขึ้น แม้ correlation เท่าเดิม เราจึงหารช่อง $ij$ ด้วย $\sigma_i\sigma_j$ ถ้า SD ของทุกตัวเป็นบวก ให้ $D$ เก็บ SD บนแนวทแยง</p>
+  <div class="math">\[
+\begin{aligned}
+D&:=\operatorname{diag}(\sigma_1,\ldots,\sigma_n),\\
+C_{ij}&:=\frac{\Sigma_{ij}}{\sigma_i\sigma_j},
+\qquad C=D^{-1}\Sigma D^{-1},\\
+\text{ข้อมูลสามวัน: }D&=\operatorname{diag}(1,\sqrt3)\text{ bp},\\
+C_{12}&=\frac{1.5}{1\sqrt3}\approx0.8660,\\
+C&\approx\begin{bmatrix}1&amp;0.8660\\0.8660&amp;1\end{bmatrix}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>correlation ไม่มีหน่วยและอยู่ในช่วง $[-1,1]$ จาก Cauchy–Schwarz ใน 6.5 การเปลี่ยน returns จาก bp เป็นทศนิยมไม่เปลี่ยน correlation แต่ไม่ได้ทำให้มันกลายเป็นตัววัดความสัมพันธ์ทุกแบบ ดูตัวอย่าง zero covariance ที่ยังไม่อิสระใน 8.3</p></div>
+  <p>ถ้าคอลัมน์หนึ่งคงที่ SD เป็นศูนย์และ correlation ที่เกี่ยวข้องนิยามไม่ได้ อย่าใส่ศูนย์แทนแล้วสรุปว่าอิสระกัน และอย่านำ correlation matrix มาใช้แทน covariance โดยลืมคูณ SD กลับ</p>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 7 — กลับไปตรวจแฟ้มความเสี่ยงสามกลุ่ม</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> แบบจำลองรายวันเรียง Technology, Energy, Financials มี $\mu=(0.0005,0.0002,0.00035)^{\mathsf T}$ และ $w=(0.5,0.3,0.2)^{\mathsf T}$ ตารางต่อไปนี้กำหนดให้ต่างหาก ไม่ได้ประมาณจากข้อมูลสามวัน</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma&=10^{-4}\begin{bmatrix}4&amp;0.8&amp;1.2\\0.8&amp;9&amp;1.8\\1.2&amp;1.8&amp;6\end{bmatrix},\\
+\mathbb E[R_p]&=w^{\mathsf T}\mu\\
+&=0.5(0.0005)+0.3(0.0002)+0.2(0.00035)\\
+&=0.00038=3.8\text{ bp},\\
+\operatorname{Var}(R_p)&=w^{\mathsf T}\Sigma w\\
+&=10^{-4}(1+0.81+0.24+0.24+0.24+0.216)\\
+&=0.0002746,\\
+\sigma_p&=\sqrt{0.0002746}\approx0.0165711=1.6571\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> พอร์ต NAV \$10 ล้านมี mean P&amp;L \$3,800 ต่อวัน และ SD ประมาณ \$165,710.59 ภายใต้แบบจำลองนี้ โดยยังไม่คิดค่าธรรมเนียม ผลตอบแทนจริงไม่จำเป็นต้องใกล้ค่าเฉลี่ย และ SD ไม่ใช่เพดานขาดทุน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ทแยงมุมช่องแรกคือ variance $0.0004$ จึงให้ SD $0.02=2\%$ ไม่ใช่ 0.04% ส่วนช่อง Technology–Financials มี covariance $0.00012$ จึงได้ correlation $0.00012/(0.02\sqrt{0.0006})\approx0.24495$</p>
+  <details><summary>เฉลยกับดักการสลับชื่อในคำถามเปิด</summary>
+    <p>ถ้าเรียงใหม่เป็น Energy, Technology, Financials ต้องสลับทั้งสองแกนของ covariance และสลับ mean กับ weights ด้วย การสลับอย่างถูกต้องไม่เปลี่ยนพอร์ต</p>
+    <div class="math">\[
+\begin{aligned}
+\Sigma'&=10^{-4}\begin{bmatrix}9&amp;0.8&amp;1.8\\0.8&amp;4&amp;1.2\\1.8&amp;1.2&amp;6\end{bmatrix},\\
+\mu'&=(0.0002,0.0005,0.00035)^{\mathsf T},\\
+w'&=(0.3,0.5,0.2)^{\mathsf T},\\
+(w')^{\mathsf T}\mu'&=0.00038,
+\quad (w')^{\mathsf T}\Sigma'w'=0.0002746,\\
+\text{แต่ใช้ }w\text{ เดิม: }w^{\mathsf T}\Sigma'w
+&=10^{-4}(2.25+0.36+0.24+0.24+0.36+0.144)\\
+&=0.0003594,\\
+\sqrt{0.0003594}&\approx1.8958\%.
+\end{aligned}
+\]</div>
+    <p>การสลับทั้งสองแกนคง symmetry และ eigenvalues ไว้ จึงผ่านการตรวจเชิงพีชคณิตได้ แต่เมื่อจับกับน้ำหนักผิดลำดับก็ตอบคำถามของคนละพอร์ต</p>
+  </details>
+</section>
+<figure class="plot">
+  <h4>Figure 8.1a — อ่าน heatmap พร้อมหน่วยและลำดับชื่อ</h4>
+  <img src="../figures/8.1-1.svg" alt="Covariance ของสามกลุ่มในหน่วย bp squared" loading="lazy">
+  <figcaption>รูปใช้ bp² จึงคูณ covariance แบบทศนิยมด้วย $10^8$: $0.0004$ กลายเป็น 40,000 และ $0.00012$ กลายเป็น 12,000 ทแยงมุมเป็น variance ไม่ใช่ SD สีแสดงขนาด covariance ไม่ใช่ correlation ที่ปรับสเกลแล้ว</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 8.1c — เมฆจุดที่จำลองขึ้น ไม่ใช่หลักฐานจากตลาด</h4>
+  <img src="../figures/8.1-3.svg" alt="จุดจำลอง Technology และ Financials มี covariance บวก" loading="lazy">
+  <figcaption>รูปสร้าง 700 จุดจาก Normal สองมิติที่กำหนด mean เป็นศูนย์, variance 0.0004 กับ 0.0006 และ covariance 0.00012 เพื่อแสดงการเอียงของเมฆจุด ศูนย์กลางจึงต่างจาก mean vector ใน Figure 8.1b และรูปไม่ได้พิสูจน์ว่า returns จริงเป็น Normal</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 8 — ถ้าได้รับ SD กับ correlation แทน จะสร้าง covariance อย่างไร</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> เปลี่ยนเป็นแบบจำลองรายปีของหุ้นสหรัฐ หุ้นกู้สหรัฐ และทองคำอ้างราคา USD กำหนด SD เป็น 18%, 6%, 15% และ correlation คู่หุ้น–หุ้นกู้, หุ้น–ทอง, หุ้นกู้–ทอง เป็น $-0.20,0.05,0.25$ ตามลำดับ</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma_{ij}&=\rho_{ij}\sigma_i\sigma_j,
+\qquad\Sigma=DCD,\\
+\Sigma_{11}&=0.18^2=0.0324,\\
+\Sigma_{12}&=(-0.20)(0.18)(0.06)=-0.00216,\\
+\Sigma_{13}&=(0.05)(0.18)(0.15)=0.00135,\\
+\Sigma_{23}&=(0.25)(0.06)(0.15)=0.00225,\\
+\Sigma&=\begin{bmatrix}0.0324&amp;-0.00216&amp;0.00135\\-0.00216&amp;0.0036&amp;0.00225\\0.00135&amp;0.00225&amp;0.0225\end{bmatrix},\\
+w&=(0.5,0.3,0.2)^{\mathsf T},\\
+w^{\mathsf T}\Sigma w&=0.0081+0.000324+0.0009\\
+&\quad-0.000648+0.00027+0.00027\\
+&=0.009216,\\
+\sigma_p&=\sqrt{0.009216}=9.60\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ได้ SD ของพอร์ตรายปี 9.60% ซึ่งตรงกับตัวอย่างใน 7.3 ไม่ใช่ SD รายวันของสามกลุ่มอุตสาหกรรมในขั้นก่อน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ช่องหุ้น–หุ้นกู้ต้องเป็นลบ เพราะ correlation เป็นลบ และ $\Sigma_{21}$ ต้องเท่ากับ $\Sigma_{12}$ การเอาตัวเลขต่างหน่วยหรือต่างช่วงเวลามาปะกันให้ครบตารางไม่สร้างแบบจำลองที่ถูกต้อง</p>
+</section>
+<section class="prose">
+  <h4>พอร์ตใหญ่ขึ้น ต้องประมาณอะไรเพิ่ม</h4>
+  <p>สำหรับ $n$ สินทรัพย์ mean vector มี $n$ ค่า ส่วน covariance มี variance $n$ ค่าและคู่ที่ไม่ซ้ำ $n(n-1)/2$ คู่ รวม $n(n+1)/2$ ค่า ที่ $n=3$ จึงมี covariance 6 ค่าต่างกัน ไม่ใช่ 9 ค่าที่เป็นอิสระต่อกัน</p>
+  <p>500 สินทรัพย์ต้องประมาณ covariance 125,250 ค่า และ 1,000 สินทรัพย์ต้องประมาณ 500,500 ค่า ตัวเลขเหล่านี้บอกภาระการประมาณ ไม่ใช่ข้อพิสูจน์ความแม่นยำหรือ rank การเลือกช่วงข้อมูล วิธีให้น้ำหนัก และการลด noise จึงสำคัญพอ ๆ กับสูตร</p>
+  <p>mean กับ covariance เป็น input สำคัญของ mean–variance portfolio เช่นใน 12.5 แต่ไม่เพียงพอสำหรับทุกปัญหา หากสนใจ tail loss, payoff ที่ไม่เป็นเส้นตรง หรือความเสี่ยงสภาพคล่อง ต้องใช้ข้อมูลและสมมติฐานเพิ่มเติม</p>
+</section>
+<section class="pitfall">
+  <h4>ผ่านการคูณ matrix ไม่ได้แปลว่าข้อมูลตอบคำถามเดียวกัน</h4>
+  <div class="table-wrap"><table><thead><tr><th>ตรวจอะไร</th><th>พลาดแล้วเกิดอะไร</th></tr></thead><tbody>
+    <tr><td>ชื่อและลำดับทั้งสองแกน</td><td>โค้ดทำงานแต่จับ covariance ของคนละคู่</td></tr>
+    <tr><td>หน่วยและช่วงถือครอง</td><td>เอา bp² ไปใช้เหมือน return² หรือเอารายปีไปตอบรายวัน</td></tr>
+    <tr><td>วันที่และข้อมูลขาดหาย</td><td>แต่ละคู่ใช้คนละชุดวัน อาจได้ตารางสมมาตรแต่ไม่ PSD</td></tr>
+    <tr><td>symmetry และ PSD</td><td>ค่าคลาดเคลื่อนอาจมาจากการจัดข้อมูล การปัดเลข หรือวิธีประมาณ ต้องหาสาเหตุก่อนซ่อม</td></tr>
+    <tr><td>ความเสถียรของแบบจำลอง</td><td>ค่าที่เคยประมาณได้ไม่รับประกันว่าจะใช้กับอนาคตได้เหมือนเดิม</td></tr>
+  </tbody></table></div>
+  <p>อย่าสรุปจากความไม่สมมาตรว่า “ข้อมูลตลาดเป็นแบบนี้” เพราะ population covariance สมมาตรเสมอ แต่ก็อย่าสรุปทันทีว่าเขียนสูตรผิดแน่นอน ความคลาดเคลื่อนเชิงตัวเลขหรือแฟ้มที่ประกอบจากหลายขั้นตอนก็เป็นสาเหตุได้</p>
+</section>
+<section class="example">
+  <h4>ตรวจเองก่อนผ่านไป 8.2</h4>
+  <p><strong>1.</strong> เพิ่ม 100 bp ให้ Technology ทุกวันในตารางสามวัน mean และ covariance เปลี่ยนอย่างไร?</p>
+  <details><summary>เฉลย</summary><p>mean เปลี่ยนจาก $(5,2)$ เป็น $(105,2)$ bp แต่ deviations เหมือนเดิมจึงได้ covariance เดิม พอร์ตครึ่งต่อครึ่งมี mean 53.5 bp แต่ variance ยัง 1.75 bp² การย้ายศูนย์กลางด้วยค่าคงที่ไม่เพิ่มความกระจาย</p></details>
+  <p><strong>2.</strong> เปลี่ยนข้อมูลสามวันจาก bp เป็นทศนิยม ต้องคูณ mean และ covariance ด้วยตัวใด?</p>
+  <details><summary>เฉลย</summary><p>mean คูณ $10^{-4}$ ได้ $(0.0005,0.0002)$ ส่วน covariance คูณ $10^{-8}$ ได้ช่อง $10^{-8},1.5\times10^{-8},3\times10^{-8}$ ตามเดิม SD พอร์ตครึ่งต่อครึ่งเป็น $\sqrt{1.75}\times10^{-4}$ หรือ 1.3229 bp เท่าเดิม correlation ไม่เปลี่ยน</p></details>
+  <p><strong>3.</strong> แทน Energy ทั้งสามวันด้วย 2 bp ควรใส่ correlation ของสองกลุ่มเป็นศูนย์หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่ควร covariance จะเป็น $\operatorname{diag}(1,0)$ bp² แต่ correlation ต้องหารด้วย SD ของ Energy ที่เป็นศูนย์ จึงนิยามไม่ได้ ข้อมูลสามวันนี้แค่ไม่แสดงความแปรปรวนของ Energy ไม่ได้พิสูจน์ว่าอนาคตไม่มีความเสี่ยง</p></details>
+</section>
+<section class="prose">
+  <h4>จากสถิติหลายตัวแปรสู่การลงทุน</h4>
+  <p>งานด้าน correlation และ PCA ในยุค Pearson ช่วยให้มองความแปรปรวนของหลายตัวแปรร่วมกัน ส่วนงานของ Markowitz ในปี 1952 นำ covariance มาเชื่อมกับการเลือกพอร์ตอย่างเป็นระบบ ประเด็นสำคัญคือความเสี่ยงของพอร์ตไม่ได้ขึ้นกับ variance รายตัวเท่านั้น แต่ขึ้นกับทุกคู่ที่ถือร่วมกัน</p>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>รันด้วย Node.js ได้โดยไม่ติดตั้งไลบรารี โค้ดคำนวณจาก returns จริงในตาราง ไม่ได้พิมพ์คำตอบสำเร็จรูป การตรวจชื่อและ symmetry เป็นเพียงส่วนหนึ่งของการตรวจข้อมูล ไม่ใช่ตัวตรวจ PSD สำหรับ matrix ทั่วไปหรือหลักฐานว่าแบบจำลองทำนายอนาคตได้</p>
+  <pre><code class="language-javascript" data-example="8.1">function shape(A) {
+  if (!Array.isArray(A) || !A.length || ![...A].every(Array.isArray)) {
+    throw new TypeError('Need a rectangular matrix');
+  }
+  const n = A[0].length;
+  if (!n || ![...A].every(r =&gt; r.length === n &amp;&amp; [...r].every(Number.isFinite))) {
+    throw new TypeError('Need a finite rectangular matrix');
+  }
+  return [A.length, n];
+}
+function vector(v, n) {
+  if (!Array.isArray(v) || v.length !== n || ![...v].every(Number.isFinite)) {
+    throw new TypeError('Need a matching finite vector');
+  }
+}
+function dot(a, b) {
+  if (!Array.isArray(a) || !a.length) throw new TypeError('Need a nonempty vector');
+  vector(a, a.length); vector(b, a.length);
+  const value = a.reduce((s, x, i) =&gt; s + x * b[i], 0);
+  if (!Number.isFinite(value)) throw new RangeError('Arithmetic overflow');
+  return value;
+}
+function sampleMoments(rows) {
+  const [T, n] = shape(rows);
+  if (T &lt; 2) throw new RangeError('Need at least two observations');
+  // Shift first: constant columns then center to exactly zero.
+  const offsets = rows.map(r =&gt; r.map((x, j) =&gt; x - rows[0][j]));
+  shape(offsets);
+  const ones = rows.map(() =&gt; 1);
+  const shifts = Array.from({ length: n }, (_, j) =&gt;
+    dot(offsets.map(r =&gt; r[j]), ones) / T);
+  const mean = shifts.map((x, j) =&gt; rows[0][j] + x);
+  vector(mean, n);
+  const centered = offsets.map(r =&gt; r.map((x, j) =&gt; x - shifts[j]));
+  const columns = Array.from({ length: n }, (_, j) =&gt; centered.map(r =&gt; r[j]));
+  const cov = columns.map(a =&gt; columns.map(b =&gt; dot(a, b) / (T - 1)));
+  return { mean, cov };
+}
+function square(S) {
+  const [m, n] = shape(S);
+  if (m !== n) throw new RangeError('Need a square matrix');
+  return n;
+}
+function correlation(S) {
+  square(S);
+  if (S.some((r, i) =&gt; r.some((x, j) =&gt; x !== S[j][i]))) {
+    throw new RangeError('Need a symmetric matrix');
+  }
+  if (S.some((r, i) =&gt; r[i] &lt;= 0)) throw new RangeError('Positive variance required');
+  const sd = S.map((r, i) =&gt; Math.sqrt(r[i]));
+  return S.map((r, i) =&gt; r.map((x, j) =&gt; x / sd[i] / sd[j]));
+}
+function portfolio(mean, cov, weights) {
+  const n = square(cov);
+  vector(mean, n); vector(weights, n);
+  const variance = dot(weights, cov.map(r =&gt; dot(r, weights)));
+  if (variance &lt; 0) throw new RangeError('Negative variance; inspect covariance');
+  return { mean: dot(weights, mean), variance, sd: Math.sqrt(variance) };
+}
+function reorder(mean, cov, from, to) {
+  const n = square(cov);
+  vector(mean, n);
+  for (const names of [from, to]) {
+    if (!Array.isArray(names) || names.length !== n ||
+        ![...names].every(x =&gt; typeof x === 'string' &amp;&amp; x.length &gt; 0) ||
+        new Set(names).size !== n) throw new TypeError('Need unique asset labels');
+  }
+  const p = to.map(name =&gt; from.indexOf(name));
+  if (p.some(i =&gt; i &lt; 0)) throw new RangeError('Asset labels do not match');
+  return { mean: p.map(i =&gt; mean[i]), cov: p.map(i =&gt; p.map(j =&gt; cov[i][j])) };
+}
+const rows = [[4, 1], [6, 4], [5, 1]];
+const sample = sampleMoments(rows);
+const half = portfolio(sample.mean, sample.cov, [0.5, 0.5]);
+const halfRows = rows.map(r =&gt; [dot(r, [0.5, 0.5])]);
+const mean = [0.0005, 0.0002, 0.00035];
+const S = [[0.0004, 0.00008, 0.00012],
+  [0.00008, 0.0009, 0.00018], [0.00012, 0.00018, 0.0006]];
+const w = [0.5, 0.3, 0.2];
+const labels = ['Technology', 'Energy', 'Financials'];
+const order = ['Energy', 'Technology', 'Financials'];
+const switched = reorder(mean, S, labels, order);
+const alignedWeights = order.map(name =&gt; w[labels.indexOf(name)]);
+const sector = portfolio(mean, S, w);
+const annualSD = [0.18, 0.06, 0.15];
+const annualCorr = [[1, -0.2, 0.05], [-0.2, 1, 0.25], [0.05, 0.25, 1]];
+// Multiply the SD pair first so symmetric cells use the same rounding.
+const annualCov = annualCorr.map((r, i) =&gt;
+  r.map((x, j) =&gt; x * (annualSD[i] * annualSD[j])));
+const shifted = sampleMoments(rows.map(r =&gt; [r[0] + 100, r[1]]));
+const decimal = sampleMoments(rows.map(r =&gt; r.map(x =&gt; x * 1e-4)));
+const flat = sampleMoments(rows.map(r =&gt; [r[0], 2]));
+console.log(JSON.stringify({ sample, sampleCorrelation: correlation(sample.cov),
+  half, halfDirect: sampleMoments(halfRows), sector,
+  dollars: [sector.mean * 1e7, sector.sd * 1e7], sectorCorrelation: correlation(S),
+  wrongVariance: portfolio(mean, switched.cov, w).variance,
+  wrongSD: portfolio(mean, switched.cov, w).sd,
+  aligned: portfolio(switched.mean, switched.cov, alignedWeights),
+  annualCov, annual: portfolio([0, 0, 0], annualCov, w),
+  shifted, decimal, flat, uniqueEntries: [3, 500, 1000].map(n =&gt; n * (n + 1) / 2) }));</code></pre>
+  <p>ช่อง mean ของตัวอย่างรายปีในโค้ดตั้งศูนย์ไว้เพียงเพื่อเรียกฟังก์ชันตรวจ variance เพราะโจทย์รายปีไม่ได้กำหนด expected returns อย่านำศูนย์นี้ไปใช้เป็นสมมติฐานผลตอบแทนของสินทรัพย์จริง</p>
+  <p>floating-point อาจทำให้คำตอบต่างในหลักท้าย เช่น correlation บนแนวทแยงแสดง 1.0000000000000002 ตัวอย่างสร้าง covariance คู่สมมาตรด้วยลำดับคำนวณเดียวกันและตรวจเท่ากันตรง ๆ งานจริงต้องกำหนด tolerance ตามสเกล พร้อมแยก rounding error ออกจากความผิดของข้อมูลหรือโมเดล</p>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>mean vector สรุปจุดศูนย์กลางผลตอบแทนของสินทรัพย์ทุกตัวให้อยู่ในรูป vector คอลัมน์เดียว</li>
-    <li>covariance matrix เก็บ variance เดี่ยวบนแนวทแยงมุม และเก็บความสัมพันธ์ร่วมระหว่างคู่สินทรัพย์ในช่องนอกแนวทแยง</li>
-    <li>หน่วยของ covariance คือผลตอบแทนยกกำลังสอง เช่น $\text{bp}^2$ หรือ $\text{return}^2$</li>
-    <li>matrix $\Sigma$ ต้องสมมาตรเสมอ $\Sigma = \Sigma^{\mathsf T}$ และลำดับของสินทรัพย์ต้องตรงกันทุกมิติ</li>
+    <li>mean vector บอกศูนย์กลาง ส่วน covariance เก็บ variance และการเคลื่อนไหวร่วมเชิงเส้น ทั้งคู่ยังไม่ระบุ distribution ทั่วไปทั้งหมด</li>
+    <li>รู้ว่าแต่ละตารางเรียงชื่ออย่างไร ใช้หน่วยและช่วงเวลาอะไร และเป็นค่าของแบบจำลองหรือค่าประมาณจากข้อมูล</li>
+    <li>สร้าง sample covariance จาก deviations ได้ อธิบายตัวหาร $T-1$ ภายใต้สมมติฐานที่ระบุ และตรวจผลด้วย variance ของพอร์ตจากข้อมูลดิบ</li>
+    <li>covariance ต้องสมมาตรและ PSD แต่ไม่จำเป็นต้อง invertible; correlation ต้องใช้ SD ที่เป็นบวก และไม่ใช่ความเป็นอิสระ</li>
+    <li>ใน 8.2 เราจะเปลี่ยนจากพอร์ตเดียวไปสู่การแปลง returns ทั้งชุด และติดตามว่า mean กับ covariance เปลี่ยนตามอย่างไร</li>
   </ul>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="7.6.html">7.6 Eigenvalues and Positive Definiteness</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.2.html">8.2 Linear Transformations and Portfolio Risk</a></div>

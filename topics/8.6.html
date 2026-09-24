@@ -15,353 +15,397 @@
   <a href="../chapters/8.html">บทที่ 8</a>
   <span class="topic-progress">หัวข้อ 48/158</span>
 </nav>
-
-<article class="topic" data-number="8.6" data-depends-on="5.2 8.4 7.3">
+<article class="topic" data-number="8.6" data-depends-on="5.2 7.2 7.3 7.6 8.1 8.3 8.4 8.5">
 <header class="topic-header">
   <h1><span class="tnum">8.6</span> Marginals of the Multivariate Normal</h1>
-  <p class="subtitle">ฉาย joint Normal ลงแกนเดียวแล้วได้ Normal ที่ใช้ทำ single-name risk</p>
+  <p class="subtitle">เลือกสินทรัพย์ที่สนใจ โดยไม่แอบเปลี่ยน “ไม่ได้ถือ” ให้กลายเป็น “รู้ผลตอบแทนแล้ว”</p>
 </header>
-
 <div class="hook">
-  <p>model ความเสี่ยงของเดสก์ครอบคลุมหุ้นสหรัฐฯ หุ้นกู้ และทองคำ ลูกค้ารายหนึ่งถือแค่หุ้นกับทองอย่างละครึ่ง ต้องประมาณ model ใหม่ไหม และพอร์ตนี้ผันผวนปีละเท่าไร?</p>
-  <p>เฉลย: ไม่ต้อง ตัดแถวและคอลัมน์ของหุ้นกู้ทิ้ง เหลือตาราง 2 × 2 ของหุ้นกับทอง แล้วคิดพอร์ตครึ่งต่อครึ่งได้ variance 0.0144 หรือความผันผวน 12.00% ต่อปี model 500 หุ้นที่ลูกค้าถือ 12 ตัวก็ทำแบบเดียวกัน ตัดตาราง 12 × 12 ออกมาใช้</p>
-  <p>Marginal of a Multivariate Normal (MVN) คือ distribution ของตัวแปรเดียวที่ดึงออกจากแบบจำลองหลายตัวแปร และยังเป็น Normal; ใช้ทำรายงานหรือคำนวณคำถามเฉพาะตัวแปรได้ตรง ๆ</p>
+  <p>แบบจำลองรายวันของ SPX และ QQQ ให้ SD เท่ากับ 2% และ 3% และ correlation 0.40 คุณถือเฉพาะ SPX จึงตั้งน้ำหนัก QQQ เป็นศูนย์ โปรแกรมอีกชุดกลับตั้ง <em>ผลตอบแทน</em> QQQ เป็นศูนย์แล้วคำนวณความเสี่ยงของ SPX สองวิธีนี้ควรได้ SD เท่ากันไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่เท่า การไม่ถือ QQQ ยังปล่อยให้ QQQ ขึ้นลงตาม distribution: SPX marginal มี SD 2% แต่การให้ข้อมูลว่า QQQ มี return ใกล้ศูนย์เป็นโจทย์ conditional ใน Gaussian model นี้จะได้ SD ประมาณ 1.833% ความต่างไม่ได้เกิดจากการกระจายเงินลงทุน แต่เกิดจากคำถามที่ป้อนเข้าโมเดล</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากลูกค้าที่ถือแค่ส่วนเดียวของ model</h4>
-  <p>ทีมความเสี่ยงมี model ที่ครอบคลุมหุ้นสหรัฐฯ หุ้นกู้ และทองคำ พร้อมตารางความเกี่ยวกันครบทุกคู่ วันนี้ลูกค้ารายหนึ่งถือแค่หุ้นกับทองอย่างละครึ่ง ไม่มีหุ้นกู้เลย</p>
-  <p>คำถามคือต้องประมาณ model ใหม่สำหรับลูกค้ารายนี้ไหม คำตอบคือไม่ต้อง แค่ตัดแถวและคอลัมน์ของหุ้นกู้ทิ้ง เหลือตาราง 2 คูณ 2 แล้วคิดต่อจากตรงนั้นได้เลย</p>
-  <p>ที่ตัดได้แบบนี้ไม่ใช่เรื่องบังเอิญ มันเป็นสมบัติของรูประฆังหลายมิติโดยเฉพาะ คือส่วนย่อยของมันยังเป็นระฆังเสมอ และตัวเลขที่ใช้บรรยายส่วนย่อยนั้นก็คือช่องที่ตัดออกมาตรง ๆ หัวข้อนี้พิสูจน์ข้อนั้น ซึ่งเป็นเหตุผลที่ model 500 ตัวหนึ่งตัวรองรับลูกค้าทุกรายได้</p>
+  <h4>Marginal เก็บทุกความเป็นไปได้ของตัวแปรที่ไม่ได้ถาม</h4>
+  <p>ถ้าต้องการ distribution ของ SPX เพียงตัวเดียว เราต้องนับทุก outcome ของ QQQ ที่เกิดร่วมกับค่า SPX นั้น ไม่ว่าจะบวก ลบ หรือศูนย์ สำหรับ joint density จึงใช้การ integrate ไม่ใช่เลือกแถวของกราฟ density ที่ QQQ เท่ากับศูนย์</p>
+  <p>การเลือกบางชื่อจาก mean vector และ covariance matrix ทำได้ในทุก joint distribution ที่มี second moments finite ส่วนคำรับรองว่า distribution ที่เหลือยังเป็น Normal ต้องอาศัย <em>joint Gaussianity</em> เพิ่มเติม ไม่ใช่เห็นแต่ละ marginal ดูคล้ายระฆัง</p>
 </section>
-
 <details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <summary>ศัพท์ที่ต้องแยกให้ได้</summary>
   <dl>
-    <dt>marginal distribution</dt>
-    <dd>distribution ของ component เดียวหลัง integrate components อื่นออก ใช้ทำ single-asset risk จาก joint model</dd>
-    <dt>Multivariate Normal (MVN) distribution</dt>
-    <dd>joint distribution ที่ทุก linear combination เป็น Normal ใช้เป็น source model ของ asset returns</dd>
-    <dt>projection</dt>
-    <dd>การเลือกหรือ map vector ไปยัง component/subspace ที่สนใจ ใช้สร้าง marginal return distribution</dd>
-    <dt>probability density function (PDF)</dt>
-    <dd>density ของผลตอบแทนที่ integrate แล้วให้โอกาสใช้เป็นวัตถุที่ project ออกจาก joint model</dd>
-    <dt>Normal distribution</dt>
-    <dd>distribution ที่กำหนดด้วยค่าเฉลี่ยและ variance ใช้เป็นผลลัพธ์ของ MVN marginal</dd>
-    <dt>variance</dt>
-    <dd>ค่ากระจายรอบค่าเฉลี่ยใช้กำหนดความกว้างของ marginal Normal</dd>
-    <dt>covariance</dt>
-    <dd>ค่า co-movement ระหว่างผลตอบแทนใช้เก็บ joint structure แม้ถูก project เป็น marginal แล้ว</dd>
-    <dt>spread</dt>
-    <dd>ความกว้างของ distribution รอบค่าเฉลี่ยใช้แปล variance ให้เห็นเป็นรูป curve</dd>
-    <dt>margin</dt>
-    <dd>ส่วน distribution ของ asset ตัวเดียวที่แยกจาก joint model ใช้ทำ single-name risk report</dd>
-    <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ในตลาดสหรัฐฯ ใช้เป็น component ที่ project ออกมา</dd>
-    <dt>AAPL</dt>
-    <dd>หุ้น Apple ในตลาดสหรัฐฯ ใช้เป็น component อื่นที่ถูก integrate ออก</dd>
+    <dt>Marginal distribution</dt><dd>Distribution ของบาง components โดยรวมความเป็นไปได้ทั้งหมดของ components อื่น ไม่ใช่เงินประกัน margin และไม่ได้กำหนดค่าของสินทรัพย์ที่ไม่ถือ</dd>
+    <dt>Selection matrix</dt><dd>Matrix ที่แต่ละแถวมี 1 เพียงตัวเดียวเพื่อเลือก coordinate ตามลำดับที่ต้องการ ในการเลือก subset ตามปกติจะไม่เลือกชื่อซ้ำ</dd>
+    <dt>Principal submatrix</dt><dd>ส่วนของ square matrix ที่เลือก index ชุดเดียวกันจากทั้งแถวและคอลัมน์ เป็น covariance ของสินทรัพย์ชุดที่เลือกเมื่อใช้ลำดับเดียวกัน</dd>
+    <dt>Conditional distribution</dt><dd>Distribution เมื่อมีข้อมูลเกี่ยวกับตัวแปรอื่น เช่น QQQ อยู่ใกล้ค่าที่ระบุ ต่างจากการไม่ถาม QQQ เลย</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$r$</td><td>full MVN return vector</td><td>decimal return/day</td></tr>
-      <tr><td>$r_X$</td><td>selected marginal component</td><td>decimal return/day</td></tr>
-      <tr><td>$\mu_X$</td><td>selected mean component</td><td>decimal return/day</td></tr>
-      <tr><td>$\Sigma_{X X}$</td><td>selected covariance block</td><td>return²/day²</td></tr>
-      <tr><td>$P$</td><td>projection/selection matrix</td><td>unitless</td></tr>
-    </tbody>
-  </table>
+  <summary>ตัวแปรและสองแบบจำลองในหน้านี้</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์/ตัวอย่าง</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>$X,\mu,\Sigma$</td><td>vector สุ่ม, mean vector, covariance matrix ของ full model</td></tr>
+    <tr><td>$A,B$</td><td>กลุ่ม index ที่เลือกกับกลุ่มที่ไม่เลือก; ไม่ใช่ค่าที่เกิดขึ้นของตัวแปร</td></tr>
+    <tr><td>$P,Y=PX$</td><td>selection matrix กับ vector ที่เลือกออกมา</td></tr>
+    <tr><td>$s,t$</td><td>MGF arguments ไม่ใช่ผลตอบแทนที่สังเกตได้</td></tr>
+    <tr><td>หุ้นสหรัฐ/พันธบัตรสหรัฐ/ทองคำ USD</td><td>simple returns หนึ่งปี; mean 9%,3%,5% เป็นสมมติฐานใหม่ในตัวอย่างนี้</td></tr>
+    <tr><td>SPX/QQQ ใน hook และ figures</td><td>returns หนึ่งวัน; mean 0.04%,0.03%, SD 2%,3%, correlation 0.40 ตาม 8.4</td></tr>
+  </tbody></table></div>
+  <p>ตัวเลขรายปีกับรายวันเป็นคนละโมเดล ห้ามนำ mean ของชุดหนึ่งไปใช้กับ covariance อีกชุดหนึ่ง Covariance ใช้หน่วย decimal-return² สำหรับช่วงเวลาที่ระบุ ไม่ใช่ variance ของอัตราผลตอบแทนต่อวัน</p>
 </details>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — คำนวณ marginal ออกมาเอง: อินทิเกรตอีกแกนทิ้งด้วยกำลังสองสมบูรณ์</h4>
-  <p>ข้อความที่ว่า marginal ของ MVN ยังเป็น Normal มักถูกยกมาเฉย ๆ สูตรข้างล่างคำนวณมันออกมา และเครื่องมือที่ใช้มีชิ้นเดียวคือกำลังสองสมบูรณ์ สำหรับกรณีที่มีมากกว่าสองตัว ทำซ้ำแบบนี้ทีละแกนจนเหลือแกนที่ต้องการ ผลออกมารูปเดียวกัน และผลพลอยได้ของบรรทัดที่หกถึงเจ็ดคือคำตอบของหัวข้อ 8.7 ทั้งหัวข้อ</p>
+  <h4>ขั้นที่ 1 — เขียนว่า “รวมออก” หมายถึงอะไร</h4>
+  <p>แบ่ง vector เป็น $X_A$ กับ $X_B$ หากมี joint density นิยามของ marginal คือ integral ครอบคลุมทุกค่าของ $X_B$ แต่ marginal distribution ยังมีอยู่ได้แม้ full model ไม่มี density เช่น Gaussian ที่ singular</p>
   <div class="math">\[
 \begin{aligned}
-u&=\frac{x-\mu_X}{\sigma_X},\qquad v=\frac{y-\mu_Y}{\sigma_Y}\\
-f_{X,Y}&=\frac{1}{2\pi\sigma_X\sigma_Y\sqrt{1-\rho^{2}}}\\
-&\quad\exp\!\left(-\frac{u^{2}-2\rho uv+v^{2}}{2(1-\rho^{2})}\right)\\[4pt]
-&u^{2}-2\rho uv+v^{2}\\
-&=(v-\rho u)^{2}+u^{2}(1-\rho^{2})\\[4pt]
-f_{X,Y}&=\underbrace{\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}}_{\text{no }y}\\
-&\quad\cdot\frac{1}{\sigma_Y\sqrt{2\pi}\sqrt{1-\rho^{2}}}e^{-\frac{(v-\rho u)^{2}}{2(1-\rho^{2})}}\\[4pt]
-f_X(x)&=\int_{-\infty}^{\infty}f_{X,Y}\,dy\\
-&=\frac{1}{\sigma_X\sqrt{2\pi}}e^{-u^{2}/2}\cdot 1\\[4pt]
-&\Longrightarrow\;X\sim\mathcal N(\mu_X,\sigma_X^{2})
+f_A(x_A)&:=\int_{\mathbb R^{|B|}}f_{A,B}(x_A,x_B)\,dx_B,\\
+M_{X_A}(t)&:=\mathbb E[e^{t^{\mathsf T}X_A}]\\
+&=\mathbb E[e^{t^{\mathsf T}X_A+0^{\mathsf T}X_B}]\\
+&=M_X(t,0).
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ข้อความที่ว่า marginal ของ MVN ยังเป็นระฆัง มักถูกยกมาเฉย ๆ ขั้นนี้คำนวณออกมาจริง เริ่มจากเปลี่ยนหน่วยให้ทั้งสองแกนวัดเป็นจำนวนเท่าของความกว้างตัวเอง แล้วเขียน joint density ตามหัวข้อ 8.4</p>
-    <p>บรรทัดที่สี่ถึงห้าคือกำลังสองสมบูรณ์ในตัวแปร $v$ เติมและลบ $\rho^{2}u^{2}$ เพื่อรวบสามพจน์ให้เหลือวงเล็บเดียว บวกเศษที่ไม่มี $v$ ลองกระจายกลับเพื่อตรวจได้ ผลคือ density แยกเป็นสองก้อน ก้อนซ้ายไม่มี $y$ เลยจึงเป็นตัวคูณคงที่ของ integral</p>
-    <p>ก้อนขวาเป็นระฆังที่จุดกลาง $\rho u$ พื้นที่ใต้กราฟจึงเป็น 1 ตามหัวข้อ 1.9 เหลือเฉพาะก้อนซ้าย ซึ่งเป็นระฆังของ $X$ เองทุกตัวอักษร</p>
-  </div>
+  <div class="reading"><p>ศูนย์ใน MGF เป็นค่าสัมประสิทธิ์ของ argument:เราไม่กำลังถาม moment ของ $X_B$ แต่ไม่ได้บอกว่า $X_B=0$ ตัวแปรที่ไม่ถามยังสุ่มและมีความสัมพันธ์กับตัวที่ถามได้ตามเดิม</p></div>
+  <div class="table-wrap"><table><thead><tr><th>เขียนศูนย์ตรงไหน</th><th>กำลังทำอะไร</th></tr></thead><tbody>
+    <tr><td>น้ำหนัก $w_B=0$</td><td>ไม่มี P&amp;L จากการถือ B โดยตรง; ไม่ได้หยุดให้ return B สุ่ม</td></tr>
+    <tr><td>MGF argument $s_B=0$</td><td>เลือกดู distribution/moments ของ A โดยไม่ถาม B</td></tr>
+    <tr><td>ข้อมูล $X_B\approx0$</td><td>เปลี่ยนเป็น conditional question ซึ่งอาจเปลี่ยน mean และ covariance ของ A</td></tr>
+  </tbody></table></div>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 2 — linear projection</h4>
-  <p>กรณีทั่วไปคือฉายลงบนทิศทางใด ๆ ซึ่งครอบคลุมทั้งการดูตัวเดียวและการดูพอร์ตทั้งกอง จุดที่ควรสังเกตคือ $P$ โผล่สองครั้งในฝั่งความเสี่ยง แต่ครั้งเดียวในฝั่งค่าเฉลี่ย เพราะความเสี่ยงวัดระยะยกกำลังสอง</p>
-  <div class="math">\[
-\begin{aligned}r_X&=Pr\\
-\mu_X=\mathbb{E}[Pr]&=P\,\mathbb{E}[r]=P\mu\\
-r_X-\mu_X&=Pr-P\mu=P(r-\mu)\\
-\Sigma_X&=\mathbb{E}\big[(r_X-\mu_X)(r_X-\mu_X)^{\mathsf{T}}\big]\\
-&=\mathbb{E}\big[P(r-\mu)\,(r-\mu)^{\mathsf{T}}P^{\mathsf{T}}\big]\\
-&=P\,\mathbb{E}\big[(r-\mu)(r-\mu)^{\mathsf{T}}\big]\,P^{\mathsf{T}}=P\Sigma P^{\mathsf{T}}\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$P$ คือตารางที่เลือกแถวที่สนใจออกมา หรือจะมองเป็นน้ำหนักพอร์ตก็ได้ ฝั่งค่าเฉลี่ยง่ายกว่า: ดึง $P$ ออกนอกค่าเฉลี่ยได้เลย เพราะมันเป็นตัวเลขที่เราเลือกเอง ไม่ได้สุ่ม เป็นกฎเดียวกับหัวข้อ 1.3 เพียงแต่เขียนเป็นตาราง</p>
-    <p>ฝั่งความเสี่ยงต้องระวังลำดับ ใส่นิยาม covariance matrix จากหัวข้อ 8.1 แล้วแทนผลต่างที่ดึงตัวร่วมไว้ การทรานสโพสผลคูณต้องสลับลำดับ $P^{\mathsf{T}}$ จึงไปอยู่ขวาสุด สุดท้ายดึง $P$ ทั้งสองข้างออก เหลือ $\Sigma$ ตรงกลางพอดี นี่คือเหตุผลที่ $P$ โผล่สองครั้งฝั่งความเสี่ยง แต่ครั้งเดียวฝั่งค่าเฉลี่ย</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — one-component marginal</h4>
-  <p>แทนทิศทางที่เลือกเฉพาะตัวเดียว จะเห็นว่ามันกลับไปเป็น Normal ตัวเดียวธรรมดา และที่สำคัญกว่าคือมันให้คำตอบเดียวกับการอินทิเกรตในขั้นที่ 1 ซึ่งเป็นการตรวจว่าสองเครื่องมือที่ต่างกันสิ้นเชิงยังเห็นตรงกัน</p>
-  <div class="math">\[
-\begin{aligned}P&=\begin{bmatrix}1 & 0\end{bmatrix}\\
-\mu_{SPX}&=P\mu=\begin{bmatrix}1 & 0\end{bmatrix}\begin{bmatrix}\mu_{SPX}\\
-\mu_{QQQ}\end{bmatrix}=\mu_{SPX}\\
-P\Sigma P^{\mathsf{T}}&=\begin{bmatrix}1 & 0\end{bmatrix}\begin{bmatrix}\sigma_{SPX}^{2} & \sigma_{X,Y}\\
-\sigma_{X,Y} & \sigma_{QQQ}^{2}\end{bmatrix}\begin{bmatrix}1\\
-0\end{bmatrix}=\sigma_{SPX}^{2}\\
-\Longrightarrow\;r_{SPX}&\sim\mathcal N(\mu_{SPX},\sigma_{SPX}^{2})\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ตารางที่เลือกมาหยิบเฉพาะแถวแรกคือ SPX และทิ้ง QQQ เลข 1 หยิบช่องแรก เลข 0 ทิ้งช่องที่สอง</p>
-    <p>บรรทัดสามคูณสามตารางตามลำดับ ผลคือช่องซ้ายบนของ $\Sigma$ ช่องเดียว พจน์ที่มี $\sigma_{X,Y}$ ถูกคูณด้วยศูนย์จนหายหมด สิ่งที่ได้คือระฆังตัวเดียวธรรมดาที่ใช้ตัวเลขของ SPX เท่านั้น ตรงกับที่ขั้นที่ 1 คำนวณด้วย integral ทุกประการ สองทางที่ต่างกันสิ้นเชิงจึงยืนยันกันเอง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — ทำไม marginal ยังเป็นระฆังคว่ำ: จัดกำลังสองสมบูรณ์ในเลขชี้กำลังหนึ่งครั้ง</h4>
-  <p>ขั้นก่อนหน้าบอกว่าหยิบ $\mu_1$ กับ $\sigma_1^2$ ออกมาได้เลย ทำไมถึงง่ายขนาดนั้น คำตอบอยู่ในเลขชี้กำลังของหัวข้อ 8.4</p>
+  <h4>ขั้นที่ 2 — เลือกแถวและคอลัมน์ด้วย index ชุดเดียวกัน</h4>
+  <p>กำหนด annual Gaussian return vector ของหุ้นสหรัฐ พันธบัตรสหรัฐ และทองคำตามลำดับนี้ ต้องการเฉพาะหุ้นกับทองจึงเลือก components 1 และ 3 โดยยังรักษา covariance ระหว่างสองตัวไว้</p>
   <div class="math">\[
 \begin{aligned}
-\frac{z_1^{2}-2\rho z_1z_2+z_2^{2}}{1-\rho^{2}}&=z_1^{2}+\frac{(z_2-\rho z_1)^{2}}{1-\rho^{2}}\\[4pt]
-A&=z_1^{2}(1-\rho^{2})+(z_2-\rho z_1)^{2}\\
-&=z_1^{2}-\rho^{2}z_1^{2}+z_2^{2}-2\rho z_1z_2+\rho^{2}z_1^{2}\\
-&=z_1^{2}-2\rho z_1z_2+z_2^{2}\\[4pt]
-f(r_1,r_2)&=\underbrace{\frac{e^{-z_1^{2}/2}}{\sigma_1\sqrt{2\pi}}}_{\text{Normal in }r_1}\\
-&\times\underbrace{\frac{e^{-\frac{(z_2-\rho z_1)^{2}}{2(1-\rho^{2})}}}{\sigma_2\sqrt{1-\rho^{2}}\sqrt{2\pi}}}_{r_2\ \text{given}\ r_1}\\[4pt]
-f_1(r_1)&=\int f(r_1,r_2)\,dr_2\\
-&=\frac{e^{-z_1^{2}/2}}{\sigma_1\sqrt{2\pi}}\times1\\
-\Longrightarrow\ r_1&\sim\mathcal{N}(\mu_1,\sigma_1^{2})
+\mu&=\begin{bmatrix}0.09\\0.03\\0.05\end{bmatrix},\\
+\Sigma&=10^{-4}\begin{bmatrix}
+324&amp;-21.6&amp;13.5\\
+-21.6&amp;36&amp;22.5\\
+13.5&amp;22.5&amp;225
+\end{bmatrix},\\
+P&=\begin{bmatrix}1&amp;0&amp;0\\0&amp;0&amp;1\end{bmatrix},\\
+Y=PX&=\begin{bmatrix}X_1\\X_3\end{bmatrix},\\
+\mu_Y&=P\mu=\begin{bmatrix}0.09\\0.05\end{bmatrix},\\
+\Sigma_Y&=P\Sigma P^{\mathsf T}\\
+&=\begin{bmatrix}0.0324&amp;0.00135\\0.00135&amp;0.0225\end{bmatrix}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>บรรทัดแรกคือกลเดียวกับหัวข้อ 1.10: เติมและหัก $\rho^2z_1^2$ เพื่อให้ $z_2$ อยู่ในกำลังสองสมบูรณ์ ก้อนถัดมาคือการตรวจ คูณ $1-\rho^2$ กลับเข้าไปในด้านขวา เรียกผลว่า A แล้วกระจาย ต้องได้ตัวเศษเดิม</p>
-    <p>พอเลขชี้กำลังเป็นผลบวกสองก้อน $e^{a+b}=e^{a}e^{b}$ ผิวจึงแยกเป็น ‘ระฆังคว่ำของ $r_1$’ คูณ ‘ระฆังคว่ำของ $r_2$ ที่จุดกลางเลื่อนตาม $z_1$’ (ค่าคงที่ข้างหน้า $\sigma_1\sigma_2\sqrt{1-\rho^2}$ คือ $|\Sigma|^{1/2}$ ที่คำนวณในหัวข้อ 8.4)</p>
-    <p>รวมพื้นที่ตามแกน $r_2$: ก้อนที่สองเป็นระฆังคว่ำเต็มอัน จึงรวมได้ 1 เหลือระฆังคว่ำของ $r_1$ เพียว ๆ นี่คือทั้งการพิสูจน์ และก้อนที่สองจะกลายเป็น conditional distribution ในหัวข้อ 8.7</p>
-    <p>Normal ก้อนที่สองเป็น distribution ของ $r_2$ เมื่อกำหนด $r_1$ แล้ว: จุดกลางคือ $\mu_2+\rho\sigma_2z_1$ และ standard deviation คือ $\sigma_2\sqrt{1-\rho^2}$ จึงมีพื้นที่รวมเป็นหนึ่งเมื่อนำไป integrate ตาม $r_2$</p>
-  </div>
+  <div class="reading"><p>การคูณ P ด้านซ้ายเลือกแถว และคูณ $P^{\mathsf T}$ ด้านขวาเลือกคอลัมน์ตามลำดับเดียวกัน ไม่ใช่เลือกสอง diagonal cells แล้วตั้ง covariance ระหว่างหุ้นกับทองให้ศูนย์</p></div>
+  <p>สูตร mean/covariance นี้มาจาก linear transformation ใน 8.2 จึงไม่ต้องใช้ Normal assumption แต่ P แบบ selection ต่างจาก matrix ที่ผสมหลาย assets ในแต่ละแถว: กรณีหลังเป็น distribution ของ linear combinations ซึ่งจะเรียนต่อใน 8.8</p>
+  <p>P ขนาด $2\times3$ เรียกได้ว่า coordinate projection แต่ไม่ใช่ square orthogonal projector ที่ต้องตรวจ $P^2=P$ หากต้องการลำดับ “ทอง, หุ้น” ให้สลับแถวของ P และเรียง weights ของพอร์ตให้ตรงกับผลที่เลือกออกมา</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 5 — พิสูจน์ normalization ของ marginal density ด้วยพิกัดเชิงขั้ว</h4>
-  <p>การตรวจสอบว่า marginal density มีพื้นที่รวมใต้กราฟเท่ากับหนึ่งพอดี สามารถพิสูจน์ได้ถึงรากฐาน โดยเปลี่ยนตัวแปรเป็น $u$ แล้วใช้เทคนิคอินทิเกรตสองมิติบนพิกัดเชิงขั้วเพื่อหาค่า Gaussian integral</p>
+  <h4>ขั้นที่ 3 — MGF พิสูจน์ว่า selected law ยังเป็น Gaussian</h4>
+  <p>สมมติ $X$ เป็น joint Gaussian ตาม 8.4–8.5 เมื่อถาม MGF ของ $Y=PX$ ให้ส่ง argument $P^{\mathsf T}t$ กลับไปยัง full vector แล้วจัดรูป</p>
   <div class="math">\[
 \begin{aligned}
-&\int_{-\infty}^{\infty}f_{r_X}(x)\,dx\\
-&=\int_{-\infty}^{\infty}\frac{1}{\sigma_X\sqrt{2\pi}}e^{-\frac{(x-\mu_X)^2}{2\sigma_X^2}}\,dx\\
-&=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-u^2/2}\,du=\frac{I}{\sqrt{2\pi}}\\[4pt]
-I^2&=\int_{-\infty}^{\infty}e^{-u^2/2}\,du\int_{-\infty}^{\infty}e^{-v^2/2}\,dv\\
-&=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}e^{-(u^2+v^2)/2}\,du\,dv\\
-&=\int_0^{2\pi}\int_0^{\infty}e^{-s^2/2}\,s\,ds\,d\theta\\
-&=2\pi\Big[-e^{-s^2/2}\Big]_0^{\infty}=2\pi(0+1)=2\pi\\[4pt]
-I&=\sqrt{2\pi}\\
-&\int_{-\infty}^{\infty}f_{r_X}(x)\,dx=\frac{\sqrt{2\pi}}{\sqrt{2\pi}}=1
+M_Y(t)&=\mathbb E[e^{t^{\mathsf T}PX}]\\
+&=M_X(P^{\mathsf T}t)\\
+&=\exp\{t^{\mathsf T}P\mu\\
+&\qquad+\tfrac12t^{\mathsf T}P\Sigma P^{\mathsf T}t\},\\
+Y&\sim N(P\mu,P\Sigma P^{\mathsf T}).
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>เริ่มต้นจากสูตร marginal density ของ $r_X$ แล้วเปลี่ยนตัวแปรเป็นระยะมาตรฐาน $u=(x-\mu_X)/\sigma_X$ ซึ่งให้ $dx=\sigma_X\,du$ ตัวคูณนี้ตัดกับตัวหารด้านหน้าพอดี เหลือ integral ที่ตั้งชื่อว่า I</p>
-    <p>หัวใจสำคัญอยู่ที่การหาค่า integral ของ $e^{-u^2/2}$ ซึ่งไม่สามารถหา antiderivative ด้วย function พื้นฐานได้ เราจึงคูณ I กับตัวเอง โดยตั้งชื่อตัวแปรของสำเนาที่สองว่า v แล้วรวมเป็น integral สองมิติบนระนาบ $u$-$v$</p>
-    <p>เมื่อสลับเป็นพิกัดเชิงขั้ว u² + v² = s² พื้นที่ชิ้นเล็ก du dv กลายเป็น s ds dθ ตัว s ที่งอกมานี้คือ Jacobian และทำให้ integral ตาม s หาได้ตรง ๆ ได้ 1 ส่วนมุมรอบวงได้ 2π จึงได้ I² = 2π</p>
-    <p>เมื่อถอดรากกลับมาจะได้ $I = \sqrt{2\pi}$ ซึ่งเมื่อคูณกับ $1/\sqrt{2\pi}$ ด้านหน้า จะได้พื้นที่รวมเท่ากับหนึ่งบริบูรณ์ ยืนยันว่า marginal นี้เป็น density ที่ถูกต้องตามกฎความน่าจะเป็น</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — พิสูจน์ marginal ของกลุ่มตัวแปรย่อยผ่าน Moment Generating Function (MGF) และ projection matrix</h4>
-  <p>นอกจากการพิสูจน์ทีละตัวแปรเดี่ยว เราสามารถพิสูจน์ marginal ของกลุ่มตัวแปรย่อยขนาด $k$ มิติใด ๆ ได้อย่างรวดเร็วและทรงพลัง โดยใช้โครงสร้าง block matrix ร่วมกับ Moment Generating Function (MGF)</p>
-  <div class="math">\[
+  <div class="reading"><p>MGF ตรงกับ Gaussian ที่มี mean/covariance ที่เลือกไว้ และ finite รอบศูนย์ จึงระบุ distribution ได้ ไม่จำเป็นต้องสร้าง joint density หรือ integrate ทีละตัวแปรใหม่ทุกครั้ง</p></div>
+  <details><summary>ทำไม cross-block หายได้โดยไม่ต้องเป็นศูนย์</summary>
+    <div class="math">\[
 \begin{aligned}
-r &= \begin{bmatrix} r_1 \\
-r_2 \end{bmatrix},\quad \mu = \begin{bmatrix} \mu_1 \\
-\mu_2 \end{bmatrix}\\
-\Sigma &= \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
-\Sigma_{21} & \Sigma_{22} \end{bmatrix} \\
-P &= \begin{bmatrix} I_k & 0 \end{bmatrix} \implies r_1 = P r \\
-\mathbb{E}[r_1] &= P \mu = \begin{bmatrix} I_k & 0 \end{bmatrix} \begin{bmatrix} \mu_1 \\
-\mu_2 \end{bmatrix} = \mu_1 \\
-&\operatorname{Cov}(r_1) = P \Sigma P^\top\\
-&= \begin{bmatrix} I_k & 0 \end{bmatrix} \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\
-\Sigma_{21} & \Sigma_{22} \end{bmatrix} \begin{bmatrix} I_k \\
-0 \end{bmatrix}\\
-&= \Sigma_{11} \\
-&M_{r_1}(s_1) = M_r\left( \begin{bmatrix} s_1 \\
-0 \end{bmatrix} \right)\\
-&= \exp\left( s_1^\top \mu_1 + \frac{1}{2} s_1^\top \Sigma_{11} s_1 \right)\\
-&\implies r_1 \sim \mathcal{MN}_k(\mu_1, \Sigma_{11})
+s^{\mathsf T}\Sigma s
+&=s_A^{\mathsf T}\Sigma_{AA}s_A\\
+&\quad+2s_A^{\mathsf T}\Sigma_{AB}s_B\\
+&\quad+s_B^{\mathsf T}\Sigma_{BB}s_B,\\
+s_B&=0,\\
+M_{X_A}(s_A)&=\exp\{s_A^{\mathsf T}\mu_A\\
+&\qquad+\tfrac12s_A^{\mathsf T}\Sigma_{AA}s_A\}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>แบ่ง vector $r$ ออกเป็นสองส่วนคือกลุ่ม $r_1$ ที่สนใจ และกลุ่ม $r_2$ ที่ต้องการละทิ้ง</p>
-    <p>ใช้ projection matrix $P$ ที่มี identity matrix ขนาด $k$ คัดเลือกเฉพาะบล็อก $r_1$ ออกมา expected value จึงยุบเหลือเพียง $\mu_1$ และ covariance matrix กลายเป็นบล็อก $\Sigma_{11}$</p>
-    <p>เมื่อตรวจสอบผ่าน Moment Generating Function (MGF) เพียงแค่กำหนดให้ค่าความถี่ของกลุ่ม $r_2$ เป็นศูนย์ พจน์ที่เกี่ยวข้องกับ $\mu_2$, $\Sigma_{12}$ และ $\Sigma_{22}$ จะหายไปทั้งหมดในทันที</p>
-    <p>ผลลัพธ์ที่เหลืออยู่คือ MGF ของ Multivariate Normal ขนาด $k$ มิติที่มี mean $\mu_1$ และ covariance $\Sigma_{11}$ อย่างสมบูรณ์</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — โจทย์เปิดเรื่อง: ตัดบล็อกหุ้นกับทองออกจาก model สามสินทรัพย์</h4>
-  <p>model สามสินทรัพย์คือหุ้นสหรัฐฯ หุ้นกู้ ทองคำ ค่าเฉลี่ย 9%, 3%, 5% ความผันผวน 18%, 6%, 15% และ correlation หุ้นกับทอง 0.05 ตามขั้นที่ 6 marginal ของกลุ่มหุ้นกับทองคือบล็อกที่ตรงกันพอดี ไม่ต้องอินทิเกรตหรือประมาณอะไรใหม่ พอร์ตลูกค้าคือ w = (0.5, 0.5) บนหุ้นกับทอง</p>
-  <div class="math">\[
-\begin{aligned}
-\mu&=\begin{bmatrix}0.09\\ 0.03\\ 0.05\end{bmatrix}\\[4pt]
-\Sigma&=10^{-4}\begin{bmatrix}324 & -21.6 & 13.5\\ -21.6 & 36 & 22.5\\ 13.5 & 22.5 & 225\end{bmatrix}\\[4pt]
-\mu_{1}&=\begin{bmatrix}0.09\\ 0.05\end{bmatrix}\\[4pt]
-\Sigma_{11}&=\begin{bmatrix}0.03240 & 0.00135\\ 0.00135 & 0.02250\end{bmatrix}\\[4pt]
-w^{\mathsf T}\Sigma_{11}w&=0.25(0.03240)+0.25(0.02250)\\
-&\quad+2(0.25)(0.00135)\\
-&=0.008100+0.005625\\
-&\quad+0.000675\\
-&=0.014400\\
-\sigma&=\sqrt{0.0144}=12.00\%\\[4pt]
-r_{\text{gold}}&\sim\mathcal N(0.05,\ 0.15^2)\\
-P(r_{\text{gold}}\lt0)&=\Phi\Big(\frac{0-0.05}{0.15}\Big)\\
-&=\Phi(-0.333)=36.9\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>Σ เขียนเป็นหน่วย 10⁻⁴ ให้อ่านง่าย ช่อง 13.5 × 10⁻⁴ = 0.00135 คือ 0.05 × 0.18 × 0.15 ตัดแถวที่ 2 กับคอลัมน์ที่ 2 ทิ้ง เหลือค่าเฉลี่ยและ covariance ของสองตัวที่ถามตรง ๆ covariance ข้ามกลุ่มที่เกี่ยวกับหุ้นกู้หายไปพร้อมกัน เพราะคำถามไม่ได้แตะหุ้นกู้เลย</p>
-    <p>พอร์ตครึ่งต่อครึ่งคิดด้วย wᵀΣw จากบล็อกที่ตัดมา ได้ 12.00% พอดี และทองตัวเดียวก็คือแถวเดียวของบล็อก ปีที่ทองให้ผลตอบแทนติดลบมีราว 36.9% ของทุกปี ใน model หุ้น 500 ตัวที่ลูกค้าถือ 12 ตัว ก็แค่ตัดตาราง 12 × 12 ออกมาแบบเดียวกัน</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การฉายภาพรวมลงมาที่ตัวเดียวหรือทิศเดียว เป็นการคำนวณที่ต้องทำทุกครั้งที่รายงานความเสี่ยง</p>
-  <p>ใช้ดึงความเสี่ยงของสินทรัพย์ตัวเดียวออกมาจากแบบจำลองรวม เพื่อรายงานเป็นรายตัว</p>
-  <p>ใช้คำนวณความเสี่ยงของพอร์ตในทิศใดทิศหนึ่ง เช่นความเสี่ยงต่อการที่อัตราดอกเบี้ยทั้งเส้นขยับขึ้นพร้อมกัน</p>
-  <p>ใช้ตรวจแบบจำลอง โดยเทียบภาพที่ฉายลงมากับข้อมูลจริงของตัวนั้น</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 8.6a — ฉายเงา bivariate Normal ลงมาเป็น marginal</h4>
-  <img src="../figures/8.6-1.svg" alt="Figure 8.6a — ฉายเงา bivariate Normal ลงมาเป็น marginal" loading="lazy">
-  <figcaption>
-    <p>เมื่อ integrate QQQ ออกจาก joint density เส้น SPX marginal ที่ฐานยังมีศูนย์กลาง 0.04% และ spread 2% ตรงกับ parameter เดิม</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.6b — ค่าเฉลี่ยและความผันผวนของ marginal</h4>
-  <img src="../figures/8.6-2.svg" alt="Figure 8.6b — ค่าเฉลี่ยและความผันผวนของ marginal" loading="lazy">
-  <figcaption>
-    <p>SPX marginal ไม่ได้ถูกดึงกลับไปศูนย์: mean ยังอยู่ที่ 0.04% และช่วงหนึ่ง standard deviation คือประมาณ -1.96% ถึง 2.04%</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.6c — เลือกคนละ component ได้คนละ marginal</h4>
-  <img src="../figures/8.6-3.svg" alt="Figure 8.6c — เลือกคนละ component ได้คนละ marginal" loading="lazy">
-  <figcaption>
-    <p>selection matrix ที่เลือก SPX ให้ mean 0.04% และ volatility 2% ส่วนการเลือก QQQ ให้ mean 0.03% และ volatility 3% จาก joint MVN ชุดเดียวกัน</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 8.6d — ตรวจ variance ของ marginal</h4>
-  <img src="../figures/8.6-4.svg" alt="Figure 8.6d — ตรวจ variance ของ marginal" loading="lazy">
-  <figcaption>
-    <p>selected covariance block ต้องตรงกับ diagonal ที่สอดคล้องใน full covariance matrix; check นี้จับ projection-index bug ได้</p>
-  </figcaption>
-</figure>
-
-<section class="example">
-  <h4>Worked Example — โจทย์จิ๋วที่คำนวณได้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: full Multivariate Normal model ให้ SPX variance 0.0004 และ QQQ variance 0.0009 ต่อวัน. ต้องดึง marginal ของ SPX</p>
-  <p>คำตอบ: SPX marginal ใช้ค่าเฉลี่ยช่อง SPX และ variance 0.0004; daily volatility คือ 2%</p>
-  <p>ตรวจเองใน 10 วินาที: ถอดราก 0.0004 ต้องได้ 0.02 หรือ 2%</p>
-  <p>แปลว่าอะไร: ดึงแถวและคอลัมน์ที่ตรงกันได้โดยไม่สมมติว่า SPX independent จาก QQQ กับดักคือสลับ asset order ตอนตัด submatrix</p>
-</section>
-
-<section class="pitfall">
-  <h4>กับดัก: project covariance ด้วย $P\Sigma$ อย่างเดียว</h4>
-  <p>covariance ต้อง map เป็น $P\Sigma P^{\mathsf T}$ ถ้าลืม transpose ผลลัพธ์อาจไม่ symmetric และ portfolio variance ต่อไปจะผิด</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: รายงานรายตัว จากแบบจำลองรวม</h4>
-  <p>ฝ่ายกำกับและผู้ลงทุนขอความเสี่ยงแยกรายสินทรัพย์เสมอ แต่แบบจำลองที่เราสร้างเป็นแบบรวม</p>
-  <p>คำถามคือดึงภาพรายตัวออกมาได้อย่างไร และคำตอบสำหรับระฆังคว่ำหลายมิตินั้นง่ายจนน่าตกใจ คือหยิบค่าที่ตรงกับตัวนั้นออกมาตรง ๆ ได้เลย</p>
-  <p>ความง่ายนี้ไม่ใช่เรื่องบังเอิญ แต่เป็นสมบัติเฉพาะของรูปทรงนี้ ซึ่งเป็นเหตุผลหนึ่งที่มันได้รับความนิยม</p>
-  <p>แต่ต้องเตือนตัวเองเสมอว่าภาพรายตัวที่ได้มานั้นทิ้งความสัมพันธ์ไปหมดแล้ว การเอาความเสี่ยงรายตัวมาบวกกันเพื่อหาความเสี่ยงรวม เป็นข้อผิดพลาดที่พบบ่อยที่สุดในรายงานที่ทำด้วยมือ</p>
-</section>
-
-<section class="prose">
-  <h4>ความเป็นมา: จากปัญหาการฉายเงาหลายมิติ สู่การแยกดูสินทรัพย์รายตัว</h4>
-  <p>ในยุคบุกเบิกของสถิติหลายตัวแปรช่วงต้นศตวรรษที่ 20 นักวิจัยเผชิญความท้าทายอย่างมาก เมื่อต้องการวิเคราะห์ตัวแปรย่อยจากแบบจำลองหลายมิติ เพราะตามหลักทั่วไป การหา marginal distribution จำเป็นต้องคำนวณ multiple integral เพื่อกำจัดตัวแปรอื่นที่เหลือทิ้งไปทั้งหมด หากระบบมี 50 มิติ การ integrate ทิ้ง 49 มิติแทบจะเป็นไปไม่ได้ในทางปฏิบัติ</p>
-  <p>ทว่า Karl Pearson, Harold Hotelling และนักสถิติรุ่นต่อมาค้นพบคุณสมบัติพิเศษของ Multivariate Normal นั่นคือภาพฉายหรือ marginal ของมันในทุกมิติย่อย ยังคงรักษารูปทรงเป็น Normal distribution เสมอ และ parameter ของตัวแปรย่อยสามารถหยิบออกมาได้โดยตรงจากแถวและคอลัมน์ของ mean vector และ covariance matrix โดยไม่ต้องเสียเวลาทำ integral เลยแม้แต่น้อย</p>
-  <p>คุณสมบัติการฉายเงาที่รักษาความสมบูรณ์ของระฆังคว่ำนี้เอง ที่ทำให้นักวิเคราะห์ความเสี่ยงในตลาดการเงิน สามารถสร้างแบบจำลองความเสี่ยงของทั้งตลาดพร้อมกัน แล้วดึงเฉพาะความเสี่ยงของหุ้นรายตัว หรือกลุ่มอุตสาหกรรมย่อยออกมารายงานต่อผู้กำกับดูแลได้อย่างรวดเร็วและแม่นยำ</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>สิ่งที่หายไป</td><td>ภาพที่ฉายลงมาพอใช้</td><td>ความสัมพันธ์กับตัวอื่นหายไปหมด</td><td>ห้ามเอาความเสี่ยงรายตัวมาบวกกันเพื่อหาความเสี่ยงรวม</td></tr>
-      <tr><td>การเลือกทิศ</td><td>รู้ว่าจะฉายลงทิศไหน</td><td>ทิศที่อันตรายที่สุดมักไม่ใช่ทิศที่เราคิดจะดู</td><td>ต้องหาทิศที่แย่ที่สุดด้วย ไม่ใช่ดูเฉพาะทิศที่คุ้นเคย</td></tr>
-      <tr><td>สมมติฐานเดิม</td><td>ข้อจำกัดของแบบจำลองรวมไม่ตามมา</td><td>มันตามมาทั้งหมด</td><td>ภาพที่ฉายลงมาก็ยังมีหางบางเกินจริงเหมือนต้นฉบับ</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวแรกเป็นข้อผิดพลาดที่พบบ่อยที่สุดในรายงานความเสี่ยงที่ทำด้วยมือ</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดตัดบล็อก marginal จาก model สามสินทรัพย์</summary>
-    <pre><code>import numpy as np
-from scipy import stats, integrate
-mu = np.array([0.09, 0.03, 0.05])
-S = 1e-4 * np.array([[324, -21.6, 13.5], [-21.6, 36, 22.5], [13.5, 22.5, 225]])
-P = np.array([[1, 0, 0], [0, 0, 1]])                    # keep stocks and gold
-m1, S11 = P @ mu, P @ S @ P.T
-assert np.allclose(m1, [0.09, 0.05]) and np.allclose(S11, [[0.03240, 0.00135], [0.00135, 0.02250]])
-w = np.array([0.5, 0.5])
-assert abs(w @ S11 @ w - 0.0144) &lt; 1e-12 and abs(np.sqrt(w @ S11 @ w) - 0.12) &lt; 1e-12
-assert abs(stats.norm.cdf((0 - 0.05) / 0.15) - 0.369) &lt; 5e-4
-f2 = stats.multivariate_normal(m1, S11)
-marg = integrate.quad(lambda y: f2.pdf([0.12, y]), -2, 2)[0]
-assert abs(marg - stats.norm.pdf(0.12, 0.09, np.sqrt(0.0324))) &lt; 1e-8     # integrating out gold
-z1, z2, rho = 0.7, -0.4, 0.3
-assert abs((z1 ** 2 - 2 * rho * z1 * z2 + z2 ** 2) / (1 - rho ** 2) - (z1 ** 2 + (z2 - rho * z1) ** 2 / (1 - rho ** 2))) &lt; 1e-12
-X = np.random.default_rng(9).multivariate_normal(mu, S, 300_000) @ P.T
-assert np.allclose(np.cov(X, rowvar=False), S11, atol=5e-4)</code></pre>
+    <p>พจน์ cross-block หายเพราะ argument ของ B เป็นศูนย์ ไม่ใช่เพราะเราได้พิสูจน์ว่า $\Sigma_{AB}=0$ สินทรัพย์ที่ตัดออกจึงยังมีความสัมพันธ์กับสินทรัพย์ที่เหลือ และอาจให้ข้อมูลที่เปลี่ยน conditional prediction ได้</p>
   </details>
-  <div class="note">
-    <p>โค้ดตัดแถวและคอลัมน์ด้วย P ได้ค่าเฉลี่ยและ covariance ของหุ้นกับทอง พอร์ตครึ่งต่อครึ่งเสี่ยง 12.00% ทองขาดทุนได้ 36.9% ของปี อินทิเกรตทองทิ้งแล้วได้ระฆังของหุ้นพอดี และจำลองได้บล็อกเดียวกัน</p>
-  </div>
 </section>
-
+<figure class="plot">
+  <h4>Figure 8.6a — Projection รวมทุกค่า QQQ ไม่ใช่ตัดที่แถวหนึ่ง</h4>
+  <img src="../figures/8.6-1.svg" alt="Joint SPX QQQ density กับเส้น marginal SPX ที่นำมาซ้อนด้านล่าง" loading="lazy">
+  <figcaption>เส้นแดงคือ SPX marginal ที่เลื่อนและปรับความสูงเพื่อซ้อนกับ contour การวางไว้ด้านล่างไม่ได้หมายถึงกำหนด QQQ return ให้เท่ากับค่าบนแกน ณ เส้นแดง และความสูงที่ปรับแล้วไม่ใช่ ordinate ของ marginal density จริง</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 4 — ดูการ integrate จริงในสองมิติ</h4>
+  <p>สำหรับ bivariate Normal ที่ $\sigma_X,\sigma_Y\gt0$ และ $|\rho|\lt1$ กำหนด marginal scores $u=(x-\mu_X)/\sigma_X$ กับ $v=(y-\mu_Y)/\sigma_Y$ ทั้งสอง scores ยัง correlated กัน เราจัดกำลังสองเพื่อแยกพจน์ที่ขึ้นกับ y</p>
+  <div class="math">\[
+\begin{aligned}
+q&:=\frac{u^2-2\rho uv+v^2}{1-\rho^2},\\
+q&=u^2+\frac{(v-\rho u)^2}{1-\rho^2},\\
+f_{X,Y}(x,y)&=\frac{e^{-u^2/2}}{\sqrt{2\pi}\sigma_X}\\
+&\quad\times\frac{e^{-(v-\rho u)^2/[2(1-\rho^2)]}}{\sqrt{2\pi}\sigma_Y\sqrt{1-\rho^2}},\\
+z&=\frac{v-\rho u}{\sqrt{1-\rho^2}},\\
+dy&=\sigma_Y\sqrt{1-\rho^2}\,dz,\\
+J&:=\int_{-\infty}^{\infty}\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=1,\\
+f_X(x)&=\frac{e^{-u^2/2}}{\sqrt{2\pi}\sigma_X}J\\
+&=\frac{e^{-(x-\mu_X)^2/(2\sigma_X^2)}}{\sqrt{2\pi}\sigma_X}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>เมื่อ fix x, ส่วนที่สองเป็น Normal density ใน y ซึ่งมีพื้นที่รวมหนึ่ง แม้ศูนย์กลางจะขึ้นกับ x การ integrate จึงเหลือ Normal ของ X โดยเก็บ mean $\mu_X$ และ variance $\sigma_X^2$ ไม่ได้อาศัย independence</p></div>
+  <details><summary>ที่มาของ integral เท่ากับหนึ่ง</summary>
+    <p>ให้ $I=\int_{-\infty}^{\infty}e^{-z^2/2}\,dz\gt0$ คูณ integral สองชุด แล้วเปลี่ยนเป็น polar coordinates ซึ่งมี area factor r</p>
+    <div class="math">\[
+\begin{aligned}
+I^2&=\int_{\mathbb R^2}e^{-(x^2+y^2)/2}\,dx\,dy\\
+&=\int_0^{2\pi}\int_0^{\infty}e^{-r^2/2}r\,dr\,d\theta\\
+&=2\pi[-e^{-r^2/2}]_0^{\infty}=2\pi,\\
+I&=\sqrt{2\pi},\\
+J&=I/\sqrt{2\pi}=1.
+\end{aligned}
+\]</div>
+    <p>ที่ $|\rho|=1$ สูตร density สองมิตินี้ใช้ไม่ได้ แต่การเลือก component ของ Gaussian ที่ singular ยังทำได้ด้วย affine construction หรือ MGF ไม่ต้องฝืนหารด้วยศูนย์</p>
+  </details>
+</section>
+<figure class="plot">
+  <h4>Figure 8.6b — Marginal ของ SPX ยังมี SD 2%</h4>
+  <img src="../figures/8.6-2.svg" alt="SPX daily Normal marginal mean 0.04 เปอร์เซ็นต์ SD 2 เปอร์เซ็นต์" loading="lazy">
+  <figcaption>โมเดลรายวันให้ช่วง mean ±1SD เท่ากับ −1.96% ถึง +2.04% ซึ่งมี probability ตามทฤษฎีประมาณ 68.27% พื้นที่สีวาดจากกริด แกน density ใช้หน่วยต่อ percentage point ไม่ใช่ต่อ decimal return</figcaption>
+</figure>
+<section class="example">
+  <h4>ขั้นที่ 5 — ตรวจพอร์ตหุ้น/ทองจากทั้ง full model และ subset</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้ annual model ของขั้นที่ 2 ลงเงินครึ่งหนึ่งในหุ้นและครึ่งหนึ่งในทอง ไม่ถือพันธบัตร คง holdings ตลอดช่วงและละต้นทุนในตัวอย่าง เรียก weight vector ใน subset ว่า w</p>
+  <div class="math">\[
+\begin{aligned}
+w&=(0.5,0.5)^{\mathsf T},\\
+\mathbb E[R_p]&=0.5(0.09)+0.5(0.05)=0.07,\\
+\operatorname{Var}(R_p)&=0.25(0.0324)\\
+&\quad+0.25(0.0225)\\
+&\quad+2(0.25)(0.00135)\\
+&=0.0081+0.005625\\
+&\quad+0.000675\\
+&=0.0144,\\
+\operatorname{SD}(R_p)&=\sqrt{0.0144}=0.12,\\
+\widetilde w=P^{\mathsf T}w&=(0.5,0,0.5)^{\mathsf T},\\
+w^{\mathsf T}\Sigma_Yw&=\widetilde w^{\mathsf T}\Sigma\widetilde w=0.0144.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> expected annual return 7%, SD 12% จากทั้งสองเส้นทาง หาก NAV เริ่มต้น \$1 ล้าน จะเป็น mean P&amp;L \$70,000 กับ SD \$120,000 ไม่ใช่กำไรที่รับประกัน</p>
+  <p>โค้ดท้ายหน้ารายงาน portfolioLoss ภายใต้ Gaussian ด้วย: $\Phi(-0.07/0.12)\approx27.98\%$ นี่ใช้คุณสมบัติว่า linear combination ของ joint Gaussian ยังเป็น Normal ซึ่งจะขยายความใน 8.8 ไม่ได้อาศัยเพียงรูป marginal ของสินทรัพย์แต่ละตัว</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> variance ต้องมี cross-term 0.000675 หุ้นกับทองไม่เป็นอิสระเพียงเพราะนำพันธบัตรออก หากเลือกหุ้นกับพันธบัตรผิดคู่ จะได้ variance 0.00792 ซึ่งเป็นพอร์ตคนละชุด ไม่ใช่ผลที่เทียบกันได้</p>
+  <p>เมื่อถามเฉพาะทอง $R_G\sim N(0.05,0.15^2)$ ความน่าจะเป็นขาดทุนจากโมเดลจึงคำนวณได้โดยไม่ต้องตั้ง return หุ้นหรือพันธบัตรให้ค่าใด</p>
+  <div class="math">\[
+\begin{aligned}
+P(R_G\lt0)&=\Phi\left(\frac{0-0.05}{0.15}\right)\\
+&=\Phi(-1/3)\approx36.9441\%.
+\end{aligned}
+\]</div>
+</section>
+<figure class="plot">
+  <h4>Figure 8.6c — สอง marginal curves ยังไม่บอกความเสี่ยงร่วม</h4>
+  <img src="../figures/8.6-3.svg" alt="SPX และ QQQ daily marginal densities เทียบ mean และ SD" loading="lazy">
+  <figcaption>รูปกลับมาใช้ daily SPX/QQQ model:mean 0.04%/0.03%, SD 2%/3% ไม่ใช่ annual หุ้น/ทองในตัวอย่างก่อน หน้าเดียวกันมีสอง time horizons จึงต้องอ่านชื่อและหน่วยก่อนหยิบตัวเลข แม้เปลี่ยน correlation โดยคง marginals เดิม เส้นสองเส้นนี้ก็ไม่เปลี่ยน</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 6 — ตัด covariance ไม่ใช่ตัด inverse covariance</h4>
+  <p>กลับมาที่ daily SPX/QQQ หากต้องการ SPX marginal ให้เลือก $\Sigma_{11}=0.0004$ โดยตรง แต่การ invert full covariance ก่อนแล้วหยิบ diagonal ของ inverse มา invert อีกครั้งให้คนละคำตอบ</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma&=\begin{bmatrix}0.0004&amp;0.00024\\0.00024&amp;0.0009\end{bmatrix},\\
+D=\det\Sigma&=0.0004(0.0009)-0.00024^2\\
+&=3.024\times10^{-7},\\
+(\Sigma^{-1})_{11}&=0.0009/D\approx2976.190476,\\
+\frac1{(\Sigma^{-1})_{11}}&=D/0.0009\\
+&=0.0004-\frac{0.00024^2}{0.0009}\\
+&=0.000336\ne0.0004.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ค่า 0.000336 เป็น conditional variance ใน Gaussian model นี้ ไม่ใช่ marginal variance การตัด block ของ precision matrix จึงไม่ใช่ทางลัดสำหรับโจทย์ marginal</p></div>
+  <p>เหตุผลเดียวกันทำให้การตัด joint-density ที่ $Y=y$ ไม่ใช่ marginal ของ X:integrate slice นั้นตาม x จะได้ $f_Y(y)$ ซึ่งไม่จำเป็นต้องเป็นหนึ่ง ต้อง normalize ก่อนจึงกลายเป็น conditional density</p>
+  <div class="math">\[
+\begin{aligned}
+\int_{-\infty}^{\infty}f_{X,Y}(x,y)\,dx&=f_Y(y),\\
+f_{X\mid Y=y}(x)&=f_{X,Y}(x,y)/f_Y(y),\\
+f_Y(\mu_Y)&=\frac1{\sqrt{2\pi}(0.03)}\approx13.298076.
+\end{aligned}
+\]</div>
+  <p>สลับ u กับ v ในการจัดกำลังสองของขั้นที่ 4 แล้ว normalize slice จะอ่าน mean ของ X ได้เป็น $\mu_X+\rho\sigma_X(y-\mu_Y)/\sigma_Y$ ถ้า $y=0$ จะได้ mean $m_0$ ดังนี้ ส่วนสูตรทั่วไปจะพิสูจน์ต่อใน 8.7</p>
+  <div class="math">\[
+\begin{aligned}
+m_0&=0.0004+\frac{0.00024}{0.0009}(0-0.0003)\\
+&=0.0004-0.00008=0.00032,\\
+s_0&:=\operatorname{SD}(X\mid Y=0),\\
+s_0&=\sqrt{0.000336}\approx1.8330\%.
+\end{aligned}
+\]</div>
+  <p>จึงต่างจาก marginal mean 0.04%, SD 2% โดยไม่ได้เปลี่ยน weights หรือซื้อสินทรัพย์เพิ่ม</p>
+  <p>สำหรับตัวแปรต่อเนื่อง การ condition ที่ค่าแน่นอนใช้นิยามผ่าน density หรือขีดจำกัดของช่วงแคบ ไม่ใช่หารด้วย $P(Y=0)$ ซึ่งเป็นศูนย์ และโจทย์ข้อมูลร่วมนี้ไม่ได้แปลว่าเรารู้ return ปลายงวดก่อนตัดสินใจลงทุน</p>
+</section>
+<figure class="plot">
+  <h4>Figure 8.6d — Selected variance ต้องเท่ากับ diagonal เดิม</h4>
+  <img src="../figures/8.6-4.svg" alt="Full covariance SPX diagonal และ selected SPX variance เท่ากับ 0.0004" loading="lazy">
+  <figcaption>สองแท่งเท่ากับ 0.0004 สำหรับ fixed one-day return หน่วยที่ใช้ในบทคือ decimal-return²; ป้ายเดิม return²/day² ไม่ควรอ่านเป็น variance ของอัตรารายวัน การตรวจสองแท่งตรงกันเป็นเพียงหนึ่ง check ไม่พอจับการเลือก ticker ผิดในกรณีที่ variances บังเอิญเท่ากัน</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 7 — Full model singular ไม่ได้ทำให้ทุก marginal ใช้ไม่ได้</h4>
+  <p>ให้ Z กับ W เป็น independent standard Normal แล้วสร้าง $X=(Z,Z,W)^{\mathsf T}$ full covariance singular เพราะ component แรกกับที่สองซ้ำกัน แต่เลือกตัวแรกกับตัวที่สามจะได้ independent standard Normal สองตัวที่มี density ปกติ</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma_X&=\begin{bmatrix}1&amp;1&amp;0\\1&amp;1&amp;0\\0&amp;0&amp;1\end{bmatrix},\\
+(X_1,X_3)^{\mathsf T}&\sim N\left(0,\begin{bmatrix}1&amp;0\\0&amp;1\end{bmatrix}\right),\\
+(X_1,X_2)^{\mathsf T}&\sim N\left(0,\begin{bmatrix}1&amp;1\\1&amp;1\end{bmatrix}\right).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>คู่แรกมี density เต็มสองมิติ คู่หลังเป็น Gaussian ที่อยู่บนเส้นตรง ทั้งสองเป็น marginals ที่ถูกต้อง ส่วน component ที่ variance ศูนย์เป็นค่าคงที่ ต้องอ่านเป็น point mass ไม่ใช่เอา SD ศูนย์ไปหารใน Normal PDF</p></div>
+  <details><summary>ถ้า full covariance เป็น PD ล่ะ</summary>
+    <div class="math">\[
+\begin{aligned}
+a^{\mathsf T}\Sigma_Ya&=a^{\mathsf T}P\Sigma P^{\mathsf T}a\\
+&=(P^{\mathsf T}a)^{\mathsf T}\Sigma(P^{\mathsf T}a)\\
+&\gt0\quad(a\ne0).
+\end{aligned}
+\]</div>
+    <p>เมื่อ P เลือก distinct coordinates,$P^{\mathsf T}a\ne0$ สำหรับ $a\ne0$ จึงเก็บความเป็น PD ไว้ แต่ถ้าเลือก coordinate เดิมซ้ำจะสร้าง duplicate outputs ซึ่งอาจทำให้ covariance ใหม่ singular ได้ ไม่ใช่ความผิดของ Gaussian law</p>
+  </details>
+</section>
+<section class="pitfall">
+  <h4>“ไม่ต้อง fit ใหม่” มีเงื่อนไข ไม่ใช่ใบอนุญาตให้ใช้โมเดลเก่าเสมอ</h4>
+  <p>หากคำถามคือ unconditional distribution ของ subset ภายใต้ <em>fixed full model เดิม</em> ก็เลือก mean/covariance ได้ตรง ๆ ไม่ต้องประมาณ parameters อีกชุด แต่การเปลี่ยน horizon, ข้อมูล, regime หรือข้อมูลที่ condition อยู่เป็นคนละโจทย์</p>
+  <div class="table-wrap"><table><thead><tr><th>สิ่งที่ตรวจ</th><th>ข้อผิดพลาดที่ป้องกัน</th></tr></thead><tbody>
+    <tr><td>Names และ order</td><td>ตัดแถวหนึ่งแต่คอลัมน์อีกชื่อ หรือเรียง weights ไม่ตรงกับ selected assets</td></tr>
+    <tr><td>Covariance ภายใน subset</td><td>เก็บแต่ diagonal แล้วสมมติ independence ทั้งที่ cross-covariance ยังอยู่</td></tr>
+    <tr><td>Distribution assumption</td><td>ใช้ mean/covariance สร้าง Normal ทั้งที่ full law ไม่ใช่ joint Gaussian</td></tr>
+    <tr><td>Calibration และข้อมูลใหม่</td><td>เข้าใจว่าการเลือก submatrix แก้ estimation error หรือความเสี่ยงจากโมเดลผิดได้</td></tr>
+  </tbody></table></div>
+  <p>MGF ที่พิสูจน์ให้เลือกได้เป็นคุณสมบัติของ Gaussian family ไม่ใช่หลักฐานว่าหางตลาดจริงตรงกับ Gaussian โมเดล marginal รับข้อจำกัดของ full model มาด้วย ต้องทดสอบ tails และความเปลี่ยนแปลงตามข้อมูลนอกชุดที่ใช้ fit</p>
+</section>
+<section class="example">
+  <h4>ทดสอบว่ากำลังเลือกข้อมูล หรือเปลี่ยนคำถาม</h4>
+  <p><strong>1.</strong> Annual model เดิม ลงหุ้น 70%, ทอง 30% แต่ผลลัพธ์ที่เลือกจาก matrix เรียง “ทอง, หุ้น” ต้องส่ง weight vector อะไร? ถ้าไม่แก้ order จะรายงาน mean/variance ต่างอย่างไร?</p>
+  <details><summary>เฉลย</summary><p>ส่ง $(0.3,0.7)^{\mathsf T}$ ตามลำดับทอง, หุ้น จึงได้ mean 7.8%, variance 0.018468 เหมือน full vector $(0.7,0,0.3)^{\mathsf T}$ หากส่ง $(0.7,0.3)$ ตามลำดับใหม่จะเป็นพอร์ตทอง 70% ให้ mean 6.2%, variance 0.014508 การใช้ 50/50 ทดสอบอย่างเดียวจะซ่อน bug สลับลำดับนี้</p></details>
+  <p><strong>2.</strong> เปลี่ยน correlation ของ daily SPX/QQQ จาก 0.40 เป็น 0.80 โดยคง means และ marginal SDs เดิม SPX marginal เปลี่ยนหรือไม่? แล้วจะใช้เส้น marginal สองเส้นกู้ค่า correlation กลับมาได้ไหม?</p>
+  <details><summary>เฉลย</summary><p>ไม่เปลี่ยน: SPX ยัง $N(0.0004,0.0004)$ ส่วน QQQ ยัง $N(0.0003,0.0009)$ เส้นสองเส้นจึงไม่บอก correlation ต้องมี joint information เพิ่ม Gaussian mean vector กับ <em>full covariance</em> กำหนด joint law ได้ แต่รายการ marginal means/variances อย่างเดียวไม่พอ</p></details>
+  <p><strong>3.</strong> ใช้คู่ $X\sim N(0,1),Y=WX$ ของ 8.3 ซึ่ง W เป็นเครื่องหมายอิสระอย่างละครึ่ง เลือก X ตัวเดียวได้ Normal ถูกต้อง แล้วสรุปว่า full joint เป็น MVN ได้หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ไม่ได้ ทั้ง X และ Y มี Normal marginals แต่ joint อยู่บนสองเส้น $y=x,y=-x$ และ $P(X+Y=0)=1/2$ การมี Gaussian marginals ไม่ย้อนกลับไปพิสูจน์ joint Gaussianity</p></details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>โค้ดเลือกชื่อจากทั้งแถวและคอลัมน์ในลำดับเดียวกัน แล้วตรวจ full/subset portfolio และ integrate density โดยตรง indices ใน JavaScript เริ่มที่ 0 จึงเลือก components 1,3 ด้วย indices 0,2 รันด้วย Node.js ได้; การจำลองเพื่อเช็กภาพของ marginals จะตามมาใน 8.9</p>
+  <p>checkLayout ตรวจรูปแบบ ชื่อ และ symmetry เท่านั้น ไม่ใช่ตัวรับรอง PSD หรือ Gaussianity จึงใช้กับ model covariance ที่ตรวจแล้วตาม 7.6 ฟังก์ชัน select ปฏิเสธชื่อซ้ำตามสัญญาว่าจะเลือก distinct subset ส่วน normalPDF ต้องการ variance บวกสำหรับ ordinary density</p>
+  <p>คำนวณ joint density โดยบวก log-densities ก่อน exponential เพื่อไม่ให้ factor เล็กมากปัดเป็นศูนย์ก่อนคูณกับอีก factor ที่ใหญ่กว่า ส่วน integral ใช้กริดสำหรับตัวอย่างนี้ ไม่ใช่ตัว integrate ทุกฟังก์ชันได้โดยอัตโนมัติ</p>
+  <pre><code class="language-javascript" data-example="8.6">function finiteVector(v, n = null) {
+  if (!Array.isArray(v) || !v.length || (n !== null &amp;&amp; v.length !== n) ||
+      ![...v].every(Number.isFinite)) throw new TypeError('Need a finite vector of matching size');
+}
+function finiteResult(x) {
+  if (!Number.isFinite(x)) throw new RangeError('Arithmetic overflow');
+  return x;
+}
+function checkLayout(mean, covariance, labels) {
+  finiteVector(mean);
+  const n = mean.length;
+  if (!Array.isArray(labels) || labels.length !== n ||
+      ![...labels].every(x =&gt; typeof x === 'string' &amp;&amp; x.length &gt; 0) || new Set(labels).size !== n) {
+    throw new TypeError('Need unique nonempty labels matching the model');
+  }
+  if (!Array.isArray(covariance) || covariance.length !== n ||
+      [...covariance].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
+    throw new TypeError('Need a matching finite square covariance');
+  }
+  for (let i = 0; i &lt; n; i++) for (let j = 0; j &lt; n; j++) {
+    if (covariance[i][j] !== covariance[j][i]) throw new RangeError('Covariance must be symmetric');
+  }
+}
+function select(mean, covariance, labels, keep) {
+  checkLayout(mean, covariance, labels);
+  if (!Array.isArray(keep) || !keep.length || new Set(keep).size !== keep.length ||
+      ![...keep].every(x =&gt; labels.includes(x))) throw new RangeError('Need a nonempty distinct subset of labels');
+  const indices = keep.map(x =&gt; labels.indexOf(x));
+  return {labels: [...keep], indices, mean: indices.map(i =&gt; mean[i]),
+    covariance: indices.map(i =&gt; indices.map(j =&gt; covariance[i][j])),
+    P: indices.map(i =&gt; labels.map((_, j) =&gt; Number(i === j)))};
+}
+function dot(a, b) {
+  finiteVector(a); finiteVector(b, a.length);
+  return finiteResult(a.reduce((s, x, i) =&gt; s + x * b[i], 0));
+}
+function portfolio(model, w) {
+  checkLayout(model.mean, model.covariance, model.labels);
+  finiteVector(w, model.mean.length);
+  const variance = dot(w, model.covariance.map(row =&gt; dot(row, w)));
+  if (variance &lt; 0) throw new RangeError('Negative portfolio variance');
+  return {mean: dot(w, model.mean), variance, sd: Math.sqrt(variance)};
+}
+function logMGF(model, s) {
+  const p = portfolio(model, s);
+  return finiteResult(p.mean + .5 * p.variance);
+}
+function integrate(f, lo, hi, n = 8000) {
+  if (![lo, hi].every(Number.isFinite) || lo &gt; hi ||
+      !Number.isInteger(n) || n &lt; 2 || n &gt; 100000 || n % 2) throw new RangeError('Invalid integration bounds or grid');
+  const h = finiteResult((hi - lo) / n);
+  if (h === 0 &amp;&amp; lo !== hi) throw new RangeError('Integration step underflow');
+  let total = 0, correction = 0;
+  for (let i = 0; i &lt;= n; i++) {
+    const weight = i === 0 || i === n ? 1 : i % 2 ? 4 : 2;
+    const term = finiteResult(weight * f(lo + i * h)) - correction;
+    const next = total + term;
+    correction = (next - total) - term; total = next;
+  }
+  return finiteResult(total * h / 3);
+}
+function normalLogPDF(x, mean, variance) {
+  if (![x, mean, variance].every(Number.isFinite) || variance &lt;= 0) {
+    throw new RangeError('Positive finite variance required for ordinary density');
+  }
+  const z = finiteResult((x - mean) / Math.sqrt(variance));
+  return finiteResult(-.5 * z * z - .5 * Math.log(2 * Math.PI) - .5 * Math.log(variance));
+}
+const normalPDF = (x, mean, variance) =&gt; finiteResult(Math.exp(normalLogPDF(x, mean, variance)));
+function Phi(x) {
+  if (!Number.isFinite(x) || Math.abs(x) &gt; 6) throw new RangeError('CDF demo limited to finite scores within 6');
+  return .5 + Math.sign(x) * integrate(z =&gt; normalPDF(z, 0, 1), 0, Math.abs(x));
+}
+function jointPDF(x, y, mean, covariance) {
+  checkLayout(mean, covariance, ['X', 'Y']);
+  if (covariance[0][0] &lt;= 0 || covariance[1][1] &lt;= 0) throw new RangeError('Positive definite covariance required');
+  const sx = Math.sqrt(covariance[0][0]), sy = Math.sqrt(covariance[1][1]);
+  const rho = covariance[0][1] / sx / sy;
+  if (!Number.isFinite(rho) || Math.abs(rho) &gt;= 1) throw new RangeError('Positive definite covariance required');
+  const u = finiteResult((x - mean[0]) / sx);
+  const conditionalMean = finiteResult(mean[1] + rho * sy * u);
+  const conditionalVariance = finiteResult(covariance[1][1] * ((1 - rho) * (1 + rho)));
+  const logDensity = finiteResult(normalLogPDF(x, mean[0], covariance[0][0]) +
+    normalLogPDF(y, conditionalMean, conditionalVariance));
+  return finiteResult(Math.exp(logDensity));
+}
+const annual = {labels: ['stocks', 'bonds', 'gold'], mean: [.09, .03, .05],
+  covariance: [[.0324, -.00216, .00135], [-.00216, .0036, .00225], [.00135, .00225, .0225]]};
+const pair = select(annual.mean, annual.covariance, annual.labels, ['stocks', 'gold']);
+const reverse = select(annual.mean, annual.covariance, annual.labels, ['gold', 'stocks']);
+const half = portfolio(pair, [.5, .5]);
+const daily = {labels: ['SPX', 'QQQ'], mean: [.0004, .0003], covariance: [[.0004, .00024], [.00024, .0009]]};
+const spx = select(daily.mean, daily.covariance, daily.labels, ['SPX']);
+const det = .0004 * .0009 - .00024 ** 2;
+const degenerate = {labels: ['Z1', 'Z2', 'W'], mean: [0, 0, 0], covariance: [[1, 1, 0], [1, 1, 0], [0, 0, 1]]};
+const t = [.7, -.4], embedded = [.7, 0, -.4];
+console.log(JSON.stringify({pair, half, fullHalf: portfolio(annual, [.5, 0, .5]),
+  dollars: [1e6 * half.mean, 1e6 * half.sd],
+  goldLoss: Phi(-.05 / .15), portfolioLoss: Phi(-half.mean / half.sd),
+  logMGF: [logMGF(pair, t), logMGF(annual, embedded)],
+  samePortfolioReordered: [portfolio(pair, [.7, .3]), portfolio(reverse, [.3, .7])],
+  wrongOrder: portfolio(reverse, [.7, .3]),
+  wrongAssets: portfolio(select(annual.mean, annual.covariance, annual.labels, ['stocks', 'bonds']), [.5, .5]),
+  integratedStockDensity: integrate(y =&gt; jointPDF(.12, y, pair.mean, pair.covariance), -2, 2),
+  directStockDensity: normalPDF(.12, .09, .0324),
+  spx, spxAtHigherCorrelation: select(daily.mean, [[.0004, .00048], [.00048, .0009]], daily.labels, ['SPX']),
+  precision11: .0009 / det, conditionalVariance: det / .0009,
+  conditionalMeanAtQQQ0: .0004 + (.00024 / .0009) * (0 - .0003),
+  conditionalSD: Math.sqrt(det / .0009),
+  sliceAreaAtQQQMean: integrate(x =&gt; jointPDF(x, .0003, daily.mean, daily.covariance), -.3, .3),
+  qqqDensityAtMean: normalPDF(.0003, .0003, .0009), coverageOneSD: Phi(1) - Phi(-1),
+  regularSubset: select(degenerate.mean, degenerate.covariance, degenerate.labels, ['Z1', 'W']),
+  singularSubset: select(degenerate.mean, degenerate.covariance, degenerate.labels, ['Z1', 'Z2'])}));</code></pre>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>marginal ของ MVN ยังเป็น Normal</li>
-    <li>projection map mean ด้วย $P\mu$ และ covariance ด้วย $P\Sigma P^{\mathsf T}$</li>
-    <li>selected covariance block ต้องตรงกับ full matrix: model หุ้น/หุ้นกู้/ทอง ถามแค่หุ้นกับทองให้ตัดบล็อก 2 × 2 ออกมา แล้วพอร์ตครึ่งต่อครึ่งได้ความผันผวน √0.0144 = 12.00% โดยไม่ต้องประมาณอะไรใหม่</li>
-    <li>marginal ไม่ได้แปลว่า assets independent</li>
+    <li>Marginal รวมทุก outcome ของตัวที่ไม่ได้ถาม ไม่ใช่ fix return ของตัวนั้นเป็นศูนย์; MGF argument ศูนย์กับ observed return ศูนย์คนละเรื่อง</li>
+    <li>Mean/covariance ของ subset เป็น $P\mu,P\Sigma P^{\mathsf T}$ สำหรับทุก law ที่มี moments ส่วน Gaussianity ของ selected law ต้องมาจาก joint Gaussian model</li>
+    <li>เลือกแถวและคอลัมน์ด้วยชื่อชุดเดียวกันในลำดับเดียวกัน และคง off-diagonal covariance ของสมาชิกที่เลือกไว้</li>
+    <li>การ invert แล้วตัด precision block ไม่ใช่ marginalization; conditional distribution ใช้ข้อมูลเพิ่มและเป็นหัวข้อถัดไป</li>
+    <li>Singular Gaussian ยังมี marginals; บาง subset มี density เต็มมิติ บาง subset เป็นเส้นหรือ point mass</li>
   </ul>
+  <p>8.7 จะตอบโจทย์อีกแบบอย่างชัดเจน: เมื่อ <em>รู้</em> บาง components แล้ว mean และ covariance ของส่วนที่เหลือเปลี่ยนอย่างไร และ slope นั้นเกี่ยวข้องกับ hedge ratio ภายใต้เงื่อนไขใด</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="8.5.html">8.5 The Moment Generating Function (MGF)</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.7.html">8.7 The MVN Conditional Distribution and the Hedge Ratio</a></div>
