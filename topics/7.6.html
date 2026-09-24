@@ -10,598 +10,375 @@
 <body>
 <div class="wrap">
 <nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/7.html">บทที่ 7</a>
-  <span class="topic-progress">หัวข้อ 42/158</span>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+<a href="../chapters/7.html">บทที่ 7</a>
+<span class="topic-progress">หัวข้อ 42/158</span>
 </nav>
-
-<article class="topic" data-number="7.6" data-depends-on="7.5">
+<article class="topic" data-number="7.6" data-depends-on="1.4 5.4 6.3 6.5 7.2 7.3 7.5">
 <header class="topic-header">
-  <h1><span class="tnum">7.6</span> Eigenvalues and Positive Definiteness</h1>
-  <p class="subtitle">ทิศพิเศษที่การแปลงเพียงยืดหรือหด</p>
+<h1><span class="tnum">7.6</span> Eigenvalues and Positive Definiteness</h1>
+<p class="subtitle">เปลี่ยนแกนให้เห็นทิศของความเสี่ยง แล้วตรวจว่า covariance เป็นไปได้จริงหรือไม่</p>
 </header>
-
 <div class="hook">
-  <p>หุ้นแบงก์สามตัวผันผวน 25% ต่อปีเท่ากันและมี correlation 0.7 ทุกคู่ พอร์ตที่ซื้อทั้งสามตัวเท่ากัน กับพอร์ต long ตัวหนึ่ง short อีกตัว ในขนาดความยาวเท่ากัน เสี่ยงต่างกันแค่ไหน?</p>
-  <p>เฉลย: ทิศซื้อเท่ากันมี variance 0.150 หรือ σ 38.73% ทิศ long/short มีแค่ 0.01875 หรือ σ 13.69% ต่างกันราวหนึ่งในสาม สองตัวเลขนี้คือ eigenvalue ของ covariance matrix และทิศซื้อเท่ากันกินความเสี่ยงของทั้งระบบ 80%</p>
-  <p>eigenvector คือทิศที่ matrix เพียงยืดหรือหดโดยไม่หมุน eigenvalue คือตัวคูณของทิศนั้น ส่วน positive definiteness ตรวจว่าทุกทิศมีความเสี่ยงเป็นบวก งาน quant ใช้ eigenvalue ตรวจ covariance ก่อนส่งเข้า optimizer และใช้หาทิศความเสี่ยงหลักของพอร์ต</p>
+<p>สมมติ JPM, BAC และ WFC แต่ละตัวมี SD 25% ต่อปี ถือตัวละหนึ่งในสามของ NAV จะได้ SD $25\%/\sqrt3\approx14.43\%$ หรือไม่ ถ้า correlation ทุกคู่เท่ากับ 0.7?</p>
+<details><summary>ดูคำตอบ</summary><p>ไม่ได้ สูตรหารด้วย $\sqrt3$ นั้นใช้กรณี covariance ระหว่างคู่เป็นศูนย์ ภายใต้สมมติฐานนี้ variance พอร์ตเท่ากับ $0.25^2(1+2\times0.7)/3=0.05$ จึงมี SD ประมาณ 22.36% หุ้นสามชื่อยังมีทิศร่วมที่กระจายออกได้ไม่มาก</p></details>
+<p>เราจะค่อย ๆ หาแกนร่วมนี้ด้วย eigenvectors และดูว่า eigenvalues ทำหน้าที่เป็น variance ของพอร์ตแบบใด ตัวเลขทั้งหมดในหน้านี้เป็นตัวอย่างสมมติ ไม่ใช่ค่าที่อ้างว่าเก็บจากตลาดปัจจุบัน</p>
 </div>
-
-<section class="prose">
-  <h4>เริ่มจากสองพอร์ตขนาดเท่ากันที่เสี่ยงต่างกันสามเท่า</h4>
-  <p>หุ้นแบงก์สามตัวผันผวน 25% ต่อปีเท่ากันทุกตัว และเกาะกันที่ correlation 0.7 ทุกคู่ พอร์ตแรกซื้อทั้งสามตัวเท่ากัน พอร์ตที่สอง long ตัวหนึ่ง short อีกตัว ทั้งสองพอร์ตมีขนาดเท่ากันเป๊ะ</p>
-  <p>พอร์ตแรกเหวี่ยง 38.73% ต่อปี พอร์ตที่สองเหวี่ยง 13.69% ต่างกันเกือบสามเท่า ทั้งที่ใช้เงินเท่ากันและถือหุ้นชุดเดียวกัน ความต่างทั้งหมดอยู่ที่ทิศ</p>
-  <p>แปลว่าตารางความเสี่ยงของหุ้นชุดนี้ไม่ได้ปฏิบัติกับทุกทิศเท่ากัน มันมีทิศที่มันขยายแรงและทิศที่มันแทบไม่แตะ ทิศพิเศษเหล่านั้นเรียกว่า eigenvector และตัวคูณของแต่ละทิศคือ eigenvalue หัวข้อนี้หาพวกมันออกมา แล้วใช้มันตรวจว่าตารางความเสี่ยงที่ได้มาใช้งานได้จริงหรือเปล่า</p>
+<section class="formula">
+<h2>1. Eigenvector: ทิศที่ matrix ไม่ส่งออกไปนอกเส้นเดิม</h2>
+<p>สำหรับ square matrix $A$ เราเรียก $u\ne0$ ว่า eigenvector หาก $Au=\lambda u$ ค่า $\lambda$ คือ eigenvalue คูณด้วยค่าบวกจะยืด/หด ค่าลบกลับทิศ และศูนย์ส่ง vector ไปศูนย์ ตามความหมายของ null space ใน 7.5</p>
+<div class="math">\[
+\begin{aligned}
+A&=\begin{bmatrix}2&0\\0&1\end{bmatrix},\\
+A\begin{bmatrix}1\\0\end{bmatrix}&=2\begin{bmatrix}1\\0\end{bmatrix},\qquad
+A\begin{bmatrix}0\\1\end{bmatrix}=1\begin{bmatrix}0\\1\end{bmatrix},\\
+A\begin{bmatrix}1\\1\end{bmatrix}&=\begin{bmatrix}2\\1\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>สองแกนแรกเป็น eigenvectors ส่วน $(1,1)$ ไม่ใช่ เพราะ output ไม่เป็น scalar เท่าเดียวคูณทุกพิกัด ถ้า $u$ เป็น eigenvector แล้ว $cu$ สำหรับ $c\ne0$ ก็เป็นด้วย จึงมักกำหนด $\|u\|_2=1$ เพื่อให้เทียบสเกลได้</p>
+<p>คำว่า eigenvalue ยังไม่ได้แปลว่า variance สำหรับ matrix ทั่วไป ความหมายทางความเสี่ยงจะตามมาเมื่อ $A$ เป็น covariance และเราระบุหน่วยของข้อมูลกับ normalization ของ vector แล้ว</p>
 </section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>eigenvalue</dt>
-    <dd>scalar ที่บอกว่า matrix ขยายหรือหด vector ใน eigen-direction เท่าไร ใช้จัดอันดับขนาดของ risk direction</dd>
-    <dt>eigenvector</dt>
-    <dd>nonzero vector ที่เมื่อ matrix คูณแล้วชี้ทิศเดิม ใช้เป็น axis ของ principal risk directions</dd>
-    <dt>covariance matrix</dt>
-    <dd>matrix ของ variance บน diagonal และ covariance นอก diagonal ใช้คำนวณ variance ของ portfolio returns</dd>
-    <dt>positive definite</dt>
-    <dd>คุณสมบัติของ symmetric matrix ที่ quadratic form เป็นบวกสำหรับ vector ที่ไม่เป็นศูนย์ ใช้รับรองว่า portfolio variance เป็นบวกและ optimization มี geometry ที่ดี</dd>
-    <dt>quadratic form</dt>
-    <dd>นิพจน์ $x^{\mathsf T}\Sigma x$ ที่วัด variance ตาม portfolio direction $x$ ใช้เปลี่ยน covariance matrix เป็น risk scalar</dd>
-    <dt>correlation matrix</dt>
-    <dd>ตาราง correlation ทุกคู่ที่มีเลข 1 บนแนวทแยง ใช้แยกรูปร่างของความเสี่ยงออกจากขนาดความผันผวน</dd>
-    <dt>trace</dt>
-    <dd>ผลรวมของช่องบนแนวทแยง ใช้ตรวจ eigenvalue เพราะผลรวม eigenvalue เท่ากับ trace เสมอ และคือความเสี่ยงรวมของทั้งระบบ</dd>
-    <dt>characteristic polynomial</dt>
-    <dd>พหุนามที่ได้จาก det ของตารางลบตัวแปรบนแนวทแยง ใช้หา eigenvalue เพราะรากของมันคือ eigenvalue ทั้งหมด</dd>
-    <dt>leading principal minor</dt>
-    <dd>det ของมุมซ้ายบนขนาด 1 × 1, 2 × 2 ไปจนเต็มตาราง ใช้ตรวจ positive definite อีกทางโดยไม่ต้องหา eigenvalue</dd>
-    <dt>basis point (bp)</dt>
-    <dd>หนึ่งส่วนในหนึ่งหมื่นของผลตอบแทนหรือ 0.0001 ใน decimal ใช้รายงานการเปลี่ยนแปลงเล็ก ๆ และหน่วย variance แบบ basis-point-squared</dd>
-    <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ของหุ้นสหรัฐฯ ใช้เป็น United States (US) market return ใน scatter ตัวอย่าง</dd>
-    <dt>QQQ</dt>
-    <dd>กองทุนที่ติดตาม Nasdaq-100 ใช้เป็น technology-heavy return คู่กับ SPX ในตัวอย่าง</dd>
-  </dl>
+<section class="formula">
+<h2>2. หา eigenvalues โดยถามว่าเมื่อไรระบบมีคำตอบที่ไม่เป็นศูนย์</h2>
+<p>จัดรูป $Au=\lambda u$ เป็น $(A-\lambda I)u=0$ ถ้า $A-\lambda I$ กลับด้านได้ คำตอบมีเพียง $u=0$ ซึ่งไม่ใช่ eigenvector ดังนั้นค่าที่ต้องการทำให้ determinant เป็นศูนย์ นี่คือ characteristic equation</p>
+<p>เริ่มจากข้อมูลสองชุดที่รูปเรียกว่า SPX และ QQQ ให้ $R$ เป็น daily returns ที่หัก mean แล้ว ใช้หน่วยเศษส่วน และกำหนด covariance ดังนี้:</p>
+<div class="math">\[
+\Sigma=\begin{bmatrix}0.0004&0.00024\\0.00024&0.0009\end{bmatrix},\qquad
+\sigma_1=2\%,\quad\sigma_2=3\%.
+\]</div>
+<p>Covariance นอกแนวทแยงมาจาก $0.4(0.02)(0.03)=0.00024$ จึงเป็นสมมติฐาน correlation 0.4 ทุกช่องอยู่ที่ horizon หนึ่งวันเหมือนกัน ไม่ได้ผสม daily variance กับ annual covariance</p>
+<div class="math">\[
+\begin{aligned}
+\det(\Sigma-\lambda I)&=(0.0004-\lambda)(0.0009-\lambda)\\
+ &\quad-0.00024^2\\
+ &=\lambda^2-0.0013\lambda+0.0000003024,\\
+0&=\lambda^2-0.0013\lambda+0.0000003024,\\
+\lambda_{1,2}&=\frac{0.0013\pm\sqrt{0.0000004804}}{2},\\
+\lambda_1&\approx0.000996554469,\\
+\lambda_2&\approx0.000303445531.
+\end{aligned}
+\]</div>
+<p>ทั้งคู่เป็น variance ในหน่วย return เศษส่วนยกกำลังสอง ยังไม่ใช่ SD และยังไม่ใช่ risk ของพอร์ตที่ใส่เงิน 100% โดยอัตโนมัติ</p>
+<p>หาทิศของค่าตัวแรกจากสมการแถวหนึ่ง แล้ว normalize:</p>
+<div class="math">\[
+\begin{aligned}
+(0.0004-\lambda_1)x+0.00024y&=0,\\
+y/x&=(\lambda_1-0.0004)/0.00024\\
+ &\approx2.485643621,\\
+u_1&=\frac{(1,2.485643621)^{\mathsf T}}{\sqrt{1+2.485643621^2}}\\
+ &\approx(0.373237645,0.927735771)^{\mathsf T},\\
+u_2&\approx(0.927735771,-0.373237645)^{\mathsf T}.
+\end{aligned}
+\]</div>
+<p>แทนกลับจะได้ $\Sigma u_i\approx\lambda_i u_i$ และ $u_1^{\mathsf T}u_2\approx0$ การกลับเครื่องหมาย eigenvector ทั้งตัวไม่เปลี่ยน eigenvalue เลข 2.4856 คือ slope ของแกนหลัก ไม่ใช่ regression slope หรือคำทำนายว่า QQQ ต้องเคลื่อนไหวเท่านี้เมื่อ SPX เปลี่ยน 1%</p>
+<figure class="plot">
+<img src="../figures/7.6-1.svg" alt="จุด returns จำลองสองตัวและทิศ eigenvectors ของ covariance" loading="lazy">
+<figcaption>รูป 7.6a จุด 500 จุดจำลองจาก Normal mean ศูนย์และ covariance ที่กำหนด ไม่ใช่ข้อมูล SPX/QQQ จริง เส้นแต่ละเส้นยาวจาก $-2\sqrt{\lambda_i}u_i$ ถึง $+2\sqrt{\lambda_i}u_i$ จึงแสดงแกนและสเกล ไม่ได้แปลว่าทุกจุดต้องอยู่บนแกนใดแกนหนึ่ง</figcaption>
+</figure>
+</section>
+<section class="formula">
+<h2>3. เหตุใด covariance จึงเลือกแกนที่ตั้งฉากกันได้?</h2>
+<p>Covariance เป็น real symmetric matrix เพราะ $\operatorname{Cov}(R_i,R_j)=\operatorname{Cov}(R_j,R_i)$ สำหรับ matrix ประเภทนี้ spectral theorem รับประกัน eigenvalues จริงและ orthonormal eigenbasis ครบจำนวนมิติ</p>
+<p>ส่วนที่พิสูจน์สั้น ๆ ได้คือ eigenvectors ของค่าที่ต่างกันต้องตั้งฉาก: ใช้ความสมมาตรย้าย $A$ ไปอีกฝั่งของ inner product</p>
+<div class="math">\[
+\begin{aligned}
+u_i^{\mathsf T}Au_j&=\lambda_j u_i^{\mathsf T}u_j,\\
+u_i^{\mathsf T}Au_j&=(Au_i)^{\mathsf T}u_j=\lambda_i u_i^{\mathsf T}u_j,\\
+(\lambda_i-\lambda_j)u_i^{\mathsf T}u_j&=0,\\
+\lambda_i\ne\lambda_j&\ \Longrightarrow\ u_i^{\mathsf T}u_j=0.
+\end{aligned}
+\]</div>
+<p>เมื่อ eigenvalue ซ้ำ สามารถเลือก basis ที่ orthonormal ภายใน eigenspace นั้นได้ แต่ eigenvectors สองตัวที่หยิบมาเองไม่จำเป็นต้องตั้งฉาก และทิศที่โปรแกรมรายงานอาจต่างกันทั้งที่ subspace เดิม</p>
+<p>เก็บ unit eigenvectors เป็นคอลัมน์ของ $Q$ และ eigenvalues ไว้บน diagonal ของ $\Lambda$ จะได้:</p>
+<div class="math">\[
+\begin{aligned}
+AQ&=Q\Lambda,\qquad Q^{\mathsf T}Q=QQ^{\mathsf T}=I,\\
+A&=Q\Lambda Q^{\mathsf T},\\
+A^{-1}&=Q\Lambda^{-1}Q^{\mathsf T}\quad(\lambda_i\ne0\ \forall i).
+\end{aligned}
+\]</div>
+<p>ที่นี่ $Q^{-1}=Q^{\mathsf T}$ เพราะคอลัมน์ orthonormal ไม่ใช่เพราะ inverse เท่ากับ transpose สำหรับทุก basis ตามที่เตือนไว้ในบท 6 และ 7.2 ผลของเปลี่ยนแกนอาจรวมการกลับเครื่องหมายแกนด้วย</p>
+<p>รูปนี้ยังให้วิธีตรวจผล: trace เท่ากับผลรวม eigenvalues และ determinant เท่ากับผลคูณ เพราะ:</p>
+<div class="math">\[
+\begin{aligned}
+\operatorname{tr}A&=\sum_i\sum_j\lambda_j q_{ij}^2=\sum_j\lambda_j,\\
+\det A&=(\det Q)^2\prod_j\lambda_j=\prod_j\lambda_j.
+\end{aligned}
+\]</div>
+<p>สำหรับตัวอย่างสองมิติ ผลรวมต้องได้ 0.0013 และผลคูณ $3.024\times10^{-7}$ ถ้า normalize vectors หรือเรียง eigenvalues ผิดคู่ การแทนกลับ $Q\Lambda Q^{\mathsf T}$ จะตรวจพบได้ดีกว่ามองตัวเลขทีละตัว</p>
+</section>
+<section class="formula">
+<h2>4. เปลี่ยนพิกัดของ returns กับเปลี่ยนพิกัดของพอร์ต</h2>
+<p>ให้ $Y=Q^{\mathsf T}R$ เป็น returns ในแกนใหม่ จาก linearity ของ covariance:</p>
+<div class="math">\[
+\operatorname{Cov}(Y)=Q^{\mathsf T}\Sigma Q=\Lambda.
+\]</div>
+<p>จึงมี $\operatorname{Var}(u_i^{\mathsf T}R)=\lambda_i$ และ SD เท่ากับ $\sqrt{\lambda_i}$ สำหรับ unit eigenvector ส่วน portfolio weights $w$ มีพิกัดอีกชุดคือ $c=Q^{\mathsf T}w$ โดย $w=Qc$ ทำให้:</p>
+<div class="math">\[
+\begin{aligned}
+w^{\mathsf T}R&=c^{\mathsf T}Y,\\
+w^{\mathsf T}\Sigma w&=c^{\mathsf T}\Lambda c=\sum_i\lambda_i c_i^2,\\
+\|w\|_2^2&=\sum_i c_i^2.
+\end{aligned}
+\]</div>
+<p>ถ้า normalize $\|w\|_2=1$ จะได้ variance เป็น weighted average ของ eigenvalues โดย weights คือ $c_i^2$ จึงอยู่ระหว่าง $\lambda_{\min}$ และ $\lambda_{\max}$ และแตะขอบได้ที่ eigenvectors นั้น ๆ แต่เงื่อนไขนี้ไม่ใช่ $\sum w_i=1$ หรือ gross exposure เท่ากัน</p>
+<figure class="plot">
+<img src="../figures/7.6-2.svg" alt="วงรีในพิกัดแกนหลักที่มี covariance เป็น diagonal" loading="lazy">
+<figcaption>รูป 7.6b เลือกแกนหลักแล้วกึ่งแกนวงรียาวประมาณ 3.1568% กับ 1.7420% เท่ากับ $\sqrt{\lambda_1},\sqrt{\lambda_2}$ รูปนี้แสดง level set ของ standardized squared distance เท่ากับหนึ่ง ไม่ใช่การรับรองพื้นที่ความน่าจะเป็น 68% ในสองมิติ</figcaption>
+</figure>
+<figure class="plot">
+<img src="../figures/7.6-3.svg" alt="eigenvalues ประมาณ 99655 และ 30345 ในหน่วย basis points ยกกำลังสอง" loading="lazy">
+<figcaption>รูป 7.6c เปลี่ยน return เศษส่วนเป็น basis points ต้องคูณ 10,000 และ variance ต้องคูณ $10^8$ จึงได้ประมาณ 99,655.45 และ 30,344.55 bp² อย่าอ่านเป็นจำนวน basis points ของ SD</figcaption>
+</figure>
+<p>สำหรับพอร์ต $w=(0.6,0.4)$ คำนวณได้ $c\approx(0.595036895,0.407346405)$ จึงมี:</p>
+<div class="math">\[
+\begin{aligned}
+V&=0.6^2(0.0004)+2(0.6)(0.4)(0.00024)\\
+ &\quad+0.4^2(0.0009)=0.0004032,\\
+\lambda_1c_1^2&\approx0.000352848951,\\
+\lambda_2c_2^2&\approx0.000050351049,\\
+\sqrt V&\approx0.020079841=2.0079841\%.
+\end{aligned}
+\]</div>
+<p>แกนแรกจึงรับประมาณ 87.51% ของ <em>variance พอร์ตนี้</em> แต่ $\lambda_1/\operatorname{tr}\Sigma\approx76.66\%$ คือส่วนของ <em>total coordinate variance</em> ที่แกนแรกอธิบายตามเกณฑ์ PCA ทั้งสองจำนวนตอบคนละคำถาม</p>
+<p>ส่วนแบ่งแบบ eigenbasis ไม่ติดลบเมื่อ covariance เป็น PSD ต่างจาก asset-level contributions ใน 7.3 ที่อาจติดลบเมื่อบาง asset ช่วย hedge และส่วนแบ่ง trace ยังขึ้นกับหน่วย/การ standardize ของข้อมูลด้วย</p>
+<figure class="plot">
+<img src="../figures/7.6-4.svg" alt="quadratic form เป็นบวกทุกทิศบนวงกลม unit vectors" loading="lazy">
+<figcaption>รูป 7.6d ทดลอง $w=(\cos\theta,\sin\theta)$ ซึ่งมี L2 norm หนึ่งทุกจุด Variance อยู่ระหว่าง eigenvalues ที่เป็นบวก ไม่ใช่การทดลองพอร์ตที่ sum weights เท่ากับหนึ่งทุกจุด</figcaption>
+</figure>
+</section>
+<section class="formula">
+<h2>5. Positive semidefinite กับ positive definite ต่างกันตรงศูนย์</h2>
+<p>Covariance ที่มี finite second moments ต้องให้ $w^{\mathsf T}\Sigma w=\operatorname{Var}(w^{\mathsf T}R)\ge0$ สำหรับทุก $w$ นี่คือ positive semidefinite (PSD) ส่วน positive definite (PD) กำหนดให้เป็นบวกอย่างเคร่งครัดเมื่อ $w\ne0$</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Real symmetric matrix</th><th>Quadratic form</th><th>Eigenvalues</th></tr></thead>
+<tbody>
+<tr><td>PSD</td><td>ไม่ติดลบทุกทิศ; บางทิศอาจเป็นศูนย์</td><td>ทุกค่า $\ge0$</td></tr>
+<tr><td>PD</td><td>เป็นบวกทุกทิศที่ไม่เป็นศูนย์</td><td>ทุกค่า $\gt0$</td></tr>
+<tr><td>Indefinite</td><td>มีทั้งทิศบวกและทิศลบ</td><td>มีทั้งค่าบวกและค่าลบ</td></tr>
+</tbody></table></div>
+<p>เหตุผลอยู่ใน $w^{\mathsf T}Aw=\sum_i\lambda_i c_i^2$: ถ้าทุกค่าไม่ลบผลรวมไม่ลบ และถ้ามีค่าลบ เลือก $w=u_i$ จะได้ค่าลบนั้นทันที ดังนั้น covariance จริงเป็น PSD แต่อาจ singular ได้ เช่นผลตอบแทนบางตัวซ้ำกันพอดี</p>
+<p>การมี eigenvalues ไม่เป็นศูนย์ทั้งหมดรับรอง invertibility แต่ไม่รับรอง PD เช่น $\operatorname{diag}(1,-1)$ กลับด้านได้และยังให้ quadratic form ติดลบในบางทิศ</p>
+<details><summary>ทำไมต้องย้ำคำว่า symmetric?</summary><p>$A=\begin{bmatrix}1&4\\0&1\end{bmatrix}$ มี eigenvalues ทั้งสองเท่ากับ 1 แต่ที่ $x=(1,-1)$ กลับได้ $x^{\mathsf T}Ax=-2$ เกณฑ์ “eigenvalues บวกแล้ว quadratic form บวก” ที่ใช้ข้างต้นอาศัย real symmetry อย่านำไปใช้กับ matrix ทั่วไปโดยข้ามเงื่อนไขนี้</p></details>
+<details><summary>Sylvester’s criterion: ตรวจ PD โดยไม่หา eigenvalues ทุกตัว</summary>
+<p>สำหรับ real symmetric matrix ขนาด 2×2 ที่ $a\gt0$ ใช้การจัดกำลังสอง:</p>
+<div class="math">\[
+\begin{aligned}
+A&=\begin{bmatrix}a&b\\b&d\end{bmatrix},\\
+x^{\mathsf T}Ax&=a\left(x_1+\frac ba x_2\right)^2
+ +\frac{ad-b^2}{a}x_2^2.
+\end{aligned}
+\]</div>
+<p>จึงเป็น PD ก็ต่อเมื่อ $a\gt0$ และ $ad-b^2\gt0$ ตัวอย่างรายวันผ่านเพราะ $a=0.0004$ และ determinant $3.024\times10^{-7}$ เป็นบวกทั้งคู่</p>
+<p>สำหรับขนาดทั่วไป Sylvester’s criterion บอกว่า PD ก็ต่อเมื่อ <em>leading principal minors</em> หรือ determinants ของบล็อกบนซ้ายขนาด 1,2,…,n เป็นบวกทั้งหมด มองได้เป็นการจัดกำลังสองต่อเนื่องที่ได้ coefficients $D_k/D_{k-1}$ โดย $D_0=1$</p>
+<p>ถ้าจะตรวจ PSD ห้ามเปลี่ยนเพียง “บวก” เป็น “ไม่ลบ” ในเกณฑ์ leading minors เช่น $\operatorname{diag}(0,-1)$ มี leading minors 0,0 แต่ quadratic form ที่ $(0,1)$ เท่ากับ −1 เกณฑ์ PSD ต้องตรวจ <em>ทุก principal minor</em> ไม่ใช่เฉพาะบล็อกบนซ้าย หรือใช้ eigenvalues ของ matrix สมมาตร</p>
 </details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$\Sigma$</td><td>covariance matrix ของ daily returns</td><td>(decimal return)² ที่ horizon หนึ่งวัน</td></tr>
-      <tr><td>$\lambda$</td><td>eigenvalue ของ $\Sigma$</td><td>(decimal return)² ที่ horizon หนึ่งวัน</td></tr>
-      <tr><td>$v$</td><td>eigenvector ของ $\Sigma$</td><td>unitless เมื่อ normalize</td></tr>
-      <tr><td>$x$</td><td>portfolio direction หรือ weight vector</td><td>unitless</td></tr>
-      <tr><td>$x^{\mathsf T}\Sigma x$</td><td>variance ตาม direction $x$</td><td>(decimal return)² ที่ horizon หนึ่งวัน</td></tr>
-      <tr><td>$C,\ \rho$</td><td>correlation matrix ของหุ้นแบงก์สามตัว และ correlation ทุกคู่</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$k,\ u$</td><td>eigenvalue ของ $C$ และตัวแปรช่วย $u=1-k$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$D_1,D_2,D_3$</td><td>leading principal minors ของ $C$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$r_{SPX},r_{QQQ}$</td><td>daily returns ของสินทรัพย์</td><td>decimal return ในหนึ่งวัน</td></tr>
-    </tbody>
-  </table>
+</section>
+<section class="formula">
+<h2>6. สามธนาคาร: ทิศร่วมหนึ่งทิศ และ spread plane สองมิติ</h2>
+<p>กลับไป JPM/BAC/WFC สมมติให้ SD ต่อปีเท่ากัน $\sigma=0.25$ และ correlation ทุกคู่เท่ากับ $\rho$ เขียน covariance ด้วย $\mathbf1=(1,1,1)^{\mathsf T}$ ได้ว่า:</p>
+<div class="math">\[
+\begin{aligned}
+\Sigma&=\sigma^2\begin{bmatrix}1&\rho&\rho\\\rho&1&\rho\\\rho&\rho&1\end{bmatrix}\\
+ &=\sigma^2\{(1-\rho)I+\rho\mathbf1\mathbf1^{\mathsf T}\}.
+\end{aligned}
+\]</div>
+<p>สำหรับทิศร่วม $u_1=\mathbf1/\sqrt3$ ผลคูณ $\mathbf1\mathbf1^{\mathsf T}u_1=3u_1$ ส่วนทิศที่ sum coordinates เป็นศูนย์จะถูกพจน์นี้ส่งไปศูนย์ จึงหา eigenvalues ได้ทันทีโดยไม่ต้องเริ่มจาก cubic equation:</p>
+<div class="math">\[
+\begin{aligned}
+\Sigma u_1&=\sigma^2(1+2\rho)u_1,\\
+u_2&=\frac{(1,-1,0)^{\mathsf T}}{\sqrt2},\qquad
+u_3=\frac{(1,1,-2)^{\mathsf T}}{\sqrt6},\\
+\Sigma u_2&=\sigma^2(1-\rho)u_2,\\
+\Sigma u_3&=\sigma^2(1-\rho)u_3.
+\end{aligned}
+\]</div>
+<p>ทั้งสาม vectors เป็น orthonormal เราเลือก $u_2,u_3$ เป็น basis ของ zero-sum plane แต่เปลี่ยนเป็น orthonormal basis อื่นในระนาบนั้นก็ได้ เนื่องจาก eigenvalue ซ้ำ จึงไม่ควรตีความการสลับแกนที่โปรแกรมรายงานว่าเศรษฐกิจเปลี่ยนทิศเสมอไป</p>
+<div class="math">\[
+\begin{aligned}
+\rho=0.7:\quad\lambda_{\rm common}&=0.0625(2.4)=0.15,\\
+\lambda_{\rm spread}&=0.0625(0.3)=0.01875\quad\text{(twice)},\\
+\operatorname{tr}\Sigma&=0.15+2(0.01875)=0.1875,\\
+\det\Sigma&=0.15(0.01875)^2=0.000052734375.
+\end{aligned}
+\]</div>
+<p>ทิศร่วมอธิบาย 80% ของ trace ส่วนอีกสองแกนคนละ 10% สำหรับสมมติฐานนี้ ไม่ใช่หลักฐานว่าปัจจัยตลาดจริงรับความเสี่ยง 80% ในพอร์ตธนาคารทุกแบบ และเมื่อ $\rho\lt0$ ทิศร่วมอาจมี eigenvalue <em>เล็กกว่า</em> spread ไม่ควรเรียกทิศร่วมว่า “ทิศใหญ่” โดยไม่ดูค่า</p>
+<details><summary>ตรวจคำตอบอีกทางด้วย characteristic polynomial</summary>
+<p>แยกสเกล $\Sigma=\sigma^2C$ ให้ $k=\lambda/\sigma^2$ และ $u=1-k$ เมื่อขยาย determinant ของ $C-kI$ ได้:</p>
+<div class="math">\[
+\begin{aligned}
+0&=u^3-3\rho^2u+2\rho^3\\
+ &=(u+2\rho)(u-\rho)^2,\\
+k&=1+2\rho,\quad1-\rho,\quad1-\rho.
+\end{aligned}
+\]</div>
+<p>ที่ $\rho=0.7$ polynomial คือ $u^3-1.47u+0.686$ มีราก $-1.4,0.7,0.7$ จึงให้ $k=2.4,0.3,0.3$ ตรงกับวิธีทิศร่วม ส่วน leading minors ของ correlation matrix คือ $1,0.51,0.216$ ซึ่งเป็นบวกทั้งหมด</p>
 </details>
-
-<section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>ตอนนี้ให้มอง $\Sigma$ เป็น symmetric matrix ที่สรุปความผันผวนของข้อมูลสองชุดก่อน ความหมายและวิธีสร้าง covariance matrix จากผลตอบแทนจะเรียนเต็มในหัวข้อ 8.1</p>
-  <p>โจทย์ให้อะไรมาบ้าง: $r_{SPX},r_{QQQ}$ เป็น daily returns แบบ decimal และ matrix นี้มีหน่วย decimal-return squared ต่อวัน เราต้องหาแกนที่ matrix ไม่เปลี่ยนทิศ และตรวจว่าทุก direction ให้ค่าความเสี่ยงเป็นบวก</p>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — ลองกับแผ่นยางก่อน: ทิศไหนถูกยืดเฉย ๆ ทิศไหนถูกหมุน</h4>
-  <p>ลองกับตารางที่ง่ายที่สุดที่ยืดแผ่นยางได้: ดึงแนวนอนสองเท่า ปล่อยแนวตั้งเท่าเดิม แล้วส่งลูกศรสามอันเข้าไป</p>
-  <div class="math">\[
-M=\begin{bmatrix}2&amp;0\\
-0&amp;1\end{bmatrix}:\qquad M\begin{bmatrix}1\\
-0\end{bmatrix}=\begin{bmatrix}2\\
-0\end{bmatrix}=2\begin{bmatrix}1\\
-0\end{bmatrix},\qquad M\begin{bmatrix}0\\
-1\end{bmatrix}=\begin{bmatrix}0\\
-1\end{bmatrix}=1\begin{bmatrix}0\\
-1\end{bmatrix},\qquad M\begin{bmatrix}1\\
-1\end{bmatrix}=\begin{bmatrix}2\\
-1\end{bmatrix}\ne c\begin{bmatrix}1\\
-1\end{bmatrix}
-\]</div>
-  <div class="reading">
-    <p>ตาราง $M$ ดึงแนวนอนออกสองเท่า ไม่แตะแนวตั้ง ลูกศรตามแนวนอนยาวขึ้นสองเท่าแต่ยังชี้ทางเดิม (ตัวคูณ 2) ลูกศรแนวตั้งไม่เปลี่ยนเลย (ตัวคูณ 1)</p>
-    <p>ลูกศรเฉียง $(1,1)$ กลายเป็น $(2,1)$ ซึ่งชี้คนละทิศ ไม่มีตัวคูณ $c$ ตัวไหนทำให้ $(2,1)=c(1,1)$ ได้ ทิศนี้จึงไม่ใช่ทิศพิเศษ</p>
-    <p>ทิศพิเศษสองทิศเรียกว่า eigenvector ตัวคูณ 2 กับ 1 เรียกว่า eigenvalue ที่ยากคือเมื่อตารางไม่เป็นแนวทแยง ทิศพิเศษจะเอียง และต้องคำนวณหา ซึ่งคือขั้นถัด ๆ ไป</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — นิยามของ eigenvector: ทิศที่การแปลงไม่หมุนมัน</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของสิ่งที่เรากำลังตามหา ไม่ใช่ผลที่พิสูจน์มา การแปลงส่วนใหญ่ทั้งหมุนทั้งยืด แต่มีบางทิศที่มันแค่ยืดหรือหดเฉย ๆ ไม่หมุนเลย เราตั้งชื่อทิศพวกนั้นว่า eigenvector และตั้งชื่อจำนวนเท่าที่มันถูกยืดว่า eigenvalue</p>
-  <div class="math">\[
-\Sigma v=\lambda v,\qquad v\ne0
-\]</div>
-  <div class="reading">
-    <p>$v$ คือ eigenvector ที่ไม่เป็นศูนย์ และ $\lambda$ คือ eigenvalue; เมื่อ covariance matrix คูณ $v$ ผลลัพธ์ยังอยู่ทิศ $v$ แต่ยาวขึ้นหรือสั้นลงตาม $\lambda$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — quadratic risk</h4>
-  <p>เหตุผลที่เรื่องนี้สำคัญกับการเงิน คือความเสี่ยงของพอร์ตเขียนในรูปนี้พอดี หกบรรทัดนี้แสดงว่ารูปนั้นไม่ได้ถูกเลือกมาเพราะสวย มันคือสิ่งที่ออกมาเองจากนิยามของ variance และเพราะมันเป็นรูปนี้ สมบัติเรื่อง eigenvalue ในขั้นถัดไปจึงแปลเป็นความเสี่ยงได้ตรง ๆ</p>
-  <div class="math">\[
-\begin{aligned}\mathbb{E}\big[x^{\mathsf{T}}r\big]&=x^{\mathsf{T}}\mu\\
-x^{\mathsf{T}}r-x^{\mathsf{T}}\mu&=x^{\mathsf{T}}(r-\mu)\\
-\operatorname{Var}\big(x^{\mathsf{T}}r\big)&=\mathbb{E}\Big[\big(x^{\mathsf{T}}(r-\mu)\big)^{2}\Big]\\
-&=\mathbb{E}\Big[x^{\mathsf{T}}(r-\mu)\,(r-\mu)^{\mathsf{T}}x\Big]\\
-&=x^{\mathsf{T}}\,\mathbb{E}\big[(r-\mu)(r-\mu)^{\mathsf{T}}\big]\,x\\
-&=x^{\mathsf{T}}\Sigma x\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เหตุผลที่เรื่อง eigenvalue สำคัญกับการเงิน คือความเสี่ยงพอร์ตเขียนออกมาเป็นรูปนี้พอดี และรูปนี้ไม่ได้ถูกเลือกมาเพราะสวย มันออกมาเองจากนิยามของ variance เริ่มจากดึงน้ำหนักออกนอกค่าเฉลี่ย ทำได้เพราะน้ำหนักเป็นเลขที่เราเลือกเอง ไม่ได้สุ่ม แล้วลบค่าเฉลี่ยออกและดึงตัวร่วม</p>
-    <p>พอใส่นิยาม variance จากหัวข้อ 1.4 ก้อนในวงเล็บเป็นเลขตัวเดียว ไม่ใช่ตาราง การยกกำลังสองจึงเขียนเป็นตัวมันคูณทรานสโพสของตัวเองได้ แล้วดึงน้ำหนักทั้งสองข้างออกนอกค่าเฉลี่ย เหลือก้อนตรงกลางซึ่งหัวข้อ 8.1 จะตั้งชื่อให้ว่า covariance matrix</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — positive definiteness</h4>
-  <p>ความเสี่ยงติดลบไม่ได้ เงื่อนไขที่รับประกันข้อนั้นเขียนได้สามแบบที่เท่ากันหมด และแบบที่ตรวจง่ายที่สุดคือดูว่าทุก eigenvalue เป็นบวก</p>
-  <div class="math">\[
-\begin{aligned}
-&\Sigma=\Sigma^{\mathsf{T}}\\
-&\Sigma\succ0:\\
-&\quad x^{\mathsf{T}}\Sigma x>0\\
-&\quad\text{ for every }x\ne0\\
-&\text{same test}:\\
-&\quad \lambda_i>0\ \text{ for every }i
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สำหรับ symmetric covariance matrix สัญลักษณ์ $\Sigma\succ0$ หมายถึง positive definite; equivalent conditions คือ quadratic risk เป็นบวกทุก nonzero direction และ eigenvalues ทุกตัวเป็นบวก</p>
-    <p>เหตุผลของการเทียบ eigenvalue: matrix จริงที่สมมาตรมีฐาน eigenvector ตั้งฉากที่ยาวหนึ่งหน่วย เขียน $x=\sum_i c_i v_i$ แล้วคูณได้ $x^\mathsf{T}\Sigma x=\sum_i\lambda_i c_i^2$ เพราะ $v_i^\mathsf{T} v_j$ เป็นศูนย์เมื่อคนละตัว</p>
-    <p>ถ้า eigenvalue ทุกตัวบวกและ $x\ne0$ ต้องมี $c_i$ ไม่เป็นศูนย์อย่างน้อยตัวหนึ่ง ผลรวมจึงบวก กลับกัน ถ้าเลือก $x=v_i$ จะได้ค่าความเสี่ยง $\lambda_i$ จึงต้องบวกทุกตัวเพื่อให้เป็น positive definite</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — พิสูจน์ทำไมความเสี่ยงบวกทุกทิศเทียบเท่ากับ eigenvalues เป็นบวกทุกตัว</h4>
-  <p>ในขั้นก่อนหน้า เราบอกว่า positive definite แปลว่า $x^{\mathsf{T}}\Sigma x > 0$ ทุก nonzero $x$ และเทียบเท่ากับ $\lambda_i > 0$ ทุกตัว บรรทัดเหล่านี้คือสะพานเชื่อมที่พิสูจน์ข้อความนั้นโดยตรง ไม่ต้องจำสูตรลอย ๆ</p>
-  <div class="math">\[
-\begin{aligned}
-x &= \sum_{i=1}^{n} c_i v_i \\
-\Sigma x &= \Sigma \left(\sum_{i=1}^{n} c_i v_i\right) = \sum_{i=1}^{n} c_i (\Sigma v_i) = \sum_{i=1}^{n} c_i \lambda_i v_i \\
-x^{\mathsf{T}}\Sigma x &= \left(\sum_{j=1}^{n} c_j v_j\right)^{\mathsf{T}}\left(\sum_{i=1}^{n} c_i \lambda_i v_i\right) \\
-&= \sum_{j=1}^{n}\sum_{i=1}^{n} c_j c_i \lambda_i \big(v_j^{\mathsf{T}}v_i\big) \\
-&= \sum_{i=1}^{n} \lambda_i c_i^2 \qquad \big(\text{since } v_j^{\mathsf{T}}v_i = \delta_{ij}\big)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ใจความสำคัญอยู่ที่สมบัติการตั้งฉากของ eigenvectors: เมื่อ matrix มีความสมมาตร ทิศพิเศษจะตั้งฉากกันเองเป็นมุมฉากเสมอ นั่นคือผลคูณ $v_j^{\mathsf{T}}v_i$ จะเป็น 1 เมื่อเป็นตัวเดียวกัน และเป็น 0 ทันทีเมื่อคนละตัว</p>
-    <p>เมื่อกระจายพอร์ต $x$ ใด ๆ ลงบนแกน eigenvectors เหล่านี้ พจน์คูณไขว้ทั้งหมดจะหายไปจนหมด เหลือเพียงผลรวมกำลังสอง $\sum \lambda_i c_i^2$ ทำให้โครงสร้างความเสี่ยงแยกขาดจากกันเป็นอิสระ</p>
-    <p>จุดนี้ตอบคำถามทันที: ถ้า $x \ne 0$ จะต้องมีพิกัด $c_i \ne 0$ อย่างน้อยหนึ่งแกน กำลังสองจึงเป็นบวกเสมอ หาก $\lambda_i > 0$ ทุกตัว ผลรวมทั้งหมดจึงบวกแน่นอน</p>
-    <p>และถ้ากลับกันเราเลือกพอร์ตให้ชี้ตรงไปตามแกน $v_k$ เพียงแกนเดียว ความเสี่ยงที่คำนวณได้จะเท่ากับ $\lambda_k$ พอดี ดังนั้นความเสี่ยงจะบวกทุกทิศได้ eigenvalues ก็ต้องบวกครบทุกตัว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ที่มาของสมการ characteristic: ทำไม determinant ต้องเป็นศูนย์</h4>
-  <p>ก่อนจะแทนตัวเลขลงไปในสูตรกำลังสอง เราต้องตอบให้ได้ก่อนว่าสมการนี้โผล่มาจากไหน บรรทัดเหล่านี้สร้างสมการ characteristic จากนิยามตั้งต้นโดยไม่ข้ามขั้นตอน</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma v &= \lambda v \\
-\Sigma v - \lambda I v &= 0 \\
-(\Sigma - \lambda I)v &= 0,\qquad v \ne 0 \\
-\det(\Sigma - \lambda I) &= 0 \\
-&\det\begin{bmatrix} \Sigma_{11}-\lambda & \Sigma_{12} \\
-\Sigma_{21} & \Sigma_{22}-\lambda \end{bmatrix} = 0 \\
-&(\Sigma_{11}-\lambda)(\Sigma_{22}-\lambda)\\
-&\quad - \Sigma_{12}\Sigma_{21} = 0 \\
-&\lambda^2 - (\Sigma_{11}+\Sigma_{22})\,\lambda\\
-&\quad + (\Sigma_{11}\Sigma_{22}-\Sigma_{12}\Sigma_{21}) = 0 \\
-&\lambda^2 - (\operatorname{tr}\Sigma)\,\lambda + \det\Sigma = 0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>คำถามที่คนมักสะดุดคือ ทำไมจู่ ๆ เราถึงจับ determinant ให้เท่ากับศูนย์ได้ ใครเป็นคนอนุญาตให้ตั้งสมการนี้</p>
-    <p>คำตอบอยู่ที่เงื่อนไข $v \ne 0$: ถ้า matrix $(\Sigma - \lambda I)$ มี inverse เราจะคูณ inverse ทั้งสองข้างแล้วได้คำตอบเดียวคือ $v = 0$ ซึ่งผิดข้อตกลงของ eigenvector</p>
-    <p>ดังนั้น matrix นี้ต้องไม่มี inverse ซึ่งในพีชคณิตเชิงเส้น สิ่งนี้เกิดขึ้นได้เมื่อ determinant มีค่าเท่ากับศูนย์เท่านั้น</p>
-    <p>เมื่อกระจายผลคูณไขว้ของ determinant สำหรับขนาด $2\times 2$ พจน์กำลังหนึ่งจะยุบรวมกันได้ผลบวกบนเส้นทแยงมุมหลักหรือ trace และพจน์คงที่จะกลายเป็น determinant ของ $\Sigma$ พอดี</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — คำนวณ eigenvalues ของข้อมูลตัวอย่าง</h4>
-  <p>จาก $\Sigma v=\lambda v$ ลบ $\lambda v$ สองข้างได้ $(\Sigma-\lambda I)v=0$ ต้องการคำตอบ $v\ne0$ จึงต้องให้ matrix นี้กลับด้านไม่ได้ หรือ determinant เป็นศูนย์ สำหรับสองคูณสอง determinant คือ $(a-\lambda)(d-\lambda)-bc=\lambda^2-(a+d)\lambda+(ad-bc)$ นี่คือที่มาของสมการกำลังสองด้านล่าง ไม่ได้เลือก coefficient ขึ้นมาเอง</p>
-  <div class="math">\[
-\begin{aligned}
-\operatorname{tr}\Sigma&=0.0004+0.0009=0.0013\\
-\det\Sigma&=0.0004(0.0009)-0.00024^2\\
-&=0.00000036-0.0000000576\\
-&=0.0000003024\\[4pt]
-&\lambda^2-0.0013\,\lambda\\
-&\quad+0.0000003024=0\\[4pt]
-&\sqrt{\;}\;:\\
-&\ 0.0013^2-4(0.0000003024)\\
-&=0.00000169-0.0000012096\\
-&=0.0000004804\\
-&\quad \sqrt{0.0000004804}=0.000693109\\[4pt]
-\lambda_{1,2}&=\frac{0.0013\pm0.000693109}{2}\\
-&=\begin{cases}0.000996554\\
-0.000303446\end{cases}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>บรรทัดแรกสองบรรทัดคือ trace กับ determinant ซึ่งเป็นค่าคงที่สองตัวของสมการ จากนั้นก็คือสูตรกำลังสองที่คุ้นเคย รากทั้งสองเป็นบวก จึงยืนยันว่า matrix นี้ positive definite</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — แปลงเป็น basis-point-squared เพื่ออ่านค่าบนโต๊ะทำงาน</h4>
-  <p>ตัวเลข eigenvalue ข้างบนมีหน่วยเป็น decimal ยกกำลังสอง ซึ่งอ่านยาก แปลงเป็น basis point ยกกำลังสองจะเทียบกับความรู้สึกบนโต๊ะได้ง่ายกว่า</p>
-  <div class="math">\[
-\begin{aligned}1\;\mathrm{bp}&=10^{-4}\quad\Longrightarrow\quad 1\;\mathrm{bp}^2=10^{-8}\\
-\lambda_1&=\frac{0.000996554}{10^{-8}}=99{,}655.45\;\mathrm{bp}^2\\
-\lambda_2&=\frac{0.000303446}{10^{-8}}=30{,}344.55\;\mathrm{bp}^2\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>หารด้วย $10^{-8}$ คือการเลื่อนจุดทศนิยมไปแปดตำแหน่ง เช็กได้ว่าสองตัวรวมกันได้ 130,000 ซึ่งตรงกับ trace 0.0013 ที่แปลงหน่วยแล้ว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — หาทิศพิเศษของ eigenvalue ตัวใหญ่ แล้วตรวจว่าตารางแค่ยืดมันจริง</h4>
-  <p>eigenvalue บอกว่ายืดกี่เท่า แต่ยังไม่บอกว่ายืดทิศไหน ทิศหาได้จากสมการเดิมโดยแทน $\lambda_1$ กลับเข้าไป</p>
-  <div class="math">\[
-\begin{aligned}
-&\Sigma=10^{-4}\begin{bmatrix}4&2.4\\2.4&9\end{bmatrix},\qquad\lambda_1=9.96554\times10^{-4}\\
-&(\Sigma-\lambda_1I)v=0:\ \ (4-9.96554)\,v_1+2.4\,v_2=0\\
-&v_2=\frac{5.96554}{2.4}\,v_1=2.486\,v_1\\
-&v\propto\begin{bmatrix}1\\2.486\end{bmatrix}\ \Longrightarrow\ v=\begin{bmatrix}0.3733\\0.9277\end{bmatrix}\\[4pt]
-&\Sigma v=10^{-4}\begin{bmatrix}4(0.3733)+2.4(0.9277)\\2.4(0.3733)+9(0.9277)\end{bmatrix}\\
-&\quad=10^{-4}\begin{bmatrix}3.720\\9.245\end{bmatrix}=\lambda_1v\ \checkmark
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>บรรทัดแรกคือสมการ $\Sigma v=\lambda_1 v$ ย้ายข้างเป็น $(\Sigma-\lambda_1 I)v=0$ แล้วอ่านแถวบน: มันบอกอัตราส่วน $v_2/v_1$ เท่านั้น เพราะ eigenvector ยาวเท่าไรก็ได้ ทิศคือสิ่งที่นับ</p>
-    <p>ทิศ $(1,\,2.486)$ เอียงไปทาง QQQ มากกว่า SPX แปลว่าความเสี่ยงก้อนใหญ่สุดของคู่นี้คือ “ทั้งคู่ขยับทางเดียวกัน โดย QQQ ขยับแรงกว่า 2.5 เท่า”</p>
-    <p>บรรทัดสุดท้ายคือการตรวจแบบแผ่นยาง: คูณตารางเข้าไป ได้ลูกศรทิศเดิมที่ยาวขึ้น $\lambda_1$ เท่า ไม่หมุนเลย</p>
-    <p>การทำให้ยาวหนึ่งหน่วย: ความยาวของ $(1,2.486)$ คือ $\sqrt{1^2+2.486^2}\approx2.6796$ หารทั้งสองช่องด้วยความยาวเดียวกัน จึงได้ประมาณ $(0.3733,0.9277)$ ทิศไม่เปลี่ยนเพราะหารด้วยค่าบวกเดียวกัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — หาทิศพิเศษแกนที่สองและตรวจว่าสองแกนตั้งฉากกันจริง</h4>
-  <p>เมื่อได้แกนความเสี่ยงหลักจาก eigenvalue ตัวใหญ่แล้ว เราต้องหาแกนที่สองที่คู่กับ eigenvalue ตัวเล็ก เพื่อดูว่าความเสี่ยงส่วนที่เหลือหน้าตาเป็นอย่างไร และตรวจว่าสองแกนนี้ตั้งฉากกันตามทฤษฎีจริงหรือไม่</p>
-  <div class="math">\[
-\begin{aligned}
-&(\Sigma-\lambda_2I)v=0,\qquad\lambda_2=3.03446\times10^{-4}\\
-&(4-3.03446)\,v_1+2.4\,v_2=0\\
-&v_2=-\frac{0.96554}{2.4}\,v_1=-0.402308\,v_1\\
-&v_2\propto\begin{bmatrix}1\\-0.402308\end{bmatrix}\ \Longrightarrow\ v_2=\begin{bmatrix}0.9277\\-0.3733\end{bmatrix}\\[4pt]
-&\Sigma v_2=10^{-4}\begin{bmatrix}4(0.9277)+2.4(-0.3733)\\2.4(0.9277)+9(-0.3733)\end{bmatrix}\\
-&\quad=10^{-4}\begin{bmatrix}2.815\\-1.133\end{bmatrix}=\lambda_2v_2\ \checkmark\\[4pt]
-&v_1^{\mathsf T}v_2=0.3733(0.9277)+0.9277(-0.3733)=0\ \checkmark
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แทนค่า $\lambda_2 = 0.000303446$ ลงในสมการแถวบน จะได้ความสัมพันธ์ $v_2 \approx -0.4023 v_1$ เครื่องหมายลบแสดงว่าสินทรัพย์ทั้งสองเคลื่อนที่สวนทางกันในแกนนี้</p>
-    <p>เมื่อปรับความยาวให้เป็น 1 ด้วยการหาร $\sqrt{1^2 + (-0.4023)^2} \approx 1.0779$ จะได้ unit vector $v_2 = [0.9277, -0.3733]^{\mathsf{T}}$ ซึ่งชี้ไปในแนว long SPX และ short QQQ</p>
-    <p>ผลคูณ $\Sigma v_2$ ให้ผลลัพธ์ตรงกับ $\lambda_2 v_2$ พอดิบพอดี ยืนยันว่า matrix เพียงแค่ยืดหด vector นี้ด้วยตัวคูณ $\lambda_2$ โดยไม่หมุนเลย</p>
-    <p>และเมื่อนำมาคูณ dot product กับ $v_1$ จะได้ศูนย์พอดี ยืนยันว่าแกนทั้งสองตั้งฉากกัน ความเสี่ยงสองก้อนนี้จึงแยกขาดจากกันโดยสิ้นเชิง ไม่มีส่วนซ้อนทับ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 11 — ขอบเขตความเสี่ยงของพอร์ต: ทำไมกราฟหมุนจึงถูกล็อกระหว่างสอง eigenvalues</h4>
-  <p>ใน Figure 7.6d เราเห็นเส้นโค้งความเสี่ยงแกว่งขึ้นลงตามมุมพอร์ตโดยไม่เคยหลุดกรอบ ตัวเลข eigenvalue ทั้งสองตัวไม่ได้เป็นแค่เลขลอย ๆ แต่เป็นตัวกำหนดเพดานบนและพื้นล่างของความเสี่ยงอย่างแท้จริง</p>
-  <div class="math">\[
-\begin{aligned}
-x &= c_1 v_1 + c_2 v_2,\qquad \|x\|^2 = c_1^2 + c_2^2 = 1 \\
-x^{\mathsf{T}}\Sigma x &= \lambda_1 c_1^2 + \lambda_2 c_2^2 \\
-&= \lambda_1 c_1^2 + \lambda_2 (1 - c_1^2) \\
-&= \lambda_2 + (\lambda_1 - \lambda_2)\,c_1^2 \\[4pt]
-\min_{\|x\|=1} x^{\mathsf{T}}\Sigma x &= \lambda_2 = 30{,}344.55\;\mathrm{bp}^2\qquad (\text{at } c_1 = 0,\ c_2 = 1) \\
-\max_{\|x\|=1} x^{\mathsf{T}}\Sigma x &= \lambda_1 = 99{,}655.45\;\mathrm{bp}^2\qquad (\text{at } c_1 = 1,\ c_2 = 0)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สมการนี้ตอบคำถามว่า ทำไมไม่ว่าเราจะผสมสัดส่วนพอร์ตอย่างไร ความเสี่ยงของ unit portfolio ก็ไม่มีวันต่ำกว่า $\lambda_2$ หรือสูงกว่า $\lambda_1$ ไปได้เลย</p>
-    <p>เพราะเมื่อเขียนพอร์ตบนฐานของ eigenvectors กำลังสองของพิกัดรวมกันได้หนึ่งเสมอ ความเสี่ยงจึงกลายเป็นการเกลี่ยน้ำหนักระหว่างค่าคงที่สองตัวเท่านั้น</p>
-    <p>ค่าต่ำสุดเกิดขึ้นเมื่อเทน้ำหนักทั้งหมดไปที่ $c_2 = 1$ ซึ่งตรงกับแกน $v_2$ ได้ความเสี่ยง $30{,}344.55\text{ bp}^2$</p>
-    <p>และค่าสูงสุดเกิดขึ้นเมื่อเทน้ำหนักไปที่ $c_1 = 1$ ซึ่งตรงกับแกน $v_1$ ได้ความเสี่ยง $99{,}655.45\text{ bp}^2$ ตรงกับยอดคลื่นในรูปภาพอย่างแม่นยำ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 12 — หุ้นแบงก์จากโจทย์เปิดเรื่อง: ประกอบ Σ แล้วดึงขนาดออกให้เหลือรูปร่าง</h4>
-  <p>หุ้นแบงก์สามตัว σ = 25% เท่ากัน ρ = 0.70 ทุกคู่ ช่องทแยงคือ variance ช่องนอกทแยงคือ covariance แล้วดึง 0.0625 ออกเป็นตัวคูณร่วม</p>
-  <div class="math">\[
-\begin{aligned}
-\sigma^2&=0.25^2=0.0625\\
-\rho\sigma^2&=0.7(0.0625)=0.04375\\[4pt]
-\Sigma&=\begin{bmatrix}0.0625 & 0.04375 & 0.04375\\ 0.04375 & 0.0625 & 0.04375\\ 0.04375 & 0.04375 & 0.0625\end{bmatrix}\\
-&=0.0625\,C\\
-C&=\begin{bmatrix}1 & 0.7 & 0.7\\ 0.7 & 1 & 0.7\\ 0.7 & 0.7 & 1\end{bmatrix}\\[4pt]
-Cv&=kv\\
-&\Longrightarrow\ (0.0625\,C)v=0.0625\,k\,v
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>C คือ correlation matrix ไม่มีหน่วย สองบรรทัดล่างบอกว่า eigenvector ของ Σ กับของ C เป็นตัวเดียวกัน ส่วน eigenvalue ของ Σ คือของ C คูณ 0.0625 จึงแก้กับ C ที่มีแค่เลข 1 กับ 0.7 แล้วค่อยคูณกลับ</p>
-    <p>การแยกแบบนี้มีเหตุผลทางการเงินด้วย σ ประมาณจากข้อมูลตัวเดียวจึงค่อนข้างนิ่ง ส่วน ρ ต้องใช้ข้อมูลคู่และแกว่งแรงเวลาตลาดเปลี่ยนสภาวะ รูปร่างของความเสี่ยงถูกกำหนดโดย ρ ล้วน ๆ ส่วน σ แค่ขยายขนาด</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 13 — กาง det(C − kI) ครบทุกพจน์: ได้พหุนามกำลังสาม</h4>
-  <p>ใช้เหตุผลของขั้นที่ 6 กับตาราง 3 × 3 ตั้ง u = 1 − k ให้เขียนสั้น แล้วกระจายตามแถวแรก</p>
-  <div class="math">\[
-\begin{aligned}
-&\det\begin{bmatrix}u&0.7&0.7\\0.7&u&0.7\\0.7&0.7&u\end{bmatrix}\\
-&=u(u^2-0.49)-0.7(0.7u-0.49)+0.7(0.49-0.7u)\\
-&=u^3-0.49u-0.49u+0.343+0.343-0.49u\\
-&=u^3-1.47u+0.686=0\\[4pt]
-&3\rho^2=3(0.49)=1.47,\qquad 2\rho^3=2(0.343)=0.686
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>พจน์แรกคือ u คูณ det ของมุมขวาล่าง 2 × 2 พจน์ที่สองและสามคือ ∓0.7 คูณ det ของมุมที่เหลือ รวมได้พหุนามที่ไม่มีพจน์ u² เลย บรรทัดล่างตรวจ coefficient ด้วยรูปทั่วไป 3ρ² กับ 2ρ³</p>
-    <p>พจน์ u² หายไปไม่ใช่เรื่องบังเอิญ ผลรวม eigenvalue ของ C เท่ากับ trace = 3 พอเปลี่ยนเป็นตัวแปร u ผลรวมรากคือ 3 − 3 = 0 coefficient ของ u² จึงเป็นศูนย์ เป็นการตรวจฟรีที่ทำได้ทุกครั้ง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 14 — หารากตัวแรกจากพอร์ตที่เดาได้ แล้วหารยาวหาอีกสองตัว</h4>
-  <p>ทุกแถวของ C หน้าตาเหมือนกัน แค่สลับตำแหน่ง จึงลองทิศที่ทุกช่องเท่ากัน ถ้าคูณแล้วได้ทิศเดิมก็จบ เพราะนิยาม Cv = kv ตรวจได้ในบรรทัดเดียว</p>
-  <div class="math">\[
-\begin{aligned}
-&C\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}=\begin{bmatrix}1+0.7+0.7\\ 0.7+1+0.7\\ 0.7+0.7+1\end{bmatrix}\\
-&=2.4\begin{bmatrix}1\\ 1\\ 1\end{bmatrix}\\
-&\Longrightarrow\ k=2.4,\quad u=1-2.4=-1.4\\
-&(-1.4)^3-1.47(-1.4)+0.686\\
-&=-2.744+2.058+0.686=0\\[4pt]
-&u^3-1.47u+0.686\\
-&=(u+1.4)(u^2-1.4u+0.49)\\
-&(-1.4)^2-4(0.49)\\
-&=1.96-1.96=0\\
-&\Longrightarrow\ u=\frac{1.4}{2}=0.7\ \text{twice}\\[4pt]
-k&=2.4,\quad 0.3,\quad 0.3
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>(1, 1, 1) ปฏิบัติกับทุกหุ้นเท่ากัน matrix ที่มองหุ้นทั้งสามเหมือนกันจึงต้องมีมันเป็นแกนพิเศษ ในภาษาการเงินคือพอร์ตตลาดของกลุ่มนี้ และ 2.4 = 1 + 2ρ คือปัจจัยร่วมที่ทั้งกลุ่มแบก</p>
-    <p>หารพหุนามด้วย u + 1.4 ลงตัว เหลือกำลังสองที่ discriminant เป็นศูนย์พอดี จึงได้รากซ้ำ u = 0.7 สองตัว หรือ k = 0.3 สองตัว รากซ้ำแปลว่าทุกทิศที่ผลรวมน้ำหนักเป็นศูนย์ถูกปฏิบัติเหมือนกันหมด</p>
-    <p>ผลทางปฏิบัติคือโปรแกรมสองตัวอาจให้ eigenvector คู่นี้คนละคู่และถูกทั้งคู่ ถ้า principal component analysis (PCA) ให้ปัจจัยที่ 2 กับ 3 ไม่นิ่ง ให้ดูก่อนว่า eigenvalue สองตัวนั้นเกือบเท่ากันไหม</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 15 — คูณ 0.0625 กลับ แล้วตรวจด้วย trace และ determinant</h4>
-  <p>eigenvalue ของ Σ คือของ C คูณ 0.0625 ผลรวมต้องเท่ากับ trace ผลคูณต้องเท่ากับ det</p>
-  <div class="math">\[
-\begin{aligned}
-\lambda&=0.0625\times(2.4,\ 0.3,\ 0.3)=(0.15000,\ 0.01875,\ 0.01875)\\[4pt]
-\text{sum}&=0.15+0.01875+0.01875=0.1875=3(0.0625)=\operatorname{tr}\Sigma\\
-\text{product}&=0.15(0.01875)(0.01875)=0.0000527344=0.0625^3\times0.216=\det\Sigma\\[4pt]
-\frac{0.15}{0.1875}&=80\%,\qquad \frac{0.01875}{0.1875}=10\%,\qquad 10\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ผลรวม eigenvalue คือผลรวม variance รายตัว หรือความเสี่ยงรวมของทั้งระบบ det(C) = 2.4 × 0.3 × 0.3 = 0.216 คือผลคูณของรากทั้งสาม ทั้งสองการตรวจตรงกัน</p>
-    <p>แกนแรกอธิบายความเสี่ยง 80% ของระบบ อีกสองแกนแกนละ 10% นี่คือคำตอบของ PCA ว่าปัจจัยแรกอธิบายความเสี่ยงได้เท่าไร ในกลุ่มแบงก์จริงมักได้ 70% ถึง 85% และในวันวิกฤตพุ่งเข้าใกล้ 95% เพราะ ρ วิ่งเข้าหา 1</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 16 — พิสูจน์ Σv = λv ของอีกสองแกน และตรวจว่าตั้งฉากกันทุกคู่</h4>
-  <p>ลองพอร์ต long/short (1, −1, 0) กับพอร์ต (1, 1, −2) คูณ Σ ทีละแถว</p>
-  <div class="math">\[
-\begin{aligned}
-&\Sigma\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}=0.0625\begin{bmatrix}1-0.7\\ 0.7-1\\ 0.7-0.7\end{bmatrix}\\
-&=\begin{bmatrix}0.01875\\ -0.01875\\ 0\end{bmatrix}=0.01875\begin{bmatrix}1\\ -1\\ 0\end{bmatrix}\\
-&\Sigma\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}=0.0625\begin{bmatrix}1+0.7-1.4\\ 0.7+1-1.4\\ 0.7+0.7-2\end{bmatrix}\\
-&=0.0625\begin{bmatrix}0.3\\ 0.3\\ -0.6\end{bmatrix}=0.01875\begin{bmatrix}1\\ 1\\ -2\end{bmatrix}\\[4pt]
-v_1\cdot v_2&=1-1+0=0\\
-v_1\cdot v_3&=1+1-2=0\\
-v_2\cdot v_3&=1-1+0=0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ทั้งสองทิศถูกยืดด้วย 0.01875 ตรงกับรากซ้ำ และทั้งสามทิศตั้งฉากกันทุกคู่ ตั้งฉากแปลว่า covariance ระหว่างพอร์ตทั้งสามเป็นศูนย์ เป็นพอร์ตที่อิสระต่อกันสมบูรณ์ สำหรับ matrix สมมาตร eigenvector ของ eigenvalue ต่างค่ากันตั้งฉากกันเสมอ</p>
-    <p>ก่อนใช้เป็นน้ำหนักต้องหารด้วยความยาวให้ยาวหนึ่งหน่วย: (1, 1, 1)/√3 = (0.5774, 0.5774, 0.5774) และ (1, −1, 0)/√2 = (0.7071, −0.7071, 0) เพราะ λ คือ variance ของพอร์ตที่ยาวหนึ่งหน่วยเท่านั้น ขยายน้ำหนัก 2 เท่า variance โต 4 เท่าทันที</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 17 — positive definite สองวิธี แล้วดูว่า ρ เท่าไรถึงพัง</h4>
-  <p>วิธีแรกดู eigenvalue ทั้งหมด วิธีที่สองดู det ของมุมซ้ายบนทีละขนาด แล้วใช้รูปทั่วไปของ eigenvalue หาช่วงของ ρ ที่ปลอดภัย</p>
-  <div class="math">\[
-\begin{aligned}
-\lambda&=0.150,\ 0.01875,\ 0.01875\gt0\\
-D_1&=1\\
-D_2&=1(1)-0.7(0.7)=0.51\\
-D_3&=\det C=0.216\gt0\\[4pt]
-\lambda_{\text{big}}&=\sigma^2(1+2\rho)\gt0\\
-\lambda_{\text{small}}&=\sigma^2(1-\rho)\gt0\\
-&\Longrightarrow\ -0.5\lt\rho\lt1\\[4pt]
-\rho&=-0.6:\\
-\lambda_{\text{big}}&=0.0625(1-1.2)=-0.0125\\
-D_2&=1-0.36=0.64\\
-D_3&=(1.6)^2(-0.2)=-0.512
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>สองวิธีให้คำตอบเดียวกันเพราะตอบคำถามเดียวกันคือ xᵀΣx เป็นบวกทุกทิศไหม วิธี eigenvalue หมุนแกนไปตามทิศธรรมชาติของตาราง วิธี minor จัดกำลังสองสมบูรณ์ทีละตัวแปร minor คำนวณเร็วกว่าและทำมือได้ ส่วน eigenvalue บอกด้วยว่าพังตรงทิศไหน</p>
-    <p>ถ้านักวิเคราะห์กรอก ρ = −0.6 มาจากข้อมูลคนละช่วง พอร์ตซื้อเท่ากันจะมี variance ติดลบซึ่งเป็นไปไม่ได้ ดูทีละคู่ D₂ = 0.64 ยังดูดี แต่ D₃ ติดลบ บทเรียนคือตรวจ 2 × 2 ทีละคู่แล้วผ่านหมด ไม่ได้แปลว่าตารางเต็มใช้ได้ ต้องตรวจทั้งก้อน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 18 — แปลตัวเลขเป็นพอร์ตจริง: ทำไม market-neutral เสี่ยงน้อยกว่า</h4>
-  <p>เทียบสองพอร์ตที่ยาวหนึ่งหน่วยเท่ากัน แล้วดูพอร์ตซื้ออย่างเดียวที่ลงเงินพอดี 100% และวันที่ ρ พุ่งเป็น 0.9</p>
-  <div class="math">\[
-\begin{aligned}
-&\tfrac{1}{\sqrt3}(1,1,1):\\
-&\quad \sigma=\sqrt{0.150}=38.73\%\\
-&\quad \text{weights sum}=3(0.5774)=1.732\\
-&\tfrac{1}{\sqrt2}(1,-1,0):\\
-&\quad \sigma=\sqrt{0.01875}=13.69\%\\
-&\quad \frac{13.69}{38.73}=0.354,\qquad \frac{0.01875}{0.15}=\frac18\\[4pt]
-&w=(\tfrac13,\tfrac13,\tfrac13):\\
-&\quad \text{variance}=\frac{0.150}{3}=0.05\\
-&\quad \sigma=\sqrt{0.05}=22.36\%\\[4pt]
-&\rho=0.9:\\
-&\quad \lambda_{\text{big}}=0.0625(2.8)=0.175\\
-&\quad \lambda_{\text{small}}=0.0625(0.1)=0.00625\\
-&\quad \sigma=7.9\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>38.73% ไม่ได้แปลว่าซื้อสามตัวเสี่ยงกว่าซื้อตัวเดียว มันคือพอร์ตที่ใช้เงิน 173% ของทุน ปรับให้ลงเงิน 100% จริงได้ 22.36% ต่ำกว่าหุ้นเดี่ยว 25% แต่ลงไปได้แค่นี้เพราะ ρ = 0.7 กั้นไว้ ไม่มีทางถึง 25%/√3 = 14.4% ที่ได้ถ้าไม่มี correlation</p>
-    <p>ตัวเลขที่มีความหมายคืออัตราส่วน 0.354 ระหว่างสองทิศที่สเกลเดียวกัน ตัดทิศแรกที่กินความเสี่ยง 80% ทิ้ง เหลือเล่นแต่ทิศ 10% ความเสี่ยงหดเหลือราวหนึ่งในสาม</p>
-    <p>นี่คือเหตุผลของกลยุทธ์ market-neutral และของ leverage 3 ถึง 4 เท่าที่กองทุน long/short ใช้ วันที่ ρ พุ่งเป็น 0.9 ทิศ long/short หดเหลือ σ 7.9% ภูมิทัศน์ความเสี่ยงเปลี่ยนในวันเดียว</p>
-  </div>
-</section>
-
 <section class="example">
-  <h4>คำตอบ — หุ้นแบงก์สามตัว: 80/10/10 และกับดักเรื่องสเกล</h4>
-  <p>คำถาม: eigenvalue ของหุ้นแบงก์สามตัวเป็นเท่าไร ทิศไหน และ Σ เป็น positive definite ไหม</p>
-  <p>ของที่มี: σ = 25%, ρ = 0.7 และขั้นที่ 12 ถึง 18</p>
-  <p>1 พหุนาม u³ − 1.47u + 0.686 = 0 ให้ λ = 0.150, 0.01875, 0.01875 คิดเป็นสัดส่วนความเสี่ยง 80% / 10% / 10%</p>
-  <p>2 ทิศ (1, 1, 1)/√3, (1, −1, 0)/√2, (1, 1, −2)/√6 ตั้งฉากกันทุกคู่ และ Σv₂ = 0.01875 v₂ ตรวจแล้ว</p>
-  <p>3. positive definite ทั้งสองวิธี eigenvalue บวกทุกตัว minors 1, 0.51, 0.216 และจะพังถ้า ρ ออกนอกช่วง (−0.5, 1)</p>
-  <p>เฉลย: ทิศซื้อเท่ากันเสี่ยง 38.73% ทิศ long/short เสี่ยง 13.69% ที่ความยาวเท่ากัน ต่างกัน 0.354 เท่า</p>
-  <p>เช็ก 10 วินาที: 0.0625 × 2.4 = 0.15, 0.0625 × 0.3 = 0.01875 และ 0.15 + 2(0.01875) = 0.1875 = 3 × 0.0625</p>
-  <p>งานจริง: ก่อนส่ง Σ เข้า optimizer ให้หา eigenvalue ต่ำสุดก่อนเสมอ ถ้าติดลบ ซึ่งเกิดง่ายเมื่อหุ้นมากกว่าวันข้อมูล optimizer จะหาพอร์ตที่ความเสี่ยงติดลบแล้วอัด leverage ไม่จำกัด วิธีแก้มาตรฐานคือ shrinkage ในหัวข้อ 7.5 และรู้ว่าทิศแรกกิน 80% แปลว่า limit ที่มีความหมายคือ exposure สุทธิต่อกลุ่ม ไม่ใช่ limit รายตัว</p>
-  <p>กับดัก: λ คือ variance ไม่ใช่ความผันผวน ต้องถอดรากก่อนเทียบกับตัวเลข % บนหน้าจอ (0.15 คือ 38.7% ไม่ใช่ 15%) และค่านั้นผูกกับน้ำหนักที่ยาวหนึ่งหน่วย ไม่ใช่น้ำหนักที่รวมได้ 1 สองแบบนี้ต่างกันด้วยตัวคูณ √3 = 1.732 ตัวเลขความเสี่ยงจึงต่างกัน 73%</p>
+<h2>7. แปลเป็นพอร์ต: L2 หนึ่ง กับลงทุนเงินครบหนึ่ง ไม่ใช่ข้อกำหนดเดียวกัน</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Weights ในตัวอย่าง $\rho=0.7$</th><th>Normalization / exposure</th><th>SD ต่อปี</th></tr></thead>
+<tbody>
+<tr><td>$u_1=(1,1,1)/\sqrt3$</td><td>L2 = 1; net และ gross = $\sqrt3$</td><td>$\sqrt{0.15}\approx38.73\%$</td></tr>
+<tr><td>$u_2=(1,-1,0)/\sqrt2$</td><td>L2 = 1; net = 0, gross = $\sqrt2$</td><td>$\sqrt{0.01875}\approx13.69\%$</td></tr>
+<tr><td>$w=(1,1,1)/3$</td><td>sum weights = 1; gross = 1</td><td>$\sqrt{0.15/3}\approx22.36\%$</td></tr>
+</tbody></table></div>
+<p>สองแถวแรกเทียบที่ L2 เท่ากัน ไม่ได้ใช้เงินสดหรือ gross exposure เท่ากัน พอร์ตเท่ากันทุกชื่อในแถวสามคือ $u_1/\sqrt3$ จึงมี variance $\lambda_{\rm common}/3$ ซึ่งปิดคำถามต้นหน้า</p>
+<p>$u_2$ ตัดทิศร่วมออกได้ในโมเดลที่ loadings เหมือนกันนี้ แต่ dollar-neutral ไม่ได้แปลว่า beta-neutral ในตลาดจริง หรือปลอดภัยจาก basis risk, liquidity, borrow costs และ jump risk การเห็น SD ต่ำลงจึงไม่พอให้สรุปว่าเพิ่ม leverage แล้วปลอดภัยเท่าเดิม</p>
+<p>ถ้าเพิ่ม $\rho$ เป็น 0.9 โดย <em>ตรึง individual SD ที่ 25%</em> spread eigenvalue ลดเป็น 0.00625 และ SD ลดเป็นประมาณ 7.91% แต่ถ้า individual SD เพิ่มเป็น 50% พร้อมกัน spread SD จะเป็น $0.50\sqrt{0.1}\approx15.81\%$ สูงกว่าจุดเริ่ม 13.69%</p>
+<p>นี่เป็นผลของโมเดลที่กำหนด ไม่ใช่กฎว่าพอร์ต long–short ได้ประโยชน์จากวิกฤตหรือจาก correlation ที่เพิ่มเสมอ</p>
 </section>
-
+<section class="formula">
+<h2>8. Pairwise correlations ดูถูกต้องทั้งหมด ยังรวมเป็น covariance ที่ผิดได้</h2>
+<p>จาก eigenvalues ของสามตัวข้างต้น หาก $\sigma\gt0$ จะเป็น PSD ก็ต่อเมื่อทั้ง $1+2\rho\ge0$ และ $1-\rho\ge0$ จึงได้:</p>
+<div class="math">\[
+\begin{aligned}
+\Sigma\text{ is PSD}&\ \Longleftrightarrow\ -\tfrac12\le\rho\le1,\\
+\Sigma\text{ is PD}&\ \Longleftrightarrow\ -\tfrac12\lt\rho\lt1.
+\end{aligned}
+\]</div>
+<p>ที่ $\rho=-0.5$ ทิศร่วมเป็นศูนย์แต่สอง spread directions ยังเป็นบวก จึง rank 2 ที่ $\rho=1$ เหลือทิศร่วมอย่างเดียวจึง rank 1 ทั้งสองเป็น covariance ที่เป็นไปได้ แต่ไม่มี inverse</p>
+<p>ลองตั้งทุกคู่เป็น −0.6 แต่ละคู่ยังอยู่ระหว่าง −1 กับ 1 และทุก 2×2 correlation block มี determinant $1-0.6^2=0.64$ เป็นบวก ทว่า:</p>
+<div class="math">\[
+\begin{aligned}
+\lambda_{\rm common}&=0.0625(1-1.2)=-0.0125,\\
+w=(1,1,1)^{\mathsf T}/3:\quad w^{\mathsf T}\Sigma w&=-0.0125/3\\
+ &\approx-0.004166667,\\
+\det C&=(1.6)^2(-0.2)=-0.512.
+\end{aligned}
+\]</div>
+<p>Variance ติดลบเป็นไปไม่ได้ จึงต้องปฏิเสธ matrix นี้ในฐานะ covariance ไม่ใช่ตีความว่าเป็นพอร์ตที่ hedge ได้ดีกว่าศูนย์</p>
+</section>
+<section class="prose">
+<h2>9. เชื่อมกับ optimizer และการตรวจ covariance ก่อนใช้</h2>
+<p>พิจารณา objective ที่ต้องการ <em>minimize</em> คือ $f(w)=\frac12w^{\mathsf T}\Sigma w-\mu^{\mathsf T}w$ เมื่อขยับ $w$ ตามทิศ $z$ ด้วยขนาด $t$ จะได้:</p>
+<div class="math">\[
+\begin{aligned}
+f(w+tz)&=f(w)+t z^{\mathsf T}(\Sigma w-\mu)\\
+ &\quad+\frac{t^2}{2}z^{\mathsf T}\Sigma z.
+\end{aligned}
+\]</div>
+<p>พจน์ $t^2$ บอก curvature ตามทิศนั้น ในภาษาอนุพันธ์ Hessian ของ $f$ คือ $\Sigma$ ถ้า PD จะเป็น strictly convex quadratic บน $\mathbb R^n$ และมี minimizer เดียว ส่วนกรณี maximize utility ใน 7.5 เปลี่ยนเครื่องหมายเป็น strictly concave</p>
+<p>PSD ที่ singular อาจยังมี optimum เดียวเมื่อ constraints ปิด null directions ออก ดังตัวอย่าง sum weights ใน 7.5 แต่ถ้ามี linear gain ตาม null direction ที่ constraints ไม่จำกัด objective อาจไร้ขอบเขต ส่วน PD อย่างเดียวไม่ได้รับรองว่าทุก algorithm หรือทุก step size จะลู่เข้า</p>
+<p>Eigenvalue เล็กที่ยังบวกทำให้ inverse ขยายพิกัดนั้นด้วย $1/\lambda_i$ สำหรับ SPD matrix condition number ใน 2-norm คือ $\lambda_{\max}/\lambda_{\min}$ เพราะการคูณยืดแต่ละ orthonormal direction ตาม eigenvalue ตัวอย่างรายวันมีค่าประมาณ 3.2841 แต่เมื่อค่าต่ำสุดเข้าใกล้ศูนย์ คำตอบอาจไวต่อ estimation error มาก</p>
+<div class="table-wrap"><table>
+<thead><tr><th>สิ่งที่พบ</th><th>ควรถามต่อก่อนแก้</th></tr></thead>
+<tbody>
+<tr><td>Covariance ไม่สมมาตร</td><td>คู่ข้อมูล ลำดับ assets และหน่วยตรงกันหรือไม่? การเฉลี่ยกับ transpose แก้ symmetry ไม่ได้รับรอง PSD</td></tr>
+<tr><td>Eigenvalue ติดลบชัดเจน</td><td>ใช้ pairwise estimates คนละวัน หรือประกอบ entries จากสมมติฐานที่ขัดกันหรือไม่?</td></tr>
+<tr><td>Eigenvalue ติดลบเล็กมาก</td><td>เทียบกับ matrix scale และ numerical error ก่อนแยกจากค่าที่ควรเป็นศูนย์ ห้ามใช้ cutoff เดียวทุกหน่วย</td></tr>
+<tr><td>Eigenvalue ศูนย์หรือเล็ก</td><td>ข้อมูลซ้ำทิศ วันน้อย หรือ risk model ขาด residual directions? Shrinkage/factor model ต้องมีเหตุผลและทดสอบเพิ่ม</td></tr>
+</tbody></table></div>
+<p>Centered sample covariance จากข้อมูลครบชุดเดียวมีรูป $R^{\mathsf T}R/(T-1)$ จึงเป็น PSD ใน exact arithmetic แม้ assets มากกว่าวันก็ทำให้ rank ลด ไม่ได้สร้าง variance ติดลบอย่างแท้จริง การซ่อม matrix ให้ PSD จึงเป็นการเปลี่ยนโมเดลที่ต้องเปิดเผย ไม่ใช่สร้างข้อมูลใหม่</p>
+<p>หากมี eigenvalue ลบ optimizer ที่ถูก constraints จำกัดก็ยังอาจคืนคำตอบหรือมี optimum ได้ ดังนั้น “โปรแกรม converge” ไม่ใช่หลักฐานว่าคำตอบนั้นเป็นความเสี่ยงที่ตีความได้</p>
+</section>
+<section class="example">
+<h2>ตรวจเองใน 10 วินาที</h2>
+<p><strong>ข้อ 1:</strong> เพิ่ม portfolio weights $w=(0.6,0.4)$ เป็น $(1.2,0.8)$ ส่วนแบ่ง variance ตาม eigen-directions เปลี่ยนหรือไม่?</p>
+<details><summary>ดูเฉลย</summary><p>พิกัด $c$ เพิ่มสองเท่า ทุก contribution $\lambda_i c_i^2$ เพิ่มสี่เท่า สัดส่วนจึงเท่าเดิม แต่ variance เพิ่มเป็น 0.0016128 และ SD เพิ่มเป็นประมาณ 4.015968% ต่อวัน ไม่ใช่ความเสี่ยงเท่าเดิม</p></details>
+<p><strong>ข้อ 2:</strong> Eigenvalue ซ้ำเป็นศูนย์หรือไม่? ถ้า matrix เป็น identity แกนใดเป็น eigenvector?</p>
+<details><summary>ดูเฉลย</summary><p>ซ้ำไม่ได้แปลว่าศูนย์ Identity มี eigenvalues เท่ากับ 1 ทุกค่าและเป็น PD ทุก nonzero vector เป็น eigenvector จึงเลือก orthonormal basis ได้หลายแบบ แต่ยังกลับด้านได้และ inverse คือ identity เดิม</p></details>
+<p><strong>ข้อ 3:</strong> เปลี่ยนแกนแล้ว covariance เป็น diagonal รับรองว่า returns ในแกนใหม่ independent หรือไม่?</p>
+<details><summary>ดูเฉลยพร้อมตัวอย่างนับได้เอง</summary><p>ไม่รับรองทั่วไป ให้ $Z$ เท่ากับ −1,0,1 อย่างละหนึ่งในสาม และ $Y=Z^2-2/3$ จะมี covariance ระหว่าง $Z,Y$ เป็นศูนย์ แต่ $Y$ ถูกกำหนดด้วย $Z$ ทั้งหมด Variances คือ $2/3$ กับ $2/9$ จึงเป็น diagonal covariance ที่ยัง dependent หากเวกเตอร์เดิม jointly Gaussian จึงใช้ zero covariance สรุป independence ได้</p></details>
+</section>
 <section class="code">
-  <details>
-    <summary>โค้ดตรวจ eigenvalue ของหุ้นแบงก์สามตัว</summary>
-    <pre><code>import numpy as np
-S=0.0625*(0.3*np.eye(3)+0.7*np.ones((3,3)))
-lam=np.linalg.eigvalsh(S)
-assert np.allclose(lam,[0.01875,0.01875,0.15])
-assert abs(np.trace(S)-0.1875)&lt;1e-12 and abs(np.linalg.det(S)-0.0625**3*0.216)&lt;1e-12
-assert np.allclose(S@[1,-1,0],0.01875*np.array([1,-1,0]))
-assert np.allclose(np.roots([1,0,-1.47,0.686]).real,[-1.4,0.7,0.7],atol=1e-6)
-C=0.3*np.eye(3)+0.7*np.ones((3,3))
-assert np.allclose([C[0,0],np.linalg.det(C[:2,:2]),np.linalg.det(C)],[1,0.51,0.216])
-bad=1.6*np.eye(3)-0.6*np.ones((3,3))   # correlation -0.6 every pair
-assert np.linalg.eigvalsh(bad).min()&lt;0</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดนี้ตรวจ eigenvalue 0.15 กับ 0.01875 สองตัว trace และ det รากของพหุนามในตัวแปร u ทิศ (1, −1, 0) minors ทั้งสาม และว่า ρ = −0.6 ทำให้ eigenvalue ต่ำสุดติดลบ</p>
-  </div>
+<h2>JavaScript: แทนกลับทุก eigenpair และคำนวณ variance สองทาง</h2>
+<p>สูตร eigenvalues 2×2 นี้ใช้กับตัวอย่างขนาดเล็กที่มีสเกลเหมาะสม ไม่ใช่ eigensolver ทั่วไปสำหรับระบบ ill-conditioned เราคืน unit vectors เป็นคอลัมน์ของ $Q$ และเก็บ eigenvalues เรียงให้ตรงกัน</p>
+<pre><code class="language-javascript" data-example="7.6">function shape(A) {
+  if (!Array.isArray(A) || !A.length || !Array.isArray(A[0]) || !A[0].length) throw new TypeError('Need a rectangular matrix');
+  const n = A[0].length;
+  if ([...A].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) throw new TypeError('Need a finite rectangular matrix');
+  return [A.length, n];
+}
+function dot(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || !a.length || a.length !== b.length || ![...a, ...b].every(Number.isFinite)) throw new TypeError('Need matching finite vectors');
+  const result = a.reduce((s, x, i) =&gt; s + x * b[i], 0);
+  if (!Number.isFinite(result)) throw new RangeError('Arithmetic overflow');
+  return result;
+}
+function transpose(A) { const [, n] = shape(A); return Array.from({length: n}, (_, j) =&gt; A.map(row =&gt; row[j])); }
+function multiply(A, B) { shape(A); const Bt = transpose(B); return A.map(row =&gt; Bt.map(col =&gt; dot(row, col))); }
+function matvec(A, x) { shape(A); return A.map(row =&gt; dot(row, x)); }
+const quadratic = (A, x) =&gt; dot(x, matvec(A, x));
+function diagonal(values) {
+  dot(values, values.map(() =&gt; 0));
+  return values.map((x, i) =&gt; values.map((_, j) =&gt; i === j ? x : 0));
+}
+function spectral2(A) {
+  const [m, n] = shape(A);
+  if (m !== 2 || n !== 2) throw new RangeError('Need a 2 by 2 matrix');
+  if (A[0][1] !== A[1][0]) throw new RangeError('Need a symmetric matrix');
+  const a = A[0][0], b = A[0][1], d = A[1][1];
+  const radius = Math.hypot(a - d, 2 * b), angle = .5 * Math.atan2(2 * b, a - d);
+  const c = Math.cos(angle), s = Math.sin(angle), values = [(a + d + radius) / 2, (a + d - radius) / 2];
+  if (![...values, c, s].every(Number.isFinite)) throw new RangeError('Arithmetic overflow');
+  return {values, Q: [[c, s], [s, -c]]};
+}
+function equicovariance(rho, sigma = .25) {
+  if (!Number.isFinite(rho) || Math.abs(rho) &gt; 1 || !Number.isFinite(sigma) || sigma &lt;= 0) throw new RangeError('Invalid correlation or standard deviation');
+  const variance = sigma * sigma;
+  if (!Number.isFinite(variance) || variance === 0) throw new RangeError('Variance outside working range');
+  // Pairwise admissibility is not a PSD certificate: rho=-.6 is intentional below.
+  return Array.from({length: 3}, (_, i) =&gt; Array.from({length: 3}, (_, j) =&gt; variance * (i === j ? 1 : rho)));
+}
+const Sigma = [[.0004, .00024], [.00024, .0009]], eig = spectral2(Sigma), Qt = transpose(eig.Q);
+const w = [.6, .4], coords = matvec(Qt, w), terms = coords.map((c, i) =&gt; eig.values[i] * c * c);
+const V = quadratic(Sigma, w), inverse = multiply(multiply(eig.Q, diagonal(eig.values.map(x =&gt; 1 / x))), Qt);
+const u1 = [1, 1, 1].map(x =&gt; x / Math.sqrt(3));
+const u2 = [1, -1, 0].map(x =&gt; x / Math.sqrt(2));
+const u3 = [1, 1, -2].map(x =&gt; x / Math.sqrt(6));
+const Q3 = transpose([u1, u2, u3]), bank = equicovariance(.7), equal = [1/3, 1/3, 1/3];
+const states = [-1, 0, 1].map(x =&gt; [x, x*x - 2/3]);
+const uncorrelated = multiply(transpose(states), states).map(row =&gt; row.map(x =&gt; x / 3));
+console.log(JSON.stringify({
+  values: eig.values, Q: eig.Q, reconstructed: multiply(multiply(eig.Q, diagonal(eig.values)), Qt),
+  rotated: multiply(multiply(Qt, Sigma), eig.Q), inverse, trace: .0013,
+  determinant: .0004 * .0009 - .00024 ** 2, product: eig.values[0] * eig.values[1],
+  eigenSD: eig.values.map(Math.sqrt), basisPointsSquared: eig.values.map(x =&gt; x * 1e8),
+  coords, terms, V, sd: Math.sqrt(V), pcaShares: eig.values.map(x =&gt; x / .0013), portfolioShares: terms.map(x =&gt; x / V),
+  condition: eig.values[0] / eig.values[1], doubledVariance: quadratic(Sigma, [1.2, .8]),
+  bank, Q3, bankDiagonal: multiply(multiply(transpose(Q3), bank), Q3),
+  commonVariance: quadratic(bank, u1), spreadVariance: quadratic(bank, u2), equalVariance: quadratic(bank, equal),
+  commonSD: Math.sqrt(quadratic(bank, u1)), spreadSD: Math.sqrt(quadratic(bank, u2)), equalSD: Math.sqrt(quadratic(bank, equal)),
+  grossCommon: u1.reduce((s, x) =&gt; s + Math.abs(x), 0), grossSpread: u2.reduce((s, x) =&gt; s + Math.abs(x), 0),
+  uncorrSD: Math.sqrt(quadratic(equicovariance(0), equal)),
+  higherRhoSpreadSD: Math.sqrt(quadratic(equicovariance(.9), u2)), stressSpreadSD: Math.sqrt(quadratic(equicovariance(.9, .5), u2)),
+  badVariance: quadratic(equicovariance(-.6), equal), badLeadingMinors: [1, .64, -.512],
+  endpointMinus: multiply(multiply(transpose(Q3), equicovariance(-.5)), Q3),
+  endpointPlus: multiply(multiply(transpose(Q3), equicovariance(1)), Q3),
+  nonsymmetricCounter: quadratic([[1, 4], [0, 1]], [1, -1]),
+  leadingZeroCounter: quadratic([[0, 0], [0, -1]], [0, 1]), uncorrelated
+}));</code></pre>
 </section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การหาทิศที่การแปลงเพียงยืดหรือหด ทำให้เห็นโครงสร้างของความเสี่ยงที่ซ่อนอยู่</p>
-  <p>ใช้ตรวจว่าตารางความเสี่ยงที่ประมาณมานั้นใช้ได้ โดยดูว่าค่ายืดหดทุกตัวเป็นบวก ถ้ามีตัวติดลบแปลว่ามีพอร์ตที่ความเสี่ยงติดลบ ซึ่งเป็นไปไม่ได้</p>
-  <p>ใช้หาว่าความเสี่ยงกระจุกอยู่ทิศไหน ค่ายืดที่ใหญ่ที่สุดบอกทิศที่พอร์ตเปราะที่สุด</p>
-  <p>ใช้ลดมิติของปัญหา โดยเก็บเฉพาะทิศที่สำคัญ ซึ่งเป็นหัวใจของการลดมิติในหัวข้อ 17.4</p>
-</section>
-
-<section class="prose">
-  <h4>ทำไม optimizer ถึงระเบิด: ความเชื่อมโยงระหว่าง positive definiteness กับ Hessian</h4>
-  <p>ในการจัดพอร์ตตามแนวคิด Markowitz เป้าหมายคือการหาจุดต่ำสุดของ objective function กำลังสองอย่าง $\frac{1}{2}x^{\mathsf{T}}\Sigma x - \frac{1}{\gamma}\mu^{\mathsf{T}}x$ ภายใต้เงื่อนไขงบประมาณ</p>
-  <p>ในวิชา optimization เงื่อนไขที่รับประกันว่าจุด stationary ($\nabla f = 0$) จะเป็นจุดต่ำสุดระดับ global อย่างแท้จริง คือ Hessian matrix $\nabla^2 f(x) = \Sigma$ จะต้องเป็น positive definite</p>
-  <p>เมื่อ covariance matrix เป็น positive definite ผิวโค้งของความเสี่ยงจะเป็นรูปชามหงาย (strictly convex) ที่มีก้นชามเพียงจุดเดียว ไม่ว่า algorithm จะเริ่มค้นหาจากตรงไหน ก็จะไหลลงสู่จุดต่ำสุดที่ถูกต้องเสมอ</p>
-  <p>แต่หาก covariance matrix ที่ประมาณมาจากข้อมูลย้อนหลังมีปัญหา เช่น มีข้อมูลขาดหายจนเกิด eigenvalue ติดลบ ผิวโค้งจะบิดกลายเป็นรูปอานม้า (saddle) ทันที</p>
-  <p>ในทิศทางของ eigenvector ที่มี eigenvalue ติดลบ การเพิ่มขนาดน้ำหนักจะทำให้พจน์ความเสี่ยงดิ่งลงสู่ลบอนันต์ ตัว optimizer จึงมองเห็นเป็นโอกาสที่ไร้ความเสี่ยง และเทน้ำหนัก long-short แบบสุดขั้วจนพอร์ตระเบิด นี่คือเหตุผลที่การตรวจ eigenvalues จึงเป็นขั้นตอนแรกก่อนรัน model เสมอ</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 7.6a — eigenvector ของ covariance บนกราฟกระจาย</h4>
-  <img src="../figures/7.6-1.svg" alt="Figure 7.6a — eigenvector ของ covariance บนกราฟกระจาย" loading="lazy">
-  <figcaption>
-    <p>เส้นสองเส้นที่ลากทับกลุ่มจุดผลตอบแทนคือ eigenvector ของ covariance ซึ่งเป็นแกนธรรมชาติของกลุ่มจุดนั้น</p>
-    <p>แกนยาวคู่กับ eigenvalue 0.000996554 และชี้ไปทางที่พอร์ตขนาดหนึ่งหน่วยจะเหวี่ยงแรงที่สุด ส่วนแกนสั้นคือทางที่เหวี่ยงน้อยที่สุด</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.6b — วงรี covariance กับแกนของมัน</h4>
-  <img src="../figures/7.6-2.svg" alt="Figure 7.6b — วงรี covariance กับแกนของมัน" loading="lazy">
-  <figcaption>
-    <p>เมื่อหมุนพิกัดไปตาม eigenvectors covariance กลายเป็น diagonal และครึ่งแกนของ ellipse เท่ากับรากที่สองของ eigenvalues; ยกความยาวกำลังสองก็กลับมาเป็น variance พอดี</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.6c — งบความเสี่ยงที่แบ่งตาม eigenvalue</h4>
-  <img src="../figures/7.6-3.svg" alt="Figure 7.6c — งบความเสี่ยงที่แบ่งตาม eigenvalue" loading="lazy">
-  <figcaption>
-    <p>eigenvalue ใหญ่คิดเป็น 76.7% ของผลรวมสอง eigenvalues หรือ trace ของ covariance; แท่งใช้หน่วย basis-point-squared ที่แปลงด้วย factor $10^8$ อย่างถูกต้อง</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.6d — ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ</h4>
-  <img src="../figures/7.6-4.svg" alt="Figure 7.6d — ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ" loading="lazy">
-  <figcaption>
-    <p>เมื่อกวาด unit vector ครบรอบ quadratic risk อยู่ระหว่าง 30,344.55 กับ 99,655.45 basis-point-squared ซึ่งตรงกับ eigenvalues เล็กสุดและใหญ่สุด และไม่เคยแตะศูนย์</p>
-  </figcaption>
-</figure>
-
-<section class="example">
-  <h4>คำตอบ — eigenvalues เป็นบวกทั้งคู่</h4>
-  <p>คำตอบ: covariance matrix มี eigenvalues 0.000996554 และ 0.000303446 ซึ่งเป็นบวกทั้งคู่ จึง positive definite; แกนแรกมี variance สูงกว่าแกนที่สองในกลุ่ม direction ที่ norm เท่ากับ 1</p>
-  <p>ตรวจเองใน 10 วินาที: บวก eigenvalues ต้องได้ 0.001300000 เท่ากับ trace 0.0004 + 0.0009 ถ้าผลรวมไม่ตรง แปลว่าคำนวณรากหรือปัดเลขผิด</p>
-  <p>ใช้ตัดสินใจ: model นี้อนุญาตให้ใช้ quadratic risk กับ optimizer แบบ convex ได้ แต่ถ้า eigenvalue ต่ำสุดเข้าใกล้ศูนย์ในข้อมูลรอบใหม่ ให้หยุดและตรวจ conditioning ก่อน invert</p>
-</section>
-
 <section class="pitfall">
-  <h4>กับดัก: eigenvalue ติดลบแล้วฝืน optimize</h4>
-  <p>sample covariance ที่คำนวณจาก complete data อย่างสอดคล้องต้องเป็น positive semidefinite ดังนั้น eigenvalue ติดลบไม่ใช่ “risk ติดลบ” และไม่ควรโทษ sampling noise อย่างเดียว สาเหตุที่ต้องตรวจคือ pairwise missing-data estimates ที่ใช้คนละ sample, rounding หรือการปรับ matrix, numerical error, และ matrix ที่ไม่ symmetric ให้หยุด pipeline ตรวจต้นทางและใช้ repair method ที่ได้รับอนุมัติ</p>
+<h2>แกนทางสถิติ ไม่ใช่คำอธิบายเชิงเหตุและผลโดยอัตโนมัติ</h2>
+<p>Eigenvector บอกทิศหลักของตารางที่ใส่เข้าไป ไม่ได้ยืนยันว่าเป็น market factor ที่คงที่ ไม่ได้เป็น regression coefficient และไม่ได้พยากรณ์ว่าจุดข้อมูลทุกจุดต้องเดินตามเส้นนั้น ค่าเฉลี่ย tails และความเสี่ยงนอกโมเดลยังต้องวิเคราะห์แยก</p>
 </section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ทิศที่การแปลงทำได้แค่ยืดหรือหด</h4>
-  <p>แนวคิดนี้เกิดจากการศึกษารูปทรงของสมการกำลังสอง ซึ่งเป็นปัญหาที่นักคณิตศาสตร์สนใจมาตั้งแต่ศตวรรษที่สิบแปด คำถามคือมีมุมมองไหนที่ทำให้สมการที่ดูยุ่งเหยิงกลายเป็นสมการที่เรียบง่ายที่สุด</p>
-  <p>คำตอบคือมีทิศพิเศษบางทิศที่การแปลงไม่หมุนมันเลย ทำแค่ยืดหรือหด และถ้าเรามองปัญหาจากทิศเหล่านั้น ทุกอย่างจะแยกออกจากกันเป็นอิสระ</p>
-  <p>ในงานการเงิน ความเสี่ยงของพอร์ตคือสมการกำลังสองพอดี ทิศพิเศษเหล่านั้นจึงกลายเป็นทิศของความเสี่ยง และขนาดการยืดหดกลายเป็นขนาดของความเสี่ยงในทิศนั้น</p>
-  <p>นอกจากนั้นมันยังให้เครื่องตรวจที่จำเป็น เพราะความเสี่ยงติดลบไม่ได้ ขนาดการยืดจึงต้องเป็นบวกทุกทิศ</p>
-</section>
-
-<section class="prose">
-  <h4>ที่มาและประวัติศาสตร์: จากวงโคจรดาวเคราะห์สู่ความเสี่ยงพอร์ตการลงทุน</h4>
-  <p>แนวคิดเรื่อง eigenvalue และ eigenvector ไม่ได้เริ่มจากการเงินหรือตารางตัวเลขในคอมพิวเตอร์ แต่เกิดจากปัญหากลศาสตร์ดาราศาสตร์และการหมุนของวัตถุแข็งเกร็งในศตวรรษที่สิบแปด ในช่วงราว ๆ ทศวรรษ 1750 ถึง 1770 นักคณิตศาสตร์อย่าง Leonhard Euler และ Joseph-Louis Lagrange พยายามแก้สมการการโคจรของดาวเคราะห์และการหมุนของลูกข่าง</p>
-  <p>ปัญหาในยุคนั้นคือ เมื่อตั้งแกนพิกัดตามปกติ พิกัดทุกแกนจะส่งแรงดึงข้ามกันไปมา สมการการเคลื่อนที่จึงพัวพันกันจนแก้ไม่ออก Euler ค้นพบว่า ถ้าหมุนระบบพิกัดไปตาม 'แกนหลัก' (principal axes) พจน์คูณไขว้ทั้งหมดจะหายไป การเคลื่อนที่ที่ดูซับซ้อนจะแยกตัวออกเป็นระบบสั่นอิสระที่ไม่กวนกันเลย แกนหลักเหล่านั้นก็คือ eigenvector และอัตราการหมุนหรือความถี่เฉพาะก็คือ eigenvalue</p>
-  <p>ต่อมาราว ๆ ปี 1829 Augustin-Louis Cauchy ได้วางรากฐานทางพีชคณิตอย่างรัดกุม โดยพิสูจน์ spectral theorem ว่า symmetric matrix ที่มีสมาชิกเป็นจำนวนจริง จะมี eigenvalue เป็นจำนวนจริงเสมอ และมี eigenvector ที่ตั้งฉากกันเป็นมุมฉากครบทุกมิติเสมอ ทำให้เราหมุนแกนเพื่อกำจัดพจน์คูณไขว้ได้กับทุกปัญหาที่มีโครงสร้างสมมาตร</p>
-  <p>จนกระทั่งปี 1952 Harry Markowitz ได้นำคณิตศาสตร์ชุดนี้มาพลิกโฉมโลกการเงิน ก่อนหน้านั้นผู้จัดการกองทุนมองหุ้นทีละตัว ใครปันผลดีก็ซื้อ แต่ Markowitz ชี้ว่าความเสี่ยงพอร์ตไม่ใช่ผลรวมความเสี่ยงรายตัว หากเป็น quadratic form ที่เชื่อมโยงด้วย covariance matrix และการหา eigenvalue คือกุญแจที่บอกว่าความเสี่ยงจริง ๆ ซ่อนอยู่ตรงไหน และพอร์ตกำลังเสี่ยงกับอะไร</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>การตีความ</td><td>ทิศที่ได้มีความหมาย</td><td>ทิศที่คำนวณมาอาจไม่ตรงกับปัจจัยทางธุรกิจใด ๆ</td><td>การตั้งชื่อให้ทิศแล้วเชื่อชื่อนั้นเป็นความผิดพลาดที่พบบ่อย</td></tr>
-      <tr><td>ความมั่นคง</td><td>ทิศที่ได้นิ่ง</td><td>ทิศที่มีค่ายืดใกล้เคียงกันจะสลับที่กันเองเมื่อข้อมูลเปลี่ยนนิดเดียว</td><td>รายงานความเสี่ยงอาจเปลี่ยนไปมาโดยที่พอร์ตไม่ได้เปลี่ยนเลย</td></tr>
-      <tr><td>ค่าที่ประมาณ</td><td>ค่ายืดหดที่คำนวณได้ถูกต้อง</td><td>ตัวที่เล็กที่สุดคลาดเคลื่อนมากที่สุด</td><td>และตัวที่เล็กที่สุดนั่นเองที่ถูกขยายมากที่สุดตอนกลับด้าน</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวล่างอธิบายว่าทำไมการจัดพอร์ตแบบตรงไปตรงมาจึงให้น้ำหนักที่สุดโต่งจนใช้ไม่ได้</p>
-  </div>
-</section>
-
+<details class="jargon"><summary>คำศัพท์สำหรับอ่าน covariance ให้ครบความหมาย</summary><dl>
+<dt>Eigenpair</dt><dd>คู่ eigenvalue กับ eigenvector ที่ไม่เป็นศูนย์ ซึ่งทำให้ $Au=\lambda u$</dd>
+<dt>Orthonormal eigenbasis</dt><dd>ชุด eigenvectors ยาวหนึ่งและตั้งฉากกัน ใช้เปลี่ยนพิกัดได้โดยไม่เปลี่ยน Euclidean norm</dd>
+<dt>PSD / PD</dt><dd>Quadratic form ไม่ติดลบทุกทิศ / เป็นบวกทุกทิศที่ไม่เป็นศูนย์ สำหรับ covariance เงื่อนไขแรกจำเป็น ส่วนเงื่อนไขหลังตัด zero-variance directions ออก</dd>
+<dt>PCA</dt><dd>การเรียง orthogonal directions ตาม variance ของข้อมูลในหน่วยที่เลือก ไม่ใช่การเรียง risk shares ของพอร์ตใด ๆ โดยอัตโนมัติ</dd>
+<dt>Hessian</dt><dd>Matrix ของอนุพันธ์อันดับสอง บอก curvature หลายทิศ สำหรับ half-quadratic objective ที่สมมาตรข้างบนเท่ากับ covariance</dd>
+</dl></details>
+<details><summary>ที่มาของมุมมองนี้</summary><p>แนวคิด principal axes เชื่อม geometry ของ quadratic forms กับการแยกทิศการเคลื่อนไหว ต่อมางาน PCA ของ Pearson และ Hotelling นำมาใช้กับข้อมูลหลายตัวแปร ในงานการเงินต้องเพิ่มคำถามเรื่องการประมาณ ความเสถียร และข้อจำกัดการถือครอง มิใช่หยุดที่การ diagonalize สำเร็จ</p></details>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>eigenvector คือ risk axis และ eigenvalue คือ scale ของ variance ตาม axis</li>
-    <li>quadratic form $x^{\mathsf T}\Sigma x$ คือ portfolio variance</li>
-    <li>positive definite เทียบเท่ากับ ความเสี่ยงจากรูปแบบควอดราติกเป็นบวกเสมอ และ positive eigenvalues</li>
-    <li>scatter พร้อม eigenvectors ทำให้ covariance geometry อ่านได้ทันที</li>
-    <li>หุ้นแบงก์สามตัว σ 25% ρ 0.7 มี eigenvalue 0.150 / 0.01875 / 0.01875 คือ 80% / 10% / 10% ของความเสี่ยง ตรวจด้วย trace 0.1875 และ det; ทิศ long/short เสี่ยง 13.69% เทียบ 38.73% ของทิศซื้อเท่ากัน</li>
-    <li>positive definite ตรวจได้สองทาง eigenvalue บวกทุกตัว หรือ minors 1, 0.51, 0.216 บวกทุกตัว และตารางแบบนี้พังเมื่อ ρ ออกนอก (−0.5, 1)</li>
-  </ul>
+<h2>ก่อนอ่าน eigenvalue เป็นความเสี่ยง ให้ถามอะไรบ้าง?</h2>
+<ul>
+<li>Matrix สมมาตรหรือไม่? ข้อมูลอยู่ในหน่วยและ horizon เดียวกันหรือไม่?</li>
+<li>Eigenvectors normalize แบบใด? L2 หนึ่งไม่เท่ากับใช้ NAV 100% หรือ gross เท่ากัน</li>
+<li>กำลังอ่าน $\lambda_i$, $\sqrt{\lambda_i}$, trace share หรือ portfolio contribution $\lambda_i c_i^2$?</li>
+<li>มี zero/negative directions หรือไม่ และเป็นข้อมูลจริง สมมติฐานขัดกัน หรือ numerical precision?</li>
+<li>เกณฑ์ที่ใช้รับรอง PSD, PD, invertibility หรือเพียงการคืนคำตอบของ optimizer? ทั้งสี่ไม่ใช่เรื่องเดียวกัน</li>
+</ul>
+<p>บท 8 จะนำ mean vector กับ covariance มาใช้กับ random vectors โดยตรง เรารู้แล้วว่าการเรียงข้อมูล การเปลี่ยน basis และการตรวจความเป็นไปได้ของตารางต้องทำก่อนตีความผลทางการเงิน</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="7.5.html">7.5 Rank, Range, and Invertibility</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.1.html">8.1 The Mean Vector and the Covariance Matrix</a></div>
+<div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="7.5.html">7.5 Rank, Range, and Invertibility</a></div>
+<div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="8.1.html">8.1 The Mean Vector and the Covariance Matrix</a></div>
 </nav>
 </div>
 </body>

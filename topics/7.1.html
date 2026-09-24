@@ -10,370 +10,282 @@
 <body>
 <div class="wrap">
 <nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/7.html">บทที่ 7</a>
-  <span class="topic-progress">หัวข้อ 37/158</span>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+<a href="../chapters/7.html">บทที่ 7</a>
+<span class="topic-progress">หัวข้อ 37/158</span>
 </nav>
-
-<article class="topic" data-number="7.1" data-depends-on="6.1 6.2">
+<article class="topic" data-number="7.1" data-depends-on="6.1 6.2 6.3">
 <header class="topic-header">
-  <h1><span class="tnum">7.1</span> What a Matrix Is</h1>
-  <p class="subtitle">ตารางตัวเลขทำหน้าที่เป็นเครื่องแปลงข้อมูล</p>
+<h1><span class="tnum">7.1</span> What a Matrix Is</h1>
+<p class="subtitle">ตารางหนึ่งชุดแปลงข้อมูลอะไรเป็นอะไร? เริ่มจากชื่อแถว คอลัมน์ และหน่วย</p>
 </header>
-
 <div class="hook">
-  <p>พอร์ตถือ AAPL 2 ล้าน short MSFT 1 ล้าน และถือ JPM \$0.5 ล้าน ความไวต่อตลาดของสามตัวคือ 1.2, 0.9, 1.5 ถ้าตลาดขยับ 1% พอร์ตขยับกี่ดอลลาร์?</p>
-  <p>เฉลย: ราว \$22,500 เพราะ 1.2(2) + 0.9(−1) + 1.5(0.5) = 2.25 ล้าน แล้ว 1% ของ 2.25 ล้านคือ 22,500 ตารางความไวของสามหุ้นต่อหลายปัจจัยคือเครื่องแปลง position เป็นความเสี่ยงต่อปัจจัย</p>
-  <p>ตารางแบบนี้เรียกว่า matrix ใช้แปลง vector หนึ่งเป็นอีก vector หนึ่ง และรวมหลายสมการไว้ให้ตรวจพร้อมกัน งาน quant ใช้มันรวม exposure กับข้อมูลความเสี่ยงหลายตัว</p>
+<p>ถือ AAPL 2 ล้าน, short MSFT 1 ล้าน และถือ JPM 0.5 ล้าน USD ถ้าตลาดขึ้น 1% ส่วนของกำไรที่มาจากตลาดควรเป็น 15,000 USD ตาม net position 1.5 ล้าน หรือ 22,500 USD?</p>
+<details><summary>ต้องรู้อะไรเพิ่มก่อนตอบ?</summary><p>ต้องรู้ความไวของแต่ละหุ้นต่อตลาด ในโมเดลสมมติของบทนี้ loadings คือ 1.2, 0.9, 1.5 จึงได้ market exposure $2(1.2)-1(0.9)+0.5(1.5)=2.25$ ล้าน และ market contribution 22,500 USD แต่ไม่ใช่กำไรรวมที่รับประกัน เพราะ factor อื่น ผลตอบแทนเฉพาะหุ้นและต้นทุนอาจไม่เป็นศูนย์</p></details>
+<p>Matrix ช่วยเก็บ loading หลายหุ้นต่อหลาย factor แล้วรวมผลอย่างเป็นระบบ สิ่งสำคัญไม่ใช่แค่ใส่ตัวเลขในกรอบ แต่ต้องบอกให้ได้ว่า <strong>input คืออะไร output คืออะไร และแต่ละช่องมีหน่วยอะไร</strong></p>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากคำถามที่ vector ตัวเดียวตอบไม่พอ</h4>
-  <p>พอร์ตถือ AAPL \$2 ล้าน short MSFT \$1 ล้าน และถือ JPM \$0.5 ล้าน ถ้ารู้ว่าแต่ละตัวไวต่อตลาดเท่าไร การหาว่าพอร์ตขยับกี่ดอลลาร์เมื่อตลาดขยับ 1% ก็เป็นแค่การคูณแล้วบวก ซึ่งบทที่ 6 ทำได้แล้ว</p>
-  <p>แต่บนโต๊ะจริงไม่มีความเสี่ยงแค่ตัวเดียว ตลาดเป็นตัวหนึ่ง ดอกเบี้ยเป็นอีกตัว ราคาน้ำมันเป็นอีกตัว และหุ้นแต่ละตัวไวต่อทั้งสามไม่เท่ากัน คำถามกลายเป็นว่าพอร์ตนี้รับความเสี่ยงจากแต่ละแหล่งเท่าไร ถามทีเดียวพร้อมกันทุกแหล่ง</p>
-  <p>เขียนเป็น vector ทีละแหล่งก็ได้ แต่จะได้สมการกองหนึ่งที่ต้องตรวจทีละอัน ทางที่ใช้กันจริงคือวางความไวทั้งหมดลงในตารางเดียว แล้วให้ตารางนั้นทำงานเป็นเครื่องแปลง รับน้ำหนักพอร์ตเข้าไป คืนความเสี่ยงรายแหล่งออกมา ตารางแบบนั้นเรียกว่า matrix</p>
+<h2>1. Matrix เป็นตารางมีลำดับ ไม่ใช่รายการตัวเลขที่สลับได้</h2>
+<p>Matrix ขนาด $m\times n$ มี $m$ แถวและ $n$ คอลัมน์ เขียนสมาชิกช่องแถว $i$ คอลัมน์ $j$ ว่า $a_{ij}$ ตัวอย่างนี้มีสองแถวสามคอลัมน์:</p>
+<div class="math">\[
+M=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},
+\qquad m=2,\quad n=3,\quad m_{23}=5.
+\]</div>
+<p>ดัชนีในคณิตศาสตร์เริ่มที่ 1 แต่ array ใน JavaScript เริ่มที่ 0 ช่องนี้จึงเป็น <code>M[1][2]</code> ไม่ใช่ <code>M[2][3]</code> โดยทั่วไป column vector เป็น matrix ขนาด $n\times1$ และ row vector เป็น matrix ขนาด $1\times n$ ทั้งสองแบบเป็น matrix</p>
+<p>เมื่อใช้ matrix คูณ column vector กติกาคือแต่ละแถวสร้าง output หนึ่งช่องจากการจับคู่กับ input ทุกช่อง ดังนั้น matrix $m\times n$ รับ input $n$ ช่องและให้ output $m$ ช่อง:</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf y&=A\mathbf x,\qquad
+ A\in\mathbb R^{m\times n},\quad\mathbf x\in\mathbb R^n,\\
+y_i&=\sum_{j=1}^{n}a_{ij}x_j.
+\end{aligned}
+\]</div>
+<p>เช่นเครื่องคำนวณที่กำหนด $y_1=0.5x_1$ และ $y_2=0.25x_1+0.5x_2$ เขียนกติกาสองบรรทัดด้วย matrix เดียวได้ เมื่อ input เป็น $(2,3)$:</p>
+<div class="math">\[
+\begin{aligned}
+T&=\begin{bmatrix}0.5&0\\0.25&0.5\end{bmatrix},\\
+T\begin{bmatrix}2\\3\end{bmatrix}
+ &=\begin{bmatrix}0.5(2)+0(3)\\0.25(2)+0.5(3)\end{bmatrix}
+ =\begin{bmatrix}1\\2\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>นี่คือตารางของกติกาเชิงเส้น: เพิ่ม input ทุกช่องสองเท่า output ก็เพิ่มสองเท่า และ output ของผลรวมเท่ากับผลรวม output เพราะแจกแจงผลคูณในแต่ละแถวได้ แต่การนำตารางมาอธิบายระบบจริงยังต้องตรวจว่าระบบนั้นเป็นเชิงเส้นในช่วงที่ใช้หรือไม่</p>
 </section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>matrix</dt>
-    <dd>ตารางสี่เหลี่ยมของ numbers ที่จัดเป็น rows และ columns ใช้เก็บ exposures หลายรายการพร้อมกันและส่งข้อมูลเข้า linear algebra</dd>
-    <dt>row</dt>
-    <dd>แนวนอนหนึ่งแถวของ matrix ใช้แทน observation, asset หรือ output ชุดหนึ่งตามความหมายของ model</dd>
-    <dt>column</dt>
-    <dd>แนวตั้งหนึ่งคอลัมน์ของ matrix ใช้แทน feature, factor หรือ position dimension หนึ่งชุด</dd>
-    <dt>element</dt>
-    <dd>ตัวเลขหนึ่งช่องที่อยู่ตรงจุดตัดของ row กับ column ใช้เป็น factor loading เฉพาะคู่ที่กำลังอ่าน</dd>
-    <dt>exposure</dt>
-    <dd>จำนวน sensitivity หรือ notional ที่ portfolio มีต่อ asset หรือ factor ใช้รวมความเสี่ยงและคำนวณ hedge</dd>
-    <dt>notional</dt>
-    <dd>มูลค่าอ้างอิงของ position ซึ่งไม่จำเป็นต้องเท่ากับเงินสดที่จ่าย ใช้กำหนดขนาด trade และคำนวณ exposure</dd>
-    <dt>hedge</dt>
-    <dd>position ที่ตั้งใจให้หักล้างความเสี่ยงของ position อื่น ใช้ลด exposure ที่ desk ไม่ต้องการถือ</dd>
-    <dt>factor</dt>
-    <dd>ตัวแปรร่วมที่ขับเคลื่อนผลตอบแทนของหลาย assets เช่นตลาดหรือ quality ใช้สรุปความเสี่ยงที่ position หลายตัวรับร่วมกัน</dd>
-    <dt>SPX</dt>
-    <dd>ดัชนี S&amp;P 500 ของหุ้นสหรัฐฯ ใช้เป็น factor ตลาดกว้างในตัวอย่าง exposure</dd>
-    <dt>USD</dt>
-    <dd>สกุลเงินดอลลาร์สหรัฐฯ ใช้เป็นหน่วย notional และ P&amp;L ของ portfolio ตัวอย่างทั้งหมด</dd>
-  </dl>
-</details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$A$</td><td>matrix ของ factor loadings/exposures</td><td>unitless loading</td></tr>
-      <tr><td>$a_{ij}$</td><td>element แถว $i$ คอลัมน์ $j$ ของ $A$</td><td>unitless loading</td></tr>
-      <tr><td>$m$</td><td>จำนวน rows ของ $A$</td><td>นับรายการ</td></tr>
-      <tr><td>$n$</td><td>จำนวน columns ของ $A$</td><td>นับ factor</td></tr>
-      <tr><td>$w$</td><td>vector ของ portfolio positions</td><td>USD million</td></tr>
-      <tr><td>$y$</td><td>vector ของ aggregate factor exposures</td><td>USD million</td></tr>
-      <tr><td>$S$</td><td>state-payoff matrix แปลงสัดส่วนการลงทุนเป็นกระแสเงินสดแต่ละสถานะ</td><td>USD per share</td></tr>
-      <tr><td>$\theta$</td><td>vector ของจำนวนหุ้นหรือสัญญาที่ถือในแต่ละสินทรัพย์</td><td>shares</td></tr>
-    </tbody>
-  </table>
-</details>
-
 <section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ให้แถวของ $A$ เป็น asset สามตัวคือ AAPL, MSFT และ JPM และคอลัมน์เป็น market factor กับ quality factor ค่าแต่ละช่องคือ factor loading ซึ่งไม่มีหน่วย ตารางนี้ไม่ใช่แค่ข้อมูลสำหรับ display: มันคือ interface ระหว่าง position system กับ risk engine</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — ลองกับเครื่องผสมสีก่อน: ตารางคือกติกา ไม่ใช่กล่องเก็บเลข</h4>
-  <p>ลองกับเครื่องผสมสีก่อน ใส่แดง 2 หน่วยกับน้ำเงิน 3 หน่วย แล้วให้ตารางเล็ก ๆ บอกว่าแต่ละถังออกมาเท่าไร ทำด้วยมือทั้งหมด ยังไม่ต้องรู้จักคำว่า matrix</p>
-  <div class="math">\[
-\begin{aligned}
-\text{input}&:\ \text{red }2,\ \text{blue }3\\
-\text{table}&:\ \begin{array}{c|cc}&\text{red}&\text{blue}\\\hline\text{orange}&0.5&0\\\text{purple}&0.25&0.5\end{array}\\[4pt]
-\text{orange}&=0.5(2)+0(3)=1.0\\
-\text{purple}&=0.25(2)+0.5(3)=0.5+1.5=2.0
-\end{aligned}
+<h2>2. ตั้งชื่อแถว คอลัมน์ และหน่วยให้ครบ</h2>
+<p>กลับมาที่หุ้นสหรัฐสามตัว ใช้ loadings สมมติ ไม่ใช่ค่าประมาณล่าสุดของบริษัทจริง ทุกแถวแทนหุ้นหนึ่งตัว ทุกคอลัมน์แทน factor หนึ่งตัว:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>หุ้น / แถว</th><th>Market / คอลัมน์ 1</th><th>Quality / คอลัมน์ 2</th></tr></thead>
+<tbody>
+<tr><td>AAPL</td><td>1.2</td><td>0.4</td></tr>
+<tr><td>MSFT</td><td>0.9</td><td>0.2</td></tr>
+<tr><td>JPM</td><td>1.5</td><td>0.7</td></tr>
+</tbody></table></div>
+<div class="math">\[
+A=\begin{bmatrix}1.2&0.4\\0.9&0.2\\1.5&0.7\end{bmatrix},
+\qquad A\text{ has shape }3\times2.
 \]</div>
-  <div class="reading">
-    <p>อ่านทีละแถว: แถว orange บอกว่าหยิบแดงมา 0.5 ของที่มี และไม่หยิบน้ำเงินเลย แถว purple หยิบแดง 0.25 กับน้ำเงิน 0.5 แต่ละ output คือ “คูณตามช่องแล้วบวก” ของแถวตัวเอง</p>
-    <p>ตารางนี้ทำงานกับ input ชุดไหนก็ได้ นี่คือความหมายของคำว่าเครื่องแปลง ชื่อทางการของตารางแบบนี้คือ matrix และการคูณตามช่องแล้วบวกคือกติกาเดียวที่ทั้งบทใช้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — นิยามของรูปร่างและชื่อช่อง</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของวิธีเรียกชื่อ ไม่ได้พิสูจน์อะไร matrix เริ่มจากรูปร่างก่อนเสมอ คือกี่แถวกี่คอลัมน์ เพราะรูปร่างเป็นตัวตัดสินว่าคูณกับอะไรได้บ้าง และดัชนีสองตัวเป็นที่อยู่ของแต่ละช่อง</p>
-  <div class="math">\[
-A:\ m\times n\ \ (\text{rows}\times\text{columns}),\qquad a_{ij}=\text{loading of row }i\text{ on column }j
-\]</div>
-  <div class="reading">
-    <p>$A$ มี $m$ rows และ $n$ columns; $a_{ij}$ คือช่องที่ row $i$ ตัดกับ column $j$ และเป็น factor loading แบบไม่มีหน่วยในตัวอย่างนี้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — นิยาม identity matrix: ตารางที่ทำหน้าที่เหมือนเลข 1</h4>
-  <p>มี matrix หนึ่งแบบที่ต้องรู้จักก่อน คือ identity ซึ่งมีเลข 1 บนแนวทแยงและ 0 ที่เหลือ ลองคูณแถวแรกของตาราง loading ในขั้นถัดไปกับมันด้วยมือ</p>
-  <div class="math">\[
-\begin{aligned}
-I_2&=\begin{bmatrix}1&0\\0&1\end{bmatrix}\\[4pt]
-\text{first}&=1.2(1)+0.4(0)=1.2\\
-\text{second}&=1.2(0)+0.4(1)=0.4\\
-\begin{bmatrix}1.2&0.4\end{bmatrix}I_2&=\begin{bmatrix}1.2&0.4\end{bmatrix}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เลข 1 ในแต่ละคอลัมน์หยิบช่องเดิมมาหนึ่งเท่า เลข 0 ทิ้งช่องอื่น ผลจึงเป็นแถวเดิมทุกช่อง คูณกับ identity แล้วไม่มีอะไรเปลี่ยน เหมือนคูณเลขด้วย 1</p>
-    <p>อีกเรื่องที่ควรรู้: vector ก็คือ matrix ที่มีคอลัมน์เดียว กติกาทุกข้อของ matrix จึงใช้กับ vector ได้ทันที</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ตัวอย่างในสไลด์ของคอร์ส: matrix 2×3, row vector และ identity</h4>
-  <div class="math">\[
-\begin{aligned}
-A_{2\times3}&=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},\quad a_{23}=5\\
-B_{1\times3}&=\begin{bmatrix}2&3&7\end{bmatrix}\\
-I_3&=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$A$ มี 2 แถว 3 คอลัมน์ ช่องแถวที่ 2 คอลัมน์ที่ 3 คือ 5 row vector คือ matrix ที่มีแถวเดียว ส่วน column vector คือ matrix ที่มีคอลัมน์เดียว vector จึงเป็นกรณีพิเศษของ matrix</p>
-    <p>identity มีหนึ่งบนเส้นทแยงและศูนย์ที่อื่น คูณ matrix ไหนก็ได้ matrix เดิม</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — ตารางตัวเลขจริง</h4>
-  <p>ใส่ตัวเลขจริงลงไป โดยแต่ละแถวคือสินทรัพย์หนึ่งตัว และแต่ละคอลัมน์คือปัจจัยหนึ่งตัว</p>
-  <div class="math">\[
-A=\begin{bmatrix}1.2&amp;0.4\\
-0.9&amp;0.2\\
-1.5&amp;0.7\end{bmatrix}\;\text{(unitless loading)},\qquad w=\begin{bmatrix}2\\
--1\\
-0.5\end{bmatrix}\;\text{USD million}
-\]</div>
-  <div class="reading">
-    <p>แต่ละ row คือ AAPL, MSFT, JPM ตามลำดับ และแต่ละ column คือตลาดกับ quality exposure; $w$ คือ notional position ที่ถือใน USD million ตัวเลขนี้ตั้งใจให้เห็นว่า matrix เก็บหลายความสัมพันธ์ในวัตถุเดียว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — matrix ทำหน้าที่รวมข้อมูล</h4>
-  <p>ทำไมต้องพลิก $A$ ก่อนคูณ: กติกา “คูณตามช่องแล้วบวก” ต้องเอาแถวของตารางไปจับกับคอลัมน์ของ input ตารางถูกเก็บเป็น asset × factor แต่คำถามคือ “factor แต่ละตัวได้เท่าไร” จึงต้องให้ factor เป็นแถว การพลิกนั้นคือ transpose ซึ่งหัวข้อ 7.2 จะให้ชื่อและกฎ ตอนนี้แค่รู้ว่าเราหมุนตารางให้แถวตรงกับคำถาม</p>
-  <p>แล้วใช้กติกาเดียวกับเครื่องผสมสี: แถวตลาดจับกับ position สามตัว คูณตามช่องแล้วบวก</p>
-  <div class="math">\[
-\begin{aligned}
-y&=A^{\mathsf T}w\\
-&=\begin{bmatrix}1.2(2)+0.9(-1)+1.5(0.5)\\0.4(2)+0.2(-1)+0.7(0.5)\end{bmatrix}\\[4pt]
-&=\begin{bmatrix}2.4-0.9+0.75\\0.8-0.2+0.35\end{bmatrix}=\begin{bmatrix}2.25\\0.95\end{bmatrix}\ \text{USD million}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แถวแรก: AAPL ให้ $1.2\times2=2.4$, MSFT ที่ short อยู่ให้ $0.9\times(-1)=-0.9$, JPM ให้ $1.5\times0.5=0.75$ รวม \$2.25 ล้าน ของ market exposure</p>
-    <p>แปลว่าอะไร: ถ้า market factor ขยับ 1% พอร์ตนี้ขยับราว $0.01\times2.25\text{M}=\$22{,}500$ ตัวเลขนี้คือสิ่งที่ฝ่ายความเสี่ยงอยากได้ ไม่ใช่ตัวตารางเอง</p>
-    <p>ลองเอง: ถ้าเปลี่ยน MSFT จาก $-1$ เป็น $+1$ market exposure จะเป็นเท่าไร (คำใบ้: บรรทัดที่สองกลับเครื่องหมาย)</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — การแปลงจากสินทรัพย์สู่สถานะตลาด (state-payoff matrix)</h4>
-  <p>ตัวอย่างนี้มาจากโจทย์ hedging ในตลาดที่มี 3 สถานะและ 2 สินทรัพย์ (หุ้นและพันธบัตร) โดย matrix $S$ เก็บ payoff ของแต่ละสินทรัพย์ในแต่ละสถานะ</p>
-  <p>เงื่อนไขบังคับคือมิติของ matrix ต้องสอดคล้องกัน: $S$ มีขนาด $3\times 2$ และ $\theta$ มีขนาด $2\times 1$ ผลลัพธ์จึงออกมาเป็น $3\times 1$ หากมิติไม่ตรงกัน การคูณจะไม่สามารถนิยามได้ และในทางเศรษฐศาสตร์จะสะท้อนว่ามีสินทรัพย์ที่ไม่มีข้อมูลราคาในบางสถานะ</p>
-  <div class="math">\[
-\begin{aligned}y = S\theta &= \begin{bmatrix} 120 & 105 \\
-100 & 105 \\
-70 & 105 \end{bmatrix} \begin{bmatrix} 2 \\
--1 \end{bmatrix} \\
-&= \begin{bmatrix} 120(2) + 105(-1) \\
-100(2) + 105(-1) \\
-70(2) + 105(-1) \end{bmatrix} \\
-&= \begin{bmatrix} 240 - 105 \\
-200 - 105 \\
-140 - 105 \end{bmatrix} = \begin{bmatrix} 135 \\
-95 \\
-35 \end{bmatrix} \;\text{USD}\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>หัวใจของการคำนวณนี้คือการประเมินกระแสเงินสดในทุกสถานะของตลาดพร้อมกัน แถวทั้งสามแถวบอกผลลัพธ์เมื่อตลาดอยู่ในภาวะขาขึ้น ปานกลาง และถดถอยตามลำดับ</p>
-    <p>เมื่อพอร์ตถือหุ้น 2 หุ้นและ short พันธบัตร 1 หน่วย ในแต่ละสถานะเรานำจำนวนหน่วยไปคูณกับราคาของสินทรัพย์แล้วรวมกัน ได้กระแสเงินสดสุทธิของพอร์ตออกมาเป็น vector ในมิติของสถานะตลาด</p>
-    <p>matrix จึงทำหน้าที่แปลง vector สัดส่วนการถือครองให้กลายเป็น vector ของผลตอบแทนในอนาคต รวบระบบสมการสามสมการให้เหลือการคูณเพียงขั้นตอนเดียว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — คำถามที่โต๊ะเทรดถามจริง: ทำอย่างไรให้ exposure ตัวหนึ่งเป็นศูนย์</h4>
-  <p>สมการ exposure มีสมการเดียวแต่มีไม่ทราบค่าสามตัว จึงมีคำตอบมากมายนับไม่ถ้วน วิธีที่โต๊ะเทรดใช้คือตรึงตัวที่ไม่ต้องการแตะไว้ก่อน แล้วแก้หาตัวที่เหลือ นี่ไม่ใช่การเดา แต่เป็นการเลือกจุดหนึ่งบนเส้นคำตอบทั้งหมด</p>
-  <p>ผลลัพธ์ที่ได้คือการ hedge ตัวแรกในบทนี้: พอร์ตที่ market exposure เป็นศูนย์ แต่ยังถือ position อยู่จริง</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{target: market exposure }=0\\
-&\quad\text{(neutral to the market)}\\[4pt]
-&1.2w_{1}+0.9w_{2}+1.5w_{3}=0\\[4pt]
-&\text{pick }w_{1}=0,\ w_{3}=0.5:\\
-&\quad 0.9w_{2}+1.5(0.5)=0\\
-0.9w_{2}&=-0.75\\
-w_{2}&=-0.75/0.9=-0.8333\\[6pt]
-&\text{check: }1.2(0)+0.9(-0.8333)+1.5(0.5)\\
-&=-0.75+0.75=0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เลือก $w_1=0$ แปลว่าไม่แตะ AAPL และเลือก long JPM ไว้ $0.5$ เหลือสมการเดียวกับตัวแปรเดียวคือ MSFT จึงย้ายข้างได้ตรง ๆ ได้ $w_2=-0.8333$ แปลว่าต้อง short MSFT ประมาณ $0.83$ ล้านดอลลาร์</p>
-    <p>การแทนค่ากลับคือสิ่งที่ทำให้คำตอบน่าเชื่อ: exposure ที่ได้จาก MSFT คือ $-0.75$ และจาก JPM คือ $+0.75$ หักกันพอดี เหลือศูนย์</p>
-    <p>สังเกตว่าเราไม่ได้แก้ matrix ทั้งก้อน เราใช้กติกาแถวคูณคอลัมน์ตัวเดียวกับขั้นที่ 5 ต่างกันแค่ย้ายข้างสมการ เพราะโจทย์ให้ผลลัพธ์มาแล้วและถามหาย้อนกลับ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ตรวจด้วยเลขของตัวเอง: hedge อีกตัวหนึ่ง</h4>
-  <p>ลองตั้งเป้าเป็น exposure ตัวที่สองบ้าง ตัวเลขเปลี่ยนแต่โครงเดิม และคำตอบที่ได้จะไม่เท่ากับคำตอบก่อนหน้า ซึ่งเป็นบทเรียนสำคัญ: การ hedge ตัวหนึ่งไม่ได้รับประกันว่า exposure ตัวอื่นจะจบไปด้วย</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{target: quality exposure }=0\\[4pt]
-&0.4w_{1}+0.2w_{2}+0.7w_{3}=0\\[4pt]
-&\text{pick }w_{1}=0,\ w_{3}=0.5:\\
-&\quad 0.2w_{2}+0.7(0.5)=0\\
-w_{2}&=-0.35/0.2=-1.75\\[6pt]
-&\text{check: }0.4(0)+0.2(-1.75)+0.7(0.5)\\
-&=-0.35+0.35=0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แถวที่ใช้คือแถว quality ซึ่งวางไว้เป็นคอลัมน์ที่สองของตารางในขั้นที่ 4 จึงหยิบตัวเลข $0.4$ กับ $0.2$ กับ $0.7$ มาใช้ ไม่ใช่ชุดเดิม</p>
-    <p>คำตอบคือ short MSFT $1.75$ ล้าน ซึ่งมากกว่าคำตอบก่อนหน้าถึงสองเท่า เพราะ loading ของ MSFT ต่อ quality มีเพียง $0.2$ จึงต้องใช้ position ใหญ่กว่าจะหักล้างได้</p>
-    <p>แปลว่าอะไร: ถ้าต้องการทั้งตลาดและ quality เป็นศูนย์พร้อมกัน จะเหลือสมการสองสมการ และต้องแก้พร้อมกัน ซึ่งคือระบบสมการเชิงเส้นที่หัวข้อ 7.5 จะพูดถึง</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การมองตารางตัวเลขเป็นเครื่องแปลง ทำให้ทั้งบทที่เหลืออ่านง่ายขึ้นมาก</p>
-  <p>ใช้แปลงจากน้ำหนักพอร์ต ไปเป็นความเสี่ยงต่อปัจจัยแต่ละตัว ในการคูณครั้งเดียว</p>
-  <p>ใช้เก็บ covariance ของสินทรัพย์ทั้งพอร์ตไว้ในที่เดียว ซึ่งเป็น input หลักของการจัดพอร์ตทุกวิธี</p>
-  <p>ใช้เขียนระบบสมการหลายสิบสมการให้เหลือบรรทัดเดียว ซึ่งเป็นภาษาที่ตัวแก้ปัญหาทุกตัวรับ</p>
-</section>
-
+<p>ในตัวอย่างนี้ market factor คือ return ของตลาด และ quality factor คือผลต่าง return ของพอร์ตคุณภาพสูงกับพอร์ตอ้างอิง โดยกำหนดสเกลคงที่ไว้ ทั้งสองวัดเป็นเศษส่วน เช่น 1% ใช้ 0.01 ในงวดเดียวกับ return หุ้น จึงเขียน loading เป็นสัมประสิทธิ์ไร้หน่วยได้</p>
+<p>ถ้าเปลี่ยนหน่วยหรือ normalization ของ factor ต้องเปลี่ยน loading ชดเชยด้วย อย่านำ 1.2 กับ 0.4 มาเทียบว่า factor แรกเสี่ยงกว่าสามเท่าโดยไม่รู้ขนาดความผันผวนและ covariance ของ factors</p>
 <figure class="plot">
-  <h4>Figure 7.1a — matrix คือตารางของ loading</h4>
-  <img src="../figures/7.1-1.svg" alt="Figure 7.1a — matrix คือตารางของ loading" loading="lazy">
-  <figcaption>
-    <p>สีเข้มคือ factor loading ที่มากขึ้น ไม่ใช่จำนวนเงิน: แถวบอก asset และคอลัมน์บอก factor จึงอ่านความสัมพันธ์ทั้งหกคู่ได้โดยไม่ทำหน่วยหล่นหาย</p>
-  </figcaption>
+<img src="../figures/7.1-1.svg" alt="ตารางloadingสามแถวAAPL MSFT JPMและสองคอลัมน์market quality" loading="lazy">
+<figcaption>รูป 7.1a สีช่วยให้อ่านตาราง แต่ความหมายของตัวเลขมาจากชื่อแถว คอลัมน์ และการกำหนดหน่วย ไม่ใช่สีเข้มหรืออ่อน</figcaption>
 </figure>
-
+<p>Matrix เดียวกันอ่านได้สองมุม: แถว AAPL บอกว่าหุ้นนี้ตอบสนองต่อสอง factors อย่างไร ส่วนคอลัมน์ market บอกว่าหุ้นทั้งสามตอบสนองต่อ market อย่างไร การสลับชื่อหุ้นโดยไม่สลับตัวเลขตามเป็นความผิดที่ shape ไม่ตรวจให้</p>
+</section>
+<section class="formula">
+<h2>3. จากตำแหน่งหุ้นสู่ factor exposure</h2>
+<p>ให้ $\mathbf w=(2,-1,0.5)^{\mathsf T}$ เป็น <strong>มูลค่าสถานะในล้าน USD</strong> ตามลำดับ AAPL/MSFT/JPM ไม่ใช่น้ำหนักที่ต้องรวมเป็นหนึ่ง การรวม market exposure คือคูณสถานะแต่ละตัวด้วย loading ในคอลัมน์ market:</p>
+<div class="math">\[
+\begin{aligned}
+e_M&=2(1.2)+(-1)(0.9)+0.5(1.5)\\
+ &=2.40-0.90+0.75=2.25,\\
+e_Q&=2(0.4)+(-1)(0.2)+0.5(0.7)\\
+ &=0.80-0.20+0.35=0.95.
+\end{aligned}
+\]</div>
+<p>เมื่อกลับคอลัมน์ของ $A$ มาเป็นแถวโดย transpose จะเขียนการรวมสองครั้งนี้เป็นคำสั่งเดียวได้:</p>
+<div class="math">\[
+\begin{aligned}
+A^{\mathsf T}&=\begin{bmatrix}1.2&0.9&1.5\\0.4&0.2&0.7\end{bmatrix},\\
+\mathbf e&=A^{\mathsf T}\mathbf w
+ =\begin{bmatrix}2.25\\0.95\end{bmatrix},\\
+(2\times3)(3\times1)&\longrightarrow2\times1.
+\end{aligned}
+\]</div>
+<p>Exposure นี้มีหน่วยล้าน USD ต่อหนึ่งหน่วยของ factor return ตามสเกลที่กำหนด หาก market ขยับ 0.01 และพิจารณาเฉพาะส่วนจาก market จะได้ $2.25(0.01)=0.0225$ ล้าน หรือ 22,500 USD</p>
 <figure class="plot">
-  <h4>Figure 7.1b — ส่วนร่วมของ exposure หลังถ่วงน้ำหนัก</h4>
-  <img src="../figures/7.1-2.svg" alt="Figure 7.1b — ส่วนร่วมของ exposure หลังถ่วงน้ำหนัก" loading="lazy">
-  <figcaption>
-    <p>แต่ละแท่งคือ position คูณ factor loading ของ asset นั้น เมื่อรวมแท่งสีเดียวกันจะได้ market 2.25 และ quality \$0.95 ล้าน ตรงกับ $A^{\mathsf T}w$</p>
-  </figcaption>
+<img src="../figures/7.1-2.svg" alt="ส่วนร่วมของสามหุ้นต่อmarketคือ2.4ติดลบ0.9และ0.75ล้าน ส่วนqualityคือ0.8ติดลบ0.2และ0.35ล้าน" loading="lazy">
+<figcaption>รูป 7.1b บวกแท่งที่เป็น factor เดียวกันข้ามหุ้นเพื่อได้ exposure รวม ไม่ใช่บวกทุกแท่งแล้วเรียกว่าเงินลงทุน</figcaption>
 </figure>
-
 <figure class="plot">
-  <h4>Figure 7.1c — vector ของสถานะเจอกับตาราง loading</h4>
-  <img src="../figures/7.1-3.svg" alt="Figure 7.1c — vector ของสถานะเจอกับตาราง loading" loading="lazy">
-  <figcaption>
-    <p>position vector มีหนึ่งค่า USD million ต่อหนึ่งแถวของ $A$ ถ้าจำนวนหรือลำดับไม่ตรงกัน นั่นคือ dimension error ไม่ใช่เศษ rounding ที่ปล่อยผ่านได้</p>
-  </figcaption>
+<img src="../figures/7.1-3.svg" alt="สถานะAAPL2ล้าน shortMSFT1ล้าน และJPM0.5ล้านUSD" loading="lazy">
+<figcaption>รูป 7.1c สถานะมีเครื่องหมาย: net หุ้น 1.5 ล้าน แต่ gross 3.5 ล้าน ทั้งสองยังไม่ใช่ NAV หากมี cash หรือรายการอื่นที่ไม่ได้แสดง</figcaption>
 </figure>
-
 <figure class="plot">
-  <h4>Figure 7.1d — factor exposure ของทั้งพอร์ต</h4>
-  <img src="../figures/7.1-4.svg" alt="Figure 7.1d — factor exposure ของทั้งพอร์ต" loading="lazy">
-  <figcaption>
-    <p>หลังคูณด้วย positions แล้ว portfolio มี market exposure 2.25 มากกว่า quality exposure \$0.95 ล้าน ภาพนี้จึงสรุป concentration ของ portfolio จริง ไม่ใช่ผลรวม loadings เปล่า ๆ</p>
-  </figcaption>
+<img src="../figures/7.1-4.svg" alt="market exposure2.25ล้านและquality exposure0.95ล้านUSDตามสเกลfactorที่กำหนด" loading="lazy">
+<figcaption>รูป 7.1d แสดง sensitivities ตาม normalization ของโมเดล คำว่า concentration ในหัวรูปไม่ควรอ่านว่า market มี variance contribution สูงกว่าแน่นอน เพราะรูปยังไม่ให้ covariance ของ factors หรือความเสี่ยงเฉพาะหุ้น</figcaption>
 </figure>
-
+</section>
+<section class="formula">
+<h2>4. ตารางเดิมใช้จำลองผลจาก factor shock ได้อีกทาง</h2>
+<p>ให้ factor shock เป็น $\mathbf f=(0.01,-0.02)^{\mathsf T}$ หมายถึง market +1% และ quality −2% สมมติคิดเฉพาะผลตอบแทนส่วนที่โมเดลเชิงเส้นอธิบายได้ จะได้ modeled returns $\widehat{\mathbf r}=A\mathbf f$:</p>
+<div class="math">\[
+\begin{aligned}
+\widehat r_{\mathrm{AAPL}}&=1.2(0.01)+0.4(-0.02)=0.004,\\
+\widehat r_{\mathrm{MSFT}}&=0.9(0.01)+0.2(-0.02)=0.005,\\
+\widehat r_{\mathrm{JPM}}&=1.5(0.01)+0.7(-0.02)=0.001,\\
+(3\times2)(2\times1)&\longrightarrow3\times1.
+\end{aligned}
+\]</div>
+<p>คำนวณ P&amp;L จากหุ้นทั้งสาม หรือจาก factor exposure สองตัว ต้องได้คำตอบเดียวกัน:</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf w^{\mathsf T}\widehat{\mathbf r}
+ &=2(0.004)-1(0.005)+0.5(0.001)\\
+ &=0.0035\ \text{million USD},\\
+\mathbf e^{\mathsf T}\mathbf f
+ &=2.25(0.01)+0.95(-0.02)\\
+ &=0.0035\ \text{million USD}=3{,}500\ \text{USD}.
+\end{aligned}
+\]</div>
+<p>ถ้า return จริงคือ $\mathbf r=A\mathbf f+\boldsymbol\varepsilon$ ยังมีส่วน $\mathbf w^{\mathsf T}\boldsymbol\varepsilon$ ที่โมเดลไม่ได้อธิบาย รวมทั้งต้นทุนและกระแสเงินสดอื่น จึงอย่ารายงาน 3,500 USD เป็นกำไรจริงโดยไม่ตรวจส่วนที่เหลือ</p>
+<div class="table-wrap"><table>
+<thead><tr><th>คำถาม</th><th>การคำนวณ</th><th>output</th></tr></thead>
+<tbody>
+<tr><td>factor shock ทำให้หุ้นขยับตามโมเดลเท่าไร?</td><td>$A\mathbf f$</td><td>return สามหุ้น</td></tr>
+<tr><td>สถานะสามหุ้นให้ exposure ต่อ factors เท่าไร?</td><td>$A^{\mathsf T}\mathbf w$</td><td>exposure สองตัว</td></tr>
+<tr><td>factor contribution ต่อ P&amp;L เท่าไร?</td><td>$\mathbf e^{\mathsf T}\mathbf f$</td><td>จำนวนเงินหนึ่งค่า</td></tr>
+</tbody></table></div>
+<p>สองทางนี้ใช้คนละ input และ output ไม่ใช่การแปลงไปแล้วใช้ transpose ย้อนคืนเหมือน inverse โดยทั่วไป $A^{\mathsf T}A\mathbf f$ ไม่เท่ากับ $\mathbf f$ เราจะเจาะเรื่อง transpose ในหัวข้อถัดไป</p>
+</section>
 <section class="example">
-  <h4>คำตอบ — factor exposure 2.25 กับ 0.95</h4>
-  <p>คำตอบ: market exposure เท่ากับ \$2.25 ล้าน และ quality exposure เท่ากับ \$0.95 ล้าน จาก matrix ที่มี assets 3 rows กับ factors 2 columns</p>
-  <p>ตรวจเองใน 10 วินาที: คูณ $A^{\mathsf T}w$ แยกทีละ factor แล้วต้องได้ vector สองค่า 2.25 และ \$0.95 ล้าน; ถ้าได้สามค่า แปลว่าวาง matrix ผิดด้าน</p>
-  <p>ใช้ตัดสินใจ: ส่ง factor report ได้เมื่อ asset order ของ matrix ตรงกับ position vector ทุกแถว ถ้า engineer เปลี่ยนลำดับ rows แต่ไม่เปลี่ยน $w$ ให้ reject แม้โปรแกรมจะไม่ขึ้น error</p>
+<h2>5. อีก matrix หนึ่ง: แถวเป็นสถานะ คอลัมน์เป็นสินทรัพย์</h2>
+<p>สมมติหุ้นกับ bond มี payoff สิ้นงวดต่อหนึ่งหน่วยตามสามสถานะดังตารางใน matrix $S$ โดย bond จ่าย 105 USD ทุกสถานะ และถือหุ้นสองหน่วยพร้อม short bond หนึ่งหน่วย:</p>
+<div class="math">\[
+\begin{aligned}
+S&=\begin{bmatrix}120&105\\100&105\\70&105\end{bmatrix},\qquad
+\boldsymbol\theta=\begin{bmatrix}2\\-1\end{bmatrix},\\
+\mathbf y=S\boldsymbol\theta
+ &=\begin{bmatrix}240-105\\200-105\\140-105\end{bmatrix}
+ =\begin{bmatrix}135\\95\\35\end{bmatrix}\ \text{USD}.
+\end{aligned}
+\]</div>
+<p>ในคอลัมน์แรกหน่วยคือ USD ต่อหุ้น ส่วนคอลัมน์ที่สองคือ USD ต่อหน่วย bond แต่ละช่องของ $\boldsymbol\theta$ จึงเป็นจำนวนหน่วยของสินทรัพย์นั้น ไม่ใช่เปอร์เซ็นต์เงินลงทุนหรือจำนวนล้าน USD แบบ $\mathbf w$ ในตัวอย่างก่อน</p>
+<p>ผลลัพธ์เป็น terminal payoff ในแต่ละสถานะ ไม่ใช่ profit, return หรือ expected payoff หากต้องการ profit ต้องมีต้นทุนเริ่มต้นและกระแสเงินสดที่เกี่ยวข้อง หากต้องการ expectation ต้องมีความน่าจะเป็นของสถานะตามแบบจำลองที่ใช้</p>
+<p>ตัวอย่างเพิ่มเติม: ถ้าสมมติหุ้นและ bond ราคาเริ่มต้นอย่างละ 100 USD ต้นทุนสุทธิคือ $2(100)-100=100$ USD ก่อนค่าใช้จ่าย กำไรจึงเป็น $(35,-5,-65)$ USD และ simple returns เป็น $(35\%,-5\%,-65\%)$ ภายใต้สมมติฐานไม่มี cash flow อื่นระหว่างงวด</p>
 </section>
-
+<section class="formula">
+<h2>6. Identity และ zero matrix เป็นกติกาสองกรณีที่ควรจำ</h2>
+<p>Identity $I_n$ มีหนึ่งบนแนวทแยงและศูนย์ที่อื่น แต่ละแถวจึงเลือก input เดิมหนึ่งช่อง โดยไม่เปลี่ยนค่า ส่วน zero matrix ให้ output ศูนย์ทุกช่อง:</p>
+<div class="math">\[
+\begin{aligned}
+I_3&=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix},\\
+I_3\begin{bmatrix}2\\-1\\0.5\end{bmatrix}
+ &=\begin{bmatrix}2\\-1\\0.5\end{bmatrix},\\
+0_{2\times3}\begin{bmatrix}2\\-1\\0.5\end{bmatrix}
+ &=\begin{bmatrix}0\\0\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>สำหรับ $A$ ขนาด $3\times2$ จะมี $I_3A=A$ และ $AI_2=A$ ต้องเลือกขนาด identity ให้ตรง ไม่ใช่ใส่ $I_3$ ทั้งสองด้านโดยไม่ดู shape ส่วน output ศูนย์จาก zero matrix ไม่ได้พิสูจน์ว่า input เป็นศูนย์ ตารางนี้ทิ้งข้อมูลทั้งหมดไปตั้งแต่แรก</p>
+<p>Matrix จัตุรัสมีจำนวนแถวเท่าคอลัมน์ แต่ยังไม่รับประกันว่ากลับด้านได้หรือปลอดภัยเชิงตัวเลข เราจะใช้ rank, range และ invertibility ในหัวข้อ 7.5 อธิบายเงื่อนไขเหล่านั้น</p>
+</section>
 <section class="example">
-  <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: การทำให้ exposure ตัวหนึ่งเป็นศูนย์ทำได้เสมอถ้ามี position ให้ปรับอย่างน้อยหนึ่งตัว โดยตรึงตัวอื่นไว้แล้วแก้หาตัวที่เหลือ ตัวอย่างนี้ให้ $w_2=-1.75$</p>
-  <p>ตรวจเองใน 10 วินาที: แทนคำตอบกลับเข้าสมการ exposure ต้องได้ศูนย์พอดี ถ้าได้ค่าใกล้ศูนย์แต่ไม่ใช่ศูนย์ ให้สงสัยการปัดเศษไม่ใช่แนวคิด</p>
-  <p>ใช้ตัดสินใจ: เขียน position ที่ได้ลงไปทั้ง sign และขนาด เพราะ short ไม่ใช่การลบออกจากพอร์ต แต่เป็นการถือ exposure ฝั่งตรงข้ามซึ่งมีต้นทุนของตัวเอง</p>
+<h2>7. แถวของ exposure matrix กลายเป็นข้อจำกัดพอร์ต</h2>
+<p>ถ้าต้องการ market exposure ศูนย์ในโมเดลเดิม จะมีข้อจำกัดหนึ่งสมการ:</p>
+<div class="math">\[
+1.2w_1+0.9w_2+1.5w_3=0.
+\]</div>
+<p>สมการเดียวกับตัวไม่ทราบค่าสามตัวนี้ให้ระนาบของคำตอบ ก่อนเพิ่มข้อจำกัดอื่น สมมติเลือก <strong>เป้าหมาย</strong> AAPL เป็นศูนย์และคง JPM 0.5 ล้าน USD เราจึงหาสถานะ MSFT ได้ดังนี้:</p>
+<div class="math">\[
+\begin{aligned}
+0.9w_2+1.5(0.5)&=0,\\
+w_2&=-\frac{0.75}{0.9}=-\frac56\ \text{million USD},\\
+e_Q&=0.2(-5/6)+0.7(0.5)\approx0.183333\ \text{million USD}.
+\end{aligned}
+\]</div>
+<p>Market exposure เป็นศูนย์ แต่ quality ยังไม่เป็นศูนย์ และการตั้ง AAPL เป้าหมายศูนย์หมายถึงปิดสถานะเดิม 2 ล้าน ไม่ใช่ปล่อย AAPL ไว้เหมือนเดิม รายการซื้อขายต้องคำนวณจาก $\Delta\mathbf w=\mathbf w_{\text{target}}-\mathbf w_{\text{current}}$</p>
+<p>หากเปลี่ยนเป้าหมายเป็น quality-neutral โดยยังให้ AAPL ศูนย์และ JPM 0.5 จะได้ $0.2w_2+0.7(0.5)=0$ หรือ $w_2=-1.75$ ล้าน ซึ่งใหญ่กว่าขา MSFT แบบ market-neutral 2.1 เท่า และเหลือ market exposure −0.825 ล้าน USD</p>
+<details><summary>ถ้าอยาก neutral ทั้งสอง factor ล่ะ?</summary>
+<p>ต้องแก้สองสมการพร้อมกัน หากยังคง JPM 0.5 แต่ยอมให้ AAPL และ MSFT เปลี่ยนได้:</p>
+<div class="math">\[
+\begin{aligned}
+1.2w_1+0.9w_2&=-0.75,\\
+0.4w_1+0.2w_2&=-0.35,\\
+0.3w_2&=0.30\ \Longrightarrow\ w_2=1,\\
+w_1&=(-0.35-0.2)/0.4=-1.375.
+\end{aligned}
+\]</div>
+<p>จึงได้ $\mathbf w=(-1.375,1,0.5)$ ล้าน USD ตรวจทั้งสอง exposure ได้ศูนย์ (ยอมให้ความคลาดเคลื่อนจิ๋วจาก floating point เมื่อใช้คอมพิวเตอร์) แต่ยังมีความเสี่ยงเฉพาะหุ้น ต้นทุน และข้อจำกัด short ไม่ได้กลายเป็นพอร์ตไร้ความเสี่ยง</p>
+</details>
+<p>การแก้ขาเดียวทำได้ในตัวอย่างเพราะ loading ของขาที่ปรับไม่เป็นศูนย์และอนุญาตสถานะตามคำตอบ หาก loading เป็นศูนย์ มี position limit หรือห้าม short อาจไม่มีพอร์ตที่ทำเป้าหมายนี้ได้</p>
 </section>
-
-<section class="pitfall">
-  <h4>กับดัก: มอง matrix เป็นถุงตัวเลข</h4>
-  <p>อย่าทิ้งชื่อ row, ชื่อ column หรือหน่วยไว้ใน metadata เพราะตัวเลข \$1.2 ล้าน กับ 1.2 shares ไม่ใช่ quantity เดียวกัน ก่อนคูณให้เช็ก shape และ label alignment เสมอ</p>
+<section class="example">
+<h2>ตรวจเองใน 10 วินาที</h2>
+<p><strong>ข้อ 1:</strong> $A$ มีสามแถวสองคอลัมน์ ถ้า input เป็น factor shock สองค่า output มีกี่ค่า และหมายถึงอะไร?</p>
+<details><summary>ดูเฉลย</summary><p>สามค่า จาก $A\mathbf f$ คือ modeled returns ของ AAPL/MSFT/JPM ไม่ใช่ factor exposure ของพอร์ต Exposure ต้องใช้สถานะสามตัวเป็น input ของ $A^{\mathsf T}$</p></details>
+<p><strong>ข้อ 2:</strong> ปัด market-neutral MSFT จาก $-5/6$ เป็น −0.8333 ล้านแล้ว ควรรายงาน exposure เป็นศูนย์เป๊ะหรือไม่?</p>
+<details><summary>ดูเฉลย</summary><p>ไม่ควร เพราะ $0.9(-0.8333)+0.75=0.00003$ ล้าน หรือ market exposure 30 USD หาก market ขึ้น 1% จะมีส่วนร่วมประมาณ 0.30 USD ก่อนปัจจัยอื่น ต้องแยกการปัดเพื่อแสดงผลออกจากค่าที่ใช้คำนวณ</p></details>
+<p><strong>ข้อ 3:</strong> รู้ payoff สามสถานะเป็น 135, 95, 35 USD แล้ว ทำไมจึงยังหา expected payoff ไม่ได้?</p>
+<details><summary>ดูเฉลย</summary><p>ยังไม่รู้ความน่าจะเป็นของแต่ละสถานะ การเป็นสามแถวไม่ได้ทำให้ทุกแถวมีโอกาสหนึ่งในสามโดยอัตโนมัติ และ payoff ที่คาดหมายก็ยังไม่ใช่กำไรหากยังไม่หักต้นทุน</p></details>
 </section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: ตารางตัวเลขที่กลายเป็นเครื่องแปลง</h4>
-  <p>คำว่า matrix ถูกใช้ในความหมายนี้ครั้งแรกโดย James Joseph Sylvester ในปี 1850 และ Arthur Cayley เป็นคนวางกฎการคำนวณของมันไว้ในบทความปี 1858</p>
-  <p>สิ่งที่ Cayley ทำไม่ใช่แค่จัดตัวเลขให้เป็นระเบียบ แต่เขานิยามการบวกและการคูณของตารางเหล่านี้ จนมันกลายเป็นวัตถุที่คำนวณได้เหมือนตัวเลขตัวเดียว</p>
-  <p>การเปลี่ยนมุมมองนี้สำคัญกว่าที่เห็น เพราะมันเปลี่ยนตารางจาก 'ที่เก็บของ' เป็น 'เครื่องแปลง' ที่รับข้อมูลชุดหนึ่งเข้าไปแล้วคายอีกชุดออกมา</p>
-  <p>ในงานพอร์ต เครื่องแปลงนั้นทำงานทุกวัน คือรับน้ำหนักพอร์ตเข้าไป แล้วคายความเสี่ยงต่อปัจจัยออกมา</p>
-</section>
-
-<section class="prose">
-  <h4>ความเป็นมา: จากระบบสมการหลายตัวแปรสู่การแปลงสถานะตลาด</h4>
-  <p>คำว่า matrix ถูกบัญญัติขึ้นราว ๆ ปี 1850 โดย James Joseph Sylvester โดยยืมมาจากภาษาละตินที่แปลว่า 'มดลูก' หรือแหล่งกำเนิด เพราะเขามองว่าตารางสี่เหลี่ยมผืนผ้านี้เป็นต้นกำเนิดของ determinant ย่อยหลายชุด</p>
-  <p>ต่อมาในปี 1858 Arthur Cayley ได้ตีพิมพ์บทความวางรากฐานพีชคณิตของ matrix ก่อนหน้านั้น นักคณิตศาสตร์อย่าง Carl Friedrich Gauss จัดการระบบสมการเชิงเส้นโดยเขียนตัวคูณ coefficient เรียงทีละบรรทัดและเขียนตัวแปรซ้ำไปซ้ำมา ซึ่งเทอะทะและไม่เห็นภาพการแปลงเชิงเรขาคณิต Cayley จึงเสนอให้มองตารางทั้งชุดเป็นวัตถุเอกเทศที่บวกและคูณกันได้ ยุบระบบสมการยืดยาวให้เหลือรูป $y = Ax$</p>
-  <p>ในโลกการเงิน Kenneth Arrow และ Gérard Debreu ในช่วงทศวรรษ 1950 ได้นำโครงสร้างนี้มาสร้าง state-payoff matrix ที่แถวคือสถานะตลาดในอนาคต และคอลัมน์คือสินทรัพย์ ทำให้คำนวณมูลค่าและการ hedge ภาระผูกพันได้ในสมการเดียว ดังที่ Martin Haugh และ Garud Iyengar ถ่ายทอดไว้ในตำราวิศวกรรมการเงิน</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>ที่มาของตัวเลข</td><td>ตัวเลขในตารางถูกต้อง</td><td>เกือบทุกค่าที่ประมาณมาจากข้อมูลย้อนหลัง</td><td>ความคลาดเคลื่อนของ input ถูกขยายตอนคำนวณ โดยเฉพาะเวลากลับ matrix</td></tr>
-      <tr><td>ขนาด</td><td>ตารางมีขนาดพอเหมาะ</td><td>พอร์ตจริงมีสินทรัพย์มากกว่าจำนวนวันที่มีข้อมูล</td><td>ตารางจะไม่มั่นคง ซึ่งเป็นเหตุผลของหัวข้อ 17.8</td></tr>
-      <tr><td>ความคงที่</td><td>ความสัมพันธ์คงที่ในช่วงที่ใช้</td><td>มันเปลี่ยนตลอด</td><td>ต้องกำหนดว่าจะใช้ข้อมูลย้อนหลังกี่วัน ซึ่งเป็นการแลกกันระหว่างความสดกับความนิ่ง</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>สามแถวนี้คือเหตุผลที่งานจัดพอร์ตจริงใช้เวลากับการเตรียม input มากกว่ากับการแก้สมการ</p>
-  </div>
-</section>
-
 <section class="code">
-  <details>
-    <summary>โค้ดคูณตารางจริงและหา hedge ที่ทำให้ exposure เป็นศูนย์</summary>
-    <pre><code>import numpy as np
-mix = np.array([[0.5, 0], [0.25, 0.5]])
-assert np.allclose(mix @ [2, 3], [1.0, 2.0])                  # orange 1.0, purple 2.0
-assert np.allclose(np.array([1.2, 0.4]) @ np.eye(2), [1.2, 0.4])
-A23 = np.array([[2, 3, 7], [1, 6, 5]])
-assert A23.shape == (2, 3) and A23[1, 2] == 5                  # a_23 counted from 1
-A = np.array([[1.2, 0.4], [0.9, 0.2], [1.5, 0.7]]); w = np.array([2, -1, 0.5])
-assert np.allclose(A.T @ w, [2.25, 0.95])
-S = np.array([[120, 105], [100, 105], [70, 105]])
-assert np.allclose(S @ [2, -1], [135, 95, 35])
-w2 = -1.5 * 0.5 / 0.9
-assert abs(w2 + 0.8333) &lt; 5e-5 and abs(A[:, 0] @ [0, w2, 0.5]) &lt; 1e-12
-w2q = -0.7 * 0.5 / 0.2
-assert abs(w2q + 1.75) &lt; 1e-12 and abs(A[:, 1] @ [0, w2q, 0.5]) &lt; 1e-12</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดคูณเครื่องผสมสี ตรวจ identity คิด exposure 2.25 กับ \$0.95 ล้าน และ payoff 135, 95, \$35 แล้วแก้ hedge ที่ทำให้ exposure ตลาดและคุณภาพเป็นศูนย์ได้ −0.8333 กับ −1.75</p>
-  </div>
+<h2>JavaScript: ตรวจ shape แล้วตรวจความหมายของข้อมูลแยกอีกชั้น</h2>
+<pre><code class="language-javascript" data-example="7.1">function shape(A) {
+  if (!Array.isArray(A) || !A.length || !Array.isArray(A[0]) || !A[0].length) {
+    throw new TypeError('Need a nonempty rectangular matrix');
+  }
+  const n = A[0].length;
+  // Spread exposes empty array slots as undefined so validation cannot skip them.
+  if ([...A].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
+    throw new TypeError('Need a finite rectangular matrix');
+  }
+  return [A.length, n];
+}
+function matvec(A, v) {
+  const [, n] = shape(A);
+  if (!Array.isArray(v) || ![...v].every(Number.isFinite)) throw new TypeError('Need a finite vector');
+  if (v.length !== n) throw new RangeError('Matrix/vector dimensions do not match');
+  return A.map(row =&gt; row.reduce((sum, x, j) =&gt; sum + x * v[j], 0));
+}
+function transpose(A) {
+  const [, n] = shape(A);
+  return Array.from({length: n}, (_, j) =&gt; A.map(row =&gt; row[j]));
+}
+const dot = (a, b) =&gt; a.reduce((sum, x, i) =&gt; sum + x * b[i], 0);
+const assets = ['AAPL', 'MSFT', 'JPM'];
+const positionsByName = {JPM: .5, AAPL: 2, MSFT: -1};
+const w = assets.map(name =&gt; positionsByName[name]);
+const A = [[1.2, .4], [.9, .2], [1.5, .7]], At = transpose(A);
+const f = [.01, -.02], exposure = matvec(At, w), modeledReturns = matvec(A, f);
+const S = [[120, 105], [100, 105], [70, 105]], theta = [2, -1];
+const payoffs = matvec(S, theta), initialCost = dot([100, 100], theta);
+const I3 = [[1, 0, 0], [0, 1, 0], [0, 0, 1]], M = [[2, 3, 7], [1, 6, 5]];
+console.log(JSON.stringify({
+  simple: matvec([[.5, 0], [.25, .5]], [2, 3]), entry23: M[1][2], shapeA: shape(A), w,
+  exposure, contributions: A.map((row, i) =&gt; row.map(a =&gt; a * w[i])), modeledReturns,
+  pnlAssetsUSD: 1e6 * dot(w, modeledReturns), pnlFactorsUSD: 1e6 * dot(exposure, f),
+  marketOnlyUSD: 1e6 * exposure[0] * .01,
+  net: w.reduce((s, x) =&gt; s + x, 0), gross: w.reduce((s, x) =&gt; s + Math.abs(x), 0),
+  payoffs, initialCost, profits: payoffs.map(x =&gt; x - initialCost),
+  identity: matvec(I3, w), zero: matvec([[0, 0, 0], [0, 0, 0]], w),
+  marketHedge: matvec(At, [0, -5 / 6, .5]), qualityHedge: matvec(At, [0, -1.75, .5]),
+  bothHedge: matvec(At, [-1.375, 1, .5]),
+  roundedMarketResidualUSD: 1e6 * matvec(At, [0, -.8333, .5])[0], hedgeSizeRatio: 1.75 / (5 / 6)
+}));</code></pre>
+<p>โปรแกรมตรวจแถวสั้นยาวไม่เท่ากัน มิติไม่ตรง และค่าที่ไม่ใช่จำนวนจำกัดได้ แต่ไม่รู้เองว่าชื่อหุ้นผิดวันหรือ factor เปลี่ยนสเกล จึงยังต้องจัดชื่อและเวลาให้ตรงก่อนส่งเข้า matrix</p>
 </section>
-
+<details class="jargon"><summary>ศัพท์และสัญกรณ์</summary><dl>
+<dt>Matrix / shape / entry</dt><dd>ตารางตัวเลขที่มีลำดับ / จำนวนแถวคูณจำนวนคอลัมน์ / สมาชิก $a_{ij}$ ที่แถว i คอลัมน์ j</dd>
+<dt>Linear map</dt><dd>กติกาที่รักษาการบวกและการคูณด้วย scalar Matrix คงที่ให้กติกาแบบนี้ แต่ความเหมาะสมกับระบบจริงต้องตรวจเพิ่มเติม</dd>
+<dt>Loading / exposure</dt><dd>ความไวของสินทรัพย์ต่อ factor / ความไวรวมหลังถ่วงด้วยสถานะตามหน่วยที่กำหนด</dd>
+<dt>Payoff matrix</dt><dd>ตารางกระแสเงินสดของสินทรัพย์ในแต่ละสถานะ ไม่ใช่ตารางความน่าจะเป็น</dd>
+<dt>Identity / zero matrix</dt><dd>กติกาที่คืน input เดิม / กติกาที่ส่งทุก input ไปยังศูนย์ โดยต้องระบุขนาดให้ตรง</dd>
+</dl></details>
+<details><summary>ที่มาสั้น ๆ</summary><p>Sylvester ใช้ชื่อ matrix ในปี 1850 และ Cayley พัฒนาพีชคณิตของ matrices ในปี 1858 ภาษานี้ทำให้ระบบสมการหลายบรรทัดกลายเป็นการแปลงที่ประกอบกันและวิเคราะห์ได้ แต่ความกระชับของสัญกรณ์ไม่ทดแทนการระบุความหมายของตัวเลข</p></details>
+<section class="pitfall">
+<h2>สี่ความผิดที่ shape ถูกก็ยังพลาดได้</h2>
+<ul>
+<li>แถวเป็น AAPL/MSFT/JPM แต่ input เรียง JPM/AAPL/MSFT</li>
+<li>เอาจำนวนหุ้นไปใช้กับสูตรที่ต้องการ dollar position หรือใช้ return 1 แทน 0.01</li>
+<li>ตีความ terminal payoff เป็น profit หรือสมมติให้แต่ละแถวมีโอกาสเท่ากันโดยไม่ได้รับข้อมูลนั้น</li>
+<li>เรียก factor-neutral ว่า risk-free ทั้งที่โมเดลมี residual, loadings เปลี่ยนได้และการซื้อขายมีข้อจำกัด</li>
+</ul>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>matrix คือ table ที่เก็บความสัมพันธ์ของ rows กับ columns ไม่ใช่ list แบน ๆ</li>
-    <li>identity matrix มี 1 บนแนวทแยงและ 0 ที่เหลือ คูณแล้วได้ของเดิม เหมือนเลข 1 และ vector คือ matrix คอลัมน์เดียว</li>
-    <li>shape $m\times n$ บอกจำนวน rows และ columns และช่วยป้องกัน dimension error</li>
-    <li>row aggregation กับ column aggregation ตอบคำถามคนละแบบ</li>
-    <li>ใน risk engine ต้องเก็บ labels และ units คู่กับ numbers</li>
-    <li>exposure ตัวหนึ่งเป็นศูนย์หาได้ด้วยการตรึง position อื่นไว้แล้วแก้สมการเดียว ไม่ต้องแก้ทั้งระบบ และต้องแทนค่ากลับเพื่อยืนยันเสมอ</li>
-  </ul>
+<h2>ก่อนคูณ matrix ให้ตอบสามคำถาม</h2>
+<ul>
+<li>แต่ละแถวและคอลัมน์แทนอะไร และใช้หน่วยใด?</li>
+<li>input/output ที่ต้องการมีกี่ช่อง และ shape ของคำสั่งให้ผลชนิดนั้นหรือไม่?</li>
+<li>ผลลัพธ์เป็น sensitivity, return, payoff หรือ P&amp;L ภายใต้สมมติฐานใด?</li>
+</ul>
+<p>เมื่อความหมายชัดแล้ว การ transpose จะเปลี่ยนบทบาทของแถวและคอลัมน์อย่างตรวจสอบได้ หัวข้อ 7.2 จะอธิบายว่าทำไมการพลิกตารางจึงมีผลต่อการจับคู่ข้อมูล แต่ไม่ใช่การกลับด้านการแปลงโดยอัตโนมัติ</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="6.5.html">6.5 Inner Product, Angle, and Correlation</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="7.2.html">7.2 Transpose</a></div>
+<div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="6.5.html">6.5 Inner Product, Angle, and Correlation</a></div>
+<div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="7.2.html">7.2 Transpose</a></div>
 </nav>
 </div>
 </body>

@@ -10,23 +10,99 @@
 <body>
 <div class="wrap">
 <nav class="book-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a>
 </nav>
 <header class="chapter-landing">
-  <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 7</h1>
-  <p>Matrices · 6 หัวข้อ</p>
-  <p class="chapter-sequence">ใช้ matrix แทนตารางความเสี่ยงของหุ้นทั้งตลาด และรู้ว่าเมื่อไรมันจะกลับด้านไม่ได้</p>
+<div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
+<h1>บทที่ 7</h1>
+<p>Matrices · 6 หัวข้อ</p>
+<p class="chapter-sequence">จากตารางที่มีชื่อและหน่วย ไปสู่ระบบสมการและทิศของความเสี่ยง: คำนวณได้ ไม่ได้แปลว่ากลับด้านได้ หรือว่าโมเดลถูก</p>
 </header>
+<section class="prose">
+<h2>คำถามหลักของบท</h2>
+<p>ตาราง loadings ควรคูณจากด้านไหน? ถ้าโปรแกรมคืน holdings มาแล้ว มีคำตอบเดียวจริงหรือไม่? และถ้า optimizer รายงาน variance ติดลบ ควรดีใจหรือกลับไปตรวจข้อมูล?</p>
+<p>บทนี้ไม่ได้ให้จำสูตร matrix ทีละตัว แต่ให้ใช้สามขั้นตอนเดียวกันกับทุกโจทย์: ระบุความหมายและหน่วยของ input/output ตรวจว่าการแปลงตอบคำถามได้หรือไม่ แล้วค่อยตีความตัวเลขภายใต้ข้อจำกัดของโมเดล</p>
+<p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ vectors, dot product, basis และ norms จากบท 6 รวมถึง variance/covariance และข้อแตกต่างระหว่าง uncorrelated กับ independent ไม่จำเป็นต้องเคยหา eigenvalues มาก่อน</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 1 — กำหนดความหมาย ก่อนคูณตัวเลข</h2>
+<p>เริ่มจากชื่อแถว ชื่อคอลัมน์และหน่วย เรียน transpose เพื่อรักษาความสัมพันธ์ของช่อง แล้วใช้ multiplication ต่อการแปลงเป็น pipeline ที่ตรวจสอบได้ทั้งรูปและผล</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/7.1.html"><span class="toc-number">7.1</span><span class="toc-name">What a Matrix Is<span class="toc-why">ตารางตัวเลขทำหน้าที่เป็นเครื่องแปลงข้อมูล</span></span></a></li>
-  <li><a href="../topics/7.2.html"><span class="toc-number">7.2</span><span class="toc-name">Transpose<span class="toc-why">พลิกแถวเป็นคอลัมน์เพื่อเปลี่ยนมุมมอง</span></span></a></li>
-  <li><a href="../topics/7.3.html"><span class="toc-number">7.3</span><span class="toc-name">Matrix Multiplication<span class="toc-why">คูณตารางด้วยการจับคู่แถวกับคอลัมน์</span></span></a></li>
-  <li><a href="../topics/7.4.html"><span class="toc-number">7.4</span><span class="toc-name">Linear Functions and Linear Constraints<span class="toc-why">เขียนกฎเส้นตรงและข้อจำกัดด้วย matrix</span></span></a></li>
-  <li><a href="../topics/7.5.html"><span class="toc-number">7.5</span><span class="toc-name">Rank, Range, and Invertibility<span class="toc-why">ดูว่าการแปลงเก็บข้อมูลไว้ครบหรือทำข้อมูลหาย</span></span></a></li>
-  <li><a href="../topics/7.6.html"><span class="toc-number">7.6</span><span class="toc-name">Eigenvalues and Positive Definiteness<span class="toc-why">ทิศพิเศษที่การแปลงเพียงยืดหรือหด</span></span></a></li>
+<li><a href="../topics/7.1.html"><span class="toc-number">7.1</span><span class="toc-name">What a Matrix Is<span class="toc-why">Net position 1.5 ล้าน USD ไม่ได้แปลว่า sensitivity เท่ากับ 1.5 ล้าน: ใช้ตารางที่มีชื่อและหน่วยรวม exposures ให้ถูก</span></span></a></li>
+<li><a href="../topics/7.2.html"><span class="toc-number">7.2</span><span class="toc-name">Transpose<span class="toc-why">Reshape อาจได้ขนาดที่ต้องการแต่สลับความหมายผิด: ไล่ช่อง i,j และพิสูจน์ว่าทำไม transpose ของผลคูณต้องย้อนลำดับ</span></span></a></li>
+<li><a href="../topics/7.3.html"><span class="toc-number">7.3</span><span class="toc-name">Matrix Multiplication<span class="toc-why">เงินในหุ้น 50% อาจรับ variance 85.84%: ต่อ maps, สร้าง covariance และแยกเงินลงทุนออกจากส่วนร่วมความเสี่ยง</span></span></a></li>
 </ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> ถ้า $A$ เป็น asset-by-factor, $f$ เป็น factor shock และ $w$ เป็น positions ทำไม $w^{\mathsf T}(Af)$ กับ $(A^{\mathsf T}w)^{\mathsf T}f$ จึงให้ P&amp;L เดียวกัน? ต้องจับคู่ labels อย่างไรจึงจะไม่ใช่แค่ผลคูณที่มี shape ถูก?</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 2 — มีคำตอบไหม มีข้อจำกัดอะไร และคำตอบไวแค่ไหน?</h2>
+<p>แยกกฎการคำนวณออกจากข้อจำกัด ตรวจ feasibility ก่อน optimization แล้วใช้ range กับ null space อธิบายสิ่งที่สร้างได้และความไม่เป็นเอกลักษณ์ Inverse เป็นเครื่องมือหนึ่ง ไม่ใช่คำตอบของทุกระบบ</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="4">
+<li><a href="../topics/7.4.html"><span class="toc-number">7.4</span><span class="toc-name">Linear Functions and Linear Constraints<span class="toc-why">เงินสำรองคงที่เปลี่ยนกฎ scaling: แยก linear กับ affine อ่าน slack ให้ตรงหน่วย และอย่าสับสนระหว่างขยายแผนเดิมกับหาแผนดีที่สุด</span></span></a></li>
+<li><a href="../topics/7.5.html"><span class="toc-number">7.5</span><span class="toc-name">Rank, Range, and Invertibility<span class="toc-why">สามสัญญาอาจสร้างได้แค่หนึ่งทิศ: แยก existence, uniqueness และ stability ก่อนนำ covariance ไปแก้พอร์ต</span></span></a></li>
+</ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> Matrix ที่มี full row rank แต่มีคอลัมน์มากกว่าแถว ให้ทุกเป้าหมายได้หรือไม่ และ holdings จำเป็นต้องมีชุดเดียวหรือไม่? เมื่อเพิ่มห้าม short ข้อสรุปใดต้องตรวจใหม่?</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 3 — ตรวจทิศของความเสี่ยง ไม่ใช่แค่ช่องบนแนวทแยง</h2>
+<p>ใช้ eigenbasis เปลี่ยน covariance เป็น variance ตามทิศที่ไม่สัมพันธ์เชิงเส้นกัน ตรวจ PSD/PD และกลับมาถามว่าทิศเหล่านั้นหมายถึงพอร์ตแบบใดภายใต้ normalization ที่เลือก</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="6">
+<li><a href="../topics/7.6.html"><span class="toc-number">7.6</span><span class="toc-name">Eigenvalues and Positive Definiteness<span class="toc-why">หุ้นสามตัว SD 25% ไม่ได้ลดพอร์ตเหลือ 14.43% เมื่อ correlation 0.7: หาแกนร่วม แยก trace share จาก portfolio risk และตรวจ covariance ที่เป็นไปไม่ได้</span></span></a></li>
+</ol>
+<section class="example">
+<p><strong>จุดตรวจ:</strong> ทำไม covariance อาจเป็น PSD แต่ไม่มี inverse? และทำไม eigenvector ที่มี L2 norm หนึ่งจึงไม่ใช่พอร์ตที่ใช้ NAV 100% โดยอัตโนมัติ?</p>
+</section>
+<section class="example">
+<h2>โจทย์เชื่อมทั้งบท — จาก holdings ไปสู่ risk model</h2>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> NAV 5 ล้าน USD, positions $w=(2,-1,0.5)^{\mathsf T}$ ล้าน USD ใน AAPL/MSFT/JPM ตามลำดับ ใช้ cash เป็นส่วนที่ทำให้ net positions บวก cash เท่ากับ NAV และยังไม่คิด cash return หรือค่าใช้จ่าย</p>
+<p>ให้ $A$ เป็น asset-by-factor loadings จากตัวอย่าง 7.1 และใช้สอง factors ชื่อ Market/Quality ที่วัดเป็น return เศษส่วน กำหนดแบบจำลองรายวัน $R=Af$ โดยเริ่มจากการละ residual risk:</p>
+<div class="math">\[
+\begin{aligned}
+A&=\begin{bmatrix}1.2&0.4\\0.9&0.2\\1.5&0.7\end{bmatrix},\\
+\Omega=\operatorname{Cov}(f)&=\begin{bmatrix}0.0004&0.00024\\0.00024&0.0009\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>$\Omega$ ในโจทย์นี้เป็น covariance สมมติของสอง factors ไม่ใช่การอ้างว่า factors เหล่านี้คือ SPX/QQQ ใน 7.6 แม้จะใช้ตัวเลขเดียวกันเพื่อให้ตรวจต่อได้ง่าย</p>
+<p><strong>1.</strong> Net, gross, cash และ factor exposures เป็นเท่าไร?</p>
+<details><summary>ดูเฉลยข้อ 1</summary><p>Net = 1.5 ล้าน, gross = 3.5 ล้าน และ cash ตามบัญชี = 3.5 ล้าน USD โดย $e=A^{\mathsf T}w=(2.25,0.95)^{\mathsf T}$ ล้าน USD Cash identity ไม่ได้รับรองว่าเงินสดทั้งหมดใช้ได้โดยไม่มี margin restrictions</p></details>
+<p><strong>2.</strong> หาก $f=(0.01,-0.02)^{\mathsf T}$ คำนวณ P&amp;L สองทางได้หรือไม่?</p>
+<details><summary>ดูเฉลยข้อ 2</summary><p>$Af=(0.004,0.005,0.001)^{\mathsf T}$ จึงได้ $w^{\mathsf T}Af=0.008-0.005+0.0005=0.0035$ ล้าน USD อีกทางคือ $e^{\mathsf T}f=0.0225-0.019=0.0035$ ล้าน USD เท่ากัน หรือกำไร 3,500 USD และ 0.07% ของ NAV ภายใต้ scenario นี้</p></details>
+<p><strong>3.</strong> Model SD ของ P&amp;L รายวันเป็นเท่าไร และต่างจาก return volatility บน NAV อย่างไร?</p>
+<details><summary>ดูเฉลยข้อ 3 พร้อมหน่วย</summary>
+<div class="math">\[
+\begin{aligned}
+\operatorname{Var}(w^{\mathsf T}R)&=e^{\mathsf T}\Omega e\\
+ &=2.25^2(0.0004)\\
+ &\quad+2(2.25)(0.95)(0.00024)\\
+ &\quad+0.95^2(0.0009)\\
+ &=0.00386325\quad\text{(million USD)}^2.
+\end{aligned}
+\]</div>
+<p>SD ประมาณ 0.06215505 ล้าน USD หรือ 62,155.05 USD ต่อวัน หารด้วย NAV 5 ล้านแล้วจึงเป็น return SD ประมาณ 1.243101% ไม่ใช่เอา variance หน่วย (ล้าน USD)² ไปอ่านเป็นเปอร์เซ็นต์</p>
+</details>
+<p><strong>4.</strong> Asset covariance $\Sigma_R=A\Omega A^{\mathsf T}$ เป็น PD หรือไม่? ลองตรวจ $z=(-1.375,1,0.5)^{\mathsf T}$</p>
+<details><summary>ดูเฉลยข้อ 4</summary><p>$A^{\mathsf T}z=0$ จึงมี $z^{\mathsf T}\Sigma_Rz=0$ แม้ $z\ne0$ ตารางนี้เป็น PSD แต่ไม่เป็น PD และกลับด้านไม่ได้ $A$ มี rank 2 เพราะ minor ของสองแถวแรกเท่ากับ −0.12 เมื่อ $\Omega$ เป็น PD จึงได้ rank ของ $\Sigma_R$ เท่ากับ 2 เช่นกัน</p><p>Zero model variance เกิดจากการตัด residual risk ทิ้ง ไม่ใช่ข้อยืนยันว่า holdings ชุดนี้ไม่มีความเสี่ยงจริง</p></details>
+<p><strong>5.</strong> ถ้า gross cap เท่ากับ NAV คือ 5 ล้าน USD จะขยาย $w$ ด้วย scalar $s\ge0$ ได้มากที่สุดเท่าไร? นี่คือ optimal portfolio แล้วหรือยัง?</p>
+<details><summary>ดูเฉลยข้อ 5</summary><p>เงื่อนไขคือ $3.5s\le5$ จึงได้ $s\le10/7\approx1.42857$ นี่เป็นเพียงขอบของ ray ผ่านแผนเดิม ไม่ใช่คำตอบ optimization ของทุก holdings ที่เป็นไปได้ ยังต้องระบุ objective และข้อจำกัดอื่น</p><p>ที่ขอบนี้ model P&amp;L SD เพิ่มตามสเกลเป็นประมาณ 88,792.93 USD ต่อวัน และ cash ตาม net accounting เหลือประมาณ 2.857143 ล้าน USD Gross cap ไม่ใช่จำนวนเงินสดที่ใช้ไป</p></details>
+<p><strong>6.</strong> หากเพิ่ม residual $\varepsilon$ ที่ uncorrelated กับ factors และมี covariance $D=0.0001I_3$ โมเดลใหม่เป็นอย่างไร?</p>
+<details><summary>ดูเฉลยข้อ 6</summary><p>เมื่อ $R=Af+\varepsilon$ จะมี covariance $A\Omega A^{\mathsf T}+D$ สำหรับทุก $x\ne0$ quadratic form เดิมไม่ลบและเพิ่ม $0.0001\|x\|_2^2\gt0$ จึงเป็น PD</p><p>พอร์ตเดิมมี variance เพิ่ม $0.0001(2^2+(-1)^2+0.5^2)=0.000525$ เป็น 0.00438825 (ล้าน USD)² หรือ SD ประมาณ 66,243.87 USD ส่วนพอร์ต $z$ ที่เคยเป็นศูนย์มี SD ประมาณ 17,721.81 USD นี่เป็นผลของสมมติฐาน residual ใหม่ ซึ่งต้องตรวจความเหมาะสมต่อ ไม่ใช่ข้อมูลที่เพิ่มขึ้นเอง</p></details>
+</section>
+<section class="takeaways">
+<h2>ก่อนเดินต่อบท 8</h2>
+<ul>
+<li>อธิบาย shape, labels และหน่วยได้ก่อนคูณตาราง อย่าใช้ “คูณผ่าน” เป็นเกณฑ์ความถูกต้องเพียงข้อเดียว</li>
+<li>แยก feasibility, uniqueness และ numerical stability รวมถึงผลของ constraints</li>
+<li>แยก PD จาก PSD และ inverse จาก transpose พร้อมระบุเงื่อนไขของแต่ละข้อ</li>
+<li>อ่าน covariance เป็น variance ภายใต้โมเดล ไม่ใช่คำรับรอง payoff หรือความปลอดภัยในอนาคต</li>
+</ul>
+<p>บท 8 จะใช้โครงสร้างเหล่านี้กับ random vectors โดยตรง: mean, covariance, conditioning และการรวมความเสี่ยงจะเขียนเป็นระบบเดียวกันได้เมื่อเรารักษาความหมายของทุกแกนไว้</p>
+</section>
 </div>
 </body>
 </html>

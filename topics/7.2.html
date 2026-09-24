@@ -10,385 +10,289 @@
 <body>
 <div class="wrap">
 <nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/7.html">บทที่ 7</a>
-  <span class="topic-progress">หัวข้อ 38/158</span>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+<a href="../chapters/7.html">บทที่ 7</a>
+<span class="topic-progress">หัวข้อ 38/158</span>
 </nav>
-
-<article class="topic" data-number="7.2" data-depends-on="7.1">
+<article class="topic" data-number="7.2" data-depends-on="1.4 5.5 6.5 7.1">
 <header class="topic-header">
-  <h1><span class="tnum">7.2</span> Transpose</h1>
-  <p class="subtitle">พลิกแถวเป็นคอลัมน์เพื่อเปลี่ยนมุมมอง</p>
+<h1><span class="tnum">7.2</span> Transpose</h1>
+<p class="subtitle">สลับบทบาทของแถวและคอลัมน์ โดยไม่ทำข้อมูลหลุดจากชื่อของมัน</p>
 </header>
-
 <div class="hook">
-  <p>ตาราง payoff มี 2 แถวคือสองสภาวะตลาด และ 3 คอลัมน์คือสามสินทรัพย์: แถวแรก 2, 3, 7 แถวสอง 1, 6, 5 ระบบความเสี่ยงต้องการตารางแบบแถวเป็นสินทรัพย์ เลข 7 ต้องย้ายไปอยู่ช่องไหน และมีเลขตัวไหนเปลี่ยนค่าไหม?</p>
-  <p>เฉลย: เลข 7 ย้ายจากแถว 1 คอลัมน์ 3 ไปแถว 3 คอลัมน์ 1 ตารางใหม่มี 3 แถว 2 คอลัมน์ คือ (2, 1), (3, 6), (7, 5) ไม่มีเลขตัวไหนเปลี่ยนค่า มีแต่ที่อยู่เปลี่ยน</p>
-  <p>transpose คือการสลับแถวกับคอลัมน์ของ matrix ใช้จัด vector ให้วางด้านที่คูณได้ งานจริงใช้มันเขียนความเสี่ยงพอร์ตเป็น quadratic form และตรวจทิศทางของข้อมูลใน regression หรือ optimization</p>
+<p>พอร์ตเดิมมี payoff สองสถานะเท่ากับ 50 และ 58 USD โปรแกรมจัดตารางจาก $2\times3$ เป็น $3\times2$ เพื่อเปลี่ยนทิศทางการคูณ ตัวเลขยังอยู่ครบและ shape ถูก แต่คำตอบกลับเป็น 70 และ 32 USD เกิดอะไรขึ้น?</p>
+<details><summary>ดูสาเหตุ แล้วค่อยสร้างตัวอย่างด้วยกัน</summary><p>โปรแกรมอาจใช้ reshape แทน transpose การเรียงตัวเลขใหม่ให้ได้จำนวนแถวที่ต้องการ ไม่ได้รักษาความสัมพันธ์ระหว่างสินทรัพย์กับสถานะ ต้องตรวจว่าช่องแถว $i$ คอลัมน์ $j$ ย้ายไปแถว $j$ คอลัมน์ $i$ จริง ไม่ใช่ดู shape อย่างเดียว</p></details>
+<p>บทนี้ใช้ matrices ของจำนวนจริง เราจะเริ่มจากการย้ายช่องหนึ่งช่อง แล้วใช้กติกาเดียวกันอธิบาย dot product, ลำดับผลคูณ และสูตรความเสี่ยงพอร์ต</p>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากตารางที่มาผิดด้าน</h4>
-  <p>ทีมวิจัยส่งตาราง payoff มาให้ 2 แถวคือสองสภาวะตลาด 3 คอลัมน์คือสามสินทรัพย์ แต่ระบบความเสี่ยงที่จะรับตารางนี้ต้องการให้แถวเป็นสินทรัพย์ ไม่ใช่สภาวะ</p>
-  <p>งานนี้ไม่ใช่การคำนวณอะไรเลย ไม่มีเลขตัวไหนเปลี่ยนค่า มีแต่ที่อยู่ที่เปลี่ยน เลขที่เคยอยู่แถว 1 คอลัมน์ 3 ย้ายไปแถว 3 คอลัมน์ 1</p>
-  <p>ฟังดูเป็นงานธุรการ แต่มันไม่ใช่ การสลับด้านนี้คือสิ่งที่ทำให้เขียนความเสี่ยงของทั้งพอร์ตเป็นบรรทัดเดียวได้ และเป็นสาเหตุที่โค้ดคำนวณความเสี่ยงพังเงียบ ๆ บ่อยที่สุด เพราะวางผิดด้านแล้วเครื่องยังคูณให้ได้อยู่ แค่ได้คำตอบที่ไม่ใช่สิ่งที่ถาม</p>
-</section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>transpose</dt>
-    <dd>การสลับ rows เป็น columns และ columns เป็น rows ใช้เปลี่ยนทิศทางของข้อมูลให้การคูณหรือ inner product มี shape ที่ถูกต้อง</dd>
-    <dt>dot product</dt>
-    <dd>ผลรวมของผลคูณ element ที่อยู่ตำแหน่งคู่กัน ใช้รวม position weights กับ exposures ให้ได้ scalar หรือ output หนึ่งตัว</dd>
-    <dt>matrix shape</dt>
-    <dd>คู่จำนวน rows และ columns ของ matrix ใช้ตรวจว่า operation ถัดไปทำได้หรือไม่</dd>
-    <dt>application programming interface (API)</dt>
-    <dd>ข้อตกลงที่ software ใช้รับส่งข้อมูลกับอีกระบบ ใช้กำหนด shape, labels และหน่วยที่ risk service ต้องได้รับ</dd>
-    <dt>exposure</dt>
-    <dd>ความไวหรือ notional ที่ position มีต่อ factor ใช้ติดตามความเสี่ยงของ portfolio</dd>
-    <dt>SPY</dt>
-    <dd>กองทุนที่ซื้อขายในตลาดสหรัฐฯ และติดตาม S&amp;P 500 ใช้เป็น asset ตัวอย่างที่มี exposure ต่อ market factor</dd>
-  </dl>
-</details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$A$</td><td>factor-loading matrix เดิม</td><td>unitless loading</td></tr>
-      <tr><td>$A^{\mathsf T}$</td><td>transpose ของ $A$</td><td>unitless loading</td></tr>
-      <tr><td>$a_{ij}$</td><td>element row $i$, column $j$</td><td>unitless loading</td></tr>
-      <tr><td>$m,n$</td><td>จำนวน rows และ columns ของ $A$</td><td>นับรายการ</td></tr>
-      <tr><td>$u,v$</td><td>vectors ที่ใช้ใน dot product</td><td>ตาม quantity ที่แทน</td></tr>
-      <tr><td>$\Sigma$</td><td>covariance matrix ของผลตอบแทนสินทรัพย์</td><td>squared return</td></tr>
-      <tr><td>$\sigma_p^2$</td><td>portfolio variance ของผลตอบแทนพอร์ต</td><td>squared return</td></tr>
-    </tbody>
-  </table>
-</details>
-
-<section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ตาราง $A$ มี rows เป็น AAPL, MSFT, SPY และ columns เป็นตลาดกับ quality factor การ transpose ไม่ได้เปลี่ยน factor loading ใด ๆ มันเพียงสลับมุมมองเพื่อให้ factor เป็น rows และ asset เป็น columns</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — พลิกตารางจริงด้วยมือ แล้วพลิกกลับ</h4>
-  <p>ก่อนกฎ ลองกับตารางจากหัวข้อ 7.1 ตรง ๆ หันสมุด 90 องศาแล้วเขียนใหม่ แล้วหันกลับ</p>
-  <div class="math">\[
-A=\begin{bmatrix}1.2&amp;0.4\\
-0.9&amp;0.2\\
-1.5&amp;0.7\end{bmatrix}\quad\Longrightarrow\quad A^{\mathsf T}=\begin{bmatrix}1.2&amp;0.9&amp;1.5\\
-0.4&amp;0.2&amp;0.7\end{bmatrix}\quad\Longrightarrow\quad(A^{\mathsf T})^{\mathsf T}=\begin{bmatrix}1.2&amp;0.4\\
-0.9&amp;0.2\\
-1.5&amp;0.7\end{bmatrix}=A
-\]</div>
-  <div class="reading">
-    <p>แถวของ $A$ (AAPL, MSFT, SPY) กลายเป็นคอลัมน์ของ $A^{\mathsf T}$ และคอลัมน์ (market, quality) กลายเป็นแถว ตัวเลขทั้งหกไม่มีตัวไหนเปลี่ยนค่า เช่น 1.5 ที่เคยอยู่แถว 3 คอลัมน์ 1 ย้ายไปแถว 1 คอลัมน์ 3</p>
-    <p>พลิกซ้ำได้ของเดิม นี่คือการตรวจที่เร็วที่สุด และเป็นเหตุผลที่ reshape (จัดเรียงตัวเลขใหม่ตามลำดับหน่วยความจำ) ไม่ใช่ transpose</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — นิยาม element</h4>
-  <p>transpose คือการสลับที่ของทุกช่องตามกฎเดียว เขียนเป็นสูตรได้บรรทัดเดียว</p>
-  <div class="math">\[
-(A^{\mathsf T})_{ij}=A_{ji}
-\]</div>
-  <div class="reading">
-    <p>element ที่ row $i$, column $j$ ใน transpose เท่ากับ element ที่ row $j$, column $i$ ใน matrix เดิม จึงเป็นการสลับตำแหน่ง ไม่ใช่การเปลี่ยนค่า</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — ทำไม transpose ต้องสลับจำนวนแถวกับคอลัมน์</h4>
-  <p>นิยามในบรรทัดก่อนบอกว่า transpose คือการสลับ index สองตัวของแต่ละช่อง ส่วนรูปร่างของผลลัพธ์ไม่ต้องจำแยก เพราะมันตามมาเองจากการนับ index</p>
-  <p>ช่องหนึ่งของ $A$ ถูกระบุด้วยเลขสองตัว ตัวแรกนับแถว ตัวที่สองนับคอลัมน์ พอสลับกัน ตัวที่นับแถวก็กลายเป็นตัวที่นับคอลัมน์</p>
-  <div class="math">\[
+<h2>1. Transpose ย้ายช่องอย่างไร?</h2>
+<p>นิยาม $A^{\mathsf T}$ โดยให้ $(A^{\mathsf T})_{ji}=A_{ij}$ ทุกช่อง ดังนั้น $A$ ขนาด $m\times n$ กลายเป็น $A^{\mathsf T}$ ขนาด $n\times m$ ตัวเลขไม่ได้เปลี่ยน แต่ชื่อแถวกับชื่อคอลัมน์ย้ายตามมันไป</p>
+<p>ใช้ตาราง loadings สมมติชุดเดิมเพื่อฝึก แต่ในหน้านี้สินทรัพย์แถวที่สามเป็น SPY ตามรูป แทน JPM ในหัวข้อ 7.1 ตัวเลขไม่ใช่ผลประมาณ loadings ของ SPY จริง และไม่ควรนำไปสร้าง hedge โดยตรง:</p>
+<div class="math">\[
 \begin{aligned}
-A&=\begin{bmatrix}1.2&0.4\\
-0.9&0.2\\
-1.5&0.7\end{bmatrix}\\
-&\quad(3\times2:\ m=3,\ n=2)\\[4pt]
-(A^{\mathsf T})_{ij}&=a_{ji}\\
-&\quad\text{(the two indices trade places)}\\[4pt]
-&\text{rows of }A^{\mathsf T}:\ i=1,\dots,n=2\\
-&\text{columns: }j=1,\dots,m=3\\[4pt]
-&\Longrightarrow\quad A^{\mathsf T}=\begin{bmatrix}1.2&0.9&1.5\\
-0.4&0.2&0.7\end{bmatrix}\\
-&\quad(2\times3)
+A&=\begin{bmatrix}1.2&0.4\\0.9&0.2\\1.5&0.7\end{bmatrix},\\
+A^{\mathsf T}&=\begin{bmatrix}1.2&0.9&1.5\\0.4&0.2&0.7\end{bmatrix}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>$A$ มี $3$ rows และ $2$ columns ช่อง $(i,j)$ ของ $A^{\mathsf T}$ คือ $a_{ji}$ แปลว่า index แรกของ $A^{\mathsf T}$ วิ่งตาม index ที่สองของ $A$ ซึ่งมีอยู่ $2$ ค่า</p>
-    <p>ส่วน index ที่สองของ $A^{\mathsf T}$ วิ่งตาม index แรกของ $A$ ผลลัพธ์จึงมี $2$ rows และ $3$ columns</p>
-    <p>ดูจากตัวเลขจริงจะเห็นว่าแถวแรกของ $A$ คือ $1.2$ กับ $0.4$ กลายเป็นคอลัมน์แรกของ $A^{\mathsf T}$ ไม่มีตัวเลขใดถูกคำนวณใหม่ทั้งหมด แค่ย้ายที่อยู่ นี่คือเหตุผลที่ transpose ไม่เปลี่ยนข้อมูล มีแต่เปลี่ยนมุมมองว่าจะอ่านเป็นแถวหรือคอลัมน์</p>
-  </div>
+<p>เดิมช่อง SPY–Market คือ $A_{31}=1.5$ หลัง transpose ช่อง Market–SPY คือ $(A^{\mathsf T})_{13}=1.5$ ยังเป็น loading ของ SPY ต่อ Market เหมือนเดิม ไม่ได้กลายเป็น loading ของ Market ต่อ SPY</p>
+<figure class="plot">
+<img src="../figures/7.2-1.svg" alt="Aมีแถวเป็นAAPL MSFT SPYและคอลัมน์เป็นMarket Quality" loading="lazy">
+<figcaption>รูป 7.2a ก่อน transpose: หุ้นและ ETF อยู่ตามแถว factors อยู่ตามคอลัมน์ ตัวเลขทั้งหกเป็นข้อมูลสมมติสำหรับฝึก</figcaption>
+</figure>
+<figure class="plot">
+<img src="../figures/7.2-2.svg" alt="transposeของAมีแถวเป็นMarket Qualityและคอลัมน์เป็นAAPL MSFT SPY" loading="lazy">
+<figcaption>รูป 7.2b หลัง transpose: Market row อ่านได้ 1.2, 0.9, 1.5 โดยชื่อสินทรัพย์ย้ายมาอยู่บนคอลัมน์</figcaption>
+</figure>
+<figure class="plot">
+<img src="../figures/7.2-3.svg" alt="ค่าคอลัมน์MarketของAตรงกับแถวMarketของtransposeทุกสินทรัพย์" loading="lazy">
+<figcaption>รูป 7.2c คอลัมน์เดิมกับแถวใหม่มีค่าเท่ากันทีละสินทรัพย์ สิ่งที่ต้องรักษาคือคู่ชื่อ–ค่า ไม่ใช่เพียงชุดตัวเลขทั้งหมด</figcaption>
+</figure>
+<p>สำหรับ matrix จัตุรัส ลองนึกถึงการสะท้อนช่องข้ามแนวทแยง ไม่ใช่การหมุนกระดาษ 90 องศา การหมุนจะกลับลำดับของแกนหนึ่งด้วย ส่วน transpose ใช้กติกาสลับดัชนีข้างต้นเท่านั้น</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 4 — shape เปลี่ยนอย่างไร</h4>
-  <p>ขั้นที่ 3 ตรวจกับตารางขนาด 3 คูณ 2 จริง ขั้นนี้เขียนกรณีทั่วไปด้วยตัวอักษร เพื่อให้เห็นว่าผลไม่ได้ขึ้นกับตัวเลขของตัวอย่าง</p>
-  <div class="math">\[
-\begin{aligned}A:\ m\times n\ &\Rightarrow\ a_{ij}\ \text{exists for }i\le m,\ j\le n\\[4pt]
-(A^{\mathsf T})_{ij}&=a_{ji}\ \Rightarrow\ i\le n,\ j\le m\\[4pt]
-\Longrightarrow\quad A^{\mathsf T}&:\ n\times m\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แถวแรกบอกว่า index ของ $A$ มีอยู่เท่าไร: ตัวแรกวิ่งถึง $m$ ตัวที่สองวิ่งถึง $n$ นี่คือความหมายของคำว่ารูปร่าง ไม่ใช่ข้อมูลเพิ่ม</p>
-    <p>แถวที่สองสลับ index ทั้งสอง แล้วถามว่าตอนนี้แต่ละตัววิ่งได้ถึงเท่าไร คำตอบคือตัวแรกได้ถึง $n$ และตัวที่สองได้ถึง $m$ เพราะมันสลับบทบาทกัน</p>
-    <p>บรรทัดสุดท้ายจึงเป็นเพียงการอ่านจำนวนที่นับได้กลับออกมาเป็นรูปร่าง ไม่มีขั้นตอนใดที่ต้องเชื่อ ต้องเชื่อแค่ว่าการสลับ index สองตัวสลับกันจริง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — transpose กลับที่เดิม</h4>
-  <p>ทำสองครั้งได้ของเดิม ซึ่งเป็นการตรวจที่เร็วที่สุดว่าเข้าใจถูก และเหตุผลสั้นมาก คือสลับที่สองครั้งย่อมกลับมาที่เดิม ไม่ต้องรู้อะไรเกี่ยวกับค่าในตารางเลย</p>
-  <div class="math">\[
-\begin{aligned}\big(A^{\mathsf T}\big)_{ij}&=A_{ji}\\
-\Big(\big(A^{\mathsf T}\big)^{\mathsf T}\Big)_{ij}&=\big(A^{\mathsf T}\big)_{ji}\\
-&=A_{ij}\\
-\Longrightarrow\;\big(A^{\mathsf T}\big)^{\mathsf T}&=A\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>นิยามของ transpose บอกว่าช่องแถว $i$ คอลัมน์ $j$ ของตัวใหม่ คือช่องแถว $j$ คอลัมน์ $i$ ของตัวเดิม ทำสองครั้งก็คือสลับดัชนีสองครั้ง ซึ่งย่อมกลับมาที่เดิม</p>
-    <p>บรรทัดสองใช้นิยามนั้นกับตัวที่ transpose ไปแล้ว ส่วนบรรทัดสามอ่านค่ากลับด้วยนิยามเดิมอีกที ดัชนีกลับมาตรงกับของเดิมทุกช่อง ตารางสองอันจึงเป็นอันเดียวกัน สังเกตว่าตลอดการพิสูจน์ เราไม่ต้องรู้อะไรเกี่ยวกับค่าในตารางเลยแม้แต่ช่องเดียว</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — dot product เป็นกรณีพิเศษ</h4>
-  <p>การคูณกันแบบที่ใช้บ่อยที่สุดในหนังสือเล่มนี้ แท้จริงเป็นกรณีเฉพาะของ transpose คูณ vector และการที่สลับลำดับได้เป็นเรื่องเฉพาะของกรณีนี้ ไม่ใช่กฎทั่วไปของการคูณตาราง ซึ่งเป็นจุดที่ขั้นถัดไปจะย้ำ</p>
-  <div class="math">\[
-\begin{aligned}u^{\mathsf T}v&=\sum_{i=1}^{n}u_iv_i\\
-v^{\mathsf T}u&=\sum_{i=1}^{n}v_iu_i\\
-u_iv_i&=v_iu_i\\
-\Longrightarrow\;u^{\mathsf T}v&=v^{\mathsf T}u=\sum_{i=1}^{n}u_iv_i\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>การคูณแบบนี้ใช้บ่อยที่สุดในเล่ม และมันเป็นแค่กรณีเฉพาะของการคูณตาราง: transpose เปลี่ยน vector แนวตั้งให้เป็นแนวนอน จึงคูณกันได้ และผลออกมาเป็นเลขตัวเดียว ไม่ใช่ตาราง</p>
-    <p>เหตุผลที่สลับลำดับได้มีข้อเดียว อยู่บรรทัดสาม คือการคูณเลขสองตัวสลับที่กันได้ ทีละคู่ ทุกคู่ สองผลรวมจึงบวกของชิ้นเดียวกัน ค่าย่อมเท่ากัน ข้อควรระวังคือนี่เป็นเรื่องเฉพาะของกรณีนี้ ไม่ใช่กฎทั่วไปของการคูณตาราง ซึ่งเป็นจุดที่ขั้นถัดไปจะย้ำ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — ทรานสโพสของผลคูณ: ทำไมลำดับต้องสลับ</h4>
-  <p>ข้อนี้เป็นกฎที่ใช้บ่อยที่สุดในบทหลัง ๆ และเป็นข้อที่คนจำผิดบ่อยที่สุดด้วย เพราะเผลอคิดว่าทรานสโพสกระจายเข้าไปเฉย ๆ โดยไม่สลับลำดับ</p>
-  <div class="math">\[
-\begin{aligned}\big((AB)^{\mathsf T}\big)_{ij}&=(AB)_{ji}\\
-&=\sum_k A_{jk}B_{ki}\\
-&=\sum_k\big(B^{\mathsf T}\big)_{ik}\big(A^{\mathsf T}\big)_{kj}\\
-&=\big(B^{\mathsf T}A^{\mathsf T}\big)_{ij}\\[4pt]
-\Longrightarrow\;(AB)^{\mathsf T}&=B^{\mathsf T}A^{\mathsf T}\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เดาคำตอบจากรูปร่างก่อนก็ได้ ถ้า $A$ เป็น $m\times n$ และ $B$ เป็น $n\times p$ ผลคูณเป็น $m\times p$ ทรานสโพสจึงเป็น $p\times m$ ซึ่งต่อกันได้ทางเดียวคือ $B^{\mathsf T}$ คูณ $A^{\mathsf T}$ สลับทางอื่นรูปร่างไม่รับกันเลย</p>
-    <p>การพิสูจน์จริงคือไล่ทีละช่อง ช่อง $ij$ ของทรานสโพสคือช่อง $ji$ ของตัวเดิม ซึ่งตามนิยามการคูณในหัวข้อ 7.3 คือแถวที่ $j$ ของ $A$ จับคู่กับหลักที่ $i$ ของ $B$</p>
-    <p>จังหวะที่ทุกอย่างลงตัวคือบรรทัดสาม แถวของ $A$ ก็คือหลักของ $A^{\mathsf T}$ และหลักของ $B$ ก็คือแถวของ $B^{\mathsf T}$ พอเรียกชื่อใหม่ ผลรวมเดิมกลายเป็นการคูณสองตัวที่สลับที่กันพอดี โดยไม่ได้ขยับตัวเลขสักตัว</p>
-    <p>กฎนี้ถูกใช้ตรง ๆ ในหัวข้อ 8.8 ตอนยุบความเสี่ยงพอร์ตให้เหลือ $a^{\mathsf T}\Sigma a$ และในหัวข้อ 8.9 ตอนตรวจว่า Cholesky ให้ covariance ตรงตามที่สั่งไว้จริง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ตรวจกฎสลับลำดับด้วยตาราง payoff จากโจทย์เปิดเรื่อง</h4>
-  <p>ตาราง payoff S จากโจทย์เปิดเรื่องมี 2 สภาวะ × 3 สินทรัพย์ ถือสินทรัพย์ 2, 6, 4 หน่วย คูณแถวกับคอลัมน์แบบหัวข้อ 6.1 ได้เงินของแต่ละสภาวะ แล้วลองกฎของขั้นที่ 7 ด้วยตัวเลขจริง</p>
-  <div class="math">\[
+<h2>2. กฎพื้นฐานตามมาจากการดูทีละช่อง</h2>
+<p>สลับแถวกับคอลัมน์สองครั้งต้องกลับช่องเดิม ส่วนการบวกและการคูณด้วย scalar ทำทีละช่อง จึงสลับก่อนหรือหลังได้ เมื่อ $A,B$ มีขนาดเดียวกัน:</p>
+<div class="math">\[
 \begin{aligned}
-S&=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},\qquad \theta=\begin{bmatrix}2\\6\\4\end{bmatrix}\\
-S^{\mathsf T}&=\begin{bmatrix}2&1\\3&6\\7&5\end{bmatrix},\qquad \theta^{\mathsf T}=\begin{bmatrix}2&6&4\end{bmatrix}\\[4pt]
-S\theta&=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}=\begin{bmatrix}50\\58\end{bmatrix}\\[4pt]
-(\theta^{\mathsf T}S^{\mathsf T})_1&=2(2)+6(3)+4(7)=50\\
-(\theta^{\mathsf T}S^{\mathsf T})_2&=2(1)+6(6)+4(5)=58\\
-\theta^{\mathsf T}S^{\mathsf T}&=\begin{bmatrix}50&58\end{bmatrix}=(S\theta)^{\mathsf T}\\[4pt]
-S^{\mathsf T}\theta^{\mathsf T}&:\ (3\times2)(1\times3),\quad 2\ne1
+((A^{\mathsf T})^{\mathsf T})_{ij}&=(A^{\mathsf T})_{ji}=A_{ij},\\
+((A+B)^{\mathsf T})_{ij}&=A_{ji}+B_{ji}
+ =(A^{\mathsf T}+B^{\mathsf T})_{ij},\\
+((cA)^{\mathsf T})_{ij}&=cA_{ji}=(cA^{\mathsf T})_{ij}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>Sθ คือเงินที่พอร์ตได้ในสองสภาวะ 50 กับ 58 หัวข้อ 7.3 จะไล่ทีละช่อง ตรงนี้ใช้แค่ตรวจกฎ: พลิกผลลัพธ์ต้องเท่ากับ θᵀ คูณ Sᵀ ซึ่งสลับลำดับแล้ว และได้ 50 กับ 58 เท่าเดิมจริง</p>
-    <p>บรรทัดล่างคือสิ่งที่เกิดถ้าพลิกแต่ไม่สลับลำดับ ตาราง 3 × 2 คูณแถว 1 × 3 มิติตรงกลางเป็น 2 กับ 1 คูณไม่ได้เลย กฎสลับลำดับจึงไม่ใช่ท่าจำ แต่เป็นทางเดียวที่มิติลงตัว ในโค้ดจริง numpy มักเก็บผลตอบแทนเป็นวัน × หุ้น แต่สูตรในตำราเขียนหุ้น × วัน ลืม .T ครั้งเดียว ตัวเลขความเสี่ยงเพี้ยนทั้งรายงาน</p>
-  </div>
+<p>ดังนั้น $(A^{\mathsf T})^{\mathsf T}=A$, $(A+B)^{\mathsf T}=A^{\mathsf T}+B^{\mathsf T}$ และ $(cA)^{\mathsf T}=cA^{\mathsf T}$ แต่ transpose <strong>ไม่ใช่ inverse</strong> โดยทั่วไป เช่น $D=\operatorname{diag}(2,3)$ มี $D^{\mathsf T}=D$ แต่ $D^{\mathsf T}D=\operatorname{diag}(4,9)$ ไม่ใช่ identity</p>
+<p>Matrix ที่ $A^{\mathsf T}=A$ เรียกว่า symmetric ต้องเป็นจัตุรัสและมี $A_{ij}=A_{ji}$ ทุกคู่ ไม่ได้หมายความว่าทุกช่องมีค่าเท่ากัน หรือว่า matrix จัตุรัสทุกตัวจะ symmetric</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 9 — การสร้าง quadratic form และ portfolio variance</h4>
-  <p>นี่คือการประยุกต์ใช้ transpose ที่สำคัญที่สุดในทฤษฎีพอร์ต โดย $\Sigma$ คือ covariance matrix ขนาด $d\times d$ และ $w$ คือ vector สัดส่วนลงทุนขนาด $d\times 1$</p>
-  <p>เงื่อนไขบังคับคือมิติทางพีชคณิตต้องประสานกัน: $w^{\mathsf T}$ ขนาด $1\times d$ คูณกับ $\Sigma$ ขนาด $d\times d$ แล้วคูณกับ $w$ ขนาด $d\times 1$ จึงจะได้ขนาด $1\times 1$ หากไม่ transpose ตัวหน้า การคูณระหว่าง $d\times 1$ กับ $d\times d$ จะผิดกฎมิติและทำงานไม่ได้ทันที</p>
-  <div class="math">\[
-\begin{aligned}\sigma_p^2 &= \sum_{i=1}^d \sum_{j=1}^d w_i \Sigma_{ij} w_j \\
-&= \begin{bmatrix} w_1 & \dots & w_d \end{bmatrix} \begin{bmatrix} \sum_{j} \Sigma_{1j} w_j \\
-\vdots \\
-\sum_{j} \Sigma_{dj} w_j \end{bmatrix} = w^{\mathsf T}(\Sigma w) = w^{\mathsf T}\Sigma w \\[6pt]
-\Sigma w &= \begin{bmatrix} 0.1 & -0.0559 \\
--0.0559 & 0.5 \end{bmatrix} \begin{bmatrix} 0.6 \\
-0.4 \end{bmatrix} = \begin{bmatrix} 0.06 - 0.02236 \\
--0.03354 + 0.20 \end{bmatrix} = \begin{bmatrix} 0.03764 \\
-0.16646 \end{bmatrix} \\
-\sigma_p^2 &= \begin{bmatrix} 0.6 & 0.4 \end{bmatrix} \begin{bmatrix} 0.03764 \\
-0.16646 \end{bmatrix} = 0.6(0.03764) + 0.4(0.16646) = 0.089168\end{aligned}
+<h2>3. ย้าย transpose ไปอีกที่ ก็เปลี่ยนคำถามได้</h2>
+<p>ให้ $\mathbf u=(1,-2,3)^{\mathsf T}$ และ $\mathbf v=(4,0.5,-1)^{\mathsf T}$ เป็น column vectors ถ้าต้องการจับคู่แล้วรวมเป็นเลขเดียว ต้องวาง row vector ไว้ทางซ้าย:</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf u^{\mathsf T}\mathbf v
+ &=1(4)+(-2)(0.5)+3(-1)=0,\\
+(1\times3)(3\times1)&\longrightarrow1\times1,\\
+\mathbf u\mathbf v^{\mathsf T}
+ &=\begin{bmatrix}4&0.5&-1\\-8&-1&2\\12&1.5&-3\end{bmatrix},\\
+(3\times1)(1\times3)&\longrightarrow3\times3.
+\end{aligned}
 \]</div>
-  <div class="reading">
-    <p>สูตรนี้เริ่มต้นจากนิยามพื้นฐานของ variance ที่เป็นผลรวมสองชั้นของ covariance ถ่วงน้ำหนักด้วยสัดส่วนการลงทุน การจะเขียนให้อยู่ในรูป matrix จำเป็นต้องแยก vector น้ำหนักออกมาทางซ้ายและขวา</p>
-    <p>vector $w$ ทางขวามือถูกคูณเข้ากับ $\Sigma$ ได้ผลลัพธ์เป็น vector ขนาด $d\times 1$ ซึ่งบอกความเสี่ยงส่วนเพิ่มของแต่ละสินทรัพย์ จากนั้นการคูณด้วย $w^{\mathsf T}$ จากทางซ้ายจะยุบผลลัพธ์ทั้งหมดให้กลายเป็น scalar ตัวเดียว</p>
-    <p>เมื่อแทนตัวเลขจริงจากตลาดสองสินทรัพย์ เราจะเห็นผลลัพธ์ที่เป็นตัวเลขชัดเจน ความเสี่ยงรวมของพอร์ตคือ 0.089168 ซึ่งต่ำกว่าการถือครองสินทรัพย์เดี่ยวเพราะมีผลกระจายความเสี่ยงจาก covariance ที่ติดลบ</p>
-    <p>สังเกตว่า Σ ในบรรทัดนี้สมมาตร ช่องแถว 1 คอลัมน์ 2 กับช่องแถว 2 คอลัมน์ 1 เป็น −0.0559 เท่ากัน พลิกแล้วได้ตัวเดิม Σᵀ = Σ เพราะ covariance ของ A กับ B เท่ากับของ B กับ A เสมอ นี่คือเครื่องตรวจฟรีที่พูดถึงตอนต้นหัวข้อ</p>
-  </div>
+<p>Inner product ใช้คู่ดัชนีเดียวกันแล้วบวก จึงได้ scalar ส่วน outer product เก็บผลคูณทุกคู่เป็นตาราง ถึง inner product เป็นศูนย์ outer product ก็ไม่จำเป็นต้องเป็น zero matrix</p>
+<p>สำหรับจำนวนจริง $\mathbf u^{\mathsf T}\mathbf v=\sum_i u_i v_i=\sum_i v_i u_i=\mathbf v^{\mathsf T}\mathbf u$ แต่ outer products สองลำดับไม่จำเป็นต้องเท่ากัน หากทำงานกับจำนวนเชิงซ้อน inner product มาตรฐานต้องใช้ conjugate transpose ซึ่งต่างจาก transpose ที่เราศึกษาที่นี่</p>
+<figure class="plot">
+<img src="../figures/7.2-4.svg" alt="จำนวนแถวของAเท่ากับ3 ของtransposeเท่ากับ2 และของwเท่ากับ3" loading="lazy">
+<figcaption>รูป 7.2d ความสูงแท่งคือจำนวนแถว ไม่ใช่ exposure หรือความเสี่ยง อ่าน shape เต็มด้วย: $A$ เป็น $3\times2$, $A^{\mathsf T}$ เป็น $2\times3$, $w$ เป็น $3\times1$</figcaption>
+</figure>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 10 — ตรวจด้วยเลขของตัวเอง: transpose สองครั้ง และ quadratic form</h4>
-  <p>สองข้อที่ทั้งเล่มใช้ต่อจากนี้ ตรวจได้ด้วยเลขชุดเดียว ข้อแรก transpose สองครั้งแล้วกลับมาที่เดิม ข้อที่สอง quadratic form ให้ผลเป็นเลขตัวเดียว ไม่ใช่ matrix</p>
-  <div class="math">\[
-\begin{aligned}B&=\begin{bmatrix}2&amp;1\\
-0&amp;3\end{bmatrix},\qquad B^{\mathsf T}=\begin{bmatrix}2&amp;0\\
-1&amp;3\end{bmatrix}\\[4pt]
-(B^{\mathsf T})^{\mathsf T}&=\begin{bmatrix}2&amp;1\\
-0&amp;3\end{bmatrix}=B\\[6pt]
-x&=\begin{bmatrix}1\\
-2\end{bmatrix}\\[4pt]
-Bx&=\begin{bmatrix}2(1)+1(2)\\
-0(1)+3(2)\end{bmatrix}=\begin{bmatrix}4\\
-6\end{bmatrix}\\[4pt]
-x^{\mathsf T}Bx&=\begin{bmatrix}1&amp;2\end{bmatrix}\begin{bmatrix}4\\
-6\end{bmatrix}=1(4)+2(6)=16\end{aligned}
+<h2>4. ทำไม transpose ของผลคูณต้องกลับลำดับ?</h2>
+<p>ให้ $P$ ขนาด $m\times n$ และ $Q$ ขนาด $n\times p$ ผลคูณ $PQ$ ขนาด $m\times p$ หลัง transpose จึงเป็น $p\times m$ ซึ่งเป็นขนาดของ $Q^{\mathsf T}P^{\mathsf T}$ การพิสูจน์ว่าค่าเท่ากันต้องดูทีละช่องด้วย:</p>
+<div class="math">\[
+\begin{aligned}
+((PQ)^{\mathsf T})_{ij}
+ &=(PQ)_{ji}=\sum_{k=1}^{n}P_{jk}Q_{ki}\\
+ &=\sum_{k=1}^{n}(Q^{\mathsf T})_{ik}(P^{\mathsf T})_{kj}\\
+ &=(Q^{\mathsf T}P^{\mathsf T})_{ij},\\
+(PQ)^{\mathsf T}&=Q^{\mathsf T}P^{\mathsf T}.
+\end{aligned}
 \]</div>
-  <div class="reading">
-    <p>สลับ index สองครั้งก็เท่ากับไม่ได้สลับ จึงได้ $B$ กลับคืนมา ข้อนี้ทำให้เขียน $V=W^{\mathsf T}W$ แล้วไม่ต้องกังวลว่ารูปแบบจะเพี้ยน</p>
-    <p>ทางฝั่ง quadratic form: คูณจากขวาก่อนได้ $Bx=(4,6)$ แล้วคูณจากซ้ายด้วย $x^{\mathsf T}$ เหลือ $4+12=16$ ซึ่งเป็น matrix ขนาด $1\times1$ คือเลขตัวเดียว</p>
-    <p>ความกว้าง $1$ นี้มาจากการที่เราบังคับให้ index ทั้งสองฝั่งถูกบวกจนหมด จึงเป็นเหตุผลว่าทำไม portfolio variance ซึ่งเป็นความเสี่ยงก้อนเดียวจึงเขียนเป็น $w^{\mathsf T}Vw$ ได้</p>
-  </div>
+<p>บรรทัดกลางใช้ว่าตัวเลข $P_{jk}$ กับ $Q_{ki}$ คูณสลับกันได้ ไม่ได้สมมติว่า matrices คูณสลับกันได้ หากทั้งสองเป็นจัตุรัส ลำดับผิดอาจยังมี shape ถูก แต่ให้คำตอบผิด:</p>
+<div class="math">\[
+\begin{aligned}
+P&=\begin{bmatrix}1&2\\0&1\end{bmatrix},\quad
+Q=\begin{bmatrix}1&0\\3&1\end{bmatrix},\\
+PQ&=\begin{bmatrix}1+6&2\\3&1\end{bmatrix}
+ =\begin{bmatrix}7&2\\3&1\end{bmatrix},\\
+(PQ)^{\mathsf T}=Q^{\mathsf T}P^{\mathsf T}
+ &=\begin{bmatrix}7&3\\2&1\end{bmatrix},\\
+P^{\mathsf T}Q^{\mathsf T}
+ &=\begin{bmatrix}1&3\\2&7\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>สำหรับสาม matrices ใช้กฎเดิมสองครั้ง: $(PQR)^{\mathsf T}=R^{\mathsf T}(PQ)^{\mathsf T}=R^{\mathsf T}Q^{\mathsf T}P^{\mathsf T}$ ไม่ใช่แค่เติมเครื่องหมาย transpose โดยคงลำดับเดิม</p>
 </section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การพลิกแถวเป็นคอลัมน์ฟังดูเล็กน้อย แต่เป็นสิ่งที่ทำให้สูตรความเสี่ยงเขียนได้</p>
-  <p>ใช้ทำให้การคูณเป็นไปได้ เพราะกติกาการคูณบังคับเรื่องรูปร่าง การพลิกจึงเป็นขั้นที่ขาดไม่ได้</p>
-  <p>ใช้เขียนความเสี่ยงของพอร์ตในรูปที่สั้นที่สุด ซึ่งมีน้ำหนักปรากฏสองครั้ง ครั้งหนึ่งพลิกแล้ว</p>
-  <p>ใช้ตรวจว่า covariance ที่คำนวณมาถูกต้อง เพราะตารางนั้นต้องเท่ากับตัวพลิกของตัวเองเสมอ</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 7.2a — ภาพของการ transpose</h4>
-  <img src="../figures/7.2-1.svg" alt="Figure 7.2a — ภาพของการ transpose" loading="lazy">
-  <figcaption>
-    <p>ก่อน transpose แถวแทน assets และคอลัมน์แทน factors; ตัวเลขหกค่าเป็น unitless loadings ที่ผูกกับ label ทั้งสองแกน</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.2b — หลัง transpose</h4>
-  <img src="../figures/7.2-2.svg" alt="Figure 7.2b — หลัง transpose" loading="lazy">
-  <figcaption>
-    <p>หลัง transpose factor แต่ละตัวกลายเป็นหนึ่งแถวและ asset แต่ละตัวกลายเป็นหนึ่งคอลัมน์ ค่าเดิมไม่เปลี่ยนเลย จึงส่งเข้า factor-first API ได้โดยความหมายยังครบ</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.2c — อ่านค่าตามแถวและคอลัมน์</h4>
-  <img src="../figures/7.2-3.svg" alt="Figure 7.2c — อ่านค่าตามแถวและคอลัมน์" loading="lazy">
-  <figcaption>
-    <p>market column ของ $A$ กับ market row ของ $A^{\mathsf T}$ ให้แท่งสูงเท่ากันทุก asset นี่คือ operational check ว่า transpose สลับแกนโดยไม่สลับค่า</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 7.2d — ตรวจขนาดก่อนคูณ matrix</h4>
-  <img src="../figures/7.2-4.svg" alt="Figure 7.2d — ตรวจขนาดก่อนคูณ matrix" loading="lazy">
-  <figcaption>
-    <p>$A^{\mathsf T}$ มี shape สองคูณสาม จึงรับ position vector สามคูณหนึ่งและคืน factor vector สองคูณหนึ่งได้ พอดีที่ inner dimension เท่ากับสาม</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>คำตอบ — transpose สลับแกน แต่ค่าเดิมอยู่ครบ</h4>
-  <p>คำตอบ: transpose ของตาราง 3×2 ต้องมี shape 2×3 โดย market row เป็น [1.2, 0.9, 1.5] และ quality row เป็น [0.4, 0.2, 0.7] ค่า loading ทั้งหกตัวไม่เปลี่ยน มีเพียงตำแหน่งที่สลับ</p>
-  <p>ตรวจเองใน 10 วินาที: ดูช่อง market–SPY หลัง transpose ต้องได้ 1.5 เท่ากับช่อง SPY–market เดิม แล้ว transpose ซ้ำอีกครั้งต้องกลับเป็นตาราง 3×2 เดิมทุกช่อง</p>
-  <p>ใช้ตัดสินใจ: ส่ง matrix เข้า factor-first API ได้เมื่อ shape เป็น 2×3 และ labels เดินไปพร้อมแกน ถ้าตัวเลขตรงแต่ label ไม่ตรง ให้ reject ก่อนคำนวณ exposure</p>
+<h2>5. คลี่โจทย์เปิด: shape ถูก แต่เงินหายไปไหน?</h2>
+<p>สมมติสัญญาสามตัวจ่ายเงินสิ้นงวดตามสองสถานะดัง $S$ หน่วยของแต่ละช่องคือ USD ต่อหน่วยสัญญา ถือจำนวนหน่วย $\boldsymbol\theta=(2,6,4)^{\mathsf T}$ จึงมี payoff:</p>
+<div class="math">\[
+\begin{aligned}
+S&=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},\\
+S\boldsymbol\theta
+ &=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}
+ =\begin{bmatrix}50\\58\end{bmatrix},\\
+(S\boldsymbol\theta)^{\mathsf T}
+ &=\boldsymbol\theta^{\mathsf T}S^{\mathsf T}
+ =\begin{bmatrix}50&58\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>คำตอบเปลี่ยนจากคอลัมน์เป็นแถว แต่ payoff ของสถานะเดิมยังเป็นค่าเดิม ส่วน reshape ที่อ่านค่าทีละแถวแล้วจัดใหม่จะทำแบบนี้:</p>
+<div class="math">\[
+\begin{aligned}
+S^{\mathsf T}&=\begin{bmatrix}2&1\\3&6\\7&5\end{bmatrix},\qquad
+\widetilde S=\begin{bmatrix}2&3\\7&1\\6&5\end{bmatrix},\\
+\boldsymbol\theta^{\mathsf T}\widetilde S
+ &=\begin{bmatrix}4+42+24&6+6+20\end{bmatrix}\\
+ &=\begin{bmatrix}70&32\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>เงินไม่ได้หายจากพอร์ตจริง แต่โปรแกรมจับคู่จำนวนสัญญากับ payoff ผิดช่อง เหลือรูปตารางที่คูณกันได้แต่เล่าเรื่องคนละเรื่อง และ payoff สองสถานะนี้ยังไม่ใช่ expected profit เพราะยังไม่ให้โอกาสแต่ละสถานะหรือต้นทุนเริ่มต้น</p>
+<p><strong>ข้อควรระวัง:</strong> reshape กลับขนาดเดิมก็อาจคืนข้อมูลเดิมได้เหมือนกัน ดังนั้นการทดสอบ round-trip อย่างเดียวไม่พอ ต้องทดสอบชื่อแกนและ $(S^{\mathsf T})_{ji}=S_{ij}$ ทีละช่องด้วย</p>
 </section>
-
-<section class="example">
-  <h4>ตัวอย่างที่สอง — คำตอบและวิธีเช็ก</h4>
-  <p>คำตอบ: transpose สองครั้งได้ $B$ กลับคืนมา และ quadratic form ของตัวอย่างนี้เท่ากับ $16$ ซึ่งเป็นเลขตัวเดียว ไม่ใช่ตาราง</p>
-  <p>ตรวจเองใน 10 วินาที: ผลลัพธ์ของ quadratic form ต้องมีรูปร่าง $1\times1$ เสมอ ถ้าได้เป็น matrix แปลว่าลำดับการคูณผิดด้าน</p>
-  <p>ใช้ตัดสินใจ: เวลาเห็นสูตรความเสี่ยงในรูป quadratic form ให้อ่านว่ามันคือเลขตัวเดียว จึงเอาไปเทียบกับ budget ความเสี่ยงหรือใส่เป็นข้อจำกัดได้ทันที</p>
+<section class="formula">
+<h2>6. Covariance matrix ทำไม transpose แล้วเหมือนเดิม?</h2>
+<p>ให้ $\mathbf R$ เป็น vector ของ returns จำนวนจริงในงวดเดียวกัน มี finite second moments และ $\mu_i=E[R_i]$ จากนิยาม covariance:</p>
+<div class="math">\[
+\begin{aligned}
+\Sigma_{ij}
+ &=E[(R_i-\mu_i)(R_j-\mu_j)]\\
+ &=E[(R_j-\mu_j)(R_i-\mu_i)]\\
+ &=\Sigma_{ji},\qquad \Sigma^{\mathsf T}=\Sigma.
+\end{aligned}
+\]</div>
+<p>สมมาตรเกิดจากการสลับลำดับคูณของตัวเลข ไม่ได้เกิดจากความเป็นอิสระหรือการที่สินทรัพย์มีความเสี่ยงเท่ากัน Covariance นอกแนวทแยงจึงอาจเป็นบวก ลบ หรือศูนย์ได้</p>
+<p>หากตารางที่ประมาณมาไม่สมมาตร ให้ตรวจ labels, วันข้อมูล, วิธีคำนวณและการปัดก่อน เมื่อยืนยันแล้วว่าความต่างเป็นเพียง numerical noise จึงค่อยใช้ $(C+C^{\mathsf T})/2$ เพื่อให้สมมาตร การเฉลี่ยสองด้านไม่ซ่อมข้อมูลผิด และไม่รับประกันว่า matrix จะเป็น covariance ที่ใช้ได้</p>
 </section>
-
+<section class="formula">
+<h2>7. จาก covariance ไปสู่ variance หนึ่งค่า</h2>
+<p>ให้ $R_p=\mathbf w^{\mathsf T}\mathbf R$ โดย weights เป็นค่าคงที่ การถ่วง returns งวดเดียวกันทำให้ความเบี่ยงเบนจากค่าเฉลี่ยของพอร์ตเป็นผลรวมถ่วงน้ำหนักเช่นกัน:</p>
+<div class="math">\[
+\begin{aligned}
+\operatorname{Var}(R_p)
+ &=E\!\left[\left(\sum_i w_i(R_i-\mu_i)\right)^2\right]\\
+ &=\sum_i\sum_j w_iw_j E[(R_i-\mu_i)(R_j-\mu_j)]\\
+ &=\sum_i\sum_j w_i\Sigma_{ij}w_j
+ =\mathbf w^{\mathsf T}\Sigma\mathbf w.
+\end{aligned}
+\]</div>
+<p>Weights อยู่สองข้างเพราะขยายกำลังสอง ไม่ใช่เพราะอยากเติม transpose ให้สูตรดูถูก shape หาก weights สุ่มหรือปรับระหว่างงวด ต้องนิยาม return ของกลยุทธ์ให้ตรงก่อน ไม่ควรใช้สูตร fixed-weight นี้โดยไม่ตรวจเงื่อนไข</p>
+<p>ตัวอย่างสมมติให้ $\Sigma$ เป็น covariance ของ returns หนึ่งปีซึ่งวัดเป็นเศษส่วน และ $\mathbf w=(0.6,0.4)^{\mathsf T}$ เป็นน้ำหนัก ไม่ใช่จำนวนเงิน:</p>
+<div class="math">\[
+\begin{aligned}
+\Sigma&=\begin{bmatrix}0.1&-0.0559\\-0.0559&0.5\end{bmatrix},\\
+\Sigma\mathbf w
+ &=\begin{bmatrix}0.06-0.02236\\-0.03354+0.20\end{bmatrix}
+ =\begin{bmatrix}0.03764\\0.16646\end{bmatrix},\\
+\sigma_p^2&=0.6(0.03764)+0.4(0.16646)=0.089168,\\
+\sigma_p&=\sqrt{0.089168}\approx0.298610=29.8610\%.
+\end{aligned}
+\]</div>
+<p>ตรวจด้วยสูตรสองสินทรัพย์ได้อีกทาง: $0.6^2(0.1)+2(0.6)(0.4)(-0.0559)+0.4^2(0.5)=0.036-0.026832+0.08=0.089168$ ถ้าเผลอทิ้ง covariance จะได้ 0.116 ซึ่งเป็นคนละโมเดล</p>
+<p>แต่ละช่องของ $\Sigma\mathbf w$ คือ $\sum_j\operatorname{Cov}(R_i,R_j)w_j=\operatorname{Cov}(R_i,R_p)$ จึงไม่ใช่ volatility ของสินทรัพย์ และไม่ใช่ variance ของพอร์ตโดยลำพัง ต้องถ่วงด้วย $\mathbf w^{\mathsf T}$ อีกครั้งเพื่อรวมเป็น scalar</p>
+<details><summary>ถ้าเรียก marginal risk ต้องระบุว่าอะไรเปลี่ยน</summary>
+<p>กำหนด $V(\mathbf w)=\mathbf w^{\mathsf T}\Sigma\mathbf w$ และเปลี่ยนเฉพาะ weight ที่ $i$ ทีละ $h$ โดยตรึงตัวอื่น ใช้ความสมมาตรขยายได้:</p>
+<div class="math">\[
+\begin{aligned}
+V(\mathbf w+h\mathbf e_i)
+ &=V(\mathbf w)+2h(\Sigma\mathbf w)_i+h^2\Sigma_{ii},\\
+\lim_{h\to0}\frac{V(\mathbf w+h\mathbf e_i)-V(\mathbf w)}h
+ &=2(\Sigma\mathbf w)_i.
+\end{aligned}
+\]</div>
+<p>จึงมีอัตราเปลี่ยน variance เป็นสองเท่าของช่องนั้นใน $\Sigma\mathbf w$ แต่หากการซื้อสินทรัพย์หนึ่งต้องขายอีกตัวเพื่อรักษางบลงทุน จะมีหลาย weights เปลี่ยนพร้อมกัน ห้ามอ่านตัวเลขนี้เป็นผลของ trade แบบนั้นโดยตรง</p>
+</details>
+</section>
 <section class="pitfall">
-  <h4>กับดัก: reshape ไม่ใช่ transpose</h4>
-  <p>reshape เพียงจัดค่าตามลำดับข้อมูลที่ถูก flatten และไม่ได้สลับ index ตามนิยาม transpose ต่อให้ shape ที่ได้ดูพอดี label ก็อาจจับกับ value ผิด การ transpose ต้องอ้างอิง $(A^{\mathsf T})_{ij}=A_{ji}$ และควรตรวจว่า transpose ซ้ำสองครั้งคืน matrix เดิม</p>
+<h2>เป็น scalar และสมมาตร ก็ยังไม่พอจะเรียกว่า variance</h2>
+<p>Quadratic form เป็นคำเรียกนิพจน์ $\mathbf x^{\mathsf T}B\mathbf x$ เมื่อ $B$ จัตุรัส มันให้ scalar เพราะ $(1\times n)(n\times n)(n\times1)$ ลงท้ายที่ $1\times1$ แต่ $B$ ไม่จำเป็นต้องเป็น covariance:</p>
+<div class="math">\[
+\begin{aligned}
+B&=\begin{bmatrix}2&1\\0&3\end{bmatrix},\quad
+\mathbf x=\begin{bmatrix}1\\2\end{bmatrix},\\
+B\mathbf x&=\begin{bmatrix}4\\6\end{bmatrix},\quad
+\mathbf x^{\mathsf T}B\mathbf x=4+12=16.
+\end{aligned}
+\]</div>
+<p>เลข 16 ไม่ใช่ variance โดยอัตโนมัติ และ $B$ นี้ไม่ symmetric แม้เปลี่ยนเป็น symmetric part $(B+B^{\mathsf T})/2$ แล้ว quadratic form ยังได้ 16 เหมือนเดิม ก็ไม่ได้สร้างหลักฐานว่าตัวเลขมาจาก returns ชุดใด</p>
+<p>Covariance ที่ถูกต้องต้องให้ variance ไม่ติดลบสำหรับทุก linear combination ด้วย ลอง matrix ที่ symmetric แต่ใช้ไม่ได้:</p>
+<div class="math">\[
+\begin{aligned}
+C&=\begin{bmatrix}1&2\\2&1\end{bmatrix},\qquad
+\mathbf a=\begin{bmatrix}1\\-1\end{bmatrix},\\
+C\mathbf a&=\begin{bmatrix}-1\\1\end{bmatrix},\qquad
+\mathbf a^{\mathsf T}C\mathbf a=-1-1=-2.
+\end{aligned}
+\]</div>
+<p>Variance ติดลบเป็นไปไม่ได้ Matrix นี้จึงไม่ใช่ covariance ที่ถูกต้อง คุณสมบัติให้ quadratic form ไม่ติดลบสำหรับทุก vector เรียกว่า positive semidefinite ซึ่งจะศึกษาใน 7.6</p>
 </section>
-
-<section class="prose">
-  <h4>ที่มาที่ไป: การพลิกที่ทำให้สูตรความเสี่ยงเขียนได้</h4>
-  <p>การสลับแถวกับคอลัมน์ฟังดูเหมือนเรื่องเล็กที่สุดในบทนี้ แต่ถ้าไม่มีมัน สูตรความเสี่ยงของพอร์ตเขียนไม่ได้เลย</p>
-  <p>เหตุผลอยู่ที่กติกาการคูณ ซึ่งบังคับเรื่องรูปร่างอย่างเคร่งครัด น้ำหนักพอร์ตที่เขียนเป็นคอลัมน์ จะคูณกับตารางความเสี่ยงแล้วได้คอลัมน์ออกมา ซึ่งยังไม่ใช่ตัวเลขตัวเดียวที่เราต้องการ</p>
-  <p>การพลิกน้ำหนักให้เป็นแถวก่อนแล้วคูณอีกครั้ง คือขั้นตอนที่ยุบทุกอย่างเหลือตัวเลขตัวเดียว ซึ่งเป็นเหตุผลที่น้ำหนักปรากฏสองครั้งในสูตร โดยครั้งหนึ่งพลิกแล้ว</p>
-  <p>นอกจากนั้นมันยังให้เครื่องตรวจฟรี เพราะตารางความเสี่ยงต้องเท่ากับตัวพลิกของตัวเองเสมอ</p>
+<section class="example">
+<h2>ตรวจเองใน 10 วินาที</h2>
+<p><strong>ข้อ 1:</strong> หลัง transpose ตาราง loadings ช่องแถว Market คอลัมน์ SPY ต้องเป็นเท่าไร และเป็น loading ของใครต่อใคร?</p>
+<details><summary>ดูเฉลย</summary><p>1.5 เป็น loading ของ SPY ต่อ Market ในตารางสมมติเดิม ไม่ใช่ความไวของ Market ต่อ SPY การเปลี่ยนทิศอ่านไม่กลับความหมายทางเศรษฐศาสตร์</p></details>
+<p><strong>ข้อ 2:</strong> ถ้า weights ในตัวอย่าง covariance เพิ่มสองเท่าทั้งคู่ variance และ SD เปลี่ยนอย่างไร?</p>
+<details><summary>ดูเฉลย</summary><p>$(2w)^{\mathsf T}\Sigma(2w)=4w^{\mathsf T}\Sigma w$ จึงได้ variance 0.356672 และ SD ประมาณ 0.597220 หรือ 59.7220% เป็นกรณีเพิ่ม exposures โดยตรึงฐานที่ใช้วัด return ไม่ใช่แค่เปลี่ยนหน่วยของเงิน</p></details>
+<p><strong>ข้อ 3:</strong> Matrix จัตุรัส transpose แล้วไม่เปลี่ยนค่า แปลว่า inverse เท่ากับตัวเดิมหรือไม่?</p>
+<details><summary>ดูเฉลย</summary><p>ไม่แปลว่าอย่างนั้น $D=\operatorname{diag}(2,3)$ เป็น symmetric แต่ inverse คือ $\operatorname{diag}(1/2,1/3)$ เพราะผลคูณจึงได้ identity การเป็น symmetric กับการที่ transpose เท่ากับ inverse เป็นคนละเงื่อนไข</p></details>
 </section>
-
-<section class="prose">
-  <h4>ความเป็นมา: กำเนิด transpose จากการสลับดัชนีสู่ quadratic form</h4>
-  <p>Arthur Cayley เป็นผู้นิยาม transpose อย่างเป็นทางการในบทความปี 1858 เรื่องทฤษฎี matrix ก่อนหน้านั้น นักคณิตศาสตร์รุ่นก่อนหน้าอย่าง Joseph-Louis Lagrange และ Carl Friedrich Gauss ต้องศึกษา quadratic form โดยเขียนเครื่องหมายผลรวมสองชั้นยาวเหยียด และต้องคอยสลับดัชนี $i, j$ ด้วยมือทุกครั้งที่ต้องการวิเคราะห์สมมาตร</p>
-  <p>Cayley มองเห็นว่าการสลับแถวเป็นคอลัมน์คือการแปลงเชิงพีชคณิตที่เป็นเอกเทศ การใส่สัญลักษณ์ transpose ทำให้เกิดกฎความสัมพันธ์สำคัญอย่าง $(AB)^{\mathsf T} = B^{\mathsf T}A^{\mathsf T}$ ซึ่งช่วยให้การคำนวณในระบบหลายมิติง่ายขึ้นอย่างมหาศาล</p>
-  <p>ในโลกการเงินเชิงปริมาณ Harry Markowitz ในปี 1952 ได้นำ transpose มาใช้นิยาม portfolio variance ในรูป $w^{\mathsf T}\Sigma w$ หากไม่มี transpose เราจะไม่สามารถเชื่อม vector น้ำหนักพอร์ตเข้ากับ covariance matrix เพื่อยุบตัวเลขความเสี่ยงออกมาเป็น scalar ค่าเดียวได้เลย</p>
-</section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>ลำดับการคูณ</td><td>การพลิกไม่เปลี่ยนความหมาย</td><td>การพลิกเปลี่ยนลำดับการคูณ</td><td>ผลคูณสองแบบให้ผลต่างกันคนละเรื่อง อันหนึ่งเป็นตัวเลข อีกอันเป็นตาราง</td></tr>
-      <tr><td>ในโค้ด</td><td>มิติชัดเจน</td><td>ไลบรารีบางตัวยุบมิติที่มีขนาดหนึ่งทิ้งเงียบ ๆ</td><td>คำนวณผ่านแต่ผลผิด และไม่มีข้อความเตือน</td></tr>
-      <tr><td>ความสมมาตร</td><td>ตารางความเสี่ยงสมมาตรเสมอ</td><td>ตารางที่ประมาณมาอาจไม่สมมาตรเป๊ะเพราะการปัดเลข</td><td>ต้องบังคับให้สมมาตรก่อนใช้ ไม่งั้นวิธีคำนวณบางอย่างจะพัง</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวกลางคือข้อผิดพลาดที่พบบ่อยที่สุดเวลาเขียนโค้ดคำนวณความเสี่ยงครั้งแรก</p>
-  </div>
-</section>
-
 <section class="code">
-  <details>
-    <summary>โค้ดตรวจ transpose, กฎสลับลำดับ และ quadratic form</summary>
-    <pre><code>import numpy as np
-A = np.array([[1.2, 0.4], [0.9, 0.2], [1.5, 0.7]])
-assert A.T.shape == (2, 3) and np.array_equal(A.T.T, A) and A.T[0, 2] == A[2, 0]
-u, v = np.array([1., -2, 3]), np.array([4., 0.5, -1])
-assert u @ v == v @ u
-S = np.array([[2, 3, 7], [1, 6, 5]]); th = np.array([2, 6, 4])
-assert np.array_equal(S @ th, [50, 58]) and np.array_equal(th @ S.T, S @ th)
-rng = np.random.default_rng(0)
-P, Q = rng.random((3, 4)), rng.random((4, 2))
-assert np.allclose((P @ Q).T, Q.T @ P.T)                       # (PQ)^T = Q^T P^T
-Sig = np.array([[0.1, -0.0559], [-0.0559, 0.5]]); w = np.array([0.6, 0.4])
-assert np.allclose(Sig @ w, [0.03764, 0.16646]) and abs(w @ Sig @ w - 0.089168) &lt; 1e-9
-B = np.array([[2, 1], [0, 3]]); x = np.array([1, 2])
-assert np.array_equal(B.T.T, B) and np.array_equal(B @ x, [4, 6]) and x @ B @ x == 16</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดยืนยันว่า transpose สองครั้งกลับที่เดิม dot product สลับข้างได้ ผลคูณต้องสลับลำดับเมื่อ transpose ได้ 50 กับ 58 ทั้งสองทาง และ portfolio variance 0.089168 ตามขั้นที่ 9</p>
-  </div>
+<h2>JavaScript: ตรวจทีละช่อง ไม่ใช่แค่ตรวจ shape</h2>
+<p>โค้ดนี้แทน matrices ด้วย arrays ซ้อนสองชั้น เช่น column vector ใช้ <code>[[1], [2], [3]]</code> ส่วน <code>[1, 2, 3]</code> เป็น list ที่ยังไม่ได้ระบุทิศในสัญญาของฟังก์ชันนี้ จึงไม่รับเป็น matrix</p>
+<pre><code class="language-javascript" data-example="7.2">function shape(A) {
+  if (!Array.isArray(A) || !A.length || !Array.isArray(A[0]) || !A[0].length) {
+    throw new TypeError('Need a nonempty rectangular matrix');
+  }
+  const n = A[0].length;
+  if ([...A].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
+    throw new TypeError('Need a finite rectangular matrix');
+  }
+  return [A.length, n];
+}
+function transpose(A) {
+  const [, n] = shape(A);
+  return Array.from({length: n}, (_, j) =&gt; A.map(row =&gt; row[j]));
+}
+function multiply(A, B) {
+  const [, n] = shape(A), [m] = shape(B);
+  if (n !== m) throw new RangeError('Matrix dimensions do not match');
+  const Bt = transpose(B);
+  return A.map(row =&gt; Bt.map(col =&gt; row.reduce((s, x, k) =&gt; s + x * col[k], 0)));
+}
+const column = xs =&gt; xs.map(x =&gt; [x]);
+const A = [[1.2, .4], [.9, .2], [1.5, .7]], At = transpose(A);
+const u = column([1, -2, 3]), v = column([4, .5, -1]);
+const S = [[2, 3, 7], [1, 6, 5]], theta = column([2, 6, 4]);
+const wrongReshape = [[2, 3], [7, 1], [6, 5]];
+const P = [[1, 2], [0, 1]], Q = [[1, 0], [3, 1]];
+const Sigma = [[.1, -.0559], [-.0559, .5]], w = column([.6, .4]);
+const sigmaw = multiply(Sigma, w), variance = multiply(transpose(w), sigmaw)[0][0];
+const B = [[2, 1], [0, 3]], x = column([1, 2]);
+const symmetricPart = B.map((row, i) =&gt; row.map((b, j) =&gt; (b + B[j][i]) / 2));
+const badCov = [[1, 2], [2, 1]], a = column([1, -1]);
+console.log(JSON.stringify({
+  shapeA: shape(A), shapeAt: shape(At), At, twice: transpose(At), witness: At[0][2],
+  allCells: A.every((row, i) =&gt; row.every((value, j) =&gt; At[j][i] === value)),
+  inner: multiply(transpose(u), v), reversedInner: multiply(transpose(v), u), outer: multiply(u, transpose(v)),
+  payoffs: multiply(S, theta), rowPayoffs: multiply(transpose(theta), transpose(S)),
+  wrongPayoffs: multiply(transpose(theta), wrongReshape),
+  transposedProduct: transpose(multiply(P, Q)), reversedProduct: multiply(transpose(Q), transpose(P)),
+  wrongProduct: multiply(transpose(P), transpose(Q)), sigmaw, variance, sd: Math.sqrt(variance),
+  noCovVariance: .6 ** 2 * .1 + .4 ** 2 * .5,
+  doubledVariance: multiply(transpose(column([1.2, .8])), multiply(Sigma, column([1.2, .8])))[0][0],
+  Bx: multiply(B, x), quadratic: multiply(transpose(x), multiply(B, x))[0][0],
+  symmetricQuadratic: multiply(transpose(x), multiply(symmetricPart, x))[0][0],
+  invalidVariance: multiply(transpose(a), multiply(badCov, a))[0][0]
+}));</code></pre>
 </section>
-
+<details class="jargon"><summary>ศัพท์และสิ่งที่อย่าสับสน</summary><dl>
+<dt>Transpose</dt><dd>สลับดัชนีแถวและคอลัมน์ของข้อมูล โดยชื่อแกนต้องย้ายตาม</dd>
+<dt>Reshape</dt><dd>จัดรูป array ใหม่ตามลำดับที่กำหนด ไม่ใช่การสลับดัชนีตามนิยาม transpose</dd>
+<dt>Symmetric</dt><dd>Matrix จัตุรัสที่เท่ากับ transpose ของตัวเอง ไม่ได้แปลว่าเป็น inverse ของตัวเอง</dd>
+<dt>Quadratic form</dt><dd>นิพจน์ $x^{\mathsf T}Bx$ ที่ให้ scalar สำหรับ square matrix B; จะเป็น variance ต้องมีเงื่อนไขเพิ่มเติม</dd>
+</dl></details>
+<details><summary>ที่มาสั้น ๆ</summary><p>งานพีชคณิต matrix ของ Cayley ในศตวรรษที่ 19 ทำให้การจัดรูปผลรวมและ quadratic forms มีภาษากระชับ ต่อมาแนวคิด mean–variance ของ Markowitz ในปี 1952 ทำให้ covariance เป็นแกนกลางของการเลือกพอร์ต แต่ variance คำนวณด้วยผลรวมสองชั้นได้อยู่แล้ว Transpose ช่วยเขียนและตรวจโครงสร้าง ไม่ได้สร้างความเสี่ยงขึ้นจากสัญกรณ์</p></details>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>พลิกผลคูณต้องสลับลำดับ: (Sθ)ᵀ = θᵀSᵀ = [50 58] ส่วน Sᵀθᵀ แบบไม่สลับคูณไม่ได้เพราะมิติไม่ตรง และ covariance matrix พลิกแล้วได้ตัวเดิมเสมอ</li>
-    <li>transpose สลับ index ตาม $(A^{\mathsf T})_{ij}=A_{ji}$ โดยไม่เปลี่ยน element</li>
-    <li>shape $m\times n$ กลายเป็น $n\times m$</li>
-    <li>ใช้ transpose เพื่อหันข้อมูลให้ dot product และ matrix multiplication ถูกทิศ</li>
-    <li>reshape แบบไม่รักษา labels เป็นความเสี่ยงเชิงระบบ</li>
-    <li>รูปร่างของ transpose ไม่ต้องจำ: index สองตัวสลับที่ จำนวนแถวจึงกลายเป็นจำนวนคอลัมน์ตาม definition</li>
-    <li>quadratic form ให้ผลเป็นเลขตัวเดียว เพราะ index ทั้งสองฝั่งถูก sum จนหมด</li>
-  </ul>
+<h2>ก่อนส่งตารางต่อให้ระบบอื่น</h2>
+<ul>
+<li>ตรวจชื่อแกนและค่าทีละช่อง: $(A^{\mathsf T})_{ji}=A_{ij}$; shape และ round-trip อย่างเดียวไม่พอ</li>
+<li>Transpose ของผลคูณต้องกลับลำดับ แม้ลำดับผิดยังคูณกันได้</li>
+<li>Inner product เป็น scalar แต่ outer product เป็น matrix; วาง transpose คนละที่คือถามคนละคำถาม</li>
+<li>Covariance ต้อง symmetric และให้ variance ไม่ติดลบ ไม่ใช่ทุก quadratic form จะเป็นความเสี่ยง</li>
+</ul>
+<p>เมื่อรู้ว่าตัวเลขแต่ละช่องย้ายไปไหนแล้ว หัวข้อ 7.3 จะดูว่าการคูณสอง matrices รวมกติกาหลายขั้นเข้าด้วยกันอย่างไร</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="7.1.html">7.1 What a Matrix Is</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="7.3.html">7.3 Matrix Multiplication</a></div>
+<div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="7.1.html">7.1 What a Matrix Is</a></div>
+<div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="7.3.html">7.3 Matrix Multiplication</a></div>
 </nav>
 </div>
 </body>
