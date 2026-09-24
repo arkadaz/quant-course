@@ -10,307 +10,258 @@
 <body>
 <div class="wrap">
 <nav class="book-nav top-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
-  <a href="../chapters/6.html">บทที่ 6</a>
-  <span class="topic-progress">หัวข้อ 34/158</span>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a> <span aria-hidden="true">·</span>
+<a href="../chapters/6.html">บทที่ 6</a>
+<span class="topic-progress">หัวข้อ 34/158</span>
 </nav>
-
-<article class="topic" data-number="6.3" data-depends-on="6.2">
+<article class="topic" data-number="6.3" data-depends-on="6.1 6.2">
 <header class="topic-header">
-  <h1><span class="tnum">6.3</span> Basis</h1>
-  <p class="subtitle">เลือกชุดลูกศรที่สร้างพื้นที่ทั้งหมดโดยไม่ซ้ำซ้อน</p>
+<h1><span class="tnum">6.3</span> Basis</h1>
+<p class="subtitle">พอร์ตเดิม พิกัดใหม่: เปลี่ยนวิธีบรรยายโดยไม่ทำเงินหรือข้อมูลหาย</p>
 </header>
-
 <div class="hook">
-  <p>พอร์ตถือ AAPL \$6 ล้าน, JPM \$5 ล้าน และ XOM \$4 ล้าน ถ้าเขียนสองหุ้นแรกใหม่เป็น ขาที่ไปด้วยกัน บวก ขาที่สวนกัน แต่ละขาใหญ่เท่าไร?</p>
-  <p>เฉลย: ขาไปด้วยกัน 5.5 คือถือ AAPL และ JPM ข้างละ \$5.5 ล้าน ขาสวนกัน 0.5 คือ AAPL +0.5M กับ JPM −0.5M เพราะ 5.5 + 0.5 = 6 และ 5.5 − 0.5 = 5 ส่วน XOM คง 4 พอร์ตไม่เปลี่ยนเลย เปลี่ยนแค่แกนที่ใช้อ่าน</p>
-  <p>Basis คือชุด vector ที่ไม่ซ้ำกันและผสมแล้วสร้างทุกจุดในพื้นที่ได้ quant ใช้ย่อ risk factor หรือแทน portfolio ด้วยพิกัดที่ควบคุมได้</p>
+<p>พอร์ตถือ AAPL 6 ล้าน, JPM 5 ล้าน และ XOM 4 ล้าน USD รวม 15 ล้าน ฝ่ายวิเคราะห์เขียนพิกัดใหม่เป็น 5.5, 0.5 และ 4 ซึ่งบวกกันได้เพียง 10 ล้าน เงินอีก 5 ล้านหายไปไหน?</p>
+<details><summary>ลองคิดก่อนเปิดเฉลย</summary><p>ไม่มีเงินหาย พิกัด 5.5 หมายถึงตะกร้าที่ถือ AAPL และ JPM อย่างละ 5.5 ล้าน ส่วนพิกัด 0.5 หมายถึง long AAPL 0.5 ล้านและ short JPM 0.5 ล้าน รวมกลับได้ AAPL 6, JPM 5 และ XOM 4 ล้านเหมือนเดิม ห้ามบวกพิกัดใหม่เสมือนเป็นมูลค่าหุ้นสามตัว</p></details>
+<p>Basis คือชุดทิศทางที่ใช้บรรยาย vector ส่วน coordinates คือจำนวนที่คูณแต่ละทิศทาง การเปลี่ยน basis ไม่ใช่การซื้อขาย และการมีพิกัดที่อ่านง่ายขึ้นก็ยังไม่ใช่หลักฐานว่าพอร์ตเสี่ยงน้อยลง</p>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจากพอร์ตเดิม อ่านด้วยแกนใหม่</h4>
-  <p>พอร์ตถือ AAPL \$6 ล้าน JPM \$5 ล้าน และ XOM \$4 ล้าน นี่คือการอ่านพอร์ตในหน่วยของหุ้นรายตัว ซึ่งเป็นวิธีอ่านที่คุ้นที่สุด แต่ไม่ใช่วิธีเดียว</p>
-  <p>ลองอ่านใหม่ว่าพอร์ตนี้มีขาที่ไปด้วยกันกับขาที่สวนกันอย่างละเท่าไร ขาไปด้วยกันคือ \$5.5 ล้านข้างละตัว และขาสวนกันคือ AAPL บวก \$0.5 ล้านกับ JPM ลบ \$0.5 ล้าน บวกกันแล้วได้ 6 กับ 5 เท่าเดิมพอดี</p>
-  <p>เงินไม่ได้ขยับสักบาท เราแค่เปลี่ยนแกนที่ใช้อ่าน แต่แกนใหม่นี้ตอบคำถามที่แกนเดิมตอบไม่ได้ เช่นถ้าทั้งกลุ่มร่วงพร้อมกันเราเจ็บเท่าไร และถ้าสองตัวแยกทางกันเราเจ็บเท่าไร หัวข้อนี้คือกติกาว่าแกนชุดไหนใช้ได้ และเปลี่ยนไปมาอย่างไรโดยไม่ทำข้อมูลหาย</p>
-</section>
-
-<details class="jargon">
-  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
-  <dl>
-    <dt>basis</dt>
-    <dd>ชุดของ linearly independent vectors ที่ span พื้นที่ exposure ทั้งหมด ใช้เป็นภาษาพิกัดเพื่ออธิบาย portfolio เดิมในมุมที่ช่วยตัดสินใจได้</dd>
-    <dt>coordinate</dt>
-    <dd>coefficient ของ basis vector แต่ละตัว ใช้บอกว่า portfolio ประกอบจาก risk direction นั้นมากน้อยเพียงใด</dd>
-    <dt>canonical basis</dt>
-    <dd>basis มาตรฐานที่แต่ละ vector มี 1 หนึ่งตำแหน่งและ 0 ที่เหลือ ใช้แทนการถือสินทรัพย์ทีละชื่อโดยตรง</dd>
-    <dt>change of basis</dt>
-    <dd>การเขียน vector เดิมด้วย coordinates ของ basis ชุดใหม่ ใช้แปลงรายชื่อ position เป็น factor exposure โดยไม่เปลี่ยน P&amp;L ของ portfolio</dd>
-    <dt>factor</dt>
-    <dd>driver ร่วมที่ทำให้สินทรัพย์หลายตัวเคลื่อนไหวไปทางเดียวกัน ใช้รวมความเสี่ยงที่กระจายอยู่ตาม ticker ให้เห็นเป็นไม่กี่ก้อนที่ hedge ได้</dd>
-    <dt>liquidity</dt>
-    <dd>ความสามารถในการซื้อหรือขาย instrument ได้ตามขนาดที่ต้องการโดยไม่ทำให้ราคาเคลื่อนมาก ใช้ตัดสินว่า risk direction ใน basis มี hedge ที่ลงมือทำได้จริงหรือมีเพียงชื่อสวยบน dashboard</dd>
-    <dt>chief investment officer (CIO)</dt>
-    <dd>ผู้บริหารที่รับผิดชอบภาพรวมการลงทุนและความเสี่ยงขององค์กร ใช้กำหนด mandate จัดสรร risk budget และตัดสินใจว่า exposure ใดควรถือหรือ hedge</dd>
-  </dl>
-</details>
-
-<details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$\mathbf{x}$</td><td>vector exposure ของ portfolio เดียวกันในสินทรัพย์ดั้งเดิม</td><td>USD millions</td></tr>
-      <tr><td>$\mathbf{e}_i$</td><td>canonical basis vector ตัวที่ $i$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$\mathbf{b}_i$</td><td>basis vector ใหม่ที่แทน risk direction หรือ factor</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$c_i$</td><td>coordinate หรือขนาดของ basis vector $\mathbf{b}_i$</td><td>USD millions</td></tr>
-      <tr><td>$B$</td><td>matrix ที่วาง basis vectors เป็น columns</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$\mathbf{c}$</td><td>column vector ของ coordinates ใน basis ใหม่</td><td>USD millions</td></tr>
-    </tbody>
-  </table>
-</details>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การเลือกชุดแกนที่เหมาะ ทำให้ปัญหาที่ดูยุ่งกลายเป็นเรื่องง่ายทันที</p>
-  <p>ใช้เปลี่ยนมุมมองความเสี่ยงจากรายตัว ไปเป็นความเสี่ยงตามปัจจัย เช่นแทนที่จะดูหุ้นสองร้อยตัว ก็ดูแค่ความเสี่ยงต่อตลาด ต่อขนาดบริษัท และต่อมูลค่า</p>
-  <p>ใช้ในงานพันธบัตร ที่แทนการดูอายุทุกช่วง ด้วยการดูแค่สามทิศคือระดับ ความชัน และความโค้ง ซึ่งเราจะสร้างมันเองในหัวข้อ 17.4</p>
-  <p>ใช้ลดจำนวนตัวเลขที่ต้องประมาณ ซึ่งเป็นเหตุผลเชิงปฏิบัติที่สำคัญที่สุด</p>
-</section>
-
+<h2>1. เริ่มจาก basis ที่ใช้อยู่โดยไม่รู้ตัว</h2>
+<p>ใช้พอร์ตสมมติหุ้นสหรัฐข้างต้น หน่วยของทุกพิกัดเดิมคือหนึ่งล้าน USD เรียง AAPL, JPM, XOM เราเขียนพอร์ตด้วยแกนที่เลือกหุ้นทีละตัวได้ว่า</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf e_1&=\begin{bmatrix}1\\0\\0\end{bmatrix},\quad
+\mathbf e_2=\begin{bmatrix}0\\1\\0\end{bmatrix},\quad
+\mathbf e_3=\begin{bmatrix}0\\0\\1\end{bmatrix},\\
+\mathbf x&=6\mathbf e_1+5\mathbf e_2+4\mathbf e_3
+=\begin{bmatrix}6\\5\\4\end{bmatrix}.
+\end{aligned}
+\]</div>
+<p>นี่คือ canonical หรือ standard basis: หนึ่งแกนต่อหนึ่งหุ้น เหมาะกับการดูสถานะและส่งคำสั่งซื้อขาย แต่เราอาจอยากแยก “ถือ AAPL กับ JPM เท่ากัน” ออกจาก “ถือ AAPL มากกว่า JPM” จึงเลือกแกนใหม่:</p>
+<div class="math">\[
+\mathbf b_1=\begin{bmatrix}1\\1\\0\end{bmatrix},\quad
+\mathbf b_2=\begin{bmatrix}1\\-1\\0\end{bmatrix},\quad
+\mathbf b_3=\begin{bmatrix}0\\0\\1\end{bmatrix}.
+\]</div>
+<div class="table-wrap"><table>
+<thead><tr><th>แกน</th><th>หนึ่งหน่วยของพิกัดหมายถึง</th><th>มูลค่าสุทธิของหุ้น</th></tr></thead>
+<tbody>
+<tr><td>$\mathbf b_1$ common</td><td>long AAPL และ JPM อย่างละ 1 ล้าน USD</td><td>2 ล้าน USD</td></tr>
+<tr><td>$\mathbf b_2$ relative</td><td>long AAPL 1 ล้าน และ short JPM 1 ล้าน USD</td><td>ศูนย์</td></tr>
+<tr><td>$\mathbf b_3$ XOM</td><td>long XOM 1 ล้าน USD</td><td>1 ล้าน USD</td></tr>
+</tbody></table></div>
+<p>Common ในที่นี้เป็นชื่อของตะกร้า long-long ไม่ใช่ผลวิจัยว่าหุ้นสองตัวเคลื่อนไหวเหมือนกัน และ relative ที่มี net dollar exposure ศูนย์ก็ยังมีความเสี่ยง ไม่ได้เป็น market-neutral โดยอัตโนมัติ</p>
 <figure class="plot">
-  <h4>Figure 6.3a — พอร์ตเดียวกัน อ่านได้สองระบบพิกัด</h4>
-  <img src="../figures/6.3-1.svg" alt="Figure 6.3a — พอร์ตเดียวกัน อ่านได้สองระบบพิกัด" loading="lazy">
-  <figcaption>
-    <p>จุดสีน้ำเงินคือ portfolio เดิมและไม่ขยับ สิ่งที่เปลี่ยนมีเพียงแกนพิกัด: ticker coordinates ตอบว่า “เราถืออะไร” ส่วน factor coordinates ตอบว่า “อะไรจะทำให้หลาย position เจ็บพร้อมกัน”</p>
-  </figcaption>
+<img src="../figures/6.3-1.svg" alt="จุดพอร์ตเดิมกับแนวแกนสองชุดในภาพประกอบสองมิติ" loading="lazy">
+<figcaption>รูป 6.3a จุดที่มีป้าย same portfolio ไม่ย้ายเมื่อเปลี่ยนแนวแกน ภาพนี้เป็นแนวคิดสองมิติ ไม่ใช่ข้อมูลสามหุ้นหรือมาตราส่วนหนึ่งหน่วยของตัวอย่างในตาราง</figcaption>
 </figure>
-
-<section class="prose">
-  <h4>เริ่มจากภาษาของ positions</h4>
-  <p>สมมติ $\mathbf{x}$ วัดเป็น USD millions ตามลำดับ AAPL, JPM, XOM canonical basis เหมาะกับการส่ง order และ reconcile custodian เพราะ coordinate หนึ่งตัวตรงกับหุ้นหนึ่งชื่อ แต่ไม่ช่วยตอบว่า sector shock จะกระทบก้อนใดพร้อมกัน</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — เขียน exposure ใน canonical basis</h4>
-  <p>ปกติเราเขียนความเสี่ยงในหน่วยของสินทรัพย์แต่ละตัว ซึ่งเป็นการเลือกแกนแบบหนึ่ง แต่ไม่ใช่แกนเดียวที่ใช้ได้</p>
-  <div class="math">\[
-\mathbf{x}=6\mathbf{e}_1+5\mathbf{e}_2+4\mathbf{e}_3=\begin{bmatrix}6\\
-5\\
-4\end{bmatrix}
-\]</div>
-  <div class="reading">
-    <p>ตัวแรกคือเงินที่พอร์ตวางไว้ทั้งหมด นับเป็นล้าน USD ส่วนลูกศรสามตัวถัดมาคือ canonical basis ซึ่งเป็นทิศของ AAPL, JPM และ XOM ตามลำดับ</p>
-    <p>ตัวเลข 6, 5 และ 4 ที่คูณอยู่หน้าลูกศรแต่ละตัว คือเงินที่ถือ long ในหุ้นตัวนั้น คือ \$6 ล้าน \$5 ล้าน และ \$4 ล้าน รวมกันได้ \$15 ล้าน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — เขียน basis ชุดใหม่ของ risk directions</h4>
-  <p>แกนชุดใหม่จะใช้ได้ต้องมีสองสมบัติ คือไม่ซ้ำกันเอง และครอบคลุมทุกทิศที่เป็นไปได้</p>
-  <div class="math">\[
-B=\begin{bmatrix}1&amp;1&amp;0\\
-1&-1&amp;0\\
-0&amp;0&amp;1\end{bmatrix},\qquad \mathbf{x}=B\mathbf{c}
-\]</div>
-  <div class="reading">
-    <p>แต่ละ column ของ $B$ คือ risk direction หนึ่งแบบ: AAPL กับ JPM ไปทางเดียวกัน, AAPL สวนกับ JPM, และ XOM เดี่ยว ๆ</p>
-    <p>$\mathbf{c}$ บอกว่าต้องผสมแต่ละ direction มากแค่ไหนเพื่อประกอบกลับเป็น portfolio เดิม $\mathbf{x}$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ตรวจสอบเงื่อนไข Basis: คำนวณ Determinant เพื่อยืนยันว่าแกนไม่ซ้ำซ้อน</h4>
-  <p>ค่า determinant ที่ไม่เท่ากับศูนย์เป็นหลักประกันว่า columns ของ $B$ ไม่มีทิศทางใดทับซ้อนกัน จึงรับประกันว่า $B$ สามารถกลับค่า (invertible) ได้ และทุกพอร์ตสามหุ้นจะมีพิกัดบน basis นี้เสมอ</p>
-  <div class="math">\[
+<h2>2. Basis ต้องสร้างได้ครบ และเขียนได้ไม่กำกวม</h2>
+<p>Basis ของพื้นที่ $V$ ต้องมีสองคุณสมบัติ: span ครบ $V$ และ linearly independent คุณสมบัติแรกทำให้ทุก vector ในพื้นที่มีคำบรรยาย ส่วนคุณสมบัติที่สองทำให้คำบรรยายนั้นมีชุดเดียว</p>
+<p>สำหรับแกนใหม่ ให้ $\mathbf x=(x_A,x_J,x_X)^{\mathsf T}$ เป็นพอร์ตใด ๆ การเขียน $\mathbf x=c_1\mathbf b_1+c_2\mathbf b_2+c_3\mathbf b_3$ เท่ากับแก้</p>
+<div class="math">\[
 \begin{aligned}
-\det(B) &= \det\begin{bmatrix}1&1&0\\
-1&-1&0\\
-0&0&1\end{bmatrix} \\
-&= 1\cdot((-1)(1) - (0)(0))\\
-&\quad - 1\cdot((1)(1) - (0)(0)) + 0 \\
-&= 1(-1) - 1(1) = -2 \ne 0
+c_1+c_2&=x_A,\\
+c_1-c_2&=x_J,\\
+c_3&=x_X,\\
+c_1&=\frac{x_A+x_J}{2},\qquad
+c_2=\frac{x_A-x_J}{2}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ก่อนจะนำชุด vector ใด ๆ มาใช้เป็น basis ต้องตรวจสองคุณสมบัติคือเป็นอิสระต่อกันและแผ่คลุมมิติได้ครบ สำหรับ matrix จัตุรัสขนาด $3\times 3$ สองเงื่อนไขนี้ยุบรวมเหลือการตรวจสอบ determinant เพียงค่าเดียว</p>
-    <p>กระจายตามแถวแรก พจน์แรกได้ผลคูณทแยง $-1$ พจน์ที่สองลบด้วย $1$ รวมกันได้ $-2$ ซึ่งไม่เท่ากับศูนย์ ยืนยันว่าทั้งสามคอลัมน์ไม่ซ้ำซ้อนและเป็น basis ที่ถูกต้องของพื้นที่ 3 มิติ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — ทำไมพิกัดในแกนชุดหนึ่งมีได้ชุดเดียว</h4>
-  <p>สองสมบัติของแกนชุดใหม่ในขั้นที่ 2 ทำงานคนละหน้าที่ ความครอบคลุมรับประกันว่าเขียนได้ ส่วน linear independence รับประกันว่าเขียนได้แบบเดียว ข้อหลังนี่เองที่ทำให้พูดคำว่าพิกัดของพอร์ตได้</p>
-  <div class="math">\[
+<p>สูตรนี้ให้คำตอบสำหรับทุกพอร์ตใน $\mathbb R^3$ และเมื่อ $\mathbf x=\mathbf0$ จะบังคับให้ $c_1=c_2=c_3=0$ จึงได้ทั้ง spanning และ independence แกนสามตัวนี้เป็น basis ของ $\mathbb R^3$ จริง ไม่ใช่เพียงตั้งชื่อแล้วเรียกว่า basis</p>
+<details><summary>ทำไม independence จึงรับประกันพิกัดชุดเดียว?</summary>
+<p>สมมติพอร์ตเดียวมีพิกัดสองชุด $\mathbf c$ และ $\mathbf d$ ลบคำบรรยายสองชุดออกจากกัน:</p>
+<div class="math">\[
 \begin{aligned}
-\mathbf{x}&=\sum_i a_i\mathbf{v}_i=\sum_i b_i\mathbf{v}_i\\
-\mathbf{0}&=\sum_i\big(a_i-b_i\big)\mathbf{v}_i\\[4pt]
-&\mathbf{v}_1,\dots,\mathbf{v}_n\ \text{independent}\\
-&\;\Longrightarrow\;a_1-b_1=\cdots=a_n-b_n=0\\
-a_i&=b_i
+\sum_i c_i\mathbf b_i&=\sum_i d_i\mathbf b_i,\\
+\sum_i(c_i-d_i)\mathbf b_i&=\mathbf0,\\
+\text{independence}&\ \Longrightarrow\ c_i-d_i=0\ \text{for all }i.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>ถามคำถามที่ดูเหมือนไม่จำเป็นก่อน ถ้าเขียนจุดเดิมด้วยแกนชุดเดียวกันสองครั้ง จะได้ตัวเลขชุดเดียวกันเสมอไหม ถ้าไม่ ภาษาที่เราเพิ่งสร้างขึ้นก็กำกวม และทั้งหัวข้อนี้ก็ใช้ไม่ได้</p>
-    <p>วิธีตอบคือสมมติไปเลยว่ามีสองชุด แล้วลบกัน ผลต่างกลายเป็นการผสมแกนที่ได้ผลลัพธ์เป็นศูนย์</p>
-    <p>ตรงนี้เองที่ linear independence ทำงาน นิยามของมันในหัวข้อ 6.2 บอกว่าการผสมที่ได้ศูนย์ มีทางเดียวคือตัวคูณทุกตัวเป็นศูนย์ ผลต่างทุกตัวจึงเป็นศูนย์ และสองชุดนั้นคือชุดเดียวกัน</p>
-    <p>นั่นคือเหตุผลที่การเปลี่ยนแกนในขั้นถัดไปไม่ทำให้ความเสี่ยงเปลี่ยน มันเปลี่ยนแค่ตัวเลขที่ใช้เรียกจุดเดิม และตัวเลขชุดนั้นมีได้ชุดเดียวเท่านั้น</p>
-  </div>
+<p>จึงได้ $\mathbf c=\mathbf d$ ถ้าขาด spanning อาจมีพอร์ตที่เขียนไม่ได้เลย ถ้าขาด independence อาจมีหลายพิกัดที่เขียนพอร์ตเดียวกันได้</p>
+</details>
+<p>ต้องบอกด้วยว่าเป็น basis ของพื้นที่ใด เช่น A และ B ในหัวข้อ 6.2 เป็น basis ของระนาบที่สองกองนั้นสร้างได้ แต่ไม่ใช่ basis ของทั้ง $\mathbb R^3$ จำนวนแกนของ basis เท่ากับมิติของพื้นที่ที่สนใจ ไม่ใช่จำนวนหุ้นที่ต้องเท่ากันในทุกกรณี</p>
 </section>
-
 <section class="formula">
-  <h4>ขั้นที่ 4 — หา coordinates ใหม่ด้วยการแก้สมการสามบรรทัด</h4>
-  <p>ไม่ต้องกลับ matrix เลย สามสมการนี้แก้ด้วยมือได้: บวกสองบรรทัดแรกให้ $c_2$ หายไป แล้วแทนกลับ ตัวเลขเปลี่ยนแต่ความเสี่ยงจริงเท่าเดิม เปลี่ยนแค่ภาษาที่ใช้อธิบาย</p>
-  <div class="math">\[
-\begin{aligned}B\mathbf{c}=\mathbf{x}\;&\Longrightarrow\;\begin{cases}c_1+c_2=6\\
-c_1-c_2=5\\
-c_3=4\end{cases}\\
-(1)+(2):\quad 2c_1&=11\;\Longrightarrow\;c_1=5.5\\
-c_2&=6-5.5=0.5\\
-\mathbf{c}&=\begin{bmatrix}5.5\\
-0.5\\
-4\end{bmatrix}\\
-B\mathbf{c}&=\begin{bmatrix}5.5+0.5\\
-5.5-0.5\\
-4\end{bmatrix}=\begin{bmatrix}6\\
-5\\
-4\end{bmatrix}\;\checkmark\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$c_1=5.5$ หมายถึงถือ AAPL และ JPM ข้างละ \$5.5 ล้าน ตามทิศ “ไปด้วยกัน” ไม่ใช่เงินก้อนรวม \$5.5 ล้าน; $c_2=0.5$ เพิ่ม AAPL และลด JPM อย่างละ \$0.5 ล้าน ตามทิศ “สวนกัน”; $c_3=4$ คือ XOM \$4 ล้าน</p>
-    <p>บรรทัดสุดท้ายคือการตรวจ: ผสมกลับด้วย $B$ ต้องได้พอร์ตเดิม $[6,5,4]$ พอดี สัญลักษณ์ $B^{-1}$ ในตำราคือชื่อของ “การแก้สมการนี้” ซึ่งหัวข้อ 7.5 จะทำเป็นกฎทั่วไป</p>
-    <p>สัญลักษณ์ $(1)+(2)$ หมายถึงเอาสมการบรรทัดแรกบวกบรรทัดที่สอง ซึ่งทำให้ $c_2$ หายไปพอดี เหลือตัวไม่รู้ค่าตัวเดียว ส่วนบรรทัดสุดท้ายคือการแทนคำตอบกลับเข้าไปตรวจ ต้องได้ของเดิมทุกช่อง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — คำนวณ Coordinates ผ่าน Matrix ผกผัน $B^{-1}$</h4>
-  <p>การใช้ matrix ผกผัน $B^{-1}$ แสดงให้เห็นว่าการเปลี่ยน basis คือการฉายพอร์ตลงบนมุมมองความเสี่ยงใหม่ แถวของ $B^{-1}$ ทำหน้าที่เป็นตัววัดที่แยกแยะว่าพอร์ตเดิมมี exposure ต่อแต่ละความเสี่ยงอยู่เท่าใด โดยที่มูลค่ารวมของพอร์ตยังคงเท่ากับ $\$15M$ เท่าเดิมทุกประการ</p>
-  <div class="math">\[
+<h2>3. หาพิกัด แล้วคูณกลับเพื่อพิสูจน์ว่าเป็นพอร์ตเดิม</h2>
+<p>แทน $x_A=6,x_J=5,x_X=4$ ลงในสมการที่แก้ไว้ ไม่ต้องเดาส่วนผสม:</p>
+<div class="math">\[
 \begin{aligned}
-B^{-1} &= \begin{bmatrix}0.5 & 0.5 & 0\\
-0.5 & -0.5 & 0\\
-0 & 0 & 1\end{bmatrix} \\
-\mathbf{c} &= B^{-1}\mathbf{x}\\
-&= \begin{bmatrix}0.5 & 0.5 & 0\\
-0.5 & -0.5 & 0\\
-0 & 0 & 1\end{bmatrix}\begin{bmatrix}6\\
-5\\
-4\end{bmatrix} \\
-&= \begin{bmatrix}0.5(6) + 0.5(5)\\
-0.5(6) - 0.5(5)\\
-1(4)\end{bmatrix}\\
-&= \begin{bmatrix}3+2.5\\
-3-2.5\\
-4\end{bmatrix} = \begin{bmatrix}5.5\\
-0.5\\
-4\end{bmatrix}
+c_1&=(6+5)/2=5.5,\\
+c_2&=(6-5)/2=0.5,\qquad c_3=4,\\
+5.5\mathbf b_1+0.5\mathbf b_2+4\mathbf b_3
+ &=\begin{bmatrix}5.5+0.5\\5.5-0.5\\4\end{bmatrix}
+ =\begin{bmatrix}6\\5\\4\end{bmatrix}.
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>แทนที่จะแก้สมการทีละบรรทัด เราสามารถหาพิกัดใหม่ได้ในขั้นตอนเดียว ด้วยการคูณ matrix ผกผัน $B^{-1}$ ทางด้านซ้ายของ vector เดิม</p>
-    <p>สังเกตความหมายทางการเงินของแถวใน $B^{-1}$: แถวแรกคำนวณค่าเฉลี่ยของ AAPL และ JPM ได้ $\$5.5M$ ซึ่งเป็นขนาดของความเสี่ยงที่วิ่งไปในทิศทางเดียวกัน</p>
-    <p>แถวที่สองคำนวณครึ่งหนึ่งของผลต่างได้ $\$0.5M$ ซึ่งเป็นขนาดของการเก็งกำไรระยะห่างระหว่างสองหุ้น ส่วนแถวที่สามส่งผ่านมูลค่า XOM ออกมาตรง ๆ $\$4M$</p>
-  </div>
-</section>
-
+<p>นำ basis vectors วางเป็น <strong>คอลัมน์</strong> ของ matrix $B$ จะย่อการคูณกลับเป็น $\mathbf x=B\mathbf c$ และการหาพิกัดเป็น $\mathbf c=B^{-1}\mathbf x$:</p>
+<div class="math">\[
+\begin{aligned}
+B&=\begin{bmatrix}1&1&0\\1&-1&0\\0&0&1\end{bmatrix},\\
+B^{-1}&=\begin{bmatrix}1/2&1/2&0\\1/2&-1/2&0\\0&0&1\end{bmatrix},\\
+\det B&=(1(-1)-1(1))1=-2\ne0.
+\end{aligned}
+\]</div>
+<p>แถวแรกของ inverse ทำหน้าที่หาค่าเฉลี่ย AAPL/JPM แถวที่สองหาครึ่งหนึ่งของผลต่าง แถวที่สามเก็บ XOM ตามเดิม จึงอ่าน inverse ได้จากสมการที่เพิ่งแก้ ไม่ใช่สูตรใหม่ที่ต้องจำโดยไม่มีที่มา</p>
 <figure class="plot">
-  <h4>Figure 6.3b — เปลี่ยนสถานะให้เป็นกลุ่มความเสี่ยงที่อ่านออก</h4>
-  <img src="../figures/6.3-2.svg" alt="Figure 6.3b — เปลี่ยนสถานะให้เป็นกลุ่มความเสี่ยงที่อ่านออก" loading="lazy">
-  <figcaption>
-    <p>coordinates $[5.5,0.5,4]^\top$ มีหน่วย USD millions แต่ห้ามบวกเป็นมูลค่า book: basis vector แรกถือ AAPL และ JPM พร้อมกัน. สิ่งที่ต้องอนุรักษ์คือ $B\mathbf{c}=\mathbf{x}=[6,5,4]^\top$ ไม่ใช่ผลรวม coordinates</p>
-  </figcaption>
+<img src="../figures/6.3-2.svg" alt="พิกัดcommon5.5 relative0.5 และXOM4ในbasisที่กำหนด" loading="lazy">
+<figcaption>รูป 6.3b แท่งแสดงสัมประสิทธิ์ 5.5, 0.5, 4 ของแกนที่นิยามไว้ ไม่ใช่ variance contribution หรือค่าความเสี่ยงที่ประมาณจากข้อมูลราคา</figcaption>
 </figure>
-
+</section>
 <section class="example">
-  <h4>กลับไปตอบ CIO</h4>
-  <p>คำตอบที่ดีไม่ใช่ “เราถือสามชื่อ” แต่คือ “coefficient ของ common AAPL-JPM direction เท่ากับ \$5.5 ล้าน ซึ่งลงบนสอง legs ข้างละ \$5.5 ล้าน, relative AAPL-versus-JPM เท่ากับ \$0.5 ล้าน, และ XOM-specific เท่ากับ \$4 ล้าน” จากนั้น chief investment officer เลือกได้ว่าจะลด market-like direction, ปิด relative view, หรือคง energy thesis ไว้ — basis เปลี่ยนรายการ holdings ให้เป็นปุ่มตัดสินใจโดยไม่แกล้งทำว่า coordinates คือ cash buckets</p>
-  <p>คำถาม: basis ที่แยก common AAPL-JPM \$5.5 ล้าน, relative \$0.5 ล้าน และ XOM-specific \$4 ล้าน ช่วยตัดสินใจอย่างไร?</p>
-  <p>ของที่มี: common direction \$5.5 ล้าน, relative direction \$0.5 ล้าน, XOM-specific direction \$4 ล้าน.</p>
-  <p>1 รวม \$5.5 ล้าน กับ \$0.5 ล้าน ได้ \$6.0 ล้าน ของ exposure ที่โยงกับคู่ AAPL-JPM</p>
-  <p>2 เทียบ \$0.5 ล้าน กับ common \$5.5 ล้าน จะเห็นว่า relative view เล็กกว่ามาก</p>
-  <p>เฉลย: ถ้าต้องลด market-like risk ให้ลด common direction \$5.5 ล้าน ก่อน ไม่ใช่เผลอปิด energy thesis \$4 ล้าน.</p>
-  <p>เช็ก 10 วินาที: \$5.5 ล้าน + \$0.5 ล้าน = \$6.0 ล้าน.</p>
-  <p>งานจริง: basis เปลี่ยนรายการ holdings ให้กลายเป็นปุ่มความเสี่ยงที่ chief investment officer กดได้</p>
-  <p>กับดัก: อย่าคิดว่า basis coefficient คือ cash bucket จริง; มันคือพิกัดของ exposure ที่เปลี่ยนได้ตาม basis ที่เลือก</p>
-</section>
-
+<h2>4. ทำไมพิกัดรวมได้ 10 แต่พอร์ตยังมี 15 ล้าน?</h2>
+<p>แต่ละหน่วยของ common มีสองขา ส่วน relative มี long กับ short หักล้างมูลค่าสุทธิ จึงต้องแปลงตามความหมายของแกนก่อนรวม:</p>
+<div class="math">\[
+\begin{aligned}
+\text{net stock value}&=2c_1+0c_2+c_3\\
+ &=2(5.5)+4=15\ \text{million USD},\\
+c_1+c_2+c_3&=10\quad\text{(not the stock value)}.
+\end{aligned}
+\]</div>
+<p>ถ้าพอร์ตไม่มีเงินสดหรือหนี้อื่น NAV ก็เท่ากับมูลค่าหุ้น 15 ล้านนี้ การบรรยายใหม่ไม่สร้าง cash flow แม้ผลรวมตัวเลขบนรายงานจะเปลี่ยน</p>
+<p>เรายังย่อแกน common เป็น $\widetilde{\mathbf b}_1=\mathbf b_1/2=(0.5,0.5,0)^{\mathsf T}$ ได้ เพื่อให้หนึ่งหน่วยหมายถึงตะกร้ามูลค่าสุทธิหนึ่งล้าน พิกัด common ต้องเพิ่มเป็นสองเท่า:</p>
+<div class="math">\[
+5.5\mathbf b_1=11\widetilde{\mathbf b}_1,\qquad
+\widetilde{\mathbf c}=\begin{bmatrix}11\\0.5\\4\end{bmatrix}.
+\]</div>
+<p>ยังเป็นพอร์ตเดิม จึงไม่ควรเปรียบเทียบขนาดพิกัดต่างรายงานโดยไม่ตรวจ normalization ของแกนก่อน ตัวเลขพิกัดที่ใหญ่ขึ้นอาจเกิดจากการเปลี่ยนหน่วย ไม่ใช่เพิ่มการลงทุนหรือความเสี่ยง</p>
 <figure class="plot">
-  <h4>Figure 6.3c — เปลี่ยนฐานแล้วจุดเดิมอยู่ที่เดิม เปลี่ยนแค่ป้ายกำกับ</h4>
-  <img src="../figures/6.3-3.svg" alt="Figure 6.3c — เปลี่ยนฐานแล้วจุดเดิมอยู่ที่เดิม เปลี่ยนแค่ป้ายกำกับ" loading="lazy">
-  <figcaption>
-    <p>เปลี่ยน basis แล้ว coordinates เปลี่ยน แต่ position เดิมต้องผ่าน $B\mathbf{c}=\mathbf{x}$; coordinates เป็น coefficients ไม่ใช่ cash buckets ที่นำไป stack หรือบวกกันได้</p>
-  </figcaption>
+<img src="../figures/6.3-3.svg" alt="เปรียบเทียบพิกัดหุ้น6 5 4กับพิกัดbasisใหม่5.5 0.5 4แยกกันสองชุด" loading="lazy">
+<figcaption>รูป 6.3c สามแท่งซ้ายคือพิกัดรายหุ้น สามแท่งขวาคือพิกัดใน basis ใหม่ อย่านำหกแท่งมารวมเป็นเงินลงทุน และอย่าบังคับให้ผลรวมสามแท่งแต่ละฝั่งเท่ากัน</figcaption>
 </figure>
-
+</section>
+<section class="formula">
+<h2>5. P&amp;L ต้องเท่าเดิมเมื่อจับคู่กับข้อมูลให้ถูกชุด</h2>
+<p>สมมติในหนึ่งวัน return ของ AAPL, JPM, XOM เป็น 1%, −2%, 0.5% ตามลำดับ โดยไม่รวมปันผลและต้นทุน ใช้หน่วยมูลค่าเดิมเป็นล้าน USD:</p>
+<div class="math">\[
+\begin{aligned}
+\Delta V&=6(0.01)+5(-0.02)+4(0.005)\\
+ &=0.06-0.10+0.02=-0.02\ \text{million USD}\\
+ &=-20{,}000\ \text{USD}.
+\end{aligned}
+\]</div>
+<p>ถ้าใช้พิกัด $\mathbf c$ ต้องคิด P&amp;L ต่อหนึ่งหน่วยของแต่ละตะกร้าให้ตรงกัน common ให้ $r_A+r_J$ ส่วน relative ให้ $r_A-r_J$ จึงเขียนเป็น $\mathbf g=B^{\mathsf T}\mathbf r$ ได้ว่า</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf g&=\begin{bmatrix}-0.01\\0.03\\0.005\end{bmatrix},\\
+\mathbf c^{\mathsf T}\mathbf g
+ &=5.5(-0.01)+0.5(0.03)+4(0.005)\\
+ &=-0.02\ \text{million USD},\\
+\mathbf x^{\mathsf T}\mathbf r
+ &=(B\mathbf c)^{\mathsf T}\mathbf r
+ =\mathbf c^{\mathsf T}B^{\mathsf T}\mathbf r.
+\end{aligned}
+\]</div>
+<p>$g_1$ เป็น P&amp;L ของสองขาต่อหนึ่งหน่วยพิกัด common ไม่ใช่ return ต่อเงินลงทุนรวมของตะกร้าสองล้าน หากใช้ตะกร้า normalized มูลค่าหนึ่งล้านจากส่วนก่อน return จะเป็น $(r_A+r_J)/2=-0.5\%$ และคูณพิกัด 11 ก็ยังได้ส่วนร่วม −55,000 USD เท่าเดิม</p>
+<p>การคูณ $\mathbf c^{\mathsf T}\mathbf r$ โดยไม่เปลี่ยนข้อมูลที่จับคู่กันจะได้ +65,000 USD ซึ่งผิด และการนำ $B^{-1}\mathbf r$ มาใช้แทน $B^{\mathsf T}\mathbf r$ ก็ไม่ใช่กฎคำนวณ P&amp;L นี้ ชนิดของสิ่งที่แปลงและหน่วยมีความสำคัญกว่าการใช้ matrix ตัวเดียวกันทุกที่</p>
+</section>
 <section class="pitfall">
-  <h4>กับดัก: basis ที่สวยแต่ไม่สะท้อน tradeable risk</h4>
-  <p>เลือก basis อะไรก็ได้ทางคณิตศาสตร์ แต่ basis ที่ดีบน desk ต้องเชื่อมกับ instrument, liquidity, และ hedge ที่ทำได้จริง factor ที่ตีความไม่ได้คือ dashboard ที่มีสีสวยแต่ไม่มีปุ่มกด ก่อนใช้ basis ใหม่ถามว่า coordinate แต่ละตัว hedge ด้วยอะไรและเสียต้นทุนเท่าไร</p>
+<h2>6. เปลี่ยนพิกัดไม่ใช่ตัดพิกัดทิ้ง</h2>
+<p>Basis เต็มสามมิติยังมีสามพิกัด ไม่ได้ลดจำนวนข้อมูล ถ้าเราตัด relative ทิ้งโดยตั้ง $c_2=0$ จะได้พอร์ตอีกชุด:</p>
+<div class="math">\[
+\begin{aligned}
+\widehat{\mathbf x}&=5.5\mathbf b_1+0\mathbf b_2+4\mathbf b_3
+ =\begin{bmatrix}5.5\\5.5\\4\end{bmatrix},\\
+\mathbf e=\mathbf x-\widehat{\mathbf x}
+ &=\begin{bmatrix}0.5\\-0.5\\0\end{bmatrix},\\
+\mathbf e^{\mathsf T}\mathbf r
+ &=0.5(0.01)-0.5(-0.02)=0.015.
+\end{aligned}
+\]</div>
+<p>ในวันที่สมมติ พอร์ตใหม่ขาดทุน 35,000 USD ต่างจากพอร์ตเดิม 15,000 USD แม้มูลค่าหุ้นตอนเริ่มวันยังรวม 15 ล้านเท่ากัน การลบพิกัดจึงเป็นการเปลี่ยนสถานะหรือประมาณข้อมูล โดยมี residual ที่ต้องตรวจ ไม่ใช่เพียงเปลี่ยนวิธีเขียน</p>
+<p>PCA ที่เก็บแกนครบทุกมิติอาจใช้เป็นการเปลี่ยน basis ได้ แต่เมื่อเก็บเพียงบางแกนเพื่อทำ dimensionality reduction เราต้องยอมรับข้อมูลส่วนที่ทิ้ง หรือกำหนดให้พอร์ตอยู่ใน subspace นั้น ความง่ายของรายงานไม่ได้ทำให้ความเสี่ยงส่วนที่ละไว้หายไป</p>
+<h3>Inverse ไม่ใช่ transpose เสมอ</h3>
+<p>Basis ไม่จำเป็นต้องตั้งฉากหรือมีความยาวหนึ่ง แกนของตัวอย่างนี้ตั้งฉากกัน แต่สองแกนแรกยังไม่ใช่ unit vectors จึงมี</p>
+<div class="math">\[
+B^{\mathsf T}B=\begin{bmatrix}2&0&0\\0&2&0\\0&0&1\end{bmatrix}\ne I,
+\qquad
+B^{\mathsf T}\mathbf x=\begin{bmatrix}11\\1\\4\end{bmatrix}\ne\mathbf c.
+\]</div>
+<p>เงื่อนไข $B^{\mathsf T}B=I$ ของ orthonormal basis ต่างหากที่ทำให้ inverse เท่ากับ transpose เราจะใช้ norms และ inner products ในสองหัวข้อถัดไปเพื่ออธิบายความยาวและมุมให้ชัดขึ้น</p>
 </section>
-
 <section class="prose">
-  <h4>ที่มาที่ไป: แกนที่เราคุ้นเคย ไม่ใช่แกนเดียวที่ใช้ได้</h4>
-  <p>โดยปกติเราอธิบายพอร์ตด้วยการบอกว่าถือหุ้นตัวไหนเท่าไร ซึ่งเป็นการเลือกแกนแบบหนึ่ง และเป็นแกนที่ตรงกับวิธีบันทึกบัญชี</p>
-  <p>แต่แกนนั้นแย่มากสำหรับการเข้าใจความเสี่ยง เพราะหุ้นห้าร้อยตัวขยับพร้อมกันเกือบตลอด การดูทีละตัวจึงเห็นแต่เรื่องเดียวกันซ้ำห้าร้อยรอบ</p>
-  <p>แนวคิดของหัวข้อนี้คือเราเลือกแกนใหม่ได้ โดยที่ความเสี่ยงจริงไม่เปลี่ยน เปลี่ยนแค่ภาษาที่ใช้อธิบาย และถ้าเลือกแกนดี ๆ เรื่องที่ซ้ำกันห้าร้อยรอบจะยุบเหลือไม่กี่ทิศ</p>
-  <p>ความคิดนี้เป็นรากของทั้งแบบจำลองปัจจัย และของการลดมิติในหัวข้อ 17.4</p>
+<h2>7. เลือก basis ให้ตอบงาน แต่ไม่เชื่อชื่อแกนเกินข้อมูล</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>งาน</th><th>สิ่งที่ต้องตรวจ</th></tr></thead>
+<tbody>
+<tr><td>ส่งคำสั่งซื้อขาย</td><td>แปลงกลับเป็นหุ้นที่ trade ได้ จำนวนเงินและหน่วยต้องถูก</td></tr>
+<tr><td>รายงาน factor risk</td><td>แยก basis ที่เลือกเองออกจาก factor loadings ที่ประมาณจากข้อมูล</td></tr>
+<tr><td>เปรียบเทียบรายงานข้ามวัน</td><td>basis เปลี่ยนด้วยหรือไม่? พิกัดอาจขยับแม้พอร์ตคงเดิม</td></tr>
+<tr><td>เลือก hedge</td><td>ตรวจ covariance, beta, ต้นทุนและข้อจำกัด ไม่ใช่เรียงพิกัดจากใหญ่ไปเล็กแล้วตัดสิน</td></tr>
+<tr><td>ใช้แกนที่เกือบซ้ำ</td><td>ตรวจความไวเชิงตัวเลข คำตอบมีชุดเดียวก็ยังไม่รับประกันความเสถียร</td></tr>
+</tbody></table></div>
+<p>ไม่มี basis ที่ “ดีที่สุด” โดยไม่ระบุเป้าหมายทางธุรกิจ แต่ทุก basis ที่อ้างว่าบรรยายพื้นที่เดียวกันแบบ exact ต้องรักษา independence และ spanning ไว้ การตั้งชื่อแกนให้ดูมีความหมายไม่ทดแทนการพิสูจน์สองเงื่อนไขนี้</p>
 </section>
-
-<section class="prose">
-  <h4>ประวัติความเป็นมา: จากพิกัดเดส์การ์ตสู่การแปลงแกนปัจจัยในตลาดการเงิน</h4>
-  <p>จุดเริ่มต้นของระบบพิกัดต้องย้อนไปถึง René Descartes ในปี ค.ศ. 1637 ที่เสนอแกนตั้งฉากแบบคาร์ทีเซียน (Cartesian coordinates) ในหนังสือ La Géométrie เป็นเวลากว่าสองร้อยปีที่นักคณิตศาสตร์และนักวิทยาศาสตร์ยึดติดว่าพิกัดต้องผูกกับแกนคงที่ตั้งฉากกันในอวกาศสามมิติเท่านั้น จนกระทั่ง Hermann Grassmann และ Giuseppe Peano ในช่วงปลายศตวรรษที่ 19 ได้พิสูจน์ว่าแกนไม่จำเป็นต้องตั้งฉาก และไม่จำเป็นต้องมีเพียงสามมิติ</p>
-  <p>ขอเพียงกลุ่มของ vector มี linear independence และครอบคลุมปริภูมิทั้งหมด กลุ่ม vector นั้นย่อมทำหน้าที่เป็น basis ได้ทันที ตัววัตถุหรือจุดในปริภูมิไม่ได้เปลี่ยนไปตามภาษาที่เราเลือกบรรยาย การเปลี่ยนแกนจึงเป็นเพียงการคูณด้วย matrix ผกผัน</p>
-  <p>ในโลกการเงิน ทฤษฎี factor model ในช่วงทศวรรษ 1970 ถึง 1990 ได้นำแนวคิดเรื่อง basis มาใช้อย่างกว้างขวาง โดยเปลี่ยนจากการมองพอร์ตบนแกนชื่อหุ้นรายตัวหลายพันตัว ไปเป็นการมองบน basis ของปัจจัยความเสี่ยงส่วนกลาง เช่น ขนาดและมูลค่า ทำให้ผู้จัดการกองทุนสามารถควบคุมความเสี่ยงรวมได้อย่างมีประสิทธิภาพ</p>
+<section class="example">
+<h2>ตรวจเองใน 10 วินาที</h2>
+<p><strong>ข้อ 1:</strong> ถ้าพอร์ตเป็น AAPL 8, JPM 2, XOM 4 ล้าน USD พิกัดใน basis เดิมของบทนี้เท่าไร?</p>
+<details><summary>ดูเฉลย</summary><p>$c_1=(8+2)/2=5$, $c_2=(8-2)/2=3$, $c_3=4$ ตรวจกลับได้ $(5+3,5-3,4)=(8,2,4)$ มูลค่าสุทธิหุ้นคือ $2(5)+4=14$ ล้าน ไม่ใช่ผลรวมพิกัด 12 ล้าน</p></details>
+<p><strong>ข้อ 2:</strong> จากพอร์ตต้นบท ถ้าลด common จาก 5.5 เป็น 4.5 โดยคงพิกัดอื่นเดิม ต้องขายอะไร และได้เงินสดเท่าไร?</p>
+<details><summary>ดูเฉลย</summary><p>ขาย AAPL และ JPM อย่างละ 1 ล้าน USD ได้เงินสด 2 ล้าน ก่อนต้นทุน พอร์ตหุ้นเหลือ $(5,4,4)$ มูลค่า 13 ล้าน หากเก็บเงินสดไว้ NAV ณ ราคาที่ใช้ซื้อขายยังเป็น 15 ล้าน นี่เป็นการ trade จริง ต่างจากการเปลี่ยน basis</p></details>
+<p><strong>ข้อ 3:</strong> ถ้ารายงานวันพรุ่งนี้เปลี่ยนแกน common เป็น $(0.5,0.5,0)$ แล้วพิกัดเพิ่มจาก 5.5 เป็น 11 แปลว่าซื้อเพิ่มหรือไม่?</p>
+<details><summary>ดูเฉลย</summary><p>ไม่จำเป็นเลย เพราะ $11(0.5,0.5,0)=5.5(1,1,0)$ ต้องเปรียบเทียบทั้ง basis และพิกัดร่วมกัน ไม่ใช่ดูเพียงตัวเลขคอลัมน์เดียว</p></details>
 </section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>การเลือกแกน</td><td>มีชุดแกนที่ดีที่สุดชุดเดียว</td><td>เลือกได้หลายชุดและแต่ละชุดมีข้อดีต่างกัน</td><td>การเลือกเป็นการตัดสินใจ ไม่ใช่ผลลัพธ์ทางคณิตศาสตร์</td></tr>
-      <tr><td>ความหมาย</td><td>แกนที่ได้ตีความได้</td><td>แกนที่คำนวณมาบางทีไม่มีความหมายทางธุรกิจเลย</td><td>ต้องระวังการตั้งชื่อให้แกนแล้วเชื่อชื่อนั้นเกินไป</td></tr>
-      <tr><td>ความคงที่</td><td>แกนไม่เปลี่ยนตามเวลา</td><td>แกนที่คำนวณจากข้อมูลเปลี่ยนไปทุกครั้งที่อัปเดต</td><td>ความเสี่ยงที่รายงานอาจเปลี่ยนเพราะแกนขยับ ไม่ใช่เพราะพอร์ตเปลี่ยน</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวล่างเป็นปัญหาจริงในการรายงานความเสี่ยงรายวัน และต้องแยกให้ออกก่อนอธิบายให้ผู้บริหารฟัง</p>
-  </div>
-</section>
-
 <section class="code">
-  <details>
-    <summary>โค้ดหาพิกัดของพอร์ตในแกนความเสี่ยงชุดใหม่</summary>
-    <pre><code>import numpy as np
-E = np.eye(3)
-x = 6 * E[0] + 5 * E[1] + 4 * E[2]
-assert np.allclose(x, [6, 5, 4])
-B = np.array([[1., 1, 0], [1, -1, 0], [0, 0, 1]])
-assert abs(np.linalg.det(B) + 2) &lt; 1e-12
-c = np.linalg.solve(B, x)
-assert np.allclose(c, [5.5, 0.5, 4]) and np.allclose(B @ c, x)
-Binv = np.linalg.inv(B)
-assert np.allclose(Binv, [[0.5, 0.5, 0], [0.5, -0.5, 0], [0, 0, 1]]) and np.allclose(Binv @ x, c)</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดยืนยันว่าแกนชุดใหม่ไม่ซ้ำกัน (determinant −2) แก้พิกัดได้ 5.5, 0.5, 4 ทั้งด้วยการแก้สมการและด้วย inverse และคูณกลับได้ exposure เดิม 6, 5, \$4 ล้าน</p>
-  </div>
+<h2>JavaScript: เปลี่ยนไป เปลี่ยนกลับ และตรวจ P&amp;L</h2>
+<p>ใช้สูตรที่แก้ด้วยมือสำหรับ basis นี้ แล้วตรวจซ้ำด้วย matrix ที่ระบุอย่างชัดเจน โค้ดนี้เป็นตัวอย่างสามมิติเฉพาะเรื่อง ไม่ใช่ numerical solver สำหรับ matrix ทั่วไป</p>
+<pre><code class="language-javascript" data-example="6.3">function check3(v) {
+  if (!Array.isArray(v) || v.length !== 3 || !v.every(Number.isFinite)) {
+    throw new TypeError('Need three finite coordinates');
+  }
+}
+function coordinates(x) {
+  check3(x);
+  return [(x[0] + x[1]) / 2, (x[0] - x[1]) / 2, x[2]];
+}
+function reconstruct(c) {
+  check3(c);
+  return [c[0] + c[1], c[0] - c[1], c[2]];
+}
+const dot = (a, b) =&gt; a.reduce((sum, x, i) =&gt; sum + x * b[i], 0);
+const mv = (matrix, v) =&gt; matrix.map(row =&gt; dot(row, v));
+const B = [[1, 1, 0], [1, -1, 0], [0, 0, 1]];
+const inverse = [[.5, .5, 0], [.5, -.5, 0], [0, 0, 1]];
+const transpose = B[0].map((_, i) =&gt; B.map(row =&gt; row[i]));
+const x = [6, 5, 4], r = [.01, -.02, .005];
+const c = coordinates(x), g = mv(transpose, r);
+const dropped = reconstruct([c[0], 0, c[2]]);
+const residual = x.map((xi, i) =&gt; xi - dropped[i]);
+const identityInputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+console.log(JSON.stringify({
+  x, c, back: reconstruct(c), matrixBack: mv(B, c), inverseResult: mv(inverse, x),
+  inverseAfterB: identityInputs.map(v =&gt; mv(inverse, mv(B, v))),
+  bAfterInverse: identityInputs.map(v =&gt; mv(B, mv(inverse, v))),
+  wrongTranspose: mv(transpose, x),
+  coordinateSum: c.reduce((a, b) =&gt; a + b, 0), netMillions: 2 * c[0] + c[2],
+  rescaledCoordinates: [2 * c[0], c[1], c[2]], g,
+  pnl: 1e6 * dot(x, r), samePnl: 1e6 * dot(c, g), wrongPnl: 1e6 * dot(c, r),
+  dropped, residual, droppedPnl: 1e6 * dot(dropped, r), residualPnl: 1e6 * dot(residual, r),
+  exercise1: coordinates([8, 2, 4]), removeOneCommon: reconstruct([4.5, .5, 4])
+}));</code></pre>
 </section>
-
+<details class="jargon"><summary>ศัพท์ที่ใช้ในบทนี้</summary><dl>
+<dt>Basis / coordinates</dt><dd>ชุดแกนที่ independent และ span ครบพื้นที่ / สัมประสิทธิ์ที่ใช้ผสมแกนเพื่อเขียน vector หนึ่ง</dd>
+<dt>Canonical basis</dt><dd>แกนที่เลือกพิกัดทีละช่อง เช่นหนึ่งแกนต่อหนึ่งหุ้น</dd>
+<dt>Change of basis</dt><dd>การเปลี่ยนคำบรรยายที่ย้อนกลับได้ ไม่ใช่การลดมิติหรือซื้อขายสถานะ</dd>
+<dt>Normalization</dt><dd>การกำหนดขนาดหนึ่งหน่วยของแกน พิกัดต้องเปลี่ยนชดเชยเมื่อปรับขนาดแกน</dd>
+<dt>Residual</dt><dd>ส่วนต่างระหว่าง vector จริงกับคำบรรยายหรือค่าประมาณที่สร้างกลับมา</dd>
+</dl></details>
+<details><summary>ที่มาของมุมมองนี้</summary><p>พิกัดแบบคาร์ทีเซียนทำให้เราเขียนตำแหน่งด้วยตัวเลขตามแกนได้ พีชคณิตเชิงเส้นขยายแนวคิดไปสู่ basis ที่ไม่จำเป็นต้องเป็นแกนมาตรฐาน และพื้นที่ที่มีได้มากกว่าสามมิติ ในงานการเงิน ประโยชน์อยู่ที่การเลือกคำบรรยายให้ตรงงาน โดยยังตรวจกลับถึงสินทรัพย์และหน่วยเดิมได้</p></details>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
-  <ul>
-    <li>basis คือชุด directions ที่ใช้บรรยาย portfolio; vector เดิมไม่เปลี่ยน แต่คำถามที่ตอบได้เปลี่ยน</li>
-    <li>canonical basis เหมาะกับ positions รายชื่อหุ้น ส่วน factor basis เหมาะกับการคุยความเสี่ยงและ hedge</li>
-    <li>coordinates ใหม่ได้จาก $\mathbf{c}=B^{-1}\mathbf{x}$ เมื่อ $B$ invertible; ต้องรักษาหน่วยให้เป็น USD exposure ตลอด</li>
-    <li>basis ที่ใช้บน desk ต้องตีความได้และเชื่อมกับ hedge ที่ trade ได้จริง</li>
-  </ul>
+<h2>สิ่งที่ต้องจำก่อนอ่านรายงานพิกัดใหม่</h2>
+<ul>
+<li>Basis บอกทั้งทิศทางและขนาดของหนึ่งหน่วย ส่วน coordinates บอกจำนวนที่คูณแต่ละแกน ต้องอ่านคู่กัน</li>
+<li>Spanning รับประกันว่ามีคำตอบ และ independence รับประกันว่ามีเพียงชุดเดียวในพื้นที่ที่ระบุ</li>
+<li>เมื่อวางแกนเป็นคอลัมน์: $\mathbf x=B\mathbf c$; ถ้า $B$ เป็นจัตุรัส invertible จึงใช้ $\mathbf c=B^{-1}\mathbf x$ ได้</li>
+<li>การบวกพิกัดหรือใช้ return ชุดเดิมกับพิกัดใหม่อาจผิดหน่วย แม้คำนวณได้ตัวเลขที่ดูสมเหตุผล</li>
+<li>เปลี่ยน basis ไม่ได้ลดความเสี่ยง ตัดพิกัดอาจเปลี่ยนพอร์ตหรือทิ้งข้อมูล และการวัด “ขนาด” ต้องบอกวิธีวัด นี่คือเรื่อง norms ในหัวข้อ 6.4</li>
+</ul>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
-  <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="6.2.html">6.2 Linear Independence and Linear Combinations</a></div>
-  <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="6.4.html">6.4 Norms</a></div>
+<div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="6.2.html">6.2 Linear Independence and Linear Combinations</a></div>
+<div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="6.4.html">6.4 Norms</a></div>
 </nav>
 </div>
 </body>

@@ -10,22 +10,70 @@
 <body>
 <div class="wrap">
 <nav class="book-nav">
-  <a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
-  <a href="../index.html#part-1">Part 1</a>
+<a href="../index.html">สารบัญ</a> <span aria-hidden="true">·</span>
+<a href="../index.html#part-1">Part 1</a>
 </nav>
 <header class="chapter-landing">
-  <div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
-  <h1>บทที่ 6</h1>
-  <p>Vectors · 5 หัวข้อ</p>
-  <p class="chapter-sequence">เขียนพอร์ตเป็น vector แล้วอ่าน correlation ออกมาเป็นมุมระหว่างสองทิศ</p>
+<div class="chapter-path">PART 1 / 7 · Probability Foundations</div>
+<h1>บทที่ 6</h1>
+<p>Vectors · 5 หัวข้อ</p>
+<p class="chapter-sequence">เขียนพอร์ตให้ตรงหน่วย แยกทิศทางที่ซ้ำ เลือกวิธีวัดขนาด แล้วใช้ข้อมูลที่ centered เพื่อหา correlation และ hedge</p>
 </header>
+<section class="prose">
+<h2>คำถามของบทนี้: ตัวเลขในรายงานหมายถึงสิ่งเดียวกันจริงหรือ?</h2>
+<p>พอร์ตหนึ่งอาจมี gross 120% แต่ net 50% อาจเปลี่ยนพิกัดแล้วผลรวมตัวเลขลดลงทั้งที่ไม่ได้ขายอะไร หรืออาจมี return เป็นบวกทุกวันแต่ correlation เป็นลบ ความสับสนเหล่านี้ไม่ได้เริ่มจากคำนวณยาก แต่เริ่มจากไม่ระบุว่าตัวเลขแต่ละช่องแทนอะไร</p>
+<p>เมื่อจบบท คุณควรแปลงรายชื่อหุ้นเป็น vector ที่จับคู่ถูกต้อง แยกการเปลี่ยนคำบรรยายออกจากการเปลี่ยนพอร์ต และรู้ว่าต้องเพิ่มสมมติฐานใดก่อนตีความ norm หรือมุมเป็นความเสี่ยงทางการเงิน</p>
+<h3>ก่อนเริ่ม</h3>
+<p>ทบทวนผลรวมถ่วงน้ำหนักและ variance จากบท 1 รวมถึง covariance และความเป็นอิสระจากบท 5 ไม่ต้องรู้การหา inverse ทั่วไปมาก่อน ตัวอย่าง basis ในบทนี้แก้ด้วยสมการบวกและลบได้ แล้วค่อยแปลเป็นสัญกรณ์ matrix</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 1: บรรยายพอร์ตให้ครบและไม่ซ้ำ</h2>
+<p>เริ่มจากข้อมูลที่จับคู่กันได้ จากนั้นถามว่าตะกร้าใหม่เพิ่มทิศทางจริงหรือไม่ และสุดท้ายเลือก basis ที่เขียนพอร์ตเดิมด้วยพิกัดชุดเดียวได้</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/6.1.html"><span class="toc-number">6.1</span><span class="toc-name">Row Vectors and Column Vectors<span class="toc-why">เขียนข้อมูลชุดเดียวกันเป็นแถวหรือคอลัมน์ให้ชัด</span></span></a></li>
-  <li><a href="../topics/6.2.html"><span class="toc-number">6.2</span><span class="toc-name">Linear Independence and Linear Combinations<span class="toc-why">รู้ได้อย่างไรว่าทิศทางหนึ่งสร้างจากทิศทางอื่น</span></span></a></li>
-  <li><a href="../topics/6.3.html"><span class="toc-number">6.3</span><span class="toc-name">Basis<span class="toc-why">เลือกชุดลูกศรที่สร้างพื้นที่ทั้งหมดโดยไม่ซ้ำซ้อน</span></span></a></li>
-  <li><a href="../topics/6.4.html"><span class="toc-number">6.4</span><span class="toc-name">Norms<span class="toc-why">วัดความยาวของข้อมูลหลายมิติอย่างเป็นระบบ</span></span></a></li>
-  <li><a href="../topics/6.5.html"><span class="toc-number">6.5</span><span class="toc-name">Inner Product, Angle, and Correlation<span class="toc-why">วัดความเอียงไปทางเดียวกันของลูกศรสองตัว</span></span></a></li>
+<li><a href="../topics/6.1.html"><span class="toc-number">6.1</span><span class="toc-name">Row Vectors and Column Vectors<span class="toc-why">คำนวณกำไร 85,000 USD จากน้ำหนักกับ return แล้วจับความผิดของลำดับหุ้น shape และเงินสดที่เหลือจากการปัดจำนวนหุ้น</span></span></a></li>
+<li><a href="../topics/6.2.html"><span class="toc-number">6.2</span><span class="toc-name">Linear Independence and Linear Combinations<span class="toc-why">ตรวจว่ากองทุน C เป็นครึ่ง A บวกครึ่ง B หรือไม่ แยก span ออกจากข้อจำกัดซื้อขาย และแยก sector weights เท่ากันออกจาก payoff เท่ากัน</span></span></a></li>
+<li><a href="../topics/6.3.html"><span class="toc-number">6.3</span><span class="toc-name">Basis<span class="toc-why">เปลี่ยนพอร์ต 6/5/4 ล้านเป็นพิกัด 5.5/0.5/4 โดยเงินไม่หาย คูณกลับและตรวจ P&amp;L ว่ายังคงเดิม</span></span></a></li>
 </ol>
+<section class="example">
+<h3>จุดตรวจหลังเส้นทางที่ 1</h3>
+<p>ถ้าระบบคูณ vector ได้โดยไม่มี error คุณตรวจชื่อหุ้น วัน หน่วย และความหมายของผลลัพธ์แล้วหรือยัง? ถ้าพิกัดพอร์ตเปลี่ยน คุณแยกได้หรือไม่ว่าเกิดจาก trade จริง หรือเพียงเปลี่ยน basis?</p>
+</section>
+<section class="prose">
+<h2>เส้นทางที่ 2: วัดขนาดและการเคลื่อนไหวร่วม</h2>
+<p>หลังเขียนพอร์ตได้แล้ว ค่อยเลือกไม้บรรทัดให้ตรงคำถาม L1 ของรายการซื้อขายตอบเรื่อง turnover ส่วน volatility ต้องรู้ covariance เพิ่ม และ correlation ต้องหักค่าเฉลี่ยก่อนอ่านเป็นมุม</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="4">
+<li><a href="../topics/6.4.html"><span class="toc-number">6.4</span><span class="toc-name">Norms<span class="toc-why">แยก net, gross, สถานะใหญ่สุดและ turnover ตรวจ norm bounds และเห็นว่า L2 ไม่ใช่ risk model เมื่อ correlation เปลี่ยน</span></span></a></li>
+<li><a href="../topics/6.5.html"><span class="toc-number">6.5</span><span class="toc-name">Inner Product, Angle, and Correlation<span class="toc-why">เริ่มจากข้อมูลดิบที่ cosine บวกแต่ correlation −1 แล้ว derive projection และ hedge 0.85 เท่าพร้อมวัด residual</span></span></a></li>
+</ol>
+<section class="example">
+<h3>จุดตรวจหลังเส้นทางที่ 2</h3>
+<p>คุณอธิบายได้หรือไม่ว่าทำไมพอร์ต net ศูนย์ยังมีความเสี่ยง ทำไม correlation ศูนย์ยังไม่แปลว่า independent และทำไม variance ที่ลด 80% จึงไม่ใช่ SD ที่ลด 80%?</p>
+</section>
+<section class="example">
+<h2>แบบฝึกเชื่อมทั้งบท: ตรวจรายงานพอร์ตหนึ่งหน้า</h2>
+<p>ใช้พอร์ตสมมติ AAPL/JPM/XOM มูลค่า $(6,5,4)$ ล้าน USD ไม่มีเงินสดหรือหนี้อื่นตอนเริ่มวัน ใช้ basis เดียวกับหัวข้อ 6.3: common $(1,1,0)$, relative $(1,-1,0)$ และ XOM $(0,0,1)$</p>
+<p><strong>1. รายงานขนาด:</strong> net, gross, L2 และสถานะใหญ่สุดเท่าไร? ค่าใดเป็น volatility?</p>
+<details><summary>ดูเฉลย</summary><p>Net กับ gross เท่ากับ 15 ล้าน USD เพราะทุกสถานะเป็น long ส่วน L2 เท่ากับ $\sqrt{6^2+5^2+4^2}=\sqrt{77}\approx8.774964$ ล้าน และ L∞ เท่ากับ 6 ล้าน ไม่มีตัวใดเป็น volatility โดยลำพัง เพราะโจทย์ยังไม่ให้ covariance ของ return</p></details>
+<p><strong>2. อ่านพิกัด:</strong> ถ้ารายงานแสดง $(5.5,0.5,4)$ ทำไมจึงบวกเป็นมูลค่าพอร์ตตรง ๆ ไม่ได้?</p>
+<details><summary>ดูเฉลย</summary><p>หนึ่งหน่วย common มีหุ้นสองขา ส่วน relative มี net ศูนย์ มูลค่าสุทธิหุ้นจึงเป็น $2(5.5)+4=15$ ล้าน คูณกลับได้ $(5.5+0.5,5.5-0.5,4)=(6,5,4)$</p></details>
+<p><strong>3. ตรวจ P&amp;L:</strong> ถ้า return หนึ่งวันเป็น $(1\%,-2\%,0.5\%)$ และไม่รวมต้นทุน พอร์ตได้หรือเสียเงินเท่าไร?</p>
+<details><summary>ดูเฉลย</summary><p>$6(0.01)+5(-0.02)+4(0.005)=-0.02$ ล้าน หรือเสีย 20,000 USD ใน basis ใหม่ ต้องคูณ $(5.5,0.5,4)$ กับ P&amp;L ต่อหน่วยแกน $(-0.01,0.03,0.005)$ ไม่ใช่คูณ return รายหุ้นชุดเดิม</p></details>
+<p><strong>4. ปรับพอร์ตจริง:</strong> ตั้งพิกัด relative เป็นศูนย์โดยคงอีกสองพิกัดเดิม ต้อง trade อะไร? Gross turnover เป็นเท่าไร?</p>
+<details><summary>ดูเฉลย</summary><p>พอร์ตใหม่คือ $(5.5,5.5,4)$ ต้องขาย AAPL 0.5 ล้านและซื้อ JPM 0.5 ล้าน ยอดซื้อขายรวม 1 ล้าน แม้ cash flow สุทธิก่อนต้นทุนเป็นศูนย์ Gross turnover ต่อ NAV เดิมคือ $1/15\approx6.6667\%$ ไม่ใช่ศูนย์</p></details>
+<p><strong>5. แปลความเสี่ยง:</strong> การตั้ง relative เป็นศูนย์รับประกันว่าขาดทุนน้อยลงหรือไม่?</p>
+<details><summary>ดูเฉลย</summary><p>ไม่รับประกัน ในวันตัวอย่าง พอร์ตใหม่เสีย $5.5(0.01)+5.5(-0.02)+4(0.005)=-0.035$ ล้าน หรือ 35,000 USD มากกว่าเดิม 15,000 USD การลดพิกัดหนึ่งไม่ได้พิสูจน์ว่าทุก scenario ดีขึ้น และยังไม่บอกผลต่อ variance หากไม่มี covariance model</p></details>
+</section>
+<section class="takeaways">
+<h2>สิ่งที่พกไปใช้ในบทต่อไป</h2>
+<ul>
+<li>การคำนวณที่ถูกต้องเริ่มจากพิกัด หน่วยและข้อมูลที่เข้าคู่กัน ไม่ใช่เพียงสูตรที่รันได้</li>
+<li>Basis ที่เต็มและไม่ซ้ำทำให้เปลี่ยนคำบรรยายกลับไปกลับมาได้ ส่วนการตัดพิกัดเป็นการเปลี่ยนหรือประมาณข้อมูล</li>
+<li>Norm วัดขนาดตามกติกาที่เลือก และ inner product วัดการจับคู่ทิศทาง ต้องเพิ่มเงื่อนไขก่อนเชื่อมกับ risk</li>
+<li>บท 7 จะใช้ matrix จัดการหลาย vector พร้อมกัน ให้ตรวจ shape ควบคู่กับความหมายเหมือนที่ทำในบทนี้</li>
+</ul>
+</section>
 </div>
 </body>
 </html>
