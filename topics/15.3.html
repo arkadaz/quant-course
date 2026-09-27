@@ -15,402 +15,375 @@
   <a href="../chapters/15.html">บทที่ 15</a>
   <span class="topic-progress">หัวข้อ 91/158</span>
 </nav>
-
-<article class="topic" data-number="15.3" data-depends-on="15.2">
+<article class="topic" data-number="15.3" data-depends-on="1.1 1.3 7.5 7.6 8.1 12.5 15.1 15.2">
 <header class="topic-header">
   <h1><span class="tnum">15.3</span> Multi-Factor Models</h1>
-  <p class="subtitle">ให้หลายแรงผลักอธิบายผลตอบแทนก่อนตัดสินส่วนที่เหลือ</p>
+  <p class="subtitle">ให้ปัจจัยไม่กี่ตัวอธิบายว่าหุ้นขยับร่วมกันอย่างไร แล้วใช้มันทั้งแยกฝีมือออกจาก exposure และสร้าง covariance ของหุ้นหลายร้อยตัวจากตัวเลขไม่กี่พันตัว</p>
 </header>
-
 <div class="hook">
-  <p>จัดพอร์ต Markowitz บนหุ้น 500 ตัวด้วยข้อมูลรายวันราวหนึ่งปี คือ 250 วันเทรด ต้องประมาณ covariance กี่ตัวเลข ข้อมูลพอไหม และแบบจำลอง 5 ปัจจัยลดเหลือเท่าไร?</p>
-  <p>เฉลย: 125,250 ตัวเลขจากข้อมูล 125,000 จุด ไม่ถึง 1 จุดต่อตัว และ matrix ที่ได้ผกผันไม่ได้แน่นอน แบบจำลอง 5 ปัจจัยใช้ 3,015 ตัว ได้ 41.5 จุดต่อตัว ลดลง 97.6% และผกผันได้เสมอ</p>
+  <p>ทีมจะใช้ Markowitz (12.5) จัดพอร์ตหุ้น 500 ตัวจากข้อมูลรายวันหนึ่งปี นับเป็น 250 วันตามที่งานความเสี่ยงมักปัดข้อมูลหนึ่งปี (ปีจริงมี 252 วันซื้อขายตาม 1.1) ข้อมูลมี $500\times250=125{,}000$ ตัวเลข ส่วน covariance matrix ต้องประมาณ 125,250 ตัวเลข นักวิเคราะห์บอกว่า “ข้อมูลเกือบหนึ่งตัวต่อหนึ่งตัวเลข ถือว่าพอ” ใช้ได้ไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ใช้ไม่ได้ และปัญหาหนักกว่าแค่ข้อมูลน้อย matrix ที่ได้มี rank ไม่เกิน 249 จึงมีทิศทางพอร์ต 251 ทิศที่ข้อมูลบอกว่าไม่มีความเสี่ยงเลย optimizer จะทุ่มเงินลงทิศพวกนั้นทันที model ห้าปัจจัยใช้ตัวเลขแค่ 3,015 ตัว ได้ข้อมูลราว 41.5 จุดต่อตัว ลดภาระลง 97.6% และ matrix ที่ได้มี inverse เสมอ ราคาที่จ่ายคือต้องเชื่อว่าหุ้นขยับร่วมกันผ่านปัจจัยเท่านั้น</p></details>
 </div>
-
 <section class="prose">
-  <h4>Worked Example — โจทย์และสิ่งที่ให้มา</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: เลือก market, size, value และ momentum factors ที่สร้างด้วย rules และ dates ที่ freeze แล้ว มิฉะนั้น loading เปลี่ยนความหมายตามหลังผลลัพธ์ แบบจำลองนี้เป็น attribution model; ไม่ได้พิสูจน์ว่า factor premium จะคงอยู่หรือมี causal mechanism</p>
+  <h4>สิ่งที่เราจะสร้าง</h4>
+  <p>15.2 ใช้ตลาดเป็นแรงผลักเพียงตัวเดียว หน้านี้เปิดให้มีหลายแรง เช่น ขนาดบริษัท มูลค่าตามบัญชี และ momentum ใช้สองงาน งานแรกคือแยกผลตอบแทนของกองทุนว่ามาจากแรงไหนเท่าไร ซึ่งเปลี่ยนตัวเลข alpha ได้มาก งานที่สองซึ่งใหญ่กว่าคือสร้าง covariance ของหุ้นจำนวนมากจากตัวเลขไม่กี่ตัว</p>
+  <p>เราจะนิยาม model แล้วแยกผลตอบแทนของกองทุนหนึ่งด้วยมือ ดูว่าทำไม loading แยกกันไม่ออกเมื่อปัจจัยคล้ายกัน พิสูจน์ว่าทำไมผลตอบแทนคาดหวังต้องเป็นเส้นตรงของ loading (APT) จากนั้นสร้าง covariance จาก model นับตัวเลขที่ต้องประมาณ ดูว่า sample covariance พังอย่างไรเมื่อหุ้นมากกว่าวัน และแก้ด้วยโครงสร้างกับ shrinkage</p>
 </section>
-
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>multi-factor model</dt>
-    <dd>model ที่อธิบาย excess return ด้วย factor returns หลายชุดและ loadings ของสินทรัพย์ ใช้แยก systematic exposures ออกจาก residual</dd>
-    <dt>factor</dt>
-    <dd>return series ที่แทน common source of variation ตามนิยามและ construction ที่กำหนด ใช้เป็น explanatory building block ของ model</dd>
-    <dt>factor loading</dt>
-    <dd>coefficient ที่บอก sensitivity ของ asset ต่อ factor หนึ่ง ใช้วัด exposure และสร้าง hedge หรือ attribution</dd>
-    <dt>idiosyncratic risk</dt>
-    <dd>ส่วน residual ที่ factor set ไม่อธิบาย ใช้เตือนว่าการเพิ่ม factors ไม่ได้ลบความไม่แน่นอนทั้งหมด</dd>
-    <dt>multicollinearity</dt>
-    <dd>สถานะที่ factors เคลื่อนคล้ายกันมากจน coefficients แยกกันไม่แม่น ใช้เป็นเหตุให้ตรวจ correlation และ uncertainty ก่อนตีความ loading</dd>
-    <dt>factor premium</dt>
-    <dd>average excess return ที่ factor construction รายงานใน period หนึ่ง ใช้เป็น model input ไม่ใช่ผลตอบแทนที่รับประกัน</dd>
-    <dt>correlation</dt>
-    <dd>ความเข้มของการเคลื่อนร่วมเชิงเส้นที่ปรับสเกลแล้ว ใช้ตรวจว่าปัจจัยซ้ำกันมากจน loading รายตัวไม่เสถียรหรือไม่</dd>
-    <dt>covariance matrix</dt>
-    <dd>ตาราง variance และ covariance ของ factor returns ใช้แปลง loading ของสินทรัพย์ให้เป็นความเสี่ยงร่วมของพอร์ต</dd>
-    <dt>Arbitrage Pricing Theory (APT)</dt>
-    <dd>ทฤษฎีตั้งราคาตามเงื่อนไขไร้ arbitrage ที่สรุปว่า expected return ต้องเป็น function เส้นตรงของ factor loadings ใช้กำหนด fair return โดยไม่ต้องพึ่งพอร์ตตลาด</dd>
-    <dt>shrinkage estimator</dt>
-    <dd>เทคนิคดึง sample covariance matrix เข้าหา target เชิงโครงสร้างเพื่อลด estimation error ใช้ป้องกันน้ำหนักพอร์ตผันผวนรุนแรงเมื่อข้อมูลมีจำกัด</dd>
+    <dt>Factor</dt><dd>ผลตอบแทนของพอร์ตที่สร้างตามกติกาที่ตรึงไว้ เช่นซื้อหุ้นเล็กขายหุ้นใหญ่ ใช้แทนแรงร่วมที่ทำให้หุ้นหลายตัวขยับพร้อมกัน</dd>
+    <dt>Factor loading</dt><dd>slope ของผลตอบแทนหุ้นหรือกองทุนบน factor หนึ่ง ในขณะที่ถือ factor อื่นคงที่ ใช้วัด exposure สำหรับ attribution และ hedge</dd>
+    <dt>Multi-factor model</dt><dd>regression ของ excess return บน factor หลายตัวพร้อมกัน ใช้แยกส่วนที่แรงร่วมอธิบายออกจากส่วนเฉพาะตัว</dd>
+    <dt>Multicollinearity</dt><dd>สภาพที่ factor สองตัวขยับคล้ายกันมาก ผลรวมยังอธิบายได้ดี แต่ loading แต่ละตัวแยกไม่ออก SE พองขึ้นหลายเท่า</dd>
+    <dt>Arbitrage Pricing Theory (APT)</dt><dd>ทฤษฎีที่บอกว่าถ้าไม่มีกำไรฟรี ผลตอบแทนคาดหวังต้องเป็นเส้นตรงของ loading ใช้แทน CAPM โดยไม่ต้องสมมติว่าทุกคนใช้ mean–variance</dd>
+    <dt>Idiosyncratic variance</dt><dd>variance ของส่วนที่ factor อธิบายไม่ได้ในหุ้นแต่ละตัว เก็บบนแนวทแยงของ $D$ ใช้เป็นส่วนที่รับประกันว่า covariance ของ model มี inverse</dd>
+    <dt>Shrinkage estimator</dt><dd>การดึง sample covariance เข้าหา matrix ที่มีโครงสร้าง ด้วยน้ำหนัก $\delta$ ยอมเอนเอียงเล็กน้อยเพื่อแลกกับความคลาดที่ลดลงมาก</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$r_{i,t}$</td><td>ผลตอบแทนส่วนเกินของสินทรัพย์</td><td>decimal return ต่อเดือน</td></tr>
-      <tr><td>$f_{k,t}$</td><td>ผลตอบแทนของ factor $k$</td><td>decimal return ต่อเดือน</td></tr>
-      <tr><td>$K$</td><td>จำนวน factors ที่กำหนดล่วงหน้า</td><td>factor count</td></tr>
-      <tr><td>$b_{i,k}$</td><td>loading ของสินทรัพย์ $i$ ต่อ factor $k$</td><td>unitless</td></tr>
-      <tr><td>$a_i$</td><td>intercept หลังหัก factors</td><td>decimal return ต่อเดือน</td></tr>
-      <tr><td>$u_{i,t}$</td><td>ส่วน residual ที่เหลือ</td><td>decimal return ต่อเดือน</td></tr>
-      <tr><td>$B$</td><td>matrix ของ factor loadings ทุกสินทรัพย์</td><td>unitless</td></tr>
-      <tr><td>$\Sigma_f$</td><td>covariance matrix ของ factors</td><td>decimal-return-squared ต่อเดือน</td></tr>
-      <tr><td>$D$</td><td>diagonal matrix ของ idiosyncratic variances</td><td>decimal-return-squared ต่อเดือน</td></tr>
-      <tr><td>$\Sigma$</td><td>covariance matrix ของสินทรัพย์ที่ model สร้าง</td><td>decimal-return-squared ต่อเดือน</td></tr>
-    </tbody>
-  </table>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$r_{i,t}$</td><td>excess return ของหุ้นหรือกองทุน $i$</td><td>% ต่อช่วง</td></tr>
+    <tr><td>$f_{k,t},\ \tilde f_k$</td><td>ผลตอบแทนของ factor $k$ และส่วนที่เบี่ยงจากค่าเฉลี่ย</td><td>% ต่อช่วง</td></tr>
+    <tr><td>$b_{ik},\ a_i$</td><td>loading ของ $i$ ต่อ factor $k$ และ intercept หลังหักทุก factor</td><td>ไม่มีหน่วย และ % ต่อช่วง</td></tr>
+    <tr><td>$u_{i,t}$</td><td>ส่วนเฉพาะตัวที่ factor อธิบายไม่ได้</td><td>% ต่อช่วง</td></tr>
+    <tr><td>$N,\ K,\ T$</td><td>จำนวนหุ้น จำนวน factor และจำนวนวันของข้อมูล</td><td>นับ</td></tr>
+    <tr><td>$B,\ \Sigma_f,\ D$</td><td>matrix $N\times K$ ของ loading, covariance ของ factor และ diagonal matrix ของ idiosyncratic variance</td><td>ไม่มีหน่วย และ %²</td></tr>
+    <tr><td>$\Sigma,\ S$</td><td>covariance ที่ model สร้าง และ sample covariance จากข้อมูล</td><td>%²</td></tr>
+    <tr><td>$\lambda_k,\ \delta$</td><td>ผลตอบแทนคาดหวังต่อ loading หนึ่งหน่วย และน้ำหนัก shrinkage</td><td>% ต่อช่วง และไม่มีหน่วย</td></tr>
+  </tbody></table></div>
 </details>
-
 <section class="formula">
-  <h4>ขั้นที่ 1 — นิยามของสมการหลายแรงผลัก</h4>
-  <p>บรรทัดนี้เป็น นิยาม ของแบบจำลองที่เราเลือกเขียน ไม่ใช่ผลที่พิสูจน์ แทนที่จะอธิบายผลตอบแทนด้วยตลาดอย่างเดียวแบบหัวข้อ 15.2 ขั้นนี้เปิดให้มีหลายแรงพร้อมกัน โดยแต่ละแรงมีน้ำหนักของตัวเอง การเลือกว่าจะใส่แรงอะไรบ้างเป็นการตัดสินใจ ไม่ใช่ข้อเท็จจริง และการใส่แรงเพิ่มย่อมทำให้อธิบายข้อมูลย้อนหลังได้ดีขึ้นเสมอ ซึ่งเป็นกับดักที่หัวข้อ 15.5 เตือนไว้</p>
-  <div class="math">\[
-r_{i,t}=a_i+b_{i,M}f_{M,t}+b_{i,S}f_{S,t}+b_{i,V}f_{V,t}+b_{i,Mo}f_{Mo,t}+u_{i,t}
-\]</div>
-  <div class="reading">
-    <p>returns และ residual เป็น decimal ต่อเดือน; loadings ทุกตัว unitless และแต่ละ product จึงมีหน่วย decimal return ต่อเดือน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — expected attribution ภายใต้ factor assumptions</h4>
-  <p>แยกผลตอบแทนที่คาดหวังออกเป็นส่วน ๆ ว่ามาจากแรงไหนเท่าไร และเหลือเป็นฝีมือจริงเท่าไร ห้าบรรทัดนี้ไม่มีอะไรมากกว่าการหาค่าเฉลี่ยของสมการเส้นตรง แต่ผลของมันคือเกณฑ์ที่ใช้ตัดสินว่าผู้จัดการกองทุนคนหนึ่งเก่งจริงหรือแค่รับความเสี่ยง</p>
-  <div class="math">\[
-\begin{aligned}r_{i,t}&=a_i+\sum_{k=1}^{K}b_{i,k}f_{k,t}+u_{i,t}\\
-\mathbb E[r_i]&=\mathbb E\Big[a_i+\sum_k b_{i,k}f_k+u_i\Big]\\
-&=a_i+\sum_k b_{i,k}\,\mathbb E[f_k]+\mathbb E[u_i]\\
-\mathbb E[u_i]&=0\\
-\mathbb E[r_i]&=a_i+\sum_{k=1}^{K}b_{i,k}\,\mathbb E[f_k]\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>หาค่าเฉลี่ยทั้งสองข้างของสมการขั้นที่ 1 ใช้กฎบวกค่าเฉลี่ยของหัวข้อ 1.3 แล้วดึงน้ำหนักออกมา ทำได้เพราะน้ำหนักเป็นเลขที่ประมาณไว้แล้ว ไม่ได้สุ่มร่วมไปด้วย ส่วนความพลาดที่เหลือมีค่าเฉลี่ยศูนย์ เป็นผลบังคับจากวิธีประมาณในหัวข้อ 15.1</p>
-    <p>ผลที่ได้แยกผลตอบแทนที่คาดหวังเป็นสองส่วน คือส่วนที่มาจากการรับความเสี่ยงของแต่ละแรง กับส่วนที่เหลือซึ่งเรียกว่าฝีมือ</p>
-    <p>ข้อควรระวังที่สูตรไม่ได้บอก ส่วนที่เหลือจะเล็กลงเสมอเมื่อใส่แรงเพิ่ม เพราะแรงใหม่ดูดของเก่าไปได้ทุกครั้ง จึงต้องตรึงรายการแรงไว้ก่อนดูข้อมูล ไม่อย่างนั้นฝีมือจะหายไปได้ด้วยการเพิ่มคอลัมน์เฉย ๆ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — พิสูจน์ทฤษฎี Arbitrage Pricing Theory (APT) จากเงื่อนไขไร้การเก็งกำไร</h4>
-  <p>Stephen Ross พัฒนา Arbitrage Pricing Theory (APT) ขึ้นในปี 1976 เพื่อตอบคำถามว่า ทำไมผลตอบแทนที่คาดหวังต้องเป็นเส้นตรงกับ factor loadings</p>
-  <p>จุดแข็งของ APT คือไม่ต้องสมมติว่าผู้ลงทุนทุกคนเลือกพอร์ตตาม mean-variance เหมือน Capital Asset Pricing Model (CAPM) ขอเพียงตลาดไม่มีโอกาสทำกำไรไร้ความเสี่ยง (no-arbitrage)</p>
-  <p>เมื่อเราจัดพอร์ตที่ไม่ใช้เงินต้น และลบล้างความเสี่ยงจากทุก factor จนหมด พอร์ตขนาดใหญ่ที่กระจายน้ำหนักจะไม่มีความเสี่ยงเหลืออยู่เลย ผลตอบแทนจึงต้องเป็นศูนย์</p>
+  <h4>ขั้นที่ 1 — นิยาม model หลายปัจจัย และผลตอบแทนคาดหวังของมัน</h4>
+  <p>เขียนสมการของ 15.2 ใหม่ โดยให้มี factor $K$ ตัวแทนตลาดตัวเดียว loading ประมาณด้วย regression หลายตัวแปร ซึ่งคือ $X^{\mathsf T}X\hat\beta=X^{\mathsf T}\mathbf y$ ของ 15.1 ที่ $X$ มี $K+1$ คอลัมน์ บรรทัดแรกเป็นนิยาม ส่วนบรรทัดสุดท้ายได้จากการหาค่าคาดหวังทั้งสองข้าง</p>
   <div class="math">\[
 \begin{aligned}
-r_i&=\mathbb E[r_i]+\textstyle\sum_k b_{i,k}f_k+u_i\\[4pt]
-&\textstyle\sum_i w_i=0\\
-&\textstyle\sum_i w_ib_{i,k}=0\quad(k=1,\dots,K)\\[4pt]
-r_p&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_k\big(\sum_i w_ib_{i,k}\big)f_k\\
-&\quad+\sum_i w_iu_i\\
-&=\textstyle\sum_i w_i\,\mathbb E[r_i]+\sum_i w_iu_i\\[4pt]
-&w_i\approx\pm\tfrac1N\\
-&\Rightarrow\ \operatorname{Var}(r_p)=\textstyle\sum_i w_i^2\sigma_{u_i}^2\to0\\[4pt]
-&\textstyle\sum_i w_i\,\mathbb E[r_i]=0\\[4pt]
-\mathbb E[r_i]&=\lambda_0+\textstyle\sum_k b_{i,k}\lambda_k\\
-&b_{i,k}=0\ \Rightarrow\ \lambda_0=R_f\\
-&\mathbb E[r_i]-R_f=\textstyle\sum_k b_{i,k}\lambda_k
+r_{i,t}&=a_i+\sum_{k=1}^{K}b_{ik}f_{k,t}+u_{i,t},\\
+\mathbb E[u_{i,t}]&=0,\\
+\mathbb E[r_i]&=a_i+\sum_{k=1}^{K}b_{ik}\,\mathbb E[f_k].
 \end{aligned}
 \]</div>
-  <div class="reading">
-    <p>สร้างพอร์ต arbitrage ที่ใช้เงินลงทุนสุทธิเป็นศูนย์ และมี exposure ต่อทุก factor เป็นศูนย์</p>
-    <p>ผลตอบแทนของพอร์ตจะเหลือเพียง expected value และผลรวมของ residual เท่านั้น</p>
-    <p>เมื่อจำนวนสินทรัพย์ $N$ มากขึ้น การกระจายน้ำหนักแบบ $1/N$ จะบีบให้ variance รวมของ residual ลู่เข้าสู่ศูนย์</p>
-    <p>ในตลาดที่ไม่มี arbitrage พอร์ตที่ไม่ใช้เงินและไม่มีความเสี่ยงต้องให้ผลตอบแทนเป็นศูนย์ ทุกชุดน้ำหนักที่ผ่านสองเงื่อนไขบนจึงต้องให้ผลรวมถ่วงของผลตอบแทนคาดหวังเป็นศูนย์ </p>
-    <p>ถ้าผลตอบแทนคาดหวังมีส่วนที่ไม่ใช่เส้นตรงของ loadings จะมีชุดน้ำหนักหนึ่งที่จับส่วนนั้นได้กำไรฟรี ผลตอบแทนคาดหวังจึงต้องเป็นค่าคงที่บวกผลรวมของ loading คูณราคาของแต่ละ factor</p>
-    <p>สินทรัพย์ที่ไม่มี exposure กับ factor ใดเลยต้องได้ดอกเบี้ยปลอดความเสี่ยง ค่าคงที่จึงคือ $R_f$ ส่วน $\lambda_k$ คือค่าตอบแทนต่อหนึ่งหน่วยของ factor ที่ $k$ ถ้า factor เป็นผลตอบแทนของพอร์ตที่ซื้อขายได้ ค่านี้คือผลตอบแทนคาดหวังของมันลบ $R_f$</p>
-  </div>
+  <div class="reading"><p>ค่าคาดหวังของผลบวกคือผลบวกของค่าคาดหวัง (1.3) และ $b_{ik}$ เป็นตัวเลขคงที่ จึงดึงออกมานอก $\mathbb E$ ได้ ส่วนที่เหลือมีค่าเฉลี่ยศูนย์ด้วยเหตุผลเดียวกับ 15.2 คือ intercept ดูดค่าเฉลี่ยไปหมดแล้ว</p><p>สิ่งที่สูตรไม่ได้บอกคือ รายชื่อ factor เป็นการตัดสินใจของเรา ไม่ใช่ข้อเท็จจริง ใส่ factor เพิ่มแล้ว SSE ไม่มีทางเพิ่ม alpha ที่เหลือจึงหดได้เสมอด้วยการเพิ่มคอลัมน์เฉย ๆ ต้องตรึงรายชื่อ factor ก่อนดูผล</p></div>
 </section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — ตัวอย่าง transparent attribution</h4>
-  <p>ผลตอบแทนคาดหวังคือ alpha บวกกับผลรวมของ exposure คูณผลตอบแทนของแต่ละ factor กางทีละ factor จะเห็นว่าตัวไหนออกแรงเท่าไร</p>
-  <div class="math">\[
-\begin{aligned}
-a&=0.001\\
-b_M\mathbb E[f_M]&=1.0(0.006)=0.0060\\
-b_S\mathbb E[f_S]&=0.3(0.002)=0.0006\\
-b_V\mathbb E[f_V]&=0.4(0.003)=0.0012\\
-b_{Mo}\mathbb E[f_{Mo}]&=0.2(0.004)=0.0008\\[4pt]
-\mathbb E[r]&=0.001+0.0060+0.0006\\
-&\quad+0.0012+0.0008=0.0096
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>market factor ออกแรงมากที่สุดที่ 0.60% เพราะทั้ง exposure และผลตอบแทนของมันใหญ่สุด สาม factor ที่เหลือรวมกันได้ 0.26%</p>
-    <p>alpha 0.10% คือส่วนที่ factor ทั้งสี่อธิบายไม่ได้ ซึ่งเป็นส่วนที่ต้องพิสูจน์ว่ามีจริง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — จาก factor exposure ไปสู่ covariance ที่ใช้บริหารพอร์ต</h4>
-  <p>ประโยชน์ที่ใหญ่กว่าการอธิบายผลตอบแทน คือมันลดจำนวนตัวเลขที่ต้องประมาณลงมหาศาล สูตรข้างล่างชี้ว่าการลดนั้นซื้อมาด้วยข้อสมมติสองข้อในบรรทัดที่เจ็ดถึงเก้า และหัวข้อ 17.8 จะกลับมาที่ราคาของข้อสมมติเหล่านี้</p>
-  <div class="math">\[
-\begin{aligned}
-r_t&=a+Bf_t+u_t\\
-&r_t-\mathbb E[r_t]=B\big(f_t-\mathbb E[f_t]\big)+u_t\\
-\Sigma&=\mathbb E\Big[\big(B(f-\mathbb Ef)+u\big)\\
-&\qquad\big(B(f-\mathbb Ef)+u\big)^{\mathsf T}\Big]\\
-&=B\,\mathbb E\big[(f-\mathbb Ef)(f-\mathbb Ef)^{\mathsf T}\big]B^{\mathsf T}\\
-&\quad+\mathbb E\big[uu^{\mathsf T}\big]+\text{cross}\\
-&\operatorname{Cov}(f,u)=0\;\Longrightarrow\;\text{cross}=0\\
-&\operatorname{Cov}(u_i,u_j)=0\ (i\ne j)\\
-&\;\Longrightarrow\;\mathbb E[uu^{\mathsf T}]=D\ \text{diagonal}\\
-\Sigma&=B\Sigma_fB^{\mathsf T}+D
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เขียนสมการของขั้นที่ 1 สำหรับหุ้นทุกตัวพร้อมกัน แล้วลบค่าเฉลี่ยออก พจน์คงที่หายไป จากนั้นใส่นิยามของ covariance matrix จากหัวข้อ 8.1 แล้วกระจายผลคูณ ได้สามก้อน คือก้อนแรง ก้อนที่เหลือ และพจน์ไขว้</p>
-    <p>ข้อสมมติสองข้อทำงานตรงนี้ ข้อแรกคือส่วนที่เหลือไม่เกี่ยวกับแรง พจน์ไขว้จึงหายไป ข้อที่สองคือส่วนที่เหลือของหุ้นสองตัวไม่เกี่ยวกัน ตารางของมันจึงมีค่าเฉพาะแนวทแยง</p>
-    <p>ประโยชน์อยู่ที่จำนวนตัวเลขที่ต้องประมาณ แทนที่จะต้องประมาณทุกคู่ของหุ้นห้าร้อยตัว ซึ่งมีกว่าแสนคู่ เราประมาณแค่น้ำหนักกับตารางของแรงไม่กี่ตัว</p>
-    <p>นั่นคือทั้งเหตุผลที่ factor model มีอยู่ ไม่ใช่เพราะมันจริงกว่า แต่เพราะข้อมูลที่มีไม่พอจะประมาณแสนคู่ได้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ตัวอย่างสองหุ้นคำนวณทุกช่อง</h4>
-  <p>covariance ของสองหุ้นสร้างจากสองส่วน คือความเสี่ยงที่มาจาก factor ร่วมกัน บวกกับความเสี่ยงเฉพาะตัวที่ไม่เกี่ยวกัน</p>
-  <div class="math">\[
-\begin{aligned}B\Sigma_fB^{\mathsf T}&=\begin{bmatrix}1.2\\
-0.8\end{bmatrix}[1.00]\begin{bmatrix}1.2&amp;0.8\end{bmatrix}=\begin{bmatrix}1.44&amp;0.96\\
-0.96&amp;0.64\end{bmatrix}\\[4pt]
-\Sigma&=B\Sigma_fB^{\mathsf T}+D=\begin{bmatrix}1.44+2.25&amp;0.96+0\\
-0.96+0&amp;0.64+4.00\end{bmatrix}=\begin{bmatrix}3.69&amp;0.96\\
-0.96&amp;4.64\end{bmatrix}\quad[\%^{2}/\mathrm{day}]\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ช่องนอกแนวทแยงมาจาก $1.2\times0.8=0.96$ เท่านั้น เพราะ $D$ เป็นแนวทแยงล้วน ความเสี่ยงเฉพาะตัวจึงไม่สร้างการเคลื่อนไหวร่วม</p>
-    <p>นี่คือเหตุผลที่ factor model ลดจำนวนตัวเลขที่ต้องประมาณลงมาก: การเคลื่อนไหวร่วมทั้งหมดมาจาก exposure ไม่กี่ตัว</p>
-    <p>ทีละช่อง: $1.2\times1.2=1.44$, $1.2\times0.8=0.96$, $0.8\times0.8=0.64$ เอา variance ของ factor 1.00 มาคูณ บวก residual variance 2.25 กับ 4.00 ลงแนวทแยง correlation ที่แบบจำลองบอกคือ $0.96/\sqrt{3.69\times4.64}=0.96/4.138=0.232$</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — นับตัวเลขที่ต้องประมาณ: 500 หุ้น</h4>
-  <p>ทำไมต้องอ้อมผ่าน factor ทั้งที่จะประมาณ covariance ตรง ๆ ก็ได้ ลองนับดูว่าแต่ละวิธีต้องประมาณกี่ตัวเลข</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{direct covariance: }\\
-&\frac{N(N+1)}{2}=\frac{500(501)}{2}=125{,}250\\
-&\text{five-factor model: }\\
-&\underbrace{500\times5}_{\text{loadings}}+\underbrace{\tfrac{5(6)}{2}}_{\Sigma_f}+\underbrace{500}_{D}\\
-&=2{,}500+15+500=3{,}015
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ตาราง covariance ของ 500 หุ้นมี 500 ช่องบนแนวทแยงและ 500×499/2 = 124,750 ช่องนอกแนวทแยง (ช่องซ้ำกันสองฝั่ง นับครั้งเดียว) รวม 125,250 ตัวเลข ขั้นที่ 9 จะนับว่าข้อมูล 250 วันมีให้แค่ 125,000 จุด</p>
-    <p>factor model ต้องการแค่ 5 loadings ต่อหุ้น 15 ตัวเลขใน covariance ของ factor และ 1 residual variance ต่อหุ้น รวม 3,015 น้อยกว่า 41 เท่า นี่คือเหตุผลเชิงปฏิบัติที่ทั้งอุตสาหกรรมใช้แบบจำลองนี้ ไม่ใช่เพราะมันจริงกว่า</p>
-    <p>ราคาที่จ่าย: ทุกการเคลื่อนไหวร่วมต้องผ่าน factor ทั้งห้า ถ้าหุ้นสองตัวในอุตสาหกรรมเดียวกันขยับด้วยกันด้วยเหตุผลที่ factor ไม่รู้จัก แบบจำลองจะบอกว่าไม่สัมพันธ์กัน</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ทำไมต้องบีบโครงสร้าง: Ledoit–Wolf Shrinkage แก้วิกฤต Matrix ข้อมูลน้อย</h4>
-  <p>ปัญหาใหญ่ที่สุดของการนำ covariance matrix ไปใช้จัดพอร์ตจริงคือ estimation error ตามที่ Ron Michaud ชี้ไว้ว่า mean-variance มักกลายเป็นเครื่องขยายความผิดพลาด</p>
-  <p>ถ้าเรามีหุ้น 500 ตัวแต่มีข้อมูลย้อนหลังเพียง 60 เดือน sample covariance จะมี rank ไม่เกิน 59 ทำให้ไม่สามารถหา inverse เพื่อคำนวณน้ำหนักพอร์ตได้เลย</p>
-  <p>Olivier Ledoit และ Michael Wolf จึงเสนอให้บีบ sample covariance เข้าหาโครงสร้าง factor model ช่วยให้ matrix กลับมามีเสถียรภาพและลงทุนได้จริง</p>
-  <div class="math">\[
-\begin{aligned}
-S&=\frac{1}{T-1}\sum_{t=1}^T (r_t-\bar{r})(r_t-\bar{r})^{\mathsf T}\\[4pt]
-T\lt N&\ \Rightarrow\ \operatorname{rank}(S)\le T-1\lt N\\[4pt]
-F&=B\Sigma_f B^{\mathsf T}+D\\[4pt]
-\Sigma_{\mathrm{sh}}&=\delta F+(1-\delta)S,\qquad 0\le\delta\le1\\[4pt]
-w^*&\propto \Sigma_{\mathrm{sh}}^{-1}\big(\mathbb E[r]-R_f\mathbf 1\big)
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เมื่อจำนวนงวดเวลา $T$ น้อยกว่าจำนวนสินทรัพย์ $N$ ตัว sample covariance estimator จะไม่เต็ม rank และไม่สามารถหา inverse ได้</p>
-    <p>โครงสร้างแบบจำลองหลายปัจจัย $F$ บังคับให้ความสัมพันธ์นอกแนวทแยงถูกขับเคลื่อนด้วย factor เท่านั้น จึงรับประกันความเป็น positive definite</p>
-    <p>การผสมแบบนูนระหว่าง $F$ กับ $S$ ด้วยค่าน้ำหนัก $\delta$ ช่วยลด variance ของ estimator ลงอย่างมหาศาล แลกกับ bias เล็กน้อย</p>
-    <p>ผลลัพธ์คือ inverse ของ matrix มีความเสถียร ไม่เกิดน้ำหนักพอร์ตสุดโต่งเหมือนการใช้ sample covariance เดี่ยว ๆ</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — ตัวอย่างจากต้นทาง: ข้อมูลพอไหม และ matrix ผกผันได้ไหม</h4>
-  <p>หุ้น 500 ตัว ข้อมูลรายวันย้อนหลัง 250 วัน คือราวหนึ่งปี (ปีจริงมี 250 ถึง 252 วันเทรดตามหัวข้อ 1.1 งานความเสี่ยงมักปัดข้อมูลหนึ่งปีเป็น 250 วัน) Markowitz ต้องใช้ทั้งความเสี่ยงของพอร์ต และต้องผกผัน covariance matrix ได้ นับข้อมูลเทียบกับตัวเลขที่ต้องประมาณ</p>
-  <div class="math">\[
-\begin{aligned}
-\text{data}&=500\times250=125{,}000\\
-125{,}000/125{,}250&=0.998\ \text{per parameter}\\
-125{,}250\times30/500&=7{,}515\ \text{days}\approx30\ \text{years}\\[4pt]
-\operatorname{rank}(\hat\Sigma)&\le T-1=249\\
-500-249&=251\ \text{zero eigenvalues}\\[4pt]
-125{,}000/3{,}015&=41.5\ \text{per parameter}\\
-1-3{,}015/125{,}250&=97.6\%\\
-3{,}015\times30/500&=181\ \text{days}\approx9\ \text{months}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>วิธีตรงมีข้อมูลไม่ถึง 1 จุดต่อหนึ่งตัวเลขที่ต้องประมาณ ถ้าใช้กฎนิ้วโป้ง 30 จุดต่อตัวของหัวข้อ 15.5 ต้องใช้ข้อมูลราว 30 ปี ซึ่งหุ้นครึ่งหนึ่งในดัชนียังไม่จดทะเบียนด้วยซ้ำ</p>
-    <p>ปัญหาที่หนักกว่าการนับคือ matrix ตัวอย่างสร้างจากผลรวมของ 250 ก้อนที่แต่ละก้อนมี rank หนึ่ง และหักค่าเฉลี่ยไปแล้ว rank จึงไม่เกิน 249 มี eigenvalue เป็นศูนย์ 251 ตัว แปลว่ามีพอร์ต 251 ทิศทางที่ข้อมูลบอกว่าความเสี่ยงเป็นศูนย์ ทั้งที่โลกจริงไม่ใช่ optimizer จะทุ่มเงินลงทิศทางพวกนี้ทันที</p>
-    <p>แบบจำลองห้าปัจจัยใช้ 3,015 ตัว ได้ 41.5 จุดต่อตัว เกินกฎ 30 จุด ลดตัวเลขที่ต้องประมาณลง 97.6% และข้อมูลที่ต้องรอลดจากราว 30 ปีเหลือราว 9 เดือน ราคาที่จ่ายคือสมมติว่าหุ้นสัมพันธ์กันผ่านปัจจัยเท่านั้น</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — ทำไม matrix ของแบบจำลองปัจจัยผกผันได้เสมอ</h4>
-  <p>ตรวจกับตัวอย่างสองหุ้นของขั้นที่ 6 ก่อน แล้วพิสูจน์ว่าใช้ได้กับทุกขนาด</p>
-  <div class="math">\[
-\begin{aligned}
-\det\Sigma&=3.69(4.64)-0.96^2\\
-&=17.1216-0.9216=16.20\gt0\\
-\lambda&=3.094,\ 5.236\\[4pt]
-w^{\mathsf T}\Sigma w&=w^{\mathsf T}B\Sigma_fB^{\mathsf T}w+w^{\mathsf T}Dw\\
-&=(B^{\mathsf T}w)^{\mathsf T}\Sigma_f(B^{\mathsf T}w)+\textstyle\sum_i w_i^2\sigma_{\varepsilon,i}^2\\
-&\gt0\quad\text{when}\ w\ne0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ก้อนแรกไม่ติดลบ เพราะ $\Sigma_f$ เป็น covariance matrix ของปัจจัย ก้อนหลังเป็นบวกแน่นอน เพราะหุ้นทุกตัวมีความเสี่ยงเฉพาะตัวมากกว่าศูนย์ และน้ำหนักไม่เป็นศูนย์ทั้งหมด ความเสี่ยงของทุกพอร์ตจึงเป็นบวก matrix เป็น positive definite และผกผันได้ทุกครั้ง</p>
-    <p>D คือตัวช่วยชีวิต มันเติมค่าบวกลงบนแนวทแยง ทำให้ eigenvalue ที่เคยเป็นศูนย์กลายเป็นบวกทุกตัว แนวคิดเดียวกับ Ridge regression และการบีบของ Ledoit–Wolf ในขั้นที่ 8</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>การให้หลายปัจจัยช่วยอธิบาย ทำให้แยกฝีมือออกจากการรับความเสี่ยงได้ละเอียดขึ้น</p>
-  <p>ใช้ประเมินผู้จัดการกองทุนอย่างเป็นธรรม โดยหักผลของทุกปัจจัยที่ซื้อได้ถูก ๆ ออกก่อน</p>
-  <p>ใช้สร้างตารางความเสี่ยงของพอร์ตใหญ่ โดยลดจำนวนตัวเลขที่ต้องประมาณลงมหาศาล ซึ่งเป็นเหตุผลเชิงปฏิบัติที่สำคัญที่สุด</p>
-  <p>ใช้ออกแบบพอร์ตที่รับความเสี่ยงเฉพาะปัจจัยที่ต้องการ และตัดปัจจัยที่ไม่ต้องการออก</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 15.3a — แผนที่ความร้อนของ factor loading</h4>
-  <img src="../figures/15.3-1.svg" alt="Figure 15.3a — แผนที่ความร้อนของ factor loading" loading="lazy">
-  <figcaption>
-    <p>heatmap เป็น exposures สมมติของสาม portfolios เพื่อสอนการอ่านเครื่องหมายและขนาด สีไม่ใช่ผลการประมาณจากตลาดสหรัฐฯ และไม่ควรใช้แทน regression report</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 15.3b — บัญชีส่วนร่วมของแต่ละ factor</h4>
-  <img src="../figures/15.3-2.svg" alt="Figure 15.3b — บัญชีส่วนร่วมของแต่ละ factor" loading="lazy">
-  <figcaption>
-    <p>สำหรับ Fund A ตัวอย่าง contributions รวม 1.08 จุด ต่อเดือน แท่งแสดง arithmetic attribution ภายใต้ premiums ที่สมมติ ไม่ได้แสดง realized cumulative performance</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 15.3c — สัญญาณเตือนว่า factor ซ้ำกัน</h4>
-  <img src="../figures/15.3-3.svg" alt="Figure 15.3c — สัญญาณเตือนว่า factor ซ้ำกัน" loading="lazy">
-  <figcaption>
-    <p>เมื่อ factors สองตัวมี correlation ใกล้หนึ่ง model อาจ fit รวมได้ แต่แยก loading รายตัวไม่เสถียร เส้นนี้เป็น synthetic correlation sweep เพื่อชี้ uncertainty risk</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 15.3d — ลดภาระประมาณ covariance ด้วยโครงสร้าง factor</h4>
-  <img src="../figures/15.3-4.svg" alt="Figure 15.3d — ลดภาระประมาณ covariance ด้วยโครงสร้าง factor" loading="lazy">
-  <figcaption>
-    <p>จำนวน covariance parameters แบบตรงโตตามกำลังสองของจำนวนหุ้น ขณะที่ factor model ห้าปัจจัยโตใกล้เส้นตรง ที่ 500 หุ้นลดจาก 125,250 เหลือ 3,015 parameters จึงช่วยให้ optimizer มี matrix ที่ใช้งานได้</p>
-  </figcaption>
-</figure>
-
-<section class="prose">
-  <h4>สมมติฐานและ risk interpretation</h4>
-  <p>model ต้อง freeze factor definitions, rebalance lag, currency, universe และ estimation window ก่อนวัด performance การใช้ diagonal $D$ สมมติ residual covariance ข้ามหุ้นเป็นศูนย์; หาก sector shock ยังหลงเหลือ matrix จะประเมิน portfolio risk ต่ำไป Loading จึงควรรายงานพร้อม standard errors, rolling stability และ scenario shocks ไม่ใช่แจกเป็นเลขทศนิยมไร้บริบท</p>
-</section>
-
 <section class="example">
-  <h4>คำตอบ — covariance ของหุ้น 500 ตัว และ attribution ของกองทุน</h4>
-  <p>คำถาม: จัดพอร์ต Markowitz บนหุ้น 500 ตัวด้วยข้อมูลรายวัน 250 วัน ต้องประมาณ covariance กี่ตัวเลข ข้อมูลพอไหม และแบบจำลอง 5 ปัจจัยลดเหลือเท่าไร?</p>
-  <p>ของที่มี: ขั้นที่ 4 ถึง 10</p>
-  <p>1 วิธีตรง 500 × 501 ÷ 2 = 125,250 ตัวเลข จากข้อมูล 125,000 จุด ได้ 0.998 จุดต่อตัว และ rank ไม่เกิน 249 จึงผกผันไม่ได้</p>
-  <p>2 แบบจำลองห้าปัจจัย 2,500 + 15 + 500 = 3,015 ตัว ได้ 41.5 จุดต่อตัว ลดลง 97.6%</p>
-  <p>3 ตัวอย่างสองหุ้นได้ covariance 3.69, 0.96, 4.64 correlation 0.232 ที่ไม่มีใครวัดตรง ๆ determinant 16.20 เป็นบวก</p>
-  <p>4 กองทุนที่มี loadings 1.0, 0.3, 0.4, 0.2 ได้ contribution 0.60 + 0.06 + 0.12 + 0.08 = 0.86 จุด บวก intercept 0.10% เป็น 0.96% ต่อเดือน หรือ \$96,000 บน \$10 ล้าน</p>
-  <p>ตรวจเองใน 10 วินาที: 500 × 501 ÷ 2 = 125,250 และ 500 × 5 + 15 + 500 = 3,015</p>
-  <p>แปลว่าอะไร: แบบจำลองปัจจัยไม่ได้จริงกว่า แต่ข้อมูลที่มีไม่พอประมาณทุกคู่ของหุ้น มันแลกความยืดหยุ่นกับ matrix ที่ใช้งานได้ และทำให้แยกฝีมือของผู้จัดการออกจาก exposure ที่ซื้อได้ถูก ๆ</p>
+  <h4>ขั้นที่ 2 — กองทุน A: alpha ของ CAPM 0.36% เหลือเท่าไรเมื่อหักสี่ปัจจัย</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กองทุน A มี loading ต่อ market, size, value และ momentum เท่ากับ 1.0, 0.3, 0.4 และ 0.2 สมมติผลตอบแทนคาดหวังรายเดือนของสี่ factor เป็น 0.6%, 0.2%, 0.3% และ 0.4% และ $a=0.10\%$ กองทุนมีเงิน \$10 ล้าน สมมติต่อว่า size, value และ momentum ไม่มี covariance กับ market</p>
+  <div class="math">\[
+\begin{aligned}
+1.0(0.6)&=0.60,\quad0.3(0.2)=0.06,\\
+0.4(0.3)&=0.12,\quad0.2(0.4)=0.08,\\
+\mathbb E[r_A]&=0.10+0.60+0.06+0.12+0.08\\
+&=0.96\%,\\
+\beta_{\rm CAPM}&=\frac{\operatorname{Cov}(r_A,f_M)}{\operatorname{Var}(f_M)}=b_M=1.0,\\
+\alpha_{\rm CAPM}&=0.96-1.0(0.60)=0.36\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> กองทุนคาดได้ 0.96% ต่อเดือน หรือ \$96,000 บนเงิน \$10 ล้าน ถ้าวัดด้วย CAPM ตัวเดียว alpha คือ 0.36% หรือ \$36,000 ต่อเดือน แต่ 0.26 จุดในนั้นมาจาก exposure ต่อ size, value และ momentum ที่ซื้อได้ถูกด้วยกองทุน factor เมื่อหักสี่ปัจจัยแล้วเหลือ alpha จริงแค่ 0.10% หรือ \$10,000 ค่าธรรมเนียมที่คิดจาก “alpha” จึงควรคิดจากตัวหลัง</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $0.60+0.06+0.12+0.08=0.86$ บวก 0.10 ได้ 0.96 ส่วน $\beta_{\rm CAPM}=b_M$ ได้เพราะสมมติว่าอีกสาม factor ไม่มี covariance กับตลาด ถ้ามี slope ของ CAPM จะดูด exposure ส่วนนั้นเข้ามาด้วย</p>
 </section>
-
-<section class="code">
-  <details>
-    <summary>โค้ดตรวจ attribution และ covariance</summary>
-    <pre><code>import numpy as np
-premium=np.array([.006,.002,.003,.004])
-loading=np.array([1.0,.3,.4,.2])
-alpha=.001
-value=10_000_000
-factor_contrib=loading*premium
-expected=alpha+factor_contrib.sum()
-B=np.array([[1.2],[.8]])
-Sigma=B@np.array([[1.]])@B.T+np.diag([2.25,4.])
-assert np.allclose(factor_contrib,[.006,.0006,.0012,.0008])
-assert abs(expected-.0096)&lt;1e-12
-assert abs(expected*value-96_000)&lt;1e-8
-assert np.allclose(Sigma,[[3.69,.96],[.96,4.64]])
-assert abs(np.linalg.det(Sigma)-16.20) &lt; 1e-9 and np.allclose(np.linalg.eigvalsh(Sigma),[3.0939,5.2361],atol=1e-4)
-assert abs(.96/np.sqrt(3.69*4.64)-.232) &lt; 1e-3
-assert 500*501//2 == 125_250 and 500*5+5*6//2+500 == 3_015
-assert abs(125_000/125_250-.998) &lt; 1e-3 and abs(125_000/3_015-41.46) &lt; 0.01
-assert abs(1-3_015/125_250-.976) &lt; 1e-3 and 125_250*30//500 == 7_515
-R=np.random.default_rng(0).standard_normal((250,500))
-assert np.linalg.matrix_rank(np.cov(R,rowvar=False)) == 249             # 251 zero eigenvalues</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดตรวจ contributions ราย factor, expected excess return 0.96%, ผลเงิน \$96,000 และ covariance matrix สองหุ้น; การตรวจแบบนี้กันทั้งการบวกรวมผิดและการใส่ residual variance นอก diagonal</p>
-  </div>
+<figure class="plot">
+  <h4>Figure 15.3a — แผนที่ loading ของสามกองทุน</h4>
+  <img src="../figures/15.3-1.svg" alt="heatmap ของ loading กองทุน A B C ต่อ Market Size Value Momentum ค่าตั้งแต่ −0.3 ถึง 1.2" loading="lazy">
+  <figcaption>ตัวเลขในช่องเป็น loading สมมติ แถวบนคือกองทุน A ของขั้นที่ 2 (1.0, 0.3, 0.4, 0.2) กองทุน B (0.8, −0.2, 0.7, −0.1) เอียงไปทาง value และหนีหุ้นเล็ก กองทุน C (1.2, 0.1, −0.3, 0.6) เอียงไปทาง momentum ด้วย premium ชุดเดียวกัน ส่วนที่ factor อธิบายได้คือ 0.86%, 0.61% และ 0.89% ต่อเดือน สีแดงคือบวก สีน้ำเงินคือลบ ไม่ใช่ผลประมาณจากตลาดจริง</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 15.3b — บัญชีส่วนร่วมของแต่ละ factor ในกองทุน A</h4>
+  <img src="../figures/15.3-2.svg" alt="แท่งห้าแท่ง alpha 0.10 market 0.60 size 0.06 value 0.12 momentum 0.08 จุดต่อเดือน" loading="lazy">
+  <figcaption>แท่งคือตัวเลขของขั้นที่ 2: alpha 0.10, market 0.60, size 0.06, value 0.12 และ momentum 0.08 จุดต่อเดือน รวม 0.96 (คำบรรยายเดิมของรูปนี้เขียนว่า 1.08 ซึ่งไม่ตรงกับแท่งที่วาด) เป็นบัญชีภายใต้ premium ที่สมมติ ไม่ใช่ผลตอบแทนสะสมที่เกิดขึ้นจริง</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 3 — factor ที่คล้ายกันทำให้ loading แยกกันไม่ออก</h4>
+  <p>ถ้า value กับ factor ใหม่ตัวหนึ่งขยับด้วยกันแทบตลอด regression จะรู้ได้อย่างไรว่าผลตอบแทนมาจากตัวไหน? ดูจาก variance ของค่าประมาณ สมมติสอง factor ถูกปรับให้มีค่าเฉลี่ยศูนย์ variance หนึ่ง และ correlation $\rho$ มีข้อมูล $n$ ช่วง ส่วนที่เหลือมี variance $\sigma^2$ อิสระกัน</p>
+  <div class="math">\[
+\begin{aligned}
+\hat\beta&=(X^{\mathsf T}X)^{-1}X^{\mathsf T}\mathbf y,\\
+\operatorname{Cov}(\hat\beta)&=\sigma^2(X^{\mathsf T}X)^{-1},\\
+X^{\mathsf T}X&=n\begin{bmatrix}1&amp;\rho\\\rho&amp;1\end{bmatrix},\\
+(X^{\mathsf T}X)^{-1}&=\frac{1}{n(1-\rho^2)}\begin{bmatrix}1&amp;-\rho\\-\rho&amp;1\end{bmatrix},\\
+\operatorname{Var}(\hat b_k)&=\frac{\sigma^2}{n}\cdot\frac{1}{1-\rho^2},\\
+\rho=0.9:&\quad\frac{1}{1-0.81}\approx5.26,\\
+\rho=0.99:&\quad\frac{1}{1-0.9801}\approx50.25.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สองมาจากการแทน $\mathbf y=X\beta+\varepsilon$ ลงในบรรทัดแรก ส่วนที่สุ่มคือ $(X^{\mathsf T}X)^{-1}X^{\mathsf T}\varepsilon$ covariance ของมันคือ $(X^{\mathsf T}X)^{-1}X^{\mathsf T}(\sigma^2I)X(X^{\mathsf T}X)^{-1}$ ซึ่งยุบเหลือ $\sigma^2(X^{\mathsf T}X)^{-1}$ ตัวคูณ $1/(1-\rho^2)$ เรียกว่า variance inflation factor</p><p>ที่ $\rho=0.9$ variance พองขึ้น 5.26 เท่า SE พองขึ้น $\sqrt{5.26}\approx2.29$ เท่า ที่ 0.99 SE พอง 7.09 เท่า แต่ผลรวม $\hat b_1+\hat b_2$ มี variance $\tfrac{\sigma^2}{n}\cdot\tfrac{2}{1+\rho}$ ซึ่งที่ 0.9 แค่ 1.05 เท่า model รวมยังทำนายได้ดี แค่แบ่งเครดิตให้แต่ละ factor ไม่ได้</p></div>
 </section>
-
+<figure class="plot">
+  <h4>Figure 15.3c — variance ของ loading พองขึ้นเมื่อ factor คล้ายกัน</h4>
+  <img src="../figures/15.3-3.svg" alt="เส้น 1 หารด้วย 1 ลบ rho กำลังสอง เทียบ correlation ระหว่างสอง factor จาก 0 ถึง 0.99" loading="lazy">
+  <figcaption>เส้นคือ $1/(1-\rho^2)$ ที่ 100 ค่าของ $\rho$ จาก 0 ถึง 0.99 ตามขั้นที่ 3 แกนตั้งเป็นตัวคูณของ variance ไม่ใช่ของ SE ที่ $\rho=0.9$ ได้ 5.26 และพุ่งเป็น 50.25 ที่ 0.99 เส้นเป็นสูตร ไม่ได้มาจากข้อมูลตลาด</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 4 — ทำไมผลตอบแทนคาดหวังต้องเป็นเส้นตรงของ loading (APT)</h4>
+  <p>เริ่มจากตัวอย่าง สมมติพอร์ตกระจายตัวดีสามพอร์ตที่ความเสี่ยงเฉพาะตัวเกือบหมดไปแล้ว มีปัจจัยเดียว P1 มี loading 0.5 คาดได้ 0.55% ต่อเดือน P2 มี loading 1.5 คาดได้ 1.25% ผสม P1 กับ P2 อย่างละครึ่งได้ loading 1.0 และคาดได้ 0.90% ถ้า P3 มี loading 1.0 แต่คาดได้ 1.00% ก็ซื้อ P3 หนึ่งดอลลาร์ ขายส่วนผสมหนึ่งดอลลาร์ ไม่ใช้เงินและไม่มีความเสี่ยงปัจจัย แต่ได้ 0.10% ต่อเดือนฟรี ทุกคนจะทำจนราคา P3 ขึ้นและผลตอบแทนคาดหวังลงเหลือ 0.90% จุดทั้งสามจึงต้องอยู่บนเส้นเดียว $0.20+0.70b$</p>
+  <div class="math">\[
+\begin{aligned}
+r_i&=\mu_i+\sum_k b_{ik}\tilde f_k+u_i,\\
+\sum_i w_i&=0,\quad\sum_i w_ib_{ik}=0,\\
+r_p&=\sum_i w_i\mu_i+\sum_i w_iu_i,\\
+\operatorname{Var}(r_p)&=\sum_i w_i^2\sigma_{u_i}^2\approx0,\\
+\sum_i w_i\mu_i&=0,\\
+\mu_i&=\lambda_0+\sum_k b_{ik}\lambda_k.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สองคือพอร์ตที่ไม่ใช้เงินและไม่มี exposure ต่อ factor ใดเลย พจน์ factor จึงหายในบรรทัดที่สาม เมื่อกระจายน้ำหนักไปหลายร้อยตัว ส่วนเฉพาะตัวที่อิสระกันเหลือ variance ราว $\sigma_u^2/N$ ใกล้ศูนย์ พอร์ตที่ไม่ใช้เงินและไม่มีความเสี่ยงต้องได้ผลตอบแทนศูนย์ ไม่อย่างนั้นเป็นกำไรฟรี</p><p>จังหวะที่ยากคือบรรทัดสุดท้าย: ทุก $w$ ที่ตั้งฉากกับ vector ของ 1 และกับทุกคอลัมน์ของ $B$ ต้องตั้งฉากกับ $\mu$ ด้วย แปลว่า $\mu$ อยู่ใน span ของ vector เหล่านั้น (range กับ null space ใน 7.5) สินทรัพย์ที่ loading ศูนย์ทุกตัวต้องได้ $\lambda_0=R_f$ และ $\lambda_k$ คือราคาของ factor $k$ ต่อ loading หนึ่งหน่วย</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 5 — covariance ของหุ้นทุกตัวจาก model: $B\Sigma_fB^{\mathsf T}+D$</h4>
+  <p>ประโยชน์ที่ใหญ่กว่า attribution คือการสร้าง covariance เขียนสมการของขั้นที่ 1 สำหรับหุ้นทุกตัวพร้อมกันเป็น vector ลบค่าเฉลี่ยออก แล้วใส่นิยาม covariance ของ 8.1 ข้อสมมติสองข้อทำงานในบรรทัดที่ห้า</p>
+  <div class="math">\[
+\begin{aligned}
+r_t-\mathbb E[r_t]&=B\tilde f_t+u_t,\\
+\Sigma&=\mathbb E\big[(B\tilde f+u)(B\tilde f+u)^{\mathsf T}\big]\\
+&=B\,\mathbb E[\tilde f\tilde f^{\mathsf T}]B^{\mathsf T}+\mathbb E[uu^{\mathsf T}]\\
+&\quad+B\,\mathbb E[\tilde fu^{\mathsf T}]+\mathbb E[u\tilde f^{\mathsf T}]B^{\mathsf T},\\
+\mathbb E[\tilde fu^{\mathsf T}]&=0,\quad\mathbb E[uu^{\mathsf T}]=D,\\
+\Sigma&=B\Sigma_fB^{\mathsf T}+D.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>กระจายผลคูณได้สี่ก้อน ก้อนแรกคือแรงร่วม ก้อนที่สองคือส่วนเฉพาะตัว สองก้อนสุดท้ายเป็นพจน์ไขว้ ข้อสมมติแรกคือส่วนเฉพาะตัวไม่เกี่ยวกับ factor พจน์ไขว้จึงหาย ข้อสมมติที่สองคือส่วนเฉพาะตัวของหุ้นสองตัวไม่เกี่ยวกัน $\mathbb E[uu^{\mathsf T}]$ จึงเหลือแต่แนวทแยง</p><p>ผลคือการขยับร่วมกันทั้งหมดของหุ้นสองตัวต้องผ่าน factor ถ้าหุ้นธนาคารสองตัวมีข่าวร้ายร่วมกันที่ factor ไม่รู้จัก model จะมองไม่เห็น ข้อนี้กลับมาใน pitfall ท้ายหน้า</p></div>
+</section>
+<section class="example">
+  <h4>ขั้นที่ 6 — หุ้นสองตัว หนึ่ง factor: คำนวณทุกช่อง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> loading $B=(1.2, 0.8)^{\mathsf T}$ variance ของ factor 1.00 %² ต่อวัน และ idiosyncratic variance 2.25 กับ 4.00 %² ต่อวัน (ตัวเลขสมมติ)</p>
+  <div class="math">\[
+\begin{aligned}
+B\Sigma_fB^{\mathsf T}&=\begin{bmatrix}1.44&amp;0.96\\0.96&amp;0.64\end{bmatrix},\\
+\Sigma&=\begin{bmatrix}1.44+2.25&amp;0.96\\0.96&amp;0.64+4.00\end{bmatrix}\\
+&=\begin{bmatrix}3.69&amp;0.96\\0.96&amp;4.64\end{bmatrix},\\
+\rho_{12}&=\frac{0.96}{\sqrt{3.69(4.64)}}\approx0.232,\\
+\det\Sigma&=17.1216-0.9216=16.20,\\
+\lambda^2-8.33\lambda+16.20&=0,\\
+\lambda&\approx3.094,\ 5.236.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> covariance ของสองหุ้นคือ 0.96 %² ต่อวัน มาจาก $1.2\times0.8\times1.00$ เท่านั้น correlation 0.232 ไม่มีใครวัดตรง ๆ มันถูกสร้างจาก loading สองตัว eigenvalue ทั้งสองเป็นบวก (ผลคูณคือ det 16.20 ผลบวกคือ trace 8.33) matrix นี้จึงเป็น positive definite และมี inverse</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> พอร์ตครึ่งต่อครึ่งมี variance $0.25(3.69+4.64+2\times0.96)=2.5625$ แยกได้เป็น factor $(0.5\times1.2+0.5\times0.8)^2=1.00$ บวกเฉพาะตัว $0.25(2.25)+0.25(4.00)=1.5625$ รวมกันได้ 2.5625 เท่ากัน</p>
+</section>
+<section class="example">
+  <h4>ขั้นที่ 7 — นับตัวเลขที่ต้องประมาณ: 500 หุ้น</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้น $N=500$ ตัว ข้อมูล $T=250$ วัน model ห้าปัจจัย ($K=5$) covariance แบบตรงต้องการ variance $N$ ตัวบนแนวทแยงกับคู่ที่ไม่ซ้ำ $N(N-1)/2$ คู่ (8.1) ส่วน model ต้องการ loading $NK$ ตัว covariance ของ factor $K(K+1)/2$ ตัว และ idiosyncratic variance $N$ ตัว</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{N(N+1)}{2}&=\frac{500(501)}{2}=125{,}250,\\
+NK+\frac{K(K+1)}{2}+N&=2{,}500+15+500\\
+&=3{,}015,\\
+\frac{125{,}000}{125{,}250}&\approx0.998,\quad\frac{125{,}000}{3{,}015}\approx41.5,\\
+1-\frac{3{,}015}{125{,}250}&\approx97.6\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> แบบตรงมีข้อมูลไม่ถึงหนึ่งจุดต่อตัวเลข model ห้าปัจจัยมี 41.5 จุดต่อตัวเลข และลดภาระลง 97.6% ถ้าใช้กฎหัวแม่มือที่อยากได้ราว 30 จุดต่อตัวเลข แบบตรงต้องใช้ $125{,}250\times30/500=7{,}515$ วัน หรือราว 29.8 ปีที่ 252 วันต่อปี ซึ่งหุ้นครึ่งหนึ่งในดัชนียังไม่เข้าตลาดด้วยซ้ำ ส่วน model ใช้ราว 181 วัน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $500\times499/2=124{,}750$ คู่นอกแนวทแยง บวก 500 บนแนวทแยงได้ 125,250 และ $5\times6/2=15$ คือจำนวนตัวเลขใน covariance ของห้า factor</p>
+</section>
+<figure class="plot">
+  <h4>Figure 15.3d — ภาระการประมาณโตเป็นกำลังสอง เทียบกับเกือบเส้นตรง</h4>
+  <img src="../figures/15.3-4.svg" alt="จำนวน parameter บนแกน log ของ sample covariance เทียบ model ห้าปัจจัย ที่ 50 100 250 และ 500 หุ้น" loading="lazy">
+  <figcaption>จุดคือสูตรของขั้นที่ 7 ที่ $N$ = 50, 100, 250 และ 500 หุ้น: sample covariance ต้องการ 1,275, 5,050, 31,375 และ 125,250 ตัวเลข model ห้าปัจจัยต้องการ 315, 615, 1,515 และ 3,015 ตัวเลข แกนตั้งเป็น log เส้นหนึ่งโตตาม $N^2$ อีกเส้นโตตาม $N$</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 8 — หุ้นมากกว่าวัน: sample covariance บอกว่ามีพอร์ตที่ไม่มีความเสี่ยง</h4>
+  <p>นับอย่างเดียวยังไม่พอ ปัญหาที่หนักกว่าเห็นได้จากตัวอย่างเล็กที่สุด หุ้นสามตัว ข้อมูลสองวัน: วันแรกได้ $(1, 2, 0)\%$ วันที่สองได้ $(3, 0, 2)\%$ ค่าเฉลี่ยคือ $(2, 1, 1)$</p>
+  <div class="math">\[
+\begin{aligned}
+d_t&:=r_t-\bar r,\quad\sum_{t=1}^{T}d_t=0,\\
+S&=\frac{1}{T-1}\sum_{t=1}^{T}d_td_t^{\mathsf T},\\
+d_1&=(-1, 1, -1),\quad d_2=-d_1,\\
+S&=2d_1d_1^{\mathsf T}=\begin{bmatrix}2&amp;-2&amp;2\\-2&amp;2&amp;-2\\2&amp;-2&amp;2\end{bmatrix},\\
+w&=(1, 1, 0):\quad d_1^{\mathsf T}w=0,\\
+w^{\mathsf T}Sw&=2(d_1^{\mathsf T}w)^2=0.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ข้อมูลสองวันบอกว่าพอร์ตที่ซื้อหุ้นแรกกับหุ้นที่สองอย่างละเท่ากันไม่มีความเสี่ยงเลย เพราะในสองวันนั้นสองตัวขยับสวนกันพอดี พอร์ต $(1, 0, -1)$ ก็ได้ศูนย์เช่นกัน ใครที่เอา $S$ นี้ไปให้ optimizer จะได้พอร์ตที่ lever ทิศนี้ไม่จำกัด</p><p>ในกรณีทั่วไป $S$ เป็นผลรวมของ $T$ ก้อนที่แต่ละก้อนมี rank หนึ่ง และเพราะ $d_t$ รวมกันได้ศูนย์ ก้อนสุดท้ายเขียนได้จากก้อนอื่น rank จึงไม่เกิน $T-1$ หุ้น 500 ตัวกับ 250 วันได้ rank ไม่เกิน 249 เหลือ eigenvalue ศูนย์อย่างน้อย 251 ตัว คือ 251 ทิศทางที่ข้อมูลบอกว่าไม่มีความเสี่ยง ทั้งที่โลกจริงไม่ใช่</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 9 — covariance ของ model มี inverse เสมอ และ shrinkage ซ่อม $S$ ได้</h4>
+  <p>ทำไม model ไม่พังแบบเดียวกัน? คำนวณความเสี่ยงของพอร์ต $w$ ใด ๆ จาก $\Sigma=B\Sigma_fB^{\mathsf T}+D$ แล้วดูว่ามันเป็นศูนย์ได้หรือไม่ จากนั้นดูวิธีที่งานจริงใช้ซ่อม $S$ โดยผสมมันกับ matrix ที่มีโครงสร้าง $F$</p>
+  <div class="math">\[
+\begin{aligned}
+w^{\mathsf T}\Sigma w&=(B^{\mathsf T}w)^{\mathsf T}\Sigma_f(B^{\mathsf T}w)\\
+&\quad+\sum_i w_i^2\sigma_{u_i}^2\gt0,\\
+w=(1, -1.5):\quad B^{\mathsf T}w&=1.2-1.2=0,\\
+w^{\mathsf T}\Sigma w&=2.25+1.5^2(4.00)=11.25,\\
+\Sigma_{\rm sh}&:=\delta F+(1-\delta)S,\\
+F=\operatorname{diag}(S),\ \delta&=0.5,\\
+\Sigma_{\rm sh}&=\begin{bmatrix}2&amp;-1&amp;1\\-1&amp;2&amp;-1\\1&amp;-1&amp;2\end{bmatrix},\\
+w=(1, 1, 0):\quad w^{\mathsf T}\Sigma_{\rm sh}w&=2+2-2=2.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ก้อนแรกไม่ติดลบเพราะ $\Sigma_f$ เป็น covariance ก้อนที่สองเป็นบวกทุกครั้งที่ $w$ ไม่เป็นศูนย์ เพราะหุ้นทุกตัวมีความเสี่ยงเฉพาะตัว พอร์ต $(1, -1.5)$ ของขั้นที่ 6 ตัด factor ได้หมด แต่ยังเหลือ 11.25 %² ต่อวัน $D$ เติมค่าบวกลงแนวทแยง จึงไม่มีทิศไหนที่ความเสี่ยงเป็นศูนย์</p><p>shrinkage ใช้แนวคิดเดียวกันกับ $S$ ที่พัง ผสมครึ่งหนึ่งกับแนวทแยงของมันเอง พอร์ต $(1, 1, 0)$ ได้ variance 2 แทน 0 และ eigenvalue เปลี่ยนจาก 6, 0, 0 เป็น 4, 1, 1 เพราะ $\Sigma_{\rm sh}=I+0.5S$ วิธีของ Ledoit–Wolf เลือก $\delta$ จากข้อมูล ส่วน 0.5 ที่นี่ตั้งเพื่อสาธิต</p></div>
+</section>
 <section class="prose">
-  <h4>ก่อนไปต่อ — cointegration</h4>
-  <p>factor model อธิบายผลตอบแทนหลายสินทรัพย์ด้วย common drivers แต่ relative-value trade ต้องถามเพิ่มว่าระดับราคาสองเส้นมี equilibrium ร่วมกันหรือไม่ หัวข้อถัดไปจึงย้ายจาก cross-sectional exposure ไปสู่ time-series residual ที่ต้อง stationary ก่อนเดิมพันการกลับค่าเฉลี่ย</p>
+  <h4>คำถามที่ควรถามออกมาดัง ๆ</h4>
+  <p><strong>factor มาจากไหน?</strong> ส่วนใหญ่เป็นผลตอบแทนของพอร์ต long–short ที่สร้างตามกติกา เช่น size คือหุ้นเล็กลบหุ้นใหญ่ value คือหุ้นที่ราคาถูกเทียบมูลค่าทางบัญชีลบหุ้นที่แพง momentum คือผู้ชนะลบผู้แพ้ (15.6) กติกา วันที่ข้อมูลพร้อมใช้ และการ rebalance ต้องตรึงก่อนวัดผล ไม่อย่างนั้น loading เปลี่ยนความหมายตามผลที่อยากได้</p>
+  <p><strong>ใส่ factor เยอะ ๆ ไม่ดีกว่าหรือ?</strong> ในข้อมูลเก่า ดีกว่าเสมอ เพราะ SSE ไม่มีทางเพิ่ม แต่ factor ที่ค้นเจอจากข้อมูลชุดเดิมจำนวนมากใช้ไม่ได้กับข้อมูลใหม่ และ factor ที่คล้ายกันทำให้ loading ไม่นิ่งตามขั้นที่ 3 15.5 วัดว่าการค้นหาแบบนี้หลอกได้แค่ไหน</p>
 </section>
-
 <section class="pitfall">
-  <h4>กับดัก: เพิ่ม factor จน residual เล็กแล้วประกาศ discovery</h4>
-  <p>ทุก factor เพิ่ม degrees of freedom และโอกาส data mining กำหนด economic rationale, construction, lag, costs และ test period ก่อนดู result; model ที่มี factors มากอาจอธิบายอดีตเก่งแต่ไม่ทำนายอนาคต</p>
+  <h4>ความผิดที่ทำให้ความเสี่ยงดูต่ำกว่าจริง</h4>
+  <p><strong>ส่วนเฉพาะตัวที่ไม่เฉพาะตัวจริง:</strong> ถ้าสองหุ้นในขั้นที่ 6 เป็นธนาคารที่ส่วนเฉพาะตัวมี correlation 0.5 จริง covariance ที่แท้คือ $0.96+0.5(1.5)(2.0)=2.46$ ไม่ใช่ 0.96 พอร์ตครึ่งต่อครึ่งมี SD จริง 1.820% ต่อวัน แต่ model รายงาน 1.601% ต่ำไป 12% โดยไม่มีสัญญาณเตือน งานจริงจึงเพิ่ม factor ของอุตสาหกรรมเข้าไป</p>
+  <p><strong>อ่าน loading ทีละตัวตอนที่ factor คล้ายกัน:</strong> ที่ correlation 0.9 SE ของแต่ละ loading พองขึ้น 2.29 เท่า loading ที่ดูเหมือนบวกชัดอาจสลับเครื่องหมายเมื่อเพิ่มข้อมูลอีกไม่กี่เดือน ให้รายงานผลรวมของกลุ่ม factor ที่คล้ายกัน หรือรวมมันเป็นตัวเดียวก่อน</p>
+  <p><strong>ใช้ sample covariance ตรง ๆ เมื่อหุ้นมากกว่าวัน:</strong> optimizer ไม่รู้ว่า 251 ทิศที่ความเสี่ยงเป็นศูนย์เป็นภาพลวง มันจะถือทิศเหล่านั้นหนักที่สุด ผลคือพอร์ตที่ความเสี่ยงจริงสูงกว่าที่รายงานหลายเท่า</p>
 </section>
-
 <section class="prose">
-  <h4>ที่มาที่ไป: เมื่อปัจจัยเดียวอธิบายไม่พอ</h4>
-  <p>หลังจากทฤษฎีปัจจัยเดียวถูกใช้มายี่สิบกว่าปี นักวิจัยเริ่มพบรูปแบบที่มันอธิบายไม่ได้อย่างเป็นระบบ</p>
-  <p>โดยเฉพาะหุ้นบริษัทเล็กและหุ้นที่ราคาถูกเมื่อเทียบกับมูลค่าทางบัญชี ให้ผลตอบแทนสูงกว่าที่ทฤษฎีบอกอย่างสม่ำเสมอ จนเรียกไม่ได้ว่าเป็นความบังเอิญ</p>
-  <p>Eugene Fama กับ Kenneth French เสนอในช่วงต้นทศวรรษ 1990 ให้เพิ่มปัจจัยเข้าไปอีกสองตัว เพื่อจับรูปแบบเหล่านั้น</p>
-  <p>ประโยชน์ที่ตามมามีมากกว่าการอธิบายผลตอบแทน เพราะแบบจำลองปัจจัยลดจำนวนตัวเลขที่ต้องประมาณ สำหรับตารางความเสี่ยงของหุ้นหลายร้อยตัว จากหลายหมื่นเหลือไม่กี่ร้อย</p>
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>risk model เชิงพาณิชย์ที่โต๊ะหุ้นใช้ทุกวันเป็น factor model ที่มี factor ของตลาด อุตสาหกรรม และลักษณะของบริษัทหลายสิบตัว ใช้คำนวณความเสี่ยงของพอร์ตหลายพันตัว ฝ่ายวัดผลใช้ regression หลายตัวแปรตัดสินว่าผู้จัดการได้ alpha จริงหรือแค่ถือ exposure ที่ซื้อได้ถูก และผู้จัดการใช้ loading ของพอร์ตสร้างพอร์ตที่เป็นกลางต่อ factor ที่ไม่ต้องการ</p>
 </section>
-
+<section class="example">
+  <h4>สามโจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> กองทุน C มี loading (1.2, 0.1, −0.3, 0.6) ต่อ market, size, value, momentum และ $a=0$ ใช้ premium ชุดเดียวกับขั้นที่ 2 ผลตอบแทนคาดหวังและ alpha ของ CAPM เป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>$1.2(0.6)+0.1(0.2)-0.3(0.3)+0.6(0.4)=0.72+0.02-0.09+0.24=0.89\%$ ภายใต้ข้อสมมติเดียวกันว่า factor อื่นไม่มี covariance กับตลาด alpha ของ CAPM คือ $0.89-1.2(0.6)=0.17\%$ ทั้งที่ alpha หลังหักสี่ปัจจัยเป็นศูนย์ ทั้ง 0.17 จุดมาจาก momentum และ size ที่หักด้วย value ติดลบ</p></details>
+  <p><strong>2.</strong> หุ้น 100 ตัว model สามปัจจัย ต้องประมาณกี่ตัวเลข เทียบกับ covariance แบบตรง</p>
+  <details><summary>เฉลย</summary><p>แบบตรง $100(101)/2=5{,}050$ model $100(3)+3(4)/2+100=300+6+100=406$ ลดลง $1-406/5{,}050\approx92\%$</p></details>
+  <p><strong>3.</strong> ในขั้นที่ 8 ถ้าได้ข้อมูลวันที่สาม $(2, 1, 4)\%$ เพิ่ม ค่าเฉลี่ยใหม่คือ $(2, 1, 2)$ rank ของ $S$ เป็นเท่าไร และพอร์ต $(1, 1, 0)$ ยังไม่มีความเสี่ยงไหม</p>
+  <details><summary>เฉลย</summary><p>ระยะห่างจากค่าเฉลี่ยใหม่คือ $(-1, 1, -2)$, $(1, -1, 0)$, $(0, 0, 2)$ ทุกตัวมีสองช่องแรกเป็นคู่ตรงข้าม พอร์ต $(1, 1, 0)$ จึงได้ $d_t^{\mathsf T}w=0$ ทุกวัน variance ยังเป็นศูนย์ rank คือ 2 ตาม $T-1=2$ วันที่สามหุ้นแรกกับหุ้นที่สองอยู่ตรงค่าเฉลี่ยพอดี ข้อมูลเพิ่มหนึ่งวันลดทิศที่ไม่มีความเสี่ยงจากสองเหลือหนึ่ง แต่ยังไม่หมด</p></details>
+</section>
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>รันใน Node.js ได้โดยไม่ต้องติดตั้งอะไร โค้ดคำนวณ attribution ของกองทุน A, variance inflation, covariance ของ model หุ้นสองตัวพร้อม eigenvalue, จำนวน parameter, sample covariance ของตัวอย่างสามหุ้นสองวันพร้อม rank และ shrinkage และสุ่มข้อมูล 25 วันของหุ้น 50 ตัวด้วย seed ตายตัวเพื่อยืนยันว่า rank เป็น 24 ตรวจรูปร่างของ matrix, variance ที่ต้องเป็นบวก และช่วงของ $\delta$ กับ $\rho$</p>
+  <pre><code class="language-javascript" data-example="15.3">function checkMatrix(A, name) {
+  if (!Array.isArray(A) || A.length === 0 || !A.every(r =&gt; Array.isArray(r) &amp;&amp; r.length === A[0].length &amp;&amp; r.every(Number.isFinite))) {
+    throw new TypeError(name + ' must be a non-empty rectangular matrix of finite numbers');
+  }
+  return [A.length, A[0].length];
+}
+const transpose = A =&gt; A[0].map((_, j) =&gt; A.map(r =&gt; r[j]));
+function multiply(A, B) {
+  const [, k] = checkMatrix(A, 'Left matrix'), [k2] = checkMatrix(B, 'Right matrix');
+  if (k !== k2) throw new RangeError('Inner dimensions do not match');
+  return A.map(r =&gt; B[0].map((_, j) =&gt; r.reduce((s, v, t) =&gt; s + v * B[t][j], 0)));
+}
+const quadratic = (S, w) =&gt; w.reduce((s, wi, i) =&gt; s + wi * S[i].reduce((t, v, j) =&gt; t + v * w[j], 0), 0);
+// Expected excess return split into alpha plus loading times premium for each factor.
+function attribution(alpha, loadings, premiums) {
+  if (!Number.isFinite(alpha) || !Array.isArray(loadings) || !Array.isArray(premiums) || loadings.length !== premiums.length) {
+    throw new TypeError('Need a finite alpha and loadings and premiums of the same length');
+  }
+  if (![...loadings, ...premiums].every(Number.isFinite)) throw new TypeError('Loadings and premiums must be finite');
+  const contributions = loadings.map((b, k) =&gt; b * premiums[k]);
+  const expected = alpha + contributions.reduce((s, v) =&gt; s + v, 0);
+  // If the other factors are uncorrelated with the market (factor 0), a market-only regression keeps
+  // slope loadings[0] and its intercept absorbs every other contribution.
+  return {contributions, expected, capmAlpha: expected - contributions[0]};
+}
+// Factor-model covariance B F B^T + diag(d); every residual variance must be positive.
+function factorCovariance(B, F, d) {
+  const [n, k] = checkMatrix(B, 'Loadings'), [k1, k2] = checkMatrix(F, 'Factor covariance');
+  if (k1 !== k || k2 !== k) throw new RangeError('Factor covariance must be K by K');
+  if (!Array.isArray(d) || d.length !== n || !d.every(v =&gt; Number.isFinite(v) &amp;&amp; v &gt; 0)) {
+    throw new RangeError('Need one positive residual variance per asset');
+  }
+  return multiply(multiply(B, F), transpose(B)).map((r, i) =&gt; r.map((v, j) =&gt; v + (i === j ? d[i] : 0)));
+}
+function eigen2(S) {
+  const tr = S[0][0] + S[1][1], det = S[0][0] * S[1][1] - S[0][1] * S[1][0], gap = Math.sqrt(tr * tr - 4 * det);
+  return {det, values: [(tr - gap) / 2, (tr + gap) / 2]};
+}
+const countParameters = (N, K) =&gt; ({direct: N * (N + 1) / 2, factor: N * K + K * (K + 1) / 2 + N});
+function sampleCovariance(rows) {
+  const [T, N] = checkMatrix(rows, 'Returns');
+  if (T &lt; 2) throw new RangeError('Need at least two dates');
+  const mean = rows[0].map((_, j) =&gt; rows.reduce((s, r) =&gt; s + r[j], 0) / T);
+  const d = rows.map(r =&gt; r.map((v, j) =&gt; v - mean[j]));
+  return Array.from({length: N}, (_, i) =&gt; Array.from({length: N}, (_, j) =&gt; d.reduce((s, r) =&gt; s + r[i] * r[j], 0) / (T - 1)));
+}
+// Rank by Gaussian elimination with partial pivoting; pivots below tol times the largest entry count as zero.
+function rank(S, tol = 1e-10) {
+  const A = S.map(r =&gt; r.slice()), n = A.length, m = A[0].length;
+  const scale = Math.max(...A.map(r =&gt; Math.max(...r.map(Math.abs))));
+  let r = 0;
+  for (let c = 0; c &lt; m &amp;&amp; r &lt; n; c++) {
+    let p = r;
+    for (let i = r + 1; i &lt; n; i++) if (Math.abs(A[i][c]) &gt; Math.abs(A[p][c])) p = i;
+    if (Math.abs(A[p][c]) &lt;= tol * scale) continue;
+    [A[r], A[p]] = [A[p], A[r]];
+    for (let i = r + 1; i &lt; n; i++) {
+      const f = A[i][c] / A[r][c];
+      for (let j = c; j &lt; m; j++) A[i][j] -= f * A[r][j];
+    }
+    r++;
+  }
+  return r;
+}
+// Seeded standard normals (mulberry32 + Box-Muller) so the rank demonstration is reproducible.
+function normals(seed) {
+  let a = seed &gt;&gt;&gt; 0, spare = null;
+  const u = () =&gt; {
+    a = (a + 0x6D2B79F5) &gt;&gt;&gt; 0;
+    let t = Math.imul(a ^ (a &gt;&gt;&gt; 15), a | 1);
+    t ^= t + Math.imul(t ^ (t &gt;&gt;&gt; 7), t | 61);
+    return (((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) + 0.5) / 4294967296;
+  };
+  return () =&gt; {
+    if (spare !== null) { const z = spare; spare = null; return z; }
+    const r = Math.sqrt(-2 * Math.log(u())), q = 2 * Math.PI * u();
+    spare = r * Math.sin(q);
+    return r * Math.cos(q);
+  };
+}
+function sampleRank(T, N, seed) {
+  if (!Number.isInteger(T) || !Number.isInteger(N) || T &lt; 2 || N &lt; 1) throw new RangeError('Need whole numbers T &gt;= 2 and N &gt;= 1');
+  const z = normals(seed), rows = Array.from({length: T}, () =&gt; Array.from({length: N}, z));
+  return rank(sampleCovariance(rows));
+}
+function shrink(S, delta) {
+  checkMatrix(S, 'Sample covariance');
+  if (!(delta &gt;= 0 &amp;&amp; delta &lt;= 1)) throw new RangeError('Shrinkage weight must lie between 0 and 1');
+  return S.map((r, i) =&gt; r.map((v, j) =&gt; (1 - delta) * v + (i === j ? delta * v : 0)));
+}
+const vif = rho =&gt; {
+  if (!(Math.abs(rho) &lt; 1)) throw new RangeError('Correlation must lie strictly between -1 and 1');
+  return 1 / (1 - rho * rho);
+};
+const premiums = [0.6, 0.2, 0.3, 0.4];
+const fundA = attribution(0.1, [1.0, 0.3, 0.4, 0.2], premiums);
+const twoStock = factorCovariance([[1.2], [0.8]], [[1.0]], [2.25, 4.0]);
+const tiny = sampleCovariance([[1, 2, 0], [3, 0, 2]]), tinyShrunk = shrink(tiny, 0.5);
+const tiny3 = sampleCovariance([[1, 2, 0], [3, 0, 2], [2, 1, 4]]);
+const counts = countParameters(500, 5), data = 500 * 250;
+const bankTrue = twoStock.map((r, i) =&gt; r.map((v, j) =&gt; v + (i === j ? 0 : 0.5 * 1.5 * 2)));
+console.log(JSON.stringify({
+  fundA: {...fundA, usd: [fundA.expected, fundA.capmAlpha, 0.1].map(p =&gt; p / 100 * 1e7)},
+  fundB: attribution(0, [0.8, -0.2, 0.7, -0.1], premiums).expected,
+  fundC: attribution(0, [1.2, 0.1, -0.3, 0.6], premiums),
+  apt: {mixLoading: 0.5 * 0.5 + 0.5 * 1.5, mixReturn: 0.5 * 0.55 + 0.5 * 1.25, slope: (1.25 - 0.55) / (1.5 - 0.5),
+    intercept: 0.55 - 0.5 * (1.25 - 0.55) / (1.5 - 0.5), freeLunch: 1.00 - (0.5 * 0.55 + 0.5 * 1.25)},
+  vif: [0.5, 0.9, 0.99].map(r =&gt; ({rho: r, vif: vif(r), seMultiple: Math.sqrt(vif(r)), sumOfTwo: 2 / (1 + r)})),
+  twoStock: {Sigma: twoStock, corr: twoStock[0][1] / Math.sqrt(twoStock[0][0] * twoStock[1][1]), ...eigen2(twoStock),
+    factorNeutral: quadratic(twoStock, [1, -1.5]), halfHalf: quadratic(twoStock, [0.5, 0.5])},
+  counts: {...counts, data, perDirect: data / counts.direct, perFactor: data / counts.factor, cut: 1 - counts.factor / counts.direct,
+    daysAt30: [counts.direct * 30 / 500, counts.factor * 30 / 500], small: countParameters(100, 3)},
+  tiny: {S: tiny, rank: rank(tiny), zeroRisk: [quadratic(tiny, [1, 1, 0]), quadratic(tiny, [1, 0, -1])],
+    shrunk: tinyShrunk, shrunkRisk: quadratic(tinyShrunk, [1, 1, 0]), shrunkRank: rank(tinyShrunk),
+    thirdDay: {rank: rank(tiny3), risk: quadratic(tiny3, [1, 1, 0])}},
+  randomRank: {T: 25, N: 50, rank: sampleRank(25, 50, 7)},
+  bankPair: {modelSD: Math.sqrt(quadratic(twoStock, [0.5, 0.5])), trueSD: Math.sqrt(quadratic(bankTrue, [0.5, 0.5]))}
+}));</code></pre>
+</section>
+<section class="prose">
+  <h4>ที่มาที่ไป</h4>
+  <p>Stephen Ross เสนอ APT ในปี 1976 โดยใช้แค่เงื่อนไขว่าไม่มีกำไรฟรี ต่อมาในต้นทศวรรษ 1990 Eugene Fama กับ Kenneth French พบว่าหุ้นเล็กและหุ้นที่ราคาถูกเทียบมูลค่าทางบัญชีให้ผลตอบแทนสูงกว่าที่ beta บอกอย่างสม่ำเสมอ จึงเพิ่มสอง factor เข้าไปกับตลาด และ Mark Carhart เพิ่ม momentum ในปี 1997 ตอนวัดผลกองทุนรวม</p>
+  <p>ฝั่งความเสี่ยง Barr Rosenberg ตั้งบริษัท Barra ในปี 1975 ขาย factor model สำหรับคำนวณความเสี่ยงของพอร์ตใหญ่ และ Olivier Ledoit กับ Michael Wolf เสนอวิธีเลือก $\delta$ ของ shrinkage จากข้อมูลในต้นทศวรรษ 2000</p>
+</section>
 <section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>การเลือกปัจจัย</td><td>รู้ว่าปัจจัยไหนสำคัญ</td><td>ปัจจัยที่เผยแพร่กันมาจากการค้นหาในข้อมูลชุดเดิม ๆ</td><td>ปัจจัยจำนวนมากที่ตีพิมพ์แล้วใช้จริงไม่ได้ ซึ่งเชื่อมกับหัวข้อ 3.6</td></tr>
-      <tr><td>ความคงที่</td><td>ค่าความเกาะปัจจัยคงที่</td><td>เปลี่ยนตามเวลา</td><td>ความเสี่ยงที่รายงานล้าหลังความจริงเสมอ</td></tr>
-      <tr><td>ส่วนที่เหลือ</td><td>ส่วนที่เหลือไม่เกี่ยวกัน</td><td>มักยังเกี่ยวกันอยู่</td><td>ความเสี่ยงรวมของพอร์ตถูกประเมินต่ำเกินจริง เพราะนึกว่าส่วนที่เหลือหักล้างกันได้</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวล่างเป็นข้อผิดพลาดที่ทำให้พอร์ตที่ดูกระจายดีแล้วยังขาดทุนพร้อมกันได้</p>
-  </div>
+  <h4>ข้อจำกัด: model นี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
+  <div class="table-wrap"><table><thead><tr><th>เรื่อง</th><th>model สมมติว่า</th><th>ของจริง</th><th>ผลเวลาใช้งาน</th></tr></thead><tbody>
+    <tr><td>รายชื่อ factor</td><td>รู้ว่าแรงร่วมมีอะไรบ้าง</td><td>factor ที่ตีพิมพ์จำนวนมากมาจากการค้นในข้อมูลชุดเดิม</td><td>หลาย factor ใช้ไม่ได้นอกตัวอย่าง (3.6, 15.5)</td></tr>
+    <tr><td>ส่วนเฉพาะตัว</td><td>ไม่เกี่ยวกันข้ามหุ้น ($D$ เป็นแนวทแยง)</td><td>หุ้นอุตสาหกรรมเดียวกันยังขยับด้วยกัน</td><td>ความเสี่ยงของพอร์ตต่ำเกินจริง เช่น 12% ใน pitfall</td></tr>
+    <tr><td>ความคงที่</td><td>loading และ $\Sigma_f$ คงที่ตลอดหน้าต่างข้อมูล</td><td>เปลี่ยนตามภาวะตลาด</td><td>ความเสี่ยงที่รายงานตามหลังความจริงเสมอ</td></tr>
+    <tr><td>premium</td><td>ผลตอบแทนคาดหวังของ factor เป็นค่าที่รู้</td><td>ประมาณยากมาก และเปลี่ยนตามเวลา</td><td>attribution ขึ้นกับ premium ที่เลือกใส่</td></tr>
+  </tbody></table></div>
 </section>
-
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>factor loading คือ exposure ไม่ใช่คำตัดสิน performance</li>
-    <li>alpha ใน multi-factor model ขึ้นกับ factor set ที่ freeze ไว้</li>
-    <li>factor premiums เป็น assumptions ตาม horizon และ construction</li>
-    <li>ตรวจ multicollinearity ก่อนแปล loading รายตัว</li>
+    <li>ผลตอบแทนคาดหวังแยกเป็น $a+\sum_kb_k\mathbb E[f_k]$ กองทุน A ได้ 0.96% แต่ alpha จริงแค่ 0.10% ไม่ใช่ 0.36% ของ CAPM</li>
+    <li>factor ที่ correlation 0.9 ทำให้ variance ของแต่ละ loading พอง 5.26 เท่า ผลรวมยังแม่น แต่แบ่งเครดิตไม่ได้</li>
+    <li>ถ้าไม่มีกำไรฟรี ผลตอบแทนคาดหวังต้องเป็นเส้นตรงของ loading (APT)</li>
+    <li>model สร้าง $\Sigma=B\Sigma_fB^{\mathsf T}+D$ จากตัวเลข 3,015 ตัวแทน 125,250 ตัว และมี inverse เสมอเพราะ $D$ เป็นบวก</li>
+    <li>หุ้น 500 ตัวกับ 250 วันให้ sample covariance ที่มี rank ไม่เกิน 249 คือ 251 ทิศที่ข้อมูลบอกผิดว่าไม่มีความเสี่ยง</li>
   </ul>
+  <p>15.4 เปลี่ยนจากการอธิบายผลตอบแทนของหุ้นหลายตัว มาเป็นการเทรดส่วนต่างของหุ้นสองตัว ซึ่งต้องถามว่าระดับราคาของมันผูกกันจริงหรือแค่บังเอิญเดินไปทางเดียวกัน</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="15.2.html">15.2 Capital Asset Pricing Model (CAPM) — Beta, Alpha, and Required Return</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="15.4.html">15.4 Pairs Trading and Cointegration</a></div>
