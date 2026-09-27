@@ -17,17 +17,91 @@
   <div class="chapter-path">PART 5 / 7 · Instruments, Microstructure, and Execution</div>
   <h1>บทที่ 20</h1>
   <p>Interest Rate Curves, Swaps, and Credit · 7 หัวข้อ</p>
-  <p class="chapter-sequence">เส้นอัตราดอกเบี้ย swap และการตั้งราคาความเสี่ยงที่คู่สัญญาจะไม่จ่าย</p>
+  <p class="chapter-sequence">จากราคาตราสารในตลาดไปสู่ราคาของเงิน \$1 ในทุกวันอนาคต แล้วใช้มันตั้งราคา swap เติมความไม่แน่นอนของอัตราด้วยต้นไม้เพื่อตั้งราคา cap และ swaption หาพารามิเตอร์ของแบบจำลองอัตราจากตลาดจริง และปิดด้วยความเป็นไปได้ที่ผู้ออกหนี้จะไม่จ่าย: พันธบัตรเอกชนและ CDS</p>
 </header>
+
+<section class="prose">
+  <h2>คำถามหลักของบท</h2>
+  <p>โต๊ะตราสารหนี้ของธนาคารเจอคำถามเจ็ดข้อในวันเดียว: เงินที่ต้องจ่ายในอีก 18 เดือนต้องกันไว้วันนี้เท่าไร swap เก่าของลูกค้ามีค่าเท่าไร option บนพันธบัตรควรขายเท่าไร cap ที่ลูกค้าขอซื้อราคาเท่าไร แบบจำลองอัตราที่ใช้ควรตั้งพารามิเตอร์อย่างไร หุ้นกู้เอกชนที่อาจไม่จ่ายมีค่าเท่าไร และ CDS บนบริษัทเดียวกันควรเก็บเบี้ยเท่าไร บทนี้ตอบทั้งเจ็ดข้อด้วยเครื่องมือชุดเดียว: discount factor ที่แกะจากตลาด</p>
+  <p>เส้นเรื่องที่ร้อยทั้งบทคือ “อัตราตัวเดียวไม่พอ”: yield ของพันธบัตรเป็นค่าเฉลี่ย ไม่ใช่ราคาของเงินก้อนเดียว ค่าเฉลี่ยของอัตรามองไม่เห็นมูลค่าของ option และการ fit curve ได้พอดีไม่ได้บอกอะไรเรื่องความผันผวนหรือความเสี่ยงเครดิต ทุกขั้นจึงต้องแยกเงินแต่ละก้อนตามวันและเหตุการณ์ที่มันจ่ายจริง</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ discount factor และการทบต้นต่อเนื่องจาก 18.1 ราคาพันธบัตรและ duration จาก 18.2 ต้นไม้สองกิ่งและน้ำหนัก $q$ จาก 18.3 ราคาล่วงหน้าจาก 19.1 คำตอบของ Vasicek และ CIR จาก 13.4 และ PDE ของราคาจาก 13.7 gradient descent จาก 12.7 และการแจกแจงแบบ exponential จาก 1.8</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 1 — แกะราคาของเงินแต่ละวัน แล้วตั้งราคา swap</h2>
+  <p>ตลาดไม่ได้ประกาศ discount factor ตลาดประกาศราคาพันธบัตรและ swap rate เราแกะ discount factor ทีละอายุจากสั้นไปยาว เขียนใหม่เป็น zero rate และ forward rate แล้วใช้ตั้งราคา swap ซึ่งขาลอยตัวที่ยังไม่รู้อัตรามีค่าวันนี้แน่นอน swap rate จึงเป็นค่าเฉลี่ยถ่วงของ forward และสัญญาเก่ามีค่าเท่าส่วนต่างของอัตราคูณ annuity</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/20.1.html"><span class="toc-number">20.1</span><span class="toc-name">Zero Rates, Forward Rates, and Bootstrapping<span class="toc-why">เปลี่ยนราคา bond หลายอายุให้เป็น discount curve เส้นเดียวที่ใช้ตั้งราคากระแสเงินสดทุกวันส่งมอบ</span></span></a></li>
-  <li><a href="../topics/20.2.html"><span class="toc-number">20.2</span><span class="toc-name">Swap Rates and the Swap Curve<span class="toc-why">swap rate คือ coupon ที่ทำให้สองขาเท่ากัน และ swap curve คือเครื่องมือแปลง quote นั้นกลับเป็นราคาเงินตามเวลา</span></span></a></li>
-  <li><a href="../topics/20.3.html"><span class="toc-number">20.3</span><span class="toc-name">Rate Lattices: Ho-Lee and Black-Derman-Toy<span class="toc-why">เติมเส้นทางที่เป็นไปได้ให้ curve วันนี้ แล้วใช้ state prices ส่งมูลค่ากลับมาทีละ node</span></span></a></li>
-  <li><a href="../topics/20.4.html"><span class="toc-number">20.4</span><span class="toc-name">Caps, Floors, and Swaptions on the Lattice<span class="toc-why">นำ payoff ของ rate option วางบน reset หรือ exercise nodes แล้วส่งมูลค่ากลับด้วย tree ที่ calibrate แล้ว</span></span></a></li>
-  <li><a href="../topics/20.5.html"><span class="toc-number">20.5</span><span class="toc-name">Calibrating Vasicek and Cox-Ingersoll-Ross (CIR)<span class="toc-why">parameter ไม่ได้มาจากการมองเส้น curve แล้วเดา แต่จาก objective ที่มีหน่วย น้ำหนัก และข้อมูลซึ่งระบุไว้</span></span></a></li>
-  <li><a href="../topics/20.6.html"><span class="toc-number">20.6</span><span class="toc-name">Defaultable Bonds, Hazard Rates, and Survival<span class="toc-why">แยกเวลา default ออกจาก discounting แล้วตั้งราคาทุก coupon, principal และ recovery ตามเหตุการณ์ที่ทำให้จ่ายจริง</span></span></a></li>
-  <li><a href="../topics/20.7.html"><span class="toc-number">20.7</span><span class="toc-name">Credit Default Swaps (CDS)<span class="toc-why">par spread คือ rate ที่ทำให้ premium leg เท่ากับ default leg ภายใต้ survival, recovery และ settlement convention เดียวกัน</span></span></a></li>
+  <li><a href="../topics/20.1.html"><span class="toc-number">20.1</span><span class="toc-name">Zero Rates, Forward Rates, and Bootstrapping<span class="toc-why">คิดลดเงิน \$10 ล้านด้วย yield ของ note ทำให้ขาด \$993.00 discount factor ของเดือนที่ 18 คือ 0.931421875 และ forward ของครึ่งปีนั้น 4.0552% ต่ำกว่า zero rate ทั้งสองตัว</span></span></a></li>
+  <li><a href="../topics/20.2.html"><span class="toc-number">20.2</span><span class="toc-name">Swap Rates and the Swap Curve<span class="toc-why">swap 5 ปีรับคงที่ 5.25% มีค่า \$111,125.00 ไม่ใช่ \$128,945.23 swap rate วันนี้ 5.198422% และ DV01 \$21,545 ต่อ bp</span></span></a></li>
 </ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไม note ที่ขายที่ par ด้วยคูปอง 4.80% จึงไม่ได้บอกว่าเงินก้อนเดียวในเดือนที่ 18 ควรคิดลดด้วย 4.80% และทำไมขาลอยตัวของ swap ที่ยังไม่รู้อัตราสักงวดจึงมีค่าวันนี้เท่า $N(1-D_n)$ พอดี</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 2 — ต้นไม้ของอัตรา และสัญญาที่มีทางเลือก</h2>
+  <p>สัญญาที่จ่ายเฉพาะบางสถานการณ์ต้องรู้ว่าอัตราในอนาคตกระจายอย่างไร ต้นไม้สองกิ่งของ short rate ให้ state price ของทุกจุด ปรับระดับทีละชั้นให้ราคาพันธบัตรตรง curve (Ho-Lee และ BDT) แล้ววาง payoff ของ option บนพันธบัตร caplet, floorlet และ swaption โดยแยกวันที่อัตรากำหนดออกจากวันที่เงินจ่าย</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="3">
+  <li><a href="../topics/20.3.html"><span class="toc-number">20.3</span><span class="toc-name">Rate Lattices: Ho-Lee and Black-Derman-Toy<span class="toc-why">call บนพันธบัตรราคา \$2,564.15 ไม่ใช่ \$294.80 ของอัตรากลางตัวเดียว ต้นไม้ของคอร์สให้ zero 77.22 และ put อเมริกัน 10.78 ที่ควรใช้สิทธิ์ทันที</span></span></a></li>
+  <li><a href="../topics/20.4.html"><span class="toc-number">20.4</span><span class="toc-name">Caps, Floors, and Swaptions on the Lattice<span class="toc-why">caplet ราคา \$19,992.24 ไม่ใช่ \$20,704.36 ที่ลืมคิดลดครึ่งปีสุดท้าย และต้นไม้สองต้นที่ fit curve เท่ากันให้ swaption \$1,339 กับ \$1,962</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไม state price ของชั้นหนึ่งรวมกันได้ราคา zero ไม่ใช่ 1 และถ้า caplet กำหนดอัตราที่ปีที่ 1 แต่จ่ายที่ปีที่ 1.5 ต้องคิดลดช่วงไหนด้วยอัตราอะไร</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 3 — หาพารามิเตอร์ของแบบจำลองอัตราจากตลาด</h2>
+  <p>Vasicek และ CIR มีพารามิเตอร์แค่สี่ตัว จึงต้องเลือกค่าที่ทำให้ราคาของแบบจำลองใกล้ quote ของตลาดที่สุด ด้วย objective ที่ประกาศหน่วยและน้ำหนักไว้ ทดสอบระบบด้วย curve ที่รู้คำตอบก่อน แล้ว calibrate กับ LIBOR และ swap จริง จะเห็นว่า curve บอกระดับและความเร็วดึงกลับได้ แต่แทบไม่รู้จักความผันผวน</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="5">
+  <li><a href="../topics/20.5.html"><span class="toc-number">20.5</span><span class="toc-name">Calibrating Vasicek and Cox-Ingersoll-Ross (CIR)<span class="toc-why">optimizer ตอบว่าความผันผวน 9.52% ทั้งที่ $\sigma$ 0 ถึง 2% เปลี่ยนคะแนนความคลาดไม่ถึง 0.3% และ CIR ที่เริ่มผิดจุดค้างที่ 0.0275 bp แทนที่จะ fit พอดี</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ถ้า optimizer คืนค่าพารามิเตอร์ที่ใช้สร้าง curve ได้ทุกหลัก นั่นพิสูจน์อะไรและไม่ได้พิสูจน์อะไร และความผันผวนที่ใช้ตั้งราคา cap ควรมาจากไหน</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 4 — เมื่อผู้ออกหนี้อาจไม่จ่าย: พันธบัตรเอกชนและ CDS</h2>
+  <p>hazard rate คืออัตราเจ๊งของผู้ที่ยังรอด โอกาสรอดคือ exponential ของ hazard สะสม ราคาพันธบัตรเอกชนคือคูปองที่รอด เงินต้นที่รอด และเงินคืนเมื่อเจ๊ง ซึ่งทำให้เงินที่จ่ายเมื่อรอดถูกคิดลดด้วยอัตราบวก hazard CDS แยกความเสี่ยงเครดิตออกมาเป็นสองขาแบบ swap และ par spread ออกมาใกล้ hazard คูณ loss given default</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="6">
+  <li><a href="../topics/20.6.html"><span class="toc-number">20.6</span><span class="toc-name">Defaultable Bonds, Hazard Rates, and Survival<span class="toc-why">หุ้นกู้ 5 ปีราคา \$9,684,390.68 แยกเป็นสามบัญชี โอกาสเจ๊งห้าปีที่ hazard 1.8% คือ 8.6069% ไม่ใช่ 9% และ credit01 คือ −\$2,603.02</span></span></a></li>
+  <li><a href="../topics/20.7.html"><span class="toc-number">20.7</span><span class="toc-name">Credit Default Swaps (CDS)<span class="toc-why">par spread 119.99975 bp CDS ที่เบี้ย 125 bp ติดลบ \$21,225.22 ไม่ใช่ \$25,000 และ jump-to-default ราว \$6.02 ล้าน ใหญ่กว่า credit01 หลายพันเท่า</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมโอกาสเจ๊งห้าปีจึงไม่ใช่ห้าเท่าของ hazard และทำไมมูลค่าของ CDS ที่เบี้ยไม่เท่า par จึงคูณด้วย risky annuity ไม่ใช่จำนวนปี</p>
+</section>
+
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — หกคำถามของโต๊ะตราสารหนี้</h2>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ทุกตัวเลขเป็นตัวอย่างสมมติ ใช้แบบจำลองของแต่ละหัวข้อตามที่หน้านั้นสร้าง</p>
+  <p><strong>1.</strong> zero 6 เดือนราคา 98.00 และ note 1 ปีคูปอง 5% จ่ายครึ่งปีขายที่ par 100 discount factor ของปีที่ 1 zero rate ทบต่อเนื่องสองอายุ และ forward ช่วง 0.5 ถึง 1 ปีเป็นเท่าไร (20.1)?</p>
+  <details><summary>ดูเฉลยข้อ 1</summary><p>$D(0,0.5)=0.98$ $D(0,1)=(100-2.5(0.98))/102.5=97.55/102.5=0.951707$ zero rate $-\ln0.98/0.5=4.0405\%$ และ $-\ln0.951707=4.9498\%$ forward ต่อเนื่อง $\ln(0.98/0.951707)/0.5=5.8590\%$ แบบ simple $(0.98/0.951707-1)/0.5=5.9457\%$ ตรวจ: par yield 1 ปีจาก curve นี้คือ $2(1-0.951707)/(0.98+0.951707)=5.0000\%$ เท่าคูปองของ note</p></details>
+  <p><strong>2.</strong> discount factor ปีที่ 1 ถึง 3 คือ 0.96, 0.92 และ 0.88 swap 3 ปีรายปีควรมีอัตราเท่าไร และ swap เก่าที่รับคงที่ 5% บน \$20,000,000 มีค่าเท่าไร DV01 เท่าไร (20.2)?</p>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>$A=0.96+0.92+0.88=2.76$ $S=0.12/2.76=4.3478\%$ มูลค่า $20{,}000{,}000(0.05(2.76)-0.12)=20{,}000{,}000(0.018)=\$360{,}000$ ถ้าคูณสามปีโดยไม่คิดลดจะได้ \$391,304.35 ซึ่งผิด DV01 $20{,}000{,}000(2.76)(0.0001)=\$5{,}520$</p></details>
+  <p><strong>3.</strong> ต้นไม้หนึ่งงวด ($\Delta t=1$ ปี ทบต่อเนื่อง) short rate วันนี้ 4% ปีหน้าเป็น 5% หรือ 3% ครึ่งต่อครึ่ง caplet และ floorlet strike 4% บน \$1,000,000 กำหนดอัตราที่ปีที่ 1 จ่ายที่ปีที่ 2 (สัญญาสอนที่จ่ายตาม short rate) ราคาเท่าไร (20.3 และ 20.4)?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>state price ของสองจุด $0.5e^{-0.04}=0.480395$ caplet จ่ายที่จุด 5%: $10^6(0.01)=10{,}000$ คิดลดปีที่สองด้วย 5% ได้ $9{,}512.29$ ราคา $0.480395(9{,}512.29)=\$4{,}569.66$ floorlet จ่ายที่จุด 3%: $10{,}000e^{-0.03}=9{,}704.46$ ราคา \$4,661.97 caplet ลบ floorlet $=-92.31$ เท่ากับมูลค่าของการจ่าย $r-0.04$ ทุกจุด ซึ่งเป็นการตรวจแบบ parity</p></details>
+  <p><strong>4.</strong> Vasicek ที่ $\kappa=0.5$ $\theta=4\%$ $\sigma_V=1\%$ $r_0=3\%$ half-life เท่าไร ราคาพันธบัตร 2 ปีและ yield เท่าไร (20.5)?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary><p>$t_{1/2}=0.693147/0.5=1.3863$ ปี $B(2)=(1-e^{-1})/0.5=1.264241$ $\ln A=(0.04-0.0001/0.5)(1.264241-2)-0.0001(1.264241)^2/2=-0.029363$ $\ln P=-0.029363-1.264241(0.03)=-0.067290$ $P=0.934924$ yield $0.067290/2=3.3645\%$ อยู่ระหว่าง $r_0=3\%$ กับ $\theta=4\%$ เพราะอัตราถูกดึงขึ้นหา $\theta$</p></details>
+  <p><strong>5.</strong> zero-coupon bond เอกชน 3 ปี หน้าตั๋ว \$1,000,000 อัตราไร้ความเสี่ยง 4% hazard 2% recovery 40% ของหน้าตั๋วจ่ายทันทีเมื่อเจ๊ง ราคาเท่าไร และ spread เทียบสูตรลัดเป็นอย่างไร (20.6)?</p>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>รอดถึงปีที่ 3: $e^{-(0.06)(3)}=0.835270$ เงินคืน $0.4(0.02/0.06)(1-0.835270)=0.021964$ ราคา $10^6(0.857234)=\$857{,}234.18$ โอกาสเจ๊งสามปี $1-e^{-0.06}=5.8235\%$ yield ทบต่อเนื่อง $-\ln(0.857234)/3=5.1348\%$ spread 113.48 bp ต่ำกว่าสูตรลัด $0.02(0.6)=120$ bp เพราะเงินคืนมาทันทีที่เจ๊ง ก่อนวันครบกำหนด</p></details>
+  <p><strong>6.</strong> CDS 1 ปี จ่ายเบี้ยรายไตรมาส บน \$5,000,000 อัตรา 4% hazard 3% recovery 30% par spread เท่าไร และถ้าสัญญาเก็บเบี้ย 300 bp มูลค่าสำหรับผู้ซื้อเท่าไร (20.7)?</p>
+  <details><summary>ดูเฉลยข้อ 6</summary><p>ผลบวกสี่ไตรมาสได้ risky annuity $A=0.960980$ และ $\sum D_i\Delta Q_i=0.0288293$ par spread $0.7(0.0288293)/0.960980=209.999$ bp ใกล้ $\lambda(1-R)=210$ bp ขาชดเชย $5\times10^6(0.7)(0.0288293)=\$100{,}902.44$ สัญญาที่ 300 bp มีค่าสำหรับผู้ซื้อ $5\times10^6(0.0209999-0.03)(0.960980)=-\$43{,}244.58$</p></details>
+</section>
+
+<section class="takeaways">
+  <h2>ก่อนเดินต่อบท 21</h2>
+  <ul>
+    <li>discount factor คือราคาของ \$1 ในวันอนาคต แกะจากตลาดทีละอายุ zero rate, forward rate, par yield และ swap rate เป็นแค่วิธีเขียนมันต่างกัน และมีแค่ discount factor ที่ใช้คิดลดเงินก้อนเดียวได้ตรง</li>
+    <li>swap มีค่า $N(K-S)A$ ขาลอยตัวมีค่า $N(1-D_n)$ และสัญญาเชิงเส้นทุกตัวตั้งราคาได้จาก curve อย่างเดียว</li>
+    <li>สัญญาที่มีทางเลือกต้องการการกระจายของอัตรา ต้นไม้ที่ fit curve พอดียังเลือกความผันผวนได้อิสระ และความผันผวนเปลี่ยนราคา option มาก จึงต้อง calibrate กับ option</li>
+    <li>calibration คือคำถามที่เราเขียนให้ optimizer ตอบ ต้องประกาศข้อมูล หน่วย น้ำหนัก และจุดเริ่ม แล้วตรวจ residual และความไม่แน่นอนของพารามิเตอร์</li>
+    <li>ความเสี่ยงเครดิตทำให้เงินที่จ่ายเมื่อรอดถูกคิดลดด้วย $r+\lambda$ spread จึงใกล้ $\lambda(1-R)$ และ CDS ตั้งราคาด้วยโอกาสรอดชุดเดียวกับพันธบัตร</li>
+  </ul>
+  <p>บทที่ 21 ย้ายจากสูตรปิดและต้นไม้ไปสู่วิธีเชิงตัวเลข: แก้สมการราคาของ 13.7 บนตาราง finite difference สำหรับสัญญาที่ซับซ้อนเกินกว่าสูตรจะตอบได้</p>
+</section>
 </div>
 </body>
 </html>
