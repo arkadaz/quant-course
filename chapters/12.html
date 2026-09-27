@@ -17,18 +17,86 @@
   <div class="chapter-path">PART 2 / 7 · Optimization and Portfolio Choice</div>
   <h1>บทที่ 12</h1>
   <p>Nonlinear Optimization — Gradients, Hessians, Portfolio Choice · 8 หัวข้อ</p>
-  <p class="chapter-sequence">หาจุดต่ำสุดของความเสี่ยงเมื่อโจทย์ไม่เป็นเส้นตรง จนได้ efficient frontier และพอร์ตที่ดีที่สุด</p>
+  <p class="chapter-sequence">จากคำถามว่าจุดที่ optimizer หยุดคือคำตอบจริงไหม ไปสู่พอร์ตของ Markowitz ที่มีข้อบังคับ ต้นทุนการเทรด และเครื่องคำนวณที่ต้องเลือกขนาดก้าว: ทุกขั้นใช้แค่ความชัน ความโค้ง และราคาของข้อบังคับ</p>
 </header>
+<section class="prose">
+  <h2>คำถามหลักของบท</h2>
+  <p>คณะกรรมการลงทุนของกองทุน \$50 ล้าน ที่ถือหุ้นสหรัฐฯ พันธบัตร และหุ้นเทค ต้องตอบสี่ข้อ: ควรถือแต่ละตัวเท่าไร ตัวเลขที่ optimizer ส่งมาเชื่อได้ไหมว่าเป็นคำตอบที่ดีที่สุดจริง กฎของกองทุนอย่างห้าม short และเพดาน turnover มีราคาเท่าไร และถ้าวันนี้ถืออยู่ 40/40/20 ควรเทรดแค่ไหนเมื่อทุกการเทรดมีต้นทุน</p>
+  <p>บทนี้ตอบทั้งสี่ด้วยเครื่องมือชุดเดียว: ความชัน (gradient) หาผู้สมัคร ความโค้ง (Hessian) ตัดสินว่าเป็นหลุมหรือยอด ตัวคูณ Lagrange และ KKT จัดการข้อบังคับและบอกราคาของมัน ตลอดบทใช้แบบจำลองรายปีสมมติชุดเดียวกัน: หุ้น 12%/20% พันธบัตร 6%/10% correlation 0.30 เงินสด 2% และหุ้นเทค 15%/35% เมื่อมีสามสินทรัพย์</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรหา derivative ได้ รู้จัก variance ของพอร์ต $w^{\mathsf T}\Sigma w$ จาก 8.8 การกลับ matrix 2×2 จาก 7.5 และ eigenvalues กับ PSD/PD จาก 7.6 หัวข้อ 12.7 ใช้ CDF ของ Normal จาก 1.9 และยืมสูตรราคา option จากบทที่ 14 มาเป็นของที่ให้มา</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 1 — แผนที่ของปัญหา: หลุม ความชัน และความโค้ง</h2>
+  <p>ก่อนจะใส่ข้อบังคับใด ๆ ต้องรู้ก่อนว่าจุดที่เครื่องหยุดคืออะไร เส้นทางนี้แยกหลุมใกล้ตัวออกจากหลุมต่ำสุด ใช้ gradient อ่านความเสี่ยงส่วนเพิ่มของพอร์ต และใช้ Hessian ตัดสินว่าจุดราบเป็นก้นหลุม ยอดโดม หรืออานม้า</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/12.1.html"><span class="toc-number">12.1</span><span class="toc-name">Global vs Local Minima<span class="toc-why">แยกจุดต่ำสุดใกล้ตัวออกจากจุดต่ำสุดของทั้งโจทย์</span></span></a></li>
-  <li><a href="../topics/12.2.html"><span class="toc-number">12.2</span><span class="toc-name">The Gradient and First-Order Conditions<span class="toc-why">ใช้ลูกศรความชันหาทิศที่ทำให้ค่าลดเร็วที่สุด</span></span></a></li>
-  <li><a href="../topics/12.3.html"><span class="toc-number">12.3</span><span class="toc-name">The Hessian and Second-Order Conditions<span class="toc-why">ใช้ความโค้งตรวจว่าจุดนิ่งเป็นหลุมหรือยอด</span></span></a></li>
-  <li><a href="../topics/12.4.html"><span class="toc-number">12.4</span><span class="toc-name">Lagrange Multipliers — Equality Constraints<span class="toc-why">หาคำตอบเมื่อถูกบังคับให้อยู่บนเส้นขอบ</span></span></a></li>
-  <li><a href="../topics/12.5.html"><span class="toc-number">12.5</span><span class="toc-name">Markowitz Portfolio Selection<span class="toc-why">ผสมสินทรัพย์ให้ผลตอบแทนกับความผันผวนสมดุลกัน</span></span></a></li>
-  <li><a href="../topics/12.6.html"><span class="toc-number">12.6</span><span class="toc-name">Karush-Kuhn-Tucker (KKT) Conditions — Inequality Constraints<span class="toc-why">ดูว่าข้อจำกัดข้อใดกำลังบังคับคำตอบ</span></span></a></li>
-  <li><a href="../topics/12.7.html"><span class="toc-number">12.7</span><span class="toc-name">Algorithms in Practice — Gradient Descent and Newton's Method<span class="toc-why">เลือกก้าวลงเขาให้เร็วโดยไม่หลุดทาง</span></span></a></li>
-  <li><a href="../topics/12.8.html"><span class="toc-number">12.8</span><span class="toc-name">Mean-Variance with Transaction Costs<span class="toc-why">คิดค่าปรับจากการเปลี่ยนพอร์ตไปพร้อมกับการจัดสรร</span></span></a></li>
+  <li><a href="../topics/12.1.html"><span class="toc-number">12.1</span><span class="toc-name">Global vs Local Minima<span class="toc-why">backtest เดียวกันเริ่มที่ −1 ได้กำไร \$64 ล้าน เริ่มที่ +1 ได้ \$189 ล้าน แต่ variance ของพอร์ตที่ลงเงินครบเป็นชามใบเดียว เริ่มที่ไหนก็จบที่หุ้น 2/19 หรือ 10.53%</span></span></a></li>
+  <li><a href="../topics/12.2.html"><span class="toc-number">12.2</span><span class="toc-name">The Gradient and First-Order Conditions<span class="toc-why">ที่พอร์ต 60/40 เพิ่มหุ้น 1% ความผันผวนขึ้น 0.192 จุด เพิ่มพันธบัตรขึ้น 0.055 จุด ต่างกัน 3.47 เท่า ไม่ใช่ 2 เท่า เพราะ gradient คือ covariance กับพอร์ตที่ถืออยู่</span></span></a></li>
+  <li><a href="../topics/12.3.html"><span class="toc-number">12.3</span><span class="toc-name">The Hessian and Second-Order Conditions<span class="toc-why">gradient เป็นศูนย์ทั้งที่ $\gamma=2$ และ $\gamma=-2$ แต่อันแรกคือยอดสูงสุดที่ค่า 0.0598 อันหลังคือจุดแย่ที่สุด ความโค้ง $-4V$ กับ $+4V$ เป็นตัวตัดสิน</span></span></a></li>
 </ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> optimizer รายงานว่า gradient เป็นศูนย์ที่พอร์ตหนึ่ง ต้องตรวจอีกสองอย่างอะไรก่อนจะเรียกมันว่าคำตอบที่ดีที่สุด และทำไมโจทย์ variance ของพอร์ตผ่านทั้งสองอย่างในครั้งเดียว ขณะที่พื้นผิว backtest ไม่ผ่าน?</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 2 — ข้อบังคับ ราคาของข้อบังคับ และพอร์ตของ Markowitz</h2>
+  <p>พอร์ตจริงต้องลงเงินครบ ต้องได้ผลตอบแทนเป้าหมาย หรือห้าม short เส้นทางนี้ใส่ข้อบังคับเข้าไปทีละแบบ: สมการด้วยตัวคูณ Lagrange ซึ่งให้ efficient frontier และ tangency portfolio แล้วอสมการด้วย KKT ซึ่งบอกว่ากฎข้อไหนกำลังบีบ และตัวคูณของแต่ละข้อคือราคาของมัน</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="4">
+  <li><a href="../topics/12.4.html"><span class="toc-number">12.4</span><span class="toc-name">Lagrange Multipliers — Equality Constraints<span class="toc-why">ทุน \$12 ล้าน ควรแบ่ง 3.667 : 8.333 ไม่ใช่ 4 : 8 ตามฝีมือ และตัวคูณ $\nu=3/7$ ทำนายว่าเงินล้านถัดไปทำกำไร \$428,571 ต่อปี แต่เพิ่มเต็มล้านได้จริง \$413,957</span></span></a></li>
+  <li><a href="../topics/12.5.html"><span class="toc-number">12.5</span><span class="toc-name">Markowitz Portfolio Selection<span class="toc-why">หุ้นมี Sharpe 0.50 พันธบัตร 0.40 แต่ส่วนผสม 43.18/56.82 ได้ 0.5645 และถ้าผลตอบแทนคาดหวังของหุ้นผิดไป 1 จุด น้ำหนักที่ดีที่สุดขยับ 6.58 จุด</span></span></a></li>
+  <li><a href="../topics/12.6.html"><span class="toc-number">12.6</span><span class="toc-name">Karush-Kuhn-Tucker (KKT) Conditions — Inequality Constraints<span class="toc-why">ตัดหุ้นเทคที่ติดลบทิ้งแล้วปรับสัดส่วนได้ความผันผวน 9.847% แต่ KKT ได้ 9.787% และบอกว่ากฎห้าม short มีราคา $u_3=0.00921$</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมตัวคูณของงบลงเงินครบใน 12.5 ติดลบได้ (ที่ $\gamma=4$ ได้ −1.03%) แต่ตัวคูณของกฎห้าม short ใน 12.6 ติดลบไม่ได้ และถ้าคำนวณออกมาติดลบ แปลว่าเราเดาอะไรผิด?</p>
+</section>
+<section class="prose">
+  <h2>เส้นทางที่ 3 — เครื่องคำนวณ และพอร์ตที่ย้ายไม่ฟรี</h2>
+  <p>สองหัวข้อสุดท้ายออกจากโลกของสูตรปิด: เมื่อไม่มีสูตร เครื่องต้องเดินเข้าหาคำตอบทีละขั้น และขนาดก้าวกำหนดว่าเร็ว ช้า หรือระเบิด และเมื่อการเทรดมีต้นทุน คำตอบขึ้นกับพอร์ตที่ถืออยู่ มีเขตที่ไม่ควรเทรด และเพดาน turnover ทำตัวเหมือนต้นทุนแฝง</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="7">
+  <li><a href="../topics/12.7.html"><span class="toc-number">12.7</span><span class="toc-name">Algorithms in Practice — Gradient Descent and Newton's Method<span class="toc-why">หา implied volatility ด้วยขนาดก้าว 0.0005 ใช้ 8 ก้าว แต่ 0.002 พา σ ไปถึง −25.7% เพราะเกินเพดาน $2/f''=0.00131$ ส่วน Newton ใช้ 2 ก้าว</span></span></a></li>
+  <li><a href="../topics/12.8.html"><span class="toc-number">12.8</span><span class="toc-name">Mean-Variance with Transaction Costs<span class="toc-why">ภายใต้เพดาน turnover 10% อย่าขยับทุกตัวตามสัดส่วน ขายหุ้นเทคไปซื้อพันธบัตรล้วน ๆ ได้ 40/50/10 ดีกว่า 1.3 bp ต่อปีด้วยค่าธรรมเนียมเท่ากัน</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไม Newton ถึงคำตอบในก้าวเดียวบน variance ของพอร์ต แต่ใช้สองก้าวบน implied volatility และทำไมเพดาน turnover ที่บีบจึงทำให้คำตอบเลือกเทรดแค่บางคู่ แทนที่จะขยับทุกตัวพร้อมกัน?</p>
+</section>
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — แบบจำลองเดิม แต่ correlation 0.20</h2>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้นคาดหวัง 12% SD 20% พันธบัตรคาดหวัง 6% SD 10% เงินสด 2% ทุกอย่างเหมือนในบท ยกเว้น correlation เป็น 0.20 ตัวเลขเป็นแบบจำลองรายปีสมมติ ทำทุกข้อด้วยเครื่องมือของบทนี้</p>
+  <p><strong>1.</strong> สร้าง covariance หา eigenvalues แล้วบอกว่า variance ของพอร์ตเป็นชามใบเดียวไหม</p>
+  <details><summary>ดูเฉลยข้อ 1</summary><p>$V_{12}=0.20(0.20)(0.10)=0.004$ trace 0.05 determinant $0.0004-0.000016=0.000384$ eigenvalues คือ $\big(0.05\pm\sqrt{0.0025-0.001536}\big)/2=(0.05\pm0.031048)/2$ ได้ 0.040524 กับ 0.009476 บวกทั้งคู่ $V$ จึง PD variance เป็นชาม strictly convex มีต่ำสุดจุดเดียว (12.1)</p></details>
+  <p><strong>2.</strong> พอร์ตที่ลงเงินครบและ variance ต่ำสุดคืออะไร และตัวคูณ Lagrange ของงบเป็นเท่าไร?</p>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>หุ้น $(V_{22}-V_{12})/(V_{11}+V_{22}-2V_{12})=0.006/0.042=1/7\approx14.29\%$ พันธบัตร 85.71% variance $(0.04+6(0.008)+36(0.01))/49=0.448/49\approx0.0091429$ SD 9.562% ตรวจกฎ marginal variance เท่ากัน (12.2): $2(Vx)=(0.018286,\ 0.018286)$ เท่ากันและเท่ากับ $\lambda=2\sigma^2$ ของ 12.4 หุ้นได้มากกว่ากรณี correlation 0.30 (10.53%) เพราะกระจายความเสี่ยงได้ดีขึ้น</p></details>
+  <p><strong>3.</strong> ที่พอร์ต 60/40 ถ้าเพิ่มหุ้น 1% หรือพันธบัตร 1% โดยกู้เงินสด ความผันผวนขึ้นกี่จุด?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>$Vx=(0.04(0.6)+0.004(0.4),\ 0.004(0.6)+0.01(0.4))=(0.0256, 0.0064)$ variance $0.6(0.0256)+0.4(0.0064)=0.01792$ SD 13.387% ความไวของ SD คือ $Vx/\sigma_p=(0.1912, 0.0478)$ หุ้น 1% เพิ่ม 0.191 จุด พันธบัตร 1% เพิ่ม 0.048 จุด ต่างกัน 4.0 เท่า มากกว่า 3.47 เท่าของกรณี 0.30 เพราะพันธบัตรขยับไปกับพอร์ตน้อยลง</p></details>
+  <p><strong>4.</strong> กองทุนที่ $\gamma=2$ ต้องลงเงินครบ ควรถืออะไร ถ้าเพิ่มกฎหุ้นไม่เกิน 40% คำตอบและราคาของกฎเป็นเท่าไร?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary>
+<div class="math">\[
+\begin{aligned}
+V^{-1}&=\frac{1}{0.000384}\begin{bmatrix}0.01&amp;-0.004\\-0.004&amp;0.04\end{bmatrix},\\
+A&=\mathbf1^{\mathsf T}V^{-1}\mathbf1=109.375,\quad B=7.5,\\
+\nu&=\frac{7.5-4}{109.375}=0.032,\\
+V^{-1}(\mu-\nu\mathbf1)&=(2,\ 2),\quad x=(0.5,\ 0.5),\\
+J&=0.09-2(0.0145)=0.061.
+\end{aligned}
+\]</div>
+<p>ได้ 50/50 อีกครั้ง (12.5) แต่ $\nu$ เป็น 3.2% กฎหุ้นไม่เกิน 40% บีบ คำตอบคือ 40/60 ประโยชน์ส่วนเพิ่ม $g=\mu-4Vx=(0.0464, 0.0296)$ พันธบัตรถืออิสระจึง $\nu=0.0296$ ตัวคูณของเพดานคือ $0.0464-0.0296=0.0168\ge0$ ผ่าน KKT (12.6) ผ่อนเพดานเป็น 41% ค่าเป้าหมายเพิ่มจริง 0.000160 ใกล้ $0.0168\times0.01$ ส่วนราคารวมของกฎคือ $0.061-0.06016=0.00084$</p>
+  </details>
+  <p><strong>5.</strong> เมื่อมีเงินสด 2% tangency portfolio และ Sharpe สูงสุดคืออะไร?</p>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>$V^{-1}(0.10, 0.04)=(2.6042-0.4167,\ -1.0417+4.1667)=(2.1875, 3.125)$ รวม 5.3125 หุ้น $2.1875/5.3125=7/17\approx41.18\%$ Sharpe สูงสุด $\sqrt{0.10(2.1875)+0.04(3.125)}=\sqrt{0.34375}\approx0.5863$ สูงกว่า 0.5645 ของกรณี 0.30 เพราะ correlation ต่ำลงทำให้ส่วนผสมคุ้มขึ้น (12.5)</p></details>
+  <p><strong>6.</strong> ถ้าใช้ gradient descent หาคำตอบของข้อ 2 บนเส้นลงเงินครบ ขนาดก้าวใหญ่สุดที่ยังเข้าคำตอบคือเท่าไร และ Newton ใช้กี่ก้าว?</p>
+  <details><summary>ดูเฉลยข้อ 6</summary><p>variance บนเส้นคือ $g(a)=0.04a^2+0.008a(1-a)+0.01(1-a)^2$ ความโค้ง $h=2(0.04+0.01-0.008)=0.084$ ขนาดก้าวต้องต่ำกว่า $2/h\approx23.8$ (12.7) ที่ $\eta=10$ error ถูกคูณด้วย $1-0.84=0.16$ ทุกก้าว: จากหุ้น 100% ไป 0.28, 0.1648, 0.1464 เข้าหา 1/7 Newton ใช้ก้าวเดียวเพราะ variance เป็นกำลังสองล้วน</p></details>
+</section>
+<section class="takeaways">
+  <h2>ก่อนเดินต่อบท 13</h2>
+  <ul>
+    <li>ความชันศูนย์ให้ผู้สมัคร ความโค้งตัดสินหลุมหรือยอด convexity ทำให้หลุมใกล้ตัวเป็นหลุมต่ำสุดโดยอัตโนมัติ ถ้าไม่ convex ต้องหาใบรับรองอื่น เช่นหาจุดราบให้ครบแล้วแสดงว่าพื้นผิวเชิดขึ้นเมื่อออกไปไกล</li>
+    <li>ตัวคูณของข้อบังคับคือราคาของมันสำหรับการผ่อนเล็ก ๆ: ของสมการติดลบได้ ของอสมการต้องไม่ติดลบ และเป็นศูนย์เมื่อกฎไม่บีบ</li>
+    <li>Markowitz ให้ GMV, frontier และ tangency จากตัวเลขสี่ตัว $A, B, C, D$ แต่คำตอบไวต่อผลตอบแทนคาดหวังมาก ตัวเลขจึงเป็นจุดเริ่มคุย</li>
+    <li>เครื่องคำนวณต้องมีรั้ว: ขนาดก้าวต่ำกว่า $2/f''$ และห้ามหารด้วยความชันใกล้ศูนย์ ส่วนการเทรดจริงต้องหักต้นทุนก่อนตัดสินใจ</li>
+  </ul>
+  <p>บทที่ 13 เปลี่ยนจากการหาจุดที่ดีที่สุดไปสู่แคลคูลัสของราคาที่สั่นตลอดเวลา ซึ่งเป็นเครื่องมือที่จำเป็นก่อนพิสูจน์สูตรราคา option ที่ 12.7 ยืมมาใช้</p>
+</section>
 </div>
 </body>
 </html>
