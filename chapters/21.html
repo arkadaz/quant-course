@@ -17,14 +17,77 @@
   <div class="chapter-path">PART 5 / 7 · Instruments, Microstructure, and Execution</div>
   <h1>บทที่ 21</h1>
   <p>Numerical Methods for Pricing and Calibration · 4 หัวข้อ</p>
-  <p class="chapter-sequence">เมื่อไม่มีสูตรปิด ก็คำนวณด้วย tree, Monte Carlo และ PDE แล้วปรับให้ตรงกับราคาตลาด</p>
+  <p class="chapter-sequence">จากสัญญาที่ไม่มีสูตรปิด ไปสู่กริดที่ตัดสินเรื่องใช้สิทธิ์ได้ทุกวัน optimizer ที่หา parameter หลายตัวพร้อมกันอย่างมีเบรก เครื่องตั้งราคาแบบ Fourier ที่ให้ทุก strike ในการคำนวณครั้งเดียว และขั้นตอนที่รันทุกเช้าโดยมีประตูตรวจทุกด่าน</p>
 </header>
+
+<section class="prose">
+  <h2>คำถามหลักของบท</h2>
+  <p>เช้าวันหนึ่งโต๊ะ option ต้องตอบสี่คำถามก่อนตลาดเปิด: American put ที่ลูกค้าขอควรราคาเท่าไร ทั้งที่ไม่มีสูตรปิด parameter ของ Heston วันนี้คืออะไร เมื่อมีตัวเลขห้าตัวแต่ quote หลายสิบตัว เครื่องตั้งราคาเร็วพอให้ optimizer เรียกทั้ง smile หลายสิบครั้งไหม และผลที่ได้ใช้ได้จริงหรือแค่ optimizer บอกว่า “สำเร็จ” บทนี้ตอบทั้งสี่ข้อด้วยเครื่องมือที่สร้างเองและตรวจกับคำตอบที่รู้แล้วทุกขั้น</p>
+  <p>เส้นเรื่องที่ร้อยทั้งบทคือ “ตัวเลขที่เครื่องให้มายังไม่ใช่คำตอบ”: กริดที่ก้าวยาวเกินให้ราคาที่ดูปกติแต่ผิด optimizer ที่ลู่เข้าแล้วอาจอยู่บนร่องที่ข้อมูลแยกไม่ออก ค่าที่ตั้งของ FFT ที่ผิดให้ราคาเกินจริงสิบเท่า และชุดที่ความคลาดเคลื่อนต่ำที่สุดอาจเป็นชุดเดียวที่ตกประตูตรวจ</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ Bayes จาก 1.7, moment generating function จาก 8.5, Hessian และ gradient descent กับ Newton จาก 12.3 และ 12.7, Feynman–Kac จาก 13.7, PDE และสูตรของ Black–Scholes กับ Greeks จาก 14.1 ถึง 14.3, แบบจำลอง Heston กับ characteristic function และเงื่อนไข Feller จาก 14.7, variance swap จาก 14.8, least squares จาก 15.1 และต้นไม้ที่ตั้งราคา put อเมริกันจาก 18.3</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 1 — ตั้งราคาเมื่อไม่มีสูตร: กริดของ PDE</h2>
+  <p>แทนความชันและความโค้งใน PDE ด้วยผลต่างของสามช่องข้างเคียง แล้วเดินถอยหลังจากวันหมดอายุ ทุกช่องเลือกค่าที่มากกว่าระหว่างใช้สิทธิ์เลยกับถือต่อ วิธีง่ายที่สุดระเบิดได้ถ้าก้าวเวลายาวเกินเทียบกับช่องราคา implicit กับ Crank–Nicolson ไม่ระเบิด แต่ต้องรู้ว่าแต่ละแบบพลาดตรงไหน</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/21.1.html"><span class="toc-number">21.1</span><span class="toc-name">Finite-Difference Pricing<span class="toc-why">เปลี่ยน partial differential equation เป็นตารางราคา: stability, implicit, Crank–Nicolson และ American exercise</span></span></a></li>
-  <li><a href="../topics/21.2.html"><span class="toc-number">21.2</span><span class="toc-name">Multivariate Optimizers for Calibration<span class="toc-why">เลือก parameter หลายตัวให้เข้าตลาดโดยวัด error, scale ก้าว และควบคุมการหยุด</span></span></a></li>
-  <li><a href="../topics/21.3.html"><span class="toc-number">21.3</span><span class="toc-name">Fourier and FFT Pricing<span class="toc-why">ใช้ characteristic function และ Carr–Madan transform สร้างราคา option หลาย strike ในรอบเดียว</span></span></a></li>
-  <li><a href="../topics/21.4.html"><span class="toc-number">21.4</span><span class="toc-name">The Production Calibration Recipe<span class="toc-why">จาก snapshot bid–ask ถึง parameter set ที่ deploy, reproduce และหยุดใช้ได้อย่างมีวินัย</span></span></a></li>
+  <li><a href="../topics/21.1.html"><span class="toc-number">21.1</span><span class="toc-name">Finite-Difference Pricing<span class="toc-why">American put ราคา \$4.7830 ไม่ใช่ \$4.6213 ของสูตร European ควรใช้สิทธิ์เมื่อหุ้นต่ำกว่าราว \$38.5 และ explicit ที่ 320 ก้าวให้ 4.3671 ซึ่งผิด 0.25 โดยไม่มีอะไรเตือน</span></span></a></li>
 </ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมหนึ่งก้าวก่อนหมดอายุที่หุ้น \$45 การถือต่อจึงแพ้การใช้สิทธิ์พอดีดอกเบี้ยของ strike และทำไมรอยหยักขึ้นลงสลับช่องจึงเป็นตัวตัดสินว่า explicit จะระเบิดหรือไม่</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 2 — หา parameter หลายตัวให้ตรงตลาด</h2>
+  <p>รวมความพลาดของทุก quote เป็นตัวเลขเดียวโดยหารด้วยครึ่งส่วนต่าง bid–ask แล้วเดินลงเขาด้วย Gauss–Newton ที่เติมเบรก (Levenberg–Marquardt) เทียบกับ grid search, gradient descent, BFGS และ Nelder–Mead ปรับหน่วยของตัวแปรและแปลง log ให้ตัวเลขที่ต้องเป็นบวก แล้วถามว่าข้อมูลบอกตัวเลขแต่ละตัวได้แคบแค่ไหน</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="2">
+  <li><a href="../topics/21.2.html"><span class="toc-number">21.2</span><span class="toc-name">Multivariate Optimizers for Calibration<span class="toc-why">Levenberg–Marquardt ถึง 0.151839 ใน 6 รอบ ขณะที่ grid search ใช้ 1,331 ชุดแล้วได้ 0.1685 แต่ข้อมูลบอก $\kappa$ ได้แค่ 1.41 ถึง 2.52 และ variance swap 10 ปีเลื่อนได้ตั้งแต่ 19.67% ถึง 21.13%</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ถ้าสามอัลกอริทึมได้ $\kappa$ เดียวกันถึงทศนิยมสี่ตำแหน่ง ทำไมยังเชื่อตัวเลขนั้นไม่ได้ และทำไมแค่เปลี่ยนหน่วยของตัวแปรจึงทำให้ gradient descent เร็วขึ้นหลายพันเท่า</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 3 — เครื่องตั้งราคาที่เร็ว และขั้นตอนที่รันทุกเช้า</h2>
+  <p>แบบจำลองที่ไม่มีสูตรของ density มักมี characteristic function หน่วงราคา call ให้แปลง Fourier ได้ แล้วเลือกกริดให้ผลรวมกลายเป็น FFT ซึ่งให้ทุก strike พร้อมกัน จากนั้นประกอบทุกชิ้นเป็นงานประจำวัน: คัดข้อมูลด้วยกฎที่เขียนไว้ก่อน ลดเสียงของ quote ผิด ยึดกับค่าของเมื่อวาน ตรวจ parameter และบันทึกทุกอย่างให้รันซ้ำได้</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="3">
+  <li><a href="../topics/21.3.html"><span class="toc-number">21.3</span><span class="toc-name">Fourier and FFT Pricing<span class="toc-why">FFT ครั้งเดียวให้ 4,096 strike จาก characteristic function 4,096 ครั้ง และ smile ของ 14.7 ออกมาตรงทุกตัว ค่าหน่วง 0.01 ให้ 372.11 แทน 25.6146 และตาราง Heston ที่ใช้สอน (25.2428) รันโดยลืมปันผล ค่าที่ถูกคือ 24.3325</span></span></a></li>
+  <li><a href="../topics/21.4.html"><span class="toc-number">21.4</span><span class="toc-name">The Production Calibration Recipe<span class="toc-why">quote ผิดตัวเดียวดึง $\kappa$ จาก 1.90 เป็น 1.29 quote ที่ขยับไม่เกิน 0.10 จุดทำให้ราคา 10 ปีกระโดด 0.44 จุด และชุดของ Heston ที่ RMSE ต่ำสุด (0.2661) เป็นชุดเดียวที่ไม่ผ่าน Feller</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมค่าหน่วง $\alpha$ ที่เล็กเกินจึงให้ราคาผิดมากขึ้นเมื่อกริดความถี่หยาบขึ้น และทำไม optimizer ที่รายงานว่า “สำเร็จ” จึงยังไม่พอให้ปล่อย parameter ออกไปใช้</p>
+</section>
+
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — หกคำถามของเช้าวันเดียว</h2>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้แบบจำลองและข้อมูลของแต่ละหัวข้อตามที่หน้านั้นสร้าง: put อเมริกันของ 21.1 ($S_0=50$, $K=52$, $r=5\%$, $\sigma=30\%$, อายุ 0.5 ปี), variance swap ห้าอายุของ 21.2, กรณีทดสอบของ 21.3 และขั้นตอนของ 21.4</p>
+  <p><strong>1.</strong> ถ้าใช้ explicit บนกริดช่องละ \$2.5 ขอบบน \$100 ต้องใช้อย่างน้อยกี่ก้าวในครึ่งปี และถ้าใช้ 100 ก้าว ($\Delta t=0.005$) หนึ่งก้าวก่อนหมดอายุที่หุ้น \$50 ควรถือต่อหรือใช้สิทธิ์ (21.1)?</p>
+  <details><summary>ดูเฉลยข้อ 1</summary><p>$M=40$ จึง $\Delta t\le1/(0.09\times1{,}600+0.05)=1/144.05=0.006942$ ต้องใช้ $0.5/0.006942=72.03$ คือ 73 ก้าว ที่ $i=20$: $a=\tfrac12(0.005)(36-1)=0.0875$, $b=1-0.005(36.05)=0.81975$, $c=\tfrac12(0.005)(36+1)=0.0925$ รวม $0.99975=1-0.05(0.005)$ payoff ที่ \$47.5, \$50 และ \$52.5 คือ 4.5, 2 และ 0 ถือต่อ $=0.0875(4.5)+0.81975(2)=0.39375+1.6395=2.03325$ มากกว่า \$2 จึงถือต่อ</p></details>
+  <p><strong>2.</strong> ที่ชุด $(v_0,\theta,\kappa)=(0.09,\ 0.04,\ 2)$ residual ของ variance swap อายุ 1 ปี (mid 0.0612653, ครึ่งส่วนต่าง 0.001485) และ 3 ปี (mid 0.047986, ครึ่งส่วนต่าง 0.00219) เป็นเท่าไร ใช้ $g(2)=0.432332$ และ $g(6)=0.166254$ (21.2)</p>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>1 ปี: $w=0.04+0.05(0.432332)=0.0616166$ ลบ 0.0612653 ได้ 0.0003514 หารด้วย 0.001485 ได้ 0.2366 ส่วน 3 ปี: $w=0.04+0.05(0.166254)=0.0483127$ ลบ 0.047986 ได้ 0.0003267 หารด้วย 0.00219 ได้ 0.1492 ทั้งคู่ไม่เกิน 1 ราคาจากแบบจำลองจึงอยู่ใน bid–ask</p></details>
+  <p><strong>3.</strong> ที่คำตอบของ 21.2 eigenvalue มากสุดและน้อยสุดของ $J^{\top}J$ คือ 178.93 และ 1.788 gradient descent ที่ขนาดก้าวดีที่สุดคูณความคลาดเคลื่อนในทิศที่แบนที่สุดด้วยเท่าไรต่อก้าว และต้องกี่ก้าวจึงลดลงพันเท่า (21.2)?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>อัตราส่วน $c=178.93/1.788=100.1$ ตัวคูณ $(c-1)/(c+1)=99.1/101.1=0.9802$ จำนวนก้าว $\ln1{,}000/(-\ln0.9802)=6.908/0.01998=345.7$ คือ 346 ก้าว ถ้าไม่ปรับหน่วย อัตราส่วนเป็น 318,091 และตัวคูณเป็น 0.9999937</p></details>
+  <p><strong>4.</strong> ถ้าใช้ FFT ของ 21.3 ด้วย $N=2{,}048$ และ $\eta=0.5$ ระยะห่างของ log-strike, หน้าต่าง log-strike และความถี่สูงสุดคือเท่าไร กริดนี้เสี่ยง aliasing ไหม (21.3)?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary><p>$\lambda=2\pi/(2{,}048\times0.5)=2\pi/1{,}024=0.006136$ เท่ากับกริดของ 21.3 เพราะ $N\eta$ เท่ากัน หน้าต่างคือ $2\pi/0.5=12.57$ ความถี่สูงสุด $2{,}047(0.5)=1{,}023.5$ ตารางของ 21.3 ขั้นที่ 8 ที่ $\eta=0.5$ พลาดเพียง 0.0000006 จึงไม่เสี่ยง แต่ถ้าเพิ่ม $\eta$ เป็น 1.5 หน้าต่างเหลือ 4.19 และราคาเกินไป 0.18</p></details>
+  <p><strong>5.</strong> ชุด Heston ใหม่มี $\kappa=2.5$, $\theta=0.05$, $\xi=0.45$ ผ่าน Feller ไหม และ vol-of-vol สูงสุดที่ยังผ่านคือเท่าไร quote หนึ่งตัวมี residual 4 ถ้าใช้ Huber ที่ $c=1.5$ loss เป็นเท่าไร (21.4)?</p>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>$2\kappa\theta=2(2.5)(0.05)=0.25$ มากกว่า $\xi^2=0.2025$ จึงผ่าน และ $\xi$ สูงสุดคือ $\sqrt{0.25}=0.5$ Huber: $1.5(4-0.75)=4.875$ แทน $\tfrac12(16)=8$ ของกำลังสองธรรมดา แรงดึงถูกตัดที่ 1.5 แทน 4</p></details>
+  <p><strong>6.</strong> ในวันที่สองของ 21.4 quote ขยับไม่เกิน 0.10 จุด ราคา variance swap 10 ปีขยับ 0.4416 จุดเมื่อไม่มี prior และ 0.0672 จุดเมื่อ $\gamma=10$ อัตราส่วนระหว่างการขยับของราคาที่ไม่มี quote กับการขยับสูงสุดของ input เป็นเท่าไรในแต่ละกรณี และบอกอะไร (21.4)?</p>
+  <details><summary>ดูเฉลยข้อ 6</summary><p>ไม่มี prior: $0.4416/0.10=4.4$ เท่า มี prior: $0.0672/0.10=0.67$ เท่า ราคาที่ไม่มี quote ไม่ควรขยับมากกว่าข้อมูลที่ขยับจริงหลายเท่าโดยไม่มีเหตุ อัตราส่วน 4.4 คือสัญญาณว่า parameter เลื่อนไปตามร่องแบน ขณะที่ residual ทุกตัวยังอยู่ในแถบทั้งสองกรณี (0.39 และ 0.59)</p></details>
+</section>
+
+<section class="takeaways">
+  <h2>ก่อนเดินต่อบท 22</h2>
+  <ul>
+    <li>สัญญาที่ไม่มีสูตรปิดตั้งราคาได้บนกริดของ PDE โดยเลือกค่าที่มากกว่าระหว่างใช้สิทธิ์กับถือต่อทุกช่อง แต่ต้องเลือกก้าวเวลาจากกฎความเสถียร ซอยกริดตรวจ และตรวจขอบของตาราง</li>
+    <li>calibration คือ least squares ที่ถ่วงด้วย bid–ask ซึ่ง Levenberg–Marquardt แก้ได้เร็ว แต่คำตอบที่ลู่เข้าแล้วอาจอยู่บนร่องที่ข้อมูลแยกไม่ออก ต้องรายงานช่วง ไม่ใช่ตัวเลขเดียว</li>
+    <li>characteristic function กับการหน่วงราคา call เปลี่ยนการตั้งราคาเป็นผลรวมเดียว และ FFT ให้ทุก strike พร้อมกัน ถ้าตั้ง $\alpha$, $\eta$, $N$ ถูกและตรวจกับกรณีที่รู้คำตอบ</li>
+    <li>งานที่รันทุกเช้าต้องมีประตูที่เขียนไว้ก่อน: คัดข้อมูล residual ทุกตัวอยู่ในแถบ ลดเสียง quote ผิด ยึดกับเมื่อวาน ตรวจ parameter และบันทึกให้รันซ้ำได้ ความคลาดเคลื่อนที่ต่ำที่สุดไม่ใช่เกณฑ์เดียว</li>
+  </ul>
+  <p>บทที่ 22 ใช้เครื่องมือเหล่านี้กับสินเชื่อบ้านและตราสารที่สร้างจากกลุ่มสินเชื่อ ซึ่งกระแสเงินสดขึ้นกับว่าผู้กู้จะจ่ายคืนก่อนกำหนดเมื่อไร การแบ่งกระแสเงินสดเป็นชั้น และความเสี่ยงที่ผิดนัดพร้อมกัน</p>
+</section>
 </div>
 </body>
 </html>
