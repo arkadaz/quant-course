@@ -17,19 +17,93 @@
   <div class="chapter-path">PART 4 / 7 · Regression, Time Series, and Risk</div>
   <h1>บทที่ 17</h1>
   <p>Risk Measurement and Portfolio Construction · 9 หัวข้อ</p>
-  <p class="chapter-sequence">วัดความเสี่ยงของพอร์ตด้วย VaR และ Expected Shortfall แล้วประกอบพอร์ตจริงภายใต้ข้อจำกัด</p>
+  <p class="chapter-sequence">จากคำถามว่าวันร้ายเสียเท่าไร ไปสู่ว่าควรเสี่ยงเท่าไร ควรถือแต่ละตัวเท่าไร และตัวเลขที่ป้อนเข้าไปเชื่อได้แค่ไหน: ทุกหัวข้อตอบด้วยตัวเลขที่คิดซ้ำได้ และทุกหัวข้อจบที่จุดที่แบบจำลองพัง</p>
 </header>
+
+<section class="prose">
+  <h2>คำถามหลักของบท</h2>
+  <p>กองทุน \$10 ล้านถือหุ้น 60% พันธบัตร 40% คณะกรรมการความเสี่ยงถามห้าข้อ: วันร้ายหนึ่งในร้อยวันเสียเท่าไร และวันแบบนั้นเสียเฉลี่ยเท่าไร ควรใช้ leverage เท่าไร ถ้าทีมวิจัยมีมุมมองต่อหุ้น ควรขยับน้ำหนักแค่ไหน แบบจำลองความเสี่ยงที่ใช้อยู่ผ่านการตรวจย้อนหลังไหม และถ้าทุนตกจากยอด ต้องทำอะไร</p>
+  <p>บทนี้ตอบทั้งห้าข้อ และทุกคำตอบมีคำเตือนแนบมา: VaR ไม่เห็นความลึกของหาง Kelly โตเร็วที่สุดแต่เจ็บหนักระหว่างทาง optimizer ขยายความคลาดของค่าเฉลี่ย และการทดสอบย้อนหลังหนึ่งปีจับแบบจำลองที่แย่ได้น้อยกว่าที่คิด โจทย์ท้ายบทใช้กองทุนนี้ร้อยทุกหัวข้อเข้าด้วยกัน</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ quantile ของ Normal จาก 1.9 (VaR 99% ใช้ 2.3263) variance ของพอร์ต $w^{\mathsf T}\Sigma w$ จาก 8.2 สูตรค่าเฉลี่ยแบบมีเงื่อนไขของ Normal จาก 8.7 Lagrangian และพอร์ต Markowitz จาก 12.4 และ 12.5 eigenvalue จาก 7.6 และความผันผวนที่เปลี่ยนตามเวลา (GARCH) จาก 16.4</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 1 — วันร้ายเสียเท่าไร และควรเสี่ยงเท่าไร</h2>
+  <p>VaR บอกว่าหางเริ่มตรงไหน Expected Shortfall บอกว่าในหางลึกแค่ไหน และตัวหลังเป็นตัวที่ขยับมากเมื่อหางหนา จากนั้นกลับคำถาม: ถ้ารู้ว่าได้เปรียบ ควรลงเท่าไร คำตอบมาจาก log ของทุน ไม่ใช่กำไรเฉลี่ย และการลงเกินขนาดนั้นเสียมากกว่าการลงน้อยกว่า</p>
+</section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/17.1.html"><span class="toc-number">17.1</span><span class="toc-name">Value at Risk and Expected Shortfall<span class="toc-why">เมื่อรู้จุดเริ่มของวันเลวร้ายแล้ว ต้องรู้ด้วยว่าข้างในเลวร้ายแค่ไหน</span></span></a></li>
-  <li><a href="../topics/17.2.html"><span class="toc-number">17.2</span><span class="toc-name">The Kelly Criterion<span class="toc-why">เลือกขนาดสถานะจากการเติบโตของทุน โดยเผื่อสิ่งที่เรายังไม่รู้</span></span></a></li>
-  <li><a href="../topics/17.3.html"><span class="toc-number">17.3</span><span class="toc-name">Markowitz Portfolio Theory<span class="toc-why">มองความเสี่ยงของสินทรัพย์ร่วมกัน ก่อนเลือกน้ำหนักที่ดูดีที่สุด</span></span></a></li>
-  <li><a href="../topics/17.4.html"><span class="toc-number">17.4</span><span class="toc-name">Principal Component Analysis (PCA)<span class="toc-why">ความเสี่ยงของเส้นอัตราแปดมิติ จริง ๆ แล้วเป็นสามทิศที่ตั้งฉากกัน</span></span></a></li>
-  <li><a href="../topics/17.5.html"><span class="toc-number">17.5</span><span class="toc-name">Monte Carlo and the Bootstrap<span class="toc-why">คำนวณราคาพร้อมความคลาดเคลื่อน และแยกความไม่แน่นอนของแบบจำลองจากข้อมูล</span></span></a></li>
-  <li><a href="../topics/17.6.html"><span class="toc-number">17.6</span><span class="toc-name">Drawdown, Calmar, and De-risking Rules<span class="toc-why">กำไรปลายทางไม่บอกว่าระหว่างทางบัญชีเกือบทนไม่ไหวแค่ไหน</span></span></a></li>
-  <li><a href="../topics/17.7.html"><span class="toc-number">17.7</span><span class="toc-name">VaR Backtesting: Kupiec and Christoffersen<span class="toc-why">นับครั้งที่พลาด แล้วตรวจว่าความผิดพลาดมาติดกันหรือไม่</span></span></a></li>
-  <li><a href="../topics/17.8.html"><span class="toc-number">17.8</span><span class="toc-name">Covariance Shrinkage (Ledoit-Wolf)<span class="toc-why">ลดเสียงรบกวนที่ inverse matrix กำลังขยายให้เป็นคำสั่งซื้อขาย</span></span></a></li>
-  <li><a href="../topics/17.9.html"><span class="toc-number">17.9</span><span class="toc-name">The Black-Litterman Model<span class="toc-why">เริ่มจากน้ำหนักอ้างอิง แล้วปรับด้วยมุมมองที่ยอมรับว่ามีความไม่แน่นอน</span></span></a></li>
+  <li><a href="../topics/17.1.html"><span class="toc-number">17.1</span><span class="toc-name">Value at Risk and Expected Shortfall<span class="toc-why">VaR 99% หนึ่งวันของพอร์ต \$500 ล้านคือ \$13.96 ล้าน แต่วันที่เลยจุดนั้นเสียเฉลี่ย \$15.99 ล้าน และถ้าหางเป็น Student-t ที่ความผันผวนเท่ากัน เสียเฉลี่ย \$22.15 ล้าน ส่วนพันธบัตรสองตัวแสดงว่า VaR ลงโทษการกระจายได้</span></span></a></li>
+  <li><a href="../topics/17.2.html"><span class="toc-number">17.2</span><span class="toc-name">The Kelly Criterion<span class="toc-why">เกม 55% จ่ายหนึ่งต่อหนึ่ง ลงรอบละ 10% โต 0.501% ต่อรอบ แต่ 20% เลยจุดศูนย์ที่ 19.87% แล้ว และครึ่ง Kelly ลดโอกาสที่ทุนลงถึงครึ่งใน 400 รอบจาก 0.436 เหลือ 0.104</span></span></a></li>
 </ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมกฎ Basel จึงย้ายจาก VaR 99% ไปใช้ ES 97.5% ทั้งที่ภายใต้ Normal สองตัวเลขนี้แทบเท่ากัน และทำไมการลงขนาดสองเท่าของ Kelly จึงโตแค่เท่าเงินฝาก ทั้งที่แต่ละรอบยังได้เปรียบ?</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 2 — ประกอบพอร์ตจาก covariance และสุ่มสิ่งที่ไม่มีสูตร</h2>
+  <p>Markowitz ใช้ covariance หาพอร์ตเสี่ยงต่ำสุดและพอร์ต tangency PCA แยก covariance เป็นทิศที่ตั้งฉากกัน และชี้ว่าทิศที่ variance เล็กคือทิศที่ inverse ขยายความคลาด ส่วน Monte Carlo ตั้งราคาสิ่งที่ไม่มีสูตร พร้อม standard error ที่ต้องรายงานคู่กันเสมอ</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="3">
+  <li><a href="../topics/17.3.html"><span class="toc-number">17.3</span><span class="toc-name">Markowitz Portfolio Theory<span class="toc-why">ใส่หุ้น 4.5% ทำให้พอร์ตเสี่ยง 5.93% ต่ำกว่าพันธบัตรล้วน พอร์ต tangency หุ้น 32.19% ได้ Sharpe 0.4030 สูงกว่าหุ้นล้วน แต่ไฟล์แปดกลุ่มของคอร์สสั่งพันธบัตร 568% กับ short หุ้น 865%</span></span></a></li>
+  <li><a href="../topics/17.4.html"><span class="toc-number">17.4</span><span class="toc-name">Principal Component Analysis (PCA)<span class="toc-why">ทิศแรกของสามอายุอธิบาย 90.06% inverse ขยายทิศเล็ก 56 เท่า และ hedge พันธบัตร 10 ปี \$100 ล้านต้อง short 2 ปี \$448.4 ล้าน หรือ \$523.1 ล้านถ้าอายุ 10 ปีแกว่ง 7 ต่อ 6 ของอายุ 2 ปี</span></span></a></li>
+  <li><a href="../topics/17.5.html"><span class="toc-number">17.5</span><span class="toc-name">Monte Carlo and the Bootstrap<span class="toc-why">10,000 เส้นทางให้ Asian call \$7.84 ± 0.25 ยังใช้เสนอราคาไม่ได้ ตัวควบคุมแบบเรขาคณิตลด variance 592 เท่า ได้ \$7.7779 ± 0.0032 และ bootstrap ห้าวันให้ SE ใหญ่กว่าค่าเฉลี่ยเกือบสี่เท่า</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมพอร์ตเสี่ยงต่ำสุดไม่ต้องรู้ค่าเฉลี่ยเลย แต่พอร์ต tangency ต้องรู้ และทำไม eigenvalue ที่เล็กที่สุดของ covariance จึงเป็นตัวที่อันตรายที่สุดเมื่อกลับ matrix?</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 3 — ระหว่างทาง และการตรวจแบบจำลอง</h2>
+  <p>ผลตอบแทนปลายทางไม่บอกว่าระหว่างทางทุนลงลึกแค่ไหน drawdown วัดสิ่งนั้น และการฟื้นต้องใช้เปอร์เซ็นต์มากกว่าที่เสีย กฎลดขนาดเมื่อทุนตกซื้อหลุมที่ตื้นขึ้นด้วยการพลาดช่วงฟื้น แล้วตรวจแบบจำลองความเสี่ยงเอง: นับวันที่พลาด และดูว่าพลาดมาเป็นก้อนไหม</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="6">
+  <li><a href="../topics/17.6.html"><span class="toc-number">17.6</span><span class="toc-name">Drawdown, Calmar, and De-risking Rules<span class="toc-why">ตกจาก \$1.1 ล้านเหลือ \$880,000 คือ drawdown 20% ต้องฟื้น 25% และบนเส้นทาง 12 วัน กฎลดขนาดทำให้หลุมตื้นขึ้นจาก 21.13% เป็น 16.03% แต่จบต่ำกว่าการถือเต็ม \$24,451</span></span></a></li>
+  <li><a href="../topics/17.7.html"><span class="toc-number">17.7</span><span class="toc-name">VaR Backtesting: Kupiec and Christoffersen<span class="toc-why">พลาด 5 วันเท่ากัน Kupiec ได้ 1.957 ทั้งคู่ แต่ Christoffersen ได้ 0.204 กับชุดกระจาย และ 31.02 กับชุดติดกัน และแบบจำลองที่พลาดจริง 2% ถูกจับได้แค่ 24% ของปี</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมจุดตัด 20% ของกฎลดขนาดจึงไม่ใช่เพดานขาดทุน และทำไมการที่แบบจำลองไม่ถูกปฏิเสธใน 250 วันจึงไม่ได้แปลว่ามันดี?</p>
+</section>
+
+<section class="prose">
+  <h2>เส้นทางที่ 4 — เมื่อตัวเลขที่ป้อนเป็นค่าประมาณ</h2>
+  <p>optimizer เทเงินไปที่ความคลาดของค่าที่ประมาณ ทางแก้แรกคือดึงค่าเฉลี่ยและ covariance เข้าหาสิ่งที่เรียบง่าย โดยให้ข้อมูลบอกเองว่าควรดึงแรงแค่ไหน ทางแก้ที่สองคือเริ่มจากน้ำหนักที่ถืออยู่ ย้อนหาค่าเฉลี่ยที่มันบอกเป็นนัย แล้วใส่เฉพาะมุมมองที่มีจริงตามความมั่นใจ</p>
+</section>
+<ol class="chapter-topics chapter-topics-full" start="8">
+  <li><a href="../topics/17.8.html"><span class="toc-number">17.8</span><span class="toc-name">Covariance Shrinkage (Ledoit-Wolf)<span class="toc-why">พอร์ตจากค่าที่ประมาณสัญญา Sharpe 0.864 ได้จริง 0.586 และการผสม covariance ครึ่งหนึ่งเปลี่ยนน้ำหนักจาก −75% เป็น 25.81% condition number จาก 62.1 เหลือ 2.88</span></span></a></li>
+  <li><a href="../topics/17.9.html"><span class="toc-number">17.9</span><span class="toc-name">The Black-Litterman Model<span class="toc-why">มุมมองว่าหุ้นชนะพันธบัตร 3 จุด เทียบกับ 4.8 จุดที่ 60/40 บอกเป็นนัย คือมุมมองลบ จึงลดหุ้นเหลือ 51.43% ย้าย \$857,143 ไปพันธบัตร</span></span></a></li>
+</ol>
+<section class="example">
+  <p><strong>จุดตรวจ:</strong> ทำไมการดึงค่าเฉลี่ยทั้งสามให้เท่ากันหมดจึงให้ Sharpe จริงสูงกว่าการเชื่อค่าเฉลี่ยที่ประมาณ และทำไมมุมมองเดียวกันจากสองทีมที่ใช้ข้อมูลชุดเดียวกันไม่ควรนับเป็นหลักฐานสองชิ้น?</p>
+</section>
+
+<section class="example">
+  <h2>โจทย์เชื่อมทั้งบท — กองทุน 60/40 ตั้งแต่ความเสี่ยงรายวันถึงมุมมองของทีมวิจัย</h2>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กองทุน \$10 ล้าน ถือหุ้น 60% พันธบัตร 40% covariance รายปี $\Sigma=\begin{bmatrix}0.04&amp;0.004\\0.004&amp;0.01\end{bmatrix}$ (ความผันผวน 20% และ 10% correlation 0.2) ผลตอบแทนส่วนเกินที่น้ำหนักบอกเป็นนัย 6.4% และ 1.6% (17.9) ปีหนึ่งมี 252 วันทำการ ผลตอบแทนรายวันเป็น Normal ค่าเฉลี่ยราวศูนย์ ทุกตัวเลขเป็นตัวอย่างสมมติ</p>
+  <p><strong>1.</strong> ความผันผวนต่อปีและต่อวันของกองทุนเท่าไร (8.2, 17.3)?</p>
+  <details><summary>ดูเฉลยข้อ 1</summary><p>$\sigma^2=0.36(0.04)+0.16(0.01)+2(0.24)(0.004)=0.0144+0.0016+0.00192=0.01792$ ความผันผวนต่อปี 13.39% ต่อวัน $13.39\%/\sqrt{252}=0.8433\%$ (หารด้วย 15.87)</p></details>
+  <p><strong>2.</strong> VaR 99% และ ES 99% หนึ่งวัน และ VaR 99% สิบวันเท่าไร (17.1)?</p>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>$\sigma V=0.008433\times10{,}000{,}000=\$84{,}327$ VaR คือ $2.3263479$ เท่า ได้ \$196,175 ES คือ $2.6652142$ เท่า ได้ \$224,751 สิบวัน (ถ้าแต่ละวันอิสระ) VaR คูณ $\sqrt{10}$ ได้ \$620,359 ถ้าหางหนาแบบ Student-t ของ 17.1 ES จะสูงกว่านี้มาก</p></details>
+  <p><strong>3.</strong> ถ้ามองกองทุน 60/40 เป็นสินทรัพย์เสี่ยงตัวเดียว Kelly แบบต่อเนื่องสั่งให้ถือกี่เท่าของทุน (17.2)?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>ส่วนเกิน $0.6(6.4\%)+0.4(1.6\%)=4.48\%$ $a^*=0.0448/0.01792=2.5$ เท่า ความผันผวนของพอร์ต Kelly $2.5(13.39\%)=33.47\%$ เท่ากับ Sharpe 0.3347 อัตราโตเหนือเงินฝาก $0.3347^2/2=5.6\%$ ครึ่ง Kelly (1.25 เท่า) ได้ 4.2% คือสามในสี่ สังเกตว่า $a^*$ เท่ากับ $\delta=2.5$ ของ 17.9 พอดี เพราะทั้งคู่คือส่วนเกินหารด้วย variance</p></details>
+  <p><strong>4.</strong> ตรวจ VaR 99% ย้อนหลัง 250 วัน พบวันพลาด 6 วัน Kupiec ปฏิเสธไหม และอยู่โซนสีอะไรของ Basel (17.7)?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary><p>$\hat p=0.024$ $\mathrm{LR}=2[6\ln2.4+244\ln(0.976/0.99)]=2[5.2528-3.4751]=3.555$ ต่ำกว่า 3.841 ไม่ปฏิเสธ แต่ 6 วันอยู่โซนเหลือง (5 ถึง 9) ตัวคูณเงินกองทุนขึ้น และควรดู Christoffersen ด้วยว่าหกวันนั้นมาติดกันไหม</p></details>
+  <p><strong>5.</strong> ทีมวิจัยมีมุมมองว่าหุ้นชนะพันธบัตร 3 จุด ด้วยความมั่นใจเท่ากับตลาด น้ำหนักใหม่เป็นเท่าไร และ VaR 99% หนึ่งวันเปลี่ยนเป็นเท่าไร (17.9, 17.1)?</p>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>จาก 17.9 น้ำหนักใหม่ 51.43% กับ 48.57% variance $0.010580+0.002359+0.001998=0.014937$ ความผันผวนต่อปี 12.22% ต่อวัน 0.7699% VaR $2.3263479(0.007699)(10{,}000{,}000)=\$179{,}105$ ลดลง \$17,070 เพราะมุมมองย้ายเงินจากตัวที่แกว่งแรงไปตัวที่แกว่งเบา</p></details>
+  <p><strong>6.</strong> กองทุนเคยขึ้นไปถึง \$10.5 ล้าน ตอนนี้เหลือ \$9.2 ล้าน drawdown เท่าไร ต้องฟื้นเท่าไร และกฎของ 17.6 สั่งอะไรพรุ่งนี้?</p>
+  <details><summary>ดูเฉลยข้อ 6</summary><p>$D=1-9.2/10.5=12.38\%$ ต้องฟื้น $0.1238/0.8762=14.13\%$ drawdown อยู่ระหว่าง 10% กับ 20% กฎสั่งครึ่งขนาดตั้งแต่พรุ่งนี้ ถ้าตลาดฟื้นเร็ว กองทุนจะฟื้นช้ากว่าการถือเต็มแบบขั้นที่ 6 ของ 17.6</p></details>
+</section>
+
+<section class="takeaways">
+  <h2>ก่อนเดินต่อบท 18</h2>
+  <ul>
+    <li>VaR คือประตูของหาง ES คือค่าเฉลี่ยของห้องหลังประตู และหางหนาเปลี่ยน ES มากกว่า VaR</li>
+    <li>ขนาดเดิมพันที่ดีที่สุดมาจากค่าเฉลี่ยของ log การลงเกินขนาดนั้นแย่กว่าการลงน้อยกว่า และค่าที่ประมาณคลาดนิดเดียวก็พาข้ามยอด</li>
+    <li>Markowitz ใช้ $\Sigma^{-1}$ ซึ่งขยายทิศที่ eigenvalue เล็ก ค่าเฉลี่ยที่ประมาณคลาดได้หลายจุด optimizer จึงขยายความคลาด</li>
+    <li>ราคาและความเสี่ยงจากการสุ่มต้องมาพร้อม SE และการทดสอบย้อนหลังหนึ่งปีมีพลังต่ำ ไม่ปฏิเสธไม่ได้แปลว่าดี</li>
+    <li>ทางแก้ของความไม่แน่นอนคือดึงเข้าหาสิ่งที่นิ่งกว่า (shrinkage) หรือเริ่มจากสิ่งที่ถืออยู่แล้วเบนตามความมั่นใจ (Black-Litterman)</li>
+  </ul>
+  <p>บท 18 ออกจากการเลือกน้ำหนักไปสู่ราคาและการซื้อขาย: มูลค่าของเงินตามเวลา เส้นอัตราผลตอบแทนที่ 17.4 แยกเป็นสามทิศ ต้นไม้สองกิ่งของ option และต้นทุนที่พอร์ตเป้าหมายต้องจ่ายเมื่อส่งคำสั่งจริง</p>
+</section>
 </div>
 </body>
 </html>
