@@ -15,348 +15,322 @@
   <a href="../chapters/13.html">บทที่ 13</a>
   <span class="topic-progress">หัวข้อ 77/158</span>
 </nav>
-
-<article class="topic" data-number="13.5" data-depends-on="13.2 8.1 8.2">
+<article class="topic" data-number="13.5" data-depends-on="13.1 13.2 8.2 8.9">
 <header class="topic-header">
   <h1><span class="tnum">13.5</span> Multidimensional Itô and the Product Rule</h1>
-  <p class="subtitle">เมื่อแรงกระแทกสองตัวมาพร้อมกัน</p>
+  <p class="subtitle">เมื่อสอง process สุ่มพร้อมกัน ผลคูณของการขยับ $dX\,dY$ ไม่หายไป แต่เท่ากับ correlation คูณเวลา พจน์นี้เพิ่ม drift ของผลคูณ และทำให้ความผันผวนรวมกันแบบ variance ไม่ใช่บวกตรง ๆ</p>
 </header>
-
 <div class="hook">
-  <p>note ตัวอย่างจ่าย \$1,000,000 คูณผลตอบแทนสะสมของ SPY คูณของ QQQ ในหนึ่งปี แบบจำลองให้ SPY โต 8% เหวี่ยง 20% ให้ QQQ โต 10% เหวี่ยง 25% และ correlation 0.60 ค่าเฉลี่ยของเงินที่จ่ายคือเท่าไร?</p>
-  <p>เฉลย: \$1,233,678 เพราะผลคูณโตเฉลี่ย 21% ต่อปี ไม่ใช่ 8% + 10% = 18% ซึ่งจะให้แค่ \$1,197,217 ส่วนต่าง \$36,461 มาจากการที่สองตัวขยับไปด้วยกัน และความผันผวนของผลคูณคือ 40.31% ไม่ใช่ 45%</p>
-  <p>calculus ปกติทิ้งผลคูณของการขยับสองตัว แต่เมื่อทั้งคู่สุ่ม ผลคูณนั้นมีขนาดเท่าเวลา Itô ฉบับหลายมิติเก็บมันไว้</p>
+  <p>โต๊ะ structured note ออก note สมมติที่จ่าย \$1 ล้าน คูณผลตอบแทนสะสมหนึ่งปีของ SPY คูณของ QQQ แบบจำลองของโต๊ะให้ SPY มี drift 8% ความผันผวน 20% ให้ QQQ มี drift 10% ความผันผวน 25% และ correlation 0.60 นักวิเคราะห์บวก drift ได้ 18% จึงคาดว่าจ่ายเฉลี่ย $10^6e^{0.18}=\$1{,}197{,}217$ และบวกความผันผวนได้ 45% ใช้สองตัวเลขนี้ได้ไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ได้ ผลคูณมี drift $0.08+0.10+0.60(0.20)(0.25)=0.21$ จ่ายเฉลี่ย \$1,233,678 มากกว่าที่คิด \$36,461 และความผันผวนของผลคูณคือ $\sqrt{0.04+0.0625+2(0.03)}=40.31\%$ ไม่ใช่ 45% ทั้งสองความผิดมาจากพจน์เดียวกัน คือ $dX\,dY=\rho\sigma_X\sigma_YXY\,dt$ ที่ calculus ปกติทิ้งไป</p></details>
 </div>
-
 <section class="prose">
-  <h4>เริ่มจาก note ที่จ่ายตามผลคูณของสองดัชนี</h4>
-  <p>note ตัวหนึ่งจ่าย \$1,000,000 คูณผลตอบแทนสะสมของ SPY คูณของ QQQ ในหนึ่งปี แบบจำลองให้ SPY โต 8% เหวี่ยง 20% ให้ QQQ โต 10% เหวี่ยง 25% และทั้งคู่เกาะกันที่ correlation 0.60</p>
-  <p>ถ้าบวกอัตราโตกันตรง ๆ ได้ 18% และเงินที่จ่าย \$1,197,217 คำตอบจริงคือ \$1,233,678 เพราะผลคูณโตเฉลี่ย 21% ต่อปี ส่วนต่าง \$36,461 มาจากการที่สองตัวขยับไปด้วยกัน</p>
-  <p>ในทางกลับกัน ความผันผวนของผลคูณคือ 40.31% ไม่ใช่ 45% ที่ได้จากการบวกตรง ๆ ทั้งสองตัวเลขมาจากพจน์ไขว้ตัวเดียวกัน หัวข้อนี้หาพจน์นั้นออกมาแล้วใช้มันกับทั้งผลคูณและผลหาร</p>
+  <h4>สิ่งที่เราจะสร้าง</h4>
+  <p>13.1 ถึง 13.4 มีแหล่งความสุ่มแหล่งเดียว แต่งานจริงแทบไม่เคยมีตัวเดียว note ที่อ้างอิงสองดัชนี หุ้นต่างประเทศที่ต้องคูณอัตราแลกเปลี่ยน หรือส่วนต่างของคู่หุ้น ล้วนเป็นฟังก์ชันของสอง process ที่สุ่มพร้อมกัน หน้านี้ขยายตารางคูณของ 13.1 ให้มีผลคูณไขว้ $dW^X\,dW^Y$ แล้วขยาย Itô's lemma ของ 13.2 ไปสองตัวแปร</p>
+  <p>ลำดับคือ: เห็นพจน์ไขว้ในหนึ่งก้าวด้วยมือ สร้าง Brownian motion สองตัวที่ correlate กันด้วย Cholesky ของ 8.9 หา $dW^X\,dW^Y$ เขียน Itô สองตัวแปร ได้กฎผลคูณ ใช้กับ note ใช้กับอัตราส่วน ตรวจด้วยการเดิน SDE สองตัวทีละวัน แล้ววัดว่า correlation ที่ประมาณคลาดทำให้ราคาคลาดเท่าไร</p>
 </section>
-
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>multidimensional Itô formula</dt>
-    <dd>chain rule สำหรับ function ของ random variable หลายตัว ที่เก็บผลคูณของการขยับทุกคู่ไว้ ใช้หาการเคลื่อนที่ของตะกร้าสินทรัพย์ อัตราส่วน และสัญญาที่อ้างอิงหลายตัว</dd>
-    <dt>Itô product rule</dt>
-    <dd>กฎหาการเปลี่ยนของผลคูณที่มีพจน์ dX dY เพิ่มจากกฎปกติ ใช้หาค่าเฉลี่ยและความเสี่ยงของผลคูณของสองตัวที่สุ่ม</dd>
-    <dt>correlation</dt>
-    <dd>ตัวเลขระหว่าง −1 ถึง 1 ที่วัดว่าแรงกระแทกสองตัวไปทางเดียวกันแค่ไหน ใช้กำหนดขนาดของพจน์ไขว้</dd>
-    <dt>covariance</dt>
-    <dd>correlation คูณความผันผวนของทั้งสองตัว ใช้เป็นขนาดของพจน์ไขว้ในค่าเฉลี่ยและ variance</dd>
-    <dt>total-return factor</dt>
-    <dd>มูลค่าสะสมที่เริ่มที่ 1 และรวมทั้งราคากับเงินปันผล ใช้เทียบสินทรัพย์ที่ราคาต่างระดับกันในสัญญาเดียว</dd>
-    <dt>notional</dt>
-    <dd>มูลค่าอ้างอิงที่เอาไปคูณตัวเลขไร้หน่วยให้เป็นเงิน ใช้แปลงผลคูณเป็นจำนวนดอลลาร์ของ note</dd>
-    <dt>SPY และ QQQ</dt>
-    <dd>กองทุนสหรัฐที่ติดตามดัชนี S&amp;P 500 และ Nasdaq-100 ใช้เป็นสองสินทรัพย์ของตัวอย่าง ไม่ใช่คำแนะนำลงทุน</dd>
-    <dt>quanto option</dt>
-    <dd>option ที่อ้างอิงหุ้นต่างประเทศแต่จ่ายเป็นสกุลเงินบ้าน ใช้เป็นตัวอย่างจริงที่ผลคูณของราคากับอัตราแลกเปลี่ยนต้องมีพจน์ไขว้</dd>
-    <dt>Jensen's inequality</dt>
-    <dd>ผลที่ว่าค่าเฉลี่ยของ function ที่โค้งหงาย มากกว่า function ของค่าเฉลี่ย ใช้อธิบายว่าทำไมหนึ่งส่วนราคามี drift เพิ่ม</dd>
-    <dt>risk-neutral measure</dt>
-    <dd>ชุดน้ำหนักโอกาสสำหรับตั้งราคา ที่ทำให้ราคาคิดลดเป็น martingale (หัวข้อ 13.6) ใช้แทน drift ของโลกจริงเมื่อจะตั้งราคาสัญญา</dd>
+    <dt>Multidimensional Itô formula</dt><dd>chain rule ของ $f(t,X,Y)$ เมื่อ $X$ และ $Y$ ขยับตาม SDE ทั้งคู่ เก็บพจน์กำลังสองของแต่ละตัวและพจน์ไขว้ $f_{XY}\,dX\,dY$ ใช้กับทุกสัญญาและพอร์ตที่ขึ้นกับหลายสินทรัพย์</dd>
+    <dt>Itô product rule</dt><dd>$d(XY)=X\,dY+Y\,dX+dX\,dY$ กฎผลคูณที่มีพจน์ที่สามเพิ่มจากของ calculus ปกติ</dd>
+    <dt>Correlation ของ Brownian motion</dt><dd>$\rho$ ใน $dW^X\,dW^Y=\rho\,dt$ คือ correlation ของการขยับสองตัวในทุกช่วงสั้น ๆ ใช้กำหนดขนาดของพจน์ไขว้</dd>
+    <dt>Covariance term</dt><dd>$\rho\sigma_X\sigma_Y$ ขนาดของพจน์ไขว้ต่อปี โผล่ทั้งใน drift ของผลคูณและใน variance ของมัน</dd>
+    <dt>Total-return factor</dt><dd>มูลค่าสะสมที่เริ่มที่ 1 และรวมทั้งราคากับเงินปันผล ใช้เทียบสินทรัพย์ที่ราคาต่างระดับกันในสัญญาเดียว</dd>
+    <dt>Quanto</dt><dd>สัญญาที่อ้างอิงสินทรัพย์ต่างประเทศแต่จ่ายเป็นเงินสกุลบ้าน ต้องคูณราคากับอัตราแลกเปลี่ยน จึงไวต่อพจน์ไขว้โดยตรง</dd>
   </dl>
 </details>
-
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
-  <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
-    <tbody>
-      <tr><td>$X_t$, $Y_t$</td><td>ผลตอบแทนสะสมของ SPY และ QQQ เริ่มที่ 1</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$V_t$</td><td>ผลคูณ $X_tY_t$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$Z_t$</td><td>อัตราส่วน $X_t/Y_t$</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$N$</td><td>notional ของ note</td><td>USD</td></tr>
-      <tr><td>$\mu_X$, $\mu_Y$</td><td>drift ต่อปีของแต่ละตัว</td><td>1/ปี</td></tr>
-      <tr><td>$\sigma_X$, $\sigma_Y$</td><td>volatility ต่อปีของแต่ละตัว</td><td>$1/\sqrt{\text{year}}$</td></tr>
-      <tr><td>$W^X_t$, $W^Y_t$</td><td>Brownian motion ที่ขับแต่ละตัว</td><td>$\sqrt{\text{year}}$</td></tr>
-      <tr><td>$\rho$</td><td>correlation ของแรงกระแทกสองตัวในทุกช่วงสั้น ๆ</td><td>ไม่มีหน่วย</td></tr>
-      <tr><td>$\mu_V$, $\sigma_V$</td><td>drift และความผันผวนของผลคูณ</td><td>1/ปี, $1/\sqrt{\text{year}}$</td></tr>
-    </tbody>
-  </table>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$X_t,\ Y_t$</td><td>total-return factor ของ SPY และ QQQ เริ่มที่ 1</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$V_t,\ Z_t$</td><td>ผลคูณ $X_tY_t$ และอัตราส่วน $X_t/Y_t$</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$\mu_X,\ \mu_Y$</td><td>drift ของแต่ละตัว</td><td>ต่อปี</td></tr>
+    <tr><td>$\sigma_X,\ \sigma_Y$</td><td>ความผันผวนของแต่ละตัว</td><td>ต่อ $\sqrt{\text{yr}}$</td></tr>
+    <tr><td>$W^X,\ W^Y,\ W^\perp$</td><td>Brownian motion ที่ขับ $X$, ที่ขับ $Y$ และตัวที่อิสระจาก $W^X$</td><td>$\sqrt{\text{yr}}$</td></tr>
+    <tr><td>$\rho$</td><td>correlation ของ $dW^X$ กับ $dW^Y$</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$N$</td><td>notional ของ note</td><td>\$</td></tr>
+  </tbody></table></div>
 </details>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — หนึ่งก้าวด้วยมือ: ผลคูณของสองตัวที่ไม่มี drift เลย</h4>
-  <p>สองตัวเริ่มที่ 1 แต่ละตัวขึ้นหรือลง 10% อย่างละครึ่ง ค่าเฉลี่ยของแต่ละตัวจึงไม่ขยับ ดูค่าเฉลี่ยของผลคูณในสามกรณี</p>
-  <div class="math">\[
-\begin{aligned}
-&\text{always together}:\\
-&\quad\tfrac12(1.1)(1.1)+\tfrac12(0.9)(0.9)\\
-&\quad=\tfrac12(1.21+0.81)=1.01\\
-&\text{always opposite}:\\
-&\quad\tfrac12(1.1)(0.9)+\tfrac12(0.9)(1.1)=0.99\\
-&\text{unrelated}:\\
-&\quad\tfrac14(1.21+0.99+0.99+0.81)=1.00\\[4pt]
-&\text{cross term}\\
-&=\rho\,(0.1)(0.1)=+0.01,\ -0.01,\ 0
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แต่ละตัวเฉลี่ยไม่ขยับ แต่ผลคูณขยับได้ ขึ้นพร้อมกันได้ 1.21 ลงพร้อมกันได้ 0.81 ค่าเฉลี่ยจึงเกินหนึ่ง 1% ส่วนสวนทางกันเสียเสมอ 1% พจน์ที่เกินมาคือ correlation คูณความผันผวนของทั้งสองตัวพอดี</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — ของที่โจทย์ให้: สองตัวแบบ GBM ที่แรงกระแทกเกาะกัน</h4>
-  <p>แต่ละตัวเป็น Geometric Brownian Motion (GBM) แบบหัวข้อ 13.2 ของใหม่มีบรรทัดเดียว คือผลคูณของการขยับสองแรงให้ correlation คูณเวลา</p>
-  <div class="math">\[
-\frac{dX_t}{X_t}=\mu_X\,dt+\sigma_X\,dW_t^X,\qquad \frac{dY_t}{Y_t}=\mu_Y\,dt+\sigma_Y\,dW_t^Y,\qquad dW_t^X\,dW_t^Y=\rho\,dt
-\]</div>
-  <div class="reading">
-    <p>บรรทัดขวาคือกฎของหัวข้อ 13.1 ฉบับสองตัว ถ้าสองแรงเป็นแรงเดียวกัน correlation เป็น 1 ก็ย้อนกลับไปเป็น (dW)² = dt ถ้าไม่เกี่ยวกันเลย ผลคูณเป็นศูนย์</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — กระจายผลคูณ: พจน์ที่สามทิ้งไม่ได้</h4>
-  <p>เขียนค่าใหม่ลบค่าเก่าของผลคูณแล้วกระจายวงเล็บ ขั้นนี้ยังไม่ใช้สมบัติอะไรของ Brownian motion ไม่มีการประมาณเลย</p>
-  <div class="math">\[
-\begin{aligned}
-V_t&=X_tY_t\\
-&(X+dX)(Y+dY)-XY\\
-&=X\,dY+Y\,dX+dX\,dY\\
-dV_t&=X_t\,dY_t+Y_t\,dX_t+dX_t\,dY_t
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ใน calculus ปกติ พจน์ที่สามถูกทิ้งเพราะเป็นของเล็กคูณของเล็ก แต่การขยับแบบสุ่มมีขนาดรากของเวลา ผลคูณของสองอันจึงมีขนาดเท่าเวลา ซึ่งทิ้งไม่ได้</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — คำนวณพจน์ไขว้</h4>
-  <p>คูณสองสมการของขั้นที่ 2 ได้สี่พจน์ แล้วใช้ตารางคูณของหัวข้อ 13.2 ตัดสามพจน์ที่เล็กเกินไป</p>
-  <div class="math">\[
-\begin{aligned}
-&dX_t\,dY_t\\
-&=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\\
-&\quad\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big)\\
-&(dt)^{2}=0,\quad dt\,dW=0\\
-&dW_t^{X}dW_t^{Y}=\rho\,dt\\
-&dX_t\,dY_t=\rho\,\sigma_X\sigma_Y\,X_tY_t\,dt
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>เหลือพจน์เดียวที่เป็นผลคูณของสองแรงสุ่ม และเป็นสัดส่วนกับ correlation ตรง ๆ ถ้าสองตัวไม่เกาะกัน พจน์นี้หายไป ตรงกับกรณีไม่เกี่ยวกันของขั้นที่ 1</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — การเคลื่อนที่ของผลคูณ</h4>
-  <p>แทนทุกพจน์ลงในกฎของขั้นที่ 3 ให้มี $X_tY_t$ เป็นตัวร่วม แล้วเอามันหารทั้งสมการ</p>
-  <div class="math">\[
-\begin{aligned}
-X_t\,dY_t&=X_tY_t\big(\mu_Y dt+\sigma_Y dW_t^{Y}\big)\\
-Y_t\,dX_t&=X_tY_t\big(\mu_X dt+\sigma_X dW_t^{X}\big)\\
-\frac{dV_t}{V_t}&=\underbrace{\big(\mu_X+\mu_Y+\rho\sigma_X\sigma_Y\big)}_{\mu_V}dt\\
-&\quad+\sigma_X\,dW_t^{X}+\sigma_Y\,dW_t^{Y}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ผลคูณก็เป็น GBM อีกตัว แต่ drift ไม่ใช่แค่ผลบวก มีพจน์ covariance เพิ่มเข้ามา ซึ่งไม่มีใครใส่เข้าไป มันงอกออกมาจากพจน์ที่ calculus ปกติทิ้ง</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — รวมสองแรงสุ่มเป็นความผันผวนเดียว</h4>
-  <p>สองแรงสุ่มรวมเป็นแรงเดียวได้ แต่ขนาดต้องรวมแบบ variance ไม่ใช่บวกตรง ๆ เป็นเรื่องเดียวกับความเสี่ยงพอร์ตในหัวข้อ 8.2</p>
-  <div class="math">\[
-\begin{aligned}
-&\operatorname{Var}\big(\sigma_XdW^{X}+\sigma_YdW^{Y}\big)\\
-&=\sigma_X^{2}\,dt+\sigma_Y^{2}\,dt+2\sigma_X\sigma_Y\,\rho\,dt\\
-\sigma_V^{2}&=\sigma_X^{2}+\sigma_Y^{2}+2\rho\sigma_X\sigma_Y
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>แต่ละแรงมี variance เท่ากับเวลา และคู่ของมันมี covariance เท่ากับ correlation คูณเวลา ตัดเวลาทิ้งทั้งสองข้าง ถ้าสองแรงสวนกัน ขนาดรวมอาจเล็กกว่าแต่ละตัว นั่นคือเหตุที่พอร์ตซึ่งถือของสวนทางกันเหวี่ยงน้อยกว่า</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — แทนตัวเลขของ desk</h4>
-  <p>SPY โต 8% เหวี่ยง 20% QQQ โต 10% เหวี่ยง 25% correlation 0.60 คำนวณพจน์ไขว้ก่อน เพราะเป็นพจน์เดียวที่ไม่ได้มาจากตัวใดตัวหนึ่ง</p>
-  <div class="math">\[
-\begin{aligned}\rho\sigma_X\sigma_Y&=0.60(0.20)(0.25)=0.030\\
-\mu_V&=0.08+0.10+0.030=0.21\\
-\sigma_V^2&=0.0400+0.0625+2(0.030)=0.1625,\qquad \sigma_V=\sqrt{0.1625}=0.4031\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>พจน์ไขว้ 3% อยู่ทั้งใน drift และใน variance ถ้า correlation เป็นศูนย์ มันหายไปทั้งสองที่ ความผันผวน 40.31% น้อยกว่า 45% ที่ได้จากการบวกตรง ๆ เพราะการบวกตรงแอบสมมติว่า correlation เป็น 1</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — ค่าเฉลี่ยของเงินที่ note จ่าย เทียบกับการบวก drift ตรง ๆ</h4>
-  <p>ผลคูณเป็น GBM ที่ drift 21% ค่าเฉลี่ยของ GBM โตด้วย drift เต็มตามหัวข้อ 13.2 คูณ notional แล้วเทียบกับคำตอบที่ลืมพจน์ไขว้</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[NV_1]&=1{,}000{,}000\,e^{0.21}\\
-&=1{,}000{,}000(1.233678)\\
-&=1{,}233{,}678\ \text{USD}\\
-&\text{no cross term}:\\
-&\quad 1{,}000{,}000\,e^{0.18}=1{,}197{,}217\ \text{USD}\\
-&\text{difference}=36{,}461\ \text{USD}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ลืมพจน์ไขว้เพียงตัวเดียว ค่าเฉลี่ยของเงินที่จ่ายต่ำไปกว่าสามหมื่นหกพันดอลลาร์ต่อ note หนึ่งล้าน ตัวเลขนี้ยังไม่ได้คิดลด และใช้ drift ของโลกจริง ซึ่งยังไม่ใช่ราคา</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 13.5a — cross variation เปลี่ยน drift</h4>
-  <img src="../figures/13.5-1.svg" alt="Figure 13.5a — cross variation เปลี่ยน drift" loading="lazy">
-  <figcaption>
-    <p>เมื่อ correlation เพิ่มจาก −1 เป็น 1 พจน์ไขว้เลื่อนอัตราโตของผลคูณได้ถึง 10 จุด การบวก drift อย่างเดียวถูกเฉพาะที่ correlation เป็นศูนย์</p>
-  </figcaption>
-</figure>
-
-<figure class="plot">
-  <h4>Figure 13.5b — volatility รวมกันแบบ vector</h4>
-  <img src="../figures/13.5-2.svg" alt="Figure 13.5b — volatility รวมกันแบบ vector" loading="lazy">
-  <figcaption>
-    <p>ที่ correlation 0.60 ความผันผวนของผลคูณเท่ากับ 40.31% ไม่ใช่ผลบวก 45% การบวกตรง ๆ แอบสมมติว่า correlation เป็น 1</p>
-  </figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — ที่มาจาก Taylor สองตัวแปร</h4>
-  <p>กฎผลคูณเป็นกรณีหนึ่งของ Itô หลายมิติ กระจาย Taylor สองตัวแปรถึงอันดับสอง แล้วแทน $f=X,Y$</p>
-  <div class="math">\[
-\begin{aligned}
-df&=f_t\,dt+f_X\,dX+f_Y\,dY\\
-&\quad+\tfrac12f_{XX}(dX)^2+\tfrac12f_{YY}(dY)^2\\
-&\quad+f_{XY}\,dX\,dY\\
-&f=XY:\\
-&\quad f_X=Y,\quad f_Y=X,\quad f_t=0\\
-&\quad f_{XX}=0,\quad f_{YY}=0,\quad f_{XY}=1\\
-dV_t&=Y_t\,dX_t+X_t\,dY_t+0+0+1\cdot dX_t\,dY_t
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ผลคูณเป็นเส้นตรงตามแต่ละแกน ความโค้งตามแกนเดียวจึงเป็นศูนย์ เหลือเพียงความโค้งไขว้ซึ่งเท่ากับ 1 ได้พจน์ dX dY ออกมาเองโดยไม่ต้องจำสูตรลัด</p>
-  </div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — อัตราส่วนสองสินทรัพย์: หนึ่งส่วน Y เพิ่ม drift</h4>
-  <p>relative performance หรืออัตราแลกเปลี่ยนคือ X หาร Y ใช้สูตรเดียวกัน ความชันและความโค้งของ X/Y มีดังนี้ แล้วเอา Z หารทั้งสมการ</p>
-  <div class="math">\[
-\begin{aligned}
-&Z=\frac XY:\\
-&\quad Z_X=\frac1Y,\quad Z_Y=-\frac{X}{Y^2},\quad Z_{XX}=0\\
-&\quad Z_{YY}=\frac{2X}{Y^3},\quad Z_{XY}=-\frac{1}{Y^2}\\
-\frac{dZ_t}{Z_t}&=\frac{dX_t}{X_t}-\frac{dY_t}{Y_t}+\frac{(dY_t)^2}{Y_t^2}-\frac{dX_t\,dY_t}{X_tY_t}\\
-&=\big(\mu_X-\mu_Y+\sigma_Y^2-\rho\sigma_X\sigma_Y\big)dt\\
-&\quad+\sigma_X\,dW_t^X-\sigma_Y\,dW_t^Y\\[4pt]
-\mu_Z&=0.08-0.10+0.0625-0.030\\
-&=+0.0125=1.25\%\\
-\sigma_Z^2&=0.0400+0.0625-0.060=0.0425\\
-\sigma_Z&=20.6\%
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>หนึ่งส่วน Y โค้งหงาย ตาม Jensen's inequality จึงเพิ่ม σ_Y² เข้าไปใน drift ส่วน correlation ดึงลง calculus ปกติทำนายว่าอัตราส่วนโต −2% แต่คำตอบจริงคือ +1.25% เพราะความโค้งเพิ่ม 6.25 จุด</p>
-    <p>ความผันผวนของอัตราส่วนมี correlation เป็นลบ สองตัวที่ขยับไปด้วยกันหักล้างกันเมื่อหาร จึงเหลือ 20.6%</p>
-  </div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 13.5c — กระทบยอด payoff เฉลี่ย</h4>
-  <img src="../figures/13.5-3.svg" alt="Figure 13.5c — กระทบยอด payoff เฉลี่ย" loading="lazy">
-  <figcaption>
-    <p>ค่าเฉลี่ย \$1.234 ล้าน แยกได้เป็นเงินต้น กับการโตจาก SPY, QQQ และพจน์ไขว้ พจน์ไขว้เพิ่มราว \$36k เมื่อคิดแบบคูณครบ</p>
-  </figcaption>
-</figure>
-
 <section class="example">
-  <h4>คำตอบ ตรวจเอง และแปลว่าอะไร</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: note \$1,000,000 จ่ายตามผลคูณของ SPY กับ QQQ หนึ่งปี drift 8% และ 10% ความผันผวน 20% และ 25% correlation 0.60</p>
-  <p>คำตอบ: ผลคูณมี drift 21% ความผันผวน 40.31% ค่าเฉลี่ยของเงินที่จ่ายก่อนคิดลดคือ \$1,233,678 สูงกว่าคำตอบที่ลืมพจน์ไขว้ \$36,461 การตั้งราคาจริงต้องเปลี่ยนไปใช้ risk-neutral measure ซึ่งหัวข้อ 13.6 ทำต่อ</p>
-  <p>ตรวจเองใน 10 วินาที: $e^{0.21}$ ประมาณ 1 + 0.21 + 0.022 + 0.0015 = 1.2337</p>
-  <p>แปลว่าอะไร: สัญญาที่อ้างอิงหลายสินทรัพย์ไวต่อ correlation โดยตรง desk ต้องรายงานว่าราคาเปลี่ยนเท่าไรเมื่อ correlation ขยับ</p>
+  <h4>ขั้นที่ 1 — หนึ่งก้าวด้วยมือ: ผลคูณของสองตัวที่ไม่มี drift</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> สองตัวเริ่มที่ 1 แต่ละตัวขึ้น 10% หรือลง 10% อย่างละครึ่ง ค่าเฉลี่ยของแต่ละตัวจึงเป็น 1 เท่าเดิม ดูค่าเฉลี่ยของผลคูณในสามกรณี: ขยับไปด้วยกันเสมอ ($\rho=1$), สวนกันเสมอ ($\rho=-1$) และไม่เกี่ยวกัน ($\rho=0$ สี่แบบ แบบละ $\tfrac14$)</p>
+  <div class="math">\[
+\begin{aligned}
+\rho=1&:\ \tfrac12(1.1)(1.1)+\tfrac12(0.9)(0.9)\\
+&\quad=\tfrac12(1.21+0.81)=1.01,\\
+\rho=-1&:\ \tfrac12(1.1)(0.9)+\tfrac12(0.9)(1.1)=0.99,\\
+\rho=0&:\ \tfrac14(1.21+0.99+0.99+0.81)=1.00,\\
+\mathbb E[\Delta X\,\Delta Y]&=\rho(0.1)(0.1)=+0.01,\ -0.01,\ 0.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> แต่ละตัวเฉลี่ยไม่ขยับ แต่ผลคูณขยับได้ ขึ้นพร้อมกันได้ 1.21 ลงพร้อมกันได้ 0.81 ค่าเฉลี่ยจึงเกิน 1 อยู่ 1% ส่วนเกินคือค่าเฉลี่ยของ $\Delta X\,\Delta Y$ ซึ่งเท่ากับ correlation คูณขนาดการขยับของทั้งสองตัวพอดี</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $(1+\Delta X)(1+\Delta Y)=1+\Delta X+\Delta Y+\Delta X\,\Delta Y$ สองพจน์กลางเฉลี่ยศูนย์ เหลือพจน์สุดท้ายที่เป็น $+0.01$ หรือ $-0.01$ ทุกครั้งในสองกรณีแรก</p>
 </section>
-
+<section class="formula">
+  <h4>ขั้นที่ 2 — สร้าง Brownian motion สองตัวที่ correlate กัน แล้วหาผลคูณไขว้ของการขยับ</h4>
+  <p>8.9 สร้างคู่ Normal ที่มี correlation $\rho$ จากคู่อิสระด้วย Cholesky ทำแบบเดียวกันทีละท่อน: $\Delta W^Y=\rho\,\Delta W^X+\sqrt{1-\rho^2}\,\Delta W^\perp$ โดย $W^\perp$ อิสระจาก $W^X$ แล้วถามว่าผลรวมของผลคูณไขว้เหลือเท่าไรเมื่อบวกทั้งช่วง แบบที่ 13.1 ถามกับกำลังสอง</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E\Big[\textstyle\sum_i\Delta W^X_i\Delta W^\perp_i\Big]&=0,\\
+\operatorname{Var}\Big(\textstyle\sum_i\Delta W^X_i\Delta W^\perp_i\Big)&=n\,\Delta t^2=T^2/n,\\
+n=252&:\ \operatorname{SD}=\sqrt{1/252}=0.063\ \to0,\\
+dW^X\,dW^\perp&=0,\\
+dW^X\,dW^Y&=\rho\,(dW^X)^2+\sqrt{1-\rho^2}\,dW^X\,dW^\perp\\
+&=\rho\,dt.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>แต่ละผลคูณ $\Delta W^X_i\Delta W^\perp_i$ มีค่าเฉลี่ยศูนย์เพราะสองตัวอิสระ และ variance $\Delta t\cdot\Delta t$ บวก $n$ ท่อนได้ variance $T^2/n$ ซึ่งหายไป ผลคูณของ Brownian motion สองตัวที่อิสระจึงรวมกันเป็นศูนย์ ต่างจาก $(\Delta W)^2$ ที่ทุกท่อนเป็นบวกและรวมกันได้ $T$</p><p>ตารางคูณของ 13.1 จึงมีช่องใหม่หนึ่งช่อง $dW^X\,dW^Y=\rho\,dt$ ที่ $\rho=1$ มันกลับเป็น $(dW)^2=dt$ ที่ $\rho=0$ เป็นศูนย์ ส่วน $dt$ คูณอะไรก็ยังเป็นศูนย์</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 3 — Itô สองตัวแปร: Taylor ที่เก็บพจน์ไขว้</h4>
+  <p>ให้ $X$ และ $Y$ ขยับตาม SDE $dX=a_X\,dt+b_X\,dW^X$ และ $dY=a_Y\,dt+b_Y\,dW^Y$ ทำ Taylor ของ $f(t,x,y)$ ถึงอันดับสองแบบ 13.2 ขั้นที่ 2 แล้วใช้ตารางที่ขยายแล้ว: $(dX)^2=b_X^2\,dt$, $(dY)^2=b_Y^2\,dt$, $dX\,dY=\rho\,b_Xb_Y\,dt$</p>
+  <div class="math">\[
+\begin{aligned}
+df&=f_t\,dt+f_x\,dX+f_y\,dY\\
+&\quad+\tfrac12f_{xx}(dX)^2+\tfrac12f_{yy}(dY)^2\\
+&\quad+f_{xy}\,dX\,dY,\\
+\text{drift}&=f_t+a_Xf_x+a_Yf_y+\tfrac12b_X^2f_{xx}\\
+&\quad+\tfrac12b_Y^2f_{yy}+\rho\,b_Xb_Yf_{xy}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>พจน์ไขว้ของ Taylor คือ $f_{xy}\,dX\,dY$ ไม่มี $\tfrac12$ เพราะใน Taylor สองตัวแปร $f_{xy}$ ปรากฏสองครั้ง ($xy$ และ $yx$) รวมกันได้ $2\cdot\tfrac12$ พอดี พจน์นี้มีขนาด $\rho\,b_Xb_Y\,dt$ จึงอยู่รอด ส่วนสุ่มของ $df$ คือ $f_xb_X\,dW^X+f_yb_Y\,dW^Y$ เหมือน calculus ปกติ</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 4 — กฎผลคูณ: พจน์ที่สามทิ้งไม่ได้</h4>
+  <p>ใส่ $f=xy$ ซึ่งมี $f_x=y$, $f_y=x$, $f_{xx}=f_{yy}=0$ และ $f_{xy}=1$ เทียบกับการกระจายวงเล็บของหนึ่งท่อนตรง ๆ ซึ่งเป็นพีชคณิตล้วน ไม่มีการประมาณ</p>
+  <div class="math">\[
+\begin{aligned}
+(X+\Delta X)(Y+\Delta Y)-XY&=X\,\Delta Y+Y\,\Delta X\\
+&\quad+\Delta X\,\Delta Y,\\
+d(XY)&=X\,dY+Y\,dX+dX\,dY.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ใน calculus ปกติพจน์ที่สามทิ้งได้เพราะของเล็กคูณของเล็ก แต่การขยับสุ่มแต่ละตัวมีขนาด $\sqrt{\Delta t}$ ผลคูณของมันจึงมีขนาด $\Delta t$ และรวมกันได้ $\rho\,b_Xb_Y$ คูณเวลา ขั้นที่ 1 คือพจน์นี้ในหนึ่งก้าว ถ้า $X=Y$ กฎนี้ให้ $d(X^2)=2X\,dX+(dX)^2$ ซึ่งคือ 13.2 ขั้นที่ 4 (a)</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 5 — ผลคูณของสอง GBM ก็เป็น GBM แต่ drift มีพจน์ไขว้</h4>
+  <p>ให้ SPY และ QQQ เป็น GBM ของ 13.2 คนละตัว $dX/X=\mu_X\,dt+\sigma_X\,dW^X$ และ $dY/Y=\mu_Y\,dt+\sigma_Y\,dW^Y$ หาพจน์ไขว้ก่อน แล้วแทนในกฎผลคูณ หารด้วย $V=XY$ ทั้งสมการ</p>
+  <div class="math">\[
+\begin{aligned}
+dX\,dY&=XY\,\sigma_X\sigma_Y\,dW^XdW^Y\\
+&=\rho\,\sigma_X\sigma_Y\,XY\,dt,\\
+\frac{dV}{V}&=\frac{dX}{X}+\frac{dY}{Y}+\frac{dX\,dY}{XY}\\
+&=(\mu_X+\mu_Y+\rho\sigma_X\sigma_Y)\,dt\\
+&\quad+\sigma_X\,dW^X+\sigma_Y\,dW^Y.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดแรกใช้ว่าส่วน drift ของ $dX$ และ $dY$ คูณกับอะไรก็ได้ $dt\,dW$ หรือ $(dt)^2$ ซึ่งเป็นศูนย์ เหลือแต่ส่วนสุ่มคูณส่วนสุ่ม ผลคือ drift ของผลคูณไม่ใช่แค่ผลบวกของ drift ยังมี covariance $\rho\sigma_X\sigma_Y$ ที่ไม่มีใครใส่เข้าไป มันงอกออกมาจากพจน์ที่ calculus ปกติทิ้ง</p></div>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 6 — สองส่วนสุ่มรวมเป็นความผันผวนเดียว</h4>
+  <p>ส่วนสุ่มของ $dV/V$ มีสองก้อน ยังไม่ใช่รูป GBM ที่มี $dW$ ตัวเดียว หาขนาดของผลรวมด้วย variance ของผลรวมสองตัวแปร (8.2) โดยใช้ตารางของขั้นที่ 2 ซึ่งเป็นเรื่องเดียวกับความเสี่ยงของพอร์ตสองสินทรัพย์</p>
+  <div class="math">\[
+\begin{aligned}
+(\sigma_XdW^X+\sigma_YdW^Y)^2&=\sigma_X^2\,dt+\sigma_Y^2\,dt\\
+&\quad+2\rho\sigma_X\sigma_Y\,dt,\\
+\sigma_V^2&=\sigma_X^2+\sigma_Y^2+2\rho\sigma_X\sigma_Y.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ผลรวมของสองก้อนเป็นการขยับ Normal ที่มี variance $\sigma_V^2\,dt$ จึงเขียนเป็น $\sigma_V\,dW^V$ ด้วย Brownian motion ตัวใหม่ได้ ถ้าสองตัวสวนกัน ($\rho\lt0$) ขนาดรวมเล็กกว่าผลบวก การบวกความผันผวนตรง ๆ คือการแอบสมมติว่า $\rho=1$</p></div>
+</section>
 <section class="example">
-  <h4>ลองเอง — correlation เป็น −0.40</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ตัวเลขเดิมทั้งหมด แต่ correlation เป็น −0.40</p>
-  <p>คำตอบ: พจน์ไขว้คือ −0.40(0.05) = −0.02 drift ของผลคูณเหลือ 16% variance คือ 0.1025 − 0.04 = 0.0625 ความผันผวน 25% ค่าเฉลี่ยของเงินที่จ่ายคือ \$1,173,511</p>
-  <p>ตรวจเองใน 10 วินาที: ความผันผวนต้องต่ำกว่ากรณี 0.60 เพราะสองตัวสวนกัน</p>
-  <p>แปลว่าอะไร: correlation ขยับจาก 0.60 เป็น −0.40 ค่าเฉลี่ยของเงินที่จ่ายหายไปกว่าหกหมื่นดอลลาร์ ทั้งที่ drift ของแต่ละตัวไม่เปลี่ยนเลย</p>
+  <h4>ขั้นที่ 7 — คำตอบของโจทย์เปิดเรื่อง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\mu_X=0.08$, $\sigma_X=0.20$ (SPY ตามสมมติฐานของโต๊ะ note ซึ่งสูงกว่า 18% ใน 13.1 ถึง 13.4), $\mu_Y=0.10$, $\sigma_Y=0.25$ (QQQ), $\rho=0.60$ และ $N=\$1$ ล้าน ค่าเฉลี่ยของ GBM โตด้วย drift เต็ม (13.2 ขั้นที่ 7) จึงได้ $\mathbb E[V_1]=e^{\mu_V}$</p>
+  <div class="math">\[
+\begin{aligned}
+\rho\sigma_X\sigma_Y&=0.60(0.20)(0.25)=0.030,\\
+\mu_V&=0.08+0.10+0.030=0.21,\\
+\sigma_V^2&=0.04+0.0625+2(0.030)=0.1625,\\
+\sigma_V&=0.4031,\\
+\mathbb E[NV_1]&=10^6e^{0.21}=1{,}233{,}678,\\
+10^6e^{0.18}&=1{,}197{,}217.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> note จ่ายเฉลี่ย \$1,233,678 มากกว่าคำตอบที่ลืมพจน์ไขว้ \$36,461 และผลคูณผันผวน 40.31% ไม่ใช่ 45% ตัวเลขนี้เป็นค่าเฉลี่ยภายใต้ drift ของโลกจริงและยังไม่คิดลด ราคาจริงต้องเปลี่ยนไปใช้ risk-neutral measure ซึ่ง 13.6 ทำต่อ</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $e^{0.21}\approx1+0.21+0.0221+0.0015=1.2336$ และส่วนต่าง $e^{0.21}-e^{0.18}\approx e^{0.18}(0.0305)=0.0365$</p>
 </section>
-
+<figure class="plot">
+  <h4>Figure 13.5a — correlation เลื่อน drift ของผลคูณ</h4>
+  <img src="../figures/13.5-1.svg" alt="เส้นตรงสีน้ำเงินขึ้นจาก 13 เปอร์เซ็นต์ที่ correlation ลบหนึ่ง ถึง 23 เปอร์เซ็นต์ที่ correlation หนึ่ง เส้นประเทาที่ 18 เปอร์เซ็นต์ และจุดเขียวที่ 0.6 กับ 21 เปอร์เซ็นต์" loading="lazy">
+  <figcaption>วาดตรงจากสูตร $\mu_V=0.18+0.05\rho$ ของขั้นที่ 5 ไม่ได้สุ่ม แกนนอนคือ correlation จาก −1 ถึง 1 แกนตั้งคือ drift ของผลคูณเป็นเปอร์เซ็นต์ต่อปี เส้นน้ำเงินขึ้นจาก 13% ถึง 23% กว้าง 10 จุด เส้นประเทาคือผลบวกของ drift 18% ซึ่งถูกเฉพาะที่ $\rho=0$ จุดเขียวคือสมมติฐานของโต๊ะ ($\rho=0.6$, 21%)</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 13.5b — ความผันผวนรวมกันแบบ variance</h4>
+  <img src="../figures/13.5-2.svg" alt="เส้นโค้งสีส้มขึ้นจาก 5 เปอร์เซ็นต์ที่ correlation ลบหนึ่ง ถึง 45 เปอร์เซ็นต์ที่ correlation หนึ่ง เส้นประแดงที่ 45 เปอร์เซ็นต์ จุดเขียวที่ 0.6 กับ 40.3 เปอร์เซ็นต์" loading="lazy">
+  <figcaption>วาดตรงจากสูตร $\sigma_V=\sqrt{0.1025+0.1\rho}$ ของขั้นที่ 6 แกนนอนคือ correlation แกนตั้งคือความผันผวนของผลคูณเป็นเปอร์เซ็นต์ต่อปี เส้นส้มเริ่มที่ 5% เมื่อ $\rho=-1$ (สองส่วนสุ่มหักกันเหลือ $0.25-0.20$) และแตะ 45% เมื่อ $\rho=1$ เส้นประแดงคือผลบวกตรง ๆ 45% ซึ่งถูกเฉพาะที่ $\rho=1$ จุดเขียวคือ 40.31% ที่ $\rho=0.6$</figcaption>
+</figure>
+<figure class="plot">
+  <h4>Figure 13.5c — แยกค่าเฉลี่ย \$1.234 ล้าน ออกเป็นก้อน</h4>
+  <img src="../figures/13.5-3.svg" alt="กราฟแท่งสี่แท่ง Base 1000 SPY drift 83 QQQ drift 114 Cross term 36 หน่วยพันดอลลาร์" loading="lazy">
+  <figcaption>แท่งสี่แท่งเป็นพันดอลลาร์ คำนวณจากสูตรในไฟล์สร้างรูป: เงินต้น 1,000, ส่วนของ SPY $10^3(e^{0.08}-1)=83$, ส่วนของ QQQ $10^3(e^{0.18}-e^{0.08})=114$ และพจน์ไขว้ $10^3(e^{0.21}-e^{0.18})=36$ รวมได้ 1,234 การแยกแบบนี้ขึ้นกับลำดับ: แท่ง QQQ รวมผลทบต้นของ drift สองตัวไว้ด้วย ($e^{0.08}(e^{0.10}-1)$) ถ้าเรียงลำดับอื่นแท่งกลางจะเปลี่ยน แต่แท่งพจน์ไขว้ \$36,461 เท่าเดิม</figcaption>
+</figure>
+<section class="formula">
+  <h4>ขั้นที่ 8 — อัตราส่วนสองสินทรัพย์: ความโค้งของ 1/Y เพิ่ม drift</h4>
+  <p>ผลงานเทียบกัน (SPY เทียบ QQQ) หรืออัตราแลกเปลี่ยนคือ $Z=X/Y$ ใช้ขั้นที่ 3 กับ $f=x/y$ ซึ่งมี $f_x=1/y$, $f_y=-x/y^2$, $f_{xx}=0$, $f_{yy}=2x/y^3$ และ $f_{xy}=-1/y^2$ แล้วหารด้วย $Z$</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{dZ}{Z}&=\frac{dX}{X}-\frac{dY}{Y}+\frac{(dY)^2}{Y^2}-\frac{dX\,dY}{XY}\\
+&=(\mu_X-\mu_Y+\sigma_Y^2-\rho\sigma_X\sigma_Y)\,dt\\
+&\quad+\sigma_X\,dW^X-\sigma_Y\,dW^Y,\\
+\mu_Z&=0.08-0.10+0.0625-0.030=0.0125,\\
+\sigma_Z^2&=0.04+0.0625-0.060=0.0425,\\
+\sigma_Z&=0.2062.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>$1/y$ โค้งหงาย ความโค้งจึงเพิ่ม $\sigma_Y^2=0.0625$ ใน drift ส่วนพจน์ไขว้มาพร้อมเครื่องหมายลบเพราะ $f_{xy}\lt0$ calculus ปกติให้อัตราส่วนโต $0.08-0.10=-2\%$ คำตอบจริงคือ $+1.25\%$ ความโค้งเพิ่ม 6.25 จุด correlation หักไป 3 จุด</p><p>ในความผันผวน correlation มีเครื่องหมายลบ สองตัวที่ขยับไปด้วยกันหักล้างกันเมื่อหาร จึงเหลือ 20.62% ต่ำกว่าของแต่ละตัว</p></div>
+</section>
+<section class="example">
+  <h4>ขั้นที่ 9 — ตรวจด้วยการเดิน SDE สองตัวทีละวัน</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> โค้ดท้ายหน้าเดิน $X$ และ $Y$ วันละก้าว 252 ก้าว 20,000 เส้นทาง ด้วย seed 135 แต่ละก้าวสร้าง $\Delta W^Y$ จาก Cholesky ของขั้นที่ 2 แล้วคูณ $X$ ด้วย $1+\mu_X\Delta t+\sigma_X\Delta W^X$ (และ $Y$ ทำนองเดียวกัน) ไม่มีสูตรของขั้นที่ 5 ถึง 8 อยู่ข้างใน</p>
+  <div class="table-wrap"><table><thead><tr><th>ค่า</th><th>ทฤษฎี</th><th>ได้จากการเดิน SDE</th><th>ห่างกี่ SE</th></tr></thead><tbody>
+    <tr><td>ค่าเฉลี่ย $V_1$</td><td>1.23368 (Itô)</td><td>1.23187</td><td>−0.5</td></tr>
+    <tr><td>ค่าเฉลี่ย $V_1$</td><td>1.19722 (บวก drift)</td><td>1.23187</td><td>+9.5</td></tr>
+    <tr><td>ค่าเฉลี่ย $Z_1$</td><td>1.01258</td><td>1.01402</td><td>+1.0</td></tr>
+    <tr><td>SD ของ $\ln V_1$</td><td>0.4031</td><td>0.4027</td><td>—</td></tr>
+    <tr><td>ค่าเฉลี่ย $\sum\Delta W^X\Delta W^Y$</td><td>0.60</td><td>0.6005</td><td>—</td></tr>
+    <tr><td>ค่าเฉลี่ย $\sum\Delta W^X\Delta W^\perp$</td><td>0</td><td>−0.0001</td><td>—</td></tr>
+  </tbody></table></div>
+  <p><strong>คำตอบ:</strong> ค่าเฉลี่ยของผลคูณตกใกล้ค่าของ Itô ภายใน 0.5 SE และห่างคำตอบแบบบวก drift 9.5 SE อัตราส่วนก็ตรงภายใน 1 SE สองแถวล่างคือตารางของขั้นที่ 2 ที่วัดได้จริง: ผลรวมผลคูณไขว้เฉลี่ย $\rho T=0.60$ และของคู่อิสระเฉลี่ยศูนย์</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> SD ของ $V_1$ คือ $e^{0.21}\sqrt{e^{0.1625}-1}=1.2337(0.4201)=0.518$ หารด้วย $\sqrt{20{,}000}=141.4$ ได้ SE 0.00366 และ $(1.23187-1.23368)/0.00366\approx-0.5$</p>
+</section>
+<section class="formula">
+  <h4>ขั้นที่ 10 — correlation ที่ประมาณคลาด ทำให้ราคาคลาดเท่าไร</h4>
+  <p>$\rho=0.60$ มาจากข้อมูล ไม่ได้มาจากฟ้า ค่าที่ประมาณจากผลตอบแทนรายวันหนึ่งปีมี SE ราว $(1-\rho^2)/\sqrt n$ (ค่าประมาณมาตรฐานของ correlation ในตัวอย่างขนาดใหญ่ ยกมาใช้) แล้วหาว่าค่าเฉลี่ยของ note ไวต่อ $\rho$ แค่ไหน</p>
+  <div class="math">\[
+\begin{aligned}
+\operatorname{SE}(\hat\rho)&\approx\frac{1-0.36}{\sqrt{252}}=0.0403,\\
+\frac{d}{d\rho}\,10^6e^{0.18+0.05\rho}&=10^6(0.05)\,e^{0.21}=61{,}684,\\
+61{,}684\times0.0403&=2{,}487.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ทุก 0.01 ของ correlation ย้ายค่าเฉลี่ยของ note ราว \$617 และข้อมูลหนึ่งปีปักหมุด $\rho$ ได้แค่ ±0.04 ความไม่แน่นอนของราคาจากตัวนี้ตัวเดียวคือราว ±\$2,500 ต่อ \$1 ล้าน โต๊ะจึงต้องรายงานความไวต่อ correlation แยกจากความไวต่อราคาและความผันผวน</p></div>
+</section>
+<section class="prose">
+  <h4>คำถามที่ควรถามออกมาดัง ๆ</h4>
+  <p><strong>ทำไม drift ของผลคูณมีพจน์ไขว้ แต่ drift ของผลบวก $X+Y$ ไม่มี?</strong> เพราะ $f=x+y$ มี $f_{xy}=0$ พจน์ไขว้ในขั้นที่ 3 คูณด้วย $f_{xy}$ มันจึงทำงานเฉพาะกับฟังก์ชันที่ “โค้งไขว้” อย่างผลคูณหรืออัตราส่วน พอร์ตที่บวกมูลค่าสองตัวมี drift เป็นผลบวกตรง ๆ แต่ความผันผวนยังรวมแบบขั้นที่ 6</p>
+  <p><strong>ถ้า $\rho=0$ ผลคูณเหมือน calculus ปกติทุกอย่างไหม?</strong> drift ใช่ แต่อัตราส่วนยังไม่ใช่ ที่ $\rho=0$ อัตราส่วนยังได้ $+\sigma_Y^2$ จากความโค้งของ $1/y$ คือโต 4.25% ไม่ใช่ −2% (โจทย์ข้อ 2)</p>
+  <p><strong>correlation ของผลตอบแทนรายวันคือ $\rho$ ตัวนี้ไหม?</strong> ในแบบจำลองใช่ ผลตอบแทนรายวันของสอง GBM มี correlation ใกล้ $\rho$ มาก ในตลาดจริง correlation เปลี่ยนตามเวลาและพุ่งขึ้นในวันวิกฤติ ค่าที่ใช้ตั้งราคาจึงเป็นการตัดสินใจ ไม่ใช่ตัวเลขที่อ่านได้ตรง ๆ</p>
+</section>
 <section class="pitfall">
-  <h4>กับดัก: เปลี่ยนวิธี quote แล้วลืมเปลี่ยนเครื่องหมาย</h4>
-  <p>correlation ผูกกับนิยามของตัวแปร ถ้ากลับตัวแปรเป็นหนึ่งส่วนตัวมันเอง เช่นเปลี่ยนอัตราแลกเปลี่ยนจากเยนต่อดอลลาร์เป็นดอลลาร์ต่อเยน เครื่องหมายของแรงสุ่มและพจน์ไขว้กลับด้านทั้งคู่ และหนึ่งส่วนตัวแปรมี drift เพิ่ม σ² ตามขั้นที่ 10 ต้องตรวจ convention ทุกครั้งที่รับ correlation มาจากแหล่งอื่น</p>
+  <h4>ความผิดที่ให้ตัวเลขผิดโดยไม่มีใครเตือน</h4>
+  <p><strong>บวก drift ของสองตัว:</strong> ค่าเฉลี่ยของ note ต่ำไป \$36,461 ต่อ \$1 ล้าน ความผิดนี้ใหญ่ขึ้นตาม $\rho$ และตามความผันผวน ที่ $\rho=1$ พจน์ไขว้เป็น 0.05 ทั้งก้อน</p>
+  <p><strong>บวกความผันผวนตรง ๆ:</strong> ได้ 45% แทน 40.31% สูงไป 4.7 จุด option บนผลคูณที่ตั้งราคาด้วย 45% จะแพงเกินไป และ hedge ratio ผิดทั้งชุด</p>
+  <p><strong>กลับตัวแปรแล้วลืมกลับเครื่องหมาย:</strong> correlation ผูกกับนิยามของตัวแปร ถ้า quote อัตราแลกเปลี่ยนกลับด้าน เช่นจากบาทต่อดอลลาร์เป็นดอลลาร์ต่อบาท เครื่องหมายของ $\rho$ ต้องกลับด้วย ถ้าลืม อัตราส่วนในขั้นที่ 8 จะได้ drift $0.08-0.10+0.0625+0.030=7.25\%$ แทน 1.25% ผิด 6 จุด</p>
 </section>
-
 <section class="prose">
-  <h4>ที่มาที่ไป: เมื่อความสุ่มมาจากหลายทางพร้อมกัน</h4>
-  <p>หัวข้อก่อนหน้ามีแหล่งความสุ่มแหล่งเดียว ซึ่งพอสำหรับสินทรัพย์ตัวเดียว แต่งานจริงแทบไม่เคยมีตัวเดียว สัญญาที่อ้างอิงสองสินทรัพย์ พอร์ตที่มีทั้งหุ้นและอัตราแลกเปลี่ยน ล้วนมีความสุ่มหลายทางพร้อมกัน</p>
-  <p>Kiyosi Itô ขยายกฎไปหลายมิติราวปี 1951 ในตลาด ความจำเป็นนี้เกิดทันทีเมื่อถือหุ้นต่างประเทศ หรือทำ quanto และ basket option ซึ่งต้องคูณราคาหุ้นด้วยอัตราแลกเปลี่ยน ก่อนหน้านั้นหลายคนบวก drift ของสองตัวตรง ๆ ซึ่งผิดเมื่อสองตัวขยับไปด้วยกัน</p>
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ทุกสัญญาที่อ้างอิงหลายสินทรัพย์ใช้หน้านี้: basket, spread, best-of และ quanto ที่คูณราคาหุ้นต่างประเทศกับอัตราแลกเปลี่ยน สำหรับนักลงทุนไทยที่ถือ SPY มูลค่าเป็นบาทคือราคาดอลลาร์คูณอัตราบาทต่อดอลลาร์ ซึ่งเป็นกฎผลคูณตรง ๆ (โจทย์ข้อ 3)</p>
+  <p>ในบทที่ 14 กฎผลคูณเป็นเครื่องมือหลักตอนตั้งพอร์ตเลียนแบบที่ถือทั้งหุ้นและเงินสด และ 13.6 จะใช้มันพิสูจน์ว่าราคาที่คิดลดด้วยดอกเบี้ยกลายเป็น martingale หลังเปลี่ยน measure</p>
 </section>
-
-<section class="table">
-  <h4>ข้อจำกัด: วิธีนี้สมมติอะไร และของจริงเป็นอย่างไร</h4>
-  <table>
-    <thead><tr><th>เรื่อง</th><th>วิธีนี้สมมติว่า</th><th>ของจริงเป็นอย่างไร</th><th>ผลที่ตามมาเวลาใช้งาน</th></tr></thead>
-    <tbody>
-      <tr><td>ความสัมพันธ์คงที่</td><td>ความสัมพันธ์คงที่</td><td>เปลี่ยนตลอดและพุ่งขึ้นในวิกฤติ</td><td>ราคาของสัญญาที่อ้างอิงหลายตัวไวต่อค่านี้มาก และค่านี้ประมาณยาก</td></tr>
-      <tr><td>จำนวนแหล่งสุ่ม</td><td>แหล่งสุ่มมีจำนวนเท่าจำนวนสินทรัพย์</td><td>อาจมีปัจจัยซ่อนที่ไม่ได้ใส่</td><td>ความเสี่ยงที่มองไม่เห็นจะโผล่มาเป็นความคลาดเคลื่อนที่อธิบายไม่ได้</td></tr>
-      <tr><td>ความต่อเนื่อง</td><td>ทุกตัวเดินต่อเนื่อง</td><td>การกระโดดมักเกิดพร้อมกันหลายตัว</td><td>ความเสี่ยงร่วมในวันวิกฤติสูงกว่าที่แบบจำลองบอกมาก</td></tr>
-    </tbody>
-  </table>
-  <div class="note">
-    <p>แถวแรกคือความเสี่ยงหลักของการเทรดสัญญาที่อ้างอิงหลายสินทรัพย์</p>
-  </div>
+<section class="example">
+  <h4>สามโจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ใช้ตัวเลขเดิมทั้งหมด แต่ $\rho=-0.40$ ผลคูณมี drift และความผันผวนเท่าไร และ note จ่ายเฉลี่ยเท่าไร?</p>
+  <details><summary>เฉลย</summary><p>พจน์ไขว้ $-0.40(0.05)=-0.02$ drift $0.18-0.02=0.16$ variance $0.1025-0.04=0.0625$ ความผันผวน 25% จ่ายเฉลี่ย $10^6e^{0.16}=\$1{,}173{,}511$ ลดลง \$60,167 จากกรณี $\rho=0.6$ ทั้งที่ drift ของแต่ละตัวไม่เปลี่ยนเลย</p></details>
+  <p><strong>2.</strong> ที่ $\rho=0$ อัตราส่วน SPY ต่อ QQQ มี drift และความผันผวนเท่าไร?</p>
+  <details><summary>เฉลย</summary><p>drift $0.08-0.10+0.0625-0=0.0425$ คือ 4.25% ต่อปี ความผันผวน $\sqrt{0.04+0.0625}=\sqrt{0.1025}=32.02\%$ แม้สองตัวไม่เกี่ยวกัน drift ของอัตราส่วนก็ไม่ใช่ผลต่าง −2% เพราะความโค้งของ $1/y$ ยังอยู่</p></details>
+  <p><strong>3.</strong> นักลงทุนไทยถือ SPY (drift 8% ความผันผวน 20%) อัตราบาทต่อดอลลาร์สมมติว่าไม่มี drift ความผันผวน 8% และ correlation กับ SPY −0.30 (ตอนหุ้นสหรัฐลง ดอลลาร์มักแข็ง) มูลค่าเป็นบาทมี drift และความผันผวนเท่าไร?</p>
+  <details><summary>เฉลย</summary><p>เป็นผลคูณของสอง GBM: drift $0.08+0+(-0.30)(0.20)(0.08)=0.08-0.0048=0.0752$ variance $0.04+0.0064-0.0096=0.0368$ ความผันผวน 19.18% correlation ติดลบทำให้เงินบาทเป็น hedge บางส่วน: ความผันผวนต่ำกว่าถือ SPY เป็นดอลลาร์ แลกกับ drift ที่ลดลง 0.48 จุด</p></details>
 </section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>ใช้ตั้งราคาสัญญาที่อ้างอิงหลายสินทรัพย์ เช่นสัญญาที่จ่ายตามผลคูณหรืออัตราส่วนของสองราคา และหุ้นต่างประเทศที่แปลงเป็นเงินบ้านด้วยอัตราแลกเปลี่ยน</p>
-  <p>ใช้คำนวณความเสี่ยงของพอร์ตที่ผลลัพธ์ขึ้นกับผลคูณของสองตัว และใช้อธิบายว่าทำไม correlation โผล่ทั้งในอัตราการเติบโตและในความเสี่ยง</p>
-</section>
-
 <section class="code">
-  <details>
-    <summary>โค้ดตรวจ drift ของผลคูณและอัตราส่วนสองสินทรัพย์</summary>
-    <pre><code>import numpy as np
-from math import exp, sqrt
-assert abs(0.5 * 1.21 + 0.5 * 0.81 - 1.01) &lt; 1e-12 and abs(1.1 * 0.9 - 0.99) &lt; 1e-12
-assert abs((1.21 + 0.99 + 0.99 + 0.81) / 4 - 1) &lt; 1e-12
-mx, my, sx, sy, rho = 0.08, 0.10, 0.20, 0.25, 0.60
-cross = rho * sx * sy
-muV, varV = mx + my + cross, sx ** 2 + sy ** 2 + 2 * cross
-assert abs(cross - 0.030) &lt; 1e-12 and abs(muV - 0.21) &lt; 1e-12 and abs(varV - 0.1625) &lt; 1e-12 and abs(sqrt(varV) - 0.4031) &lt; 5e-5
-assert abs(1e6 * exp(muV) - 1_233_678) &lt; 1 and abs(1e6 * exp(0.18) - 1_197_217) &lt; 1 and abs(1e6 * (exp(0.21) - exp(0.18)) - 36_461) &lt; 1
-muZ, varZ = mx - my + sy ** 2 - cross, sx ** 2 + sy ** 2 - 2 * cross
-assert abs(muZ - 0.0125) &lt; 1e-12 and abs(varZ - 0.0425) &lt; 1e-12 and abs(sqrt(varZ) - 0.206) &lt; 5e-4
-rng = np.random.default_rng(18)
-z1 = rng.standard_normal(1_000_000); z2 = rho * z1 + sqrt(1 - rho ** 2) * rng.standard_normal(z1.size)
-X = np.exp(mx - sx ** 2 / 2 + sx * z1); Y = np.exp(my - sy ** 2 / 2 + sy * z2)
-assert abs((X * Y).mean() / exp(muV) - 1) &lt; 0.005 and abs((X / Y).mean() / exp(muZ) - 1) &lt; 0.005</code></pre>
-  </details>
-  <div class="note">
-    <p>โค้ดยืนยันว่าพจน์ไขว้ 0.030 ทำให้ note จ่ายเฉลี่ย \$1,233,678 มากกว่าการบวก drift ตรง ๆ \$36,461 อัตราส่วนสองสินทรัพย์ได้ drift +1.25% และจำลองหนึ่งล้านครั้งได้ค่าเฉลี่ยตรงกันทั้งผลคูณและอัตราส่วน</p>
-  </div>
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>รันใน Node.js ได้โดยไม่ต้องติดตั้งอะไร ฟังก์ชัน <em>pairDynamics</em> คือผลของขั้นที่ 5, 6 และ 8 ส่วน <em>simulatePair</em> เดิน SDE สองตัวทีละวันด้วย Cholesky และเครื่องสุ่มที่มี seed เพื่อเทียบ ฟังก์ชันปฏิเสธ input ที่ไม่มีความหมาย และพิมพ์ JSON บรรทัดเดียว</p>
+  <pre><code class="language-javascript" data-example="13.5">function checkPair(p) {
+  const {muX, muY, sX, sY, rho} = p;
+  if (![muX, muY, sX, sY, rho].every(Number.isFinite)) throw new TypeError('Drifts, volatilities and correlation must be finite numbers');
+  if (sX &lt;= 0 || sY &lt;= 0 || Math.abs(rho) &gt; 1) throw new RangeError('Need volatilities &gt; 0 and -1 &lt;= rho &lt;= 1');
+}
+// Two GBMs dX/X = muX dt + sX dWx, dY/Y = muY dt + sY dWy with dWx dWy = rho dt.
+// Product V = XY: d(XY) = X dY + Y dX + dX dY, and dX dY = rho sX sY XY dt.
+// Ratio Z = X/Y: 1/Y has drift -muY + sY^2, and the cross term enters with a minus sign.
+function pairDynamics(p) {
+  checkPair(p);
+  const {muX, muY, sX, sY, rho} = p, cross = rho * sX * sY;
+  return {cross, product: {drift: muX + muY + cross, vol: Math.sqrt(sX * sX + sY * sY + 2 * cross)},
+    ratio: {drift: muX - muY + sY * sY - cross, vol: Math.sqrt(sX * sX + sY * sY - 2 * cross)}};
+}
+// mulberry32 + Box-Muller: seeded standard Normals, the same generator as 13.1.
+function normals(seed) {
+  let a = seed &gt;&gt;&gt; 0, spare = null;
+  const u = () =&gt; {
+    a = (a + 0x6D2B79F5) &gt;&gt;&gt; 0;
+    let t = Math.imul(a ^ (a &gt;&gt;&gt; 15), a | 1);
+    t ^= t + Math.imul(t ^ (t &gt;&gt;&gt; 7), t | 61);
+    return (((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) + 0.5) / 4294967296;
+  };
+  return () =&gt; {
+    if (spare !== null) { const z = spare; spare = null; return z; }
+    const r = Math.sqrt(-2 * Math.log(u())), angle = 2 * Math.PI * u();
+    spare = r * Math.sin(angle);
+    return r * Math.cos(angle);
+  };
+}
+// Step both SDEs daily from 1; dWy = rho dWx + sqrt(1 - rho^2) dW_perp (Cholesky, 8.9). No Ito result is used.
+function simulatePair(p, paths, steps, seed) {
+  checkPair(p);
+  if (!Number.isInteger(paths) || paths &lt; 2 || !Number.isInteger(steps) || steps &lt; 1) throw new RangeError('Need whole numbers paths &gt;= 2 and steps &gt;= 1');
+  const {muX, muY, sX, sY, rho} = p, z = normals(seed), dt = 1 / steps, sq = Math.sqrt(dt), c = Math.sqrt(1 - rho * rho);
+  let sV = 0, sZ = 0, sL = 0, sL2 = 0, cxy = 0, qx = 0, qy = 0, perp = 0;
+  for (let k = 0; k &lt; paths; k++) {
+    let X = 1, Y = 1, crossSum = 0, perpSum = 0, sqX = 0, sqY = 0;
+    for (let i = 0; i &lt; steps; i++) {
+      const a = sq * z(), b = sq * z(), dWy = rho * a + c * b;
+      X *= 1 + muX * dt + sX * a; Y *= 1 + muY * dt + sY * dWy;
+      crossSum += a * dWy; perpSum += a * b; sqX += a * a; sqY += dWy * dWy;
+    }
+    const L = Math.log(X * Y);
+    sV += X * Y; sZ += X / Y; sL += L; sL2 += L * L; cxy += crossSum; qx += sqX; qy += sqY; perp += perpSum;
+  }
+  const mL = sL / paths;
+  return {meanV: sV / paths, meanZ: sZ / paths, sdLogV: Math.sqrt((sL2 - paths * mL * mL) / (paths - 1)),
+    meanCross: cxy / paths, meanSqX: qx / paths, meanSqY: qy / paths, meanPerp: perp / paths};
+}
+const desk = {muX: 0.08, muY: 0.10, sX: 0.20, sY: 0.25, rho: 0.60};
+const d = pairDynamics(desk), N = 20000, sim = simulatePair(desk, N, 252, 135);
+const sdV = Math.exp(d.product.drift) * Math.sqrt(Math.exp(d.product.vol ** 2) - 1);
+const sdZ = Math.exp(d.ratio.drift) * Math.sqrt(Math.exp(d.ratio.vol ** 2) - 1);
+const neg = pairDynamics({...desk, rho: -0.40}), zeroRho = pairDynamics({...desk, rho: 0});
+const thb = pairDynamics({muX: 0.08, muY: 0, sX: 0.20, sY: 0.08, rho: -0.30});
+const rhoSE = (1 - desk.rho ** 2) / Math.sqrt(252), slope = 1e6 * desk.sX * desk.sY * Math.exp(d.product.drift);
+console.log(JSON.stringify({
+  coin: {together: 0.5 * 1.1 * 1.1 + 0.5 * 0.9 * 0.9, opposite: 1.1 * 0.9, unrelated: (1.21 + 0.99 + 0.99 + 0.81) / 4},
+  perpSD: Math.sqrt(252) / 252,
+  d, note: {ito: 1e6 * Math.exp(d.product.drift), sumOfDrifts: 1e6 * Math.exp(desk.muX + desk.muY),
+    gap: 1e6 * (Math.exp(d.product.drift) - Math.exp(desk.muX + desk.muY)), naiveVol: desk.sX + desk.sY},
+  bars: [1, Math.exp(0.08) - 1, Math.exp(0.18) - Math.exp(0.08), Math.exp(0.21) - Math.exp(0.18)].map(x =&gt; 1e3 * x),
+  ratioChainRule: desk.muX - desk.muY, ratioWrongSign: desk.muX - desk.muY + desk.sY ** 2 + d.cross,
+  sim, se: {V: sdV / Math.sqrt(N), Z: sdZ / Math.sqrt(N)},
+  z: {V: (sim.meanV - Math.exp(d.product.drift)) / (sdV / Math.sqrt(N)), Z: (sim.meanZ - Math.exp(d.ratio.drift)) / (sdZ / Math.sqrt(N)),
+    sumOfDrifts: (sim.meanV - Math.exp(desk.muX + desk.muY)) / (sdV / Math.sqrt(N))},
+  rhoRisk: {se: rhoSE, slope, dollars: slope * rhoSE},
+  exercises: {negative: {...neg, mean: 1e6 * Math.exp(neg.product.drift), drop: 1e6 * (Math.exp(d.product.drift) - Math.exp(neg.product.drift))},
+    zeroRho: zeroRho.ratio, thb: thb.product}
+}));</code></pre>
 </section>
-
+<section class="prose">
+  <h4>ที่มาที่ไป</h4>
+  <p>Itô ให้สูตรหลายมิติไว้ในงานปี 1951 พร้อมกับสูตรตัวแปรเดียว ในตลาด ความจำเป็นเกิดชัดเมื่อสัญญาที่อ้างอิงหลายสินทรัพย์และ quanto แพร่หลายในทศวรรษ 1990 ซึ่งต้องคูณราคาหุ้นด้วยอัตราแลกเปลี่ยน ก่อนหน้านั้นการบวก drift ของสองตัวตรง ๆ เป็นความผิดที่พบบ่อย และพจน์ไขว้ของหน้านี้คือที่มาของการปรับ drift ใน quanto ที่โต๊ะ option ใช้ทุกวัน</p>
+</section>
+<section class="table">
+  <h4>ข้อจำกัด: สมมติอะไร และของจริงเป็นอย่างไร</h4>
+  <div class="table-wrap"><table><thead><tr><th>เรื่อง</th><th>หน้านี้สมมติว่า</th><th>ของจริง</th><th>ผลเวลาใช้งาน</th></tr></thead><tbody>
+    <tr><td>correlation</td><td>$\rho$ คงที่</td><td>เปลี่ยนตลอดเวลาและพุ่งขึ้นในวิกฤติ</td><td>ราคาสัญญาหลายสินทรัพย์ไวต่อค่านี้ (\$617 ต่อ 0.01) และค่านี้ประมาณได้หยาบ (±0.04 จากหนึ่งปี)</td></tr>
+    <tr><td>จำนวนแหล่งสุ่ม</td><td>สองแหล่ง</td><td>มีปัจจัยร่วมที่ไม่ได้ใส่</td><td>ความเสี่ยงที่มองไม่เห็นโผล่เป็นความคลาดที่อธิบายไม่ได้</td></tr>
+    <tr><td>ความต่อเนื่อง</td><td>ทั้งสองตัวเดินต่อเนื่อง</td><td>กระโดดพร้อมกันในวันข่าวใหญ่</td><td>ความเสี่ยงร่วมในวันวิกฤติสูงกว่าที่แบบจำลองบอก</td></tr>
+  </tbody></table></div>
+</section>
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>กฎผลคูณของ Itô มีพจน์ dX dY เพิ่ม ซึ่งเท่ากับ $\rho\sigma_X\sigma_YX_tY_t\,dt$</li>
-    <li>drift ของผลคูณคือผลบวกของ drift บวก covariance และความผันผวนรวมแบบ variance ไม่ใช่บวกตรง</li>
-    <li>SPY กับ QQQ ที่ correlation 0.60: drift 21% ความผันผวน 40.31% ค่าเฉลี่ยของ note \$1,233,678 ซึ่งพจน์ไขว้เพิ่ม \$36,461</li>
-    <li>อัตราส่วน X/Y ได้ drift เพิ่ม σ_Y² และลบ covariance: จาก −2% เป็น +1.25%</li>
-    <li>correlation เป็นค่าประมาณที่เปลี่ยนแรงในวิกฤติ และผูกกับวิธี quote ของตัวแปร</li>
+    <li>ตารางคูณมีช่องใหม่ $dW^X\,dW^Y=\rho\,dt$ มาจาก Cholesky และจาก $dW^X\,dW^\perp=0$ (ผลรวมมี SD $\sqrt{1/n}$)</li>
+    <li>Itô สองตัวแปรเพิ่ม $\tfrac12b_X^2f_{xx}+\tfrac12b_Y^2f_{yy}+\rho b_Xb_Yf_{xy}$ ใน drift และกฎผลคูณคือ $d(XY)=X\,dY+Y\,dX+dX\,dY$</li>
+    <li>ผลคูณของสอง GBM: drift $\mu_X+\mu_Y+\rho\sigma_X\sigma_Y$ และ $\sigma_V^2=\sigma_X^2+\sigma_Y^2+2\rho\sigma_X\sigma_Y$</li>
+    <li>note SPY คูณ QQQ: จ่ายเฉลี่ย \$1,233,678 ไม่ใช่ \$1,197,217 ความผันผวน 40.31% ไม่ใช่ 45% และไวต่อ correlation \$617 ต่อ 0.01</li>
+    <li>อัตราส่วน $X/Y$ ได้ $+\sigma_Y^2$ จากความโค้งและ $-\rho\sigma_X\sigma_Y$ จากพจน์ไขว้: 1.25% ไม่ใช่ −2%</li>
   </ul>
+  <p>13.6 จะใช้กฎผลคูณกับราคาหุ้นคูณน้ำหนักของการเปลี่ยน measure แล้วถามว่าทำไมราคาของ option ไม่ขึ้นกับ drift ของหุ้นเลย</p>
 </section>
 </article>
-
 <nav class="book-nav bottom-nav">
   <div class="nav-neighbor nav-prev"><span>ก่อนหน้า</span><a href="13.4.html">13.4 Solving Stochastic Differential Equations — Geometric Brownian Motion, Vasicek, and Cox–Ingersoll–Ross</a></div>
   <div class="nav-neighbor nav-next"><span>ถัดไป</span><a href="13.6.html">13.6 Girsanov and the Risk-Neutral Measure</a></div>
