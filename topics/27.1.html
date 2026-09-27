@@ -16,345 +16,409 @@
   <span class="topic-progress">หัวข้อ 154/158</span>
 </nav>
 
-<article class="topic" data-number="27.1" data-depends-on="26.6">
+<article class="topic" data-number="27.1" data-depends-on="26.6 15.1 7.5 12.4">
 <header class="topic-header">
   <h1><span class="tnum">27.1</span> Cross-Sectional Regression and Rank-Deficient Loadings</h1>
-  <p class="subtitle">หา factor return จากข้อมูลจริง และปัญหาที่โผล่มาในวันแรก</p>
+  <p class="subtitle">factor return ไม่มีในข้อมูล ต้องหาเองทุกวันด้วย regression ข้ามหุ้น และวันแรกก็เจอสมการที่มีคำตอบนับไม่ถ้วน</p>
 </header>
 
 <div class="hook">
-  <p>คุณมี market factor ที่ทุกหุ้นมี loading เท่ากับ 1 กับ industry สามตัวที่รวมกันได้ 1 ในทุกแถวเช่นกัน แล้วสั่งให้คอมพิวเตอร์หา factor return ผลคืออะไร?</p>
-  <p>เฉลย: มันแก้ไม่ออก เพราะ loadings matrix มีคอลัมน์ห้าคอลัมน์แต่มี rank แค่สี่ market เขียนเป็นผลรวมของ industry ทั้งสามได้พอดี จึงมีคำตอบที่ให้ค่าพอดีเท่ากันอยู่เป็นจำนวนอนันต์ ทางแก้มีสามทางและทางที่ดีที่สุดให้ market −0.0666% กับ tech +0.6708% ขณะที่ทางที่ง่ายที่สุดให้ −0.6466% กับ +1.2508% ทั้งสองทายราคาหุ้นได้เท่ากันเป๊ะ</p>
+  <p>แบบจำลองความเสี่ยงของหุ้น 8 ตัวมีห้า factor: market ที่หุ้นทุกตัวมี loading 1, industry สามกลุ่ม (tech, banks, energy) ที่หุ้นแต่ละตัวอยู่กลุ่มเดียว และ momentum นักพัฒนาสั่งไลบรารีหา factor return ของวันนี้ ได้ตัวเลขออกมาโดยไม่มีคำเตือน แล้วบอกว่า “market วันนี้ −0.03% tech +0.64% ใช้ได้เลย” เชื่อตัวเลขนี้ได้ไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ยังไม่ได้ market เท่ากับผลรวมของ industry ทั้งสามพอดี คอลัมน์ห้าคอลัมน์จึงเป็นอิสระกันแค่สี่ สมการมีคำตอบที่ดีเท่ากันนับไม่ถ้วน ไลบรารีเลือกให้หนึ่งคำตอบเงียบ ๆ (คำตอบที่สั้นที่สุด: market −0.0324% tech +0.6366%) ถ้าลบคอลัมน์ energy ทิ้งจะได้ −0.6466% กับ +1.2508% ถ้าตั้งเงื่อนไขถ่วงมูลค่าตลาดได้ −0.0666% กับ +0.6708% ทั้งสามชุดทำนายผลตอบแทนหุ้นทุกตัวได้เท่ากันเป๊ะ และให้ momentum 0.4741% เท่ากัน ต่างกันแค่การแบ่งเครดิตระหว่าง market กับ industry ซึ่งต้องเลือกเองอย่างรู้ตัว</p></details>
 </div>
 
 <section class="prose">
-  <h4>เริ่มจากการถามคำถามที่ไม่มีคำตอบเดียว</h4>
-  <p>แบบจำลองความเสี่ยงมี market factor ที่หุ้นทุกตัวมี loading เท่ากับ 1 และมี industry สามตัวที่แต่ละหุ้นอยู่กลุ่มใดกลุ่มหนึ่ง จึงรวมกันได้ 1 ในทุกแถวเช่นกัน แล้วสั่งให้เครื่องหา factor return ประจำวัน</p>
-  <p>เครื่องแก้ไม่ออก ไม่ใช่เพราะข้อมูลไม่พอ แต่เพราะ market เขียนเป็นผลรวมของ industry ทั้งสามได้พอดี คำถามจึงมีคำตอบที่ดีเท่ากันอยู่เป็นจำนวนอนันต์</p>
-  <p>ทางแก้มีสามทาง และให้ตัวเลขต่างกันมาก ทางที่ดีที่สุดให้ market −0.0666% กับ tech +0.6708% ทางที่ง่ายที่สุดให้ −0.6466% กับ +1.2508% ทั้งสองทายราคาหุ้นทุกตัวได้เท่ากันเป๊ะ ต่างกันแค่การเล่าว่าใครทำอะไร หัวข้อนี้เลือกทางที่ถูกและบอกว่าทำไม</p>
+  <h4>สิ่งที่เราจะสร้าง</h4>
+  <p>บทที่ 26 ใช้ factor return $\mathbf f_t$ ราวกับว่ามีอยู่ในข้อมูล แต่ข้อมูลจริงมีแค่ผลตอบแทนของหุ้นทุกตัว กับคุณสมบัติของบริษัทที่รู้ตั้งแต่เมื่อวาน (loading) factor return ต้องหาเองจากสองอย่างนั้น ด้วย regression ที่วิ่งข้ามหุ้นในวันเดียว (cross-sectional) แล้วทำใหม่ทุกวัน</p>
+  <p>เราจะตั้งสมการ อธิบายว่าทำไมถ่วงน้ำหนักด้วยหนึ่งส่วน idiosyncratic variance และทำไมคำตอบคือผลตอบแทนของพอร์ตที่ซื้อได้จริง จากนั้นเจอปัญหาของวันแรก: คอลัมน์ที่ซ้ำกันโดยโครงสร้าง หาทิศที่ข้อมูลมองไม่เห็น เทียบสามทางแก้ด้วยตัวเลข เทียบการถ่วงกับไม่ถ่วง และแก้ปัญหาไก่กับไข่ของน้ำหนัก</p>
 </section>
 
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>cross-sectional regression</dt>
-    <dd>การหาค่าที่อธิบายผลตอบแทนของหุ้นทุกตัวในวันเดียวกัน ทำซ้ำทุกวัน ใช้เป็นวิธีหา factor return ของ fundamental factor model</dd>
-    <dt>fundamental factor model</dt>
-    <dd>แบบจำลองที่ loading มาจากคุณสมบัติของบริษัทซึ่งรู้ล่วงหน้า ส่วน factor return ประมาณจากข้อมูล ใช้เป็นแบบที่คนทำงานจริงใช้มากที่สุด</dd>
-    <dt>ordinary least squares (OLS)</dt>
-    <dd>การหาค่าที่ทำให้ผลรวมของความคลาดเคลื่อนกำลังสองน้อยที่สุด โดยให้ทุกจุดข้อมูลน้ำหนักเท่ากัน ใช้เป็นตัวเทียบในขั้นที่ 6</dd>
-    <dt>weighted least squares (WLS)</dt>
-    <dd>การหาค่าที่ทำให้ผลรวมของความคลาดเคลื่อนกำลังสองที่ถ่วงน้ำหนักแล้วน้อยที่สุด ใช้เมื่อหุ้นแต่ละตัวมีความเหวี่ยงไม่เท่ากัน</dd>
-    <dt>heteroskedastic</dt>
-    <dd>สภาพที่ความเหวี่ยงไม่เท่ากันระหว่างข้อมูลแต่ละจุด ใช้อธิบายว่าทำไมหุ้นเล็กกับหุ้นใหญ่ไม่ควรมีน้ำหนักเท่ากัน</dd>
-    <dt>rank</dt>
-    <dd>จำนวนคอลัมน์ที่เป็นอิสระต่อกันจริง ๆ ใช้บอกว่าปัญหามีคำตอบเดียวหรือหลายคำตอบ</dd>
-    <dt>rank-deficient</dt>
-    <dd>สภาพที่ rank น้อยกว่าจำนวนคอลัมน์ ใช้เรียกปัญหาที่เกิดขึ้นเสมอเมื่อมีทั้ง market และ industry</dd>
-    <dt>null direction</dt>
-    <dd>ทิศทางที่คูณกับ loadings matrix แล้วได้ศูนย์ทั้งหมด ใช้บอกว่าจะบวกอะไรเข้าไปในคำตอบได้โดยไม่เปลี่ยนคำทำนาย</dd>
-    <dt>identification</dt>
-    <dd>การเลือกเงื่อนไขเพิ่มให้คำตอบเหลือเพียงหนึ่ง ใช้เป็นชื่อของสิ่งที่สามทางแก้ในหัวข้อนี้ทำ</dd>
-    <dt>side constraint</dt>
-    <dd>เงื่อนไขที่เติมเข้าไปในปัญหาเพื่อตรึงคำตอบ ใช้เป็นทางแก้ที่คนทำงานจริงเลือก</dd>
-    <dt>Moore-Penrose pseudo-inverse</dt>
-    <dd>ตัวผกผันทั่วไปที่ใช้ได้แม้ matrix จะผกผันไม่ได้ ใช้เลือกคำตอบที่มีความยาวน้อยที่สุด</dd>
-    <dt>ridge penalty</dt>
-    <dd>การเติมโทษตามขนาดของคำตอบเข้าไปในปัญหา ใช้ตรึงคำตอบแต่แลกมาด้วยความเอน</dd>
-    <dt>estimation universe</dt>
-    <dd>ชุดหุ้นที่ใช้ประมาณแบบจำลอง ใช้เลือกให้สภาพคล่องพอและราคาเชื่อถือได้</dd>
-    <dt>factor-mimicking portfolio (FMP)</dt>
-    <dd>พอร์ตที่ผลตอบแทนเท่ากับ factor return ที่ประมาณได้พอดี ใช้เป็นเหตุผลว่าทำไมเลือก WLS</dd>
-    <dt>market capitalization</dt>
-    <dd>มูลค่าตลาดของบริษัท ใช้เป็นน้ำหนักในเงื่อนไขที่คนทำงานจริงตั้ง</dd>
+    <dt>Cross-sectional regression</dt>
+    <dd>regression ที่ข้อมูลแต่ละแถวคือหุ้นหนึ่งตัวในวันเดียวกัน ทำซ้ำทุกวัน ใช้หา factor return ของ fundamental factor model</dd>
+    <dt>Fundamental factor model</dt>
+    <dd>แบบจำลองที่ loading มาจากคุณสมบัติของบริษัท (กลุ่มอุตสาหกรรม momentum ขนาด) ซึ่งรู้ล่วงหน้า ส่วน factor return ต้องประมาณจากข้อมูล</dd>
+    <dt>WLS (weighted least squares)</dt>
+    <dd>หาค่าที่ทำให้ผลรวมความคลาดเคลื่อนกำลังสองที่ถ่วงน้ำหนักน้อยที่สุด ใช้เมื่อข้อมูลแต่ละแถวน่าเชื่อถือไม่เท่ากัน OLS คือกรณีน้ำหนักเท่ากันหมด</dd>
+    <dt>Rank และ rank-deficient</dt>
+    <dd>rank คือจำนวนคอลัมน์ที่เป็นอิสระกันจริง (7.5) ถ้าน้อยกว่าจำนวนคอลัมน์ (rank-deficient) สมการมีคำตอบที่ดีเท่ากันนับไม่ถ้วน</dd>
+    <dt>Null direction</dt>
+    <dd>ทิศ $\mathbf v$ ที่ $\mathbf B\mathbf v=\mathbf 0$ บวกเข้าไปในคำตอบเท่าไรก็ได้โดยคำทำนายไม่เปลี่ยน</dd>
+    <dt>Factor-mimicking portfolio</dt>
+    <dd>พอร์ตหุ้นที่ผลตอบแทนเท่ากับ factor return ที่ประมาณได้พอดี มี exposure 1 ต่อ factor ของมัน และ 0 ต่อ factor อื่น</dd>
   </dl>
 </details>
 
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ใช้ในหัวข้อนี้</summary>
+  <summary>สัญลักษณ์และหน่วย</summary>
   <table>
     <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$\mathbf r_t$</td><td>ผลตอบแทนส่วนเกินของหุ้นทุกตัวในวัน t</td><td>decimal</td></tr>
-      <tr><td>$\mathbf B_t$</td><td>loadings matrix ที่รู้ตั้งแต่ก่อนวันเริ่ม</td><td>unitless</td></tr>
-      <tr><td>$\mathbf f_t$</td><td>factor return ที่ต้องหา</td><td>decimal</td></tr>
-      <tr><td>$\boldsymbol\epsilon_t$</td><td>ส่วนที่เหลือ คือ idiosyncratic return</td><td>decimal</td></tr>
-      <tr><td>$\mathbf W$</td><td>matrix น้ำหนักแบบ diagonal</td><td>decimal⁻²</td></tr>
-      <tr><td>$\boldsymbol\Omega_\epsilon$</td><td>covariance matrix ของ idiosyncratic return</td><td>decimal²</td></tr>
-      <tr><td>$\mathbf v$</td><td>null direction ของ loadings matrix</td><td>unitless</td></tr>
-      <tr><td>$\mathbf c$</td><td>vector ของเงื่อนไขที่เติมเข้าไป</td><td>unitless</td></tr>
-      <tr><td>$\delta$</td><td>ขนาดของโทษแบบ ridge</td><td>decimal</td></tr>
-      <tr><td>$n,\ m$</td><td>จำนวนหุ้น และจำนวน factor</td><td>จำนวน</td></tr>
+      <tr><td>$\mathbf r_t$</td><td>ผลตอบแทนส่วนเกินของหุ้น $n$ ตัวในวัน $t$</td><td>ทศนิยมต่อวัน</td></tr>
+      <tr><td>$\mathbf B$</td><td>loadings matrix $n\times m$ ที่รู้ก่อนวันเริ่ม</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\mathbf f_t,\ \boldsymbol\epsilon_t$</td><td>factor return ที่ต้องหา และส่วนเฉพาะตัว (idiosyncratic return)</td><td>ทศนิยมต่อวัน</td></tr>
+      <tr><td>$\mathbf W,\ \sigma_i$</td><td>น้ำหนัก $w_i=1/\sigma_i^2$ บนแนวทแยง และความผันผวนเฉพาะตัวของหุ้น $i$</td><td>ต่อทศนิยม², ทศนิยมต่อวัน</td></tr>
+      <tr><td>$\mathbf H$</td><td>matrix ที่แปลงผลตอบแทนหุ้นเป็น factor return ($\hat{\mathbf f}=\mathbf H\mathbf r$)</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\mathbf v,\ \mathbf c$</td><td>null direction และเวกเตอร์ของเงื่อนไขที่เติม</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
 
-<section class="example">
-  <h4>โจทย์: หุ้น 8 ตัว ห้าคอลัมน์ แต่มี rank สี่</h4>
-  <p>โจทย์ให้อะไรมาบ้าง หุ้น 8 ตัวในวันหนึ่ง แบบจำลองมีห้าคอลัมน์ market ซึ่งเป็นหนึ่งทุกตัว industry สามตัวคือ tech สำหรับหุ้น 1 ถึง 3 banks สำหรับหุ้น 4 กับ 5 และ energy สำหรับหุ้น 6 ถึง 8 แล้วก็ momentum อีกหนึ่งคอลัมน์</p>
-  <p>ผลตอบแทนของวันนี้เป็นเปอร์เซ็นต์คือ +1.20 +0.35 +0.90 −0.60 +0.25 −1.10 −0.40 −0.95 momentum คือ 1.2 −0.4 0.6 −1.4 0.9 −0.7 0.3 −0.5 idiosyncratic volatility คือ 1.8 2.2 1.5 2.6 2.0 2.4 1.7 2.1 และมูลค่าตลาดเป็นล้านคือ 300 180 220 400 150 260 340 190</p>
-  <p>ต้องหาห้าอย่าง ทิศที่ทำให้ matrix ไม่มีคำตอบเดียว factor return จากทางแก้ที่ง่ายที่สุด factor return จากทางแก้ที่คนทำงานใช้ ความต่างระหว่างสองชุด และความต่างระหว่างการถ่วงน้ำหนักกับไม่ถ่วง</p>
-</section>
-
 <section class="formula">
   <h4>ขั้นที่ 1 — สมการที่ต้องแก้ทุกวัน</h4>
-  <p>นี่คือนิยามของปัญหา หาค่า factor ที่ทำให้ผลรวมของความคลาดเคลื่อนกำลังสองที่ถ่วงน้ำหนักแล้วน้อยที่สุด น้ำหนักที่ถูกคือหนึ่งส่วน idiosyncratic variance ของหุ้นตัวนั้น เพราะหุ้นที่เหวี่ยงแรงบอกอะไรได้น้อยกว่า</p>
+  <p>ผลตอบแทนของหุ้นแต่ละตัวคือ loading คูณ factor return บวกส่วนเฉพาะตัว (26.1) ในวันหนึ่ง $\mathbf r$ กับ $\mathbf B$ รู้แล้ว ที่ไม่รู้คือ $\mathbf f$ เราเลือก $\mathbf f$ ที่ทำให้ส่วนที่อธิบายไม่ได้เล็กที่สุด โดยให้หุ้นที่เหวี่ยงน้อยมีเสียงดังกว่า นี่คือนิยามของปัญหา ตามด้วยคำตอบแบบ normal equations ของ 15.1</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf r_t&=\mathbf B_t\mathbf f_t+\boldsymbol\epsilon_t\\[4pt]
-\hat{\mathbf f}_t&=\arg\min_{\mathbf f}\ \big(\mathbf r_t-\mathbf B_t\mathbf f\big)^{\mathsf T}\mathbf W\big(\mathbf r_t-\mathbf B_t\mathbf f\big),
-\qquad \mathbf W=\boldsymbol\Omega_\epsilon^{-1}\\[4pt]
-\hat{\mathbf f}_t&=\big(\mathbf B_t^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B_t\big)^{-1}
-\mathbf B_t^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf r_t
+\mathbf r&=\mathbf B\mathbf f+\boldsymbol\epsilon,\\
+S(\mathbf f)&=\sum_i w_i\,e_i^2,\\
+e_i&=r_i-(\mathbf B\mathbf f)_i,\\
+w_i&=1/\sigma_i^2,\\
+\mathbf B^{\mathsf T}\mathbf W\mathbf B\,\hat{\mathbf f}&=\mathbf B^{\mathsf T}\mathbf W\mathbf r,\\
+\hat{\mathbf f}&=\mathbf H\mathbf r,\\
+\mathbf H&=(\mathbf B^{\mathsf T}\mathbf W\mathbf B)^{-1}\mathbf B^{\mathsf T}\mathbf W.
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>เหตุผลที่เลือกน้ำหนักแบบนี้ ไม่ใช่แค่ความสวยงามทางสถิติ ค่าที่ได้จากสูตรบรรทัดล่างคือผลตอบแทนของพอร์ตจริงพอร์ตหนึ่งที่ซื้อขายได้ ซึ่งเรียกว่า factor-mimicking portfolio และเป็นเนื้อหาของหัวข้อ 30.2 ถ้าใช้น้ำหนักอื่น ตัวเลขที่ได้จะไม่ใช่ผลตอบแทนของพอร์ตที่ซื้อได้จริง</p>
-    <p>เหตุผลที่สองคือความเอน ถ้าประมาณ factor return เอนไปนิดเดียวทุกวัน ความเอนนั้นสะสมตลอดปีและบิดรายงานผลงานในหัวข้อ 26.6 ทั้งใบ วิธีกำลังสองน้อยที่สุดแบบถ่วงน้ำหนักให้ค่าที่ไม่เอนและมีความคลาดเคลื่อนต่ำที่สุดในบรรดาวิธีเชิงเส้นทั้งหมด</p>
+    <p>$\hat{\mathbf f}$ คือค่าที่ทำให้ $S(\mathbf f)$ น้อยที่สุด บรรทัดที่ห้าได้จากการตั้ง gradient ของ $S$ ให้เป็นศูนย์ เหมือน 15.1 แต่มี $\mathbf W$ (แนวทแยงเป็น $w_i$) คั่นกลาง</p>
+    <p>ทำไมน้ำหนักเป็น $1/\sigma_i^2$: หุ้นที่ส่วนเฉพาะตัวเหวี่ยงแรงบอกเรื่อง factor ได้น้อยกว่า และน้ำหนักนี้ให้ค่าประมาณที่ไม่เอนและผันผวนน้อยที่สุดในบรรดาวิธีเชิงเส้น (Gauss–Markov)</p>
+    <p>บรรทัดสุดท้ายสำคัญกว่าที่เห็น: factor return แต่ละตัวคือผลรวมถ่วงของผลตอบแทนหุ้น ซึ่งก็คือผลตอบแทนของพอร์ตหนึ่งที่ซื้อได้จริง และเพราะ $\mathbf H\mathbf B=\mathbf I$ พอร์ตของ factor ที่ $k$ มี exposure 1 ต่อ factor ของมัน และ 0 ต่อ factor อื่น เรียกว่า factor-mimicking portfolio</p>
   </div>
 </section>
 
-<section class="formula">
-  <h4>ขั้นที่ 2 — ปัญหาไก่กับไข่ และทางออก</h4>
-  <p>สังเกตว่าสูตรในขั้นที่ 1 ต้องใช้ $\boldsymbol\Omega_\epsilon$ เป็นข้อมูลเข้า แต่ $\boldsymbol\Omega_\epsilon$ คือ ผลลัพธ์ ของกระบวนการทั้งหมด ต้องมี idiosyncratic return ก่อนถึงจะหา variance ของมันได้ และต้องมี factor return ก่อนถึงจะมี idiosyncratic return</p>
-  <div class="math">\[
-\begin{aligned}
-\text{รอบที่ 1}&:\ \mathbf W=\mathbf I\ \Rightarrow\ \hat{\mathbf f}^{(1)}
-\ \Rightarrow\ \hat{\boldsymbol\epsilon}^{(1)}\ \Rightarrow\ \hat{\boldsymbol\Omega}_\epsilon^{(1)}\\[4pt]
-\text{รอบที่ 2}&:\ \mathbf W=\big(\hat{\boldsymbol\Omega}_\epsilon^{(1)}\big)^{-1}
-\ \Rightarrow\ \hat{\mathbf f}^{(2)}\ \Rightarrow\ \hat{\boldsymbol\Omega}_\epsilon^{(2)}\\[4pt]
-\text{วันถัดไป}&:\ \mathbf W=\big(\hat{\boldsymbol\Omega}_{\epsilon,t-1}\big)^{-1}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ทางออกคือเริ่มด้วยน้ำหนักเท่ากันหมด ซึ่งก็คือไม่ถ่วงน้ำหนักเลย แล้วใช้ผลที่ได้มาคำนวณน้ำหนักที่ดีกว่า แล้ววนอีกรอบ</p>
-    <p>บนโต๊ะจริงไม่ต้องวนทุกวัน ทำสองรอบเฉพาะปีแรกของประวัติข้อมูล หลังจากนั้นใช้ $\boldsymbol\Omega_\epsilon$ ของเมื่อวานเป็นน้ำหนักของวันนี้ เพราะมันเปลี่ยนช้ามาก ประหยัดเวลาคำนวณไปเกือบครึ่ง</p>
-    <p>อีกทางที่ใช้กันคือยืมตัวเลขจากผู้ให้บริการเชิงพาณิชย์มาเป็นน้ำหนักตั้งต้น ซึ่งไม่ได้แปลว่าลอกแบบจำลองเขา แค่ใช้เป็นจุดเริ่มที่ดีกว่าการให้ทุกตัวเท่ากัน</p>
-  </div>
+<section class="example">
+  <h4>ขั้นที่ 2 — ข้อมูลของวันนี้</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้น 8 ตัว คอลัมน์ของ $\mathbf B$ คือ market (1 ทุกตัว) tech (หุ้น 1–3) banks (หุ้น 4–5) energy (หุ้น 6–8) และ momentum ตัวเลขทั้งหมดเป็นตัวอย่างสมมติ</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>หุ้น</th><th>กลุ่ม</th><th>$r$ (%)</th><th>momentum</th><th>$\sigma$ (%)</th><th>cap</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>tech</td><td>1.20</td><td>1.2</td><td>1.8</td><td>300</td></tr>
+      <tr><td>2</td><td>tech</td><td>0.35</td><td>−0.4</td><td>2.2</td><td>180</td></tr>
+      <tr><td>3</td><td>tech</td><td>0.90</td><td>0.6</td><td>1.5</td><td>220</td></tr>
+      <tr><td>4</td><td>banks</td><td>−0.60</td><td>−1.4</td><td>2.6</td><td>400</td></tr>
+      <tr><td>5</td><td>banks</td><td>0.25</td><td>0.9</td><td>2.0</td><td>150</td></tr>
+      <tr><td>6</td><td>energy</td><td>−1.10</td><td>−0.7</td><td>2.4</td><td>260</td></tr>
+      <tr><td>7</td><td>energy</td><td>−0.40</td><td>0.3</td><td>1.7</td><td>340</td></tr>
+      <tr><td>8</td><td>energy</td><td>−0.95</td><td>−0.5</td><td>2.1</td><td>190</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>คำตอบที่ต้องหา:</strong> ทิศที่ทำให้สมการไม่มีคำตอบเดียว factor return จากสามทางแก้ และผลของการถ่วงน้ำหนัก มูลค่าตลาด (cap) เป็นล้านดอลลาร์ ใช้ในขั้นที่ 4</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ทุกแถวของสามคอลัมน์ industry มีเลข 1 ตัวเดียว ผลรวมสามคอลัมน์จึงเป็น 1 ทุกแถว เท่ากับคอลัมน์ market ปัญหาของขั้นถัดไปจึงเห็นได้ก่อนคำนวณ</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 27.1a — market เป็นผลรวมของ industry พอดี matrix จึงมี rank ไม่ครบ</h4>
-  <img src="../figures/27.1-1.svg" alt="Figure 27.1a — market เป็นผลรวมของ industry พอดี matrix จึงมี rank ไม่ครบ" loading="lazy">
+  <h4>Figure 27.1a — market เท่ากับผลรวมของ industry พอดี</h4>
+  <img src="../figures/27.1-1.svg" alt="ตาราง loading 8 แถว 5 คอลัมน์ กรอบแดงล้อมคอลัมน์ market และกรอบประล้อมสามคอลัมน์ industry" loading="lazy">
   <figcaption>
-    <p>ตารางของ loading ทั้งห้าคอลัมน์ คอลัมน์ซ้ายสุดคือ market ที่เป็นหนึ่งทุกแถว สามคอลัมน์กลางคือ industry ที่แต่ละแถวมีหนึ่งเดียวเป็น 1 บวกสามคอลัมน์กลางเข้าด้วยกันแล้วได้คอลัมน์ซ้ายสุดพอดี นั่นคือทั้งปัญหา</p>
+    <p>ตาราง loading ของหุ้น 8 ตัว คอลัมน์คือ market, tech, banks, energy และ momentum กรอบแดงทึบคือ market ที่เป็น 1 ทุกแถว กรอบแดงประคือสาม industry ป้ายบนรูปบอกว่าบวกสามคอลัมน์ในกรอบประจะได้คอลัมน์ในกรอบทึบ ห้าคอลัมน์จึงเป็นอิสระกันแค่สี่</p>
   </figcaption>
 </figure>
 
 <section class="formula">
-  <h4>ขั้นที่ 3 — ทิศที่มองไม่เห็น</h4>
-  <p>หาทิศที่คูณกับ loadings matrix แล้วได้ศูนย์ทุกแถว ถ้ามีทิศแบบนั้น บวกมันเข้าไปในคำตอบเท่าไรก็ได้ คำทำนายไม่เปลี่ยน แปลว่ามีคำตอบดีที่สุดเป็นจำนวนอนันต์</p>
+  <h4>ขั้นที่ 3 — ทิศที่ข้อมูลมองไม่เห็น</h4>
+  <p>ถ้ามีทิศ $\mathbf v$ ที่ $\mathbf B\mathbf v=\mathbf 0$ ทุกแถว การบวก $\mathbf v$ เข้าไปในคำตอบกี่เท่าก็ได้ไม่เปลี่ยนคำทำนายของหุ้นตัวไหนเลย ข้อมูลจึงบอกไม่ได้ว่าควรบวกเท่าไร ขั้นนี้หาทิศนั้นแล้วดูผลที่ตามมา</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf v&=(1,\ -1,\ -1,\ -1,\ 0)^{\mathsf T}\\[4pt]
-\mathbf B\mathbf v&=\mathbf 0\quad\text{ทุกแถว}\\[4pt]
-\operatorname{rank}(\mathbf B)&=4\ \lt\ 5=\text{จำนวนคอลัมน์}\\[4pt]
-\mathbf B(\hat{\mathbf f}+c\,\mathbf v)&=\mathbf B\hat{\mathbf f}\quad\text{สำหรับทุกค่าของ }c
+\mathbf v&=(1,\ -1,\ -1,\ -1,\ 0),\\
+\mathbf B\mathbf v&=\mathbf 0,\\
+\operatorname{rank}(\mathbf B)&=4\lt5,\\
+\mathbf B(\hat{\mathbf f}+s\,\mathbf v)&=\mathbf B\hat{\mathbf f}+s\,\mathbf B\mathbf v\\
+&=\mathbf B\hat{\mathbf f}.
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>อ่าน $\mathbf v$ ได้ตรง ๆ ว่า “เพิ่ม market หนึ่งหน่วย แล้วลด industry ทุกตัวลงหนึ่งหน่วย” ผลลัพธ์ต่อหุ้นทุกตัวคือศูนย์ เพราะทุกหุ้นได้ market มาหนึ่งหน่วยและเสีย industry ของตัวเองไปหนึ่งหน่วย</p>
-    <p>ผลที่ตามมาในทางปฏิบัติคือ $\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B$ ผกผันไม่ได้ สูตรในขั้นที่ 1 ใช้ไม่ได้ตรง ๆ และถ้าเขียนโค้ดแบบไม่ระวัง บางภาษาจะคืนตัวเลขที่ดูเหมือนคำตอบออกมาโดยไม่เตือนอะไรเลย ซึ่งอันตรายกว่าการพัง</p>
-    <p>สังเกตว่าตำแหน่งสุดท้ายของ $\mathbf v$ เป็นศูนย์ แปลว่า momentum ไม่เกี่ยวข้องกับปัญหานี้เลย ค่าของมันจะออกมาเท่ากันไม่ว่าจะแก้ด้วยทางไหน ซึ่งขั้นที่ 5 จะยืนยัน</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>แล้วเอาไปใช้ทำอะไรได้จริงบ้าง</h4>
-  <p>ทางแก้ที่ง่ายที่สุดคือลบคอลัมน์ทิ้งหนึ่งคอลัมน์ ซึ่งได้ผลและใช้เวลาสิบวินาที แต่มันทำให้ตัวเลขอ่านยากขึ้นมาก เพราะ industry ที่เหลือกลายเป็น “เทียบกับ energy” และ market กลายเป็น “ผลตอบแทนของหุ้น energy ที่ momentum เป็นศูนย์” ซึ่งไม่ใช่สิ่งที่ใครอยากเห็นในรายงาน</p>
-  <p>บนโต๊ะจริงจึงใช้อีกทาง คือเติมเงื่อนไขที่มีความหมายทางธุรกิจเข้าไปหนึ่งข้อ เงื่อนไขที่นิยมที่สุดคือให้ผลตอบแทนของ industry ถ่วงด้วยมูลค่าตลาดรวมกันได้ศูนย์ ซึ่งแปลว่า “ตลาดทั้งตลาดไม่มีผลตอบแทนจาก industry” และทำให้ market factor กลายเป็นผลตอบแทนของตลาดจริง ๆ</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — สามทางแก้ และทางที่เลือก</h4>
-  <p>ทั้งสามทางเติมข้อมูลหนึ่งชิ้นเข้าไปเพื่อตรึงคำตอบ ต่างกันที่ข้อมูลชิ้นนั้นคืออะไร</p>
-  <div class="math">\[
-\begin{aligned}
-\text{ทาง ก ลบคอลัมน์}&:\ \text{บังคับ } f_{\text{energy}}=0\\[4pt]
-\text{ทาง ข โทษตามขนาด}&:\ \min\ \|\mathbf r-\mathbf B\mathbf f\|^2_{\mathbf W}+\delta\|\mathbf f\|^2\\[2pt]
-&\ \ \delta\to0\ \Rightarrow\ \hat{\mathbf f}=\big(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B\big)^{\dagger}
-\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf r\\[4pt]
-\text{ทาง ค เงื่อนไขข้าง}&:\ \mathbf c^{\mathsf T}\mathbf f=0,\quad
-\mathbf c=(0,\ 0.3431,\ 0.2696,\ 0.3873,\ 0)^{\mathsf T}
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>ทาง ข ฟังดูเป็นกลางที่สุดเพราะไม่ต้องเลือกอะไร แต่มันเลือกอยู่ดี มันเลือกคำตอบที่มีความยาวสั้นที่สุด ซึ่งไม่มีความหมายทางธุรกิจใด ๆ และค่าที่ได้ก็เอนเล็กน้อยด้วย เพราะโทษตามขนาดดึงทุกอย่างเข้าหาศูนย์</p>
-    <p>ทาง ค คือสิ่งที่ผู้ให้บริการเชิงพาณิชย์ใช้ ตัวเลขใน $\mathbf c$ คือสัดส่วนมูลค่าตลาดของแต่ละ industry ซึ่งในโจทย์นี้คือ tech 34.31% banks 26.96% energy 38.73%</p>
-    <p>ความหมายของเงื่อนไขอ่านได้เป็นภาษาคน ถ้าถือหุ้นทั้งตลาดตามสัดส่วนมูลค่า จะไม่ได้หรือเสียอะไรเลยจาก industry ทุกอย่างที่ได้มาจาก market กับ style ซึ่งเป็นวิธีแบ่งที่ทำให้ตัวเลขในรายงานตีความได้</p>
+    <p>อ่าน $\mathbf v$ เป็นภาษาคนได้ว่า “เพิ่ม market หนึ่งหน่วย แล้วลดทุก industry หนึ่งหน่วย” หุ้นทุกตัวได้ market มาหนึ่งและเสีย industry ของตัวเองไปหนึ่ง ผลรวมเป็นศูนย์ ตำแหน่งสุดท้ายเป็นศูนย์ momentum จึงไม่เกี่ยวกับความกำกวมนี้เลย</p>
+    <p>ผลในทางปฏิบัติคือ $\mathbf B^{\mathsf T}\mathbf W\mathbf B$ ผกผันไม่ได้ สูตรของขั้นที่ 1 ใช้ตรง ๆ ไม่ได้ บางไลบรารีหยุดและเตือน บางไลบรารีคืนตัวเลขมาเงียบ ๆ อย่างหลังอันตรายกว่า เพราะไม่มีใครรู้ว่ามันเลือกอะไรไปแล้ว</p>
   </div>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 5 — ตัวเลขจริงจากสองทาง</h4>
-  <p>แก้ทั้งสองทางด้วยข้อมูลของโจทย์ แล้ววางเทียบกัน ทั้งคู่ใช้น้ำหนักเดียวกันคือหนึ่งส่วน idiosyncratic variance</p>
+  <h4>ขั้นที่ 4 — สามทางแก้ ต่างกันที่ข้อมูลชิ้นที่เติม</h4>
+  <p>ทุกทางแก้เติมข้อมูลหนึ่งชิ้นเพื่อเลือกหนึ่งจุดบนเส้น $\hat{\mathbf f}+s\,\mathbf v$ สิ่งที่ต่างคือชิ้นนั้นมีความหมายทางธุรกิจหรือไม่</p>
   <div class="math">\[
 \begin{aligned}
-\text{ลบ energy}&:\ (-0.6466,\ 1.2508,\ 0.5593,\ [0],\ 0.4741)\%\\[4pt]
-\text{เงื่อนไขข้าง}&:\ (-0.0666,\ 0.6708,\ -0.0207,\ -0.5800,\ 0.4741)\%\\[4pt]
-\text{ส่วนต่าง}&:\ (+0.5800,\ -0.5800,\ -0.5800,\ -0.5800,\ 0)\%\\[4pt]
-&=-0.5800\%\times\mathbf v
+\text{A}&:\ f_{\text{energy}}=0,\\
+\text{B}&:\ \hat{\mathbf f}=(\mathbf B^{\mathsf T}\mathbf W\mathbf B)^{+}\,\mathbf B^{\mathsf T}\mathbf W\mathbf r,\\
+\text{C}&:\ \mathbf c^{\mathsf T}\mathbf f=0,\\
+c_{\text{tech}}&=0.3431,\\
+c_{\text{banks}}&=0.2696,\\
+c_{\text{energy}}&=0.3873.
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>บรรทัดสุดท้ายคือสิ่งที่ยืนยันว่าทุกอย่างสอดคล้องกัน สองคำตอบต่างกันด้วยตัวคูณของ null direction พอดี ไม่ใช่ต่างกันมั่ว ๆ นั่นคือสิ่งที่ทฤษฎีทำนายไว้</p>
-    <p>และค่าของ momentum เท่ากันเป๊ะที่ 0.4741% ในทั้งสองทาง เพราะ null direction มีศูนย์ในตำแหน่งนั้น การเลือกเงื่อนไขไม่มีผลกับ style เลย มีผลแค่กับการแบ่งระหว่าง market กับ industry</p>
-    <p>ตรวจเองใน 10 วินาที ค่าที่ทำนายได้ต้องเท่ากันทั้งสองทาง หุ้นตัวแรกในทางแรกคือ −0.6466 + 1.2508 + 1.2(0.4741) = 1.1731% ในทางที่สองคือ −0.0666 + 0.6708 + 1.2(0.4741) = 1.1731% ตรงกัน และความคลาดเคลื่อนสูงสุดระหว่างสองชุดคือ 2.2 × 10⁻¹⁸</p>
+    <p>ทาง A ลบคอลัมน์ energy ทิ้ง ง่ายที่สุด แต่ industry ที่เหลือกลายเป็น “เทียบกับ energy” ทาง B ใช้ pseudo-inverse (เครื่องหมาย $^{+}$) ซึ่งเลือกคำตอบที่ยาวน้อยที่สุดในบรรดาคำตอบที่ดีที่สุดทั้งหมด และเป็นสิ่งที่ไลบรารีหลายตัวทำเงียบ ๆ ฟังดูเป็นกลาง แต่ความยาวของเวกเตอร์ไม่มีความหมายทางธุรกิจ</p>
+    <p>ทาง C ตั้งเงื่อนไขว่าผลตอบแทนของ industry ถ่วงด้วยสัดส่วนมูลค่าตลาดรวมเป็นศูนย์ $\mathbf c$ มีค่าเฉพาะสามช่องของ industry (ช่อง market และ momentum เป็นศูนย์) และคือสัดส่วนมูลค่าของ tech $700/2{,}040$ banks $550/2{,}040$ และ energy $790/2{,}040$</p>
+    <p>ความหมายคือ ถ้าถือทั้งตลาดตามมูลค่า จะไม่ได้หรือเสียอะไรจาก industry ทุกอย่างมาจาก market market factor จึงเป็นผลตอบแทนของตลาดจริง</p>
   </div>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 5 — ตัวเลขจากสามทาง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ข้อมูลของขั้นที่ 2 น้ำหนัก $1/\sigma_i^2$ แก้ทาง A ด้วยสูตรของขั้นที่ 1 บน 4 คอลัมน์ แก้ทาง C ด้วยตัวคูณ Lagrange หนึ่งตัวของ 12.4 และหาทาง B โดยเลื่อนคำตอบ C ไปตามทิศ $\mathbf v$ จนความยาวสั้นที่สุด (เรียงเป็น market, tech, banks, energy, momentum)</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>factor (%)</th><th>ทาง A</th><th>ทาง C</th><th>ทาง B</th><th>A − C</th></tr></thead>
+    <tbody>
+      <tr><td>market</td><td>−0.6466</td><td>−0.0666</td><td>−0.0324</td><td>−0.58</td></tr>
+      <tr><td>tech</td><td>1.2508</td><td>0.6708</td><td>0.6366</td><td>0.58</td></tr>
+      <tr><td>banks</td><td>0.5593</td><td>−0.0207</td><td>−0.0549</td><td>0.58</td></tr>
+      <tr><td>energy</td><td>0</td><td>−0.5800</td><td>−0.6142</td><td>0.58</td></tr>
+      <tr><td>momentum</td><td>0.4741</td><td>0.4741</td><td>0.4741</td><td>0</td></tr>
+    </tbody>
+  </table></div>
+  <div class="math">\[
+\begin{aligned}
+\text{A}-\text{C}&=-0.58\%\,\mathbf v.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> สามชุดต่างกันเฉพาะในทิศ $\mathbf v$ momentum เท่ากันทุกทางที่ 0.4741% ทาง C ให้ market −0.0666% ซึ่งตีความได้ว่าตลาดทั้งตลาดลงเล็กน้อย ส่วนทาง A ให้ −0.6466% ซึ่งที่จริงคือผลตอบแทนของหุ้น energy ที่ momentum เป็นศูนย์</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> หุ้นตัวแรก ทาง A: $-0.6466+1.2508+1.2(0.4741)=1.1731\%$ ทาง C: $-0.0666+0.6708+1.2(0.4741)=1.1731\%$ เท่ากัน ทุกตัวต่างกันไม่เกิน $4\times10^{-18}$ ซึ่งเป็นแค่เศษของเครื่องคิดเลข</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 27.1b — สองเงื่อนไข ตัวเลขคนละชุด คำทำนายชุดเดียวกัน</h4>
-  <img src="../figures/27.1-2.svg" alt="Figure 27.1b — สองเงื่อนไข ตัวเลขคนละชุด คำทำนายชุดเดียวกัน" loading="lazy">
+  <h4>Figure 27.1b — ตัวเลขคนละชุด คำทำนายชุดเดียวกัน</h4>
+  <img src="../figures/27.1-2.svg" alt="แผงซ้ายแท่ง factor return สองชุดที่ต่างกัน 0.58 แผงขวาคำทำนายของหุ้นแปดตัวที่ทับกันสนิท" loading="lazy">
   <figcaption>
-    <p>แผงซ้ายคือ factor return จากสองเงื่อนไข ซึ่ง market และ industry ต่างกัน 0.58 จุดทุกตัว ส่วน momentum เท่ากันเป๊ะ แผงขวาคือผลตอบแทนที่แบบจำลองทำนายให้หุ้นทั้งแปดตัว ซึ่งทั้งสองเงื่อนไขให้ค่าทับกันสนิท</p>
+    <p>แผงซ้ายคือ factor return ของทาง A (ส้ม) กับทาง C (ฟ้า) market และสาม industry ต่างกัน 0.58 จุดทุกตัว momentum เท่ากัน แผงขวาคือผลตอบแทนที่ทำนายให้หุ้น 8 ตัว วงกลมส้มกับกากบาทฟ้าทับกันสนิท จุดดำคือผลตอบแทนที่เกิดจริง ส่วนที่ห่างจากจุดดำคือ idiosyncratic return ซึ่งก็เท่ากันทุกทาง</p>
   </figcaption>
 </figure>
 
 <section class="formula">
-  <h4>ขั้นที่ 6 — ถ่วงน้ำหนักกับไม่ถ่วง ต่างกันแค่ไหน</h4>
-  <p>รันซ้ำด้วยน้ำหนักเท่ากันหมด ซึ่งคือ OLS ธรรมดา แล้วเทียบกับ WLS ที่ถ่วงด้วยหนึ่งส่วน idiosyncratic variance</p>
+  <h4>ขั้นที่ 6 — factor return คือพอร์ตที่ซื้อได้: ดูน้ำหนักจริง</h4>
+  <p>ขั้นที่ 1 บอกว่าแต่ละ factor return คือพอร์ตหนึ่งพอร์ต ลองกางแถวของ $\mathbf H$ (ทาง A) ออกมาดูเป็นน้ำหนักของหุ้น 8 ตัว แล้วตรวจสิ่งที่พอร์ตนั้นต้องมี</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>หุ้น</th><th>กลุ่ม</th><th>$h_{\text{mom}}$</th><th>$h_{\text{mkt}}$</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>tech</td><td>0.200</td><td>0.0352</td></tr>
+      <tr><td>2</td><td>tech</td><td>−0.211</td><td>−0.0370</td></tr>
+      <tr><td>3</td><td>tech</td><td>0.010</td><td>0.0018</td></tr>
+      <tr><td>4</td><td>banks</td><td>−0.223</td><td>−0.0392</td></tr>
+      <tr><td>5</td><td>banks</td><td>0.223</td><td>0.0392</td></tr>
+      <tr><td>6</td><td>energy</td><td>−0.095</td><td>0.2159</td></tr>
+      <tr><td>7</td><td>energy</td><td>0.172</td><td>0.4937</td></tr>
+      <tr><td>8</td><td>energy</td><td>−0.077</td><td>0.2903</td></tr>
+    </tbody>
+  </table></div>
   <div class="math">\[
 \begin{aligned}
-\text{OLS}&:\ (-0.6794,\ 1.2826,\ 0.6188,\ 0.4575)\%\\
-\text{WLS}&:\ (-0.6466,\ 1.2508,\ 0.5593,\ 0.4741)\%\\[4pt]
-\text{ต่างกันมากที่สุด}&:\ 0.0595\ \text{จุด บน banks}\\[4pt]
-\frac{w_{\text{หุ้น }3}}{w_{\text{หุ้น }4}}&=\frac{1/1.5^2}{1/2.6^2}=\left(\frac{2.6}{1.5}\right)^2=3.00
+\textstyle\sum_i h_{\text{mom},i}&=0,\\
+\mathbf h_{\text{mom}}^{\mathsf T}\,\text{mom}&=1,\\
+\mathbf h_{\text{mom}}^{\mathsf T}\mathbf r&=0.4741\%,\\
+\textstyle\sum_{i=6}^{8}h_{\text{mkt},i}&=1.
 \end{aligned}
 \]</div>
   <div class="reading">
-    <p>ส่วนต่างในวันเดียวดูเล็ก 0.0595 จุด แต่มันไม่สุ่ม ความเอนไปทางเดียวกันทุกวัน และสะสมได้ 15 จุดต่อปีถ้าทิศเดิม ซึ่งใหญ่กว่า alpha ของกลยุทธ์จำนวนมาก</p>
-    <p>บรรทัดล่างสุดอธิบายว่าทำไม หุ้นที่เงียบที่สุดในโจทย์มีน้ำหนักเป็นสามเท่าของหุ้นที่เหวี่ยงที่สุด เพราะข้อมูลของมันบอกเรื่อง factor ได้ชัดกว่า ในตลาดจริงที่ idiosyncratic volatility ต่างกันได้ห้าเท่า อัตราส่วนน้ำหนักจะเป็น 25 เท่า</p>
+    <p>พอร์ตของ momentum ซื้อหุ้นที่ momentum สูง ขายหุ้นที่ momentum ต่ำ ใช้เงินสุทธิศูนย์ มี exposure 1 ต่อ momentum และ 0 ต่อ market กับ industry ผลตอบแทนของพอร์ตนี้วันนี้คือ 0.4741% พอดี ตัวเลขใน regression จึงเป็นเงินที่เกิดขึ้นได้จริง</p>
+    <p>บรรทัดสุดท้ายเปิดโปงทาง A: พอร์ตของ “market” ในทางนี้ลงเงินเกือบทั้งหมดในหุ้น energy สามตัว น้ำหนักรวม 1 ตรงกับที่ขั้นที่ 5 บอกว่า market ของทาง A คือ energy ที่ momentum เป็นศูนย์ ใครอ่านรายงานว่า market ลง 0.65% จะเข้าใจผิดทั้งห้อง</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — ถ่วงกับไม่ถ่วงต่างกันแค่ไหน</h4>
+  <p>รันทาง A ซ้ำด้วยน้ำหนักเท่ากันหมด (OLS) แล้วเทียบกับ WLS ของขั้นที่ 5 ความต่างรายวันดูเล็ก แต่คำถามคือมันมาจากไหน</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>factor (%)</th><th>OLS</th><th>WLS</th><th>$d_k$</th></tr></thead>
+    <tbody>
+      <tr><td>market</td><td>−0.6794</td><td>−0.6466</td><td>−0.0328</td></tr>
+      <tr><td>tech</td><td>1.2826</td><td>1.2508</td><td>0.0318</td></tr>
+      <tr><td>banks</td><td>0.6188</td><td>0.5593</td><td>0.0595</td></tr>
+      <tr><td>momentum</td><td>0.4575</td><td>0.4741</td><td>−0.0166</td></tr>
+    </tbody>
+  </table></div>
+  <div class="math">\[
+\begin{aligned}
+d_k&=f^{\text{OLS}}_k-f^{\text{WLS}}_k,\\
+\max_k\lvert d_k\rvert&=0.0595,\\
+\frac{w_3}{w_4}&=\Big(\frac{2.6}{1.5}\Big)^2=3.00.
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>ความต่างมากที่สุด 0.0595 จุดอยู่ที่ banks ซึ่งมีหุ้นแค่สองตัวและหนึ่งในนั้นเหวี่ยงที่สุด</p>
+    <p>หุ้นที่เงียบที่สุด (ตัวที่ 3, σ 1.5%) ได้น้ำหนักสามเท่าของตัวที่เหวี่ยงที่สุด (ตัวที่ 4, σ 2.6%) เพราะข้อมูลของมันบอกเรื่อง factor ได้ชัดกว่า ในตลาดจริงที่ความผันผวนเฉพาะตัวต่างกันห้าเท่า อัตราส่วนน้ำหนักเป็น 25 เท่า</p>
+    <p>ความต่าง 0.06 จุดในวันเดียวไม่ใช่เรื่องใหญ่ แต่ถ้าเอนไปทางเดิมทุกวัน 252 วันจะสะสมเป็นราว 15 จุดต่อปี ซึ่งบิดรายงานแยกผลงานของ 26.6 ได้ทั้งใบ OLS ไม่ได้ผิดเพราะเอน แต่ผิดเพราะให้เสียงหุ้นที่มีสัญญาณรบกวนมากเท่ากับหุ้นที่มีน้อย</p>
   </div>
 </section>
 
 <figure class="plot">
   <h4>Figure 27.1c — หุ้นเงียบพูดดังกว่าในสมการ</h4>
-  <img src="../figures/27.1-3.svg" alt="Figure 27.1c — หุ้นเงียบพูดดังกว่าในสมการ" loading="lazy">
+  <img src="../figures/27.1-3.svg" alt="แท่งน้ำหนักของหุ้นแปดตัว แท่งเทาเท่ากันหมด แท่งฟ้าสูงสำหรับหุ้นที่ความผันผวนเฉพาะตัวต่ำ" loading="lazy">
   <figcaption>
-    <p>แกนนอนคือ idiosyncratic volatility ของหุ้นแต่ละตัว แกนตั้งคือน้ำหนักที่มันได้ในสมการ เทียบระหว่าง OLS ที่ทุกตัวเท่ากัน กับ WLS ที่น้ำหนักลดลงเป็นหนึ่งส่วนกำลังสองของความเหวี่ยง หุ้นตัวที่เงียบที่สุดได้น้ำหนักสามเท่าของตัวที่เหวี่ยงที่สุด</p>
+    <p>แกนนอนคือหุ้น 1 ถึง 8 (ความผันผวนเฉพาะตัวเขียนใต้แกน) แท่งเทาคือน้ำหนักเท่ากันของ OLS แท่งฟ้าคือน้ำหนัก $1/\sigma_i^2$ ของ WLS ปรับให้เฉลี่ยเป็น 1 ลูกศรชี้ว่าหุ้นที่เงียบที่สุดได้น้ำหนัก 3.00 เท่าของตัวที่เหวี่ยงที่สุด</p>
   </figcaption>
 </figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — ไก่กับไข่: น้ำหนักมาจากผลลัพธ์ของตัวเอง</h4>
+  <p>น้ำหนักของขั้นที่ 1 ต้องใช้ $\sigma_i$ แต่ $\sigma_i$ คือความผันผวนของ idiosyncratic return ซึ่งจะมีได้ก็ต่อเมื่อหา factor return เสร็จแล้ว ทางออกคือวนสองรอบในช่วงเริ่ม แล้วใช้ค่าของเมื่อวานตลอดไป</p>
+  <div class="math">\[
+\begin{aligned}
+\text{pass 1}&:\ w_i=1,\\
+&\quad \hat{\mathbf f}^{(1)}\to\hat{\boldsymbol\epsilon}^{(1)}\to\hat\sigma_i^{(1)},\\
+\text{pass 2}&:\ w_i=1/\big(\hat\sigma_i^{(1)}\big)^2,\\
+&\quad \hat{\mathbf f}^{(2)}\to\hat\sigma_i^{(2)},\\
+\text{day }t&:\ w_{i,t}=1/\hat\sigma_{i,t-1}^2.
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>รอบแรกไม่ถ่วงเลยเพื่อให้ได้ส่วนเฉพาะตัวชุดแรกตลอดประวัติข้อมูลช่วงเริ่ม แล้วใช้มันคำนวณความผันผวนเฉพาะตัวของแต่ละหุ้น (27.4 สอนวิธีคำนวณให้ดี) รอบที่สองใช้ความผันผวนนั้นเป็นน้ำหนัก หลังจากนั้นทุกวันใช้ค่าที่ประมาณได้ถึงเมื่อวาน เพราะมันเปลี่ยนช้า</p>
+    <p>คำว่า “ถึงเมื่อวาน” สำคัญ ถ้าเผลอใช้ความผันผวนที่รวมวันนี้ หุ้นที่บังเอิญเหวี่ยงแรงวันนี้จะได้น้ำหนักต่ำ แบบจำลองก็เหมือนรู้ล่วงหน้าว่าใครจะเหวี่ยง ส่วนเฉพาะตัวออกมาเล็กเกินจริง</p>
+  </div>
+</section>
 
 <figure class="plot">
-  <h4>Figure 27.1d — วนสองรอบเพื่อแก้ปัญหาไก่กับไข่</h4>
-  <img src="../figures/27.1-4.svg" alt="Figure 27.1d — วนสองรอบเพื่อแก้ปัญหาไก่กับไข่" loading="lazy">
+  <h4>Figure 27.1d — วนสองรอบตอนเริ่ม แล้ววันละรอบตลอดไป</h4>
+  <img src="../figures/27.1-4.svg" alt="แผนภาพกล่อง น้ำหนักเท่ากัน ไป factor return รอบหนึ่ง ไป idiosyncratic return ไป variance ไปน้ำหนักที่ดีกว่า ไป factor return รอบสอง" loading="lazy">
   <figcaption>
-    <p>แผนภาพลำดับงาน รอบแรกใช้น้ำหนักเท่ากันเพื่อให้ได้ idiosyncratic return ชุดแรก จากนั้นคำนวณ variance ของมันมาเป็นน้ำหนักของรอบสอง ตั้งแต่วันที่สองเป็นต้นไปใช้ค่าของเมื่อวานได้เลย เพราะมันเปลี่ยนช้ากว่าที่คิดมาก</p>
+    <p>แผนภาพลำดับงานของขั้นที่ 8 แถวบน: น้ำหนักเท่ากัน → factor return รอบหนึ่ง → idiosyncratic return รอบหนึ่ง แถวกลาง: idiosyncratic variance → น้ำหนักที่ดีกว่า → factor return รอบสอง กล่องล่างคือวันต่อ ๆ ไปที่ใช้ค่าของเมื่อวาน ป้าย the chicken กับ and the egg ชี้คู่ที่พึ่งกันและกัน</p>
   </figcaption>
 </figure>
 
+<section class="prose">
+  <h4>คำถามที่ควรถามออกมาดัง ๆ</h4>
+  <p><strong>ถ้าคำทำนายเหมือนกันทุกทาง จะเลือกทางไหนก็ได้ไม่ใช่หรือ?</strong> ความเสี่ยงของพอร์ตและ idiosyncratic return เหมือนกันจริง แต่รายงานว่าเงินได้หรือเสียจาก factor ไหน (26.6) เปลี่ยนไปทั้งใบ ทาง A บอกว่าวันนี้ market ลง 0.65% ทาง C บอกว่าลง 0.07% คนอ่านรายงานตัดสินใจต่างกันแน่นอน</p>
+  <p><strong>ถ้าไม่มี market factor ปัญหาก็หายใช่ไหม?</strong> หาย แต่ต้องการ market factor ไว้ตอบคำถามว่าพอร์ตเสี่ยงต่อตลาดเท่าไร ปัญหาเดียวกันเกิดกับ loading ใด ๆ ที่รวมกันเป็นคอลัมน์อื่นได้ เช่นประเทศหลายประเทศบวกกับ factor โลก</p>
+</section>
+
 <section class="pitfall">
-  <h4>กับดัก: ปล่อยให้โค้ดเลือกเงื่อนไขให้เอง และเปลี่ยนเงื่อนไขกลางทาง</h4>
-  <p>กับดักแรกคือเรียกคำสั่งหาคำตอบของ regression โดยไม่รู้ว่า matrix มี rank ไม่ครบ ไลบรารีส่วนใหญ่จะไม่พังแต่จะเงียบ ๆ เลือกคำตอบที่มีความยาวสั้นที่สุดให้ ซึ่งเป็นทาง ข ในขั้นที่ 4 คำตอบนั้นใช้ได้ในแง่การทำนาย แต่ตัวเลขรายตัวไม่มีความหมายทางธุรกิจ และไม่มีใครในทีมรู้ว่ามันถูกเลือกไปแล้ว</p>
-  <p>กับดักที่สองคือเปลี่ยนเงื่อนไขกลางประวัติข้อมูล เช่นเคยลบ energy แล้วเปลี่ยนมาใช้เงื่อนไขถ่วงมูลค่าตลาด ตัวเลข factor return ทุกตัวจะกระโดด 0.58 จุดพร้อมกันในวันที่เปลี่ยน ทั้งที่ไม่มีอะไรจริงเกิดขึ้น และการทดสอบย้อนหลังใด ๆ ที่คร่อมวันนั้นจะเห็นการกระโดดนั้นเป็นเหตุการณ์จริง</p>
-  <p>กับดักที่สามละเอียดกว่า น้ำหนักในขั้นที่ 1 ต้องมาจาก idiosyncratic variance ที่ประมาณจากข้อมูล ก่อนหน้า วันที่กำลังคำนวณ ถ้าเผลอใช้ข้อมูลของวันเดียวกัน หุ้นที่บังเอิญเหวี่ยงแรงวันนั้นจะได้น้ำหนักต่ำ ซึ่งแปลว่าแบบจำลองรู้ล่วงหน้าว่าวันนี้ใครจะเหวี่ยง ผลคือ factor return ที่ดูดีเกินจริงและ idiosyncratic return ที่เล็กเกินจริง</p>
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>ปล่อยให้ไลบรารีเลือกเอง:</strong> ได้ทาง B โดยไม่รู้ตัว market −0.0324% ที่ไม่มีใครอธิบายได้ว่ามาจากเงื่อนไขอะไร</p>
+  <p><strong>เปลี่ยนเงื่อนไขกลางประวัติข้อมูล:</strong> ถ้าเคยใช้ทาง A แล้วเปลี่ยนเป็นทาง C ทุก factor ยกเว้น momentum จะกระโดด 0.58 จุดในวันที่เปลี่ยน ทั้งที่ไม่มีอะไรเกิดในตลาด การทดสอบย้อนหลังที่คร่อมวันนั้นจะเห็นเหตุการณ์ปลอม</p>
+  <p><strong>ใช้ข้อมูลของวันนี้ทำน้ำหนักของวันนี้:</strong> ส่วนเฉพาะตัวเล็กเกินจริง ความเสี่ยงที่รายงานต่ำเกินจริงตาม</p>
 </section>
 
 <section class="prose">
-  <h4>ที่มาที่ไป: บทที่แล้วได้ factor return มาฟรี</h4>
-  <p>ทั้งบทที่ 26 ใช้ $\mathbf f_t$ ราวกับว่ามันมีอยู่ในข้อมูล แต่มันไม่มี สิ่งที่มีจริงคือผลตอบแทนของหุ้นทุกตัว และคุณสมบัติของบริษัทซึ่งรู้ตั้งแต่เมื่อวาน factor return ต้องหาเอาจากสองอย่างนั้น</p>
-  <p>วิธีหาคือการถามว่า ค่าอะไรของ factor ที่ทำให้สมการอธิบายผลตอบแทนของหุ้นทุกตัวในวันนี้ได้ดีที่สุด นั่นคือ regression ธรรมดา แต่เป็น regression ที่วิ่งข้ามหุ้นในวันเดียว ไม่ใช่ข้ามเวลา จึงเรียกว่า cross-sectional และต้องทำใหม่ทุกวัน</p>
-  <p>ฟังดูตรงไปตรงมา แต่มีสองเรื่องที่โผล่มาทันทีในวันแรกที่ลงมือทำ เรื่องแรกคือหุ้นแต่ละตัวเหวี่ยงไม่เท่ากัน จึงไม่ควรมีน้ำหนักเท่ากัน เรื่องที่สองคือ loadings matrix ที่คนออกแบบมาให้อ่านง่าย กลับมีคอลัมน์ที่ซ้ำกันโดยโครงสร้าง จนสมการไม่มีคำตอบเดียว</p>
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ทีมแบบจำลองความเสี่ยงรัน regression นี้ทุกคืนบนหุ้นหลายพันตัว เลือกทาง C ครั้งเดียวแล้วไม่เปลี่ยน เก็บน้ำหนักจากความผันผวนเฉพาะตัวของเมื่อวาน และตรวจ rank ของ $\mathbf B$ ทุกวัน เพราะ loading ของหุ้นที่เข้าออกจากกลุ่มอาจสร้างคอลัมน์ซ้ำใหม่ได้ เช่น industry ที่เหลือหุ้นตัวเดียว</p>
+</section>
+
+<section class="example">
+  <h4>สามโจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ถ้าลบคอลัมน์ tech ทิ้งแทน energy ค่า tech จะเป็นเท่าไร และ market จะเป็นเท่าไร (ใช้ความจริงที่ว่าทุกคำตอบต่างกันแค่ในทิศ $\mathbf v$)?</p>
+  <details><summary>เฉลย</summary><p>เริ่มจากทาง C แล้วบวก $s\mathbf v$ จน tech เป็นศูนย์: $0.6708-s=0$ จึง $s=0.6708$ market $=-0.0666+0.6708=0.6042\%$ banks $=-0.0207-0.6708=-0.6915\%$ energy $=-0.5800-0.6708=-1.2508\%$ momentum ยังเป็น 0.4741% คำทำนายทุกตัวยังเท่าเดิม</p></details>
+  <p><strong>2.</strong> ถ้ามีสองประเทศ ทุกหุ้นอยู่ประเทศเดียว และแบบจำลองมี factor โลก (1 ทุกตัว) ประเทศ A และประเทศ B null direction คืออะไร?</p>
+  <details><summary>เฉลย</summary><p>$\mathbf v=(1,-1,-1)$ เรียง (โลก, A, B) เพราะเพิ่มโลกหนึ่งหน่วยแล้วลดทุกประเทศหนึ่งหน่วย หุ้นทุกตัวได้ศูนย์ ถ้ายังมี industry ที่รวมกันเป็น 1 อีกชุด จะมี null direction เพิ่มอีกหนึ่ง ต้องเติมเงื่อนไขสองข้อ</p></details>
+  <p><strong>3.</strong> ถ้าความผันผวนเฉพาะตัวของหุ้นในตลาดอยู่ระหว่าง 1% ถึง 4% ต่อวัน หุ้นที่เงียบที่สุดได้น้ำหนักกี่เท่าของตัวที่เหวี่ยงที่สุด?</p>
+  <details><summary>เฉลย</summary><p>$(4/1)^2=16$ เท่า ถ้ากว้าง 1% ถึง 5% เป็น 25 เท่า การถ่วงน้ำหนักจึงสำคัญกว่าในตลาดจริงมากกว่าในโจทย์แปดตัวที่ห่างกันแค่ 3 เท่า</p></details>
+</section>
+
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>โค้ดนี้สร้าง loadings matrix หา rank และ null direction แก้ WLS แบบลบคอลัมน์และแบบมีเงื่อนไข (ตัวคูณ Lagrange) หาคำตอบที่สั้นที่สุด ตรวจว่าทุกทางทำนายเท่ากัน และเทียบกับ OLS แล้วพิมพ์ตัวเลขหลักออกมาหนึ่งบรรทัด</p>
+  <pre><code class="language-javascript" data-example="27.1">function matrix(name, A) {
+  if (!Array.isArray(A) || A.length === 0 || !A.every(row =&gt; Array.isArray(row) &amp;&amp; row.length === A[0].length &amp;&amp; row.every(Number.isFinite))) {
+    throw new TypeError(`${name} must be a non-empty rectangular array of finite numbers`);
+  }
+  return A;
+}
+const T = A =&gt; A[0].map((_, j) =&gt; A.map(row =&gt; row[j]));
+const mul = (A, B) =&gt; A.map(row =&gt; B[0].map((_, j) =&gt; row.reduce((s, a, k) =&gt; s + a * B[k][j], 0)));
+const col = v =&gt; v.map(x =&gt; [x]);
+
+// Gaussian elimination with partial pivoting: solves A x = b, refuses a singular A.
+function solve(A, b) {
+  matrix('A', A);
+  const n = A.length, M = A.map((row, i) =&gt; [...row, b[i]]);
+  for (let k = 0; k &lt; n; k++) {
+    let p = k;
+    for (let i = k + 1; i &lt; n; i++) if (Math.abs(M[i][k]) &gt; Math.abs(M[p][k])) p = i;
+    if (Math.abs(M[p][k]) &lt; 1e-12) throw new RangeError('matrix is singular: the factors are not identified');
+    [M[k], M[p]] = [M[p], M[k]];
+    for (let i = k + 1; i &lt; n; i++) {
+      const f = M[i][k] / M[k][k];
+      for (let j = k; j &lt;= n; j++) M[i][j] -= f * M[k][j];
+    }
+  }
+  const x = new Array(n).fill(0);
+  for (let i = n - 1; i &gt;= 0; i--) x[i] = (M[i][n] - M[i].slice(i + 1, n).reduce((s, a, j) =&gt; s + a * x[i + 1 + j], 0)) / M[i][i];
+  return x;
+}
+
+// Rank by elimination (count the pivots that survive).
+function rank(A) {
+  const M = matrix('A', A).map(row =&gt; [...row]);
+  let r = 0;
+  for (let c = 0; c &lt; M[0].length &amp;&amp; r &lt; M.length; c++) {
+    let p = r;
+    for (let i = r + 1; i &lt; M.length; i++) if (Math.abs(M[i][c]) &gt; Math.abs(M[p][c])) p = i;
+    if (Math.abs(M[p][c]) &lt; 1e-10) continue;
+    [M[r], M[p]] = [M[p], M[r]];
+    for (let i = r + 1; i &lt; M.length; i++) { const f = M[i][c] / M[r][c]; for (let j = c; j &lt; M[0].length; j++) M[i][j] -= f * M[r][j]; }
+    r++;
+  }
+  return r;
+}
+
+// Weighted least squares: minimise sum w_i (r_i - (B f)_i)^2.
+function wls(B, r, w) {
+  const BW = T(B).map(row =&gt; row.map((x, i) =&gt; x * w[i]));
+  return solve(mul(BW, B), mul(BW, col(r)).map(x =&gt; x[0]));
+}
+
+// Same, with one linear side constraint c'f = 0 (a Lagrange multiplier appended to the system).
+function wlsConstrained(B, r, w, c) {
+  const BW = T(B).map(row =&gt; row.map((x, i) =&gt; x * w[i]));
+  const G = mul(BW, B), m = G.length;
+  const A = G.map((row, i) =&gt; [...row, c[i]]);
+  A.push([...c, 0]);
+  return solve(A, [...mul(BW, col(r)).map(x =&gt; x[0]), 0]).slice(0, m);
+}
+
+const industry = [0, 0, 0, 1, 1, 2, 2, 2];
+const momentum = [1.2, -0.4, 0.6, -1.4, 0.9, -0.7, 0.3, -0.5];
+const B = industry.map((g, i) =&gt; [1, g === 0 ? 1 : 0, g === 1 ? 1 : 0, g === 2 ? 1 : 0, momentum[i]]);
+const r = [1.20, 0.35, 0.90, -0.60, 0.25, -1.10, -0.40, -0.95].map(x =&gt; x / 100);
+const idio = [1.8, 2.2, 1.5, 2.6, 2.0, 2.4, 1.7, 2.1];
+const w = idio.map(s =&gt; 1 / s ** 2);
+const cap = [300, 180, 220, 400, 150, 260, 340, 190];
+
+const v = [1, -1, -1, -1, 0];
+const Bv = B.map(row =&gt; row.reduce((s, x, j) =&gt; s + x * v[j], 0));
+const Bdrop = B.map(row =&gt; [row[0], row[1], row[2], row[4]]);
+const fDrop = wls(Bdrop, r, w);
+const shares = [0, 1, 2].map(g =&gt; cap.filter((_, i) =&gt; industry[i] === g).reduce((a, b) =&gt; a + b, 0) / cap.reduce((a, b) =&gt; a + b, 0));
+const fCon = wlsConstrained(B, r, w, [0, ...shares, 0]);
+const fDropFull = [fDrop[0], fDrop[1], fDrop[2], 0, fDrop[3]];
+const t = -fCon.reduce((s, x, j) =&gt; s + x * v[j], 0) / 4;          // shortest vector on the line fCon + t v
+const fMin = fCon.map((x, j) =&gt; x + t * v[j]);
+const predict = f =&gt; B.map(row =&gt; row.reduce((s, x, j) =&gt; s + x * f[j], 0));
+const fOLS = wls(Bdrop, r, r.map(() =&gt; 1));
+console.log(JSON.stringify({
+  rank: rank(B), BvMax: Math.max(...Bv.map(Math.abs)),
+  fDrop, shares, fCon, fMin, shift: fDropFull.map((x, j) =&gt; x - fCon[j]),
+  firstPrediction: predict(fCon)[0], maxPredictionGap: Math.max(...predict(fCon).map((x, i) =&gt; Math.abs(x - predict(fDropFull)[i]), predict(fMin).map((x, i) =&gt; Math.abs(x - predict(fCon)[i]))).flat()),
+  fOLS, maxOLSGap: Math.max(...fOLS.map((x, j) =&gt; Math.abs(x - fDrop[j]))),
+  weightRatio: w[2] / w[3]
+}));</code></pre>
+</section>
+
+<section class="prose">
+  <h4>ที่มาที่ไป</h4>
+  <p>การหา factor return ด้วย regression ข้ามหุ้นรายวันแพร่หลายจากงานของ Barr Rosenberg ในทศวรรษ 1970 ซึ่งกลายเป็นแบบจำลองความเสี่ยงเชิงพาณิชย์ของ Barra และเป็นแม่แบบของแบบจำลองในหัวข้อนี้ วิธีคิดแบบวนหาค่าประมาณของ Fama และ MacBeth (1973) ก็ใช้ regression ข้ามหุ้นทีละช่วงเวลาเช่นกัน แต่เพื่อทดสอบว่า factor มีค่าชดเชยหรือไม่</p>
 </section>
 
 <section class="table">
   <h4>ข้อจำกัด: สามทางแก้ เทียบกัน</h4>
   <table>
-    <thead><tr><th>ทางแก้</th><th>ข้อดี</th><th>ข้อเสีย</th><th>ใช้เมื่อไร</th></tr></thead>
+    <thead><tr><th>ทางแก้</th><th>ข้อดี</th><th>ข้อเสีย</th></tr></thead>
     <tbody>
-      <tr><td>ลบคอลัมน์ทิ้ง</td><td>ง่ายที่สุด ใช้สูตรเดิมได้เลย ไม่เอน</td><td>ตัวเลขกลายเป็น “เทียบกับตัวที่ลบ” และคนที่ดู industry นั้นจะไม่มีอะไรดู</td><td>ต้นแบบที่ทำเร็ว ๆ หรือเมื่อ industry ที่ลบไม่สำคัญจริง ๆ</td></tr>
-      <tr><td>โทษตามขนาด</td><td>ไม่ต้องเลือกอะไร โค้ดสั้น</td><td>เลือกคำตอบที่สั้นที่สุดซึ่งไม่มีความหมาย และเอนเล็กน้อย</td><td>เมื่อสนใจแค่คำทำนาย ไม่สนใจตัวเลขรายตัว</td></tr>
-      <tr><td>เงื่อนไขข้าง</td><td>ตัวเลขทุกตัวตีความได้ ครบทุก industry ไม่เอน</td><td>ต้องเขียนโค้ดเพิ่มเล็กน้อย และต้องเลือกน้ำหนักในเงื่อนไข</td><td>ระบบจริงเกือบทั้งหมดใช้ทางนี้</td></tr>
-      <tr><td>ทั้งสามทาง</td><td>คำทำนายและ idiosyncratic return เหมือนกันเป๊ะ</td><td>factor return รายตัวต่างกัน และรายงานผลงานต่างตาม</td><td>เลือกครั้งเดียวแล้วอย่าเปลี่ยน</td></tr>
+      <tr><td>A ลบคอลัมน์</td><td>ง่ายที่สุด ใช้สูตรเดิม</td><td>market กลายเป็นพอร์ต energy และ industry ที่ลบไม่มีตัวเลข</td></tr>
+      <tr><td>B คำตอบสั้นที่สุด</td><td>ไม่ต้องเลือกอะไร ไลบรารีทำให้</td><td>ไม่มีความหมายทางธุรกิจ และเปลี่ยนเมื่อจำนวน industry เปลี่ยน</td></tr>
+      <tr><td>C ถ่วงมูลค่าตลาดเป็นศูนย์</td><td>ทุกตัวตีความได้ market คือตลาดจริง</td><td>ต้องเขียนระบบสมการที่ใหญ่ขึ้นหนึ่งแถว</td></tr>
+      <tr><td>ทุกทาง</td><td>คำทำนาย ความเสี่ยง และ idiosyncratic return เหมือนกัน</td><td>การแบ่งเครดิตระหว่าง market กับ industry ต่างกัน จึงต้องเลือกครั้งเดียวแล้วไม่เปลี่ยน</td></tr>
     </tbody>
   </table>
-  <div class="note">
-    <p>แถวสุดท้ายคือสิ่งที่ทำให้เรื่องนี้ไม่น่ากลัวเท่าที่คิด ทุกอย่างที่ใช้ตัดสินใจเรื่องความเสี่ยงและ idiosyncratic PnL เหมือนกันหมด ที่ต่างคือการเล่าเรื่องว่า factor ไหนได้เครดิต</p>
-  </div>
-</section>
-
-<section class="code">
-  <details>
-    <summary>ตรวจทุกตัวเลขของหัวข้อนี้</summary>
-    <pre><code>import numpy as np
-
-ind = np.array([0, 0, 0, 1, 1, 2, 2, 2])          # tech, banks, energy
-B = np.zeros((8, 5))
-B[:, 0] = 1
-B[np.arange(8), 1 + ind] = 1
-B[:, 4] = [1.2, -0.4, 0.6, -1.4, 0.9, -0.7, 0.3, -0.5]
-r = np.array([1.20, 0.35, 0.90, -0.60, 0.25, -1.10, -0.40, -0.95]) / 100
-sig = np.array([1.8, 2.2, 1.5, 2.6, 2.0, 2.4, 1.7, 2.1])
-W = np.diag(1 / sig ** 2)
-cap = np.array([300.0, 180, 220, 400, 150, 260, 340, 190])
-
-# step 3: the direction the data cannot see
-assert np.linalg.matrix_rank(B) == 4 and B.shape[1] == 5
-v = np.array([1.0, -1, -1, -1, 0])
-assert np.allclose(B @ v, 0)
-assert np.linalg.matrix_rank(B.T @ W @ B) == 4         # so it cannot be inverted
-
-# step 5a: drop the energy column
-Bd = np.delete(B, 3, axis=1)
-fd = np.linalg.solve(Bd.T @ W @ Bd, Bd.T @ W @ r)
-assert np.allclose(fd * 100, [-0.6466, 1.2508, 0.5593, 0.4741], atol=5e-5)
-
-# step 5b: a side constraint instead
-cw = np.array([cap[ind == g].sum() for g in range(3)])
-cw = cw / cw.sum()
-assert np.allclose(cw, [0.343137, 0.269608, 0.387255], atol=1e-6)
-c = np.zeros(5); c[1:4] = cw
-A = np.zeros((6, 6)); A[:5, :5] = B.T @ W @ B; A[:5, 5] = c; A[5, :5] = c
-rhs = np.zeros(6); rhs[:5] = B.T @ W @ r
-fc = np.linalg.solve(A, rhs)[:5]
-assert np.allclose(fc * 100, [-0.0666, 0.6708, -0.0207, -0.5800, 0.4741], atol=5e-5)
-assert abs(c @ fc) &lt; 1e-15                             # the constraint really binds
-
-# the two answers differ by exactly a multiple of the null direction
-full_d = np.insert(fd, 3, 0.0)
-diff = full_d - fc
-assert np.allclose(diff, -0.005800 * v, atol=5e-7)
-assert abs(diff[4]) &lt; 1e-15                            # momentum is untouched
-assert abs(fd[3] - fc[4]) &lt; 1e-15                      # same style number both ways
-
-# and they predict exactly the same returns
-assert np.allclose(Bd @ fd, B @ fc, atol=1e-15)
-assert np.allclose(r - Bd @ fd, r - B @ fc, atol=1e-15)
-assert abs((Bd @ fd)[0] * 100 - 1.1731) &lt; 5e-5         # the 10-second check
-
-# step 6: weighted against unweighted
-fo = np.linalg.lstsq(Bd, r, rcond=None)[0]
-assert np.allclose(fo * 100, [-0.6794, 1.2826, 0.6188, 0.4575], atol=5e-5)
-assert abs(np.abs(fo - fd).max() * 100 - 0.0595) &lt; 5e-5
-assert abs((2.6 / 1.5) ** 2 - 3.0044) &lt; 1e-3           # weight ratio, quietest to loudest
-
-# step 2: the two-stage bootstrap converges fast
-f1 = np.linalg.lstsq(Bd, r, rcond=None)[0]             # round 1: equal weights
-e1 = r - Bd @ f1
-W2 = np.diag(1 / np.maximum(e1 ** 2, 1e-8))
-f2 = np.linalg.solve(Bd.T @ W2 @ Bd, Bd.T @ W2 @ r)
-assert np.abs(f2 - f1).max() &lt; 0.01                    # round 2 moves it, but not wildly</code></pre>
-  </details>
-  <div class="note">
-    <p>บรรทัดที่ยืนยันว่าส่วนต่างเท่ากับ −0.58% คูณ null direction พอดี คือหลักฐานว่าความกำกวมทั้งหมดอยู่ในทิศเดียวนั้นจริง ไม่ใช่กระจายมั่ว และบรรทัดที่เทียบ idiosyncratic return ยืนยันว่าทุกอย่างที่ใช้วัดความเสี่ยงไม่ขึ้นกับการเลือกเงื่อนไข</p>
-  </div>
-</section>
-
-<section class="prose">
-  <h4>ก่อนไปต่อ</h4>
-  <p>ตอนนี้เรามี factor return วันละหนึ่งชุดแล้ว สะสมไปหนึ่งปีได้ 251 ชุด คำถามถัดไปคือ จะเอาข้อมูลชุดนั้นมาสร้าง covariance matrix อย่างไร ซึ่งฟังดูเหมือนแค่คำนวณค่าเฉลี่ยของผลคูณ แต่มีสี่เรื่องที่ทำให้มันไม่ง่ายอย่างนั้น</p>
 </section>
 
 <section class="takeaways">
-  <h4>สรุปที่ใช้ได้จริง</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>factor return หาจาก cross-sectional regression ที่รันใหม่ทุกวัน ถ่วงน้ำหนักด้วยหนึ่งส่วน idiosyncratic variance เพราะนั่นทำให้ค่าที่ได้เป็นผลตอบแทนของพอร์ตที่ซื้อขายได้จริง</li>
-    <li>$\boldsymbol\Omega_\epsilon$ เป็นทั้งข้อมูลเข้าและผลลัพธ์ ทางออกคือวนสองรอบในปีแรก แล้วใช้ค่าของเมื่อวานเป็นน้ำหนักของวันนี้</li>
-    <li>market บวกกับ industry ที่รวมกันได้หนึ่ง ทำให้ matrix มี rank ไม่ครบเสมอ ทิศที่หายไปคือ “เพิ่ม market หนึ่ง ลด industry ทุกตัวหนึ่ง”</li>
-    <li>ทางแก้ที่ใช้กันคือเติมเงื่อนไขว่าผลตอบแทน industry ถ่วงมูลค่าตลาดรวมกันได้ศูนย์ ซึ่งทำให้ market เป็นผลตอบแทนของตลาดจริง ๆ ในโจทย์นี้สองทางแก้ต่างกัน 0.58 จุดทุก factor แต่ทำนายเหมือนกันเป๊ะ</li>
-    <li>ค่าของ style ไม่ขึ้นกับการเลือกเงื่อนไขเลย และ idiosyncratic return ก็ไม่ขึ้นด้วย สิ่งที่ขึ้นคือการแบ่งเครดิตระหว่าง market กับ industry เท่านั้น</li>
+    <li>factor return หาจาก WLS ข้ามหุ้นทุกวัน น้ำหนัก $1/\sigma_i^2$ และแต่ละค่าคือผลตอบแทนของพอร์ตที่ซื้อได้จริง</li>
+    <li>market บวก industry ที่รวมเป็นหนึ่งทำให้ rank ขาดหนึ่งเสมอ ทิศที่หายคือ “เพิ่ม market ลดทุก industry”</li>
+    <li>ทุกทางแก้ต่างกันแค่ในทิศนั้น: momentum และคำทำนายเท่ากันเป๊ะ ต่างแค่การแบ่งเครดิต</li>
+    <li>เงื่อนไขถ่วงมูลค่าตลาดทำให้ market เป็นตลาดจริง ส่วนการลบคอลัมน์ทำให้ market เป็นพอร์ต energy</li>
+    <li>น้ำหนักต้องมาจากความผันผวนเฉพาะตัวถึงเมื่อวาน: วนสองรอบตอนเริ่ม แล้ววันละรอบ</li>
   </ul>
+  <p>27.2 เอา factor return ที่ได้วันละชุดมาสร้าง covariance matrix ของ factor ซึ่งฟังดูเป็นแค่ค่าเฉลี่ยของผลคูณ แต่มีสี่เรื่องที่ทำให้ไม่ง่ายอย่างนั้น</p>
 </section>
 </article>
 
