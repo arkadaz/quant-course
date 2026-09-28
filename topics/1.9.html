@@ -24,7 +24,7 @@
 <div class="hook">
   <p>ถ้าการขาดทุนเกิน 2% เกิดได้ประมาณแปดวันต่อปี การขาดทุนเกิน 4% ควรเกิดประมาณสี่วันต่อปีหรือไม่?</p>
   <details>
-    <summary>เปิดคำตอบของแบบจำลองที่จะใช้</summary>
+    <summary>เฉลยของแบบจำลองที่จะใช้</summary>
     <p>ไม่ใช่ ภายใต้ Normal ตัวอย่างนี้ โอกาสขาดทุนเกิน 4% ต่ำกว่าขาดทุนเกิน 2% ประมาณ 265 เท่า ไม่ใช่สองเท่า หางของ distribution มีผลอย่างมากต่อคำตอบ จึงต้องตรวจหาง ไม่ใช่เลือกเส้นที่ดูเหมือนข้อมูลตรงกลางอย่างเดียว</p>
   </details>
   <p>ครึ่งแรกของบทจะคำนวณความเสี่ยงและอ่าน QQ plot ส่วนท้ายพิสูจน์ที่มาของเส้นระฆังและ moment ต่าง ๆ ผู้อ่านที่ยังไม่คล่อง calculus สามารถทำโจทย์หลักก่อนแล้วกลับมาอ่านส่วนพิสูจน์ได้</p>
@@ -70,8 +70,8 @@ F_X(x)&=\Phi\left(\frac{x-\mu}{\sigma}\right)
   <h4>ขั้นที่ 2 — กฎ 68–95–99.7% เป็นพื้นที่รอบค่าเฉลี่ย</h4>
   <div class="math">\[
 \begin{aligned}
-P(\mu-k\sigma\le X\le\mu+k\sigma)
-&=\Phi(k)-\Phi(-k)\\
+&P(\mu-k\sigma\le X\le\mu+k\sigma)\\
+&\quad=\Phi(k)-\Phi(-k)\\
 &=2\Phi(k)-1\\
 k=1&:\quad68.2689\%\\
 k=2&:\quad95.4500\%\\
@@ -98,10 +98,13 @@ k=3&:\quad99.7300\%
   <h4>ขั้นที่ 3 — โอกาสขาดทุนเกิน 2% และจำนวนวันที่คาดหมาย</h4>
   <div class="math">\[
 \begin{aligned}
-z_2&=\frac{-0.02-0.0004}{0.011}\approx-1.854545\\
-p_2&=P(R\lt-0.02)=\Phi(z_2)\\
-&\approx0.0318306=3.18306\%\\
-\mathbb E[\text{number of days}]&=252p_2\\
+z_2&=\frac{-0.02-0.0004}{0.011}\\
+&\approx-1.854545,\\
+p_2&=P(R\lt-0.02)\\
+&=\Phi(z_2)\\
+&\approx0.0318306\\
+&=3.18306\%,\\
+252p_2&=252(0.0318306)\\
 &\approx\boxed{8.02\text{ days}}
 \end{aligned}
 \]</div>
@@ -112,7 +115,8 @@ p_2&=P(R\lt-0.02)=\Phi(z_2)\\
   <h4>ขั้นที่ 4 — ขยับเกณฑ์เป็น 4% แล้วเปรียบเทียบ</h4>
   <div class="math">\[
 \begin{aligned}
-z_4&=\frac{-0.04-0.0004}{0.011}\approx-3.672727\\
+z_4&=\frac{-0.04-0.0004}{0.011}\\
+&\approx-3.672727\\
 p_4&=\Phi(z_4)\approx0.000119988\\
 &\approx0.0119988\%\\
 252p_4&\approx0.03024\text{ days}\\
@@ -143,10 +147,13 @@ p_4&=\Phi(z_4)\approx0.000119988\\
   <div class="math">\[
 \begin{aligned}
 P(R\le r_{0.01})&=0.01\\
-\frac{r_{0.01}-\mu}{\sigma}&=\Phi^{-1}(0.01)\approx-2.326348\\
+\frac{r_{0.01}-\mu}{\sigma}&=\Phi^{-1}(0.01)\\
+&\approx-2.326348\\
 r_{0.01}&=\mu+\sigma\Phi^{-1}(0.01)\\
-&\approx0.0004+0.011(-2.326348)\\
-&\approx-0.02518983=-2.518983\%\\
+&\approx0.0004\\
+&\quad+0.011(-2.326348)\\
+&\approx-0.02518983\\
+&=-2.518983\%\\
 \mathrm{VaR}_{99\%}&=-\$50{,}000{,}000\,r_{0.01}\\
 &\approx\boxed{\$1{,}259{,}491}
 \end{aligned}
@@ -180,12 +187,14 @@ r_{0.01}&=\mu+\sigma\Phi^{-1}(0.01)\\
   <h4>ขั้นที่ 6 — สร้างจุดซ้ายสุดของ QQ plot ด้วยมือ</h4>
   <div class="math">\[
 \begin{aligned}
-p_1&=\frac{1-0.5}{252}=\frac{0.5}{252}\approx0.00198413\\
+p_1&=\frac{1-0.5}{252}=\frac{0.5}{252}\\
+&\approx0.00198413\\
 z_1&=\Phi^{-1}(p_1)\approx-2.880674\\
-q_1&=0.086302\%+0.792855\%(-2.880674)\\
+q_1&=0.086302\%\\
+&\quad+0.792855\%(-2.880674)\\
 &\approx-2.197654\%\\
 r_{(1)}&=-2.980349\%\\
-r_{(1)}-q_1&\approx-0.782694\text{ percentage points}
+r_{(1)}-q_1&\approx-0.782694\%
 \end{aligned}
 \]</div>
   <div class="reading"><p>จุดแรกจึงอยู่ใต้เส้นอ้างอิงประมาณ 0.783 จุดเปอร์เซ็นต์ แต่ $q_1$ เป็น theoretical quantile ตาม plotting position ที่เลือก ไม่ใช่ขอบล่างที่ Normal อนุญาต และไม่ใช่ expected minimum แบบตรงของตัวอย่าง 252 วัน</p></div>
@@ -193,8 +202,34 @@ r_{(1)}-q_1&\approx-0.782694\text{ percentage points}
 
 <figure class="plot">
   <h4>Figure 1.9e — เปรียบเทียบอันดับ ไม่ใช่สร้างเส้นห้ามข้าม</h4>
-  <img src="../figures/1.9-5.svg" alt="QQ plot ของผลตอบแทน SPY 2024 กับเส้น Normal ที่มีค่าเฉลี่ยและ sample SD เดียวกัน" loading="lazy">
-  <figcaption><p>ปลายซ้ายของข้อมูลชุดนี้อยู่ต่ำกว่าเส้นอ้างอิง จึงเป็นเหตุให้ตรวจหางซ้ายเพิ่ม คำกำกับเดิมในรูปที่ใช้คำว่า “allows” หรือ “expects” ต้องอ่านเป็นการเปรียบเทียบกับเส้นอ้างอิง ไม่ใช่ข้อห้าม: Normal ยังให้โอกาสนอกเส้นนั้น และรูปนี้ไม่มี confidence band สำหรับตัดสินนัยสำคัญ</p></figcaption>
+  <svg data-clarity="qq-ranks" viewBox="0 0 560 410" role="img" aria-labelledby="qq-ranks-title qq-ranks-desc" style="display:block;width:100%;height:auto;background:#fff;border-radius:8px">
+    <title id="qq-ranks-title">QQ plot ห้าจุดจากข้อมูลชุดเดียวกับตัวอย่าง</title>
+    <desc id="qq-ranks-desc">จุดข้อมูลอันดับ 1, 6, 126, 247 และ 252 เทียบกับเส้น Normal ที่มีค่าเฉลี่ยและ sample SD เดียวกัน อันดับแรกมีผลตอบแทนจริงประมาณ −2.98% ต่ำกว่าค่าอ้างอิงประมาณ −2.20% เส้นนี้ไม่ใช่ขอบเขตของผลที่เกิดได้</desc>
+    <g stroke="#ccd5dd" stroke-width="1"><path d="M60,70 H520 M60,190 H520 M60,310 H520"/></g>
+    <g fill="none" stroke="#34495b" stroke-width="2"><path d="M60,60 V330 H530"/><path d="M60,330 V337 M290,330 V337 M520,330 V337"/></g>
+    <path data-reference="normal" d="M60,281.6905 L520,91.4053" stroke="#687b8c" stroke-width="3" fill="none"/>
+    <g fill="#287f9b" stroke="#fff" stroke-width="1.5">
+      <circle data-rank="1" cx="69.1483" cy="309.2139" r="6" fill="#b94e47"/>
+      <circle data-rank="6" cx="135.3305" cy="264.4737" r="6"/>
+      <circle data-rank="126" cx="289.6187" cy="186.1102" r="6"/>
+      <circle data-rank="247" cx="444.6695" cy="124.2175" r="6"/>
+      <circle data-rank="252" cx="510.8517" cy="90.5378" r="6"/>
+    </g>
+    <circle data-reference="rank1" cx="69.1483" cy="277.9062" r="6" fill="#fff" stroke="#687b8c" stroke-width="2"/>
+    <g fill="none" stroke-width="1.5"><path d="M77,277.9062 H187" stroke="#687b8c"/><path d="M77,309.2139 L187,317" stroke="#b94e47"/></g>
+    <g fill="#243b4c" font-family="Tahoma,sans-serif" font-size="22">
+      <path d="M68,25 H112" stroke="#687b8c" stroke-width="3"/><text x="124" y="32">เส้นอ้างอิง Normal</text>
+      <circle cx="403" cy="25" r="6" fill="#287f9b"/><text x="419" y="32">ข้อมูล</text>
+      <text x="199" y="285">เส้น −2.20%</text><text x="199" y="326" fill="#b94e47">ข้อมูล −2.98%</text>
+      <g text-anchor="end"><text x="48" y="78">3</text><text x="48" y="198">0</text><text x="48" y="318">−3</text></g>
+      <g text-anchor="middle"><text x="60" y="363">−3</text><text x="290" y="363">0</text><text x="520" y="363">3</text>
+        <text x="290" y="398">Normal quantile z ที่อันดับเดียวกัน</text>
+        <text transform="translate(22,190) rotate(-90)">ผลตอบแทน (%)</text>
+      </g>
+    </g>
+  </svg>
+  <figcaption><p>อ่านจุดซ้ายสุดก่อน: จุดทึบคือผลจริงประมาณ −2.98% ส่วนวงกลมโปร่งบนเส้นคือค่าอ้างอิงประมาณ −2.20% ที่อันดับเดียวกัน ลบค่าที่แสดงได้ $(-2.98)-(-2.20)=-0.78$ จุดเปอร์เซ็นต์ นี่คือส่วนต่างที่ QQ ช่วยให้มองเห็น ไม่ใช่การข้ามขอบเขตที่ Normal ห้ามไว้</p><p>ภาพเลือกอันดับ 1, 6, 126, 247 และ 252 เพื่อให้ฝึกอ่านจุดได้ง่าย การตัดสินว่า Normal เหมาะหรือไม่ต้องดูข้อมูลทั้งหมดและความคลาดจากการสุ่ม ไม่ตัดสินจากจุดเดียว</p></figcaption>
+  <details><summary>ภาพเดิมสำหรับตรวจสอบ</summary><p><a href="../figures/1.9-5.svg">กราฟเดิมทั้ง 252 จุด</a> เก็บไว้เป็นหลักฐาน คำกำกับ “allows” และ “expects” ในภาพเดิมชวนให้เข้าใจ quantile เป็นขอบเขตหรือค่าเฉลี่ยของวันแย่สุด จึงไม่ใช้เป็นภาพสอนหลัก</p></details>
 </figure>
 
 <section class="prose">
@@ -228,7 +263,8 @@ r_{(1)}-q_1&\approx-0.782694\text{ percentage points}
 &\quad-\sum_{j=1}^{k}\ln\left(1+\frac j{50}\right)\\
 &\approx-\frac1{50}\sum_{j=1}^{k}(2j-1)=-\frac{k^2}{50}\\
 \frac{p_k}{p_0}&\approx e^{-k^2/(2\cdot25)}\\
-k=5&:\quad0.609056\text{ (Binomial)},\quad e^{-0.5}\approx0.606531
+k=5&:\quad p_5/p_0\approx0.609056,\\
+e^{-0.5}&\approx0.606531
 \end{aligned}
 \]</div>
   <div class="reading"><p>ผลรวมจำนวนคี่ $1+3+\cdots+(2k-1)$ เท่ากับ $k^2$ จึงเกิดเลขชี้กำลังเป็นระยะห่างยกกำลังสอง เมื่อหารระยะห่างด้วย standard deviation 5 จะได้รูปร่าง $e^{-z^2/2}$ นี่ยังเป็นคำอธิบายผ่านการประมาณ ไม่ใช่หลักฐานว่าทั้งสอง distribution เท่ากันพอดี</p></div>
@@ -240,11 +276,12 @@ k=5&:\quad0.609056\text{ (Binomial)},\quad e^{-0.5}\approx0.606531
   <div class="math">\[
 \begin{aligned}
 I&\equiv\int_{-\infty}^{\infty}e^{-z^2/2}\,dz\\
-I^2&=\iint_{\mathbb R^2}e^{-(x^2+y^2)/2}\,dx\,dy\\
-&=\int_0^{2\pi}\int_0^\infty e^{-r^2/2}r\,dr\,d\theta\\
+I^2&\\
+&=\iint_{\mathbb R^2}e^{-(x^2+y^2)/2}\,dx\,dy\\
+&=2\pi\int_0^\infty e^{-r^2/2}r\,dr\\
 &=2\pi[-e^{-r^2/2}]_0^\infty=2\pi\\
 I&=\sqrt{2\pi}\\
-\int_{-\infty}^{\infty}\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz&=1
+&\int_{-\infty}^{\infty}\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=1
 \end{aligned}
 \]</div>
   <div class="reading"><p>$I$ เป็นบวกจึงเลือกรากบวก นี่คือเหตุผลของตัวหาร $\sqrt{2\pi}$ ใน Standard Normal ส่วนตัวหาร $\sigma$ ของ Normal ทั่วไปมาจากการยืดความกว้างของแกนโดยรักษาพื้นที่ไว้ ตามที่ทำในหัวข้อ 1.8</p></div>
@@ -286,13 +323,17 @@ M_Z(t)&=\sum_{m=0}^{\infty}\frac{\mathbb E[Z^m]}{m!}t^m\\[3pt]
 <section class="formula">
   <h4>ขั้นที่ 10 — ตรวจค่าประมาณด้วยโจทย์เหรียญที่รู้คำตอบตรง</h4>
   <p>กลับไปที่ $H\sim\mathrm{Binomial}(100,0.5)$ ถามโอกาสหัวตั้งแต่ 60 ครั้ง ใช้ค่าเฉลี่ย 50 และ standard deviation 5 แต่เริ่มพื้นที่ที่ 59.5 เพื่อครอบแท่ง 60 ตาม continuity correction</p>
+  <p>บรรทัดสุดท้ายคำนวณอีกแบบไว้เปรียบเทียบ: ถ้าไม่เลื่อนขอบและใช้ 60 ตรง ๆ จะได้ $z=(60-50)/5=2$ และโอกาสประมาณ 2.27501% แทนที่จะเป็น 2.87166%</p>
   <div class="math">\[
 \begin{aligned}
-P(H\ge60)&=\sum_{h=60}^{100}\binom{100}{h}(0.5)^{100}\\
+&P(H\ge60)\\
+&\quad=\sum_{h=60}^{100}\binom{100}{h}(0.5)^{100}\\
 &\approx2.84440\%\\
-P(H\ge60)&\approx1-\Phi\left(\frac{59.5-50}{5}\right)\\
-&=1-\Phi(1.9)\approx2.87166\%\\
-\text{without correction}&:\quad1-\Phi(2)\approx2.27501\%
+&P(H\ge60)\\
+&\quad\approx1-\Phi\left(\frac{59.5-50}{5}\right)\\
+&\quad=1-\Phi(1.9)\\
+&\quad\approx2.87166\%,\\
+&1-\Phi(2)\approx2.27501\%
 \end{aligned}
 \]</div>
   <div class="reading"><p>ค่าที่ปรับขอบใกล้คำตอบ Binomial มากกว่าในตัวอย่างนี้ แต่ยังมีความคลาดเคลื่อน การคำนวณเร็วขึ้นเป็นข้อดีของ approximation ไม่ใช่เหตุผลให้ลืมว่าใช้การประมาณ โดยเฉพาะเมื่อถามหางที่ไกลออกไป</p></div>
@@ -309,8 +350,10 @@ P(H\ge60)&\approx1-\Phi\left(\frac{59.5-50}{5}\right)\\
   <p>ให้ $Q=\Phi(-a)$ และ $a\gt0$ ใช้ integration by parts จะได้เทอมหลัก $\phi(a)/a$ ลบเศษที่เป็นบวก เศษนั้นไม่เกิน $Q/a^2$ จึงสร้างขอบล่างและขอบบนได้</p>
   <div class="math">\[
 \begin{aligned}
-a&=\frac{0.226+0.0004}{0.011}\approx20.581818\\
-Q&=\frac{\phi(a)}a-\int_a^\infty\frac{\phi(z)}{z^2}\,dz\\
+a&=\frac{0.226+0.0004}{0.011}\\
+&\approx20.581818,\\
+Q&=\frac{\phi(a)}a\\
+&\quad-\int_a^\infty\frac{\phi(z)}{z^2}\,dz\\
 \frac{a\phi(a)}{a^2+1}&\le Q\le\frac{\phi(a)}a\\
 1.9971\times10^{-94}&\lesssim Q\lesssim2.0018\times10^{-94}
 \end{aligned}
@@ -334,7 +377,7 @@ Q&=\frac{\phi(a)}a-\int_a^\infty\frac{\phi(z)}{z^2}\,dz\\
   <h4>ลองทำเอง — แยกเปอร์เซ็นต์ของผลตอบแทนออกจากจำนวนเงิน</h4>
   <p>พอร์ตเดิมมีมูลค่าลดเหลือ \$25 ล้าน แต่กำหนด distribution ของผลตอบแทนเท่าเดิม โอกาสขาดทุนเกิน 2% และ VaR 99% ในหน่วยเงินเปลี่ยนอย่างไร?</p>
   <details>
-    <summary>เปิดคำตอบ</summary>
+    <summary>เฉลย</summary>
     <p>โอกาสขาดทุนเกิน 2% ยังคงประมาณ 3.18306% เพราะเกณฑ์และ distribution ของผลตอบแทนไม่เปลี่ยน ส่วน VaR ในหน่วยเงินลดครึ่งหนึ่งเป็นประมาณ \$629,746 เนื่องจากใช้มูลค่าพอร์ตคูณ return quantile เดิม</p>
     <p>ถ้าถามโอกาสขาดทุนเกิน \$1 ล้าน คำตอบจะเปลี่ยน เพราะ \$1 ล้านเท่ากับ 4% ของพอร์ตใหม่ แทนที่จะเป็น 2% ของพอร์ตเดิม ต้องแปลงเกณฑ์ก่อนคำนวณทุกครั้ง</p>
   </details>
@@ -353,6 +396,12 @@ Q&=\frac{\phi(a)}a-\int_a^\infty\frac{\phi(z)}{z^2}\,dz\\
       <tr><td>พารามิเตอร์ที่ประมาณจากตัวอย่าง</td><td>ความคลาดเคลื่อนของการประมาณและข้อมูลหางที่น้อยทำให้ตัวเลข VaR ดูแม่นกว่าที่เป็นจริง</td></tr>
     </tbody>
   </table>
+</section>
+
+<section class="example">
+  <h4>ลองอ่านจุดซ้ายสุดด้วยตัวเอง</h4>
+  <p>ข้อมูล −2.98% อยู่ต่ำกว่าค่าอ้างอิง −2.20% ประมาณเท่าไร? แปลว่าผลนี้เกิดไม่ได้ภายใต้ Normal หรือไม่?</p>
+  <details><summary>เฉลย</summary><p>ต่ำกว่าประมาณ 0.78 จุดเปอร์เซ็นต์ เพราะ $(-2.98)-(-2.20)=-0.78$ ผลนี้ยังเกิดได้ภายใต้ Normal เพราะเส้น QQ เป็นค่าอ้างอิงที่อันดับเดียวกัน ไม่ใช่ขอบเขตต่ำสุด จุดเดียวจึงไม่พอจะตัดสินว่าแบบจำลองผิด</p></details>
 </section>
 
 <details class="jargon">
@@ -383,7 +432,7 @@ Q&=\frac{\phi(a)}a-\int_a^\infty\frac{\phi(z)}{z^2}\,dz\\
 <section class="code">
   <details>
     <summary>ตรวจ probability, VaR และ approximation ด้วย JavaScript</summary>
-    <pre><code>const phi = z =&gt; Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+    <pre><code class="language-javascript" data-example="1.9">const phi = z =&gt; Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
 function Phi(z) {
   const n = 10000, h = Math.abs(z) / n;
   let sum = 0;
