@@ -72,7 +72,24 @@ C_{\rm BS}&=25.61462.
 </section>
 <section class="formula">
   <h4>ขั้นที่ 2 — characteristic function: ค่าเฉลี่ยของจุดบนวงกลม</h4>
-  <p>ของที่แบบจำลองส่วนใหญ่ให้ได้คือ characteristic function ของ $x_T=\ln S_T$ นิยามของมันเหมือน moment generating function ของ 8.5 แต่ใส่ $i$ ในเลขชี้กำลัง ลองกับตัวแปรที่เป็น 0 หรือ 1 อย่างละครึ่งก่อน แล้วค่อยหาของ Black–Scholes ด้วยการจัดกำลังสองสมบูรณ์แบบเดียวกับ 8.5</p>
+  <p>ลองของเล่นที่แยกจากแบบจำลองราคาหุ้นก่อน: สุ่มได้ $X=0$ หรือ $X=1$ อย่างละครึ่ง ที่ความถี่ $u=0$ ทั้งสองผลชี้ไปทางขวาของวงกลม; ที่ $u=\pi$ ผล 0 ชี้ขวา แต่ผล 1 ชี้ซ้าย น้ำหนักบวกเท่ากันจึงหักล้างกันได้ จากนั้นค่อยใช้ characteristic function ของ $x_T=\ln S_T$ กับ Black–Scholes โดยจัดกำลังสองสมบูรณ์แบบเดียวกับ 8.5</p>
+  <figure class="plot" data-clarity="opposing-circle-points">
+    <h4>ของเล่น $X=0$ หรือ $1$: จุดบนวงกลมที่ $u=\pi$</h4>
+    <svg viewBox="0 0 440 190" role="img" aria-label="วงกลมหนึ่งหน่วย: X เท่ากับ 0 ชี้จุดบวกหนึ่งทางขวา X เท่ากับ 1 ชี้จุดลบหนึ่งทางซ้าย ลูกศรสองอันยาวเท่ากันและหักล้างกัน" style="display:block;width:100%;max-width:440px;margin:auto">
+      <circle cx="220" cy="90" r="64" fill="none" stroke="#596777" stroke-width="2"/>
+      <line x1="146" y1="90" x2="294" y2="90" stroke="#596777"/><line x1="220" y1="16" x2="220" y2="164" stroke="#596777"/>
+      <line x1="220" y1="84" x2="284" y2="84" stroke="#087e68" stroke-width="4"/><polygon points="284,84 275,78 275,90" fill="#087e68"/>
+      <line x1="220" y1="96" x2="156" y2="96" stroke="#af4c38" stroke-width="4"/><polygon points="156,96 165,90 165,102" fill="#af4c38"/>
+      <circle cx="284" cy="90" r="5" fill="#087e68"/><circle cx="156" cy="90" r="5" fill="#af4c38"/>
+      <text x="285" y="70" fill="#263447">X=0: +1</text><text x="62" y="70" fill="#263447">X=1: −1</text>
+      <text x="144" y="182" fill="#263447">แต่ละจุดมีโอกาส 1/2</text>
+    </svg>
+    <figcaption>สองลูกศรเริ่มที่ศูนย์ ยาวเท่ากันแต่ชี้คนละทิศ: ความถี่ $\pi$ หมุนผล $1$ ไปครึ่งรอบ โดยไม่เปลี่ยนโอกาสของผลนั้น</figcaption>
+  </figure>
+  <div class="table-wrap" style="min-width:0"><table data-clarity="opposing-circle-average"><thead><tr><th>ความถี่</th><th>ผล $X=0$ (โอกาส 1/2)</th><th>ผล $X=1$ (โอกาส 1/2)</th><th>ค่าเฉลี่ยถ่วงน้ำหนัก</th></tr></thead><tbody>
+    <tr><td>$u=0$</td><td data-value="1">$+1$</td><td data-value="1">$+1$</td><td data-value="1">$\tfrac12(+1)+\tfrac12(+1)=1$</td></tr>
+    <tr><td>$u=\pi$</td><td data-value="1">$+1$</td><td data-value="-1">$-1$</td><td data-value="0">$\tfrac12(+1)+\tfrac12(-1)=0$</td></tr>
+  </tbody></table></div>
   <div class="math">\[
 \begin{aligned}
 \varphi(u)&=\mathbb E^{\mathbb Q}\big[e^{iux_T}\big],\\
@@ -85,7 +102,7 @@ x_T&=\mu+\sigma\sqrt T\,Z,\\
 &=S_0e^{(r-q)T}=104.0811.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>$\varphi_{01}$ คือของตัวแปรที่เป็น 0 หรือ 1 อย่างละครึ่ง $e^{iux}$ คือจุดบนวงกลมรัศมีหนึ่งที่หมุนไปมุม $ux$ ค่าเฉลี่ยของจุดเหล่านั้นจึงมีขนาดไม่เกินหนึ่งเสมอ ต่างจาก moment generating function ที่บางการแจกแจงไม่มีค่า</p><p>ที่ $u=\pi$ จุดของ 0 กับ 1 อยู่คนละฝั่งของวงกลมพอดีจึงหักล้างเป็นศูนย์ ค่าที่ทุก $u$ ร่วมกันบอกการแจกแจงได้ครบ</p><p>บรรทัดที่ห้าใช้ผลของ 8.5 ว่า $\mathbb E[e^{tZ}]=e^{t^2/2}$ กับ $t=iu\sigma\sqrt T$ ซึ่งการจัดกำลังสองยังใช้ได้กับ $t$ เชิงซ้อน ได้ $t^2=-u^2\sigma^2T$ ส่วนจริงที่ติดลบคือตัวที่ทำให้คลื่นเล็กลงเมื่อความถี่สูง การตรวจที่ใช้ได้กับทุกแบบจำลองคือ $\varphi(0)=1$ และ $\varphi(-i)=\mathbb E[S_T]$ ซึ่งต้องเท่ากับ forward $100e^{0.04}=104.0811$</p></div>
+  <div class="reading"><p>ทั้งสองผลยังมีโอกาส $1/2$ เท่าเดิม แม้ค่าเฉลี่ยที่ $u=\pi$ เป็นศูนย์: ศูนย์หมายถึงทิศทางเชิงซ้อนหักล้างกัน <strong>ไม่ใช่โอกาสเป็นศูนย์</strong> เมื่อ $u=0$ ไม่มีการหมุนเลยจึงรวมได้ 1</p><p>นี่คือภาพของ $\varphi_{01}(0)=1$ และ $\varphi_{01}(\pi)=0$ ก่อนเรียกค่าเฉลี่ยของ $e^{iuX}$ ว่า characteristic function ขนาดของค่าเฉลี่ยจุดบนวงกลมจึงไม่เกินหนึ่ง ต่างจาก moment generating function ที่บางการแจกแจงไม่มีค่า</p><p>ค่าที่ทุก $u$ ร่วมกันบอกการแจกแจงได้ครบ แต่ตารางนี้เป็นเพียงตัวแปร 0/1 ไม่ใช่ราคา Black–Scholes หรือ Heston</p><p>บรรทัดที่ห้าใช้ผลของ 8.5 ว่า $\mathbb E[e^{tZ}]=e^{t^2/2}$ กับ $t=iu\sigma\sqrt T$ ซึ่งการจัดกำลังสองยังใช้ได้กับ $t$ เชิงซ้อน ได้ $t^2=-u^2\sigma^2T$ ส่วนจริงที่ติดลบคือตัวที่ทำให้คลื่นเล็กลงเมื่อความถี่สูง การตรวจที่ใช้ได้กับทุกแบบจำลองคือ $\varphi(0)=1$ และ $\varphi(-i)=\mathbb E[S_T]$ ซึ่งต้องเท่ากับ forward $100e^{0.04}=104.0811$</p></div>
 </section>
 <figure class="plot">
   <h4>Figure 21.3a — characteristic function ของ Black–Scholes เป็นคลื่นที่หดลงเร็ว</h4>
