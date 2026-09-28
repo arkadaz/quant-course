@@ -21,12 +21,12 @@
   <p class="subtitle">อัปเดตเมื่อมีข้อมูล กับเลือก hedge ก่อนเกิดผลตอบแทน: ใช้ slope เดียวกัน แต่เป็นคนละงาน</p>
 </header>
 <div class="hook">
-  <p>ถือ QQQ มูลค่า \$10 ล้าน ในโมเดลสมมติที่ QQQ มี daily SD 3%, SPX มี SD 2% และ correlation 0.40 ถ้าจะลด variance ด้วย hedge ที่อ้างอิง SPX ควร short notional \$4 ล้าน ตาม correlation หรือ \$6 ล้าน? ขนาดนี้รับประกันไม่ขาดทุนหรือไม่?</p>
+  <p>ถือ QQQ มูลค่า \$10 ล้าน สมมติว่า QQQ มี daily SD 3%, SPX มี SD 2% และ correlation 0.40 ถ้าจะลด variance ด้วย hedge ที่อ้างอิง SPX ควร short notional \$4 ล้าน ตาม correlation หรือ \$6 ล้าน? ขนาดนี้รับประกันไม่ขาดทุนหรือไม่?</p>
   <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>Unconstrained minimum-variance hedge คือ \$6 ล้าน เพราะ $\beta=\rho\sigma_Y/\sigma_X=0.40(3/2)=0.60$ ไม่ใช่ 0.40 ความเสี่ยงยังเหลือ SD ประมาณ 2.7495% ของมูลค่า QQQ เดิม ไม่มีการรับประกันกำไร และต้องวาง hedge ก่อน return ของช่วงนั้นเกิดขึ้น</p></details>
 </div>
 <section class="prose">
   <h4>เริ่มจากระบุว่า X คือข้อมูลของช่วงไหน</h4>
-  <p>ในตัวอย่างหลัก X คือ SPX return และ Y คือ QQQ return <em>ของช่วงหนึ่งวันเดียวกัน</em> การถามว่า Y เป็นอย่างไรเมื่อรู้ X เป็นโจทย์ข้อมูลร่วม ไม่ใช่การใช้ X วันนี้ทำนาย Y พรุ่งนี้โดยอัตโนมัติ หากจะถามข้ามวัน ต้องสร้างและตรวจโมเดลของคู่ข้ามวันนั้นแยกต่างหาก</p>
+  <p>ในตัวอย่างหลัก X คือ SPX return และ Y คือ QQQ return <em>ของช่วงหนึ่งวันเดียวกัน</em> การถามว่า Y เป็นอย่างไรเมื่อรู้ X เป็นโจทย์ข้อมูลร่วม ไม่ใช่การใช้ X วันนี้ทำนาย Y พรุ่งนี้โดยอัตโนมัติ หากจะถามข้ามวัน ต้องสร้างและตรวจแบบจำลองของคู่ข้ามวันนั้นแยกต่างหาก</p>
   <p>SPX เป็นดัชนี ไม่ใช่หลักทรัพย์ที่สั่ง short ได้โดยตรง คำว่า hedge อ้างอิง SPX ในตัวอย่างหมายถึงเครื่องมือซื้อขายได้ที่สมมติให้ return ตรงกับ X โดยยังละ basis risk, ค่าธรรมเนียม, ดอกเบี้ย และข้อจำกัดการซื้อขายออกก่อน</p>
 </section>
 <details class="jargon">
@@ -49,8 +49,38 @@
     <tr><td>$V$</td><td>มูลค่า target book เริ่มต้นใน USD; ผลตอบแทน hedge ในบทคิดต่อ V ไม่ใช่ต่อ gross exposure หรือ margin ที่วางจริง</td></tr>
   </tbody></table></div>
 </details>
+<section class="example">
+  <h4>ขั้นที่ 1 — คำนวณด้วยเปอร์เซ็นต์ก่อนเห็น matrix</h4>
+  <p>สมมติผลตอบแทนรายวันของ SPX กับ QQQ เป็น joint Gaussian และมี correlation 0.40 ตารางนี้เป็นค่าของคู่เดียวกันในช่วงหนึ่งวันเดียวกัน ไม่ใช่ข้อมูลสำหรับพยากรณ์ข้ามวัน</p>
+  <div class="table-wrap"><table data-clarity="conditional-inputs" style="min-width:0;table-layout:fixed"><thead><tr><th>สินทรัพย์</th><th>Mean รายวัน</th><th>SD รายวัน</th></tr></thead><tbody>
+    <tr><td>SPX ($X$)</td><td>0.04%</td><td>2%</td></tr>
+    <tr><td>QQQ ($Y$)</td><td>0.03%</td><td>3%</td></tr>
+  </tbody></table></div>
+  <p><strong>รู้เพิ่มว่า SPX ลง 3%:</strong> เริ่มจากเทียบ −3% กับ mean 0.04% ของ SPX ไม่ใช่กับศูนย์ ส่วน slope ต้องปรับ correlation ด้วยอัตราส่วน SD เพราะ QQQ แกว่ง 3% แต่ SPX แกว่ง 2%</p>
+  <div class="table-wrap"><table data-clarity="conditional-steps" style="min-width:0;table-layout:fixed"><thead><tr><th>ทำอะไร</th><th>คำนวณและผล</th></tr></thead><tbody>
+    <tr><td>หา slope ของ QQQ ต่อ SPX</td><td>0.40 × (3 ÷ 2)<br>= <span data-value="0.6">0.60</span></td></tr>
+    <tr><td>SPX ต่างจาก mean เท่าไร</td><td>−3% − 0.04%<br>= <span data-value="-3.04">−3.04</span><br>จุดเปอร์เซ็นต์</td></tr>
+    <tr><td>Mean ของ QQQ ขยับเท่าไร</td><td>0.60 × (−3.04)<br>= <span data-value="-1.824">−1.824</span><br>จุดเปอร์เซ็นต์</td></tr>
+    <tr><td>Mean ของ QQQ หลังรู้ข้อมูล</td><td>0.03% ลดลง<br>1.824 จุดเปอร์เซ็นต์<br>= <span data-value="-1.794">−1.794%</span></td></tr>
+    <tr><td>SD ของ QQQ หลังรู้ข้อมูล</td><td>3% × √(1 − 0.40²)<br>≈ <span data-value="2.749545416973504">2.7495%</span></td></tr>
+  </tbody></table></div>
+  <p><strong>แปลผล:</strong> mean ย้ายจาก +0.03% ไป −1.794% แต่ไม่ได้บอกว่า QQQ ต้องได้ return −1.794% จริง SD ที่ยังเหลือประมาณ 2.7495% แสดงว่าผลลัพธ์ยังกระจายรอบ mean มาก การรู้ SPX ช่วยลดความไม่แน่นอน ไม่ได้กำจัดมัน</p>
+  <p>คำว่า <em>จุดเปอร์เซ็นต์</em> บอกผลต่างระหว่างค่าเปอร์เซ็นต์ เช่น จาก 1% ไป 3% คือเพิ่ม 2 จุดเปอร์เซ็นต์ ไม่ใช่เพิ่ม 2% ของค่าเดิม อ่านตารางด้วยหน่วยนี้ก่อน แล้วค่อยเปลี่ยนเป็น decimal เมื่อนำไปคำนวณในโค้ด</p>
+</section>
+<figure class="plot" data-clarity="conditional-mean-picture">
+  <h4>Figure 8.7a — เส้น mean ไม่ใช่เส้นที่ outcomes ต้องเกาะอยู่</h4>
+  <img src="../figures/8.7-1.svg" alt="Conditional QQQ mean มี slope 0.60 และให้ mean ลบ1.794เปอร์เซ็นต์ที่SPXลบ3เปอร์เซ็นต์" loading="lazy">
+  <figcaption>เส้นสีแดงมี slope 0.60 ผ่านจุด means (0.04%, 0.03%) จุด SPX −3% จึงให้ conditional QQQ mean −1.794% Contours รอบเส้นยังแสดงการกระจาย ไม่ใช่ความสัมพันธ์ที่กำหนด Y แน่นอนจาก X</figcaption>
+</figure>
+<figure class="plot" data-clarity="conditional-density-picture">
+  <h4>Figure 8.7b — Mean ขยับและ density แคบลง เป็นคนละผล</h4>
+  <img src="../figures/8.7-2.svg" alt="QQQ marginal density เทียบ conditional density หลังข้อมูลSPXลบ3เปอร์เซ็นต์" loading="lazy">
+  <figcaption>สองเส้นคือ densities ไม่ใช่แท่ง variance: conditional mean อยู่ที่ −1.794%, SD ประมาณ 2.7495 จุดเปอร์เซ็นต์ แม้ distribution แคบลง ตำแหน่งที่เลื่อนไปทางขาดทุนก็ทำให้ loss risk บางเกณฑ์แย่ลงได้</figcaption>
+</figure>
+<details>
+  <summary>ภาคขยาย — พิสูจน์กรณีหลายตัวแปรด้วย matrix (อ่านทีหลังได้)</summary>
 <section class="formula">
-  <h4>ขั้นที่ 1 — สร้าง residual ที่ไม่ correlated กับข้อมูล</h4>
+  <h4>ภาคขยาย A — สร้าง residual ที่ไม่ correlated กับข้อมูล</h4>
   <p>ให้คู่ vector $(X,Y)$ เป็น joint Gaussian ที่มี means $\mu_X,\mu_Y$ และ covariance blocks ตามชื่อข้างบน สมมติ $\Sigma_{XX}$ invertible กำหนด B ให้ $B\Sigma_{XX}=\Sigma_{YX}$ แล้วหักส่วนที่อธิบายจาก X ออกจาก Y</p>
   <div class="math">\[
 \begin{aligned}
@@ -66,7 +96,7 @@ B&:=\Sigma_{YX}\Sigma_{XX}^{-1},\\
   <p>ในคอมพิวเตอร์ควรแก้ linear system เพื่อหา B แทนการสร้าง inverse แล้วคูณ โดยเฉพาะเมื่อ predictors หลายตัวเกือบซ้ำกัน เขียน inverse ในสูตรเพื่อระบุความสัมพันธ์ทางคณิตศาสตร์ ไม่ใช่สั่งให้คำนวณด้วยวิธีนั้นเสมอ</p>
 </section>
 <section class="formula">
-  <h4>ขั้นที่ 2 — Conditional covariance คือ covariance ของ residual</h4>
+  <h4>ภาคขยาย B — Conditional covariance คือ covariance ของ residual</h4>
   <p>ขยาย covariance ของผลต่าง แล้วใช้ $B\Sigma_{XX}=\Sigma_{YX}$ เพื่อลดรูป พจน์ที่เหลือเป็น PSD เพราะเป็น covariance ของตัวแปรสุ่มจริง</p>
   <div class="math">\[
 \begin{aligned}
@@ -79,10 +109,11 @@ Y\mid X=x&\sim\mathcal N(m(x),\Omega).
 \end{aligned}
 \]</div>
   <div class="reading"><p>Conditional law จึงเป็น Gaussian ที่มี mean ตาม x และ covariance เท่ากับ Omega โดยใน <em>fixed Gaussian model นี้</em> ค่า covariance ไม่ขึ้นกับ x ที่สังเกตได้ ไม่ใช่กฎว่า uncertainty ของข้อมูลจริงต้องคงที่ทุกสถานการณ์</p></div>
-  <p>Full covariance อาจเป็น PSD แต่ singular ได้: ถ้า Omega เป็นศูนย์บางทิศ Y ในทิศนั้นถูกกำหนดแน่นอนเมื่อรู้ X แล้ว แต่ถ้า $\Sigma_{XX}$ singular ต้องจัดการข้อมูลซ้ำและตรวจ support ก่อน เช่น predictors $(Z,Z)$ ต้องมีค่าที่สังเกตสอดคล้องกัน ไม่ควรใช้ pseudoinverse กลบ observation ที่โมเดลเกิดไม่ได้</p>
+  <p>Full covariance อาจเป็น PSD แต่ singular ได้: ถ้า Omega เป็นศูนย์บางทิศ Y ในทิศนั้นถูกกำหนดแน่นอนเมื่อรู้ X แล้ว แต่ถ้า $\Sigma_{XX}$ singular ต้องจัดการข้อมูลซ้ำและตรวจ support ก่อน เช่น predictors $(Z,Z)$ ต้องมีค่าที่สังเกตสอดคล้องกัน ไม่ควรใช้ pseudoinverse กลบ observation ที่แบบจำลองนี้ไม่รองรับ</p>
 </section>
+</details>
 <section class="formula">
-  <h4>ขั้นที่ 3 — ย่อเป็น scalar แล้วตรวจ denominator</h4>
+  <h4>ขั้นที่ 2 — เขียนตัวอย่างเป็นสูตร แล้วตรวจ denominator</h4>
   <p>เมื่อ X, Y เป็น scalar และ $\sigma_X\gt0$ เราเขียน covariance เป็น $\rho\sigma_X\sigma_Y$ แล้วเห็นทั้ง slope และส่วน variance ที่เหลือชัดเจน</p>
   <div class="math">\[
 \begin{aligned}
@@ -99,35 +130,28 @@ v_{\rm res}&:=\operatorname{Var}(Y\mid X=x)\\
   <div class="reading"><p>Denominator เป็น variance ของ predictor/hedge X ไม่ใช่ variance ของ target Y Correlation บอกทิศและความแรงเชิงเส้นใน standardized units แต่ต้องคูณอัตราส่วน SD เพื่อกลับมาเป็น slope ในหน่วย Y ต่อ X</p></div>
   <p>กลับทิศ regression แล้ว slope ไม่ใช่ reciprocal:ใน primary model นี้ $\beta_{Y\mid X}=0.60$ แต่ $\beta_{X\mid Y}=0.40(2/3)\approx0.266667$ ผลคูณเท่ากับ $\rho^2=0.16$ ไม่ใช่ 1 การมี residual ทำให้ไม่สามารถกลับสมการเหมือนเป็นความสัมพันธ์เชิงเส้นแบบแน่นอนได้</p>
 </section>
-<section class="example">
-  <h4>ขั้นที่ 4 — SPX ลง 3% บอกอะไรเกี่ยวกับ QQQ ของช่วงเดียวกัน</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> daily model มี $\mu_X=0.0004,\mu_Y=0.0003$, SDs 0.02 และ 0.03, correlation 0.40 และให้ข้อมูล $x=-0.03$ ตัวเลขทั้งหมดในสูตรนี้เป็น decimal returns</p>
+<details>
+  <summary>ตรวจหน่วย — ตัวอย่างต้นหน้าเมื่อเขียนเป็น decimal</summary>
+  <p>ตัวเลขชุดเดิมเมื่อหารเปอร์เซ็นต์ด้วย 100 คือ $\mu_X=0.0004,\mu_Y=0.0003$, SDs 0.02 และ 0.03 และ $x=-0.03$ ส่วน correlation 0.40 ไม่มีหน่วย จึงไม่หาร 100 ซ้ำ</p>
   <div class="math">\[
 \begin{aligned}
-\beta&=0.40(0.03/0.02)=0.60,\\
-x-\mu_X&=-0.03-0.0004=-0.0304,\\
-m(x)&=0.0003+0.60(-0.0304)\\
-&=-0.01794=-1.794\%,\\
-v_{\rm res}&=0.03^2(1-0.40^2)=0.000756,\\
-\sigma_{\rm res}&=\sqrt{0.000756}\approx2.7495\%.
+&\beta=0.40(0.03/0.02)=0.60,\\
+&x-\mu_X=-0.03-0.0004\\
+&\qquad=-0.0304,\\
+&m(x)=0.0003+0.60(-0.0304)\\
+&\qquad=-0.01794=-1.794\%,\\
+&v_{\rm res}=0.03^2(1-0.40^2)\\
+&\qquad=0.000756,\\
+&\sigma_{\rm res}=\sqrt{0.000756}\\
+&\qquad\approx2.7495\%.
 \end{aligned}
 \]</div>
   <p><strong>คำตอบ:</strong> mean QQQ เปลี่ยนจาก +0.03% เป็น −1.794% ส่วน SD จาก 3% เหลือประมาณ 2.7495% ยังมี uncertainty มาก ไม่ใช่คำทำนายว่า QQQ ต้องปิดตรง mean</p>
   <p><strong>ตรวจเองใน 10 วินาที:</strong> variance ลด 16% แต่ SD ลดเพียง $1-\sqrt{0.84}\approx8.35\%$ และต้องหัก mean ของ X ก่อนคูณ beta ไม่ใช่แทน innovation ด้วย x เฉย ๆ</p>
-  <p>Conditioning ที่ค่าแน่นอนของตัวแปรต่อเนื่องใช้นิยามผ่าน density/regular conditional law หรือขีดจำกัดของช่วงแคบ ไม่ใช่หารด้วย $P(X=x)$ ซึ่งเป็นศูนย์ ตัวอย่างนี้เป็นเรื่องข้อมูลของช่วงเดียวกัน ไม่ได้สร้างสิทธิให้เทรดย้อนเวลากลับไปก่อน SPX ลง</p>
-</section>
-<figure class="plot">
-  <h4>Figure 8.7a — เส้น mean ไม่ใช่เส้นที่ outcomes ต้องเกาะอยู่</h4>
-  <img src="../figures/8.7-1.svg" alt="Conditional QQQ mean มี slope 0.60 และให้ mean ลบ1.794เปอร์เซ็นต์ที่SPXลบ3เปอร์เซ็นต์" loading="lazy">
-  <figcaption>เส้นสีแดงมี slope 0.60 ผ่านจุด means (0.04%,0.03%) จุด SPX −3% จึงให้ conditional QQQ mean −1.794% Contours รอบเส้นยังแสดงการกระจาย ไม่ใช่ความสัมพันธ์ที่กำหนด Y แน่นอนจาก X</figcaption>
-</figure>
-<figure class="plot">
-  <h4>Figure 8.7b — Mean ขยับและ density แคบลง เป็นคนละผล</h4>
-  <img src="../figures/8.7-2.svg" alt="QQQ marginal density เทียบ conditional density หลังข้อมูลSPXลบ3เปอร์เซ็นต์" loading="lazy">
-  <figcaption>สองเส้นคือ densities ไม่ใช่แท่ง variance:conditional mean อยู่ที่ −1.794%, SD ประมาณ 2.7495 percentage points แม้ distribution แคบลง ตำแหน่งที่เลื่อนไปทางขาดทุนก็ทำให้ loss risk บางเกณฑ์แย่ลงได้</figcaption>
-</figure>
+  <p>สำหรับตัวแปรต่อเนื่อง อย่าคำนวณ conditional probability ด้วยการหาร $P(X=x)$ เพราะตัวส่วนนี้เป็นศูนย์ การ condition ใช้ density หรือขีดจำกัดของช่วงแคบรอบ x แทน ตัวอย่างนี้อธิบายข้อมูลของช่วงเดียวกัน ไม่ได้ทำให้เทรดย้อนเวลากลับไปก่อน SPX ลงได้</p>
+</details>
 <section class="formula">
-  <h4>ขั้นที่ 5 — หา hedge ด้วย variance โดยไม่ต้องสมมติ Gaussian</h4>
+  <h4>ขั้นที่ 3 — หา hedge ด้วย variance โดยไม่ต้องสมมติ Gaussian</h4>
   <p>คราวนี้เลือก b <em>ก่อน</em> returns เกิด ให้ target P&amp;L หลัง hedge เท่ากับ $V(Y-bX)$ ก่อนต้นทุน โดยทั้ง X, Y เป็น returns ของช่วงเดียวกันและหน่วยเดียวกัน สมมติมี second moments finite กับ $\sigma_X^2\gt0$</p>
   <div class="math">\[
 \begin{aligned}
@@ -141,8 +165,8 @@ b^*&=\beta,\\
 v(b^*)&=\sigma_Y^2(1-\rho^2).
 \end{aligned}
 \]</div>
-  <div class="reading"><p>พจน์กำลังสองไม่ติดลบและต่ำสุดที่ b=beta จึงได้ unique unconstrained minimum นี่เป็นผลเรื่อง second moments ไม่ต้องใช้ joint Normal ส่วนการเรียก variance นี้ว่า conditional variance ของ Y ทุกค่า x ต้องมีเงื่อนไขเพิ่มแบบที่พิสูจน์ในขั้นที่ 1–2</p></div>
-  <p>สำหรับ QQQ \$10 ล้าน, ให้ b=0.60 จึง short SPX-linked instrument notional \$6 ล้าน ตามโมเดลอุดมคติ หากลอง b=0.30,0.60,0.90 จะได้ variances 0.000792,0.000756,0.000792 ตามลำดับ จึงเห็น minimum ไม่ใช่แค่จำสูตร beta</p>
+  <div class="reading"><p>พจน์กำลังสองไม่ติดลบและต่ำสุดที่ b=beta จึงได้ unique unconstrained minimum นี่เป็นผลเรื่อง second moments ไม่ต้องใช้ joint Normal ส่วนการเรียก variance นี้ว่า conditional variance ของ Y ทุกค่า x ต้องมีเงื่อนไขเพิ่มแบบที่พิสูจน์ในภาคขยาย A–B</p></div>
+  <p>สำหรับ QQQ \$10 ล้าน, ให้ b=0.60 จึง short SPX-linked instrument notional \$6 ล้าน ภายใต้สมมติฐานอุดมคตินี้ หากลอง b=0.30,0.60,0.90 จะได้ variances 0.000792,0.000756,0.000792 ตามลำดับ จึงเห็น minimum ไม่ใช่แค่จำสูตร beta</p>
   <p>ถ้า covariance ติดลบ beta ก็ติดลบ: การลบ $bX$ กลายเป็นถือ X เพิ่ม ไม่ใช่ short หากข้อจำกัดบังคับ short เท่านั้นหรือจำกัด notional ต้องแก้ปัญหาที่มีข้อจำกัด ไม่ใช่เรียก beta เดิมว่า optimum ภายใต้ข้อจำกัดใหม่</p>
 </section>
 <figure class="plot">
@@ -153,19 +177,19 @@ v(b^*)&=\sigma_Y^2(1-\rho^2).
 <section class="prose">
   <h4>ใช้ coefficient เดียวกัน ไม่ได้ทำให้สองงานเป็นงานเดียวกัน</h4>
   <div class="table-wrap"><table><thead><tr><th>งาน</th><th>รู้/ทำอะไรเมื่อไร</th><th>ผลที่อ่านได้</th></tr></thead><tbody>
-    <tr><td>วาง hedge</td><td>เลือก b ก่อน X, Y ของช่วงนั้นเกิด</td><td>เปลี่ยน payoff เป็น $Y-bX$ และลด ex-ante variance ภายใต้โมเดล</td></tr>
+    <tr><td>วาง hedge</td><td>เลือก b ก่อน X, Y ของช่วงนั้นเกิด</td><td>เปลี่ยน payoff เป็น $Y-bX$ และลด variance ก่อนเห็นข้อมูล ตามสมมติฐานที่กำหนด</td></tr>
     <tr><td>Condition</td><td>มีข้อมูล X=x แล้ว ถาม Y ของคู่ที่กำหนดไว้</td><td>เปลี่ยนข้อมูลที่ใช้ประเมิน Y ไม่ได้สร้าง hedge ย้อนหลัง</td></tr>
-    <tr><td>Forecast ข้ามเวลา</td><td>กำหนดคู่ $X_t,Y_{t+1}$ และ fit ความสัมพันธ์นั้น</td><td>ใช้ past observation กับ future target ได้เมื่อโมเดลรองรับ ไม่ใช่เอา same-day covariance มาสวม</td></tr>
+    <tr><td>Forecast ข้ามเวลา</td><td>กำหนดคู่ $X_t,Y_{t+1}$ และ fit ความสัมพันธ์นั้น</td><td>ใช้ past observation กับ future target ได้เมื่อได้ทดสอบความสัมพันธ์ข้ามวันนั้น ไม่ใช่เอา same-day covariance มาสวม</td></tr>
   </tbody></table></div>
   <p>ถ้ารู้ X=x แล้ว การหักค่าคงที่ bx ไม่ลด $\operatorname{Var}(Y\mid X=x)$ เพิ่ม เพราะ X ไม่สุ่มอีกใน conditional question นั้น การลด ex-ante variance ของ hedge เกิดจากออกแบบ payoff ของสอง legs ก่อนผลตอบแทนเกิด ไม่ใช่จากหักเลขที่รู้แล้วภายหลัง</p>
 </section>
 <section class="example">
-  <h4>ขั้นที่ 6 — สมมติโมเดลข้ามวันให้ชัด แล้วดู VaR ที่อาจแย่ลง</h4>
+  <h4>ขั้นที่ 4 — แยกตัวอย่างข้ามวัน แล้วดู VaR ที่อาจแย่ลง</h4>
   <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กำหนด <em>hypothetical lagged model</em> โดย $X_t$ คือ S&amp;P 500 return วันนี้ และ $Y_{t+1}$ คือ Russell 2000 return พรุ่งนี้ ใช้หน่วย percentage points:means 0 และ 0.03, SDs 1.20 และ 1.00, lagged correlation 0.70 ตัวเลขนี้เป็นสมมติฐานฝึกคำนวณ ไม่ใช่ผลวัด predictive correlation ของตลาด</p>
   <p>หากค่าที่คุณมีเป็น correlation ของ returns วันเดียวกัน ตัวอย่างนี้ใช้ทำนายวันถัดไปไม่ได้ ต้องประมาณและทดสอบคู่ข้ามวันจริง รวมถึงแยก training period กับช่วงทดสอบ</p>
   <div class="math">\[
 \begin{aligned}
-x&=-2\quad\text{percentage points},\\
+x&=-2,\\
 \beta&=0.70(1/1.20)=7/12,\\
 m(x)&=0.03+(7/12)(-2-0)\\
 &=-1.136667,\\
@@ -177,7 +201,7 @@ p_*&=\Phi\left(\frac{1.136667}{0.714143}\right)\\
 &\approx94.4269\%.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> conditional variance ลด 49%, SD ลดประมาณ 28.59% แต่ mean ติดลบมากขึ้นจนโอกาสขาดทุนในโมเดลสูงขึ้น ไม่ควรดูแค่ variance แล้วสรุปว่าทุก risk metric ดีขึ้น</p>
+  <p><strong>คำตอบ:</strong> conditional variance ลด 49%, SD ลดประมาณ 28.59% แต่ mean ติดลบมากขึ้นจนโอกาสขาดทุนตามแบบจำลองสูงขึ้น ไม่ควรดูแค่ variance แล้วสรุปว่าทุก risk metric ดีขึ้น</p>
   <p><strong>ตรวจเองใน 10 วินาที:</strong> เปลี่ยนเกณฑ์เป็น return ต่ำกว่า −1% จะได้ probability เดิมประมาณ 15.15% และหลังข้อมูลประมาณ 57.59% แม้ส่วน SD ลดลงก็ตาม</p>
   <p>กำหนด loss VaR 99% เป็น quantile 99% ของ loss ไม่ใช่ worst loss ใช้ $z_{0.99}\approx2.326347874$ จึงต้องแยก quantile ของ <em>return</em> ซึ่งอาจติดลบ ออกจาก VaR ใน USD</p>
   <div class="math">\[
@@ -191,15 +215,16 @@ V&=100{,}000{,}000\ \mathrm{USD}.
 \end{aligned}
 \]</div>
   <p>ที่นี่ $q_{\rm pp}$ คือค่าตัวเลขของ return quantile ในหน่วย percentage points จึงต้องหาร 100 ก่อนคูณ V เช่น −2.296347874 percentage points เท่ากับ decimal return −0.02296347874</p>
-  <p>ได้ loss VaR จากประมาณ \$2,296,348 เป็น \$2,798,011 เพิ่มราว \$501,663 หรือ 21.85% ตัวเลขเต็มใช้ quantile ที่ละเอียดกว่า 2.326 จึงอาจต่างเล็กน้อยจากคำตอบที่ปัดระหว่างทาง และยังเป็น risk measure ตามโมเดล ไม่ใช่ขอบเขตขาดทุนสูงสุด</p>
+  <p>ได้ loss VaR จากประมาณ \$2,296,348 เป็น \$2,798,011 เพิ่มราว \$501,663 หรือ 21.85% ตัวเลขเต็มใช้ quantile ที่ละเอียดกว่า 2.326 จึงอาจต่างเล็กน้อยจากคำตอบที่ปัดระหว่างทาง และยังเป็น ตัววัดความเสี่ยงตามสมมติฐาน Gaussian ไม่ใช่ขอบเขตขาดทุนสูงสุด</p>
 </section>
 <section class="example">
-  <h4>ขั้นที่ 7 — แปลง beta เป็นเงิน โดยไม่สลับ predictor กับ target</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> อีกโมเดลหนึ่งของช่วงวันเดียวกัน: ถือ small-cap book Y มูลค่า \$100 ล้าน, hedge ด้วย Russell 2000 ETF X สมมติ $\mu_X=0.0003,\mu_Y=0.0005$, SDs 0.0120 และ 0.0155, correlation 0.82 ทั้งคู่เป็น decimal returns นี่ไม่ใช่ชุด parameters ข้ามวันเมื่อครู่</p>
+  <h4>ขั้นที่ 5 — แปลง beta เป็นเงิน โดยไม่สลับ predictor กับ target</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> เปลี่ยนเป็นอีกตัวอย่างของช่วงวันเดียวกัน: ถือ small-cap book Y มูลค่า \$100 ล้าน, hedge ด้วย Russell 2000 ETF X สมมติ $\mu_X=0.0003,\mu_Y=0.0005$, SDs 0.0120 และ 0.0155, correlation 0.82 ทั้งคู่เป็น decimal returns นี่ไม่ใช่ชุด parameters ข้ามวันเมื่อครู่</p>
   <div class="math">\[
 \begin{aligned}
 c&:=\operatorname{Cov}(Y,X)\\
-&=0.82(0.0120)(0.0155)=0.00015252,\\
+&=0.82(0.0120)(0.0155)\\
+&=0.00015252,\\
 \beta&=\frac{0.00015252}{0.0120^2}\\
 &=1271/1200\approx1.059166667,\\
 N_{\rm short}&=\beta V\\
@@ -210,14 +235,15 @@ v_{\rm res}&=0.0155^2(1-0.82^2)\\
 \end{aligned}
 \]</div>
   <p><strong>คำตอบ:</strong> short notional ประมาณ \$105.917 ล้าน หากปัด beta เป็น 1.0592 ก่อนคูณ จะได้ \$105.920 ล้าน ซึ่งต่างราว \$3,333 ไม่ใช่ค่า exact เดียวกัน ที่ beta มากกว่าหนึ่งมาจากผลคูณ correlation กับ SD ratio ไม่ใช่เพียงรู้ว่า target มี SD สูงกว่า hedge</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าใช้ denominator ผิดเป็น $0.0155^2$ จะได้ประมาณ 0.634839 และ hedge น้อยกว่าที่โมเดลกำหนดราว 40.06% ส่วนการปัด covariance เป็น 0.00015 จะลด beta เหลือ 1.041667 ทำให้ short notional น้อยไป \$1.75 ล้าน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าใช้ denominator ผิดเป็น $0.0155^2$ จะได้ประมาณ 0.634839 และ hedge น้อยกว่าค่าที่ลด variance ได้ต่ำสุดราว 40.06% ส่วนการปัด covariance เป็น 0.00015 จะลด beta เหลือ 1.041667 ทำให้ short notional น้อยไป \$1.75 ล้าน</p>
   <p>Variance ลด 67.24% แต่ SD ลด 42.7636% การรายงาน “ลดความเสี่ยง 67%” โดยไม่บอก metric จึงทำให้เข้าใจผิด และ notional short ที่มากกว่า NAV ยังต้องตรวจ margin, funding, availability และข้อจำกัดของ mandate ก่อนใช้จริง</p>
   <p>หาก ETF return ของช่วงนั้นเป็น −3%, แบบจำลอง conditional ของ <em>unhedged target</em> ให้ mean กับช่วง prediction 95% ดังนี้ ไม่ใช่ช่วง confidence ของค่า mean</p>
   <div class="math">\[
 \begin{aligned}
 m_*&:=m(-0.03)\\
 &=0.0005+\beta(-0.03-0.0003)\\
-&=-0.03159275=-3.159275\%,\\
+&=-0.03159275\\
+&=-3.159275\%,\\
 P_*&:=\mathbb E[VY\mid X=-0.03]\\
 &=-3{,}159{,}275\ \mathrm{USD},\\
 z_{0.975}&\approx1.959963985,\\
@@ -225,10 +251,10 @@ I_{0.95}&:=m_*\pm z_{0.975}\sigma_{\rm res}\\
 &\approx[-4.8981\%,\,-1.4205\%].
 \end{aligned}
 \]</div>
-  <p>ภายใต้โมเดลที่ parameters ถูกต้องยังมี conditional probability 5% นอกช่วงนี้ และหากโมเดลผิด coverage จริงอาจต่างไปด้วย ส่วน book ที่ <em>วาง hedge ไว้ก่อนแล้ว</em> มี conditional mean หลัง hedge เท่ากับ $m(x)-\beta x=\mu_Y-\beta\mu_X$ ไม่ใช่ −3.159275% ของ unhedged target</p>
+  <p>แม้สมมติฐาน Gaussian และค่าพารามิเตอร์ถูกต้อง ยังมีโอกาส 5% ที่ return จะอยู่นอกช่วงนี้ ถ้าสมมติฐานผิด สัดส่วนที่อยู่ในช่วงจริงอาจไม่ใช่ 95% ส่วน book ที่ <em>วาง hedge ไว้ก่อนแล้ว</em> มี conditional mean หลัง hedge เท่ากับ $m(x)-\beta x=\mu_Y-\beta\mu_X$ ไม่ใช่ −3.159275% ของ unhedged target</p>
 </section>
 <section class="formula">
-  <h4>ขั้นที่ 8 — เปรียบเทียบ VaR หลัง hedge ต้องใช้ mean หลัง hedgeด้วย</h4>
+  <h4>ขั้นที่ 6 — เปรียบเทียบ VaR หลัง hedge ต้องใช้ mean หลัง hedge ด้วย</h4>
   <p>สำหรับ Gaussian same-period model ข้างบน payoff $H=Y-\beta X$ ยัง Gaussian ใช้ mean ใหม่กับ residual SD และคิด loss quantile ต่อ target NAV เดิม โดยยังละ funding/costs</p>
   <div class="math">\[
 \begin{aligned}
@@ -248,7 +274,7 @@ L_{99}^{\rm hedge}&:=V(z_{0.99}\sigma_{\rm res}-\mu_H)\\
 <figure class="plot">
   <h4>Figure 8.7d — ข้อมูลเปลี่ยน mean แต่ residual ยังอยู่</h4>
   <img src="../figures/8.7-4.svg" alt="QQQ conditional mean และแถบหนึ่งconditionalSDตามค่าSPXที่สังเกต" loading="lazy">
-  <figcaption>รูปกลับมาใช้ primary SPX/QQQ model ของขั้นที่ 4 แถบคือ mean ±1conditionalSD จึงครอบคลุมประมาณ 68.27% ตาม Gaussian model ไม่ใช่ 95%, ไม่ใช่ confidence interval ของ mean และไม่ใช่กรอบที่ return ออกนอกไม่ได้ ความกว้างคงที่มาจาก fixed covariance assumption</figcaption>
+  <figcaption>รูปกลับมาใช้ตัวอย่าง SPX/QQQ ของขั้นที่ 1 แถบคือ mean ±1 conditional SD จึงครอบคลุมประมาณ 68.27% ตาม Gaussian model ไม่ใช่ 95%, ไม่ใช่ confidence interval ของ mean และไม่ใช่กรอบที่ return ออกนอกไม่ได้ ความกว้างคงที่มาจาก fixed covariance assumption</figcaption>
 </figure>
 <section class="pitfall">
   <h4>คำรับรองทางพีชคณิตไปได้ไกลแค่ไหน</h4>
@@ -263,7 +289,7 @@ L_{99}^{\rm hedge}&:=V(z_{0.99}\sigma_{\rm res}-\mu_H)\\
 <section class="example">
   <h4>สามคำถามที่แยกความเข้าใจออกจากการจำ beta</h4>
   <p><strong>1.</strong> ใน primary model เมื่อรู้ว่า SPX return เท่ากับ mean 0.04% พอดี ไม่มี innovation แล้ว ข้อมูลนี้ไม่มีค่าเลยหรือ?</p>
-  <details><summary>เฉลย</summary><p>Mean QQQ ยังคง 0.03% แต่ conditional variance ลดจาก 0.0009 เป็น 0.000756 จึงไม่ใช่ “ไม่ได้รู้อะไรเพิ่ม” ข้อมูลที่ไม่เลื่อน mean ยังลด uncertainty ภายใต้โมเดลได้</p></details>
+  <details><summary>เฉลย</summary><p>Mean QQQ ยังคง 0.03% แต่ conditional variance ลดจาก 0.0009 เป็น 0.000756 จึงไม่ใช่ “ไม่ได้รู้อะไรเพิ่ม” ข้อมูลที่ไม่เลื่อน mean ยังลด uncertainty ตามสมมติฐาน Gaussian นี้ได้</p></details>
   <p><strong>2.</strong> ต้องการลด SD เหลือครึ่งหนึ่งด้วย unconstrained linear hedge ต้องมี correlation เท่าไร? ถ้า correlation เท่ากับ −0.90 ต้อง short หรือ long?</p>
   <details><summary>เฉลย</summary><p>จาก $\sqrt{1-\rho^2}\le1/2$ ได้ $|\rho|\ge\sqrt{3/4}\approx0.8660$ ถ้า rho ติดลบ beta ก็ติดลบ จึงเพิ่ม long hedge instrument ไม่ใช่ short หากบังคับ short-only ผลการลด SD นี้ใช้ไม่ได้โดยอัตโนมัติ</p></details>
   <p><strong>3.</strong> ใช้ predictors สองตัวในหน่วย percentage points ที่ mean ศูนย์, covariance $\begin{bmatrix}1&amp;0.5\\0.5&amp;1\end{bmatrix}$ ส่วน target mean 0.1, variance 1, cross-covariance $(0.6,0.4)$ จงหา coefficients แล้ว condition ที่ $x=(1,-1)^{\mathsf T}$</p>
@@ -274,8 +300,10 @@ b_1+0.5b_2&=0.6,\\
 0.5b_1+b_2&=0.4,\\
 0.75b_2&=0.1,\\
 b_2&=2/15,\qquad b_1=8/15,\\
-m(x)&=0.1+8/15-2/15=0.5,\\
-v_{\rm res}&=1-(8/15)(0.6)-(2/15)(0.4)\\
+m(x)&=0.1+\frac8{15}-\frac2{15}\\
+&=0.5,\\
+v_{\rm res}&=1-\frac8{15}(0.6)\\
+&\quad-\frac2{15}(0.4)\\
 &=47/75\approx0.626667,\\
 \sigma_{\rm res}&\approx0.791623.
 \end{aligned}
@@ -285,7 +313,7 @@ v_{\rm res}&=1-(8/15)(0.6)-(2/15)(0.4)\\
 </section>
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
-  <p>รันใน Node.js ได้โดยไม่ใช้แพ็กเกจ ทุกชุด parameters เป็นตัวอย่างสมมติ โค้ดไม่อาจตรวจว่าคุณจับคู่ return dates ถูกหรือว่าโมเดลเป็น Gaussian จริง การใช้ variance-only hedge ไม่ต้อง Gaussian แต่ loss probabilities, prediction intervals และ Gaussian VaR ต้องมีสมมติฐาน distribution เพิ่ม</p>
+  <p>รันใน Node.js ได้โดยไม่ใช้แพ็กเกจ ทุกชุด parameters เป็นตัวอย่างสมมติ โค้ดไม่อาจตรวจว่าคุณจับคู่ return dates ถูกหรือว่าข้อมูลเป็น jointly Gaussian จริง การใช้ variance-only hedge ไม่ต้อง Gaussian แต่ loss probabilities, prediction intervals และ Gaussian VaR ต้องมีสมมติฐาน distribution เพิ่ม</p>
   <p>Loss VaR ในโค้ดเป็น signed loss quantile ไม่ตัดค่าติดลบเป็นศูนย์ ส่วน covariance/variance ต้องคำนวณได้ใน Number โดยไม่ overflow/underflow ตัวอย่างแยก zero residual variance ที่ถูกต้องเมื่อ $|\rho|=1$ ออกจากศูนย์ที่เกิดจากเครื่องปัดเศษ</p>
   <pre><code class="language-javascript" data-example="8.7">function finite(x) {
   if (!Number.isFinite(x)) throw new RangeError('Arithmetic overflow or invalid input');
