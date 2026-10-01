@@ -18,392 +18,410 @@
 <article class="topic" data-number="8.6" data-depends-on="5.2 7.2 7.3 7.6 8.1 8.3 8.4 8.5">
 <header class="topic-header">
   <h1><span class="tnum">8.6</span> Marginals of the Multivariate Normal</h1>
-  <p class="subtitle">เลือกสินทรัพย์ที่สนใจ โดยไม่แอบเปลี่ยน “ไม่ได้ถือ” ให้กลายเป็น “รู้ผลตอบแทนแล้ว”</p>
+  <p class="subtitle">marginal ของ MVN คือการเลิกถามถึงตัวแปรบางตัวโดยปล่อยให้มันสุ่มต่อไป ผลที่เหลือยังเป็น Normal และใช้ mean กับ covariance ส่วนที่ตรงชื่อได้ทันทีโดยไม่ต้องประมาณใหม่</p>
 </header>
+
 <div class="hook">
-  <p>แบบจำลองรายวันของ SPX และ QQQ ให้ SD เท่ากับ 2% และ 3% และ correlation 0.40 คุณถือเฉพาะ SPX จึงตั้งน้ำหนัก QQQ เป็นศูนย์ โปรแกรมอีกชุดกลับตั้ง <em>ผลตอบแทน</em> QQQ เป็นศูนย์แล้วคำนวณความเสี่ยงของ SPX สองวิธีนี้ควรได้ SD เท่ากันไหม?</p>
-  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่เท่า การไม่ถือ QQQ ยังปล่อยให้ QQQ ขึ้นลงตาม distribution: SPX marginal มี SD 2% แต่การให้ข้อมูลว่า QQQ มี return ใกล้ศูนย์เป็นโจทย์ conditional ใน Gaussian model นี้จะได้ SD ประมาณ 1.833% ความต่างไม่ได้เกิดจากการกระจายเงินลงทุน แต่เกิดจากคำถามที่ป้อนเข้าโมเดล</p></details>
+  <p>แบบจำลองรายวันของ desk ให้ SPX มี mean 0.04% และ SD 2% ส่วน QQQ มี mean 0.03% และ SD 3% correlation 0.4 และสมมติว่าทั้งคู่เป็น joint Normal คุณถือ SPX อย่างเดียว \$10 ล้าน ระบบความเสี่ยงสองระบบให้ตัวเลขไม่ตรงกัน ระบบ A ใส่<em>น้ำหนัก</em>ของ QQQ เป็นศูนย์ ระบบ B ใส่<em>ผลตอบแทน</em>ของ QQQ เป็นศูนย์ เพราะ “เราไม่ได้ถือ QQQ จะปล่อยให้มันขยับทำไม” SD ต่อวันของพอร์ตจากสองระบบเท่ากันไหม และระบบไหนถูก</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่เท่า ระบบ A ได้ SD 2% หรือ \$200,000 ต่อวัน และเป็นคำตอบที่ถูก เพราะ QQQ ยังขึ้นลงได้ทุกแบบ เราแค่ไม่ได้ถามถึงมัน ระบบ B ได้ $2\%\times\sqrt{1-0.4^2}\approx1.833\%$ หรือ \$183,303 ต่ำไป 8.3% เพราะมันตอบอีกคำถามหนึ่ง คือ “ถ้า<em>รู้แล้ว</em>ว่าวันนี้ QQQ ปิดที่ 0% SPX จะแกว่งเท่าไร” การรู้ข้อมูลเพิ่มทำให้ความไม่แน่นอนลดลง แต่เช้านี้ยังไม่มีใครรู้ว่า QQQ จะปิดเท่าไร</p></details>
 </div>
+
 <section class="prose">
-  <h4>Marginal เก็บทุกความเป็นไปได้ของตัวแปรที่ไม่ได้ถาม</h4>
-  <p>ถ้าต้องการ distribution ของ SPX เพียงตัวเดียว เราต้องนับทุก outcome ของ QQQ ที่เกิดร่วมกับค่า SPX นั้น ไม่ว่าจะบวก ลบ หรือศูนย์ สำหรับ joint density จึงใช้การ integrate ไม่ใช่เลือกแถวของกราฟ density ที่ QQQ เท่ากับศูนย์</p>
-  <p>การเลือกบางชื่อจาก mean vector และ covariance matrix ทำได้ในทุก joint distribution ที่มี second moments finite ส่วนคำรับรองว่า distribution ที่เหลือยังเป็น Normal ต้องอาศัย <em>joint Gaussianity</em> เพิ่มเติม ไม่ใช่เห็นแต่ละ marginal ดูคล้ายระฆัง</p>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>มองผลตอบแทนคู่ (SPX, QQQ) เป็นเนินเขาบนระนาบ ยิ่งสูงยิ่งเกิดบ่อย วงรีคือเส้นระดับของเนิน ซึ่ง<a href="8.4.html">density ของ MVN</a> วาดไว้แล้ว คำถาม “SPX ตัวเดียวกระจายแบบไหน ไม่ว่า QQQ จะทำอะไร” คือการรวม density ตามเส้นตั้งทุกเส้น ให้ QQQ ทุกค่ามีส่วน ผลที่ได้คือ “เงา” ของเนินที่ทาบลงบนแกน SPX เรียกว่า marginal distribution</p>
+  <p>ส่วนคำถาม “SPX กระจายแบบไหน ถ้ารู้ว่า QQQ ปิดที่ 0%” คือการตัดเนินตามเส้นนอนเส้นเดียว แล้วขยายให้พื้นที่เป็น 1 นั่นคือ conditional distribution ซึ่ง<a href="8.7.html">หน้าถัดไป</a>จะทำเต็มรูปแบบ รูปด้านล่างวางสองอย่างไว้คู่กัน เงากว้างกว่ารอยตัดเสมอเมื่อ correlation ไม่เป็นศูนย์ ระบบ A ดูเงา ระบบ B ดูรอยตัด</p>
+  <p>หน้านี้จะ integrate จริงในสองมิติเพื่อดูว่าเงาของ Normal สองมิติเป็น Normal หนึ่งมิติ จากนั้นพิสูจน์ด้วย MGF ว่าจะเลือกกี่ตัวจากกี่ตัวก็ได้ผลแบบเดียวกัน วิธีคือหยิบแถวกับคอลัมน์ที่ตรงชื่อออกมา แล้วใช้กับตาราง covariance ของ asset class 8 กลุ่ม ปิดท้ายด้วยกับดักที่ทำให้ตัวเลขผิดโดยไม่มี error ขึ้นเลย</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — เงาของเนินกับรอยตัดหนึ่งเส้น</h4>
+  <svg viewBox="0 0 480 420" role="img" aria-label="ด้านบนเป็นวงรีของผลตอบแทน SPX กับ QQQ รายวัน มีเส้นส้มตัดที่ QQQ เท่ากับศูนย์ ด้านล่างเป็นเส้น density สองเส้น เส้นน้ำเงินคือ marginal ของ SPX ที่ SD 2% เส้นส้มคือรอยตัดที่ SD 1.83% ซึ่งแคบกว่า" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="260" y1="20" x2="260" y2="220" stroke="#d7dce3" stroke-width="1.5"/>
+      <line x1="70" y1="120" x2="450" y2="120" stroke="#d7dce3" stroke-width="1.5"/>
+      <line x1="70" y1="220" x2="450" y2="220" stroke="#5b6472" stroke-width="2"/>
+      <line x1="70" y1="20" x2="70" y2="220" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="middle" font-size="14" fill="#5b6472">
+        <text x="70" y="237">−6</text><text x="133.3" y="237">−4</text><text x="196.7" y="237">−2</text><text x="260" y="237">0</text><text x="323.3" y="237">2</text><text x="386.7" y="237">4</text><text x="450" y="237">6</text>
+      </g>
+      <g text-anchor="end" font-size="14" fill="#5b6472">
+        <text x="64" y="225">−8</text><text x="64" y="175">−4</text><text x="64" y="125">0</text><text x="64" y="75">4</text><text x="64" y="25">8</text>
+      </g>
+      <text x="78" y="36" fill="#5b6472">QQQ (%)</text>
+      <text x="446" y="212" text-anchor="end" fill="#5b6472">SPX (%)</text>
+      <polyline fill="none" stroke="#5b6472" stroke-width="2" points="324.6,104.6 324.4,101.7 323.6,98.9 322.4,96.2 320.8,93.8 318.7,91.5 316.1,89.4 313.1,87.6 309.8,86 306.1,84.7 302,83.7 297.6,82.9 292.9,82.4 288,82.1 282.9,82.2 277.7,82.5 272.3,83.2 266.8,84.1 261.3,85.3 255.7,86.7 250.3,88.4 244.9,90.3 239.6,92.5 234.5,94.8 229.6,97.4 224.9,100.1 220.6,102.9 216.5,105.9 212.8,109 209.4,112.2 206.4,115.4 203.9,118.7 201.8,122 200.1,125.2 198.9,128.4 198.2,131.6 197.9,134.6 198.2,137.6 198.9,140.4 200.1,143 201.8,145.5 203.9,147.7 206.4,149.8 209.4,151.6 212.8,153.2 216.5,154.5 220.6,155.6 224.9,156.4 229.6,156.9 234.5,157.1 239.6,157.1 244.9,156.7 250.3,156.1 255.7,155.2 261.3,154 266.8,152.6 272.3,150.9 277.7,148.9 282.9,146.8 288,144.4 292.9,141.9 297.6,139.2 302,136.3 306.1,133.3 309.8,130.2 313.1,127.1 316.1,123.8 318.7,120.6 320.8,117.3 322.4,114 323.6,110.8 324.4,107.7 324.6,104.6"/>
+      <polyline fill="none" stroke="#5b6472" stroke-width="2" points="387.9,89.6 387.5,83.7 386,78.1 383.6,72.9 380.3,67.9 376.1,63.4 371,59.3 365,55.6 358.3,52.5 350.8,49.8 342.7,47.7 333.9,46.1 324.6,45.1 314.8,44.6 304.6,44.8 294.1,45.5 283.3,46.7 272.3,48.5 261.3,50.9 250.2,53.8 239.3,57.1 228.5,61 217.9,65.3 207.7,70 197.9,75.1 188.6,80.5 179.8,86.3 171.7,92.2 164.2,98.4 157.5,104.8 151.6,111.2 146.5,117.8 142.2,124.3 138.9,130.8 136.5,137.2 135.1,143.5 134.6,149.6 135.1,155.5 136.5,161.1 138.9,166.4 142.2,171.3 146.5,175.9 151.6,180 157.5,183.6 164.2,186.8 171.7,189.4 179.8,191.6 188.6,193.1 197.9,194.2 207.7,194.6 217.9,194.5 228.5,193.8 239.3,192.5 250.2,190.7 261.3,188.4 272.3,185.5 283.3,182.1 294.1,178.3 304.6,174 314.8,169.2 324.6,164.2 333.9,158.7 342.7,153 350.8,147 358.3,140.8 365,134.5 371,128 376.1,121.5 380.3,114.9 383.6,108.4 386,102 387.5,95.7 387.9,89.6"/>
+      <line x1="144.9" y1="120" x2="377.1" y2="120" stroke="#a65f00" stroke-width="3.5"/>
+      <text x="384" y="115" fill="#a65f00" font-size="14">QQQ = 0</text>
+      <line x1="134.6" y1="149.6" x2="134.6" y2="390" stroke="#2455d6" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <line x1="387.9" y1="89.6" x2="387.9" y2="390" stroke="#2455d6" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <circle cx="261.3" cy="119.6" r="4" fill="#181818"/>
+      <line x1="70" y1="390" x2="450" y2="390" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="middle" font-size="14" fill="#5b6472">
+        <text x="70" y="408">−6</text><text x="133.3" y="408">−4</text><text x="196.7" y="408">−2</text><text x="260" y="408">0</text><text x="323.3" y="408">2</text><text x="386.7" y="408">4</text><text x="450" y="408">6</text>
+      </g>
+      <polyline fill="none" stroke="#2455d6" stroke-width="3" points="70,388.9 76.3,388.5 82.7,388 89,387.3 95.3,386.5 101.7,385.5 108,384.2 114.3,382.6 120.7,380.7 127,378.5 133.3,375.9 139.7,372.8 146,369.2 152.3,365.2 158.7,360.7 165,355.7 171.3,350.3 177.7,344.5 184,338.3 190.3,331.9 196.7,325.3 203,318.7 209.3,312.3 215.7,306 222,300.2 228.3,295 234.7,290.4 241,286.6 247.3,283.8 253.7,282 260,281.2 266.3,281.5 272.7,282.9 279,285.4 285.3,288.8 291.7,293 298,298 304.3,303.7 310.7,309.7 317,316.1 323.3,322.7 329.7,329.3 336,335.8 342.3,342 348.7,348 355,353.6 361.3,358.8 367.7,363.5 374,367.7 380.3,371.4 386.7,374.7 393,377.5 399.3,379.9 405.7,381.9 412,383.6 418.3,385 424.7,386.1 431,387 437.3,387.7 443.7,388.3 450,388.7"/>
+      <polyline fill="none" stroke="#a65f00" stroke-width="3" stroke-dasharray="7 4" points="70,389.5 76.3,389.2 82.7,388.9 89,388.5 95.3,388 101.7,387.3 108,386.3 114.3,385.1 120.7,383.6 127,381.7 133.3,379.4 139.7,376.6 146,373.3 152.3,369.4 158.7,364.9 165,359.8 171.3,354 177.7,347.7 184,340.8 190.3,333.4 196.7,325.8 203,318 209.3,310.1 215.7,302.5 222,295.3 228.3,288.7 234.7,282.9 241,278.1 247.3,274.5 253.7,272.2 260,271.3 266.3,271.8 272.7,273.7 279,276.9 285.3,281.3 291.7,286.7 298,293.1 304.3,300.1 310.7,307.7 317,315.4 323.3,323.3 329.7,331 336,338.5 342.3,345.5 348.7,352 355,358 361.3,363.3 367.7,368.1 374,372.1 380.3,375.6 386.7,378.6 393,381.1 399.3,383.1 405.7,384.7 412,386 418.3,387 424.7,387.8 431,388.4 437.3,388.8 443.7,389.2 450,389.4"/>
+      <text x="76" y="318" fill="#2455d6">เงา: SD 2%</text>
+      <text x="318" y="282" fill="#a65f00">รอยตัด: SD 1.83%</text>
+      <text x="446" y="372" text-anchor="end" fill="#5b6472">SPX (%)</text>
+    </g>
+  </svg>
+  <figcaption>ด้านบน วงรีในคือระยะ 1 SD และวงรีนอกคือระยะ 2 SD แบบ Mahalanobis ของผลตอบแทนรายวัน จุดดำคือ mean ด้านล่าง เส้นน้ำเงินคือ marginal ของ SPX ซึ่งเป็นเงาของทั้งเนิน ช่วง ±2 SD ของมันคือ −3.96% ถึง 4.04% กว้างเท่าวงรีนอกพอดี (เส้นประน้ำเงิน) เส้นส้มคือรอยตัดที่ QQQ = 0% ซึ่งสั้นกว่า คอร์ดของวงรีนอกยาวแค่ −3.63% ถึง 3.70% พอขยายให้พื้นที่เป็น 1 จะได้ Normal ที่ SD 1.833% สูงและแคบกว่าเส้นน้ำเงิน สองเส้นนี้คือคำตอบของระบบ A และระบบ B ในโจทย์เปิด</figcaption>
+</figure>
+
 <details class="jargon">
-  <summary>ศัพท์ที่ต้องแยกให้ได้</summary>
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Marginal distribution</dt><dd>Distribution ของบาง components โดยรวมความเป็นไปได้ทั้งหมดของ components อื่น ไม่ใช่เงินประกัน margin และไม่ได้กำหนดค่าของสินทรัพย์ที่ไม่ถือ</dd>
-    <dt>Selection matrix</dt><dd>Matrix ที่แต่ละแถวมี 1 เพียงตัวเดียวเพื่อเลือก coordinate ตามลำดับที่ต้องการ ในการเลือก subset ตามปกติจะไม่เลือกชื่อซ้ำ</dd>
-    <dt>Principal submatrix</dt><dd>ส่วนของ square matrix ที่เลือก index ชุดเดียวกันจากทั้งแถวและคอลัมน์ เป็น covariance ของสินทรัพย์ชุดที่เลือกเมื่อใช้ลำดับเดียวกัน</dd>
-    <dt>Conditional distribution</dt><dd>Distribution เมื่อมีข้อมูลเกี่ยวกับตัวแปรอื่น เช่น QQQ อยู่ใกล้ค่าที่ระบุ ต่างจากการไม่ถาม QQQ เลย</dd>
+    <dt>Marginal distribution</dt><dd>distribution ของตัวแปรบางตัว เมื่อรวมทุกความเป็นไปได้ของตัวที่เหลือเข้าไปแล้ว ใช้ตอบคำถามเรื่องสินทรัพย์ที่สนใจ โดยยังให้สินทรัพย์อื่นสุ่มตามปกติ คำนี้ไม่เกี่ยวกับเงินประกัน margin</dd>
+    <dt>Conditional distribution</dt><dd>distribution ของตัวแปรบางตัวเมื่อ<em>รู้</em>ค่าของตัวอื่นแล้ว เป็นอีกคำถามหนึ่ง ใช้กับสถานการณ์อย่าง “ถ้า QQQ ลง 5% แล้ว SPX จะเป็นอย่างไร”</dd>
+    <dt>Selection matrix $P$</dt><dd>matrix ที่แต่ละแถวมีเลข 1 ตัวเดียว วางที่ตำแหน่งของชื่อที่เลือก ใช้เขียนการหยิบบางช่องของ vector ให้เป็นการคูณ matrix เพื่อใช้สูตร mean และ covariance ที่มีอยู่แล้ว</dd>
+    <dt>Principal submatrix</dt><dd>ส่วนของ covariance ที่หยิบแถวและคอลัมน์ด้วยชื่อชุดเดียวกัน ในลำดับเดียวกัน คือ covariance ของสินทรัพย์ชุดที่เลือก</dd>
+    <dt>Precision matrix</dt><dd>inverse ของ covariance matrix ใช้ใน density และใน conditional distribution ตัดบางส่วนของมันออกมาแล้ว<em>ไม่ได้</em> marginal</dd>
   </dl>
 </details>
+
 <details class="symbols">
-  <summary>ตัวแปรและสองแบบจำลองในหน้านี้</summary>
-  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์/ตัวอย่าง</th><th>ความหมาย</th></tr></thead><tbody>
-    <tr><td>$X,\mu,\Sigma$</td><td>vector สุ่ม, mean vector, covariance matrix ของ full model</td></tr>
-    <tr><td>$A,B$</td><td>กลุ่ม index ที่เลือกกับกลุ่มที่ไม่เลือก; ไม่ใช่ค่าที่เกิดขึ้นของตัวแปร</td></tr>
-    <tr><td>$P,Y=PX$</td><td>selection matrix กับ vector ที่เลือกออกมา</td></tr>
-    <tr><td>$s,t$</td><td>MGF arguments ไม่ใช่ผลตอบแทนที่สังเกตได้</td></tr>
-    <tr><td>หุ้นสหรัฐ/พันธบัตรสหรัฐ/ทองคำ USD</td><td>simple returns หนึ่งปี; mean 9%,3%,5% เป็นสมมติฐานใหม่ในตัวอย่างนี้</td></tr>
-    <tr><td>SPX/QQQ ใน hook และ figures</td><td>returns หนึ่งวัน; mean 0.04%,0.03%, SD 2%,3%, correlation 0.40 ตาม 8.4</td></tr>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$X=(X_A,X_B)$</td><td>random vector ที่แบ่งเป็นกลุ่มที่ถาม $A$ กับกลุ่มที่ไม่ถาม $B$</td><td>ผลตอบแทน</td></tr>
+    <tr><td>$\mu,\ \Sigma$</td><td>mean vector และ covariance ของทั้งแบบจำลอง</td><td>ผลตอบแทน; ผลตอบแทน²</td></tr>
+    <tr><td>$\Sigma_{AA},\ \Sigma_{AB}$</td><td>ส่วนของ $\Sigma$ ที่แถวและคอลัมน์อยู่ในกลุ่ม $A$ และส่วนไขว้ระหว่าง $A$ กับ $B$</td><td>ผลตอบแทน²</td></tr>
+    <tr><td>$u,\ v$</td><td>score ของ SPX และ QQQ: ระยะจาก mean หารด้วย SD</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$t,\ s$</td><td>argument ของ MGF ไม่ใช่ผลตอบแทนที่เห็นจริง</td><td>ไม่มีหน่วย</td></tr>
   </tbody></table></div>
-  <p>ตัวเลขรายปีกับรายวันเป็นคนละโมเดล ห้ามนำ mean ของชุดหนึ่งไปใช้กับ covariance อีกชุดหนึ่ง Covariance ใช้หน่วย decimal-return² สำหรับช่วงเวลาที่ระบุ ไม่ใช่ variance ของอัตราผลตอบแทนต่อวัน</p>
+  <p>หน้านี้มีสองแบบจำลอง แบบแรกคือ SPX/QQQ รายวันในหน่วยเปอร์เซ็นต์ แบบที่สองคือ asset class 8 กลุ่มรายปีในหน่วยทศนิยม อย่าหยิบตัวเลขข้ามแบบจำลอง</p>
 </details>
+
 <section class="formula">
-  <h4>ขั้นที่ 1 — เขียนว่า “รวมออก” หมายถึงอะไร</h4>
-  <p>แบ่ง vector เป็น $X_A$ กับ $X_B$ หากมี joint density นิยามของ marginal คือ integral ครอบคลุมทุกค่าของ $X_B$ แต่ marginal distribution ยังมีอยู่ได้แม้ full model ไม่มี density เช่น Gaussian ที่ singular</p>
+  <h4>ขั้นที่ 1 — นิยาม: รวมทุกค่าของตัวที่ไม่ได้ถาม</h4>
+  <p>แบ่ง random vector เป็นสองกลุ่ม $X_A$ คือตัวที่สนใจ เช่น SPX และ $X_B$ คือตัวที่ไม่ได้ถาม เช่น QQQ ถ้ามี joint density นิยามของ marginal คือการรวม density ของทุกค่า $x_B$ ที่เกิดคู่กับ $x_A$ ได้ ถ้าเขียนด้วย <a href="8.5.html">moment generating function</a> การไม่ถามคือการใส่ศูนย์ที่ argument ของ $X_B$</p>
   <div class="math">\[
 \begin{aligned}
-f_A(x_A)&:=\int_{\mathbb R^{|B|}}f_{A,B}(x_A,x_B)\,dx_B,\\
-M_{X_A}(t)&:=\mathbb E[e^{t^{\mathsf T}X_A}]\\
-&=\mathbb E[e^{t^{\mathsf T}X_A+0^{\mathsf T}X_B}]\\
-&=M_X(t,0).
+f_A(x_A)&=\int f_{A,B}(x_A,x_B)\,dx_B,\\
+M_{X_A}(t)&=\mathbb E\big[e^{t^{\mathsf T}X_A}\big]\\
+&=\mathbb E\big[e^{t^{\mathsf T}X_A+0^{\mathsf T}X_B}\big]\\
+&=M_X(t,\,0).
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ศูนย์ใน MGF เป็นค่าสัมประสิทธิ์ของ argument:เราไม่กำลังถาม moment ของ $X_B$ แต่ไม่ได้บอกว่า $X_B=0$ ตัวแปรที่ไม่ถามยังสุ่มและมีความสัมพันธ์กับตัวที่ถามได้ตามเดิม</p></div>
-  <div class="table-wrap"><table><thead><tr><th>เขียนศูนย์ตรงไหน</th><th>กำลังทำอะไร</th></tr></thead><tbody>
-    <tr><td>น้ำหนัก $w_B=0$</td><td>ไม่มี P&amp;L จากการถือ B โดยตรง; ไม่ได้หยุดให้ return B สุ่ม</td></tr>
-    <tr><td>MGF argument $s_B=0$</td><td>เลือกดู distribution/moments ของ A โดยไม่ถาม B</td></tr>
-    <tr><td>ข้อมูล $X_B\approx0$</td><td>เปลี่ยนเป็น conditional question ซึ่งอาจเปลี่ยน mean และ covariance ของ A</td></tr>
+  <div class="reading"><p>integral บรรทัดแรกคือการบวกทุกแถวของตาราง joint แบบที่ทำใน<a href="5.2.html">marginal distributions</a> ของตัวแปร discrete แค่เปลี่ยนจากการบวกเป็นการ integrate ครอบทุกค่าของ $x_B$ ส่วนศูนย์ใน $M_X(t,0)$ เป็นศูนย์ของ <em>argument</em> ไม่ใช่ของ $X_B$ เราแค่ไม่เอา $X_B$ เข้าไปคิดใน exponent ตัว $X_B$ เองยังสุ่มเต็มที่ ถ้าเผลอแทน $X_B=0$ จริง ๆ ก็จะกลายเป็นคำถามของระบบ B ในโจทย์เปิด</p></div>
+  <div class="table-wrap"><table><thead><tr><th>ศูนย์อยู่ตรงไหน</th><th>กำลังถามอะไร</th></tr></thead><tbody>
+    <tr><td>น้ำหนัก $w_B=0$</td><td>พอร์ตไม่ได้กำไรขาดทุนจาก $B$ โดยตรง แต่ $B$ ยังสุ่มตามปกติ</td></tr>
+    <tr><td>argument ของ MGF $s_B=0$</td><td>ดู distribution ของ $A$ โดยไม่ถามถึง $B$ คือ marginal</td></tr>
+    <tr><td>ข้อมูล “$X_B$ ปิดที่ 0”</td><td>คำถาม conditional ซึ่งเปลี่ยนทั้ง mean และ SD ของ $A$</td></tr>
   </tbody></table></div>
 </section>
+
 <section class="formula">
-  <h4>ขั้นที่ 2 — เลือกแถวและคอลัมน์ด้วย index ชุดเดียวกัน</h4>
-  <p>กำหนด annual Gaussian return vector ของหุ้นสหรัฐ พันธบัตรสหรัฐ และทองคำตามลำดับนี้ ต้องการเฉพาะหุ้นกับทองจึงเลือก components 1 และ 3 โดยยังรักษา covariance ระหว่างสองตัวไว้</p>
+  <h4>ขั้นที่ 2 — integrate จริงในสองมิติ: จัดรูปให้ส่วนของ QQQ เป็น bell ที่พื้นที่ 1</h4>
+  <p>ทำไมเงาของ Normal สองมิติถึงเป็น Normal integrate ตรง ๆ ได้ แต่ต้องจัดรูปก่อน ใช้ score ของแต่ละตัว $u=(x-\mu_X)/\sigma_X$ และ $v=(y-\mu_Y)/\sigma_Y$ แล้วจัดกำลังสองในเลขชี้กำลังของ<a href="8.4.html">density สองมิติ</a> ให้ $v$ ไปอยู่ในวงเล็บเดียว</p>
   <div class="math">\[
 \begin{aligned}
-\mu&=\begin{bmatrix}0.09\\0.03\\0.05\end{bmatrix},\\
-\Sigma&=10^{-4}\begin{bmatrix}
-324&amp;-21.6&amp;13.5\\
--21.6&amp;36&amp;22.5\\
-13.5&amp;22.5&amp;225
-\end{bmatrix},\\
-P&=\begin{bmatrix}1&amp;0&amp;0\\0&amp;0&amp;1\end{bmatrix},\\
-Y=PX&=\begin{bmatrix}X_1\\X_3\end{bmatrix},\\
-\mu_Y&=P\mu=\begin{bmatrix}0.09\\0.05\end{bmatrix},\\
-\Sigma_Y&=P\Sigma P^{\mathsf T}\\
-&=\begin{bmatrix}0.0324&amp;0.00135\\0.00135&amp;0.0225\end{bmatrix}.
+q&:=\frac{u^2-2\rho uv+v^2}{1-\rho^2}\\
+&=u^2+\frac{(v-\rho u)^2}{1-\rho^2},\\
+f_{X,Y}(x,y)&=g(x)\,h(y\mid x),\\
+g(x)&=\frac{e^{-u^2/2}}{\sqrt{2\pi}\,\sigma_X},\\
+h(y\mid x)&=\frac{e^{-(v-\rho u)^2/[2(1-\rho^2)]}}{\sqrt{2\pi}\,\sigma_Y\sqrt{1-\rho^2}}.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>การคูณ P ด้านซ้ายเลือกแถว และคูณ $P^{\mathsf T}$ ด้านขวาเลือกคอลัมน์ตามลำดับเดียวกัน ไม่ใช่เลือกสอง diagonal cells แล้วตั้ง covariance ระหว่างหุ้นกับทองให้ศูนย์</p></div>
-  <p>สูตร mean/covariance นี้มาจาก linear transformation ใน 8.2 จึงไม่ต้องใช้ Normal assumption แต่ P แบบ selection ต่างจาก matrix ที่ผสมหลาย assets ในแต่ละแถว: กรณีหลังเป็น distribution ของ linear combinations ซึ่งจะเรียนต่อใน 8.8</p>
-  <p>P ขนาด $2\times3$ เรียกได้ว่า coordinate projection แต่ไม่ใช่ square orthogonal projector ที่ต้องตรวจ $P^2=P$ หากต้องการลำดับ “ทอง, หุ้น” ให้สลับแถวของ P และเรียง weights ของพอร์ตให้ตรงกับผลที่เลือกออกมา</p>
+  <div class="reading"><p>บรรทัดที่สองตรวจได้โดยรวมเศษเข้าด้วยกัน: $u^2(1-\rho^2)+v^2-2\rho uv+\rho^2u^2=u^2-2\rho uv+v^2$ ตัวคูณหน้า density สองมิติ $1/(2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2})$ ก็แยกเป็นสองก้อนได้พอดี ทีนี้ดู $h$ เป็นฟังก์ชันของ $y$ โดยตรึง $x$ ไว้ เพราะ $\sigma_Y(v-\rho u)=y-\mu_Y-\rho\sigma_Y u$ ตัว $h$ จึงเป็น Normal density ที่ศูนย์กลาง $\mu_Y+\rho\sigma_Y u$ และ SD $\sigma_Y\sqrt{1-\rho^2}$ density ทุกตัวมีพื้นที่ 1 ไม่ว่าศูนย์กลางจะอยู่ตรงไหน</p></div>
+  <div class="math">\[
+\begin{aligned}
+f_X(x)&=\int_{-\infty}^{\infty}g(x)\,h(y\mid x)\,dy\\
+&=g(x)\int_{-\infty}^{\infty}h(y\mid x)\,dy\\
+&=g(x)\cdot1\\
+&=\frac{e^{-(x-\mu_X)^2/(2\sigma_X^2)}}{\sqrt{2\pi}\,\sigma_X}.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>จังหวะที่คนมักติดคือบรรทัดที่สอง ดึง $g(x)$ ออกนอก integral ได้เพราะ integral วิ่งตาม $y$ ส่วน $x$ ถูกตรึงไว้ตลอด พอ $h$ มีพื้นที่ 1 ก็เหลือแค่ $g(x)$ ซึ่งคือ Normal ที่มี mean $\mu_X$ และ SD $\sigma_X$ ไม่มี $\rho$ หลงเหลือ correlation จึงไม่มีผลกับ marginal เลย และตลอดทางไม่ได้สมมติว่าสองตัวอิสระกัน ผลพลอยได้คือ $h(y\mid x)$ เป็น conditional density ของ QQQ เมื่อรู้ SPX ซึ่ง<a href="8.7.html">หน้าถัดไป</a>จะใช้ต่อ</p></div>
+  <details><summary>ทำไม Normal density ถึงมีพื้นที่ 1</summary>
+    <p>ให้ $I=\int_{-\infty}^{\infty}e^{-z^2/2}\,dz$ คูณ integral สองชุดเข้าด้วยกัน แล้วเปลี่ยนเป็นพิกัดเชิงขั้ว ซึ่งพื้นที่ชิ้นเล็กคือ $r\,dr\,d\theta$</p>
+    <div class="math">\[
+\begin{aligned}
+I^2&=\int_{-\infty}^{\infty}\!\int_{-\infty}^{\infty}e^{-(x^2+y^2)/2}\,dx\,dy\\
+&=\int_0^{2\pi}\!\int_0^{\infty}e^{-r^2/2}\,r\,dr\,d\theta\\
+&=2\pi\Big[-e^{-r^2/2}\Big]_0^{\infty}=2\pi,\\
+I&=\sqrt{2\pi}.
+\end{aligned}
+\]</div>
+    <p>ตัว $r$ ที่โผล่มาคือเหตุที่ integral นี้ทำได้ เพราะ $r\,e^{-r^2/2}$ มี antiderivative คือ $-e^{-r^2/2}$ หารด้วย $\sqrt{2\pi}$ แล้วจึงได้พื้นที่ 1 และการเลื่อนศูนย์กลางหรือยืด SD ไม่เปลี่ยนพื้นที่ เพราะตัวคูณหน้า density ปรับตามไว้แล้ว</p>
+  </details>
 </section>
-<section class="formula">
-  <h4>ขั้นที่ 3 — MGF พิสูจน์ว่า selected law ยังเป็น Gaussian</h4>
-  <p>สมมติ $X$ เป็น joint Gaussian ตาม 8.4–8.5 เมื่อถาม MGF ของ $Y=PX$ ให้ส่ง argument $P^{\mathsf T}t$ กลับไปยัง full vector แล้วจัดรูป</p>
+
+<figure class="plot">
+  <h4>รูป — ทุกเส้นตั้งตัดเนินได้ bell ที่ศูนย์กลางอยู่บนเส้นเดียวกัน</h4>
+  <svg viewBox="0 0 480 320" role="img" aria-label="วงรีของ SPX กับ QQQ มีเส้นตั้งสามเส้นที่ SPX ลบสาม ศูนย์ และบวกสามเปอร์เซ็นต์ บนแต่ละเส้นมีรูประฆังวางตะแคง ศูนย์กลางอยู่บนเส้นตรงสีม่วง ความกว้างเท่ากันทุกอัน แต่ขนาดต่างกัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="60" y1="280" x2="450" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <line x1="60" y1="30" x2="60" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="middle" font-size="14" fill="#5b6472">
+        <text x="60" y="298">−6</text><text x="157.5" y="298">−3</text><text x="255" y="298">0</text><text x="352.5" y="298">3</text><text x="450" y="298">6</text>
+      </g>
+      <g text-anchor="end" font-size="14" fill="#5b6472">
+        <text x="54" y="243">−6</text><text x="54" y="201">−3</text><text x="54" y="160">0</text><text x="54" y="118">3</text><text x="54" y="77">6</text>
+      </g>
+      <text x="66" y="22" fill="#5b6472">QQQ (%)</text>
+      <text x="446" y="272" text-anchor="end" fill="#5b6472">SPX (%)</text>
+      <polyline fill="none" stroke="#d7dce3" stroke-width="2" points="321.3,137.9 321.1,134.7 320.3,131.5 319.1,128.6 317.4,125.9 315.2,123.3 312.6,121.1 309.5,119 306.1,117.3 302.3,115.8 298.1,114.6 293.6,113.7 288.8,113.2 283.8,112.9 278.5,113 273.1,113.4 267.6,114.1 262,115.1 256.3,116.4 250.6,118 245,119.9 239.5,122 234.1,124.4 228.8,127 223.8,129.8 219,132.9 214.5,136 210.3,139.4 206.5,142.8 203.1,146.3 200,149.9 197.4,153.5 195.2,157.2 193.5,160.8 192.3,164.4 191.5,167.9 191.3,171.3 191.5,174.5 192.3,177.6 193.5,180.6 195.2,183.3 197.4,185.8 200,188.1 203.1,190.1 206.5,191.9 210.3,193.4 214.5,194.6 219,195.4 223.8,196 228.8,196.2 234.1,196.2 239.5,195.8 245,195.1 250.6,194.1 256.3,192.8 262,191.2 267.6,189.3 273.1,187.2 278.5,184.8 283.8,182.1 288.8,179.3 293.6,176.3 298.1,173.1 302.3,169.8 306.1,166.4 309.5,162.8 312.6,159.2 315.2,155.6 317.4,152 319.1,148.4 320.3,144.8 321.1,141.3 321.3,137.9"/>
+      <polyline fill="none" stroke="#d7dce3" stroke-width="2" points="386.3,121.3 385.8,114.7 384.3,108.5 381.9,102.6 378.5,97.1 374.1,92.1 368.9,87.5 362.8,83.5 355.9,80 348.2,77 339.9,74.6 330.9,72.9 321.3,71.8 311.2,71.3 300.8,71.4 289.9,72.2 278.9,73.6 267.6,75.6 256.3,78.2 245,81.4 233.7,85.2 222.7,89.4 211.8,94.2 201.4,99.5 191.3,105.1 181.7,111.1 172.7,117.5 164.4,124.1 156.7,131 149.8,138.1 143.7,145.3 138.5,152.5 134.1,159.8 130.7,167 128.3,174.1 126.8,181.1 126.3,187.9 126.8,194.4 128.3,200.7 130.7,206.5 134.1,212 138.5,217.1 143.7,221.6 149.8,225.7 156.7,229.2 164.4,232.2 172.7,234.5 181.7,236.3 191.3,237.4 201.4,237.9 211.8,237.8 222.7,237 233.7,235.6 245,233.6 256.3,231 267.6,227.8 278.9,224 289.9,219.7 300.8,215 311.2,209.7 321.3,204.1 330.9,198 339.9,191.7 348.2,185 355.9,178.1 362.8,171.1 368.9,163.9 374.1,156.7 378.5,149.4 381.9,142.2 384.3,135 385.8,128 386.3,121.3"/>
+      <g stroke="#5b6472" stroke-width="1.5" stroke-dasharray="4 4">
+        <line x1="157.5" y1="30" x2="157.5" y2="280"/><line x1="255" y1="30" x2="255" y2="280"/><line x1="352.5" y1="30" x2="352.5" y2="280"/>
+      </g>
+      <line x1="60" y1="204.9" x2="450" y2="104.9" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="8 5"/>
+      <polyline fill="#2455d6" fill-opacity="0.15" stroke="#2455d6" stroke-width="2.5" points="157.5,279.2 158.1,279.2 158.3,275.4 158.5,271.6 158.7,267.7 159,263.9 159.4,260.1 159.8,256.3 160.3,252.5 160.9,248.7 161.6,244.8 162.3,241 163.1,237.2 164,233.4 164.9,229.6 165.9,225.7 167,221.9 168,218.1 169.1,214.3 170.1,210.5 171.1,206.6 172,202.8 172.8,199 173.5,195.2 174.1,191.4 174.5,187.6 174.7,183.7 174.8,179.9 174.7,176.1 174.5,172.3 174.1,168.5 173.5,164.6 172.8,160.8 172,157 171.1,153.2 170.1,149.4 169.1,145.5 168,141.7 167,137.9 165.9,134.1 164.9,130.3 164,126.5 163.1,122.6 162.3,118.8 161.6,115 160.9,111.2 160.3,107.4 159.8,103.5 159.4,99.7 159,95.9 158.7,92.1 158.5,88.3 158.3,84.4 158.1,80.6 157.5,80.6"/>
+      <polyline fill="#2455d6" fill-opacity="0.15" stroke="#2455d6" stroke-width="2.5" points="255,254.2 256.9,254.2 257.4,250.4 258.1,246.6 258.9,242.7 259.9,238.9 261.1,235.1 262.4,231.3 264,227.5 265.9,223.7 268,219.8 270.3,216 272.9,212.2 275.6,208.4 278.6,204.6 281.8,200.7 285,196.9 288.4,193.1 291.7,189.3 294.9,185.5 298,181.6 300.9,177.8 303.5,174 305.8,170.2 307.6,166.4 308.9,162.6 309.7,158.7 310,154.9 309.7,151.1 308.9,147.3 307.6,143.5 305.8,139.6 303.5,135.8 300.9,132 298,128.2 294.9,124.4 291.7,120.5 288.4,116.7 285,112.9 281.8,109.1 278.6,105.3 275.6,101.5 272.9,97.6 270.3,93.8 268,90 265.9,86.2 264,82.4 262.4,78.5 261.1,74.7 259.9,70.9 258.9,67.1 258.1,63.3 257.4,59.4 256.9,55.6 255,55.6"/>
+      <polyline fill="#2455d6" fill-opacity="0.15" stroke="#2455d6" stroke-width="2.5" points="352.5,229.2 353.1,229.2 353.3,225.4 353.5,221.6 353.8,217.7 354.1,213.9 354.5,210.1 355,206.3 355.5,202.5 356.1,198.7 356.8,194.8 357.6,191 358.5,187.2 359.4,183.4 360.4,179.6 361.5,175.7 362.5,171.9 363.7,168.1 364.8,164.3 365.9,160.5 366.9,156.6 367.9,152.8 368.7,149 369.5,145.2 370.1,141.4 370.5,137.6 370.8,133.7 370.9,129.9 370.8,126.1 370.5,122.3 370.1,118.5 369.5,114.6 368.7,110.8 367.9,107 366.9,103.2 365.9,99.4 364.8,95.5 363.7,91.7 362.5,87.9 361.5,84.1 360.4,80.3 359.4,76.5 358.5,72.6 357.6,68.8 356.8,65 356.1,61.2 355.5,57.4 355,53.5 354.5,49.7 354.1,45.9 353.8,42.1 353.5,38.3 353.3,34.4 353.1,30.6 352.5,30.6"/>
+      <g fill="#6d28d9"><circle cx="157.5" cy="179.9" r="4.5"/><circle cx="255" cy="154.9" r="4.5"/><circle cx="352.5" cy="129.9" r="4.5"/></g>
+      <g fill="#2455d6" font-size="14"><text x="178" y="186">0.063</text><text x="314" y="161">0.199</text><text x="375" y="136">0.067</text></g>
+      <text x="446" y="96" text-anchor="end" fill="#6d28d9" font-size="14">ศูนย์กลาง bell</text>
+    </g>
+  </svg>
+  <figcaption>รูประฆังสีน้ำเงินแต่ละอันคือ density สองมิติตามเส้นตั้งที่ SPX = −3%, 0% และ 3% วาดตะแคงออกไปทางขวา ความกว้างเท่ากันทุกอัน (SD 2.75%) ศูนย์กลางเลื่อนตามเส้นประม่วงซึ่งมีความชัน 0.6 ส่วนขนาดต่างกันเพราะตัวคูณ $g(x)$ ตัวเลขข้างแต่ละอันคือพื้นที่ใต้รอยตัด หน่วยต่อเปอร์เซ็นต์ เท่ากับความสูงของ marginal ของ SPX ณ จุดนั้น 0.063, 0.199 และ 0.067 นี่คือภาพของการ integrate ในขั้นที่ 2 ศูนย์กลางเลื่อนได้ แต่พื้นที่ของ bell ที่ถูกหารด้วยขนาดแล้วเป็น 1 เสมอ</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 3 — ตอบโจทย์เปิดด้วยโอกาสขาดทุนเกิน 3%</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> แบบจำลองรายวันในหน่วยเปอร์เซ็นต์ SPX มี mean 0.04 และ SD 2 QQQ มี mean 0.03 และ SD 3 correlation 0.4 ถามโอกาสที่ SPX ลงเกิน 3% ในหนึ่งวัน ระบบ A ใช้ marginal ระบบ B ใช้รอยตัดที่ QQQ = 0 ซึ่งได้จากสูตรของขั้นที่ 2 โดยสลับบทบาท ให้ศูนย์กลางเป็น $\mu_X+\rho\sigma_X v$ และ SD เป็น $\sigma_X\sqrt{1-\rho^2}$</p>
   <div class="math">\[
 \begin{aligned}
-M_Y(t)&=\mathbb E[e^{t^{\mathsf T}PX}]\\
-&=M_X(P^{\mathsf T}t)\\
-&=\exp\{t^{\mathsf T}P\mu\\
-&\qquad+\tfrac12t^{\mathsf T}P\Sigma P^{\mathsf T}t\},\\
-Y&\sim N(P\mu,P\Sigma P^{\mathsf T}).
+z_A&=\frac{-3-0.04}{2}=-1.52,\\
+P_A&=\Phi(-1.52)\approx6.43\%,\\
+v_0&=\frac{0-0.03}{3}=-0.01,\\
+m_B&=0.04+0.4(2)(-0.01)\\
+&=0.04-0.008=0.032,\\
+s_B&=2\sqrt{1-0.4^2}\approx1.8330,\\
+z_B&=\frac{-3-0.032}{1.8330}\approx-1.654,\\
+P_B&=\Phi(-1.654)\approx4.91\%.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>MGF ตรงกับ Gaussian ที่มี mean/covariance ที่เลือกไว้ และ finite รอบศูนย์ จึงระบุ distribution ได้ ไม่จำเป็นต้องสร้าง joint density หรือ integrate ทีละตัวแปรใหม่ทุกครั้ง</p></div>
-  <details><summary>ทำไม cross-block หายได้โดยไม่ต้องเป็นศูนย์</summary>
+  <p><strong>คำตอบ:</strong> ระบบ A ให้โอกาส 6.43% ซึ่งถูกสำหรับเช้าวันที่ยังไม่รู้อะไร ระบบ B ให้ 4.91% ต่ำไปเกือบหนึ่งในสี่ ($1-4.91/6.43\approx24\%$) ไม่ใช่เพราะสูตร Normal ผิด แต่เพราะมันแอบใส่ข้อมูลว่า QQQ ปิดที่ศูนย์ ซึ่งไม่มีใครรู้ล่วงหน้า</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\sqrt{0.84}\approx0.9165$ ดังนั้น SD ระบบ B คือ $2\times0.9165=1.833$ และ mean ขยับแค่ 0.008 จุดเปอร์เซ็นต์ เพราะ QQQ = 0 อยู่ห่าง mean ของมันแค่ 0.01 SD ความต่างของสองคำตอบจึงมาจาก SD เกือบทั้งหมด</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — หลายมิติ: เขียนการเลือกเป็น matrix แล้วพิสูจน์ด้วย MGF</h4>
+  <p>กับสินทรัพย์ 8 ตัว การ integrate ทีละมิติแบบขั้นที่ 2 เหนื่อยเกินไป ทางลัดคือเขียนการเลือกเป็นการคูณ matrix $P$ ที่แถวละมีเลข 1 ตัวเดียววางตรงชื่อที่เลือก แล้วใช้ MGF ของ MVN ซึ่งคือ $M_X(s)=\exp(s^{\mathsf T}\mu+\tfrac12 s^{\mathsf T}\Sigma s)$</p>
+  <div class="math">\[
+\begin{aligned}
+Y&:=PX,\\
+M_Y(t)&=\mathbb E\big[e^{t^{\mathsf T}PX}\big]\\
+&=\mathbb E\big[e^{(P^{\mathsf T}t)^{\mathsf T}X}\big]\\
+&=M_X(P^{\mathsf T}t)\\
+&=\exp\big(t^{\mathsf T}P\mu\\
+&\qquad+\tfrac12t^{\mathsf T}P\Sigma P^{\mathsf T}t\big),\\
+Y&\sim\mathcal N(P\mu,\ P\Sigma P^{\mathsf T}).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สามย้าย $P$ ไปเกาะกับ $t$ เพราะ $t^{\mathsf T}PX=(P^{\mathsf T}t)^{\mathsf T}X$ ผลคือ MGF ของ $X$ ที่ประเมินตรงจุด $P^{\mathsf T}t$ ซึ่งเป็นตัวเลขคงที่ จากนั้นแค่แทนในสูตร ผลบรรทัดรองสุดท้ายมีหน้าตาเป็น MGF ของ MVN ที่มี mean $P\mu$ และ covariance $P\Sigma P^{\mathsf T}$ และ MGF ที่มีค่าจำกัดรอบศูนย์ระบุ distribution ได้แบบเดียว จึงจบโดยไม่ต้อง integrate เลย</p><p>อ่านผลเป็นภาษาคนได้ว่า $P\mu$ คือหยิบ mean ของชื่อที่เลือก และ $P\Sigma P^{\mathsf T}$ คือหยิบแถว (คูณ $P$ ทางซ้าย) และคอลัมน์ (คูณ $P^{\mathsf T}$ ทางขวา) ด้วยชื่อชุดเดียวกันในลำดับเดียวกัน ช่องนอกแนวทแยงระหว่างชื่อที่เลือกยังอยู่ครบ</p></div>
+  <details><summary>พจน์ไขว้กับกลุ่มที่ไม่ได้ถามหายไปไหน</summary>
     <div class="math">\[
 \begin{aligned}
 s^{\mathsf T}\Sigma s
 &=s_A^{\mathsf T}\Sigma_{AA}s_A\\
 &\quad+2s_A^{\mathsf T}\Sigma_{AB}s_B\\
 &\quad+s_B^{\mathsf T}\Sigma_{BB}s_B,\\
-s_B&=0,\\
-M_{X_A}(s_A)&=\exp\{s_A^{\mathsf T}\mu_A\\
-&\qquad+\tfrac12s_A^{\mathsf T}\Sigma_{AA}s_A\}.
+s_B=0:\ s^{\mathsf T}\Sigma s&=s_A^{\mathsf T}\Sigma_{AA}s_A.
 \end{aligned}
 \]</div>
-    <p>พจน์ cross-block หายเพราะ argument ของ B เป็นศูนย์ ไม่ใช่เพราะเราได้พิสูจน์ว่า $\Sigma_{AB}=0$ สินทรัพย์ที่ตัดออกจึงยังมีความสัมพันธ์กับสินทรัพย์ที่เหลือ และอาจให้ข้อมูลที่เปลี่ยน conditional prediction ได้</p>
+    <p>พจน์ที่มี $\Sigma_{AB}$ หายเพราะถูกคูณด้วย $s_B=0$ ไม่ใช่เพราะ $\Sigma_{AB}$ เป็นศูนย์ SPX กับ QQQ ยังสัมพันธ์กันเท่าเดิม เราแค่ไม่ได้ถามถึง QQQ ใน marginal ความสัมพันธ์นั้นจะกลับมามีบทบาททันทีที่มีข้อมูลของ QQQ</p>
   </details>
+  <p>สูตร mean $P\mu$ และ covariance $P\Sigma P^{\mathsf T}$ จริงกับทุก distribution ที่มี variance จำกัด เพราะเป็นกรณีหนึ่งของ<a href="8.2.html">การแปลงเชิงเส้น</a> ส่วนที่ joint Normal ให้เพิ่มคือรับรองว่าชุดที่เลือกออกมายังเป็น Normal ซึ่งจำเป็นเมื่อจะอ่านหางอย่างโอกาสขาดทุนในขั้นที่ 3</p>
 </section>
-<figure class="plot">
-  <h4>Figure 8.6a — Projection รวมทุกค่า QQQ ไม่ใช่ตัดที่แถวหนึ่ง</h4>
-  <img src="../figures/8.6-1.svg" alt="Joint SPX QQQ density กับเส้น marginal SPX ที่นำมาซ้อนด้านล่าง" loading="lazy">
-  <figcaption>เส้นแดงคือ SPX marginal ที่เลื่อนและปรับความสูงเพื่อซ้อนกับ contour การวางไว้ด้านล่างไม่ได้หมายถึงกำหนด QQQ return ให้เท่ากับค่าบนแกน ณ เส้นแดง และความสูงที่ปรับแล้วไม่ใช่ ordinate ของ marginal density จริง</figcaption>
-</figure>
-<section class="formula">
-  <h4>ขั้นที่ 4 — ดูการ integrate จริงในสองมิติ</h4>
-  <p>สำหรับ bivariate Normal ที่ $\sigma_X,\sigma_Y\gt0$ และ $|\rho|\lt1$ กำหนด marginal scores $u=(x-\mu_X)/\sigma_X$ กับ $v=(y-\mu_Y)/\sigma_Y$ ทั้งสอง scores ยัง correlated กัน เราจัดกำลังสองเพื่อแยกพจน์ที่ขึ้นกับ y</p>
-  <div class="math">\[
-\begin{aligned}
-q&:=\frac{u^2-2\rho uv+v^2}{1-\rho^2},\\
-q&=u^2+\frac{(v-\rho u)^2}{1-\rho^2},\\
-f_{X,Y}(x,y)&=\frac{e^{-u^2/2}}{\sqrt{2\pi}\sigma_X}\\
-&\quad\times\frac{e^{-(v-\rho u)^2/[2(1-\rho^2)]}}{\sqrt{2\pi}\sigma_Y\sqrt{1-\rho^2}},\\
-z&=\frac{v-\rho u}{\sqrt{1-\rho^2}},\\
-dy&=\sigma_Y\sqrt{1-\rho^2}\,dz,\\
-J&:=\int_{-\infty}^{\infty}\frac{e^{-z^2/2}}{\sqrt{2\pi}}\,dz=1,\\
-f_X(x)&=\frac{e^{-u^2/2}}{\sqrt{2\pi}\sigma_X}J\\
-&=\frac{e^{-(x-\mu_X)^2/(2\sigma_X^2)}}{\sqrt{2\pi}\sigma_X}.
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เมื่อ fix x, ส่วนที่สองเป็น Normal density ใน y ซึ่งมีพื้นที่รวมหนึ่ง แม้ศูนย์กลางจะขึ้นกับ x การ integrate จึงเหลือ Normal ของ X โดยเก็บ mean $\mu_X$ และ variance $\sigma_X^2$ ไม่ได้อาศัย independence</p></div>
-  <details><summary>ที่มาของ integral เท่ากับหนึ่ง</summary>
-    <p>ให้ $I=\int_{-\infty}^{\infty}e^{-z^2/2}\,dz\gt0$ คูณ integral สองชุด แล้วเปลี่ยนเป็น polar coordinates ซึ่งมี area factor r</p>
-    <div class="math">\[
-\begin{aligned}
-I^2&=\int_{\mathbb R^2}e^{-(x^2+y^2)/2}\,dx\,dy\\
-&=\int_0^{2\pi}\int_0^{\infty}e^{-r^2/2}r\,dr\,d\theta\\
-&=2\pi[-e^{-r^2/2}]_0^{\infty}=2\pi,\\
-I&=\sqrt{2\pi},\\
-J&=I/\sqrt{2\pi}=1.
-\end{aligned}
-\]</div>
-    <p>ที่ $|\rho|=1$ สูตร density สองมิตินี้ใช้ไม่ได้ แต่การเลือก component ของ Gaussian ที่ singular ยังทำได้ด้วย affine construction หรือ MGF ไม่ต้องฝืนหารด้วยศูนย์</p>
-  </details>
-</section>
-<figure class="plot">
-  <h4>Figure 8.6b — Marginal ของ SPX ยังมี SD 2%</h4>
-  <img src="../figures/8.6-2.svg" alt="SPX daily Normal marginal mean 0.04 เปอร์เซ็นต์ SD 2 เปอร์เซ็นต์" loading="lazy">
-  <figcaption>โมเดลรายวันให้ช่วง mean ±1SD เท่ากับ −1.96% ถึง +2.04% ซึ่งมี probability ตามทฤษฎีประมาณ 68.27% พื้นที่สีวาดจากกริด แกน density ใช้หน่วยต่อ percentage point ไม่ใช่ต่อ decimal return</figcaption>
-</figure>
+
 <section class="example">
-  <h4>ขั้นที่ 5 — ตรวจพอร์ตหุ้น/ทองจากทั้ง full model และ subset</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้ annual model ของขั้นที่ 2 ลงเงินครึ่งหนึ่งในหุ้นและครึ่งหนึ่งในทอง ไม่ถือพันธบัตร คง holdings ตลอดช่วงและละต้นทุนในตัวอย่าง เรียก weight vector ใน subset ว่า w</p>
-  <div class="math">\[
-\begin{aligned}
-w&=(0.5,0.5)^{\mathsf T},\\
-\mathbb E[R_p]&=0.5(0.09)+0.5(0.05)=0.07,\\
-\operatorname{Var}(R_p)&=0.25(0.0324)\\
-&\quad+0.25(0.0225)\\
-&\quad+2(0.25)(0.00135)\\
-&=0.0081+0.005625\\
-&\quad+0.000675\\
-&=0.0144,\\
-\operatorname{SD}(R_p)&=\sqrt{0.0144}=0.12,\\
-\widetilde w=P^{\mathsf T}w&=(0.5,0,0.5)^{\mathsf T},\\
-w^{\mathsf T}\Sigma_Yw&=\widetilde w^{\mathsf T}\Sigma\widetilde w=0.0144.
-\end{aligned}
-\]</div>
-  <p><strong>คำตอบ:</strong> expected annual return 7%, SD 12% จากทั้งสองเส้นทาง หาก NAV เริ่มต้น \$1 ล้าน จะเป็น mean P&amp;L \$70,000 กับ SD \$120,000 ไม่ใช่กำไรที่รับประกัน</p>
-  <p>โค้ดท้ายหน้ารายงาน portfolioLoss ภายใต้ Gaussian ด้วย: $\Phi(-0.07/0.12)\approx27.98\%$ นี่ใช้คุณสมบัติว่า linear combination ของ joint Gaussian ยังเป็น Normal ซึ่งจะขยายความใน 8.8 ไม่ได้อาศัยเพียงรูป marginal ของสินทรัพย์แต่ละตัว</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> variance ต้องมี cross-term 0.000675 หุ้นกับทองไม่เป็นอิสระเพียงเพราะนำพันธบัตรออก หากเลือกหุ้นกับพันธบัตรผิดคู่ จะได้ variance 0.00792 ซึ่งเป็นพอร์ตคนละชุด ไม่ใช่ผลที่เทียบกันได้</p>
-  <p>เมื่อถามเฉพาะทอง $R_G\sim N(0.05,0.15^2)$ ความน่าจะเป็นขาดทุนจากโมเดลจึงคำนวณได้โดยไม่ต้องตั้ง return หุ้นหรือพันธบัตรให้ค่าใด</p>
-  <div class="math">\[
-\begin{aligned}
-P(R_G\lt0)&=\Phi\left(\frac{0-0.05}{0.15}\right)\\
-&=\Phi(-1/3)\approx36.9441\%.
-\end{aligned}
-\]</div>
-</section>
-<figure class="plot">
-  <h4>Figure 8.6c — สอง marginal curves ยังไม่บอกความเสี่ยงร่วม</h4>
-  <img src="../figures/8.6-3.svg" alt="SPX และ QQQ daily marginal densities เทียบ mean และ SD" loading="lazy">
-  <figcaption>รูปกลับมาใช้ daily SPX/QQQ model:mean 0.04%/0.03%, SD 2%/3% ไม่ใช่ annual หุ้น/ทองในตัวอย่างก่อน หน้าเดียวกันมีสอง time horizons จึงต้องอ่านชื่อและหน่วยก่อนหยิบตัวเลข แม้เปลี่ยน correlation โดยคง marginals เดิม เส้นสองเส้นนี้ก็ไม่เปลี่ยน</figcaption>
-</figure>
-<section class="formula">
-  <h4>ขั้นที่ 6 — ตัด covariance ไม่ใช่ตัด inverse covariance</h4>
-  <p>กลับมาที่ daily SPX/QQQ หากต้องการ SPX marginal ให้เลือก $\Sigma_{11}=0.0004$ โดยตรง แต่การ invert full covariance ก่อนแล้วหยิบ diagonal ของ inverse มา invert อีกครั้งให้คนละคำตอบ</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma&=\begin{bmatrix}0.0004&amp;0.00024\\0.00024&amp;0.0009\end{bmatrix},\\
-D=\det\Sigma&=0.0004(0.0009)-0.00024^2\\
-&=3.024\times10^{-7},\\
-(\Sigma^{-1})_{11}&=0.0009/D\approx2976.190476,\\
-\frac1{(\Sigma^{-1})_{11}}&=D/0.0009\\
-&=0.0004-\frac{0.00024^2}{0.0009}\\
-&=0.000336\ne0.0004.
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ค่า 0.000336 เป็น conditional variance ใน Gaussian model นี้ ไม่ใช่ marginal variance การตัด block ของ precision matrix จึงไม่ใช่ทางลัดสำหรับโจทย์ marginal</p></div>
-  <p>เหตุผลเดียวกันทำให้การตัด joint-density ที่ $Y=y$ ไม่ใช่ marginal ของ X:integrate slice นั้นตาม x จะได้ $f_Y(y)$ ซึ่งไม่จำเป็นต้องเป็นหนึ่ง ต้อง normalize ก่อนจึงกลายเป็น conditional density</p>
-  <div class="math">\[
-\begin{aligned}
-\int_{-\infty}^{\infty}f_{X,Y}(x,y)\,dx&=f_Y(y),\\
-f_{X\mid Y=y}(x)&=f_{X,Y}(x,y)/f_Y(y),\\
-f_Y(\mu_Y)&=\frac1{\sqrt{2\pi}(0.03)}\approx13.298076.
-\end{aligned}
-\]</div>
-  <p>สลับ u กับ v ในการจัดกำลังสองของขั้นที่ 4 แล้ว normalize slice จะอ่าน mean ของ X ได้เป็น $\mu_X+\rho\sigma_X(y-\mu_Y)/\sigma_Y$ ถ้า $y=0$ จะได้ mean $m_0$ ดังนี้ ส่วนสูตรทั่วไปจะพิสูจน์ต่อใน 8.7</p>
-  <div class="math">\[
-\begin{aligned}
-m_0&=0.0004+\frac{0.00024}{0.0009}(0-0.0003)\\
-&=0.0004-0.00008=0.00032,\\
-s_0&:=\operatorname{SD}(X\mid Y=0),\\
-s_0&=\sqrt{0.000336}\approx1.8330\%.
-\end{aligned}
-\]</div>
-  <p>จึงต่างจาก marginal mean 0.04%, SD 2% โดยไม่ได้เปลี่ยน weights หรือซื้อสินทรัพย์เพิ่ม</p>
-  <p>สำหรับตัวแปรต่อเนื่อง การ condition ที่ค่าแน่นอนใช้นิยามผ่าน density หรือขีดจำกัดของช่วงแคบ ไม่ใช่หารด้วย $P(Y=0)$ ซึ่งเป็นศูนย์ และโจทย์ข้อมูลร่วมนี้ไม่ได้แปลว่าเรารู้ return ปลายงวดก่อนตัดสินใจลงทุน</p>
-</section>
-<figure class="plot">
-  <h4>Figure 8.6d — Selected variance ต้องเท่ากับ diagonal เดิม</h4>
-  <img src="../figures/8.6-4.svg" alt="Full covariance SPX diagonal และ selected SPX variance เท่ากับ 0.0004" loading="lazy">
-  <figcaption>สองแท่งเท่ากับ 0.0004 สำหรับ fixed one-day return หน่วยที่ใช้ในบทคือ decimal-return²; ป้ายเดิม return²/day² ไม่ควรอ่านเป็น variance ของอัตรารายวัน การตรวจสองแท่งตรงกันเป็นเพียงหนึ่ง check ไม่พอจับการเลือก ticker ผิดในกรณีที่ variances บังเอิญเท่ากัน</figcaption>
-</figure>
-<section class="formula">
-  <h4>ขั้นที่ 7 — Full model singular ไม่ได้ทำให้ทุก marginal ใช้ไม่ได้</h4>
-  <p>ให้ Z กับ W เป็น independent standard Normal แล้วสร้าง $X=(Z,Z,W)^{\mathsf T}$ full covariance singular เพราะ component แรกกับที่สองซ้ำกัน แต่เลือกตัวแรกกับตัวที่สามจะได้ independent standard Normal สองตัวที่มี density ปกติ</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma_X&=\begin{bmatrix}1&amp;1&amp;0\\1&amp;1&amp;0\\0&amp;0&amp;1\end{bmatrix},\\
-(X_1,X_3)^{\mathsf T}&\sim N\left(0,\begin{bmatrix}1&amp;0\\0&amp;1\end{bmatrix}\right),\\
-(X_1,X_2)^{\mathsf T}&\sim N\left(0,\begin{bmatrix}1&amp;1\\1&amp;1\end{bmatrix}\right).
-\end{aligned}
-\]</div>
-  <div class="reading"><p>คู่แรกมี density เต็มสองมิติ คู่หลังเป็น Gaussian ที่อยู่บนเส้นตรง ทั้งสองเป็น marginals ที่ถูกต้อง ส่วน component ที่ variance ศูนย์เป็นค่าคงที่ ต้องอ่านเป็น point mass ไม่ใช่เอา SD ศูนย์ไปหารใน Normal PDF</p></div>
-  <details><summary>ถ้า full covariance เป็น PD ล่ะ</summary>
-    <div class="math">\[
-\begin{aligned}
-a^{\mathsf T}\Sigma_Ya&=a^{\mathsf T}P\Sigma P^{\mathsf T}a\\
-&=(P^{\mathsf T}a)^{\mathsf T}\Sigma(P^{\mathsf T}a)\\
-&\gt0\quad(a\ne0).
-\end{aligned}
-\]</div>
-    <p>เมื่อ P เลือก distinct coordinates,$P^{\mathsf T}a\ne0$ สำหรับ $a\ne0$ จึงเก็บความเป็น PD ไว้ แต่ถ้าเลือก coordinate เดิมซ้ำจะสร้าง duplicate outputs ซึ่งอาจทำให้ covariance ใหม่ singular ได้ ไม่ใช่ความผิดของ Gaussian law</p>
-  </details>
-</section>
-<section class="pitfall">
-  <h4>“ไม่ต้อง fit ใหม่” มีเงื่อนไข ไม่ใช่ใบอนุญาตให้ใช้โมเดลเก่าเสมอ</h4>
-  <p>หากคำถามคือ unconditional distribution ของ subset ภายใต้ <em>fixed full model เดิม</em> ก็เลือก mean/covariance ได้ตรง ๆ ไม่ต้องประมาณ parameters อีกชุด แต่การเปลี่ยน horizon, ข้อมูล, regime หรือข้อมูลที่ condition อยู่เป็นคนละโจทย์</p>
-  <div class="table-wrap"><table><thead><tr><th>สิ่งที่ตรวจ</th><th>ข้อผิดพลาดที่ป้องกัน</th></tr></thead><tbody>
-    <tr><td>Names และ order</td><td>ตัดแถวหนึ่งแต่คอลัมน์อีกชื่อ หรือเรียง weights ไม่ตรงกับ selected assets</td></tr>
-    <tr><td>Covariance ภายใน subset</td><td>เก็บแต่ diagonal แล้วสมมติ independence ทั้งที่ cross-covariance ยังอยู่</td></tr>
-    <tr><td>Distribution assumption</td><td>ใช้ mean/covariance สร้าง Normal ทั้งที่ full law ไม่ใช่ joint Gaussian</td></tr>
-    <tr><td>Calibration และข้อมูลใหม่</td><td>เข้าใจว่าการเลือก submatrix แก้ estimation error หรือความเสี่ยงจากโมเดลผิดได้</td></tr>
+  <h4>ขั้นที่ 5 — ตารางของ asset class 8 กลุ่ม: หยิบเฉพาะสองช่องที่ต้องการ</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ทีม asset allocation มี mean และ covariance รายปีของ asset class 8 กลุ่มเป็นตาราง $8\times8$ ผู้จัดการกองทุนหนึ่งถือแค่ US Large Growth กับ US Small Growth อย่างละครึ่ง แล้วขอ SD ของกองตัวเอง ตัวเลขในตารางเป็นแบบจำลองที่ใช้ฝึกทำ portfolio optimization mean ของหุ้นติดลบเพราะประมาณจากช่วงที่ตลาดหุ้นแย่ ซึ่งไม่กระทบวิธีหยิบช่อง</p>
+  <div class="table-wrap"><table><thead><tr><th>ลำดับ</th><th>Asset class</th><th>Mean ต่อปี</th><th>SD ต่อปี</th></tr></thead><tbody>
+    <tr><td>1</td><td>US Bonds</td><td>3.15%</td><td>3.17%</td></tr>
+    <tr><td>2</td><td>Int'l Bonds</td><td>1.75%</td><td>8.53%</td></tr>
+    <tr><td>3</td><td><strong>US Large Growth</strong></td><td>−6.39%</td><td>24.46%</td></tr>
+    <tr><td>4</td><td>US Large Value</td><td>−2.86%</td><td>17.21%</td></tr>
+    <tr><td>5</td><td><strong>US Small Growth</strong></td><td>−6.75%</td><td>32.01%</td></tr>
+    <tr><td>6</td><td>US Small Value</td><td>−0.54%</td><td>17.90%</td></tr>
+    <tr><td>7</td><td>Int'l Dev. Equity</td><td>−6.75%</td><td>16.84%</td></tr>
+    <tr><td>8</td><td>Int'l Emerg. Equity</td><td>−5.26%</td><td>28.28%</td></tr>
   </tbody></table></div>
-  <p>MGF ที่พิสูจน์ให้เลือกได้เป็นคุณสมบัติของ Gaussian family ไม่ใช่หลักฐานว่าหางตลาดจริงตรงกับ Gaussian โมเดล marginal รับข้อจำกัดของ full model มาด้วย ต้องทดสอบ tails และความเปลี่ยนแปลงตามข้อมูลนอกชุดที่ใช้ fit</p>
+  <p>ช่องที่ต้องใช้คือ variance ของลำดับ 3 และ 5 (0.059852 และ 0.102488) กับ covariance ระหว่างกัน 0.063497 ซึ่งอยู่ทั้งช่อง (3,5) และ (5,3)</p>
+  <div class="math">\[
+\begin{aligned}
+P&=\begin{bmatrix}0&amp;0&amp;1&amp;0&amp;0&amp;0&amp;0&amp;0\\0&amp;0&amp;0&amp;0&amp;1&amp;0&amp;0&amp;0\end{bmatrix},\\
+P\mu&=\begin{bmatrix}-0.0639\\-0.0675\end{bmatrix},\\
+P\Sigma P^{\mathsf T}&=\begin{bmatrix}0.059852&amp;0.063497\\0.063497&amp;0.102488\end{bmatrix},\\
+\rho&=\frac{0.063497}{0.24465\times0.32014}\approx0.811,\\
+v_{\rm p}&=0.25(0.059852)+0.25(0.102488)\\
+&\quad+2(0.25)(0.063497)\\
+&=0.014963+0.025622\\
+&\quad+0.031749\\
+&=0.072334,\\
+\sigma_{\rm p}&=\sqrt{0.072334}\approx26.89\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> SD ของกอง 50/50 คือ 26.89% ต่อปี mean $0.5(-6.39\%)+0.5(-6.75\%)=-6.57\%$ และภายใต้ joint Normal ผลตอบแทนของกองเป็น Normal ด้วย ถ้าคำนวณจากตารางเต็มด้วยน้ำหนักแปดช่อง $(0,0,0.5,0,0.5,0,0,0)$ จะได้ variance 0.0723335 เท่ากันทุกหลัก เพราะแถวและคอลัมน์ของอีกหกกลุ่มถูกคูณด้วยน้ำหนักศูนย์ทั้งหมด การหยิบ block จึงไม่ใช่การประมาณ มันคือคำตอบเดียวกันที่คิดเร็วกว่า</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าหยิบแค่สองช่องทแยงแล้วลืม covariance จะได้ $\sqrt{0.014963+0.025622}=\sqrt{0.040585}\approx20.15\%$ ต่ำไป 6.74 จุดเปอร์เซ็นต์ หรือหนึ่งในสี่ของความเสี่ยงจริง สองกองนี้เป็นหุ้นเติบโตเหมือนกัน correlation 0.81 การทิ้งช่องนอกแนวทแยงคือการแกล้งทำว่ามันไม่เกี่ยวกัน</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — หยิบ block ครบกับหยิบแค่แนวทแยง</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="วงรี 1 SD ของผลตอบแทนรายปี US Large Growth กับ US Small Growth วงรีน้ำเงินเอียงตาม correlation 0.81 วงรีแดงประตั้งตรงเพราะทิ้ง covariance" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="281.1" y1="30" x2="281.1" y2="270" stroke="#d7dce3" stroke-width="1.5"/>
+      <line x1="70" y1="136.7" x2="450" y2="136.7" stroke="#d7dce3" stroke-width="1.5"/>
+      <line x1="70" y1="270" x2="450" y2="270" stroke="#5b6472" stroke-width="2"/>
+      <line x1="70" y1="30" x2="70" y2="270" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="middle" font-size="14" fill="#5b6472">
+        <text x="112.2" y="288">−40</text><text x="196.7" y="288">−20</text><text x="281.1" y="288">0</text><text x="365.6" y="288">20</text><text x="450" y="288">40</text>
+      </g>
+      <g text-anchor="end" font-size="14" fill="#5b6472">
+        <text x="64" y="248">−40</text><text x="64" y="195">−20</text><text x="64" y="141">0</text><text x="64" y="88">20</text><text x="64" y="35">40</text>
+      </g>
+      <text x="76" y="22" fill="#5b6472">US Small Growth (%)</text>
+      <text x="446" y="262" text-anchor="end" fill="#5b6472">US Large Growth (%)</text>
+      <polyline fill="none" stroke="#d82632" stroke-width="2.5" stroke-dasharray="7 5" points="357.4,154.7 357,147.2 355.9,139.8 353.9,132.6 351.2,125.5 347.7,118.6 343.6,112 338.7,105.7 333.3,99.8 327.2,94.3 320.5,89.3 313.4,84.7 305.8,80.7 297.8,77.3 289.5,74.4 280.9,72.2 272.1,70.6 263.1,69.6 254.1,69.3 245.1,69.6 236.2,70.6 227.4,72.2 218.8,74.4 210.5,77.3 202.5,80.7 194.9,84.7 187.7,89.3 181.1,94.3 175,99.8 169.5,105.7 164.7,112 160.5,118.6 157.1,125.5 154.4,132.6 152.4,139.8 151.2,147.2 150.8,154.7 151.2,162.1 152.4,169.5 154.4,176.8 157.1,183.9 160.5,190.7 164.7,197.4 169.5,203.6 175,209.5 181.1,215 187.7,220.1 194.9,224.6 202.5,228.6 210.5,232 218.8,234.9 227.4,237.1 236.2,238.7 245.1,239.7 254.1,240 263.1,239.7 272.1,238.7 280.9,237.1 289.5,234.9 297.8,232 305.8,228.6 313.4,224.6 320.5,220.1 327.2,215 333.3,209.5 338.7,203.6 343.6,197.4 347.7,190.7 351.2,183.9 353.9,176.8 355.9,169.5 357,162.1 357.4,154.7"/>
+      <polyline fill="#2455d6" fill-opacity="0.1" stroke="#2455d6" stroke-width="3" points="357.4,85.5 357,81.4 355.9,77.8 353.9,74.9 351.2,72.5 347.7,70.8 343.6,69.7 338.7,69.3 333.3,69.5 327.2,70.4 320.5,71.9 313.4,74 305.8,76.8 297.8,80.1 289.5,84 280.9,88.5 272.1,93.4 263.1,98.8 254.1,104.7 245.1,110.9 236.2,117.5 227.4,124.3 218.8,131.4 210.5,138.6 202.5,146 194.9,153.4 187.7,160.9 181.1,168.3 175,175.6 169.5,182.7 164.7,189.6 160.5,196.3 157.1,202.6 154.4,208.6 152.4,214.1 151.2,219.3 150.8,223.9 151.2,228 152.4,231.5 154.4,234.5 157.1,236.8 160.5,238.5 164.7,239.6 169.5,240 175,239.8 181.1,238.9 187.7,237.4 194.9,235.3 202.5,232.6 210.5,229.2 218.8,225.3 227.4,220.9 236.2,215.9 245.1,210.5 254.1,204.6 263.1,198.4 272.1,191.9 280.9,185 289.5,178 297.8,170.7 305.8,163.3 313.4,155.9 320.5,148.5 327.2,141.1 333.3,133.8 338.7,126.6 343.6,119.7 347.7,113.1 351.2,106.7 353.9,100.7 355.9,95.2 357,90.1 357.4,85.5"/>
+      <circle cx="254.1" cy="154.7" r="4.5" fill="#181818"/>
+      <text x="78" y="50" fill="#d82632">เก็บแค่แนวทแยง: ρ = 0</text>
+      <text x="446" y="236" text-anchor="end" fill="#2455d6">หยิบ block ครบ: ρ = 0.81</text>
+    </g>
+  </svg>
+  <figcaption>วงรี 1 SD ของผลตอบแทนรายปีจากตาราง 8 กลุ่ม จุดดำคือ mean (−6.39%, −6.75%) วงรีน้ำเงินมาจาก block $2\times2$ ที่หยิบครบทั้งสี่ช่อง เอียงตาม correlation 0.81 วงรีแดงประมาจากการเก็บแค่สองช่องทแยง กว้างเท่ากันในแต่ละแกน (24.46% กับ 32.01%) แต่ตั้งตรง วงรีสองวงให้ marginal ของแต่ละกลุ่มเหมือนกันทุกประการ ต่างกันแค่ความเอียง และความเอียงนี่แหละที่ทำให้ SD ของกอง 50/50 เป็น 26.89% ไม่ใช่ 20.15%</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — ตัดที่ covariance ไม่ใช่ตัดที่ inverse ของมัน</h4>
+  <p>density ของ MVN เขียนด้วย $\Sigma^{-1}$ คนจึงชอบหยิบ precision matrix มาใช้ต่อ ลองดูว่าถ้า invert ทั้งตาราง SPX/QQQ ก่อน แล้วหยิบช่องของ SPX มากลับเศษส่วน จะได้อะไร ใช้หน่วยเปอร์เซ็นต์ยกกำลังสอง</p>
+  <div class="math">\[
+\begin{aligned}
+\Sigma&=\begin{bmatrix}4&amp;2.4\\2.4&amp;9\end{bmatrix},\\
+\det\Sigma&=4(9)-2.4^2=30.24,\\
+(\Sigma^{-1})_{11}&=\frac{9}{30.24}\approx0.29762,\\
+\frac{1}{(\Sigma^{-1})_{11}}&=\frac{30.24}{9}\\
+&=4-\frac{2.4^2}{9}=3.36,\\
+\sqrt{3.36}&\approx1.833.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ได้ 3.36 ไม่ใช่ 4 และ $\sqrt{3.36}=1.833\%$ คือตัวเลขของระบบ B ในโจทย์เปิดพอดี ไม่ใช่เรื่องบังเอิญ ช่องของ precision matrix เก็บ variance ที่<em>เหลือหลังรู้ตัวอื่นแล้ว</em> คือ conditional variance ส่วน marginal variance อยู่ในตัว $\Sigma$ เอง ตัดจาก $\Sigma$ ได้ marginal ตัดจาก $\Sigma^{-1}$ แล้วกลับเศษส่วนได้ conditional สูตร $4-2.4^2/9$ ตรงกลางจะกลับมาใน<a href="8.7.html">conditional distribution</a> ในชื่อ Schur complement</p></div>
+</section>
+
+<section class="pitfall">
+  <h4>กับดักที่ให้ตัวเลขผิดโดยไม่มี error</h4>
+  <ul>
+    <li><strong>ตั้งผลตอบแทนเป็นศูนย์แทนตั้งน้ำหนักเป็นศูนย์:</strong> ได้ SD 1.833% แทน 2% และโอกาสขาดทุนเกิน 3% ได้ 4.91% แทน 6.43% ระบบรันผ่านทุกบรรทัด แต่ตอบคำถาม conditional ที่ไม่มีใครถาม</li>
+    <li><strong>หยิบแค่แนวทแยง:</strong> กอง US Large Growth กับ US Small Growth 50/50 ได้ SD 20.15% แทน 26.89% หยิบ block ต้องหยิบทั้งแถวและคอลัมน์ของชื่อที่เลือก ไม่ใช่แค่ variance</li>
+    <li><strong>ลำดับไม่ตรงกัน:</strong> ถ้าหยิบเป็น “Small, Large” แต่ส่งน้ำหนักเรียงแบบ “Large, Small” คุณจะได้ SD ของอีกพอร์ตหนึ่ง โจทย์ข้อ 1 ด้านล่างแสดงตัวเลข การทดสอบด้วยน้ำหนัก 50/50 จะไม่จับ bug นี้ เพราะสลับแล้วเหมือนเดิม</li>
+    <li><strong>invert ก่อนแล้วค่อยตัด:</strong> ได้ conditional variance 3.36 แทน marginal 4 ตามขั้นก่อนหน้า</li>
+    <li><strong>เห็น marginal เป็น Normal ทุกตัวแล้วสรุปว่าทั้งก้อนเป็น MVN:</strong> ทิศทางกลับไม่จริง รูปด้านล่างแสดงสองแบบจำลองที่ marginal เป็น $\mathcal N(0,1)$ ทั้งคู่และ correlation เป็นศูนย์ทั้งคู่ แต่ทั้งก้อนต่างกันมาก</li>
+  </ul>
+  <figure class="plot">
+    <h4>รูป — marginal เหมือนกัน แต่ทั้งก้อนต่างกัน</h4>
+    <svg viewBox="0 0 480 270" role="img" aria-label="สองกรอบจุด กรอบซ้ายเป็นเมฆกลมของ Normal สองมิติที่อิสระกัน กรอบขวาจุดทุกจุดอยู่บนเส้นทแยงสองเส้นเป็นรูปกากบาท ทั้งสองมี marginal เป็น Normal มาตรฐานและ correlation ศูนย์" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="15" fill="#181818">
+        <rect x="40" y="50" width="180" height="180" fill="none" stroke="#5b6472" stroke-width="2"/>
+        <rect x="260" y="50" width="180" height="180" fill="none" stroke="#5b6472" stroke-width="2"/>
+        <line x1="130" y1="50" x2="130" y2="230" stroke="#d7dce3" stroke-width="1.5"/><line x1="40" y1="140" x2="220" y2="140" stroke="#d7dce3" stroke-width="1.5"/>
+        <line x1="350" y1="50" x2="350" y2="230" stroke="#d7dce3" stroke-width="1.5"/><line x1="260" y1="140" x2="440" y2="140" stroke="#d7dce3" stroke-width="1.5"/>
+        <text x="130" y="38" text-anchor="middle">Normal สองมิติ อิสระ</text>
+        <text x="350" y="38" text-anchor="middle">Y = W·X (W = ±1)</text>
+        <g fill="#2455d6" fill-opacity="0.75"><circle cx="204.2" cy="131" r="3.2"/><circle cx="167.1" cy="131.5" r="3.2"/><circle cx="129.1" cy="90.2" r="3.2"/><circle cx="116.7" cy="111" r="3.2"/><circle cx="124.8" cy="94.1" r="3.2"/><circle cx="115.2" cy="159.3" r="3.2"/><circle cx="89.8" cy="122.2" r="3.2"/><circle cx="136.3" cy="151.6" r="3.2"/><circle cx="125.3" cy="160.6" r="3.2"/><circle cx="165.4" cy="164.9" r="3.2"/><circle cx="81.1" cy="128.7" r="3.2"/><circle cx="130.2" cy="139.8" r="3.2"/><circle cx="151.9" cy="181.6" r="3.2"/><circle cx="141.3" cy="182.8" r="3.2"/><circle cx="115.8" cy="178.1" r="3.2"/><circle cx="98.7" cy="130.8" r="3.2"/><circle cx="170.1" cy="127.3" r="3.2"/><circle cx="117.5" cy="103.2" r="3.2"/><circle cx="128.9" cy="168.9" r="3.2"/><circle cx="171.4" cy="113.4" r="3.2"/><circle cx="130.1" cy="150.8" r="3.2"/><circle cx="141.1" cy="142.9" r="3.2"/><circle cx="71.1" cy="162.1" r="3.2"/><circle cx="154" cy="137.3" r="3.2"/><circle cx="107.8" cy="150.2" r="3.2"/><circle cx="155.3" cy="184.5" r="3.2"/><circle cx="187.2" cy="75.6" r="3.2"/><circle cx="123.8" cy="129.4" r="3.2"/><circle cx="148.7" cy="144.2" r="3.2"/><circle cx="161.3" cy="136.2" r="3.2"/><circle cx="142.3" cy="173.5" r="3.2"/><circle cx="175.7" cy="135.7" r="3.2"/><circle cx="117.3" cy="137.6" r="3.2"/><circle cx="164" cy="162.5" r="3.2"/><circle cx="99.2" cy="153.6" r="3.2"/><circle cx="95.6" cy="117" r="3.2"/><circle cx="127.9" cy="142.2" r="3.2"/><circle cx="131.3" cy="134.6" r="3.2"/><circle cx="140.5" cy="132.1" r="3.2"/><circle cx="101.9" cy="177" r="3.2"/><circle cx="137.7" cy="129.6" r="3.2"/><circle cx="161.8" cy="105.3" r="3.2"/><circle cx="107.6" cy="156.8" r="3.2"/><circle cx="150.2" cy="183.6" r="3.2"/><circle cx="108" cy="122.1" r="3.2"/><circle cx="119.5" cy="142.3" r="3.2"/><circle cx="152" cy="182.9" r="3.2"/><circle cx="133.6" cy="170.2" r="3.2"/><circle cx="152.6" cy="159.5" r="3.2"/><circle cx="131" cy="182.8" r="3.2"/><circle cx="161.5" cy="101.7" r="3.2"/><circle cx="92.7" cy="165.7" r="3.2"/><circle cx="143.2" cy="226.8" r="3.2"/><circle cx="136.5" cy="80.1" r="3.2"/><circle cx="111.3" cy="126.3" r="3.2"/><circle cx="148.1" cy="158.2" r="3.2"/><circle cx="148.9" cy="163.8" r="3.2"/><circle cx="85.1" cy="106.2" r="3.2"/><circle cx="100.9" cy="113.7" r="3.2"/><circle cx="101.5" cy="119.1" r="3.2"/><circle cx="123.7" cy="177.5" r="3.2"/><circle cx="124.7" cy="152.7" r="3.2"/><circle cx="147.1" cy="171.9" r="3.2"/><circle cx="132.1" cy="221" r="3.2"/><circle cx="140.6" cy="129.9" r="3.2"/><circle cx="154.4" cy="92" r="3.2"/><circle cx="156.1" cy="137" r="3.2"/><circle cx="82.4" cy="119" r="3.2"/><circle cx="137.4" cy="146" r="3.2"/><circle cx="142.4" cy="197" r="3.2"/></g>
+        <g fill="#d82632" fill-opacity="0.75"><circle cx="363.7" cy="153.7" r="3.2"/><circle cx="335" cy="125" r="3.2"/><circle cx="348.9" cy="141.1" r="3.2"/><circle cx="386.3" cy="176.3" r="3.2"/><circle cx="357.7" cy="132.3" r="3.2"/><circle cx="359.1" cy="149.1" r="3.2"/><circle cx="363.9" cy="153.9" r="3.2"/><circle cx="351.6" cy="138.4" r="3.2"/><circle cx="328.8" cy="161.2" r="3.2"/><circle cx="331.8" cy="121.8" r="3.2"/><circle cx="347" cy="137" r="3.2"/><circle cx="410.8" cy="200.8" r="3.2"/><circle cx="396.8" cy="93.2" r="3.2"/><circle cx="396.3" cy="186.3" r="3.2"/><circle cx="411" cy="79" r="3.2"/><circle cx="324.8" cy="165.2" r="3.2"/><circle cx="351.9" cy="138.1" r="3.2"/><circle cx="331.1" cy="121.1" r="3.2"/><circle cx="410.9" cy="200.9" r="3.2"/><circle cx="371.9" cy="118.1" r="3.2"/><circle cx="344.2" cy="145.8" r="3.2"/><circle cx="372.7" cy="117.3" r="3.2"/><circle cx="329.4" cy="119.4" r="3.2"/><circle cx="365.2" cy="155.2" r="3.2"/><circle cx="368.5" cy="158.5" r="3.2"/><circle cx="287.3" cy="202.7" r="3.2"/><circle cx="343.7" cy="146.3" r="3.2"/><circle cx="356.4" cy="133.6" r="3.2"/><circle cx="394.6" cy="184.6" r="3.2"/><circle cx="345.8" cy="135.8" r="3.2"/><circle cx="393.1" cy="96.9" r="3.2"/><circle cx="310.3" cy="179.7" r="3.2"/><circle cx="364.3" cy="154.3" r="3.2"/><circle cx="355.2" cy="134.8" r="3.2"/><circle cx="331.2" cy="158.8" r="3.2"/><circle cx="299.3" cy="89.3" r="3.2"/><circle cx="404.9" cy="85.1" r="3.2"/><circle cx="372.3" cy="117.7" r="3.2"/><circle cx="342.9" cy="132.9" r="3.2"/><circle cx="332" cy="158" r="3.2"/><circle cx="359.9" cy="149.9" r="3.2"/><circle cx="325.7" cy="115.7" r="3.2"/><circle cx="344.1" cy="145.9" r="3.2"/><circle cx="404.2" cy="85.8" r="3.2"/><circle cx="409.8" cy="80.2" r="3.2"/><circle cx="348.7" cy="141.3" r="3.2"/><circle cx="331.3" cy="158.7" r="3.2"/><circle cx="389.2" cy="100.8" r="3.2"/><circle cx="342" cy="132" r="3.2"/><circle cx="317.9" cy="107.9" r="3.2"/><circle cx="314.3" cy="175.7" r="3.2"/><circle cx="296.1" cy="86.1" r="3.2"/><circle cx="327.9" cy="117.9" r="3.2"/><circle cx="370.8" cy="119.2" r="3.2"/><circle cx="355.8" cy="134.2" r="3.2"/><circle cx="353.1" cy="143.1" r="3.2"/><circle cx="325.8" cy="115.8" r="3.2"/><circle cx="406.2" cy="196.2" r="3.2"/><circle cx="301.7" cy="188.3" r="3.2"/><circle cx="374.5" cy="115.5" r="3.2"/><circle cx="319.3" cy="109.3" r="3.2"/><circle cx="347.6" cy="137.6" r="3.2"/><circle cx="342.7" cy="132.7" r="3.2"/><circle cx="283.3" cy="206.7" r="3.2"/><circle cx="394.5" cy="95.5" r="3.2"/><circle cx="352.8" cy="137.2" r="3.2"/><circle cx="371.9" cy="118.1" r="3.2"/><circle cx="320.7" cy="169.3" r="3.2"/></g>
+        <text x="130" y="254" text-anchor="middle" fill="#5b6472" font-size="14">X, Y ~ N(0,1), corr 0</text>
+        <text x="350" y="254" text-anchor="middle" fill="#5b6472" font-size="14">X, Y ~ N(0,1), corr 0</text>
+      </g>
+    </svg>
+    <figcaption>70 จุดจำลอง (สมมติ) ต่อกรอบ ช่วงแกน −3 ถึง 3 ทั้งสองกรอบ กรอบซ้ายคือ Normal สองมิติที่อิสระกัน เมฆกลม กรอบขวาให้ $X$ เป็น Normal มาตรฐาน แล้วโยนเหรียญ $W=\pm1$ แยกต่างหาก ตั้ง $Y=WX$ จุดทุกจุดจึงอยู่บนเส้นทแยงสองเส้น ถ้าฉายจุดลงแกนใดแกนหนึ่ง ทั้งสองกรอบให้ Normal มาตรฐานเหมือนกัน และ correlation เป็นศูนย์ทั้งคู่ แต่ในกรอบขวา $X+Y=0$ ครึ่งหนึ่งของเวลาพอดี ซึ่ง MVN ทำไม่ได้ marginal ทุกตัวเป็น Normal จึงยังไม่พอจะเรียกทั้งก้อนว่า MVN</figcaption>
+  </figure>
+  <p>ในตลาดจริงเรื่องนี้ไม่ใช่แค่ตัวอย่างแปลก ๆ แบบจำลองสองแบบที่ให้ marginal เป็น Normal มาตรฐานเหมือนกันและ correlation 0.7 เท่ากัน อาจให้โอกาสที่ทั้งสองตัวดิ่งแรงพร้อมกันต่างกันหลายเท่า ความเชื่อว่า “marginal กับ correlation matrix พอจะบอกทั้งก้อน” เป็นความเข้าใจผิดที่มีราคาแพงในตลาด CDO ดู<a href="5.6.html">Gaussian copula</a></p>
+  <figure class="plot">
+    <h4>รูป — marginal ของ SPX กับ QQQ</h4>
+    <img src="../figures/8.6-3.svg" alt="density ของผลตอบแทนรายวัน SPX ที่ SD 2% และ QQQ ที่ SD 3% วาดซ้อนกัน" loading="lazy">
+    <figcaption>marginal ของสองตัวในแบบจำลองรายวัน SPX mean 0.04% SD 2% และ QQQ mean 0.03% SD 3% ถ้าเปลี่ยน correlation จาก 0.4 เป็น 0.8 โดยคง mean และ SD เดิม สองเส้นนี้ไม่ขยับเลย จากสองเส้นนี้จึงอ่าน correlation ไม่ได้ และอ่านความเสี่ยงของพอร์ตที่ถือทั้งคู่ไม่ได้</figcaption>
+  </figure>
+  <p>อีกเรื่องที่ควรรู้: ถ้าตารางเต็มเป็น singular เช่นมีสินทรัพย์ซ้ำกันสองแถว marginal ก็ยังมีอยู่และยังหยิบ block ได้ตามปกติ บาง block จะมี density เต็มมิติ บาง block จะเป็น Normal ที่วางอยู่บนเส้นตรง ซึ่งไม่มี density ธรรมดาให้เขียน แต่ MGF ในขั้นที่ 4 ยังใช้ได้ เพราะไม่ต้อง invert อะไรเลย</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ระบบความเสี่ยงของธนาคารเก็บ covariance ของหลายพันชื่อไว้ในตารางเดียว เวลา desk หนึ่งขอรายงานเฉพาะพอร์ตของตัวเอง ระบบก็หยิบ block ที่ตรงกับชื่อในพอร์ตนั้น ไม่ต้องประมาณใหม่ และตัวเลขของ desk จะรวมกลับเป็นตัวเลขของทั้งธนาคารได้อย่างสอดคล้อง ถ้า desk ไปประมาณ covariance ของตัวเองใหม่จากข้อมูลคนละช่วง ผลที่ได้คือแบบจำลองอีกตัว ไม่ใช่ marginal ของตัวเดิม</p>
+  <p>ใน<a href="5.6.html">Gaussian copula</a> ที่ใช้กับพอร์ตสินเชื่อ ค่าของบริษัท $i$ เขียนเป็น $X_i=a_iM+\sqrt{1-a_i^2}\,Z_i$ โดย $M$ คือปัจจัยร่วมและ $Z_i$ คือส่วนเฉพาะตัว marginal ของ $X_i$ เป็น $\mathcal N(0,1)$ เสมอ ไม่ว่า $a_i$ จะเป็นเท่าไร โอกาสที่บริษัทเดียวผิดนัดจึงตั้งได้จาก marginal ล้วน ๆ ส่วน $a_i$ มีผลเฉพาะกับคำถามที่เกี่ยวกับหลายบริษัทพร้อมกัน เช่นการผิดนัดพร้อมกันใน<a href="22.4.html">CDO</a></p>
+  <p>ส่วนคำถาม stress test อย่าง “ถ้า QQQ ลง 10% พอร์ต SPX จะเป็นอย่างไร” เป็นคำถาม conditional ห้ามตอบด้วย marginal และห้ามตอบด้วยการแทน QQQ = −10% แล้วคิด SD เดิม ต้องใช้<a href="8.7.html">conditional distribution</a> ของหน้าถัดไป</p>
+</section>
+
 <section class="example">
-  <h4>ทดสอบว่ากำลังเลือกข้อมูล หรือเปลี่ยนคำถาม</h4>
-  <p><strong>1.</strong> Annual model เดิม ลงหุ้น 70%, ทอง 30% แต่ผลลัพธ์ที่เลือกจาก matrix เรียง “ทอง, หุ้น” ต้องส่ง weight vector อะไร? ถ้าไม่แก้ order จะรายงาน mean/variance ต่างอย่างไร?</p>
-  <details><summary>เฉลย</summary><p>ส่ง $(0.3,0.7)^{\mathsf T}$ ตามลำดับทอง, หุ้น จึงได้ mean 7.8%, variance 0.018468 เหมือน full vector $(0.7,0,0.3)^{\mathsf T}$ หากส่ง $(0.7,0.3)$ ตามลำดับใหม่จะเป็นพอร์ตทอง 70% ให้ mean 6.2%, variance 0.014508 การใช้ 50/50 ทดสอบอย่างเดียวจะซ่อน bug สลับลำดับนี้</p></details>
-  <p><strong>2.</strong> เปลี่ยน correlation ของ daily SPX/QQQ จาก 0.40 เป็น 0.80 โดยคง means และ marginal SDs เดิม SPX marginal เปลี่ยนหรือไม่? แล้วจะใช้เส้น marginal สองเส้นกู้ค่า correlation กลับมาได้ไหม?</p>
-  <details><summary>เฉลย</summary><p>ไม่เปลี่ยน: SPX ยัง $N(0.0004,0.0004)$ ส่วน QQQ ยัง $N(0.0003,0.0009)$ เส้นสองเส้นจึงไม่บอก correlation ต้องมี joint information เพิ่ม Gaussian mean vector กับ <em>full covariance</em> กำหนด joint law ได้ แต่รายการ marginal means/variances อย่างเดียวไม่พอ</p></details>
-  <p><strong>3.</strong> ใช้คู่ $X\sim N(0,1),Y=WX$ ของ 8.3 ซึ่ง W เป็นเครื่องหมายอิสระอย่างละครึ่ง เลือก X ตัวเดียวได้ Normal ถูกต้อง แล้วสรุปว่า full joint เป็น MVN ได้หรือไม่?</p>
-  <details><summary>เฉลย</summary><p>ไม่ได้ ทั้ง X และ Y มี Normal marginals แต่ joint อยู่บนสองเส้น $y=x,y=-x$ และ $P(X+Y=0)=1/2$ การมี Gaussian marginals ไม่ย้อนกลับไปพิสูจน์ joint Gaussianity</p></details>
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ผู้จัดการกองในขั้นที่ 5 เปลี่ยนเป็น US Large Growth 70% และ US Small Growth 30% แต่ระบบหยิบ block ออกมาในลำดับ “Small Growth, Large Growth” ต้องส่งน้ำหนักเป็น vector อะไร และถ้าส่ง $(0.7, 0.3)$ ไปตรง ๆ จะรายงาน SD ผิดไปเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ต้องส่ง $(0.3, 0.7)$ ตามลำดับของ block ที่หยิบมา variance คือ $0.49(0.059852)+0.09(0.102488)+2(0.21)(0.063497)=0.029327+0.009224+0.026669=0.065220$ SD ประมาณ 25.54% และ mean $0.7(-6.39\%)+0.3(-6.75\%)=-6.498\%$ ถ้าส่ง $(0.7, 0.3)$ ไปตรง ๆ จะกลายเป็นพอร์ตที่ถือ Small Growth 70% variance $0.49(0.102488)+0.09(0.059852)+0.026669=0.082275$ SD ประมาณ 28.68% สูงเกินจริง 3.14 จุดเปอร์เซ็นต์ โดยไม่มี error ใดขึ้น</p></details>
+  <p><strong>2.</strong> ถ้า correlation ของ SPX กับ QQQ เปลี่ยนจาก 0.4 เป็น 0.8 โดย mean และ SD เดิม ระบบ A และระบบ B ในโจทย์เปิดจะรายงาน SD เท่าไร</p>
+  <details><summary>เฉลย</summary><p>ระบบ A ยังได้ 2% เพราะ marginal ของ SPX ไม่มี $\rho$ อยู่เลย ตามที่ขั้นที่ 2 integrate ให้ดู ระบบ B ได้ $2\sqrt{1-0.8^2}=2(0.6)=1.2\%$ ต่ำกว่าความจริงถึง 40% ยิ่งสองตัวสัมพันธ์กันแรง การแอบใส่ข้อมูล “QQQ = 0” ยิ่งบีบความเสี่ยงลงมาก ทั้งที่ตอนเช้าไม่มีใครรู้ข้อมูลนั้น</p></details>
+  <p><strong>3.</strong> ในแบบจำลอง Gaussian copula ข้างบน บริษัทหนึ่งมีโอกาสผิดนัดภายในหนึ่งปี 2% และผิดนัดเมื่อ $X_i$ ต่ำกว่าเกณฑ์ $c$ ต้องตั้ง $c$ เท่าไร และต้องรู้ $a_i$ ก่อนหรือไม่</p>
+  <details><summary>เฉลย</summary><p>marginal ของ $X_i$ คือ $\mathcal N(0,1)$ จึงต้องการ $P(X_i\lt c)=\Phi(c)=0.02$ ได้ $c=\Phi^{-1}(0.02)\approx-2.054$ ไม่ต้องรู้ $a_i$ เพราะ $a_i^2+(1-a_i^2)=1$ ทำให้ variance เป็น 1 เสมอ ค่า $a_i$ จะเข้ามาเมื่อถามว่าบริษัทนี้กับบริษัทอื่นผิดนัดพร้อมกันบ่อยแค่ไหน ซึ่งเป็นคำถามของทั้งก้อน ไม่ใช่ของ marginal</p></details>
 </section>
+
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
-  <p>โค้ดเลือกชื่อจากทั้งแถวและคอลัมน์ในลำดับเดียวกัน แล้วตรวจ full/subset portfolio และ integrate density โดยตรง indices ใน JavaScript เริ่มที่ 0 จึงเลือก components 1,3 ด้วย indices 0,2 รันด้วย Node.js ได้; การจำลองเพื่อเช็กภาพของ marginals จะตามมาใน 8.9</p>
-  <p>checkLayout ตรวจรูปแบบ ชื่อ และ symmetry เท่านั้น ไม่ใช่ตัวรับรอง PSD หรือ Gaussianity จึงใช้กับ model covariance ที่ตรวจแล้วตาม 7.6 ฟังก์ชัน select ปฏิเสธชื่อซ้ำตามสัญญาว่าจะเลือก distinct subset ส่วน normalPDF ต้องการ variance บวกสำหรับ ordinary density</p>
-  <p>คำนวณ joint density โดยบวก log-densities ก่อน exponential เพื่อไม่ให้ factor เล็กมากปัดเป็นศูนย์ก่อนคูณกับอีก factor ที่ใหญ่กว่า ส่วน integral ใช้กริดสำหรับตัวอย่างนี้ ไม่ใช่ตัว integrate ทุกฟังก์ชันได้โดยอัตโนมัติ</p>
-  <pre><code class="language-javascript" data-example="8.6">function finiteVector(v, n = null) {
-  if (!Array.isArray(v) || !v.length || (n !== null &amp;&amp; v.length !== n) ||
-      ![...v].every(Number.isFinite)) throw new TypeError('Need a finite vector of matching size');
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript">// Marginal of an MVN = pick the rows and columns with the same names, in the same order.
+const names = ['US Bonds', "Int'l Bonds", 'US Large Growth', 'US Large Value',
+  'US Small Growth', 'US Small Value', "Int'l Dev. Equity", "Int'l Emerg. Equity"];
+const mu = [3.15, 1.75, -6.39, -2.86, -6.75, -0.54, -6.75, -5.26]; // % per year
+const S = [ // annual covariance, decimal^2
+  [0.001005, 0.001328, -0.000579, -0.000675, 0.000121, 0.000128, -0.000445, -0.000437],
+  [0.001328, 0.007277, -0.001307, -0.00061, -0.002237, -0.000989, 0.001442, -0.001535],
+  [-0.000579, -0.001307, 0.059852, 0.027588, 0.063497, 0.023036, 0.032967, 0.048039],
+  [-0.000675, -0.00061, 0.027588, 0.029609, 0.026572, 0.021465, 0.020697, 0.029854],
+  [0.000121, -0.002237, 0.063497, 0.026572, 0.102488, 0.042744, 0.039943, 0.065994],
+  [0.000128, -0.000989, 0.023036, 0.021465, 0.042744, 0.032056, 0.019881, 0.032235],
+  [-0.000445, 0.001442, 0.032967, 0.020697, 0.039943, 0.019881, 0.028355, 0.035064],
+  [-0.000437, -0.001535, 0.048039, 0.029854, 0.065994, 0.032235, 0.035064, 0.079958]];
+function select(keep) {
+  const idx = keep.map(n =&gt; { const i = names.indexOf(n); if (i &lt; 0) throw new Error('unknown ' + n); return i; });
+  return {names: keep, mean: idx.map(i =&gt; mu[i]), cov: idx.map(i =&gt; idx.map(j =&gt; S[i][j]))};
 }
-function finiteResult(x) {
-  if (!Number.isFinite(x)) throw new RangeError('Arithmetic overflow');
-  return x;
+const quad = (w, C) =&gt; w.reduce((s, wi, i) =&gt; s + wi * w.reduce((t, wj, j) =&gt; t + C[i][j] * wj, 0), 0);
+const pair = select(['US Large Growth', 'US Small Growth']);
+const rev = select(['US Small Growth', 'US Large Growth']);
+const diagOnly = [[pair.cov[0][0], 0], [0, pair.cov[1][1]]];
+
+function Phi(x) { // Simpson's rule on the Normal density
+  const n = 20000, h = Math.abs(x) / n, f = z =&gt; Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+  let s = 0; for (let i = 0; i &lt;= n; i++) s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * f(i * h);
+  return 0.5 + Math.sign(x) * s * h / 3;
 }
-function checkLayout(mean, covariance, labels) {
-  finiteVector(mean);
-  const n = mean.length;
-  if (!Array.isArray(labels) || labels.length !== n ||
-      ![...labels].every(x =&gt; typeof x === 'string' &amp;&amp; x.length &gt; 0) || new Set(labels).size !== n) {
-    throw new TypeError('Need unique nonempty labels matching the model');
-  }
-  if (!Array.isArray(covariance) || covariance.length !== n ||
-      [...covariance].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
-    throw new TypeError('Need a matching finite square covariance');
-  }
-  for (let i = 0; i &lt; n; i++) for (let j = 0; j &lt; n; j++) {
-    if (covariance[i][j] !== covariance[j][i]) throw new RangeError('Covariance must be symmetric');
-  }
+// Daily SPX/QQQ model in percent
+const mx = 0.04, my = 0.03, sx = 2, sy = 3, rho = 0.4;
+const mB = mx + rho * sx * (0 - my) / sy, sB = sx * Math.sqrt(1 - rho * rho);
+function joint(x, y) {
+  const u = (x - mx) / sx, v = (y - my) / sy, k = 1 - rho * rho;
+  return Math.exp(-(u * u - 2 * rho * u * v + v * v) / (2 * k)) / (2 * Math.PI * sx * sy * Math.sqrt(k));
 }
-function select(mean, covariance, labels, keep) {
-  checkLayout(mean, covariance, labels);
-  if (!Array.isArray(keep) || !keep.length || new Set(keep).size !== keep.length ||
-      ![...keep].every(x =&gt; labels.includes(x))) throw new RangeError('Need a nonempty distinct subset of labels');
-  const indices = keep.map(x =&gt; labels.indexOf(x));
-  return {labels: [...keep], indices, mean: indices.map(i =&gt; mean[i]),
-    covariance: indices.map(i =&gt; indices.map(j =&gt; covariance[i][j])),
-    P: indices.map(i =&gt; labels.map((_, j) =&gt; Number(i === j)))};
-}
-function dot(a, b) {
-  finiteVector(a); finiteVector(b, a.length);
-  return finiteResult(a.reduce((s, x, i) =&gt; s + x * b[i], 0));
-}
-function portfolio(model, w) {
-  checkLayout(model.mean, model.covariance, model.labels);
-  finiteVector(w, model.mean.length);
-  const variance = dot(w, model.covariance.map(row =&gt; dot(row, w)));
-  if (variance &lt; 0) throw new RangeError('Negative portfolio variance');
-  return {mean: dot(w, model.mean), variance, sd: Math.sqrt(variance)};
-}
-function logMGF(model, s) {
-  const p = portfolio(model, s);
-  return finiteResult(p.mean + .5 * p.variance);
-}
-function integrate(f, lo, hi, n = 8000) {
-  if (![lo, hi].every(Number.isFinite) || lo &gt; hi ||
-      !Number.isInteger(n) || n &lt; 2 || n &gt; 100000 || n % 2) throw new RangeError('Invalid integration bounds or grid');
-  const h = finiteResult((hi - lo) / n);
-  if (h === 0 &amp;&amp; lo !== hi) throw new RangeError('Integration step underflow');
-  let total = 0, correction = 0;
-  for (let i = 0; i &lt;= n; i++) {
-    const weight = i === 0 || i === n ? 1 : i % 2 ? 4 : 2;
-    const term = finiteResult(weight * f(lo + i * h)) - correction;
-    const next = total + term;
-    correction = (next - total) - term; total = next;
-  }
-  return finiteResult(total * h / 3);
-}
-function normalLogPDF(x, mean, variance) {
-  if (![x, mean, variance].every(Number.isFinite) || variance &lt;= 0) {
-    throw new RangeError('Positive finite variance required for ordinary density');
-  }
-  const z = finiteResult((x - mean) / Math.sqrt(variance));
-  return finiteResult(-.5 * z * z - .5 * Math.log(2 * Math.PI) - .5 * Math.log(variance));
-}
-const normalPDF = (x, mean, variance) =&gt; finiteResult(Math.exp(normalLogPDF(x, mean, variance)));
-function Phi(x) {
-  if (!Number.isFinite(x) || Math.abs(x) &gt; 6) throw new RangeError('CDF demo limited to finite scores within 6');
-  return .5 + Math.sign(x) * integrate(z =&gt; normalPDF(z, 0, 1), 0, Math.abs(x));
-}
-function jointPDF(x, y, mean, covariance) {
-  checkLayout(mean, covariance, ['X', 'Y']);
-  if (covariance[0][0] &lt;= 0 || covariance[1][1] &lt;= 0) throw new RangeError('Positive definite covariance required');
-  const sx = Math.sqrt(covariance[0][0]), sy = Math.sqrt(covariance[1][1]);
-  const rho = covariance[0][1] / sx / sy;
-  if (!Number.isFinite(rho) || Math.abs(rho) &gt;= 1) throw new RangeError('Positive definite covariance required');
-  const u = finiteResult((x - mean[0]) / sx);
-  const conditionalMean = finiteResult(mean[1] + rho * sy * u);
-  const conditionalVariance = finiteResult(covariance[1][1] * ((1 - rho) * (1 + rho)));
-  const logDensity = finiteResult(normalLogPDF(x, mean[0], covariance[0][0]) +
-    normalLogPDF(y, conditionalMean, conditionalVariance));
-  return finiteResult(Math.exp(logDensity));
-}
-const annual = {labels: ['stocks', 'bonds', 'gold'], mean: [.09, .03, .05],
-  covariance: [[.0324, -.00216, .00135], [-.00216, .0036, .00225], [.00135, .00225, .0225]]};
-const pair = select(annual.mean, annual.covariance, annual.labels, ['stocks', 'gold']);
-const reverse = select(annual.mean, annual.covariance, annual.labels, ['gold', 'stocks']);
-const half = portfolio(pair, [.5, .5]);
-const daily = {labels: ['SPX', 'QQQ'], mean: [.0004, .0003], covariance: [[.0004, .00024], [.00024, .0009]]};
-const spx = select(daily.mean, daily.covariance, daily.labels, ['SPX']);
-const det = .0004 * .0009 - .00024 ** 2;
-const degenerate = {labels: ['Z1', 'Z2', 'W'], mean: [0, 0, 0], covariance: [[1, 1, 0], [1, 1, 0], [0, 0, 1]]};
-const t = [.7, -.4], embedded = [.7, 0, -.4];
-console.log(JSON.stringify({pair, half, fullHalf: portfolio(annual, [.5, 0, .5]),
-  dollars: [1e6 * half.mean, 1e6 * half.sd],
-  goldLoss: Phi(-.05 / .15), portfolioLoss: Phi(-half.mean / half.sd),
-  logMGF: [logMGF(pair, t), logMGF(annual, embedded)],
-  samePortfolioReordered: [portfolio(pair, [.7, .3]), portfolio(reverse, [.3, .7])],
-  wrongOrder: portfolio(reverse, [.7, .3]),
-  wrongAssets: portfolio(select(annual.mean, annual.covariance, annual.labels, ['stocks', 'bonds']), [.5, .5]),
-  integratedStockDensity: integrate(y =&gt; jointPDF(.12, y, pair.mean, pair.covariance), -2, 2),
-  directStockDensity: normalPDF(.12, .09, .0324),
-  spx, spxAtHigherCorrelation: select(daily.mean, [[.0004, .00048], [.00048, .0009]], daily.labels, ['SPX']),
-  precision11: .0009 / det, conditionalVariance: det / .0009,
-  conditionalMeanAtQQQ0: .0004 + (.00024 / .0009) * (0 - .0003),
-  conditionalSD: Math.sqrt(det / .0009),
-  sliceAreaAtQQQMean: integrate(x =&gt; jointPDF(x, .0003, daily.mean, daily.covariance), -.3, .3),
-  qqqDensityAtMean: normalPDF(.0003, .0003, .0009), coverageOneSD: Phi(1) - Phi(-1),
-  regularSubset: select(degenerate.mean, degenerate.covariance, degenerate.labels, ['Z1', 'W']),
-  singularSubset: select(degenerate.mean, degenerate.covariance, degenerate.labels, ['Z1', 'Z2'])}));</code></pre>
+let slice = 0; const h = 0.01; // integrate the joint density along the vertical line SPX = -3
+for (let y = -40; y &lt; 40; y += h) slice += joint(-3, y + h / 2) * h;
+const marginalHeight = Math.exp(-0.5 * ((-3 - mx) / sx) ** 2) / (sx * Math.sqrt(2 * Math.PI));
+const det = 4 * 9 - 2.4 * 2.4;
+
+console.log({
+  systemA: {sd: sx, dollars: 1e7 * sx / 100, pBelowMinus3: Phi((-3 - mx) / sx)},
+  systemB: {mean: mB, sd: sB, dollars: 1e7 * sB / 100, pBelowMinus3: Phi((-3 - mB) / sB)},
+  sliceArea: slice, marginalHeight,
+  pair, sd5050: Math.sqrt(quad([0.5, 0.5], pair.cov)),
+  sdFull8: Math.sqrt(quad([0, 0, 0.5, 0, 0.5, 0, 0, 0], S)),
+  sdDiagOnly: Math.sqrt(quad([0.5, 0.5], diagOnly)),
+  corr: pair.cov[0][1] / Math.sqrt(pair.cov[0][0] * pair.cov[1][1]),
+  ex1: {right: Math.sqrt(quad([0.3, 0.7], rev.cov)), wrong: Math.sqrt(quad([0.7, 0.3], rev.cov))},
+  precisionTrap: {inv11: 9 / det, backToVariance: det / 9},
+  rho08: sx * Math.sqrt(1 - 0.64)
+});</code></pre>
+  </details>
 </section>
+
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>Marginal รวมทุก outcome ของตัวที่ไม่ได้ถาม ไม่ใช่ fix return ของตัวนั้นเป็นศูนย์; MGF argument ศูนย์กับ observed return ศูนย์คนละเรื่อง</li>
-    <li>Mean/covariance ของ subset เป็น $P\mu,P\Sigma P^{\mathsf T}$ สำหรับทุก law ที่มี moments ส่วน Gaussianity ของ selected law ต้องมาจาก joint Gaussian model</li>
-    <li>เลือกแถวและคอลัมน์ด้วยชื่อชุดเดียวกันในลำดับเดียวกัน และคง off-diagonal covariance ของสมาชิกที่เลือกไว้</li>
-    <li>การ invert แล้วตัด precision block ไม่ใช่ marginalization; conditional distribution ใช้ข้อมูลเพิ่มและเป็นหัวข้อถัดไป</li>
-    <li>Singular Gaussian ยังมี marginals; บาง subset มี density เต็มมิติ บาง subset เป็นเส้นหรือ point mass</li>
+    <li>marginal คือการรวมทุกค่าของตัวที่ไม่ได้ถาม ไม่ใช่การแทนค่าตัวนั้นเป็นศูนย์ ศูนย์ของ argument ใน MGF กับผลตอบแทนที่รู้ว่าเป็นศูนย์คนละเรื่องกัน</li>
+    <li>ใน Normal สองมิติ จัดกำลังสองแล้วส่วนของตัวที่ไม่ได้ถามกลายเป็น bell ที่พื้นที่ 1 integrate แล้วเหลือ Normal ของตัวที่ถาม โดยไม่มี correlation หลงเหลือ</li>
+    <li>ชุดใดก็ตามที่เลือกจาก MVN ยังเป็น MVN ที่มี mean $P\mu$ และ covariance $P\Sigma P^{\mathsf T}$ คือหยิบแถวและคอลัมน์ด้วยชื่อชุดเดียวกันในลำดับเดียวกัน และเก็บช่องนอกแนวทแยงไว้ครบ</li>
+    <li>ตัดที่ $\Sigma$ ได้ marginal ตัดที่ $\Sigma^{-1}$ แล้วกลับเศษส่วนได้ conditional variance เช่น 3.36 แทน 4</li>
+    <li>marginal เป็น Normal ทุกตัวไม่ได้แปลว่าทั้งก้อนเป็น MVN และ marginal สองเส้นบอก correlation ไม่ได้</li>
   </ul>
-  <p>8.7 จะตอบโจทย์อีกแบบอย่างชัดเจน: เมื่อ <em>รู้</em> บาง components แล้ว mean และ covariance ของส่วนที่เหลือเปลี่ยนอย่างไร และ slope นั้นเกี่ยวข้องกับ hedge ratio ภายใต้เงื่อนไขใด</p>
+  <p>หน้าถัดไปตอบอีกครึ่งของโจทย์เปิด: เมื่อ<em>รู้</em>ค่าของบางตัวแล้ว mean และ covariance ของตัวที่เหลือเปลี่ยนอย่างไร และทำไมความชันเดียวกันนั้นคือ hedge ratio ที่ลด variance ได้มากที่สุด ไปต่อที่ <a href="8.7.html">MVN conditional distribution และ hedge ratio</a></p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

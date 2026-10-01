@@ -18,375 +18,424 @@
 <article class="topic" data-number="8.2" data-depends-on="1.4 6.1 7.4 7.6 8.1">
 <header class="topic-header">
   <h1><span class="tnum">8.2</span> Linear Transformations and Portfolio Risk</h1>
-  <p class="subtitle">การเพิ่มจำนวนหุ้นช่วยแค่ไหน ขึ้นกับความเสี่ยงที่หุ้นเหล่านั้นยังมีร่วมกัน</p>
+  <p class="subtitle">ค่าเฉลี่ยของพอร์ตเป็นค่าเฉลี่ยถ่วงน้ำหนัก แต่ความเสี่ยงของพอร์ตคือ $\sqrt{w^{\mathsf T}\Sigma w}$ ซึ่งนับทุกคู่ที่ถือร่วมกัน</p>
 </header>
+
 <div class="hook">
-  <p>หุ้นสมมติทุกตัวมี SD รายปี 20% และ correlation ทุกคู่เท่ากับ 0.35 ถ้าเพิ่มพอร์ตน้ำหนักเท่ากันจาก 10 เป็น 100 ตัว SD จะลดเหลือประมาณหนึ่งในสามตามกฎ $1/\sqrt N$ หรือไม่?</p>
-  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ใช่ ในแบบจำลองนี้ SD ลดจาก 12.8841% เป็น 11.9415% หรือลดเพียงประมาณ 7.32% เมื่อเทียบกับเดิม กฎ $1/\sqrt N$ ต้องใช้เงื่อนไข zero covariance ด้วย ไม่ใช่นับจำนวนชื่ออย่างเดียว</p></details>
+  <p>หุ้นสมมติทุกตัวมี SD รายปี 20% และ correlation ทุกคู่เท่ากับ 0.35 ทีมหนึ่งเสนอให้ขยายพอร์ตน้ำหนักเท่ากันจาก 10 ตัวเป็น 100 ตัว โดยอ้างกฎ “SD ลดตาม $1/\sqrt N$” ว่าความเสี่ยงจะเหลือราวหนึ่งในสาม ($1/\sqrt{10}\approx0.32$) คุ้มกับค่าซื้อขายที่เพิ่มขึ้นไหม</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่คุ้มตามที่อ้าง ในแบบจำลองนี้ SD ลดจาก 12.88% เหลือ 11.94% ลดลงแค่ 7.3% ไม่ใช่สองในสาม และต่อให้ถือหุ้นเป็นพันตัว SD ก็ไม่ต่ำกว่า $20\%\times\sqrt{0.35}\approx11.83\%$ กฎ $1/\sqrt N$ ใช้ได้เฉพาะเมื่อ covariance ระหว่างหุ้นเป็นศูนย์ ส่วนที่ทุกตัวขึ้นลงพร้อมกันไม่หายไปเพราะเพิ่มชื่อ หน้านี้จะนับให้เห็นว่าส่วนนั้นมาจากช่องไหนของ covariance matrix</p></details>
 </div>
+
 <section class="prose">
-  <h4>จาก returns หลายตัวไปสู่พอร์ตเดียว แล้วไปสู่หลายกลยุทธ์</h4>
-  <p>8.1 สร้าง mean vector และ covariance แล้ว บทนี้จะพาทั้งสองอย่างผ่านการรวมสินทรัพย์ เริ่มจากบัญชีเงินจริง กาง variance ของสองตัว ก่อนขยายเป็นหลายพอร์ตและหาขอบเขตของ diversification</p>
-  <p>สูตรต่อไปนี้ต้องมีค่าเฉลี่ยของ returns ยกกำลังสองที่จำกัด แต่ไม่ต้องสมมติ Normal ต้องระบุช่วงถือครองเดียวกัน หน่วยเดียวกัน และลำดับสินทรัพย์ให้ตรงกันตาม 8.1</p>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>พอร์ตคือผลรวมถ่วงน้ำหนักของผลตอบแทนรายตัว ค่าเฉลี่ยของพอร์ตจึงเป็นค่าเฉลี่ยถ่วงน้ำหนักธรรมดา แต่ความเสี่ยงไม่ใช่ เพราะวันที่สินทรัพย์หนึ่งขาดทุน อีกตัวอาจกำไรมาชดเชย SD ของพอร์ตจึงต้องคำนวณผ่าน variance ซึ่งใช้ทุกช่องของ <a href="8.1.html">covariance matrix</a>: $\sigma_p^2=w^{\mathsf T}\Sigma w$</p>
+  <p>รูปด้านล่างแสดงความหมายเชิงเรขาคณิตของสูตรนี้ ความเสี่ยงของแต่ละขาเป็นลูกศรยาวเท่า “น้ำหนัก × SD” และมุมระหว่างลูกศรสองอันถูกกำหนดด้วย correlation โดย cos ของมุมเท่ากับ $\rho$ ความเสี่ยงของพอร์ตคือความยาวของลูกศรผลรวม ถ้า $\rho=1$ ลูกศรชี้ทางเดียวกัน ความยาวบวกกันตรง ๆ กรณีอื่นทั้งหมดได้ผลรวมสั้นกว่า ส่วนที่สั้นลงนี้คือประโยชน์ของการกระจายการลงทุน</p>
+  <p>หน้านี้เริ่มจากบัญชีเงินจริง หาสูตรค่าเฉลี่ยและ variance ของพอร์ต แยกดูทุกช่องว่าใครเพิ่มความเสี่ยงเท่าไร ขยายจากพอร์ตเดียวเป็นหลายกลยุทธ์พร้อมกันด้วย $A\Sigma A^{\mathsf T}$ แล้วใช้ผลนั้นตอบคำถามเปิด และหาพอร์ตหุ้น–หุ้นกู้ที่เสี่ยงน้อยที่สุด</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — ความเสี่ยงของพอร์ตคือความยาวของลูกศรผลรวม</h4>
+  <svg viewBox="0 0 480 310" role="img" aria-label="ลูกศรน้ำเงินยาว 10.8 แทนความเสี่ยงของหุ้น ลูกศรส้มยาว 2.4 แทนหุ้นกู้ ทำมุม 101.5 องศา ลูกศรม่วงผลรวมยาว 10.58 เส้นจำนวนด้านล่างเทียบกรณี correlation ลบหนึ่ง ลบศูนย์จุดสอง และหนึ่ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="b82a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+      <marker id="o82a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+      <marker id="p82a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6d28d9"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <line x1="50" y1="200" x2="350" y2="200" stroke="#2455d6" stroke-width="3" marker-end="url(#b82a)"/>
+      <line x1="352.4" y1="200" x2="339.4" y2="136.4" stroke="#a65f00" stroke-width="3" marker-end="url(#o82a)"/>
+      <line x1="50" y1="200" x2="336.6" y2="134.7" stroke="#6d28d9" stroke-width="3" marker-end="url(#p82a)"/>
+      <path d="M374.4,200 A22,22 0 0,0 348.0,178.4" fill="none" stroke="#181818" stroke-width="1.5"/>
+      <text x="380" y="186">101.5°</text>
+      <text x="200" y="222" text-anchor="middle" fill="#2455d6">หุ้น: 0.6 × 18% = 10.8</text>
+      <text x="330" y="118" text-anchor="end" fill="#a65f00">หุ้นกู้: 0.4 × 6% = 2.4</text>
+      <text x="110" y="140" fill="#6d28d9">พอร์ต: ยาว 10.58</text>
+      <text x="384" y="160" fill="#5b6472" font-size="14">cos มุม = ρ</text>
+      <line x1="50" y1="262" x2="442" y2="262" stroke="#5b6472" stroke-width="2"/>
+      <g stroke="#5b6472" stroke-width="2">
+        <line x1="50" y1="262" x2="50" y2="268"/><line x1="106" y1="262" x2="106" y2="268"/><line x1="162" y1="262" x2="162" y2="268"/><line x1="218" y1="262" x2="218" y2="268"/><line x1="274" y1="262" x2="274" y2="268"/><line x1="330" y1="262" x2="330" y2="268"/><line x1="386" y1="262" x2="386" y2="268"/><line x1="442" y1="262" x2="442" y2="268"/>
+      </g>
+      <text x="50" y="283" text-anchor="middle" font-size="14">0</text><text x="162" y="283" text-anchor="middle" font-size="14">4</text><text x="274" y="283" text-anchor="middle" font-size="14">8</text><text x="386" y="283" text-anchor="middle" font-size="14">12</text>
+      <circle cx="285.2" cy="262" r="6" fill="#047857"/>
+      <circle cx="346.4" cy="262" r="6" fill="#6d28d9"/>
+      <circle cx="419.6" cy="262" r="6" fill="#d82632"/>
+      <text x="285.2" y="252" text-anchor="middle" font-size="14" fill="#047857">ρ=−1: 8.40</text>
+      <text x="346.4" y="240" text-anchor="middle" font-size="14" fill="#6d28d9">10.58</text>
+      <text x="419.6" y="252" text-anchor="middle" font-size="14" fill="#d82632">ρ=1: 13.20</text>
+      <text x="246" y="303" text-anchor="middle">SD ของพอร์ต 60/40 (% ต่อปี)</text>
+    </g>
+  </svg>
+  <figcaption>พอร์ตหุ้น 60% (SD 18%) กับหุ้นกู้ 40% (SD 6%) correlation $-0.2$ ลูกศรน้ำเงินคือความเสี่ยงที่หุ้นนำมา $0.6\times18=10.8$ ลูกศรส้มคือของหุ้นกู้ $0.4\times6=2.4$ วางต่อกันโดยทำมุม 101.5° เพราะ $\cos101.5^\circ=-0.2$ ลูกศรม่วงจากจุดเริ่มถึงปลายคือ SD ของพอร์ต 10.58% เส้นจำนวนด้านล่างเทียบสามกรณี: ถ้า $\rho=1$ ลูกศรเรียงเป็นเส้นตรงยาว 13.20 ถ้า $\rho=-1$ ลูกศรส้มหันกลับ เหลือ 8.40 ไม่ถึงศูนย์เพราะลูกศรสองอันยาวไม่เท่ากัน</figcaption>
+</figure>
+
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Linear / affine transformation</dt><dd>$AR$ เป็น linear transformation ส่วน $AR+a$ ที่มีค่าคงที่เพิ่มเป็น affine transformation ซึ่งไม่เป็น linear เมื่อ $a\ne0$</dd>
-    <dt>Portfolio variance / volatility</dt><dd>variance วัดความกระจายในหน่วย return² ส่วน volatility ในบทนี้หมายถึง SD ซึ่งเป็นรากที่สองของ variance และมีหน่วยเดียวกับ return</dd>
-    <dt>Diversification</dt><dd>การผสมความเสี่ยงที่ไม่ซ้ำกันทั้งหมด ช่วยลด SD เมื่อเทียบกับผลรวมถ่วงน้ำหนักของ SD ในพอร์ต long-only แต่ไม่ได้รับประกันว่าจะต่ำกว่าสินทรัพย์ที่เสี่ยงน้อยที่สุด</dd>
-    <dt>Minimum-variance allocation</dt><dd>น้ำหนักที่ทำให้ variance ต่ำที่สุดภายใต้แบบจำลองและข้อจำกัดที่ระบุ ไม่ใช่น้ำหนักที่ดีที่สุดสำหรับทุกเป้าหมายผลตอบแทน</dd>
+    <dt>Portfolio weight $w_i$</dt><dd>มูลค่าที่ถือในสินทรัพย์ $i$ ต้นงวด หารด้วย NAV ติดลบได้เมื่อ short ใช้แปลงผลตอบแทนรายตัวเป็นผลตอบแทนพอร์ต</dd>
+    <dt>Linear / affine transformation</dt><dd>$AR$ เป็น linear ส่วน $AR+a$ ที่บวกค่าคงที่เพิ่มเป็น affine ใช้แทนการสร้างพอร์ตหรือกลยุทธ์หลายตัวจากผลตอบแทนชุดเดียวกัน</dd>
+    <dt>Portfolio variance / volatility</dt><dd>$w^{\mathsf T}\Sigma w$ และรากของมัน volatility ในหน้านี้หมายถึง SD ของผลตอบแทนพอร์ต มีหน่วยเดียวกับผลตอบแทน</dd>
+    <dt>Diversification</dt><dd>การถือสินทรัพย์ที่ไม่ได้ขึ้นลงพร้อมกันเต็มที่ ทำให้ SD ของพอร์ตต่ำกว่าค่าเฉลี่ยถ่วงน้ำหนักของ SD รายตัว</dd>
+    <dt>Systematic / idiosyncratic risk</dt><dd>ความเสี่ยงส่วนที่ทุกตัวมีร่วมกัน ซึ่งกระจายไม่หาย กับส่วนเฉพาะตัวที่เฉลี่ยหักล้างกันได้เมื่อถือหลายตัว</dd>
+    <dt>Minimum-variance portfolio</dt><dd>น้ำหนักที่ทำให้ variance ต่ำที่สุดภายใต้ข้อจำกัดที่กำหนด เป็นจุดซ้ายสุดของ efficient frontier</dd>
+    <dt>Efficient frontier</dt><dd>เส้นของพอร์ตที่ให้ผลตอบแทนคาดหมายสูงสุดในแต่ละระดับความเสี่ยง ใช้เลือกพอร์ตใน <a href="12.5.html">Markowitz portfolio selection</a></dd>
   </dl>
 </details>
+
 <details class="symbols">
   <summary>สัญลักษณ์และหน่วย</summary>
-  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
-    <tr><td>$R,\mu,\Sigma$</td><td>returns ของสินทรัพย์, mean vector และ covariance ในช่วงถือครองเดียวกัน</td></tr>
-    <tr><td>$w,w_c$</td><td>มูลค่าตำแหน่งต้นงวดหาร NAV; น้ำหนักเงินสดซึ่งติดลบได้เมื่อกู้</td></tr>
-    <tr><td>$Y=AR+a$</td><td>ผลลัพธ์ $k$ ตัวจาก returns $n$ ตัว; $A$ ขนาด $k\times n$ และ $a$ ขนาด $k$</td></tr>
-    <tr><td>$N,\rho,\sigma$</td><td>จำนวนสินทรัพย์, correlation ร่วม และ SD รายตัวในแบบจำลองน้ำหนักเท่ากัน</td></tr>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$R,\ \mu,\ \Sigma$</td><td>ผลตอบแทนของสินทรัพย์ mean vector และ covariance ในช่วงถือครองเดียวกัน</td><td>ผลตอบแทน; ผลตอบแทน²</td></tr>
+    <tr><td>$w,\ w_c$</td><td>น้ำหนักสินทรัพย์ต้นงวด; น้ำหนักเงินสด (ติดลบเมื่อกู้)</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$Y=AR+a$</td><td>ผลลัพธ์ $k$ ตัวจากผลตอบแทน $n$ ตัว; $A$ ขนาด $k\times n$</td><td>ผลตอบแทน</td></tr>
+    <tr><td>$N,\ \rho,\ \sigma$</td><td>จำนวนสินทรัพย์ correlation ร่วม และ SD รายตัว ในแบบจำลองน้ำหนักเท่ากัน</td><td>—; —; % ต่อปี</td></tr>
   </tbody></table></div>
-  <p>ถ้าแถวของ $A$ เป็นน้ำหนัก ผลลัพธ์เป็น returns แต่ถ้าเป็น dollar exposure ผลลัพธ์เป็น P&amp;L หน่วย USD ค่า $a$ ต้องใช้หน่วยเดียวกับผลลัพธ์ ไม่ใช่เอาเงิน USD มาบวกกับเปอร์เซ็นต์ตรง ๆ</p>
 </details>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — บัญชีเงินสดทำให้น้ำหนักมีความหมาย</h4>
-  <p>ลงทุน \$100 โดยให้ A กับ B อย่างละ \$50 และไม่ซื้อขายกลางงวด ถ้า returns ที่เกิดขึ้นเป็น 10% กับ 4% เงินปลายงวดเป็น \$55 กับ \$52 รวม \$107 จึงได้ 7% ตัวเลขนี้คือ realized return ไม่ใช่ volatility</p>
-  <p>ในกรณีทั่วไป ให้ $V_0$ เป็น NAV ต้นงวด $V_i$ เป็นมูลค่าตำแหน่งที่มีเครื่องหมาย และ $C$ เป็นเงินสด สมมติ cash return $r_f$ กับค่าธรรมเนียม $K$ เป็นค่าคงที่ที่ทราบสำหรับงวดนี้</p>
+  <p>เริ่มจากเงินจริงก่อนสูตร ลงทุน \$100 ให้ A กับ B อย่างละ \$50 แล้วไม่ซื้อขายกลางงวด ถ้าได้ผลตอบแทน 10% กับ 4% เงินปลายงวดเป็น \$55 กับ \$52 รวม \$107 ผลตอบแทนพอร์ตคือ 7% ซึ่งเท่ากับ $0.5(10\%)+0.5(4\%)$ พอดี ในกรณีทั่วไปให้ $V_0$ เป็น NAV ต้นงวด $V_i$ เป็นมูลค่าที่ถือในสินทรัพย์ $i$ และ $C$ เป็นเงินสดที่ได้ดอกเบี้ย $r_f$</p>
   <div class="math">\[
 \begin{aligned}
-V_0&=\sum_i V_i+C,\qquad w_i:=V_i/V_0,\quad w_c:=C/V_0,\\
-\sum_iw_i+w_c&=1,\\
-V_1&=\sum_i V_i(1+R_i)+C(1+r_f)-K,\\
+V_0&=\sum_i V_i+C,\\
+w_i&:=V_i/V_0,\qquad w_c:=C/V_0,\\
+\sum_i w_i+w_c&=1,\\
+V_1&=\sum_i V_i(1+R_i)+C(1+r_f),\\
 R_p:=\frac{V_1-V_0}{V_0}
-&=\sum_iw_iR_i+w_cr_f-K/V_0,\\
-b&:=w_cr_f-K/V_0,\qquad R_p=w^{\mathsf T}R+b,\\
-\text{ตัวอย่าง }b=0:\quad R_p&=0.5(0.10)+0.5(0.04)=0.07.
+&=\sum_i w_iR_i+w_cr_f.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>น้ำหนัก risky assets ไม่จำเป็นต้องรวมเป็น 1 หากมีเงินสดหรือเงินกู้ เราใช้ <strong>น้ำหนักต้นงวด</strong> เป็นสัมประสิทธิ์และสมมติว่าไม่ซื้อขายกลางงวด น้ำหนักจริงเมื่อคิดเทียบ NAV ปลายงวดอาจเปลี่ยนไปตามราคา</p></div>
-  <p>เงินสดบวกและเงินกู้อาจมีอัตราต่างกันในงานจริง ต้องใช้อัตราที่ตรงกับตำแหน่ง ส่วนค่าธรรมเนียมหรือกระแสเงินสดที่ไม่แน่นอนไม่ควรถูกซ่อนไว้ในค่าคงที่ $b$</p>
+  <div class="reading"><p>บรรทัดสุดท้ายได้จากการหาร $V_1-V_0$ ด้วย $V_0$ แล้วใช้ $\sum_iV_i+C=V_0$ ตัดเงินต้นทิ้ง สิ่งที่ต้องจำคือ น้ำหนักของสินทรัพย์เสี่ยงไม่จำเป็นต้องรวมเป็น 1 ถ้ามีเงินสดหรือเงินกู้ เช่น NAV \$100 กู้เพิ่ม \$50 แล้วซื้อสินทรัพย์ \$150 จะได้ $w=1.5$ และ $w_c=-0.5$ ส่วนน้ำหนักติดลบของสินทรัพย์คือการ short ซึ่งขาดทุนเมื่อราคาขึ้น</p></div>
 </section>
+
 <section class="formula">
   <h4>ขั้นที่ 2 — ค่าเฉลี่ยถ่วงน้ำหนักได้ แต่ SD ต้องผ่าน variance</h4>
-  <p>เมื่อ $w$ กับ $b$ เป็นค่าคงที่ การบวก $b$ ย้ายค่าเฉลี่ยแต่หายไปจาก deviations เราจึงได้ทั้ง mean และ variance จากนิยามโดยตรง</p>
+  <p>เมื่อ $w$ และดอกเบี้ยเงินสดเป็นค่าคงที่ที่รู้ล่วงหน้า เขียน $b:=w_cr_f$ จะได้ $R_p=w^{\mathsf T}R+b$ ค่าคงที่ $b$ ย้ายค่าเฉลี่ย แต่หายไปจากการเบี่ยง</p>
   <div class="math">\[
 \begin{aligned}
 \mu_p&=\mathbb E[w^{\mathsf T}R+b]=w^{\mathsf T}\mu+b,\\
 R_p-\mu_p&=w^{\mathsf T}(R-\mu),\\
-\operatorname{Var}(R_p)&=\mathbb E[(w^{\mathsf T}(R-\mu))^2]\\
-&=w^{\mathsf T}\mathbb E[(R-\mu)(R-\mu)^{\mathsf T}]w\\
-&=w^{\mathsf T}\Sigma w,\\
-\sigma_p&=\sqrt{w^{\mathsf T}\Sigma w}.
+\sigma_p^2&=\mathbb E\big[(w^{\mathsf T}(R-\mu))^2\big]\\
+&=w^{\mathsf T}\,\mathbb E\big[(R-\mu)(R-\mu)^{\mathsf T}\big]\,w\\
+&=w^{\mathsf T}\Sigma w\\
+&=\sum_{i}\sum_{j}w_iw_j\Sigma_{ij}.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ค่าธรรมเนียมที่แน่นอนไม่เพิ่ม variance แต่ลด mean จึงยังเปลี่ยนโอกาสขาดทุนได้ อย่าอ่านว่า “ไม่เปลี่ยน variance” เท่ากับ “ไม่เพิ่มปัญหาทางการเงิน”</p></div>
-  <p>ถ้าเพิ่มสัมประสิทธิ์ risky assets เป็นสองเท่า ส่วน variance จะเพิ่มสี่เท่าและ SD สองเท่า แต่ mean สุทธิต้องคำนวณ cash กับต้นทุนใหม่ด้วย ไม่ใช่คูณคำตอบสุทธิเดิมโดยไม่ดูแหล่งเงิน</p>
-</section>
-<section class="formula">
-  <h4>ขั้นที่ 3 — พจน์ไขว้คือส่วนที่การเฉลี่ย SD ทำหายไป</h4>
-  <p>ใช้ sample covariance สองกลุ่มจาก 8.1 หน่วย bp² กับน้ำหนักครึ่งต่อครึ่ง การรวม variance ต้องนับ covariance ทั้งช่อง $12$ และ $21$ จึงมีตัวคูณ 2</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma&=\begin{bmatrix}1&amp;1.5\\1.5&amp;3\end{bmatrix}\text{ bp}^2,\\
-\sigma_p^2&=w_1^2\sigma_1^2+w_2^2\sigma_2^2
-+2w_1w_2\rho\sigma_1\sigma_2,\\
-&=0.25(1)+0.25(3)+2(0.5)(0.5)(1.5)\\
-&=1.75\text{ bp}^2,\\
-\sigma_p&=\sqrt{1.75}\approx1.3229\text{ bp},\\
-\text{ถ้ากำหนด covariance เป็นศูนย์: }\sigma_p
-&=\sqrt{0.25+0.75}=1\text{ bp},\\
-\text{ถ้ากำหนด }\rho=1:\quad\sigma_p
-&=0.5(1)+0.5\sqrt3\approx1.3660\text{ bp}.
-\end{aligned}
-\]</div>
-  <div class="reading"><p>1.3660 bp ไม่ใช่ตัวเลขไร้ความหมาย มันเป็นคำตอบเมื่อ correlation เท่ากับ 1 และเป็นขอบเขตบนของ SD สำหรับน้ำหนักบวกชุดนี้ ส่วน 1 bp ใช้เพียง zero covariance ไม่ต้องสมมติ independence</p></div>
-  <p>เพราะ $\rho\le1$ และ $w_i\ge0$ เรามี $\sigma_p^2\le(\sum_iw_i\sigma_i)^2$ จึงได้ $\sigma_p\le\sum_iw_i\sigma_i$ ถ้ามี short ต้องใช้ขอบเขตทั่วไป $\sigma_p\le\sum_i|w_i|\sigma_i$ แทน</p>
-  <p>ตัวอย่างนี้ SD พอร์ต 1.3229 bp ยังสูงกว่า SD ของสินทรัพย์แรก 1 bp การกระจายไม่ได้แปลว่าต้องเสี่ยงน้อยกว่าสินทรัพย์ทุกตัวที่นำมาผสม</p>
+  <div class="reading"><p>บรรทัดที่สี่ใช้ $(w^{\mathsf T}Z)^2=w^{\mathsf T}ZZ^{\mathsf T}w$ แล้วดึง $w$ ซึ่งเป็นค่าคงที่ออกนอกค่าคาดหมาย บรรทัดสุดท้ายคือสูตรเดียวกันเขียนแบบกางทุกช่อง: ช่อง $(i,j)$ ของตารางถูกคูณด้วย $w_iw_j$ แล้วบวกกันทั้งหมด ไม่มีสมมติฐาน Normal ตรงไหนเลย ต้องการแค่ว่าน้ำหนักคงที่และ covariance มีค่าจำกัด</p></div>
+  <p>ผลตามมาสองข้อที่ใช้บ่อย: เพิ่ม exposure เป็นสองเท่า ($w\to2w$) variance เพิ่มสี่เท่า SD เพิ่มสองเท่า และค่าธรรมเนียมที่แน่นอนลดค่าเฉลี่ยแต่ไม่เปลี่ยน variance ซึ่งไม่ได้แปลว่าไม่เพิ่มโอกาสขาดทุน</p>
 </section>
 
 <section class="formula">
-  <h4>ขั้นที่ 4 — แต่ละแถวของ $A$ สร้างหนึ่งกลยุทธ์</h4>
-  <p>พอร์ตเดียวใช้แถวน้ำหนัก $w^{\mathsf T}$ หากต้องการผลลัพธ์หลายตัว ให้วางแถวน้ำหนักหลายแถวใน $A$ และเพิ่ม vector ค่าคงที่ $a$ การแปลงเป็น affine เมื่อมีค่าคงที่ที่ไม่ใช่ศูนย์ ตามข้อแตกต่างใน 7.4</p>
+  <h4>ขั้นที่ 3 — พจน์ไขว้คือส่วนที่การเฉลี่ย SD มองไม่เห็น</h4>
+  <p>กางสูตรสำหรับสองสินทรัพย์ ช่องนอกแนวทแยงมีสองช่อง ($12$ และ $21$) ที่เท่ากัน จึงได้ตัวคูณ 2 ใช้พอร์ตหุ้น 60% (SD 18%) กับหุ้นกู้ 40% (SD 6%) correlation $-0.2$ ตัวเลขรายปีสมมติ คิดในหน่วย %</p>
+  <div class="math">\[
+\begin{aligned}
+\sigma_p^2&=w_1^2\sigma_1^2+w_2^2\sigma_2^2\\
+&\quad+2w_1w_2\rho\sigma_1\sigma_2\\
+&=10.8^2+2.4^2+2(10.8)(2.4)(-0.2)\\
+&=116.64+5.76-10.368\\
+&=112.032\ (\%^2),\\
+\sigma_p&\approx10.58\%,\\
+\rho=1:\quad\sigma_p&=10.8+2.4=13.20\%,\\
+\rho=-1:\quad\sigma_p&=|10.8-2.4|=8.40\%.
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สามจับคู่ $w_i\sigma_i$ ไว้ด้วยกันก่อน คือความยาวลูกศร 10.8 กับ 2.4 ในรูปภาพรวม สูตรนี้คือกฎของ cosine $|a+b|^2=|a|^2+|b|^2+2|a||b|\cos\theta$ โดยให้ $\cos\theta=\rho$ เพราะ correlation คือ cos ของมุมระหว่าง vector การเบี่ยง (<a href="6.5.html">inner product มุม และ correlation</a>) เมื่อ $\rho\le1$ และน้ำหนักเป็นบวก จะได้ $\sigma_p\le w_1\sigma_1+w_2\sigma_2$ เสมอ ถ้ามี short ต้องใช้ $|w_i|$ แทน</p></div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — พอร์ตเดิม แต่เปลี่ยนสมมติฐาน correlation</h4>
+  <img src="../figures/8.2-1.svg" alt="SD ของพอร์ต 60/40 ที่ SD 18 และ 6 เปอร์เซ็นต์ เมื่อ correlation เปลี่ยนจากลบหนึ่งถึงหนึ่ง" loading="lazy">
+  <figcaption>แกนนอนคือ correlation ระหว่างหุ้นกับหุ้นกู้ แกนตั้งคือ SD ของพอร์ต 60/40 เส้นประ 13.2% คือการเฉลี่ย SD ตรง ๆ ซึ่งถูกเฉพาะที่ $\rho=1$ จุดที่ $\rho=-0.2$ ให้ 10.58% ส่วนปลายซ้ายยังอยู่ที่ 8.40% เส้นโค้งไม่ใช่เส้นตรงเพราะ SD เป็นรากของ variance ซึ่งเป็นเส้นตรงตาม $\rho$</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 4 — ทุกช่องของตารางมีส่วนใน variance</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> จากตาราง covariance รายปีของสินทรัพย์ 8 กลุ่มที่ใช้ฝึกสร้างพอร์ต เลือกสามกลุ่ม: หุ้นกู้สหรัฐ (Bond, variance 0.001005), หุ้นใหญ่สหรัฐสาย value (LV, 0.029609) และหุ้นประเทศพัฒนาแล้วนอกสหรัฐ (Intl Dev, 0.028355) covariance คู่ Bond–LV $-0.000675$, Bond–Intl Dev $-0.000445$, LV–Intl Dev $0.020697$ น้ำหนัก 40%, 30%, 30% เขียนทุกค่าในหน่วย %² (คูณ $10^4$)</p>
+  <div class="math">\[
+\begin{aligned}
+\text{Bond}:\ 0.4^2(10.05)&=1.608,\\
+\text{LV}:\ 0.3^2(296.09)&=26.648,\\
+\text{Intl}:\ 0.3^2(283.55)&=25.520,\\
+\text{Bond–LV}:\ 2(0.4)(0.3)(-6.75)&=-1.620,\\
+\text{Bond–Intl}:\ 2(0.4)(0.3)(-4.45)&=-1.068,\\
+\text{LV–Intl}:\ 2(0.3)(0.3)(206.97)&=37.255,\\
+\sigma_p^2&=88.342\ (\%^2),\\
+\sigma_p&\approx9.40\%.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> SD ของพอร์ตประมาณ 9.40% ต่อปี ต่ำกว่าค่าเฉลี่ยถ่วงน้ำหนักของ SD รายตัว $0.4(3.17)+0.3(17.21)+0.3(16.84)=11.48\%$ ชิ้นที่ใหญ่ที่สุดไม่ใช่ variance ของสินทรัพย์ตัวไหน แต่เป็นคู่ LV–Intl Dev 37.26 จาก 88.34 หรือ 42% เพราะหุ้นสองก้อนนี้มี correlation 0.71 ขึ้นลงด้วยกันเกือบตลอด ส่วนหุ้นกู้มี variance ของตัวเองแค่ 1.6 และ covariance กับหุ้นติดลบ จึงดึงความเสี่ยงลง</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> นับช่องให้ครบ 9 ช่อง ช่องนอกแนวทแยงมี 6 ช่อง เป็น 3 คู่ที่เท่ากัน ถ้านับแค่ครึ่งบนโดยลืมคูณ 2 จะได้ $88.342-(-1.620-1.068+37.255)/2=71.06$ หรือ SD 8.43% ต่ำเกินจริง ใน spreadsheet การคูณ MMULT ของแถวน้ำหนัก ตาราง และคอลัมน์น้ำหนัก ทำผลรวมทั้ง 9 ช่องนี้ให้อัตโนมัติ</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ทุกช่อง $w_iw_j\Sigma_{ij}$ ของพอร์ตสามสินทรัพย์</h4>
+  <svg viewBox="0 0 480 375" role="img" aria-label="ตาราง 3 คูณ 3 สี่เหลี่ยมในแต่ละช่องมีพื้นที่ตามขนาดของ w i w j Sigma i j สี่เหลี่ยมน้ำเงินใหญ่สี่ช่องอยู่ที่ LV และ Intl Dev สี่เหลี่ยมส้มเล็กคือ covariance ติดลบของหุ้นกู้" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g fill="none" stroke="#d7dce3" stroke-width="1.5">
+        <rect x="140" y="40" width="100" height="100"/><rect x="240" y="40" width="100" height="100"/><rect x="340" y="40" width="100" height="100"/>
+        <rect x="140" y="140" width="100" height="100"/><rect x="240" y="140" width="100" height="100"/><rect x="340" y="140" width="100" height="100"/>
+        <rect x="140" y="240" width="100" height="100"/><rect x="240" y="240" width="100" height="100"/><rect x="340" y="240" width="100" height="100"/>
+      </g>
+      <text x="190" y="30" text-anchor="middle">Bond</text><text x="290" y="30" text-anchor="middle">LV</text><text x="390" y="30" text-anchor="middle">Intl Dev</text>
+      <text x="132" y="95" text-anchor="end">Bond 40%</text><text x="132" y="195" text-anchor="end">LV 30%</text><text x="132" y="295" text-anchor="end">Intl Dev 30%</text>
+      <rect x="178.9" y="78.9" width="22.1" height="22.1" fill="#2455d6"/>
+      <rect x="282.2" y="82.2" width="15.7" height="15.7" fill="#a65f00"/>
+      <rect x="383.7" y="83.7" width="12.7" height="12.7" fill="#a65f00"/>
+      <rect x="182.2" y="182.2" width="15.7" height="15.7" fill="#a65f00"/>
+      <rect x="245" y="145" width="90" height="90" fill="#2455d6"/>
+      <rect x="352.4" y="152.4" width="75.2" height="75.2" fill="#2455d6" fill-opacity="0.75"/>
+      <rect x="183.7" y="283.7" width="12.7" height="12.7" fill="#a65f00"/>
+      <rect x="252.4" y="252.4" width="75.2" height="75.2" fill="#2455d6" fill-opacity="0.75"/>
+      <rect x="346" y="246" width="88" height="88" fill="#2455d6"/>
+      <text x="190" y="124" text-anchor="middle" font-size="14">1.61</text>
+      <text x="290" y="124" text-anchor="middle" font-size="14" fill="#a65f00">−0.81</text>
+      <text x="390" y="124" text-anchor="middle" font-size="14" fill="#a65f00">−0.53</text>
+      <text x="190" y="224" text-anchor="middle" font-size="14" fill="#a65f00">−0.81</text>
+      <text x="190" y="324" text-anchor="middle" font-size="14" fill="#a65f00">−0.53</text>
+      <text x="290" y="195" text-anchor="middle" fill="#fff">26.65</text>
+      <text x="390" y="195" text-anchor="middle" fill="#fff">18.63</text>
+      <text x="290" y="295" text-anchor="middle" fill="#fff">18.63</text>
+      <text x="390" y="295" text-anchor="middle" fill="#fff">25.52</text>
+      <text x="290" y="364" text-anchor="middle">รวมทั้ง 9 ช่อง 88.34 %² → SD 9.40%</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละช่องคือ $w_iw_j\Sigma_{ij}$ ในหน่วย %² พื้นที่ของสี่เหลี่ยมเป็นสัดส่วนกับขนาดของค่าในช่อง สีน้ำเงินคือบวก สีส้มคือลบ สี่เหลี่ยมใหญ่สี่ช่องมุมขวาล่างคือหุ้นสองก้อน ซึ่งรวมกันได้ 89.4 เกินผลรวมทั้งตาราง แถวและคอลัมน์ของหุ้นกู้มีแต่สี่เหลี่ยมเล็ก และสองในสามเป็นสีส้ม หุ้นกู้จึงช่วยลดความเสี่ยงมากกว่าเพิ่ม ช่องนอกแนวทแยงคู่สมมาตรมีค่าเท่ากันเสมอ</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — หลายกลยุทธ์พร้อมกัน: $\operatorname{Cov}(AR+a)=A\Sigma A^{\mathsf T}$</h4>
+  <p>พอร์ตเดียวใช้แถวน้ำหนัก $w^{\mathsf T}$ แถวเดียว ถ้าต้องการรู้ความเสี่ยงของหลายกลยุทธ์ และ covariance ระหว่างกลยุทธ์ด้วย ให้วางแถวน้ำหนักซ้อนกันเป็น matrix $A$ ขนาด $k\times n$ แล้วบวก vector ค่าคงที่ $a$ (เช่นค่าธรรมเนียมที่แน่นอน) ซึ่งเป็น <a href="7.4.html">linear function</a> บวกค่าคงที่</p>
   <div class="math">\[
 \begin{aligned}
 Y&:=AR+a,\\
 \mathbb E[Y]&=A\mu+a,\\
 Y-\mathbb E[Y]&=A(R-\mu),\\
-\operatorname{Cov}(Y)
-&=\mathbb E[A(R-\mu)(R-\mu)^{\mathsf T}A^{\mathsf T}]\\
+\operatorname{Cov}(Y)&=\mathbb E\big[A(R-\mu)(R-\mu)^{\mathsf T}A^{\mathsf T}\big]\\
 &=A\Sigma A^{\mathsf T}.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>transpose ด้านขวาไม่ใช่เครื่องประดับ มันเกิดจาก $(A(R-\mu))^{\mathsf T}=(R-\mu)^{\mathsf T}A^{\mathsf T}$ ขนาดผลลัพธ์ต้องเป็น $k\times k$: แถวและคอลัมน์ตอนนี้เป็น <strong>กลยุทธ์</strong> ไม่ใช่สินทรัพย์เดิม</p></div>
-  <p>สูตรนี้ใช้ $A,a$ ที่กำหนดคงที่ หากน้ำหนักถูกเลือกจากข้อมูลที่รู้ต้นงวด สามารถใช้ conditional mean/covariance เมื่อกำหนดข้อมูลนั้นไว้ แต่ห้ามดึงน้ำหนักสุ่มที่ผูกกับ returns ออกจาก unconditional expectation เฉย ๆ</p>
-  <p>ตารางใหม่ยังเป็น PSD เพราะการรวมผลลัพธ์ $Y$ ด้วยสัมประสิทธิ์คงที่ก็คือการรวม $R$ อีกชั้นหนึ่ง ซึ่งมี variance ไม่ติดลบ แต่ถ้าแถวของ $A$ ซ้ำกันหรือเป็นหลายเท่ากัน กลยุทธ์อาจซ้ำความเสี่ยงเดิม และ covariance ใหม่อาจ singular แม้ $\Sigma$ เดิมเป็น PD</p>
-</section>
-<section class="example">
-  <h4>ตัวอย่าง — ถือสินทรัพย์เหมือนกัน แต่สร้าง returns คนละแบบ</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้ mean $(5,2)$ bp และ covariance จากสามวันเดิม กลยุทธ์แรก long ตัวแรกครึ่งหนึ่งและ short ตัวที่สองครึ่งหนึ่ง กลยุทธ์ที่สอง long 60/40 ทั้งสองนิยามผลตอบแทนเทียบ NAV ของตนเอง และตั้ง cash return เป็นศูนย์ในตัวอย่าง</p>
+  <div class="reading"><p>transpose ทางขวาไม่ได้ใส่มาเพื่อความสวย มันเกิดจาก $(A(R-\mu))^{\mathsf T}=(R-\mu)^{\mathsf T}A^{\mathsf T}$ ผลลัพธ์มีขนาด $k\times k$ แถวและคอลัมน์ตอนนี้เป็น <strong>กลยุทธ์</strong> ไม่ใช่สินทรัพย์เดิม ถ้า $A$ มีแถวเดียวคือ $w^{\mathsf T}$ สูตรนี้ย่อเหลือ $w^{\mathsf T}\Sigma w$ และถ้า $A=(a,\ b)$ จะได้ $\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y)$ ซึ่งเป็นสูตรเดียวกับขั้นก่อน</p></div>
+  <p>ลองกับข้อมูลสามวันของ Technology และ Energy (หน่วย bp) ที่มี $\hat\mu=(5,\ 2)$ และ $\hat\Sigma=\begin{bmatrix}1&amp;1.5\\1.5&amp;3\end{bmatrix}$ กลยุทธ์แรก long Technology ครึ่งหนึ่ง short Energy ครึ่งหนึ่ง กลยุทธ์ที่สอง long ทั้งคู่ 60/40</p>
   <div class="math">\[
 \begin{aligned}
 A&=\begin{bmatrix}0.5&amp;-0.5\\0.6&amp;0.4\end{bmatrix},\\
-A\mu&=\begin{bmatrix}0.5(5)-0.5(2)\\0.6(5)+0.4(2)\end{bmatrix}
+A\mu&=\begin{bmatrix}2.5-1\\3+0.8\end{bmatrix}
 =\begin{bmatrix}1.5\\3.8\end{bmatrix}\text{ bp},\\
 A\Sigma&=\begin{bmatrix}-0.25&amp;-0.75\\1.20&amp;2.10\end{bmatrix},\\
-(A\Sigma A^{\mathsf T})_{11}&=(-0.25)(0.5)+(-0.75)(-0.5)=0.25,\\
-(A\Sigma A^{\mathsf T})_{12}&=(-0.25)(0.6)+(-0.75)(0.4)=-0.45,\\
-(A\Sigma A^{\mathsf T})_{22}&=(1.20)(0.6)+(2.10)(0.4)=1.56,\\
-\operatorname{Cov}(Y)&=\begin{bmatrix}0.25&amp;-0.45\\-0.45&amp;1.56\end{bmatrix}\text{ bp}^2.
+(A\Sigma A^{\mathsf T})_{11}&=-0.125+0.375=0.25,\\
+(A\Sigma A^{\mathsf T})_{12}&=-0.15-0.30=-0.45,\\
+(A\Sigma A^{\mathsf T})_{22}&=0.72+0.84=1.56.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> SD ของสองกลยุทธ์เป็น 0.5 กับประมาณ 1.2490 bp และ covariance ระหว่างกันเป็น −0.45 bp² แม้สินทรัพย์เดิมจะมี covariance บวก เพราะน้ำหนัก short เปลี่ยนเครื่องหมายของการสัมผัสความเสี่ยง</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> แปลง returns เดิม $(4,1),(6,4),(5,1)$ ทีละวัน จะได้ $(1.5,2.8),(1,5.2),(2,3.4)$ bp แล้วคำนวณ sample covariance ของสองคอลัมน์ใหม่นี้ จะได้ตารางเดียวกัน</p>
-  <p>ถ้าเก็บค่าธรรมเนียมแน่นอน 0.1 กับ 0.2 bp ให้ $a=(-0.1,-0.2)^{\mathsf T}$ mean สุทธิกลายเป็น $(1.4,3.6)$ bp แต่ covariance เดิม ถ้าค่าใช้จ่ายสุ่ม ต้องรวม variance และ covariance ของค่าใช้จ่ายด้วย</p>
+  <div class="reading"><p>SD ของสองกลยุทธ์เป็น $\sqrt{0.25}=0.5$ กับ $\sqrt{1.56}\approx1.249$ bp และ covariance ระหว่างกันเป็น $-0.45$ ทั้งที่สินทรัพย์เดิมมี covariance บวก เพราะขา short ของกลยุทธ์แรกกลับเครื่องหมายของ Energy ตรวจได้ทันทีด้วยการแปลงข้อมูลดิบทีละวัน: $(4,1)\to(1.5,\ 2.8)$, $(6,4)\to(1,\ 5.2)$, $(5,1)\to(2,\ 3.4)$ แล้วคำนวณ sample covariance ของสองคอลัมน์ใหม่ จะได้ตารางเดียวกัน</p></div>
+  <p>ตารางใหม่ยังเป็น PSD เสมอ เพราะพอร์ตใด ๆ ของกลยุทธ์ก็คือพอร์ตของสินทรัพย์เดิมอีกชั้นหนึ่ง แต่ถ้าแถวของ $A$ ซ้ำกันหรือเป็นจำนวนเท่าของกัน กลยุทธ์ก็ถือความเสี่ยงก้อนเดิมซ้ำ และ $A\Sigma A^{\mathsf T}$ จะ singular แม้ $\Sigma$ จะ invertible</p>
 </section>
 
+<figure class="plot">
+  <h4>รูป — วันเดิม แกนใหม่: เมฆจุดก่อนและหลังคูณด้วย $A$</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="ซ้าย เมฆ 50 วันของ Technology และ Energy เอียงขึ้น ขวา เมฆเดียวกันหลังแปลงเป็นกลยุทธ์ long short และ 60 40 เอียงลงและแคบในแนวนอน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="k82b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#181818"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <line x1="40" y1="250" x2="225" y2="250" stroke="#5b6472" stroke-width="2"/><line x1="40" y1="40" x2="40" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <line x1="270" y1="250" x2="455" y2="250" stroke="#5b6472" stroke-width="2"/><line x1="270" y1="40" x2="270" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <text x="40" y="268" text-anchor="middle" font-size="14">2</text><text x="132.5" y="268" text-anchor="middle" font-size="14">5</text><text x="225" y="268" text-anchor="middle" font-size="14">8</text>
+      <text x="34" y="234" text-anchor="end" font-size="14">−2</text><text x="34" y="150" text-anchor="end" font-size="14">2</text><text x="34" y="66" text-anchor="end" font-size="14">6</text>
+      <text x="285.4" y="268" text-anchor="middle" font-size="14">−1</text><text x="362.5" y="268" text-anchor="middle" font-size="14">1.5</text><text x="439.6" y="268" text-anchor="middle" font-size="14">4</text>
+      <text x="264" y="244" text-anchor="end" font-size="14">−1</text><text x="264" y="160" text-anchor="end" font-size="14">3</text><text x="264" y="76" text-anchor="end" font-size="14">7</text>
+      <text x="132.5" y="290" text-anchor="middle">Technology (bp)</text>
+      <text x="362.5" y="290" text-anchor="middle">long–short (bp)</text>
+      <text x="46" y="30">Energy (bp)</text>
+      <text x="276" y="30">60/40 (bp)</text>
+      <line x1="228" y1="105" x2="262" y2="105" stroke="#181818" stroke-width="2.5" marker-end="url(#k82b)"/>
+      <text x="245" y="96" text-anchor="middle" font-weight="bold">A</text>
+      <g fill="#2455d6" fill-opacity="0.75"><circle cx="132.7" cy="157.1" r="3.2"/><circle cx="82.1" cy="226.9" r="3.2"/><circle cx="136.0" cy="129.8" r="3.2"/><circle cx="100.3" cy="190.4" r="3.2"/><circle cx="151.9" cy="140.2" r="3.2"/><circle cx="157.2" cy="89.2" r="3.2"/><circle cx="75.6" cy="214.5" r="3.2"/><circle cx="137.6" cy="149.8" r="3.2"/><circle cx="113.5" cy="177.1" r="3.2"/><circle cx="175.2" cy="141.5" r="3.2"/><circle cx="109.2" cy="173.2" r="3.2"/><circle cx="81.4" cy="179.4" r="3.2"/><circle cx="114.7" cy="164.0" r="3.2"/><circle cx="146.1" cy="133.5" r="3.2"/><circle cx="166.1" cy="111.7" r="3.2"/><circle cx="147.9" cy="125.5" r="3.2"/><circle cx="128.4" cy="144.2" r="3.2"/><circle cx="97.3" cy="140.2" r="3.2"/><circle cx="128.2" cy="148.6" r="3.2"/><circle cx="142.2" cy="141.1" r="3.2"/><circle cx="203.1" cy="53.2" r="3.2"/><circle cx="148.1" cy="90.9" r="3.2"/><circle cx="143.7" cy="133.3" r="3.2"/><circle cx="114.7" cy="187.9" r="3.2"/><circle cx="183.6" cy="111.3" r="3.2"/><circle cx="98.2" cy="189.0" r="3.2"/><circle cx="114.8" cy="175.3" r="3.2"/><circle cx="115.5" cy="159.9" r="3.2"/><circle cx="123.2" cy="157.6" r="3.2"/><circle cx="56.0" cy="221.6" r="3.2"/><circle cx="144.9" cy="168.5" r="3.2"/><circle cx="146.3" cy="145.9" r="3.2"/><circle cx="184.2" cy="112.8" r="3.2"/><circle cx="131.9" cy="120.1" r="3.2"/><circle cx="145.5" cy="160.3" r="3.2"/><circle cx="159.6" cy="78.6" r="3.2"/><circle cx="159.7" cy="106.7" r="3.2"/><circle cx="127.6" cy="147.4" r="3.2"/><circle cx="143.9" cy="124.2" r="3.2"/><circle cx="91.4" cy="180.3" r="3.2"/><circle cx="177.9" cy="86.2" r="3.2"/><circle cx="144.2" cy="142.1" r="3.2"/><circle cx="82.7" cy="179.4" r="3.2"/><circle cx="155.0" cy="123.6" r="3.2"/><circle cx="141.8" cy="111.0" r="3.2"/><circle cx="97.9" cy="176.2" r="3.2"/><circle cx="158.3" cy="118.7" r="3.2"/><circle cx="129.2" cy="135.6" r="3.2"/><circle cx="125.1" cy="158.8" r="3.2"/><circle cx="153.7" cy="116.0" r="3.2"/></g>
+      <g fill="#6d28d9" fill-opacity="0.75"><circle cx="371.4" cy="143.5" r="3.2"/><circle cx="397.4" cy="192.1" r="3.2"/><circle cx="353.1" cy="131.2" r="3.2"/><circle cx="379.8" cy="170.0" r="3.2"/><circle cx="368.7" cy="128.8" r="3.2"/><circle cx="333.9" cy="106.3" r="3.2"/><circle cx="385.1" cy="189.8" r="3.2"/><circle cx="368.6" cy="138.5" r="3.2"/><circle cx="376.6" cy="159.3" r="3.2"/><circle cx="381.2" cy="119.8" r="3.2"/><circle cx="371.5" cy="159.5" r="3.2"/><circle cx="362.2" cy="173.3" r="3.2"/><circle cx="367.5" cy="153.6" r="3.2"/><circle cx="360.9" cy="128.5" r="3.2"/><circle cx="354.8" cy="111.7" r="3.2"/><circle cx="355.9" cy="124.6" r="3.2"/><circle cx="359.9" cy="140.1" r="3.2"/><circle cx="341.3" cy="151.2" r="3.2"/><circle cx="363.0" cy="141.9" r="3.2"/><circle cx="364.5" cy="133.2" r="3.2"/><circle cx="330.4" cy="73.1" r="3.2"/><circle cx="330.6" cy="110.7" r="3.2"/><circle cx="359.5" cy="129.4" r="3.2"/><circle cx="385.1" cy="163.1" r="3.2"/><circle cx="363.3" cy="104.3" r="3.2"/><circle cx="377.6" cy="170.3" r="3.2"/><circle cx="375.9" cy="158.0" r="3.2"/><circle cx="364.9" cy="151.6" r="3.2"/><circle cx="367.1" cy="147.5" r="3.2"/><circle cx="380.5" cy="200.6" r="3.2"/><circle cx="385.9" cy="143.0" r="3.2"/><circle cx="370.0" cy="133.4" r="3.2"/><circle cx="364.7" cy="104.7" r="3.2"/><circle cx="343.9" cy="129.0" r="3.2"/><circle cx="380.3" cy="139.5" r="3.2"/><circle cx="327.3" cy="101.0" r="3.2"/><circle cx="348.0" cy="112.3" r="3.2"/><circle cx="361.8" cy="141.7" r="3.2"/><circle cx="353.0" cy="125.7" r="3.2"/><circle cx="367.8" cy="169.6" r="3.2"/><circle cx="342.0" cy="96.6" r="3.2"/><circle cx="366.2" cy="132.8" r="3.2"/><circle cx="362.8" cy="172.8" r="3.2"/><circle cx="358.0" cy="121.0" r="3.2"/><circle cx="342.1" cy="121.3" r="3.2"/><circle cx="368.1" cy="165.3" r="3.2"/><circle cx="356.1" cy="117.6" r="3.2"/><circle cx="353.9" cy="136.3" r="3.2"/><circle cx="368.9" cy="147.2" r="3.2"/><circle cx="351.8" cy="118.4" r="3.2"/></g>
+      <line x1="124.5" y1="145" x2="140.5" y2="145" stroke="#181818" stroke-width="3"/><line x1="132.5" y1="137" x2="132.5" y2="153" stroke="#181818" stroke-width="3"/>
+      <line x1="354.5" y1="138.7" x2="370.5" y2="138.7" stroke="#181818" stroke-width="3"/><line x1="362.5" y1="130.7" x2="362.5" y2="146.7" stroke="#181818" stroke-width="3"/>
+    </g>
+  </svg>
+  <figcaption>ซ้าย: 50 วันจำลองที่มีค่าเฉลี่ย $(5,\ 2)$ bp และ covariance เท่ากับตารางสามวันพอดี เมฆเอียงขึ้นเพราะ covariance บวก 1.5 ขวา: วันเดียวกันทุกจุดหลังคูณด้วย $A$ ทั้งสองแผงใช้มาตราส่วนเท่ากัน เมฆใหม่อยู่ที่ $A\mu=(1.5,\ 3.8)$ แคบในแนวนอน (SD ของ long–short แค่ 0.5 bp เพราะการ short หักล้างส่วนที่สองกลุ่มขึ้นลงด้วยกัน) และเอียงลงตาม covariance $-0.45$ ทุกตัวเลขของเมฆใหม่ได้จาก $A\Sigma A^{\mathsf T}$ โดยไม่ต้องแปลงข้อมูลทีละวัน</figcaption>
+</figure>
+
 <section class="formula">
-  <h4>ขั้นที่ 5 — นับพจน์ให้ครบ แล้วจะเห็นที่มาของ $1/\sqrt N$</h4>
-  <p>พิจารณา $N$ สินทรัพย์ที่มี SD เท่ากัน $\sigma$ ถือแต่ละตัว $1/N$ และมี correlation ทุกคู่เท่ากับ $\rho$ นี่คือแบบจำลองเพื่อแยกกลไก ไม่ใช่ข้อเท็จจริงว่าหุ้นทุกคู่มี correlation เท่ากัน</p>
+  <h4>ขั้นที่ 6 — นับช่องให้ครบ แล้วจะเห็นว่ากฎ $1/\sqrt N$ มาจากไหนและพังตรงไหน</h4>
+  <p>ใช้แบบจำลองที่ตัดรายละเอียดทิ้ง เพื่อให้เห็นกลไกชัด: $N$ สินทรัพย์มี SD เท่ากัน $\sigma$ ถือแต่ละตัว $1/N$ และ correlation ทุกคู่เท่ากับ $\rho$ ตารางมีช่องแนวทแยง $N$ ช่อง และนอกแนวทแยง $N(N-1)$ ช่อง ทุกช่องคูณด้วยน้ำหนัก $(1/N)(1/N)$</p>
   <div class="math">\[
 \begin{aligned}
-\sigma_p^2&=\frac1{N^2}\sum_{i=1}^{N}\sum_{j=1}^{N}\Sigma_{ij},\\
-\text{แนวทแยง }N\text{ ช่อง: }\Sigma_{ii}&=\sigma^2,\\
-\text{นอกแนวทแยง }N(N-1)\text{ ช่อง: }\Sigma_{ij}&=\rho\sigma^2,\\
-\sigma_p^2&=\frac{N\sigma^2+N(N-1)\rho\sigma^2}{N^2}\\
-&=\sigma^2\left(\rho+\frac{1-\rho}{N}\right),\\
-\rho=0:\quad\sigma_p^2&=\frac{\sigma^2}{N},
-\qquad\sigma_p=\frac{\sigma}{\sqrt N},\\
-\sigma=20\%,\ N=25:\quad\sigma_p&=20\%/5=4\%.
+\sigma_p^2&=\frac1{N^2}\sum_{i=1}^{N}\sum_{j=1}^{N}\Sigma_{ij}\\
+&=\frac{N\sigma^2+N(N-1)\rho\sigma^2}{N^2}\\
+&=\rho\sigma^2+\frac{(1-\rho)\sigma^2}{N},\\
+\rho=0:\quad\sigma_p&=\sigma/\sqrt N,\\
+N\to\infty:\quad\sigma_p&\to\sigma\sqrt\rho.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ตัวหาร $N^2$ เกิดจากน้ำหนักคูณกันสองครั้ง ส่วน $N$ ในตัวเศษมาจากจำนวนช่องบนแนวทแยง ถ้าคู่ต่าง ๆ ยังมี covariance พจน์อีก $N(N-1)$ ช่องจะไม่หายไปเมื่อเพิ่มจำนวนสินทรัพย์</p></div>
-  <p>สำหรับสองตัวที่ SD 20% เท่ากัน น้ำหนักครึ่งต่อครึ่งให้ SD $20\%/\sqrt2\approx14.14\%$ เมื่อ correlation เป็นศูนย์ แต่ยังเป็น 20% เมื่อ correlation เป็น 1 ซึ่งอธิบายว่าจำนวนสินทรัพย์อย่างเดียวไม่พอ</p>
-</section>
-<section class="formula">
-  <h4>ขั้นที่ 6 — ความเสี่ยงร่วมไม่หายไปเพียงเพราะเพิ่มชื่อ</h4>
-  <p>ถ้า $\rho\ge0$ คงที่ สูตรข้างต้นแยกเป็นส่วนที่ลดตาม $N$ กับส่วนที่คงอยู่ได้ ในขอบเขตพอร์ตน้ำหนักเท่ากันนี้ เมื่อ $N$ มากขึ้น</p>
+  <div class="reading"><p>ตัวหาร $N^2$ มาจากน้ำหนักคูณกันสองครั้ง ช่องแนวทแยงมีแค่ $N$ ช่อง ส่วนนี้จึงหดตาม $1/N$ แต่ช่องนอกแนวทแยงมีเกือบ $N^2$ ช่อง หารด้วย $N^2$ แล้วเหลือ $\rho\sigma^2$ ไม่ว่า $N$ จะใหญ่แค่ไหน กฎ $1/\sqrt N$ จึงเป็นกรณีพิเศษของ $\rho=0$ ซึ่งใช้ได้กับ variance ล้วน ๆ เช่น $\sigma=20\%$ กับ $N=25$ ได้ $20\%/5=4\%$</p></div>
   <div class="math">\[
 \begin{aligned}
-\sigma_p^2&=\sigma^2\rho+\frac{\sigma^2(1-\rho)}{N},\\
-\lim_{N\to\infty}\sigma_p^2&=\sigma^2\rho,
-\qquad\lim_{N\to\infty}\sigma_p=\sigma\sqrt\rho,\\
-\sigma=0.20,\ \rho=0.35:\quad
-\sigma_{p,10}&=0.20\sqrt{0.35+0.65/10}\approx12.8841\%,\\
-\sigma_{p,100}&=0.20\sqrt{0.35+0.65/100}\approx11.9415\%,\\
-\sigma\sqrt\rho&=0.20\sqrt{0.35}\approx11.8322\%.
+\sigma=0.20,\ \rho&=0.35,\\
+\sigma_{p,10}&=0.20\sqrt{0.35+0.065}\approx12.88\%,\\
+\sigma_{p,100}&=0.20\sqrt{0.35+0.0065}\approx11.94\%,\\
+\sigma\sqrt\rho&=0.20\sqrt{0.35}\approx11.83\%.
 \end{aligned}
 \]</div>
-  <div class="table-wrap"><table><thead><tr><th>จำนวน</th><th>$\rho=0$</th><th>$\rho=0.35$</th></tr></thead><tbody>
+  <div class="table-wrap"><table><thead><tr><th>จำนวนหุ้น</th><th>$\rho=0$</th><th>$\rho=0.35$</th></tr></thead><tbody>
     <tr><td>1</td><td>20.00%</td><td>20.00%</td></tr>
     <tr><td>10</td><td>6.32%</td><td>12.88%</td></tr>
     <tr><td>25</td><td>4.00%</td><td>12.26%</td></tr>
     <tr><td>50</td><td>2.83%</td><td>12.05%</td></tr>
     <tr><td>100</td><td>2.00%</td><td>11.94%</td></tr>
   </tbody></table></div>
-  <div class="reading"><p>จาก 10 ไป 100 ตัว SD ลดประมาณ $1-11.9415/12.8841=7.32\%$ ไม่ใช่ลดตาม $1/\sqrt{10}$ และถ้า correlation เปลี่ยนเป็น 0.80 floor นี้จะเพิ่มเป็นประมาณ 17.89% แม้ SD รายตัวคงเดิม</p></div>
-  <details><summary>เห็นส่วนร่วมและส่วนเฉพาะตัวจากแบบจำลองหนึ่งปัจจัย</summary>
-    <p>ให้ $F,\varepsilon_1,\ldots,\varepsilon_N$ มี mean ศูนย์ variance หนึ่ง และ uncorrelated กัน สำหรับ $0\le\rho\le1$ สร้าง returns ตามนี้</p>
+  <div class="reading"><p>จาก 10 ไป 100 ตัว SD ลดลง $1-11.94/12.88\approx7.3\%$ คำตอบของคำถามเปิดจึงอยู่ที่ช่องนอกแนวทแยง ไม่ได้อยู่ที่จำนวนชื่อ และถ้าวิกฤตทำให้ correlation พุ่งเป็น 0.80 พื้นนี้จะขึ้นไปที่ $20\%\sqrt{0.8}\approx17.89\%$ แม้ SD รายตัวไม่เปลี่ยนเลย</p></div>
+  <details><summary>เห็นส่วนร่วมกับส่วนเฉพาะตัวจากแบบจำลองหนึ่งปัจจัย</summary>
+    <p>ให้ $F,\varepsilon_1,\ldots,\varepsilon_N$ มีค่าเฉลี่ยศูนย์ variance หนึ่ง และ uncorrelated กัน สร้างผลตอบแทนแบบนี้ (ใช้ได้เมื่อ $0\le\rho\le1$)</p>
     <div class="math">\[
 \begin{aligned}
 R_i&=\mu_i+\sigma\sqrt\rho\,F+\sigma\sqrt{1-\rho}\,\varepsilon_i,\\
 \operatorname{Cov}(R_i,R_j)&=\sigma^2\rho\quad(i\ne j),\\
-\bar R-\bar\mu&=\sigma\sqrt\rho\,F
-+\frac{\sigma\sqrt{1-\rho}}N\sum_i\varepsilon_i,\\
+\bar R-\bar\mu&=\sigma\sqrt\rho\,F+\frac{\sigma\sqrt{1-\rho}}N\sum_i\varepsilon_i,\\
 \operatorname{Var}(\bar R)&=\sigma^2\rho+\frac{\sigma^2(1-\rho)}{N}.
 \end{aligned}
 \]</div>
-    <p>ส่วนเฉพาะตัวเฉลี่ยกันได้ แต่ส่วนร่วม $F$ ถูกถืออยู่ทุกชื่อ นี่เป็นคำอธิบายภายในแบบจำลอง ไม่ได้พิสูจน์ว่าปัจจัยตลาดจริงมีตัวเดียว และ floor นี้ไม่ใช่ขอบเขตที่พอร์ตทุกแบบหรือการ hedge แบบอื่นไม่มีทางลดลงได้</p>
+    <p>ส่วนเฉพาะตัว $\varepsilon_i$ เฉลี่ยกันแล้วหดตาม $1/N$ แต่ส่วนร่วม $F$ ถูกถืออยู่ในทุกชื่อจึงไม่หดเลย นี่คือแนวคิดของ systematic risk ที่ <a href="15.2.html">CAPM</a> และ <a href="26.1.html">factor model</a> ต่อยอด ส่วนนี้กำจัดไม่ได้ด้วยการเพิ่มชื่อ ต้อง hedge ด้วยสิ่งที่มีปัจจัยเดียวกันในทิศตรงข้าม</p>
   </details>
-  <p>ถ้า $\rho$ ติดลบ จะส่ง $N$ ไปอนันต์โดยตรึง $\rho$ เดิมไม่ได้: correlation matrix แบบทุกคู่เท่ากันต้องมี $-1/(N-1)\le\rho\le1$ เมื่อ $N\ge2$ ตาม eigenvalues $1+(N-1)\rho$ กับ $1-\rho$ ซึ่งขยายเหตุผลใน 7.6</p>
-  <p>ตัวอย่าง $\rho=-0.05$ ใช้ได้ถึง $N=21$ ซึ่งพอร์ตเท่ากันมี variance ศูนย์ในแบบจำลอง แต่ถ้าใช้ $N=22$ จะได้ variance ติดลบ นั่นคือสมมติฐานที่เข้ากันไม่ได้ ไม่ใช่ประโยชน์การกระจายที่เหนือธรรมดา</p>
+  <p>ถ้า $\rho$ ติดลบ จะเพิ่ม $N$ ไปเรื่อย ๆ โดยตรึง $\rho$ ไว้ไม่ได้ ตาราง correlation ที่ทุกคู่เท่ากันต้องมี $\rho\ge-1/(N-1)$ เพราะ eigenvalue $1+(N-1)\rho$ ห้ามติดลบ (<a href="7.6.html">eigenvalues และ positive definiteness</a>) เช่น $\rho=-0.05$ ใช้ได้ถึง $N=21$ ซึ่ง variance ของพอร์ตเท่ากันเป็นศูนย์พอดี ถ้าใช้ $N=22$ สูตรจะให้ variance ติดลบ นั่นคือสมมติฐานที่เป็นไปไม่ได้ ไม่ใช่การกระจายที่เก่งเป็นพิเศษ</p>
 </section>
+
 <figure class="plot">
-  <h4>Figure 8.2c — กราฟแสดง SD สัมพัทธ์ ไม่ใช่เปอร์เซ็นต์ returns</h4>
-  <img src="../figures/8.2-3.svg" alt="SD พอร์ตเทียบ SD รายตัว เมื่อ correlation เป็นศูนย์หรือ 0.35" loading="lazy">
-  <figcaption>แกนตั้งคือ $\sigma_p/\sigma$ เส้น zero correlation ลดตาม $1/\sqrt N$ ส่วนเส้น $\rho=0.35$ เข้าใกล้ $\sqrt{0.35}\approx0.5916$ เมื่อตั้ง SD รายตัว 20% จึงต้องคูณแกนตั้งด้วย 20% ก่อนอ่านเป็น SD พอร์ต</figcaption>
+  <h4>รูป — SD ของพอร์ตเท่ากันเทียบกับ SD รายตัว เมื่อเพิ่มจำนวนหุ้น</h4>
+  <img src="../figures/8.2-3.svg" alt="SD สัมพัทธ์ของพอร์ตเมื่อจำนวนหุ้นเพิ่ม เส้น correlation ศูนย์ลดลงเรื่อย ๆ เส้น correlation 0.35 ราบที่ประมาณ 0.59" loading="lazy">
+  <figcaption>แกนตั้งคือ $\sigma_p/\sigma$ ไม่ใช่เปอร์เซ็นต์ผลตอบแทน คูณด้วย 20% ก่อนอ่านเป็น SD ของพอร์ต เส้น correlation ศูนย์ลดตาม $1/\sqrt N$ ไปเรื่อย ๆ ส่วนเส้น $\rho=0.35$ ลดเร็วในช่วง 10 ตัวแรกแล้วราบลงเข้าหา $\sqrt{0.35}\approx0.59$ หรือ 11.83% ช่องว่างระหว่างสองเส้นคือ systematic risk ที่การเพิ่มชื่อเอาออกไม่ได้</figcaption>
 </figure>
 
-<section class="example">
-  <h4>ขั้นที่ 7 — 60/40 ไม่ได้แปลว่าเอา SD มาเฉลี่ย 60/40</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> พอร์ตหุ้นสหรัฐ 60% กับหุ้นกู้สหรัฐ 40% กำหนด SD รายปี 18% กับ 6% และ correlation $-0.20$ ตัวเลขทั้งหมดเป็นแบบจำลองสมมติ</p>
-  <div class="math">\[
-\begin{aligned}
-\Sigma_{12}&=(-0.20)(0.18)(0.06)=-0.00216,\\
-\sigma_p^2&=(0.6)^2(0.18)^2+(0.4)^2(0.06)^2\\
-&\quad+2(0.6)(0.4)(-0.00216)\\
-&=0.011664+0.000576-0.0010368\\
-&=0.0112032,\\
-\sigma_p&=\sqrt{0.0112032}\approx10.5845\%,\\
-\rho=1:\quad\sigma_p&=0.6(18\%)+0.4(6\%)=13.20\%,\\
-\rho=-1:\quad\sigma_p&=|0.6(18\%)-0.4(6\%)|=8.40\%.
-\end{aligned}
-\]</div>
-  <p><strong>คำตอบ:</strong> SD เป็นประมาณ 10.58% ไม่ใช่ 13.20% หาก correlation เปลี่ยนเป็น $+0.50$ โดย SD รายตัวยังเดิม จะได้ $\sqrt{0.014832}\approx12.18\%$ น้ำหนักที่ดูเหมือนเดิมจึงมีความเสี่ยงต่างกันได้</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> ที่ correlation เท่ากับ −1 พอร์ต 60/40 นี้ยังมี SD 8.40% ไม่ใช่ศูนย์ เพราะน้ำหนักคูณ SD ของสองขาไม่เท่ากัน การเคลื่อนไหวสวนทางจึงหักล้างไม่หมด</p>
-</section>
-<figure class="plot">
-  <h4>Figure 8.2a — ถือพอร์ตเดิม แต่เปลี่ยนสมมติฐาน correlation</h4>
-  <img src="../figures/8.2-1.svg" alt="SD พอร์ต 60/40 ของสินทรัพย์ SD 18 และ 6 เปอร์เซ็นต์ ตาม correlation" loading="lazy">
-  <figcaption>เส้นประ 13.20% เป็นกรณี correlation เท่ากับ 1 และขอบเขตบนของพอร์ต long-only ชุดนี้ จุดที่ $\rho=-0.20$ มี SD 10.58% ส่วนปลายซ้ายยังอยู่ที่ 8.40%</figcaption>
-</figure>
 <section class="formula">
-  <h4>ขั้นที่ 8 — ถ้าเป้าหมายคือ variance ต่ำสุด ต้องเปลี่ยนน้ำหนักเท่าไร</h4>
-  <p>ให้หุ้นมีน้ำหนัก $u$ และหุ้นกู้ $1-u$ เขียน variance รายตัวเป็น $v_1,v_2$ และ covariance เป็น $c$ เราสามารถหาจุดต่ำสุดด้วยการจัดเป็นกำลังสองสมบูรณ์ โดยไม่ต้องท่องสูตร optimizer</p>
+  <h4>ขั้นที่ 7 — พอร์ตหุ้น–หุ้นกู้ที่เสี่ยงน้อยที่สุด และ efficient frontier</h4>
+  <p>กลับมาที่หุ้น (SD 18%) กับหุ้นกู้ (SD 6%) correlation $-0.2$ ให้หุ้นมีน้ำหนัก $u$ หุ้นกู้ $1-u$ เขียน variance รายตัวเป็น $v_1,v_2$ และ covariance เป็น $c$ variance ของพอร์ตเป็นพหุนามกำลังสองของ $u$ หาจุดต่ำสุดได้ด้วยการจัดกำลังสองสมบูรณ์</p>
   <div class="math">\[
 \begin{aligned}
 V(u)&=u^2v_1+(1-u)^2v_2+2u(1-u)c\\
-&=d u^2+2(c-v_2)u+v_2,\\
+&=d\,u^2-2(v_2-c)u+v_2,\\
 d&:=v_1+v_2-2c=\operatorname{Var}(R_1-R_2),\\
-d\gt0:\quad V(u)&=d\left(u-\frac{v_2-c}{d}\right)^2
-+v_2-\frac{(v_2-c)^2}{d},\\
 u_*&=\frac{v_2-c}{d},\\
-\text{ตัวอย่างรายปี: }d&=0.0324+0.0036+0.00432=0.04032,\\
+V(u_*)&=v_2-\frac{(v_2-c)^2}{d},\\
+d&=0.0324+0.0036+0.00432\\
+&=0.04032,\\
 u_*&=\frac{0.0036+0.00216}{0.04032}=\frac17,\\
-V(u_*)&\approx0.002777142857,
-\qquad\sigma_*\approx5.2699\%.
+V(u_*)&\approx0.0027771,\quad\sigma_*\approx5.27\%.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>คำตอบคือหุ้นประมาณ 14.29% และหุ้นกู้ 85.71% ถ้าจำกัด long-only ให้ $u\in[0,1]$ และคำตอบจากสูตรอยู่นอกช่วง ต้องเลือกขอบที่ใกล้ที่สุดแทน ถ้า $d=0$ ให้ตรวจกรณีเสื่อม: variance ไม่เปลี่ยนตาม $u$ และหารด้วย $d$ ไม่ได้</p></div>
-  <p>variance ต่ำสุดไม่เท่ากับเป้าหมายทุกอย่างดีที่สุด หากเพิ่มสมมติฐาน mean รายปีของหุ้น 8% และหุ้นกู้ 3% พอร์ต 60/40 มี mean 6% แต่พอร์ต $1/7,6/7$ มี mean เพียง $(8+6\times3)/7\approx3.7143\%$ ความเสี่ยงที่ลดลงมาพร้อมสัดส่วนและ expected return ที่เปลี่ยน</p>
+  <div class="reading"><p>บรรทัดที่สองได้จากการกระจายและจัดกลุ่มตามกำลังของ $u$ สัมประสิทธิ์ $d$ คือ variance ของ $R_1-R_2$ ซึ่งเป็นบวกเมื่อสองสินทรัพย์ไม่ได้เหมือนกันทุกประการ พาราโบลาจึงหงาย จุดยอดอยู่ที่ $u_*$ คำตอบคือหุ้น 14.29% หุ้นกู้ 85.71% ได้ SD 5.27% ต่ำกว่าหุ้นกู้ล้วน (6%) เพราะ covariance ติดลบ ถ้าห้าม short และ $u_*$ หลุดนอกช่วง 0 ถึง 1 ให้ใช้ขอบที่ใกล้ที่สุด</p></div>
+  <p>variance ต่ำสุดไม่ใช่เป้าหมายเดียว สมมติผลตอบแทนคาดหมายรายปีของหุ้น 8% หุ้นกู้ 3% เส้นที่ลากจากการเปลี่ยน $u$ บนระนาบ (SD, ผลตอบแทนคาดหมาย) คือ frontier ของสองสินทรัพย์ เป็นเส้นโค้งไฮเพอร์โบลา ครึ่งบนเรียก efficient frontier: ทุกจุดบนครึ่งล่างมีจุดบนครึ่งบนที่เสี่ยงเท่ากันแต่ได้ผลตอบแทนคาดหมายมากกว่า</p>
 </section>
+
 <figure class="plot">
-  <h4>Figure 8.2b — เส้นกำลังสองของตัวอย่างรายวันอีกชุด</h4>
-  <img src="../figures/8.2-2.svg" alt="Variance ตามน้ำหนัก SPY ในแบบจำลองสองสินทรัพย์" loading="lazy">
-  <figcaption>รูปนี้ไม่ใช่ตัวอย่างหุ้น–หุ้นกู้รายปีข้างบน แต่กำหนด variance รายวัน 0.0004, 0.0009 และ covariance 0.00012 ให้ SPY กับสินทรัพย์อีกตัว น้ำหนัก SPY ที่ต่ำสุดคือ $(0.0009-0.00012)/(0.0004+0.0009-0.00024)=39/53\approx0.73585$ จุดในรูปเลือกจาก grid จึงเป็นค่าประมาณ</figcaption>
+  <h4>รูป — frontier ของหุ้นกับหุ้นกู้</h4>
+  <svg viewBox="0 0 480 305" role="img" aria-label="เส้นโค้งผลตอบแทนคาดหมายเทียบ SD ของพอร์ตหุ้นกับหุ้นกู้ จุดซ้ายสุด SD 5.27 เปอร์เซ็นต์ ผลตอบแทน 3.71 เปอร์เซ็นต์ ครึ่งบนเป็นเส้นทึบ ครึ่งล่างเป็นเส้นประ" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="157.5" y1="40" x2="157.5" y2="250"/><line x1="255" y1="40" x2="255" y2="250"/><line x1="352.5" y1="40" x2="352.5" y2="250"/><line x1="450" y1="40" x2="450" y2="250"/>
+        <line x1="60" y1="226.7" x2="450" y2="226.7"/><line x1="60" y1="180" x2="450" y2="180"/><line x1="60" y1="133.3" x2="450" y2="133.3"/><line x1="60" y1="86.7" x2="450" y2="86.7"/><line x1="60" y1="40" x2="450" y2="40"/>
+      </g>
+      <line x1="60" y1="250" x2="450" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <line x1="60" y1="40" x2="60" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <text x="60" y="268" text-anchor="middle" font-size="14">0</text><text x="157.5" y="268" text-anchor="middle" font-size="14">6</text><text x="255" y="268" text-anchor="middle" font-size="14">12</text><text x="352.5" y="268" text-anchor="middle" font-size="14">18</text><text x="450" y="268" text-anchor="middle" font-size="14">24</text>
+      <text x="54" y="231.7" text-anchor="end" font-size="14">2</text><text x="54" y="185" text-anchor="end" font-size="14">4</text><text x="54" y="138.3" text-anchor="end" font-size="14">6</text><text x="54" y="91.7" text-anchor="end" font-size="14">8</text><text x="54" y="45" text-anchor="end" font-size="14">10</text>
+      <text x="255" y="292" text-anchor="middle">SD ของพอร์ต (% ต่อปี)</text>
+      <text x="64" y="28">ผลตอบแทนคาดหมาย (% ต่อปี)</text>
+      <line x1="157.5" y1="203.3" x2="352.5" y2="86.7" stroke="#5b6472" stroke-width="2" stroke-dasharray="3 5"/>
+      <polyline fill="none" stroke="#d82632" stroke-width="2.5" stroke-dasharray="7 5" points="256.7,250.0 249.4,247.1 242.2,244.2 235.0,241.3 228.0,238.3 221.0,235.4 214.2,232.5 207.4,229.6 200.9,226.7 194.5,223.8 188.3,220.8 182.4,217.9 176.7,215.0 171.3,212.1 166.3,209.2 161.7,206.3 157.5,203.3 153.9,200.4 150.8,197.5 148.5,194.6 146.8,191.7 145.8,188.8 145.6,186.7"/>
+      <polyline fill="none" stroke="#2455d6" stroke-width="3" points="145.6,186.7 146.0,183.8 147.2,180.8 149.1,177.9 151.6,175.0 154.9,172.1 158.6,169.2 162.9,166.3 167.7,163.3 172.8,160.4 178.3,157.5 184.0,154.6 190.1,151.7 196.3,148.7 202.7,145.8 209.4,142.9 216.1,140.0 223.0,137.1 230.0,134.2 237.1,131.3 244.3,128.3 251.5,125.4 258.8,122.5 266.2,119.6 273.7,116.7 281.2,113.7 288.7,110.8 296.3,107.9 303.9,105.0 311.6,102.1 319.3,99.2 327.0,96.2 334.7,93.3 342.5,90.4 350.3,87.5 358.1,84.6 365.9,81.7 373.7,78.7 381.6,75.8 389.5,72.9 397.3,70.0 405.2,67.1 413.2,64.2"/>
+      <circle cx="157.5" cy="203.3" r="6" fill="#a65f00"/>
+      <circle cx="145.6" cy="186.7" r="6" fill="#047857"/>
+      <circle cx="232" cy="133.3" r="6" fill="#6d28d9"/>
+      <circle cx="352.5" cy="86.7" r="6" fill="#2455d6"/>
+      <text x="150" y="224" text-anchor="end" fill="#a65f00">หุ้นกู้ล้วน</text>
+      <text x="137" y="165" text-anchor="end" fill="#047857">ต่ำสุด 5.27%</text>
+      <line x1="234" y1="139" x2="247" y2="164" stroke="#6d28d9" stroke-width="1.5"/>
+      <text x="245" y="180" fill="#6d28d9">60/40: 10.58%, 6%</text>
+      <text x="345" y="72" text-anchor="end" fill="#2455d6">หุ้นล้วน</text>
+      <text x="300" y="228" fill="#d82632">ครึ่งล่าง: เสียเปรียบ</text>
+      <text x="372" y="112" fill="#5b6472" font-size="14">เส้นประเทา:</text>
+      <text x="372" y="129" fill="#5b6472" font-size="14">ถ้า ρ = 1</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละจุดบนเส้นคือพอร์ตหนึ่งแบบที่น้ำหนักหุ้น $u$ ต่างกัน ตั้งแต่ short หุ้น 40% ($u=-0.4$ ปลายล่าง) จนถึงหุ้น 120% ($u=1.2$ ปลายบน) จุดเขียวคือ minimum-variance $u=1/7$ ที่ SD 5.27% ผลตอบแทนคาดหมาย $3+5/7\approx3.71\%$ ครึ่งบน (น้ำเงิน) คือ efficient frontier ครึ่งล่าง (แดงประ) เสียเปรียบเพราะมีพอร์ตบนครึ่งบนที่ SD เท่ากันแต่ได้มากกว่า เส้นประเทาตรงคือสิ่งที่จะได้ถ้า $\rho=1$ ซึ่งเท่ากับการเฉลี่ย SD ทั้งเส้นโค้งอยู่ทางซ้ายของเส้นประเทา ระยะห่างแนวนอนคือประโยชน์ของการกระจาย</figcaption>
 </figure>
-<figure class="plot">
-  <h4>Figure 8.2d — ทุกช่องของตารางมีส่วนใน variance</h4>
-  <img src="../figures/8.2-4.svg" alt="ตาราง weighted covariance contributions ของสามสินทรัพย์" loading="lazy">
-  <figcaption>รูปแยก $w_iw_j\Sigma_{ij}$ ทุกช่อง ใช้น้ำหนัก $(0.4,0.3,0.3)$ และป้าย SPY/AAPL/JPM ในแบบจำลองสมมติ ค่า covariance ตรงกับตารางสามกลุ่มใน 8.1 แต่ไม่ใช่ข้อมูลประมาณจริงของหลักทรัพย์เหล่านี้ ผลรวม 27,940 bp² ให้ SD ประมาณ 1.6715% โดยนับช่องนอกแนวทแยงทั้งสองด้าน</figcaption>
-</figure>
+
 <section class="pitfall">
-  <h4>สามเงื่อนไขที่ห้ามลืมเมื่อเอาสูตรไปใช้</h4>
-  <ol>
-    <li><strong>สัมประสิทธิ์ต้องตรงกับข้อมูลที่มี</strong> การเลือกสินทรัพย์ที่รู้แล้วว่าให้ return สูงสุดในงวดนั้นทำให้ payoff เป็น maximum ไม่ใช่ linear combination ที่กำหนดไว้ล่วงหน้า ห้ามใช้ mean เดิมคูณน้ำหนักเสมือนเป็นการเลือกก่อนเห็น returns</li>
-    <li><strong>ต้องรู้ว่าอะไรสุ่ม</strong> ถ้า $a$ เป็น random vector จะมี $\operatorname{Cov}(a)$ และ cross-covariance กับ $AR$ เพิ่มขึ้น แม้ $a$ จะไม่ถูกเรียกว่า “สินทรัพย์” ก็ตาม</li>
-    <li><strong>variance ไม่ใช่ความเสี่ยงทุกชนิด</strong> covariance ที่ประมาณได้อาจเปลี่ยนระหว่างวิกฤต และ SD ต่ำไม่ได้รับประกัน tail loss ต่ำ การ hedge ยังมีต้นทุน สภาพคล่องและความเสี่ยงของแบบจำลอง</li>
-  </ol>
+  <h4>ความผิดที่ให้ตัวเลขผิดโดยไม่มีใครเตือน</h4>
+  <ul>
+    <li><strong>เฉลี่ย SD ตรง ๆ:</strong> พอร์ต 60/40 ได้ 13.20% แทน 10.58% ถูกเฉพาะเมื่อ $\rho=1$ ทุกคู่ ในพอร์ตสามสินทรัพย์ได้ 11.48% แทน 9.40%</li>
+    <li><strong>ลืมตัวคูณ 2 ของพจน์ไขว้:</strong> นับช่องนอกแนวทแยงแค่ครึ่งเดียวทำให้พอร์ตสามสินทรัพย์ได้ SD 8.43% แทน 9.40%</li>
+    <li><strong>น้ำหนักที่เลือกหลังเห็นผลตอบแทน:</strong> สูตรทั้งหมดใช้ $w$ ที่คงที่ล่วงหน้า ถ้าเลือก “ตัวที่ขึ้นมากที่สุดของงวด” ผลตอบแทนจะเป็นค่าสูงสุด ไม่ใช่ $w^{\mathsf T}R$ และ $w^{\mathsf T}\mu$ จะประเมินค่าเฉลี่ยผิด</li>
+    <li><strong>กู้เงินเพิ่ม exposure:</strong> NAV \$100 กู้ \$50 ที่ 2% ซื้อสินทรัพย์ \$150 ได้ผลตอบแทน $1.5R-0.5(2\%)$ SD เพิ่มเป็น 1.5 เท่า ไม่ใช่เท่าเดิม และดอกเบี้ยลดค่าเฉลี่ยลง</li>
+    <li><strong>variance ไม่ใช่ความเสี่ยงทุกชนิด:</strong> variance ลงโทษการเบี่ยงขึ้นกับลงเท่ากัน และไม่บอกขนาดของหาง เหมาะกับ distribution แบบ Normal แต่กับ payoff ที่มีหางหนาต้องใช้ตัววัดอย่าง <a href="17.1.html">VaR และ expected shortfall</a> ด้วย และ correlation ที่ประมาณในช่วงสงบมักต่ำกว่าช่วงวิกฤต</li>
+  </ul>
 </section>
-<section class="example">
-  <h4>ตรวจเองก่อนผ่านไป 8.3</h4>
-  <p><strong>1.</strong> ใช้ NAV \$100 กู้ \$50 ที่อัตรา 2% สำหรับงวดนี้ แล้วซื้อสินทรัพย์ \$150 ถ้าสินทรัพย์ได้ 10% ผลตอบแทนสุทธิเท่าไร? หาก SD ของสินทรัพย์ 20% และดอกเบี้ยแน่นอน SD พอร์ตเท่าไร?</p>
-  <details><summary>เฉลย</summary><p>น้ำหนัก risky asset เป็น 1.5 และเงินสด −0.5 ผลตอบแทนคือ $1.5(10\%)-0.5(2\%)=14\%$ ไม่ใช่ 15% ส่วน SD เป็น $1.5(20\%)=30\%$ ค่าใช้จ่ายแน่นอนย้าย mean แต่ไม่เปลี่ยน variance</p></details>
-  <p><strong>2.</strong> แบ่งเงินครึ่งหนึ่งให้แต่ละกลยุทธ์ในขั้นที่ 4 หลังหักค่าธรรมเนียมแน่นอน mean และ variance รวมเป็นเท่าไร?</p>
-  <details><summary>เฉลย</summary><p>mean คือ $0.5(1.4)+0.5(3.6)=2.5$ bp ส่วน variance คือ $0.25(0.25)+0.25(1.56)+2(0.5)(0.5)(-0.45)=0.2275$ bp² ให้ SD ประมาณ 0.4770 bp covariance ติดลบช่วยหักล้างความกระจาย</p></details>
-  <p><strong>3.</strong> หุ้น 25 ตัว SD 20% เท่ากันและ zero covariance ให้ SD พอร์ต 4% ถ้าเพิ่มเป็น 100 ตัว แต่ correlation ทุกคู่เปลี่ยนเป็น 0.35 จะเสี่ยงน้อยลงหรือไม่?</p>
-  <details><summary>เฉลย</summary><p>ไม่ใช่ การเพิ่มจำนวนกับการเปลี่ยน correlation เป็นคนละผล แบบจำลองใหม่ให้ SD ประมาณ 11.94% สูงกว่า 4% เดิม จึงห้ามเทียบจำนวนชื่อโดยไม่ตรวจ covariance ที่เปลี่ยนไป</p></details>
-</section>
+
 <section class="prose">
-  <h4>เหตุใดการกระจายจึงกลายเป็นโจทย์คณิตศาสตร์</h4>
-  <p>นักลงทุนรู้จักแบ่งเงินหลายที่ก่อนยุคคอมพิวเตอร์ งานของ Markowitz ในปี 1952 ทำให้การเปรียบเทียบพอร์ตเป็นระบบด้วย mean และ covariance สูตร $A\Sigma A^{\mathsf T}$ จึงเป็นทั้งเครื่องคำนวณหลายกลยุทธ์และเครื่องเตือนว่า การถือหลายชื่ออาจยังถือความเสี่ยงร่วมก้อนเดิม</p>
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ใน spreadsheet ความเสี่ยงของพอร์ตเขียนเป็น 100 คูณรากของ MMULT ของแถวน้ำหนัก ตาราง covariance และคอลัมน์น้ำหนัก ซึ่งก็คือ $\sqrt{w^{\mathsf T}\Sigma w}$ ในหน่วย % ตัวอย่างเช่นพอร์ตน้ำหนักเท่ากัน 12.5% ในสินทรัพย์ทั้ง 8 กลุ่มของตารางที่ใช้ฝึก ได้ SD 14.73% ต่อปี ขณะที่ค่าเฉลี่ยของ SD รายตัวคือ 18.55% optimizer ของ <a href="17.3.html">Markowitz portfolio theory</a> ใช้ $w^{\mathsf T}\Sigma w$ เป็นฟังก์ชันที่ต้องทำให้ต่ำสุด และการแยก variance ทีละช่องแบบรูปตารางสามสินทรัพย์คือจุดเริ่มของ <a href="26.4.html">risk decomposition</a> ที่บอกว่าแต่ละตำแหน่งเพิ่มความเสี่ยงเท่าไร</p>
 </section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> NAV \$100 กู้ \$50 ที่ดอกเบี้ย 2% สำหรับงวดนี้ แล้วซื้อสินทรัพย์ \$150 ถ้าสินทรัพย์ได้ 10% ผลตอบแทนสุทธิเท่าไร ถ้าสินทรัพย์มี SD 20% และดอกเบี้ยแน่นอน SD ของพอร์ตเท่าไร</p>
+  <details><summary>เฉลย</summary><p>น้ำหนักสินทรัพย์ $w=150/100=1.5$ เงินสด $w_c=-50/100=-0.5$ ผลตอบแทน $1.5(10\%)+(-0.5)(2\%)=15\%-1\%=14\%$ ตรวจด้วยเงิน: สินทรัพย์โตเป็น \$165 จ่ายคืนเงินกู้ \$51 เหลือ \$114 จาก \$100 คือ 14% ส่วน SD คือ $1.5\times20\%=30\%$ เพราะดอกเบี้ยแน่นอนเป็นค่าคงที่ ไม่เพิ่ม variance</p></details>
+  <p><strong>2.</strong> แบ่งเงินครึ่งหนึ่งให้กลยุทธ์ long–short และอีกครึ่งให้กลยุทธ์ 60/40 จากข้อมูลสามวันด้านบน ค่าเฉลี่ยและ SD ของพอร์ตรวมเป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ใช้ผลของ $A\Sigma A^{\mathsf T}$ เป็น covariance ของสองกลยุทธ์ แล้วใช้สูตรพอร์ตอีกชั้นด้วยน้ำหนัก $(0.5,\ 0.5)$ ค่าเฉลี่ย $0.5(1.5)+0.5(3.8)=2.65$ bp variance $0.25(0.25)+0.25(1.56)+2(0.5)(0.5)(-0.45)=0.0625+0.39-0.225=0.2275$ bp² SD ประมาณ 0.477 bp ต่ำกว่าทั้งสองกลยุทธ์ เพราะ covariance ระหว่างกันติดลบ ตรวจอีกทาง: พอร์ตรวมคือน้ำหนัก $0.5(0.5,-0.5)+0.5(0.6,0.4)=(0.55,\ -0.05)$ บนสินทรัพย์เดิม ได้ $0.3025(1)+0.0025(3)+2(0.55)(-0.05)(1.5)=0.2275$ เท่ากัน</p></details>
+  <p><strong>3.</strong> สินทรัพย์ 1 มีผลตอบแทนเฉลี่ย 1% variance 0.1 (%²) สินทรัพย์ 2 เฉลี่ย 2% variance 0.5 correlation 0.25 หา covariance และน้ำหนักของสินทรัพย์ 1 ที่ทำให้ variance ต่ำสุด variance ที่ได้ต่ำกว่าของสินทรัพย์ 1 หรือไม่</p>
+  <details><summary>เฉลย</summary><p>covariance $=0.25\sqrt{0.1\times0.5}=0.25\sqrt{0.05}\approx0.0559$ จากนั้น $d=0.1+0.5-2(0.0559)=0.4882$ น้ำหนักสินทรัพย์ 1 คือ $u_*=(0.5-0.0559)/0.4882\approx0.910$ ได้ variance $0.5-0.4441^2/0.4882\approx0.0960$ ต่ำกว่า 0.1 ของสินทรัพย์ 1 เล็กน้อย ทั้งที่ผสมสินทรัพย์ที่ variance สูงกว่าห้าเท่าเข้าไป 9% และได้ผลตอบแทนเฉลี่ยเพิ่มเป็น $0.910(1)+0.090(2)\approx1.09\%$ เพราะ correlation น้อยกว่า $\sigma_1/\sigma_2=\sqrt{0.1/0.5}\approx0.447$ การเติมสินทรัพย์ที่สองนิดหน่อยจึงลดความเสี่ยงได้</p></details>
+</section>
+
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
-  <p>รันด้วย Node.js โดยไม่ติดตั้งแพ็กเกจ โค้ดใช้สูตรทั่วไปกับ inputs ของบท ไม่สมมติ Normal และปฏิเสธ correlation ที่เป็นไปไม่ได้ในแบบจำลองทุกคู่เท่ากัน ฟังก์ชัน matrix ตรวจขนาดและตัวเลข ไม่ได้เป็นตัวตรวจ covariance ของทุกแบบจำลอง</p>
-  <pre><code class="language-javascript" data-example="8.2">function shape(A) {
-  if (!Array.isArray(A) || !A.length || ![...A].every(Array.isArray)) {
-    throw new TypeError('Need a rectangular matrix');
-  }
-  const n = A[0].length;
-  if (!n || ![...A].every(r =&gt; r.length === n &amp;&amp; [...r].every(Number.isFinite))) {
-    throw new TypeError('Need a finite rectangular matrix');
-  }
-  return [A.length, n];
-}
-function vector(v, n) {
-  if (!Array.isArray(v) || v.length !== n || ![...v].every(Number.isFinite)) {
-    throw new TypeError('Need a matching finite vector');
-  }
-}
-function dot(a, b) {
-  if (!Array.isArray(a) || !a.length) throw new TypeError('Need a nonempty vector');
-  vector(a, a.length); vector(b, a.length);
-  const value = a.reduce((s, x, i) =&gt; s + x * b[i], 0);
-  if (!Number.isFinite(value)) throw new RangeError('Arithmetic overflow');
-  return value;
-}
-function transpose(A) {
-  const [, n] = shape(A);
-  return Array.from({ length: n }, (_, j) =&gt; A.map(r =&gt; r[j]));
-}
-function multiply(A, B) {
-  const [, n] = shape(A);
-  if (shape(B)[0] !== n) throw new RangeError('Matrix dimensions do not match');
-  const Bt = transpose(B);
-  return A.map(row =&gt; Bt.map(col =&gt; dot(row, col)));
-}
-function transform(A, mean, S, offset) {
-  const [k, n] = shape(A), [m, d] = shape(S);
-  if (m !== n || d !== n) throw new RangeError('Covariance dimensions do not match');
-  vector(mean, n); vector(offset, k);
-  const outMean = A.map((row, i) =&gt; dot(row, mean) + offset[i]);
-  vector(outMean, k);
-  return { mean: outMean, cov: multiply(multiply(A, S), transpose(A)) };
-}
-function mix(weight, s1, s2, rho) {
-  vector([weight, s1, s2, rho], 4);
-  if (s1 &lt;= 0 || s2 &lt;= 0 || Math.abs(rho) &gt; 1) throw new RangeError('Invalid volatilities or correlation');
-  const x = weight * s1, y = (1 - weight) * s2;
-  // A completed square avoids cancellation near perfect hedges.
-  const variance = (x + rho * y) ** 2 + (1 - rho ** 2) * y ** 2;
-  if (!Number.isFinite(variance)) throw new RangeError('Variance overflow');
-  return { variance, sd: Math.sqrt(variance) };
-}
-function minimum(s1, s2, rho, longOnly = true) {
-  mix(0, s1, s2, rho);
-  const d = (s1 - s2) ** 2 + 2 * s1 * s2 * (1 - rho);
-  if (!Number.isFinite(d)) throw new RangeError('Optimization overflow');
-  if (d === 0) return { weight: null, nonunique: true, ...mix(0, s1, s2, rho) };
-  const unconstrained = (s2 ** 2 - rho * s1 * s2) / d;
-  const weight = longOnly ? Math.max(0, Math.min(1, unconstrained)) : unconstrained;
-  return { weight, unconstrained, nonunique: false, ...mix(weight, s1, s2, rho) };
-}
-function equalRisk(N, sigma, rho) {
-  if (!Number.isSafeInteger(N) || N &lt; 1) throw new RangeError('Need a positive integer count');
-  vector([sigma, rho], 2);
-  if (sigma &lt;= 0 || Math.abs(rho) &gt; 1 || (N &gt; 1 &amp;&amp; rho &lt; -1 / (N - 1))) {
-    throw new RangeError('Invalid equicorrelation model');
-  }
-  const variance = sigma ** 2 * (1 + (N - 1) * rho) / N;
-  if (!Number.isFinite(variance)) throw new RangeError('Variance overflow');
-  return { variance, sd: Math.sqrt(variance) };
-}
-const mean = [5, 2], S = [[1, 1.5], [1.5, 3]];
-const A = [[0.5, -0.5], [0.6, 0.4]];
-const gross = transform(A, mean, S, [0, 0]);
-const net = transform(A, mean, S, [-0.1, -0.2]);
-const samples = [[4, 1], [6, 4], [5, 1]];
-const strategies = samples.map(row =&gt; A.map(a =&gt; dot(a, row)));
-const blend = transform([[0.5, 0.5]], net.mean, net.cov, [0]);
-const e10 = equalRisk(10, 0.2, 0.35), e100 = equalRisk(100, 0.2, 0.35);
-const weights = [0.4, 0.3, 0.3];
-const figureS = [[0.0004, 0.00008, 0.00012],
-  [0.00008, 0.0009, 0.00018], [0.00012, 0.00018, 0.0006]];
-const figureCells = figureS.map((row, i) =&gt; row.map((x, j) =&gt; weights[i] * weights[j] * x * 1e8));
-console.log(JSON.stringify({ gross, net, strategies, blend,
-  half: mix(0.5, 1, Math.sqrt(3), Math.sqrt(3) / 2),
-  independentHalf: mix(0.5, 1, Math.sqrt(3), 0),
-  bound: mix(0.5, 1, Math.sqrt(3), 1),
-  equalTable: [1, 2, 10, 25, 50, 100].map(n =&gt;
-    [n, equalRisk(n, 0.2, 0).sd, equalRisk(n, 0.2, 0.35).sd]),
-  floor: 0.2 * Math.sqrt(0.35), reduction: 1 - e100.sd / e10.sd,
-  negativeBoundary: equalRisk(21, 0.2, -0.05),
-  annual: [-1, -0.2, 0, 0.5, 1].map(rho =&gt; mix(0.6, 0.18, 0.06, rho)),
-  optimum: minimum(0.18, 0.06, -0.2),
-  expectedReturns: [0.6 * 0.08 + 0.4 * 0.03, (0.08 + 6 * 0.03) / 7],
-  figureMinimum: minimum(0.02, 0.03, 0.2), figureCells,
-  figureTotal: figureCells.flat().reduce((s, x) =&gt; s + x, 0),
-  leveredReturn: 1.5 * 0.1 - 0.5 * 0.02, leveredSD: 1.5 * 0.2,
-  stressFloor: 0.2 * Math.sqrt(0.8) }));</code></pre>
-  <p>ค่าจากการคูณ matrix อาจต่างในหลักท้ายของ floating-point แม้สูตรเชิงพีชคณิตจะสมมาตร ฟังก์ชันหา minimum นี้เป็นตัวอย่างสองสินทรัพย์ ไม่ใช่ optimizer พร้อมใช้กับข้อจำกัด ต้นทุน และ matrix ขนาดใหญ่ทุกกรณี</p>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="8.2">const quad = (S, w) =&gt; w.reduce((s, wi, i) =&gt;
+  s + wi * S[i].reduce((t, x, j) =&gt; t + x * w[j], 0), 0);
+const mul = (A, B) =&gt; A.map(r =&gt; B[0].map((_, j) =&gt; r.reduce((s, x, k) =&gt; s + x * B[k][j], 0)));
+const tr = A =&gt; A[0].map((_, j) =&gt; A.map(r =&gt; r[j]));
+
+// 60/40 หุ้น-หุ้นกู้ (หน่วยทศนิยม)
+const sd = [0.18, 0.06];
+const S2 = rho =&gt; [[sd[0] ** 2, rho * sd[0] * sd[1]], [rho * sd[0] * sd[1], sd[1] ** 2]];
+console.log([-1, -0.2, 0, 1].map(r =&gt; Math.sqrt(quad(S2(r), [0.6, 0.4]))));  // .084 .1058 .1106 .132
+
+// สามสินทรัพย์จากตาราง 8 กลุ่ม: Bond, LV, Intl Dev
+const S3 = [[0.001005, -0.000675, -0.000445],
+            [-0.000675, 0.029609, 0.020697],
+            [-0.000445, 0.020697, 0.028355]];
+const w3 = [0.4, 0.3, 0.3];
+const cells = S3.map((r, i) =&gt; r.map((x, j) =&gt; w3[i] * w3[j] * x * 1e4));  // %^2
+console.log(cells, Math.sqrt(quad(S3, w3)));                                 // ... 0.0940
+
+// หลายกลยุทธ์: A Sigma A^T
+const A = [[0.5, -0.5], [0.6, 0.4]], Sb = [[1, 1.5], [1.5, 3]], mu = [5, 2];
+console.log(A.map(r =&gt; r[0] * mu[0] + r[1] * mu[1]), mul(mul(A, Sb), tr(A)));  // [1.5,3.8] [[.25,-.45],[-.45,1.56]]
+
+// พอร์ตเท่ากัน N ตัว correlation rho
+const eq = (N, s, rho) =&gt; s * Math.sqrt(rho + (1 - rho) / N);
+console.log([1, 10, 25, 50, 100].map(N =&gt; [N, eq(N, 0.2, 0), eq(N, 0.2, 0.35)]));
+
+// minimum variance หุ้น-หุ้นกู้
+const v1 = 0.0324, v2 = 0.0036, c = -0.00216, d = v1 + v2 - 2 * c;
+const u = (v2 - c) / d;
+console.log(u, Math.sqrt(v2 - (v2 - c) ** 2 / d), 0.08 * u + 0.03 * (1 - u));  // 1/7 .0527 .0371</code></pre>
+  </details>
 </section>
+
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>เริ่มจากน้ำหนักต้นงวดและบัญชีเงินสด risky weights ไม่จำเป็นต้องรวมเป็น 1 หากมีเงินสดหรือเงินกู้</li>
-    <li>สำหรับสัมประสิทธิ์คงที่ $Y=AR+a$ มี mean $A\mu+a$ และ covariance $A\Sigma A^{\mathsf T}$ โดยไม่ต้องสมมติ Normal</li>
-    <li>variance กับ SD ไม่ใช่สิ่งเดียวกัน การเพิ่ม exposure สองเท่าเพิ่ม variance สี่เท่าและ SD สองเท่า</li>
-    <li>กฎ $1/\sqrt N$ ต้องมีเงื่อนไขเรื่อง SD น้ำหนัก และ zero covariance ความเสี่ยงร่วมในแบบจำลองไม่หายเพียงเพราะเพิ่มชื่อ</li>
-    <li>เปรียบเทียบพอร์ตต้องตรวจ covariance, expected return, หน่วยและช่วงเวลาเดียวกัน ก่อนสรุปว่าคำตอบที่ variance ต่ำที่สุดเหมาะกับเป้าหมาย</li>
+    <li>แปลงบัญชีเงินเป็นน้ำหนักต้นงวดได้ และรู้ว่าน้ำหนักสินทรัพย์เสี่ยงไม่จำเป็นต้องรวมเป็น 1 เมื่อมีเงินสดหรือเงินกู้</li>
+    <li>ค่าเฉลี่ยของพอร์ตคือ $w^{\mathsf T}\mu$ ส่วน variance คือ $w^{\mathsf T}\Sigma w=\sum_i\sum_jw_iw_j\Sigma_{ij}$ ซึ่งนับทุกช่องรวมพจน์ไขว้สองครั้ง</li>
+    <li>มองสองสินทรัพย์เป็นลูกศรสองอันที่ทำมุม cos เท่ากับ $\rho$ ได้ SD ของพอร์ตคือความยาวลูกศรผลรวม และไม่เกินค่าเฉลี่ยถ่วงน้ำหนักของ SD</li>
+    <li>สำหรับ $Y=AR+a$ ได้ $\mathbb E[Y]=A\mu+a$ และ $\operatorname{Cov}(Y)=A\Sigma A^{\mathsf T}$ โดยไม่ต้องสมมติ Normal</li>
+    <li>กฎ $1/\sqrt N$ ต้องมี covariance เป็นศูนย์ เมื่อ correlation ร่วมเป็น $\rho$ SD ของพอร์ตเท่ากันมีพื้นที่ $\sigma\sqrt\rho$ ที่เพิ่มชื่อเท่าไรก็ไม่หาย</li>
+    <li>หาน้ำหนัก minimum-variance ของสองสินทรัพย์ $u_*=(v_2-c)/d$ ได้ และอ่าน efficient frontier ได้ว่าทำไมครึ่งล่างไม่มีใครควรเลือก</li>
   </ul>
+  <p>หน้าถัดไป <a href="8.3.html">zero covariance ไม่ได้แปลว่าอิสระ</a> จะแสดงว่า covariance ที่ใช้มาทั้งหน้านี้จับได้เฉพาะความสัมพันธ์เชิงเส้น และ covariance เป็นศูนย์ยังซ่อนความสัมพันธ์ที่แรงมากไว้ได้</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

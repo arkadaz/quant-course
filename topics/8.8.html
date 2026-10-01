@@ -18,332 +18,399 @@
 <article class="topic" data-number="8.8" data-depends-on="1.4 1.9 6.1 7.3 7.6 8.1 8.2 8.3 8.5 8.7">
 <header class="topic-header">
   <h1><span class="tnum">8.8</span> Linear Combinations</h1>
-  <p class="subtitle">Mean กับ covariance บอก SD ของพอร์ตได้เสมอ แต่จะบอกโอกาสขาดทุนได้ ต้องรู้ว่าพอร์ตมี distribution แบบไหน</p>
+  <p class="subtitle">ผลตอบแทนของพอร์ตคือผลรวมถ่วงน้ำหนัก mean กับ SD ของมันคำนวณจาก covariance ได้เสมอ แต่ถ้าผลตอบแทนเป็น MVN ผลรวมจะเป็น Normal ด้วย และนั่นคือสิ่งที่ทำให้อ่าน VaR กับ expected shortfall ได้จากสองตัวเลขนี้</p>
 </header>
+
 <div class="hook">
-  <p>พอร์ตสมมติ \$100 ล้าน มี annual mean return 6.4% และ SD 9.6% คนหนึ่งใช้สองเลขนี้คำนวณ loss VaR 99% ได้ \$15.93 ล้าน อีกคนบอกว่ายังตอบไม่ได้ ทั้งคู่กำลังขัดแย้งกันเรื่องสูตร หรือกำลังใช้สมมติฐานไม่เหมือนกัน?</p>
-  <details><summary>ลองตอบก่อนอ่านต่อ</summary><p>ทั้งคู่ถูกคนละส่วน 6.4% กับ 9.6% คำนวณได้จาก mean vector กับ covariance เสมอ แต่ VaR 99% ถามว่า return ต่ำกว่าระดับไหนได้เพียง 1% ของเวลา ซึ่งสองเลขนี้ไม่ได้บอก คนแรก<em>เพิ่ม</em>สมมติฐานว่า returns ของสินทรัพย์เป็น joint Gaussian ไว้แล้ว พอร์ตจึงเป็น Normal และได้ \$15.93 ล้าน ความขัดแย้งอยู่ที่สมมติฐาน ไม่ได้อยู่ที่สูตร</p></details>
+  <p>พอร์ตสมมติ \$100 ล้าน มี mean ผลตอบแทนรายปี 6.4% และ SD 9.6% คนหนึ่งใช้สองเลขนี้คำนวณ VaR 99% ได้ \$15.93 ล้าน อีกคนบอกว่ายังตอบไม่ได้ ทั้งคู่ขัดแย้งกันเรื่องสูตร หรือกำลังใช้สมมติฐานไม่เหมือนกัน</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ทั้งคู่ถูกคนละส่วน 6.4% กับ 9.6% คำนวณได้จาก mean vector กับ covariance เสมอ แต่ VaR 99% ถามว่าผลตอบแทนต่ำกว่าระดับไหนได้เพียง 1% ของเวลา ซึ่งสองเลขนี้ไม่ได้บอก คนแรก<em>เพิ่ม</em>สมมติฐานว่าผลตอบแทนของสินทรัพย์เป็น joint Normal พอร์ตจึงเป็น Normal และได้ \$15.93 ล้าน ถ้าผลตอบแทนมาจากสองภาวะตลาดที่ปรับให้ mean และ SD เท่าเดิมทุกตัว VaR 99% จะเป็น \$18.99 ล้าน ความขัดแย้งอยู่ที่สมมติฐาน ไม่ได้อยู่ที่สูตร</p></details>
 </div>
+
 <section class="prose">
-  <h4>บทนี้เพิ่มอะไรจากสูตรใน 8.2</h4>
-  <p>8.2 สอนว่า mean และ covariance เปลี่ยนอย่างไรเมื่อเราถ่วงน้ำหนักหรือบวกค่าคงที่ สูตรนั้นใช้ได้กับทุก distribution ที่มี variance จำกัด แต่ได้คำตอบแค่สองเลข หัวข้อนี้เพิ่มเงื่อนไขเดียวคือ <em>joint Gaussian</em> แล้วได้คำตอบทั้งรูปร่างของ distribution พอร์ต ซึ่งเป็นสิ่งที่ VaR ต้องใช้</p>
-  <p>ตลอดหน้า น้ำหนักเป็นค่าคงที่ที่ตัดสินใจก่อนผลตอบแทนของช่วงนั้นเกิด เราใช้สองโมเดลที่แยกกัน: พอร์ตหุ้น/bond/ทองคำรายปี และคู่ SPX/QQQ รายวัน อย่านำ covariance ของคนละช่วงเวลาหรือคนละลำดับสินทรัพย์มาปนกัน</p>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>พอร์ตไม่ได้ซับซ้อนกว่าผลรวมถ่วงน้ำหนัก $L=a^{\mathsf T}R$ คำถามคือรู้ distribution ของ $R$ แล้วจะรู้ distribution ของ $L$ ได้แค่ไหน ส่วนแรกได้มาฟรีเสมอ คือ mean $a^{\mathsf T}\mu$ และ variance $a^{\mathsf T}\Sigma a$ ซึ่งไม่ต้องสมมติอะไรนอกจาก variance มีค่าจำกัด เป็นสูตรเดียวกับ<a href="8.2.html">การแปลงเชิงเส้นและความเสี่ยงของพอร์ต</a> ส่วนที่สองคือรูปทรงทั้งก้อน ซึ่ง VaR ต้องใช้ ต้องรู้มากกว่า covariance</p>
+  <p>ภาพที่ช่วยคิดคือเส้นขนาน ทุกจุด (SPX, QQQ) ที่ให้ผลตอบแทนพอร์ต 60/40 เท่ากันอยู่บนเส้นตรงเส้นเดียว เส้นของค่าต่าง ๆ ขนานกันหมด โอกาสที่พอร์ตได้ระหว่าง −4% กับ −2% คือมวลของเมฆที่อยู่ระหว่างสองเส้นนั้น ถ้าเมฆเป็น MVN มวลระหว่างเส้นขนานเรียงกันเป็น bell curve เสมอ ไม่ว่าเส้นจะหันไปทิศไหน สมบัตินี้เรียกว่า Gaussian closure</p>
+  <p>หน้านี้จะหาสูตร moments พิสูจน์ด้วย MGF ว่าผลรวมเป็น Normal แล้วใช้กับพอร์ต 50/30/20 ไล่จาก inputs ไปถึง VaR และ expected shortfall แบ่งความเสี่ยงให้แต่ละสินทรัพย์ ดูพอร์ตรายวัน เปลี่ยน horizon และปิดด้วยกับดัก ซึ่งสำคัญที่สุดคือสอง distribution ที่ mean และ covariance เท่ากันทุกตัว แต่ VaR ต่างกัน 19%</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — พอร์ตคือการนับมวลระหว่างเส้นขนาน</h4>
+  <svg viewBox="0 0 480 400" role="img" aria-label="วงรีของผลตอบแทน SPX กับ QQQ รายวัน มีเส้นขนานสีม่วงห้าเส้นตัดผ่าน แต่ละเส้นคือจุดที่พอร์ต 60/40 ได้ผลตอบแทนเท่ากัน ลบสี่ ลบสอง ศูนย์ สอง และสี่เปอร์เซ็นต์ แถบแดงระหว่างลบสี่กับลบสอง ด้านล่างขวามีระฆังสีน้ำเงินของผลตอบแทนพอร์ต พื้นที่แดงใต้ระฆังคือ 13.3%" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="60" y1="200" x2="400" y2="200" stroke="#d7dce3" stroke-width="1.5"/>
+      <line x1="214" y1="30" x2="214" y2="300" stroke="#d7dce3" stroke-width="1.5"/>
+      <text x="404" y="205" fill="#5b6472" font-size="14">SPX</text>
+      <text x="220" y="40" fill="#5b6472" font-size="14">QQQ</text>
+      <polygon fill="#d82632" fill-opacity="0.13" points="73.4,209.1 124.1,175.2 224.2,325.3 173.4,359.2"/>
+      <polyline fill="none" stroke="#5b6472" stroke-width="2" points="258.9,172.9 258.7,167.8 258.2,162.8 257.4,158.2 256.2,153.8 254.8,149.8 253,146.2 250.9,143 248.6,140.2 246,137.9 243.2,136 240.1,134.6 236.9,133.8 233.5,133.4 229.9,133.5 226.3,134.1 222.5,135.2 218.7,136.8 214.9,138.9 211,141.4 207.2,144.4 203.5,147.7 199.8,151.5 196.3,155.7 192.9,160.2 189.6,164.9 186.6,170 183.8,175.2 181.2,180.7 178.8,186.3 176.8,192 175,197.7 173.5,203.5 172.4,209.2 171.5,214.8 171,220.4 170.9,225.7 171,230.9 171.5,235.8 172.4,240.5 173.5,244.8 175,248.8 176.8,252.4 178.8,255.7 181.2,258.4 183.8,260.8 186.6,262.6 189.6,264 192.9,264.9 196.3,265.3 199.8,265.2 203.5,264.6 207.2,263.5 211,261.9 214.9,259.8 218.7,257.3 222.5,254.3 226.3,250.9 229.9,247.2 233.5,243 236.9,238.5 240.1,233.7 243.2,228.7 246,223.4 248.6,218 250.9,212.4 253,206.7 254.8,201 256.2,195.2 257.4,189.5 258.2,183.8 258.7,178.3 258.9,172.9"/>
+      <polyline fill="none" stroke="#5b6472" stroke-width="2" points="302.9,146.5 302.5,136.2 301.5,126.3 299.9,117 297.6,108.3 294.6,100.4 291.1,93.1 287,86.7 282.3,81.1 277.1,76.5 271.4,72.7 265.4,70 258.9,68.2 252.1,67.4 245,67.6 237.7,68.8 230.2,71 222.5,74.2 214.9,78.4 207.2,83.4 199.6,89.4 192.1,96.1 184.8,103.7 177.7,112 170.9,121 164.4,130.5 158.3,140.6 152.7,151.1 147.5,162 142.8,173.2 138.7,184.6 135.1,196.1 132.2,207.6 129.9,219 128.2,230.3 127.2,241.4 126.9,252.1 127.2,262.5 128.2,272.3 129.9,281.7 132.2,290.3 135.1,298.3 138.7,305.6 142.8,312 147.5,317.6 152.7,322.2 158.3,326 164.4,328.7 170.9,330.5 177.7,331.3 184.8,331.1 192.1,329.9 199.6,327.7 207.2,324.5 214.9,320.3 222.5,315.3 230.2,309.3 237.7,302.5 245,295 252.1,286.7 258.9,277.7 265.4,268.2 271.4,258.1 277.1,247.6 282.3,236.7 287,225.5 291.1,214.1 294.6,202.6 297.6,191.1 299.9,179.7 301.5,168.4 302.5,157.3 302.9,146.5"/>
+      <g stroke="#6d28d9" stroke-width="2">
+        <line x1="62.3" y1="192.4" x2="173.4" y2="359.2"/>
+        <line x1="90" y1="124" x2="224.2" y2="325.3"/>
+        <line x1="140.7" y1="90.1" x2="275" y2="291.5"/>
+        <line x1="191.5" y1="56.3" x2="325.8" y2="257.6"/>
+        <line x1="244.8" y1="26.3" x2="376.5" y2="223.8"/>
+      </g>
+      <g fill="#6d28d9" font-size="14" text-anchor="end">
+        <text x="60" y="190">−4%</text><text x="87" y="121">−2%</text><text x="137" y="87">0%</text><text x="188" y="53">2%</text><text x="241" y="24">4%</text>
+      </g>
+      <circle cx="214.9" cy="199.3" r="4" fill="#181818"/>
+      <line x1="156.9" y1="370.2" x2="394.9" y2="211.5" stroke="#5b6472" stroke-width="2"/>
+      <polygon fill="#d82632" fill-opacity="0.35" points="173.4,359.2 177,364.5 179.9,363.4 182.9,362.3 185.8,361.2 188.8,360.2 191.8,359.2 194.9,358.3 198,357.5 201.1,356.6 204.2,355.8 207.4,355.1 210.6,354.4 213.8,353.7 217.1,353.1 220.3,352.5 223.6,351.9 226.9,351.4 230.2,350.9 233.6,350.4 236.9,349.9 240.3,349.4 224.2,325.3"/>
+      <polyline fill="none" stroke="#2455d6" stroke-width="3" points="158.7,372.8 163.7,370.4 168.7,368 173.8,365.8 179,363.7 184.3,361.7 189.7,359.9 195.2,358.2 200.8,356.7 206.5,355.3 212.2,354 218.1,352.9 224,351.9 230,350.9 236,350 242,349.2 248.1,348.3 254.1,347.4 260,346.4 265.9,345.3 271.7,344 277.3,342.5 282.8,340.8 288.1,338.9 293.2,336.6 298.1,334 302.7,331.1 307.2,327.9 311.5,324.4 315.5,320.5 319.4,316.4 323.1,312 326.6,307.4 330,302.6 333.3,297.6 336.5,292.5 339.6,287.3 342.7,282 345.8,276.8 349,271.6 352.2,266.4 355.4,261.4 358.7,256.4 362.1,251.6 365.5,246.9 369.1,242.3 372.8,237.9 376.5,233.6 380.4,229.5 384.3,225.5 388.4,221.6 392.5,217.8 396.6,214.2"/>
+      <text x="150" y="392" fill="#d82632">13.3%</text>
+      <text x="470" y="150" text-anchor="end" fill="#2455d6">พอร์ต 60/40</text>
+      <text x="470" y="170" text-anchor="end" fill="#2455d6">SD 2.008%</text>
+    </g>
+  </svg>
+  <figcaption>แบบจำลองรายวันของ SPX และ QQQ วาดด้วยสเกลเดียวกันทั้งสองแกน วงรีคือ 1 และ 2 SD จุดดำคือ mean เส้นม่วงแต่ละเส้นคือทุกคู่ผลตอบแทนที่ให้ $0.6\,\text{SPX}+0.4\,\text{QQQ}$ เท่ากับค่าที่ติดป้าย เส้นขนานกันหมดและตั้งฉากกับทิศ $(0.6,0.4)$ ระฆังน้ำเงินด้านล่างขวาวางตามทิศนั้น คือ density ของผลตอบแทนพอร์ต mean 0.036% SD 2.008% มวลของเมฆในแถบแดงระหว่างเส้น −4% กับ −2% เท่ากับพื้นที่แดงใต้ระฆังพอดี คือ 13.3%</figcaption>
+</figure>
+
 <details class="jargon">
-  <summary>ศัพท์ที่ต้องแยกให้ได้</summary>
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Linear combination</dt><dd>ผลรวมถ่วงน้ำหนัก $a^{\mathsf T}R$ โดย coefficients คงที่ จะเป็นบวก ลบ หรือไม่รวมกันเป็น 1 ก็ได้</dd>
-    <dt>Affine transformation</dt><dd>Linear map บวกค่าคงที่ เช่นผลตอบแทนจาก risky holdings ลบ borrowing cost ที่ทราบแน่นอน</dd>
-    <dt>Gaussian closure</dt><dd>Affine transformation ของ joint Gaussian ยัง Gaussian รวมกรณี variance ศูนย์ซึ่งเป็นค่าคงที่ ไม่ใช่ bell curve</dd>
-    <dt>Marginal risk</dt><dd>อนุพันธ์ของ risk metric ต่อ coefficient ต้องบอกก่อนว่า metric คือ variance หรือ SD และถือ coefficients อื่นคงที่หรือกำลังย้าย budget</dd>
-    <dt>Risk contribution</dt><dd>การแบ่ง variance หรือ SD ตามสูตรที่ระบุ ไม่ใช่ probability ว่าสินทรัพย์นั้นจะทำให้พอร์ตขาดทุน</dd>
+    <dt>Linear combination</dt><dd>ผลรวมถ่วงน้ำหนัก $a^{\mathsf T}R$ ที่ตัวคูณเป็นค่าคงที่ จะบวก ลบ หรือรวมกันไม่เป็น 1 ก็ได้ ใช้แทนพอร์ต spread หรือ P&amp;L ของหลายขา</dd>
+    <dt>Affine transformation</dt><dd>linear combination บวกค่าคงที่ เช่นผลตอบแทนของพอร์ตที่กู้เงินมาลงทุน ลบดอกเบี้ยที่รู้แน่นอน ค่าคงที่ขยับ mean แต่ไม่แตะ variance</dd>
+    <dt>Gaussian closure</dt><dd>สมบัติที่ว่า affine transformation ของ MVN ยังเป็น Normal ใช้ทำให้ VaR ของพอร์ตคำนวณได้จาก mean กับ SD ของพอร์ตตัวเดียว</dd>
+    <dt>Value at Risk (VaR)</dt><dd>ระดับขาดทุนที่ถูกเกินเพียงสัดส่วน $1-p$ ของเวลา เช่น VaR 99% ถูกเกินแค่ 1% ใช้เป็นตัวเลขความเสี่ยงหางที่ธนาคารรายงาน ดู<a href="17.1.html">VaR และ expected shortfall</a></dd>
+    <dt>Expected shortfall (ES)</dt><dd>ค่าเฉลี่ยของการขาดทุนในวันที่ขาดทุนเกิน VaR แล้ว ตอบคำถามว่า “ถ้าเกิดวันแย่ จะแย่เฉลี่ยเท่าไร” ซึ่ง VaR ไม่ตอบ</dd>
+    <dt>Risk contribution</dt><dd>การแบ่ง variance ของพอร์ตให้แต่ละสินทรัพย์ด้วย $w_i(\Sigma w)_i$ ใช้ดูว่าความเสี่ยงมาจากไหน ไม่ใช่โอกาสที่สินทรัพย์นั้นจะทำให้ขาดทุน</dd>
   </dl>
 </details>
+
 <details class="symbols">
-  <summary>หน่วยและรูปแบบ</summary>
-  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead><tbody>
-    <tr><td>$R,\mu,\Sigma$</td><td>Column vector ของ returns, mean vector และ covariance ของ assets ในลำดับเดียวกันและ horizon เดียวกัน</td></tr>
-    <tr><td>$a,L$</td><td>Coefficient vector และ scalar payoff $L=a^{\mathsf T}R$</td></tr>
-    <tr><td>$A,c,Y$</td><td>Matrix, constant vector และ output vector $Y=AR+c$</td></tr>
-    <tr><td>$w,V$</td><td>$w$ คือมูลค่าแต่ละ position หารด้วย NAV ตอนเริ่ม ส่วน $V$ คือ NAV เป็น USD ถ้ามีเงินสดหรือเงินกู้ ต้องบันทึกเป็นอีกรายการหนึ่ง</td></tr>
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$R,\ \mu,\ \Sigma$</td><td>vector ผลตอบแทน mean vector และ covariance ในลำดับและ horizon เดียวกัน</td><td>ผลตอบแทน; ผลตอบแทน²</td></tr>
+    <tr><td>$a,\ L$</td><td>vector ตัวคูณ และผลรวม $L=a^{\mathsf T}R$</td><td>ไม่มีหน่วย; ผลตอบแทน</td></tr>
+    <tr><td>$A,\ c,\ Y$</td><td>matrix ตัวคูณ ค่าคงที่ และ output หลายตัว $Y=AR+c$</td><td>ตามโจทย์</td></tr>
+    <tr><td>$w,\ V$</td><td>น้ำหนักพอร์ตตอนเริ่มช่วง และมูลค่าพอร์ต</td><td>ไม่มีหน่วย; ดอลลาร์</td></tr>
+    <tr><td>$z_p,\ \varphi,\ \Phi$</td><td>quantile ของ Normal มาตรฐาน density และ CDF ของมัน</td><td>ไม่มีหน่วย</td></tr>
   </tbody></table></div>
 </details>
+
 <section class="formula">
-  <h4>ขั้นที่ 1 — คำนวณ moments โดยยังไม่สมมติ Normal</h4>
-  <p>เริ่มจากสิ่งที่ได้มาฟรี ขอแค่ทุกสินทรัพย์มี variance จำกัด Mean ของผลรวมคือผลรวมของ means เพราะค่าคาดหวังเป็นเชิงเส้น ส่วน variance ต้องลบ mean ออกก่อน แล้วยกกำลังสองผลรวมที่เหลือ</p>
+  <h4>ขั้นที่ 1 — mean และ variance ของผลรวม โดยยังไม่สมมติ Normal</h4>
+  <p>เริ่มจากสิ่งที่ได้ฟรี ขอแค่ทุกสินทรัพย์มี variance จำกัด mean ของผลรวมคือผลรวมของ mean เพราะ<a href="1.3.html">expected value</a> เป็นเชิงเส้น ส่วน variance ต้องหัก mean ออกก่อน แล้วยกกำลังสองผลรวมที่เหลือ</p>
   <div class="math">\[
 \begin{aligned}
-L&:=a^{\mathsf T}R,\\
-\mathbb E[L]&=\sum_i a_i\mathbb E[R_i]=a^{\mathsf T}\mu,\\
+L&:=a^{\mathsf T}R=\sum_i a_iR_i,\\
+\mathbb E[L]&=\sum_i a_i\mu_i=a^{\mathsf T}\mu,\\
 L-\mathbb E[L]&=\sum_i a_i(R_i-\mu_i),\\
 \operatorname{Var}(L)&=\mathbb E\Big[\Big(\sum_i a_i(R_i-\mu_i)\Big)^2\Big]\\
-&=\sum_i\sum_j a_i a_j\,\mathbb E[(R_i-\mu_i)(R_j-\mu_j)]\\
-&=\sum_i\sum_j a_i a_j\Sigma_{ij}\\
+&=\sum_i\sum_j a_ia_j\,\Sigma_{ij}\\
 &=a^{\mathsf T}\Sigma a.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>จังหวะสำคัญคือการกระจายกำลังสองของผลรวม: ได้ทุกคู่ $(i,j)$ คู่ที่ $i=j$ คือ variance ของสินทรัพย์เอง คู่ที่ $i\ne j$ คือ covariance ซึ่งเป็นที่มาของพจน์ไขว้ ตลอดทางไม่มีบรรทัดไหนใช้ Normal หรือ independence สองเลขนี้จึงถูกกับทุก distribution ที่มี variance จำกัด</p><p>แต่ก็เป็นแค่สองเลข รู้ mean กับ variance แล้วยังไม่รู้ว่าหางซ้ายหนาแค่ไหน นั่นคือช่องว่างที่ขั้นถัดไปต้องเติม</p></div>
+  <div class="reading"><p>จังหวะสำคัญคือการกระจายกำลังสองของผลรวม ได้ทุกคู่ $(i,j)$ คู่ที่ $i=j$ คือ variance ของสินทรัพย์เอง คู่ที่ $i\ne j$ คือ covariance ซึ่งเป็นที่มาของพจน์ไขว้ ตลอดทางไม่มีบรรทัดไหนใช้ Normal หรือความอิสระ สองตัวเลขนี้จึงถูกกับทุก distribution ที่มี variance จำกัด แต่ก็เป็นแค่สองตัวเลข รู้ mean กับ variance แล้วยังไม่รู้ว่าหางซ้ายหนาแค่ไหน นั่นคือช่องว่างที่ขั้นถัดไปต้องเติม</p></div>
 </section>
+
 <section class="formula">
-  <h4>ขั้นที่ 2 — ใช้ MGF เพื่อพิสูจน์ว่า distribution ยัง Gaussian</h4>
-  <p>ถ้าอยากได้มากกว่าสองเลข ต้องเพิ่มสมมติฐาน: ให้ $R\sim\mathcal N_n(\mu,\Sigma)$ โดย $\Sigma$ เป็น PSD เครื่องมือที่เหมาะคือ MGF จาก 8.5 เพราะ $e^{tL}=e^{(ta)^{\mathsf T}R}$ แปลว่า MGF ของ $L$ ก็คือ MGF ของ $R$ ที่ประเมินตรงจุด $s=ta$ ไม่ต้อง integrate อะไรใหม่เลย</p>
+  <h4>ขั้นที่ 2 — ใช้ MGF พิสูจน์ว่าผลรวมของ MVN ยังเป็น Normal</h4>
+  <p>ถ้าอยากได้มากกว่าสองตัวเลข ต้องเพิ่มสมมติฐาน ให้ $R\sim\mathcal N_n(\mu,\Sigma)$ เครื่องมือที่เหมาะคือ <a href="8.5.html">moment generating function</a> เพราะ $e^{tL}=e^{(ta)^{\mathsf T}R}$ แปลว่า MGF ของ $L$ ก็คือ MGF ของ $R$ ที่ประเมินตรงจุด $s=ta$ ไม่ต้อง integrate อะไรใหม่</p>
   <div class="math">\[
 \begin{aligned}
-M_L(t)&=\mathbb E[e^{t a^{\mathsf T}R}]\\
-&=M_R(ta)\\
-&=\exp\!\left(t a^{\mathsf T}\mu+\tfrac12 t^2a^{\mathsf T}\Sigma a\right),\\
-L&\sim\mathcal N(a^{\mathsf T}\mu,a^{\mathsf T}\Sigma a).
+M_L(t)&=\mathbb E\big[e^{t\,a^{\mathsf T}R}\big]=M_R(ta)\\
+&=\exp\!\big(t\,a^{\mathsf T}\mu+\tfrac12t^2a^{\mathsf T}\Sigma a\big),\\
+L&\sim\mathcal N\big(a^{\mathsf T}\mu,\ a^{\mathsf T}\Sigma a\big).
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดที่สามมีรูป $\exp(tm+\tfrac12t^2v)$ โดย $m=a^{\mathsf T}\mu$ และ $v=a^{\mathsf T}\Sigma a$ ซึ่งเป็น MGF ของ Normal ตัวเดียวพอดี และ MGF ที่มีค่าจำกัดรอบ $t=0$ ระบุ distribution ได้เพียงแบบเดียว $L$ จึงเป็น Normal จริง ไม่ใช่แค่มี mean กับ variance เหมือน Normal</p><p>ถ้า $a^{\mathsf T}\Sigma a=0$ สูตรเดิมยังใช้ได้ แต่ $L$ กลายเป็นค่าคงที่ ไม่มี bell curve ให้วาด เราจึงไม่ต้องขอให้ $\Sigma$ invertible ก่อน</p></div>
-  <details><summary>ขยายเป็นหลาย outputs พร้อมกัน</summary>
+  <div class="reading"><p>บรรทัดที่สองมีรูป $\exp(tm+\tfrac12t^2v)$ โดย $m=a^{\mathsf T}\mu$ และ $v=a^{\mathsf T}\Sigma a$ ซึ่งเป็น MGF ของ Normal ตัวเดียวพอดี และ MGF ที่มีค่าจำกัดรอบ $t=0$ ระบุ distribution ได้แบบเดียว $L$ จึงเป็น Normal จริง ไม่ใช่แค่มี mean กับ variance เหมือน Normal ถ้า $a^{\mathsf T}\Sigma a=0$ สูตรยังใช้ได้ แต่ $L$ เป็นค่าคงที่ ไม่มี bell curve ให้วาด เราจึงไม่ต้องขอให้ $\Sigma$ invert ได้</p></div>
+  <details><summary>ขยายเป็นหลาย output พร้อมกัน</summary>
     <div class="math">\[
 \begin{aligned}
 Y&:=AR+c,\\
-M_Y(s)&=e^{s^{\mathsf T}c}M_R(A^{\mathsf T}s)\\
-&=\exp\!\left(s^{\mathsf T}(A\mu+c)\right)\\
-&\quad\times\exp\!\left(\tfrac12 s^{\mathsf T}A\Sigma A^{\mathsf T}s\right),\\
-Y&\sim\mathcal N(A\mu+c,A\Sigma A^{\mathsf T}).
+M_Y(s)&=e^{s^{\mathsf T}c}\,M_R(A^{\mathsf T}s)\\
+&=\exp\!\big(s^{\mathsf T}(A\mu+c)\\
+&\qquad+\tfrac12s^{\mathsf T}A\Sigma A^{\mathsf T}s\big),\\
+Y&\sim\mathcal N\big(A\mu+c,\ A\Sigma A^{\mathsf T}\big).
 \end{aligned}
 \]</div>
-    <p>ค่าคงที่ $c$ ขยับ mean แต่ไม่แตะ covariance ถ้า outputs บางตัวซ้ำกัน เช่นสองบรรทัดของ $A$ เหมือนกัน $A\Sigma A^{\mathsf T}$ จะ singular ทั้งที่คูณ matrix ถูกมิติ ผลลัพธ์ยังเป็น Gaussian แต่เป็นแบบที่ไม่มี density เต็มมิติ</p>
+    <p>ค่าคงที่ $c$ ขยับ mean แต่ไม่แตะ covariance การเลือกบางสินทรัพย์ใน<a href="8.6.html">marginal ของ MVN</a> คือกรณีที่ $A$ เป็น selection matrix ส่วนพอร์ตหลายพอร์ตพร้อมกันคือกรณีที่แต่ละแถวของ $A$ เป็นน้ำหนักของพอร์ตหนึ่ง ถ้าสองแถวของ $A$ เหมือนกัน $A\Sigma A^{\mathsf T}$ จะ singular แต่ $Y$ ยังเป็น Gaussian ที่ไม่มี density เต็มมิติ</p>
   </details>
-  <p>ทางกลับกันก็จริง: นิยามหนึ่งของ MVN คือ “<em>ทุก</em> linear combination เป็น Normal” (นับค่าคงที่เป็น Normal ที่ variance ศูนย์) คำว่า ทุก สำคัญมาก การตรวจว่าแต่ละสินทรัพย์ดู Normal หรือลองพอร์ตไม่กี่แบบยังไม่พอ ตัวอย่างใน pitfall ท้ายหน้าแสดงว่าพังได้อย่างไร</p>
+  <p>ทางกลับกันก็จริง นิยามหนึ่งของ MVN คือ “<em>ทุก</em> linear combination เป็น Normal” โดยนับค่าคงที่เป็น Normal ที่ variance ศูนย์ คำว่า ทุก สำคัญมาก การตรวจว่าแต่ละสินทรัพย์ดู Normal หรือลองพอร์ตไม่กี่แบบยังไม่พอ กับดักท้ายหน้าแสดงว่าพังได้อย่างไร</p>
 </section>
+
 <section class="example">
-  <h4>ขั้นที่ 3 — พอร์ต 50/30/20: ไล่จาก inputs ไปถึง law</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> สมมติ annual simple returns ของ US stocks, US bonds และ gold ใน USD เป็น joint Gaussian ใช้ weights 0.50,0.30,0.20 ตามลำดับ ตัวเลขนี้เป็น model inputs ไม่ใช่การยืนยันว่าตลาดจริงเป็น Normal</p>
-  <div class="table-wrap"><table><thead><tr><th>Asset</th><th>Mean</th><th>SD</th><th>Weight</th></tr></thead><tbody>
-    <tr><td>US stocks</td><td>9%</td><td>18%</td><td>0.50</td></tr>
-    <tr><td>US bonds</td><td>3%</td><td>6%</td><td>0.30</td></tr>
-    <tr><td>USD gold</td><td>5%</td><td>15%</td><td>0.20</td></tr>
+  <h4>ขั้นที่ 3 — พอร์ต 50/30/20: ไล่จาก inputs ไปถึง distribution</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> สมมติผลตอบแทนรายปีของหุ้นสหรัฐ พันธบัตรสหรัฐ และทองคำ เป็น joint Normal น้ำหนัก 0.50, 0.30, 0.20 ตัวเลขนี้เป็น inputs ของแบบจำลอง ไม่ใช่หลักฐานว่าตลาดจริงเป็น Normal</p>
+  <div class="table-wrap"><table><thead><tr><th>สินทรัพย์</th><th>Mean</th><th>SD</th><th>น้ำหนัก</th></tr></thead><tbody>
+    <tr><td>หุ้นสหรัฐ</td><td>9%</td><td>18%</td><td>0.50</td></tr>
+    <tr><td>พันธบัตรสหรัฐ</td><td>3%</td><td>6%</td><td>0.30</td></tr>
+    <tr><td>ทองคำ</td><td>5%</td><td>15%</td><td>0.20</td></tr>
   </tbody></table></div>
-  <p>Correlations คือ stock–bond −0.20, stock–gold 0.05, bond–gold 0.25 ใช้ $\Sigma_{ij}=\rho_{ij}\sigma_i\sigma_j$ แปลงเป็น covariance ก่อน ไม่ใช่นำ correlation matrix มาคูณ weights แล้วเรียกผลว่า return variance</p>
+  <p>correlation คือ หุ้น–พันธบัตร −0.20, หุ้น–ทอง 0.05, พันธบัตร–ทอง 0.25 แปลงเป็น covariance ด้วย $\Sigma_{ij}=\rho_{ij}\sigma_i\sigma_j$ ก่อน เช่น $-0.20(0.18)(0.06)=-0.00216$</p>
   <div class="math">\[
 \begin{aligned}
-\mu&=(0.09,0.03,0.05)^{\mathsf T},\\
 \Sigma&=\begin{bmatrix}
 0.0324&amp;-0.00216&amp;0.00135\\
 -0.00216&amp;0.0036&amp;0.00225\\
 0.00135&amp;0.00225&amp;0.0225
 \end{bmatrix},\\
-w&=(0.5,0.3,0.2)^{\mathsf T},\\
 \mu_p&=0.5(0.09)+0.3(0.03)+0.2(0.05)\\
 &=0.064,\\
-u&:=\Sigma w=(0.015822,0.000450,0.005850)^{\mathsf T},\\
-v_p&=0.5(0.015822)+0.3(0.000450)\\
-&\quad+0.2(0.005850)\\
+u&:=\Sigma w\\
+&=(0.015822,\ 0.000450,\ 0.005850)^{\mathsf T},\\
+v_p&=w^{\mathsf T}u=0.5(0.015822)\\
+&\quad+0.3(0.000450)+0.2(0.005850)\\
 &=0.009216,\\
 \sigma_p&=\sqrt{0.009216}=0.096,\\
-R_p&\sim\mathcal N(0.064,0.009216).
+R_p&\sim\mathcal N(0.064,\ 0.009216).
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> mean 6.4%, SD 9.6% ต่อช่วงหนึ่งปี ภายใต้ joint Gaussian assumption จึงระบุ law บรรทัดสุดท้ายได้ ถ้าเอาสมมติฐานนี้ออก สอง moments ยังถูกแต่ไม่รู้ทั้ง distribution</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> diagonal terms รวม 0.009324, cross terms รวม −0.000108 จึงได้ 0.009216 หากละ covariance จะได้ SD ประมาณ 9.6561% ในชุดนี้ผลสุทธิของ cross terms เล็ก แต่ไม่ได้แปลว่า covariance ไม่มีความสำคัญในทุกพอร์ต</p>
+  <p><strong>คำตอบ:</strong> mean 6.4% SD 9.6% ต่อปี และภายใต้สมมติฐาน joint Normal จึงเขียนบรรทัดสุดท้ายได้ ถ้าเอาสมมติฐานนี้ออก สอง moments ยังถูกทุกหลัก แต่ไม่รู้ทั้ง distribution</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> พจน์ทแยงรวม $0.25(0.0324)+0.09(0.0036)+0.04(0.0225)=0.009324$ พจน์ไขว้รวม $-0.000108$ จึงได้ 0.009216 ชุดนี้พจน์ไขว้หักล้างกันเกือบหมดเพราะ correlation ติดลบของหุ้นกับพันธบัตร ไม่ได้แปลว่า covariance ไม่สำคัญในพอร์ตอื่น</p>
 </section>
+
 <section class="formula">
-  <h4>ขั้นที่ 4 — เงินครึ่งพอร์ตไม่ได้แปลว่ารับความเสี่ยงครึ่งหนึ่ง</h4>
-  <p>แบ่ง variance เป็น $C_i=w_i(\Sigma w)_i$ แล้วรวมกลับได้ variance ทั้งหมด นี่เป็น accounting identity ของ quadratic form ไม่ใช่ probability decomposition</p>
+  <h4>ขั้นที่ 4 — VaR และ expected shortfall จาก mean กับ SD</h4>
+  <p>เมื่อรู้ว่า $R_p$ เป็น Normal ทั้งหางก็ถูกกำหนดแล้ว ให้ $V$ เป็นมูลค่าพอร์ต ขาดทุนคือ $-VR_p$ VaR ที่ระดับ $p$ คือ quantile $p$ ของขาดทุน และ ES คือค่าเฉลี่ยของขาดทุนเมื่อเกิน VaR แล้ว เขียน $R_p=\mu_p+\sigma_pZ$ โดย $Z$ เป็น Normal มาตรฐาน</p>
+  <div class="math">\[
+\begin{aligned}
+\operatorname{VaR}_p&=V\,(z_p\,\sigma_p-\mu_p),\\
+\mathbb E[Z\mid Z\gt z]&=\frac{1}{1-p}\int_{z}^{\infty}t\,\varphi(t)\,dt\\
+&=\frac{\varphi(z)}{1-p},\\
+\operatorname{ES}_p&=V\Big(\sigma_p\frac{\varphi(z_p)}{1-p}-\mu_p\Big).
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดแรกได้จากการกลับเครื่องหมาย: ผลตอบแทนต่ำกว่า $\mu_p-z_p\sigma_p$ ได้เพียง $1-p$ ของเวลา ขาดทุนจึงเกิน $V(z_p\sigma_p-\mu_p)$ ได้เพียงเท่านั้น บรรทัดที่สองเป็นค่าเฉลี่ยของหางขวาของ $Z$ ซึ่งด้วยความสมมาตรของ Normal เท่ากับค่าเฉลี่ยของหางซ้ายที่กลับเครื่องหมาย integral ทำได้ในบรรทัดเดียว เพราะอนุพันธ์ของ $-\varphi(t)$ คือ $t\varphi(t)$ พอดี สองสูตรนี้มีแค่ $\mu_p$ กับ $\sigma_p$ ใน Normal ทั้ง VaR และ ES ถูกกำหนดด้วยสองตัวเลขนี้ ไม่มีข้อมูลหางอะไรเพิ่มให้รู้</p></div>
+  <div class="math">\[
+\begin{aligned}
+z_{0.99}&\approx2.3263,\quad\varphi(2.3263)\approx0.026652,\\
+\operatorname{VaR}_{0.99}&=10^8\,(2.3263\times0.096-0.064)\\
+&\approx15{,}932{,}940,\\
+\operatorname{ES}_{0.99}&=10^8\,(0.096\times2.6652-0.064)\\
+&\approx19{,}186{,}057.
+\end{aligned}
+\]</div>
+  <p>VaR 99% ราว \$15.93 ล้าน และ ES 99% ราว \$19.19 ล้าน ในปีที่แย่ที่สุด 1% เฉลี่ยแล้วจะขาดทุนมากกว่า VaR อีกราว \$3.25 ล้าน ทั้งสองเป็นตัวเลขของแบบจำลอง ไม่ใช่ขาดทุนสูงสุด และไม่ได้รับประกันว่าทุก 100 ปีจะเจอปีแบบนี้หนึ่งครั้งพอดี ถ้าลงหุ้นล้วน (mean 9% SD 18%) VaR 99% จะเป็น $10^8(2.3263\times0.18-0.09)\approx$ \$32.87 ล้าน เกือบสองเท่า ทั้งที่ mean สูงกว่า</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — หางซ้ายของพอร์ต 50/30/20</h4>
+  <svg viewBox="0 0 480 290" role="img" aria-label="density รูประฆังของผลตอบแทนพอร์ตรายปี mean 6.4% หางซ้ายเลยลบ 15.93% ระบายสีแดงเป็นพื้นที่ 1% เส้นประแดงคือ VaR เส้นประส้มที่ลบ 19.19% คือ expected shortfall" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <polygon fill="#d82632" fill-opacity="0.45" points="50,250 52.4,250 54.7,250 57.1,250 59.4,250 61.8,250 64.1,250 66.5,250 68.8,250 71.2,250 73.5,250 75.9,250 78.2,250 80.6,250 82.9,250 85.3,249.9 87.6,249.9 90,249.9 92.4,249.9 94.7,249.9 97.1,249.9 99.4,249.8 101.8,249.8 104.1,249.8 106.5,249.7 108.8,249.6 111.2,249.6 113.5,249.5 115.9,249.4 118.2,249.3 120.6,249.1 122.9,249 125.3,248.8 127.6,248.6 130,248.3 132.4,248 134.7,247.7 137.1,247.3 139.4,246.9 141.8,246.4 144.1,245.8 146.5,245.1 148.8,244.4 151.2,243.6 153.5,242.7 155.9,241.7 158.2,240.5 160.6,239.3 162.9,237.9 163.3,237.7 163.3,250"/>
+      <line x1="50" y1="250" x2="450" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="middle" font-size="14" fill="#5b6472">
+        <text x="50" y="268">−40</text><text x="144.1" y="268">−20</text><text x="238.2" y="268">0</text><text x="332.4" y="268">20</text><text x="426.5" y="268">40</text>
+      </g>
+      <text x="450" y="286" text-anchor="end" fill="#5b6472" font-size="14">ผลตอบแทนพอร์ตรายปี (%)</text>
+      <polyline fill="none" stroke="#2455d6" stroke-width="3" points="50,250 54.7,250 59.4,250 64.1,250 68.8,250 73.5,250 78.2,250 82.9,250 87.6,249.9 92.4,249.9 97.1,249.9 101.8,249.8 106.5,249.7 111.2,249.6 115.9,249.4 120.6,249.1 125.3,248.8 130,248.3 134.7,247.7 139.4,246.9 144.1,245.8 148.8,244.4 153.5,242.7 158.2,240.5 162.9,237.9 167.6,234.6 172.4,230.7 177.1,226 181.8,220.6 186.5,214.3 191.2,207.1 195.9,199 200.6,190 205.3,180.3 210,169.8 214.7,158.7 219.4,147.3 224.1,135.6 228.8,124 233.5,112.8 238.2,102.1 242.9,92.3 247.6,83.7 252.4,76.5 257.1,71 261.8,67.3 266.5,65.5 271.2,65.7 275.9,67.9 280.6,72 285.3,77.8 290,85.3 294.7,94.2 299.4,104.2 304.1,115 308.8,126.4 313.5,138 318.2,149.6 322.9,161 327.6,171.9 332.4,182.3 337.1,191.9 341.8,200.7 346.5,208.6 351.2,215.6 355.9,221.7 360.6,227 365.3,231.5 370,235.3 374.7,238.4 379.4,241 384.1,243.1 388.8,244.7 393.5,246 398.2,247 402.9,247.8 407.6,248.4 412.4,248.9 417.1,249.2 421.8,249.4 426.5,249.6 431.2,249.7 435.9,249.8 440.6,249.9 445.3,249.9 450,249.9"/>
+      <line x1="268.4" y1="60" x2="268.4" y2="250" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="3 4"/>
+      <text x="276" y="56" fill="#5b6472" font-size="14">mean 6.4%</text>
+      <line x1="163.3" y1="110" x2="163.3" y2="250" stroke="#d82632" stroke-width="2.5" stroke-dasharray="6 4"/>
+      <line x1="147.9" y1="160" x2="147.9" y2="250" stroke="#a65f00" stroke-width="2.5" stroke-dasharray="6 4"/>
+      <text x="168" y="106" fill="#d82632">VaR 99%: −15.93%</text>
+      <text x="56" y="156" fill="#a65f00">ES: −19.19%</text>
+      <text x="56" y="232" fill="#d82632" font-size="14">พื้นที่ 1%</text>
+    </g>
+  </svg>
+  <figcaption>density ของผลตอบแทนพอร์ต 50/30/20 รายปี $\mathcal N(6.4\%,\ 9.6\%^2)$ พื้นที่แดงทางซ้ายของ −15.93% คือ 1% ของความเป็นไปได้ เส้นแดงคือ VaR 99% บนพอร์ต \$100 ล้าน หมายถึงขาดทุน \$15.93 ล้าน เส้นส้มที่ −19.19% คือค่าเฉลี่ยของผลตอบแทนภายในพื้นที่แดง หรือ ES 99% \$19.19 ล้าน ทั้งสองเส้นเลื่อนตาม mean และ SD เท่านั้น เพราะรูปทรงของ Normal ตายตัว</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — เงินครึ่งพอร์ตไม่ได้แปลว่ารับความเสี่ยงครึ่งหนึ่ง</h4>
+  <p>คำถามต่อมาของ desk คือความเสี่ยง 9.6% มาจากไหน แบ่ง variance เป็น $C_i=w_i(\Sigma w)_i$ ผลรวมของ $C_i$ คือ $w^{\mathsf T}\Sigma w$ พอดี นี่เป็นการแบ่งบัญชีของ quadratic form ไม่ใช่การแบ่งโอกาส</p>
   <div class="math">\[
 \begin{aligned}
 C_1&=0.5(0.015822)=0.007911,\\
 C_2&=0.3(0.000450)=0.000135,\\
 C_3&=0.2(0.005850)=0.001170,\\
-\sum_i C_i&=0.009216,\\
-(C_1,C_2,C_3)/v_p
-&\approx(85.8398\%,1.4648\%,12.6953\%).
+\textstyle\sum_i C_i&=0.009216,\\
+C/v_p&\approx(85.84\%,\ 1.46\%,\ 12.70\%).
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ทำไมหุ้นใช้เงิน 50% แต่กิน variance ถึง 85.84%? เพราะ contribution ไม่ได้คูณน้ำหนักกับ variance ของตัวเองอย่างเดียว มันคูณกับ $(\Sigma w)_i$ ซึ่งวัดว่าสินทรัพย์นั้นเคลื่อนไปกับ<em>ทั้งพอร์ต</em>แค่ไหน หุ้นมี SD 18% และเป็นก้อนใหญ่ที่สุดของพอร์ตเอง จึงเคลื่อนไปกับพอร์ตมากที่สุด</p><p>อย่าอ่าน 85.84% เป็นโอกาสที่หุ้นจะทำให้ขาดทุน มันเป็นการแบ่งบัญชีของ variance เท่านั้น และในพอร์ตที่มี hedge บาง contribution ติดลบได้ (โจทย์ข้อ 2 ท้ายหน้า)</p></div>
+  <div class="reading"><p>ทำไมหุ้นใช้เงิน 50% แต่กิน variance ถึง 85.84% เพราะ contribution ไม่ได้คูณน้ำหนักกับ variance ของตัวเองอย่างเดียว มันคูณกับ $(\Sigma w)_i$ ซึ่งคือ covariance ของสินทรัพย์นั้นกับ<em>ทั้งพอร์ต</em> หุ้นมี SD 18% และเป็นก้อนใหญ่ที่สุดของพอร์ตเอง จึงเคลื่อนไปกับพอร์ตมากที่สุด พันธบัตรได้แค่ 1.46% เพราะ correlation ติดลบกับหุ้นหักล้างความผันผวนของตัวเองเกือบหมด ในพอร์ตที่มี hedge บาง contribution ติดลบได้ (โจทย์ข้อ 2 ท้ายหน้า)</p></div>
   <details><summary>เชื่อม contribution กับอนุพันธ์ของความเสี่ยง</summary>
-    <p>ให้ $e_i$ เป็น unit vector ที่มี 1 อยู่ช่อง $i$ การเพิ่มน้ำหนักตัวเดียวโดยตรึงตัวอื่นไว้ ต่างจากการย้ายเงินจากตัวหนึ่งไปอีกตัว เพราะแบบแรกทำให้ขนาดพอร์ตเปลี่ยนด้วย</p>
     <div class="math">\[
 \begin{aligned}
-v(w+h e_i)&=v(w)+2h(\Sigma w)_i+h^2\Sigma_{ii},\\
 \frac{\partial v}{\partial w_i}&=2(\Sigma w)_i,\\
 \frac{\partial\sigma}{\partial w_i}&=\frac{(\Sigma w)_i}{\sigma}\quad(\sigma\gt0),\\
-\sum_i w_i\frac{\partial\sigma}{\partial w_i}&=\frac{v}{\sigma}=\sigma.
+\sum_i w_i\frac{\partial\sigma}{\partial w_i}&=\frac{w^{\mathsf T}\Sigma w}{\sigma}=\sigma.
 \end{aligned}
 \]</div>
-    <p>บรรทัดที่สองบอกว่า $u=\Sigma w$ เป็นอนุพันธ์ของ <em>variance</em> (หารสอง) ถ้าอยากได้อนุพันธ์ของ SD ต้องหารด้วย $\sigma$ อีกที ส่วนบรรทัดสุดท้ายคือเหตุผลที่ contributions รวมกันได้ SD ทั้งพอร์ตพอดี</p>
-    <p>ลองใช้: ย้ายน้ำหนัก 0.01 จากหุ้นไป bond อัตราเปลี่ยนของ SD คือ $(u_2-u_1)/\sigma=(0.000450-0.015822)/0.096=-0.160125$ จึงประมาณ SD ใหม่ได้ $9.6\%-0.01(16.0125\%)=9.439875\%$ เทียบกับคำนวณตรงที่น้ำหนัก $(0.49, 0.31, 0.20)$ ได้ 9.440653% ใกล้กันเพราะขยับน้อย</p>
+    <p>บรรทัดสุดท้ายคือเหตุที่ contribution รวมกันได้ความเสี่ยงทั้งพอร์ตพอดี ลองใช้: ย้ายน้ำหนัก 0.01 จากหุ้นไปพันธบัตร อัตราเปลี่ยนของ SD คือ $(u_2-u_1)/\sigma=(0.000450-0.015822)/0.096\approx-0.1601$ จึงประมาณ SD ใหม่ได้ $9.6\%-0.01(16.01\%)\approx9.440\%$ คำนวณตรงที่น้ำหนัก $(0.49,\ 0.31,\ 0.20)$ ได้ 9.4407% ใกล้กันเพราะขยับน้อย ถ้าอยากให้ทั้งสามรับความเสี่ยงเท่ากัน (risk parity) น้ำหนักต้องเป็นราว $(0.2115,\ 0.5869,\ 0.2016)$ ได้ SD 6.095% แต่ mean ตกเหลือ 4.672%</p>
   </details>
-  <p>ถ้าอยากให้ทุกสินทรัพย์รับความเสี่ยงเท่ากัน ต้องเปลี่ยนน้ำหนักตามโจทย์ risk budgeting ใน 7.3 และ mean จะเปลี่ยนตามไปด้วย ในโมเดลนี้ risk-parity weights ประมาณ $(0.2115, 0.5869, 0.2016)$ ให้ mean 4.6720% และ SD 6.0950% คือลด SD ได้จริง แต่ต้องยอมเสีย mean จาก 6.4% ไม่ได้ของฟรี</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — ส่วนแบ่งของเงินกับส่วนแบ่งของ variance</h4>
+  <svg viewBox="0 0 480 200" role="img" aria-label="แท่งซ้อนสองแท่ง แท่งบนคือเงิน หุ้น 50 พันธบัตร 30 ทอง 20 เปอร์เซ็นต์ แท่งล่างคือ variance หุ้น 85.8 พันธบัตร 1.5 ทอง 12.7 เปอร์เซ็นต์" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <text x="100" y="76" text-anchor="end">เงิน</text>
+      <text x="100" y="146" text-anchor="end">variance</text>
+      <rect x="110" y="50" width="170" height="40" fill="#2455d6"/>
+      <rect x="280" y="50" width="102" height="40" fill="#047857"/>
+      <rect x="382" y="50" width="68" height="40" fill="#a65f00"/>
+      <rect x="110" y="120" width="291.9" height="40" fill="#2455d6"/>
+      <rect x="401.9" y="120" width="5" height="40" fill="#047857"/>
+      <rect x="406.9" y="120" width="43.1" height="40" fill="#a65f00"/>
+      <g fill="#fff">
+        <text x="195" y="76" text-anchor="middle">หุ้น 50%</text>
+        <text x="331" y="76" text-anchor="middle">พันธบัตร 30%</text>
+        <text x="416" y="76" text-anchor="middle">ทอง 20%</text>
+        <text x="256" y="146" text-anchor="middle">หุ้น 85.8%</text>
+        <text x="428.5" y="146" text-anchor="middle" font-size="13">12.7%</text>
+      </g>
+      <text x="404" y="182" text-anchor="middle" fill="#047857" font-size="14">พันธบัตร 1.5%</text>
+      <line x1="404" y1="162" x2="404" y2="168" stroke="#047857" stroke-width="2"/>
+      <text x="110" y="34" fill="#5b6472" font-size="14">0%</text>
+      <text x="450" y="34" text-anchor="end" fill="#5b6472" font-size="14">100%</text>
+    </g>
+  </svg>
+  <figcaption>แท่งบนคือสัดส่วนเงินของพอร์ต 50/30/20 แท่งล่างคือสัดส่วนของ variance $w_i(\Sigma w)_i/w^{\mathsf T}\Sigma w$ หุ้นใช้เงินครึ่งเดียวแต่รับความเสี่ยงไปเกือบทั้งหมด พันธบัตรใช้เงิน 30% แต่แทบไม่เพิ่มความเสี่ยงเลย เพราะ correlation กับหุ้นติดลบ ใครที่ดูแค่แท่งบนจะคิดว่าพอร์ตนี้กระจายความเสี่ยงดี</figcaption>
+</figure>
+
 <section class="example">
-  <h4>ขั้นที่ 5 — ตอบ opening question ด้วย loss quantile</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> V=\$100 ล้าน, annual $R_p\sim\mathcal N(0.064,0.009216)$ และ $z_{0.99}\approx2.326347874$ ใช้ quantile 1% ของ return แล้วเปลี่ยนเครื่องหมายเป็น quantile 99% ของ loss</p>
+  <h4>ขั้นที่ 6 — อีก horizon: พอร์ตรายวัน 60/40 ของ SPX กับ QQQ</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> แบบจำลองรายวันของรูปเส้นขนานด้านบน SPX mean 0.04% SD 2% QQQ mean 0.03% SD 3% covariance 2.4 ในหน่วยเปอร์เซ็นต์ยกกำลังสอง (correlation 0.4) น้ำหนัก 0.6 กับ 0.4 ระวังชื่อ “60/40” ตรงนี้เป็นกองทุนหุ้นสองกอง ไม่ใช่พอร์ตหุ้น/พันธบัตร 60/40 ที่คนมักหมายถึง</p>
   <div class="math">\[
 \begin{aligned}
-q_{0.01}&=\mu_p-z_{0.99}\sigma_p\\
-&=0.064-(2.326347874)(0.096)\\
-&\approx-0.159329396,\\
-\operatorname{VaR}_{0.99}&=-Vq_{0.01}\\
-&\approx15{,}932{,}940\ \mathrm{USD}.
+\mu_L&=0.6(0.04)+0.4(0.03)=0.036,\\
+v_L&=0.36(4)+0.16(9)+2(0.24)(2.4)\\
+&=1.44+1.44+1.152=4.032,\\
+\sigma_L&=\sqrt{4.032}\approx2.008,\\
+P(-4\lt L\lt-2)&=\Phi(-1.014)-\Phi(-2.010)\\
+&\approx15.53\%-2.22\%=13.31\%.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> loss VaR ราว \$15.93 ล้าน ของ horizon หนึ่งปีตามโมเดล ไม่ใช่ขาดทุนสูงสุด และไม่ใช่คำรับรองว่าทุก 100 ปีจะเจอหนึ่งปีที่ขาดทุนเท่านี้พอดี หาก parameters เป็นเพียง estimates, tail calibration ก็มี uncertainty เพิ่ม</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> ลงหุ้นล้วนตามโมเดล mean 9%, SD 18% ได้ loss VaR ราว \$32.8743 ล้าน คือ $\$100\text{M}\times(2.326347874\times0.18-0.09)$ เกือบสองเท่าของพอร์ตผสม แม้ mean ของหุ้นล้วนจะสูงกว่า (9% เทียบ 6.4%) เพราะ SD 18% เทียบ 9.6% กินผลของ mean ที่ต่างกันจนหมด</p>
+  <p><strong>คำตอบ:</strong> mean 0.036% SD 2.008% ต่อวัน และโอกาสที่พอร์ตลงระหว่าง 2% ถึง 4% ในหนึ่งวันคือ 13.31% ซึ่งคือพื้นที่แดงในรูปเส้นขนาน วางสามตัวเลขเรียงกันจะเห็นว่า covariance ทำอะไร ถ้าสองตัวไม่ขยับร่วมกันเลยจะได้ $\sqrt{2.88}\approx1.697\%$ ถ้าขยับตามกันเป๊ะจะได้ค่าเฉลี่ยถ่วงน้ำหนัก $0.6(2)+0.4(3)=2.4\%$ ของจริงอยู่ระหว่างกลาง</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> spread SPX − QQQ ใช้ตัวคูณ $(1,-1)$ ได้ mean 0.01% และ variance $4+9-2(2.4)=8.2$ คราวนี้ covariance ถูก<em>หัก</em>ออกเพราะ $2a_1a_2$ ติดลบ spread ก็ยังเป็น Normal แม้สองตัวไม่อิสระกัน</p>
+  <figure class="plot">
+    <h4>รูป — mean กับ SD ของพอร์ตทุกน้ำหนักระหว่าง SPX กับ QQQ</h4>
+    <img src="../figures/8.8-4.svg" alt="เส้นโค้งของ mean กับ SD รายวันของพอร์ตที่น้ำหนัก SPX ตั้งแต่ศูนย์ถึงหนึ่ง พร้อมจุดของพอร์ต 60/40" loading="lazy">
+    <figcaption>แต่ละจุดบนเส้นคือพอร์ตหนึ่งน้ำหนัก แกนนอนคือ SD รายวัน แกนตั้งคือ mean รายวัน จุด 60/40 อยู่ที่ SD 2.008% mean 0.036% พอร์ตที่ SD ต่ำที่สุดถือ SPX $33/41\approx80.5\%$ ได้ SD 1.920% และ mean 0.038% ดีกว่า 60/40 ทั้งสองแกน ครึ่งล่างของเส้นจึงไม่ใช่ทางเลือกที่ใครควรถือ มีแต่ครึ่งบนที่เป็น efficient frontier ซึ่ง<a href="12.5.html">Markowitz portfolio selection</a> จะหาอย่างเป็นระบบ</figcaption>
+  </figure>
 </section>
-<section class="prose">
-  <h4>สามทางลัดที่ให้ตัวเลขคนละความหมาย</h4>
-  <div class="table-wrap"><table><thead><tr><th>วิธี</th><th>ตัวเลข</th><th>ควรอ่านอย่างไร</th></tr></thead><tbody>
-    <tr><td>เฉลี่ย SD</td><td>$0.5(18\%)+0.3(6\%)+0.2(15\%)=13.8\%$</td><td>เป็น upper bound สำหรับ long-only weights และ SDs ชุดนี้ ไม่ใช่ SD 9.6% ของ covariance ที่ให้; สูงกว่าค่าจริง 43.75%</td></tr>
-    <tr><td>ใช้ correlation แทน covariance</td><td>$w^{\mathsf T}Cw=0.36$</td><td>คือ variance ของผลรวม standardized variables ไม่ใช่ return SD 60%</td></tr>
-    <tr><td>ลืม cross terms</td><td>SD ประมาณ 9.6561%</td><td>เท่ากับเปลี่ยนสมมติฐานให้ covariance ระหว่าง assets เป็นศูนย์ ไม่ใช่การย่อสูตรเดิม</td></tr>
-  </tbody></table></div>
-  <p>หาก stress ให้ทุก correlation เป็น 1 โดยคง SDs และ means เดิม จะได้ SD 13.8% และ loss VaR ประมาณ \$25.7036 ล้าน Covariance ตอนนี้ rank 1 แต่พอร์ตยังมี univariate Normal law ที่ variance บวก ค่านี้ไม่ใช่เพดานของ crisis risk เพราะความจริง SDs และ means อาจเปลี่ยนพร้อมกันได้</p>
-</section>
-<section class="example">
-  <h4>ขั้นที่ 6 — อีก horizon: daily 60/40 SPX/QQQ</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> เปลี่ยนไปใช้ daily Gaussian model ที่ Figure 8.8a–d วาด: SPX มี mean 0.0004 และ variance 0.0004 (SD 2%) QQQ มี mean 0.0003 และ variance 0.0009 (SD 3%) covariance 0.00024 น้ำหนัก 0.6 กับ 0.4 ระวังชื่อ “60/40” ตรงนี้เป็นหุ้นสองกองทุน ไม่ใช่พอร์ตหุ้น/bond 60/40 ที่คนมักหมายถึง</p>
-  <div class="math">\[
-\begin{aligned}
-\mu_L&=0.6(0.0004)+0.4(0.0003)=0.00036,\\
-v_L&=0.6^2(0.0004)+0.4^2(0.0009)\\
-&\quad+2(0.6)(0.4)(0.00024)\\
-&=0.0004032,\\
-\sigma_L&=\sqrt{0.0004032}\approx0.02007984,\\
-L&\sim\mathcal N(0.00036,0.0004032).
-\end{aligned}
-\]</div>
-  <p><strong>คำตอบ:</strong> daily mean 0.036% และ SD ประมาณ 2.008% วางสามตัวเลขเรียงกันจะเห็นว่า covariance ทำอะไร: ถ้าสองตัวไม่ขยับร่วมกันเลยจะได้ $\sqrt{0.000288}\approx1.697\%$ ถ้าขยับตามกันเป๊ะจะได้ค่าเฉลี่ยถ่วงน้ำหนัก $0.6(2\%)+0.4(3\%)=2.4\%$ ของจริงอยู่ระหว่างกลาง เพราะ correlation $0.00024/(0.02\times0.03)=0.4$ ไม่ใช่ 0 และไม่ใช่ 1</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> spread $X-Y$ ใช้ coefficients $(1, -1)$ ได้ mean 0.0001 และ variance $0.0004+0.0009-2(0.00024)=0.00082$ ครั้งนี้ covariance ถูก<em>ลบ</em>ออก เพราะ $2a_1a_2$ ติดลบ spread ก็ยังเป็น Normal แม้สองตัวไม่ independent</p>
-</section>
-<figure class="plot">
-  <h4>Figure 8.8a — จาก cloud สองมิติไปสู่ scalar หนึ่งตัว</h4>
-  <img src="../figures/8.8-1.svg" alt="จุดจำลองSPXและQQQกับเส้นทิศ60/40ผ่านmean" loading="lazy">
-  <figcaption>จุด 1,600 จุดจำลองจาก Gaussian ด้วย seed 0 ไม่ใช่ returns จริง เส้นใช้ unit direction $\hat a=a/\|a\|_2$ ผ่าน mean ดังนั้นระยะบนเส้นยังไม่ใช่ portfolio return โดยตรง ต้องใช้ $L=a^{\mathsf T}\mu+\|a\|_2\hat a^{\mathsf T}(R-\mu)$ เพื่อใส่ทั้ง scale และ mean กลับ</figcaption>
-</figure>
-<figure class="plot">
-  <h4>Figure 8.8b — Cross term หายไปไม่ได้เพราะอยากให้สูตรสั้น</h4>
-  <img src="../figures/8.8-2.svg" alt="Own variances เทียบ full variance เมื่อรวมpositive covarianceของSPXและQQQ" loading="lazy">
-  <figcaption>ใน daily model นี้ covariance เป็นบวก จึงเพิ่ม variance สำหรับ weights ที่เป็นบวกทั้งคู่ ตัวเลขแกนตั้งเป็น fixed-one-day return variance ในหน่วย percentage-point²; ส่วน /day ในป้ายเดิมไม่ใช่การกำหนดให้ข้อมูลเป็น continuous return rate</figcaption>
-</figure>
-<figure class="plot">
-  <h4>Figure 8.8c — หลาย combinations จาก joint model เดียวกัน</h4>
-  <img src="../figures/8.8-3.svg" alt="Histogramsจำลอง5000จุดของSPX QQQ และพอร์ต60/40" loading="lazy">
-  <figcaption>ใช้ joint Gaussian draws 5,000 จุด, seed 0 แล้วแสดง 48-bin histograms ของ SPX, QQQ และ 60/40 รูประฆังที่เห็นเป็นเพียงภาพประกอบ finite sample; Gaussian closure มาจากสมมติฐานและ proof ไม่ใช่พิสูจน์ด้วย histogram</figcaption>
-</figure>
-<figure class="plot">
-  <h4>Figure 8.8d — Risk-return curve ไม่ใช่ทุกจุดจะ efficient</h4>
-  <img src="../figures/8.8-4.svg" alt="Risk return curveของweightsระหว่างSPXกับQQQพร้อมจุด60/40" loading="lazy">
-  <figcaption>จุด 60/40 มี daily mean 0.036%, SD ประมาณ 2.008% ในโมเดลนี้ minimum-SD weight ใน SPX คือ $33/41\approx0.804878$ ให้ mean 0.03805%, SD 1.92037% ซึ่งดีกว่า 60/40 ทั้งสองแกน ดังนั้นอย่าเรียกทั้ง curve ว่า efficient frontier; คำว่า day ในแกนระบุ horizon ของ returns ชุดนี้</figcaption>
-</figure>
-<section class="prose">
-  <h4>ขั้นที่ 7 — น้ำหนักคงที่ หมายถึงน้ำหนักตอนเริ่ม ไม่ใช่ rebalance ทุกวัน</h4>
-  <p>คำถามที่คนมักถาม: ถ้าราคาขยับ น้ำหนักจริงในพอร์ตก็ drift ไปแล้ว สูตร $w^{\mathsf T}R$ ยังใช้ได้หรือ? ใช้ได้ ถ้าซื้อจำนวนหุ้นคงที่แล้วถือจนจบช่วงโดยไม่มีเงินเข้าออก เช่น ลง \$60 ใน SPX กับ \$40 ใน QQQ ถ้า SPX ขึ้น 10% และ QQQ ลง 5% มูลค่าปลายทางคือ $60(1.10)+40(0.95)=104$ ผลตอบแทน 4% เท่ากับ $0.6(10\%)+0.4(-5\%)$ พอดี ค่าที่ใช้คือน้ำหนัก<em>ตอนเริ่ม</em> ไม่ใช่น้ำหนักระหว่างทาง</p>
-  <p>ถ้า rebalance ระหว่างช่วง ผลปลายทางจะขึ้นกับเส้นทางราคาทั้งเส้น ไม่ใช่ผลรวมถ่วงน้ำหนักของผลตอบแทนทั้งช่วงอีกต่อไป Options ก็เช่นกัน payoff ไม่เป็นเส้นตรง วิธี delta-normal จึงเป็นแค่การประมาณ ไม่ใช่ Gaussian closure ของ option จริง</p>
-  <p>อีกกรณีคือเลือกน้ำหนักตามสภาพตลาดก่อนเทรด ภายใต้ข้อมูลนั้นพอร์ตอาจเป็น Normal แต่ถ้าน้ำหนัก means หรือ covariance เปลี่ยนตาม state distribution ที่เฉลี่ยทุก state จะเป็น mixture ซึ่งหางหนากว่า Normal ได้ แม้แต่ละ state จะเป็น Normal ก็ตาม</p>
-</section>
+
 <section class="formula">
-  <h4>ขั้นที่ 8 — เปลี่ยน horizon ต้องเพิ่มโมเดลตามเวลา</h4>
-  <p>ถ้าหัวหน้าขอ VaR รายวันของพอร์ต 50/30/20 เรามีแต่โมเดลรายปี จะแปลงอย่างไร? ต้องสมมติ<em>เพิ่ม</em>ว่าผลรายปีเป็นผลรวมของผลรายวัน $T=252$ วันซื้อขาย (1.1 อธิบายที่มาของ 252) แต่ละวันมี mean และ variance เท่ากัน และวันต่าง ๆ ไม่มี covariance ต่อกัน สมมติฐานนี้ไม่ได้มาจากโมเดลรายปี เราเติมเข้าไปเอง</p>
+  <h4>ขั้นที่ 7 — เปลี่ยน horizon ต้องเพิ่มแบบจำลองตามเวลา</h4>
+  <p>ถ้าหัวหน้าขอ VaR รายวันของพอร์ต 50/30/20 แต่เรามีแบบจำลองรายปี ต้องสมมติ<em>เพิ่ม</em>ว่าผลรายปีคือผลรวมของผลรายวัน $T=252$ วันซื้อขาย (ปีหนึ่งมีวันทำการราว 252 วันหลังหักเสาร์อาทิตย์และวันหยุดตลาด) แต่ละวันมี mean และ variance เท่ากัน และวันต่าง ๆ ไม่มี covariance ต่อกัน</p>
   <div class="math">\[
 \begin{aligned}
 S_T&:=\sum_{t=1}^T R_t,\\
-\mathbb E[S_T]&=T\mu_d,\\
-\operatorname{Var}(S_T)&=T\sigma_d^2,\\
-\mu_d&=0.064/252\approx0.000253968,\\
-\sigma_d&=0.096/\sqrt{252}\approx0.006047432,\\
-q_{0.01,d}&=\mu_d-z_{0.99}\sigma_d\\
-&\approx-0.01381446.
+\mathbb E[S_T]&=T\mu_d,\qquad\operatorname{Var}(S_T)=T\sigma_d^2,\\
+\mu_d&=0.064/252\approx0.000254,\\
+\sigma_d&=0.096/\sqrt{252}\approx0.006047,\\
+q_{0.01,d}&=\mu_d-z_{0.99}\,\sigma_d\approx-0.013814.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัด variance คือสูตรขั้นที่ 1 อีกครั้ง โดยมองแต่ละวันเป็น “สินทรัพย์” หนึ่งตัวที่น้ำหนัก 1 เมื่อ covariance ข้ามวันเป็นศูนย์ พจน์ไขว้หายหมด variance จึงโตตาม $T$ และ SD โตตาม $\sqrt T$ นี่คือที่มาของการหารด้วย $\sqrt{252}$</p><p>บรรทัด quantile ใช้สมมติฐานอีกชั้น คือผลรายวันเป็น Normal ด้วย จึงได้ประมาณ −1.38145% ต่อวัน ระวังว่าผลตอบแทน simple จริงทบต้นเป็น $\prod_t(1+R_t)-1$ ไม่ใช่ผลรวม สูตรนี้จึงเป็นการประมาณที่ใช้ได้ดีเมื่อผลรายวันเล็ก</p></div>
-  <p>ถ้าผลตอบแทนวันนี้สัมพันธ์กับเมื่อวาน (autocovariance ไม่เป็นศูนย์) พจน์ไขว้ข้ามวันจะกลับมา และการหารด้วย $\sqrt{252}$ จะผิด ต้องตรวจช่วงเวลา การทบต้น และความสัมพันธ์ข้ามวันก่อนใช้</p>
+  <div class="reading"><p>บรรทัด variance คือสูตรของขั้นที่ 1 อีกครั้ง โดยมองแต่ละวันเป็น “สินทรัพย์” หนึ่งตัวที่น้ำหนัก 1 เมื่อ covariance ข้ามวันเป็นศูนย์ พจน์ไขว้หายหมด variance จึงโตตาม $T$ และ SD โตตาม $\sqrt T$ นี่คือที่มาของการหารด้วย $\sqrt{252}$ quantile ในบรรทัดสุดท้ายใช้สมมติฐานอีกชั้น คือผลรายวันเป็น Normal ด้วย จึงได้ VaR 99% รายวันราว 1.38% หรือ \$1.38 ล้าน ถ้าผลตอบแทนวันนี้สัมพันธ์กับเมื่อวาน พจน์ไขว้ข้ามวันจะกลับมา และการหารด้วย $\sqrt{252}$ จะผิด</p></div>
+  <p>อีกเงื่อนไขที่ซ่อนอยู่ในทุกขั้นของหน้านี้คือน้ำหนักคงที่ตอนเริ่มช่วง ถ้าซื้อจำนวนหน่วยคงที่แล้วถือจนจบช่วงโดยไม่มีเงินเข้าออก สูตร $w^{\mathsf T}R$ ถูกพอดี เช่นลง \$60 ใน SPX กับ \$40 ใน QQQ ถ้า SPX ขึ้น 10% และ QQQ ลง 5% มูลค่าปลายทางคือ $66+38=104$ ผลตอบแทน 4% เท่ากับ $0.6(10\%)+0.4(-5\%)$ แต่ถ้า rebalance ระหว่างช่วง หรือพอร์ตมี option ซึ่ง payoff ไม่เป็นเส้นตรง ผลปลายทางไม่ใช่ linear combination ของผลตอบแทนอีกต่อไป และ Gaussian closure ใช้ไม่ได้ ต้องใช้การจำลองของ<a href="8.9.html">หน้าถัดไป</a></p>
 </section>
+
 <section class="pitfall">
-  <h4>Gaussian เป็น model statement ไม่ใช่ผลตรวจจาก mean กับ covariance</h4>
-  <p>ให้ $X\sim N(0,1)$ และ W เป็น independent fair sign แล้วกำหนด Y=WX Marginals X, Y เป็น standard Normal, covariance ศูนย์ แต่ $L=(X+Y)/2$ เท่ากับศูนย์ครึ่งหนึ่งของเวลา และเท่ากับ X อีกครึ่งหนึ่ง จึงมี atom ที่ศูนย์ ไม่ใช่ $N(0,1/2)$ แม้ mean 0 กับ variance 1/2 จะตรงกัน</p>
-  <p>ในตัวอย่างนี้ $P(L\lt-2)=\tfrac12\Phi(-2)\approx1.1375\%$ แต่การใส่ Normal law จาก moments อย่างเดียวให้ประมาณ 0.2339% นี่เป็น counterexample ไม่ใช่ theorem ว่า Normal จะประเมิน tail ต่ำเกินไปในทุกกรณี</p>
-  <p>Non-Gaussian models อาจมี analytic distributions, convolution หรือวิธี numerical อื่นได้ ไม่จำเป็นต้อง Monte Carlo เสมอ แต่สำหรับ payoff ไม่เชิงเส้นหรือ distribution ซับซ้อน ต้องประเมินวิธีให้ตรงโมเดลแทนยืม quantile Normal โดยไม่มีเหตุผล</p>
+  <h4>Gaussian เป็นสมมติฐาน ไม่ใช่ผลที่ตรวจได้จาก mean กับ covariance</h4>
+  <p><strong>marginal เป็น Normal ทุกตัวยังไม่พอ</strong> ให้ $X\sim\mathcal N(0,1)$ และ $W=\pm1$ อย่างละครึ่งโดยอิสระ ตั้ง $Y=WX$ แล้วทั้ง $X$ และ $Y$ เป็น Normal มาตรฐาน covariance ศูนย์ แต่พอร์ตครึ่งต่อครึ่ง $L=(X+Y)/2$ เป็นศูนย์พอดีเมื่อ $W=-1$ และเป็น $X$ เมื่อ $W=1$ อย่างละครึ่งของเวลา จึงมี mean 0 และ variance $\tfrac12\mathbb E[X^2]=0.5$ เท่ากับที่สูตร $a^{\mathsf T}\Sigma a=\tfrac14(1+1)$ ให้ แต่ไม่ใช่ Normal</p>
+  <figure class="plot">
+    <h4>รูป — สูตร Normal กับของจริงที่ mean และ variance เท่ากัน</h4>
+    <svg viewBox="0 0 480 270" role="img" aria-label="กราฟสองเส้น เส้นประม่วงเป็นระฆัง Normal ที่ variance เท่ากับของจริง เส้นแดงเตี้ยกว่าและกว้างกว่า พร้อมลูกศรแดงตั้งที่ศูนย์แทนมวลครึ่งหนึ่ง หางซ้ายของเส้นแดงเลยลบสองระบายสี" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="15" fill="#181818">
+        <polygon fill="#d82632" fill-opacity="0.4" points="60,230 64.9,230 69.8,230 74.6,229.9 79.5,229.9 84.4,229.9 89.3,229.8 94.1,229.7 99,229.6 103.9,229.5 108.8,229.3 113.6,229.1 118.5,228.8 123.4,228.4 128.3,228 133.1,227.4 138,226.6 142.9,225.8 147.8,224.7 152.6,223.4 157.5,221.9 157.5,230"/>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#5b6472" stroke-width="2"/>
+        <g text-anchor="middle" font-size="14" fill="#5b6472">
+          <text x="60" y="248">−4</text><text x="157.5" y="248">−2</text><text x="255" y="248">0</text><text x="352.5" y="248">2</text><text x="450" y="248">4</text>
+        </g>
+        <text x="450" y="266" text-anchor="end" fill="#5b6472" font-size="14">L = (X + Y)/2</text>
+        <polyline fill="none" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="7 5" points="60,230 64.9,230 69.8,230 74.6,230 79.5,230 84.4,230 89.3,230 94.1,230 99,230 103.9,230 108.8,230 113.6,230 118.5,229.9 123.4,229.9 128.3,229.8 133.1,229.7 138,229.5 142.9,229.1 147.8,228.7 152.6,227.9 157.5,226.9 162.4,225.4 167.3,223.4 172.1,220.6 177,216.9 181.9,212.2 186.8,206.2 191.6,198.8 196.5,189.9 201.4,179.5 206.3,167.7 211.1,154.7 216,140.8 220.9,126.3 225.8,111.9 230.6,98.2 235.5,85.8 240.4,75.3 245.3,67.4 250.1,62.4 255,60.7 259.9,62.4 264.8,67.4 269.6,75.3 274.5,85.8 279.4,98.2 284.3,111.9 289.1,126.3 294,140.8 298.9,154.7 303.8,167.7 308.6,179.5 313.5,189.9 318.4,198.8 323.3,206.2 328.1,212.2 333,216.9 337.9,220.6 342.8,223.4 347.6,225.4 352.5,226.9 357.4,227.9 362.3,228.7 367.1,229.1 372,229.5 376.9,229.7 381.8,229.8 386.6,229.9 391.5,229.9 396.4,230 401.3,230 406.1,230 411,230 415.9,230 420.8,230 425.6,230 430.5,230 435.4,230 440.3,230 445.1,230 450,230"/>
+        <polyline fill="none" stroke="#d82632" stroke-width="3" points="60,230 64.9,230 69.8,230 74.6,229.9 79.5,229.9 84.4,229.9 89.3,229.8 94.1,229.7 99,229.6 103.9,229.5 108.8,229.3 113.6,229.1 118.5,228.8 123.4,228.4 128.3,228 133.1,227.4 138,226.6 142.9,225.8 147.8,224.7 152.6,223.4 157.5,221.9 162.4,220.2 167.3,218.2 172.1,215.9 177,213.4 181.9,210.6 186.8,207.5 191.6,204.3 196.5,200.9 201.4,197.3 206.3,193.7 211.1,190.1 216,186.5 220.9,183.2 225.8,180 230.6,177.2 235.5,174.8 240.4,172.8 245.3,171.3 250.1,170.5 255,170.2 259.9,170.5 264.8,171.3 269.6,172.8 274.5,174.8 279.4,177.2 284.3,180 289.1,183.2 294,186.5 298.9,190.1 303.8,193.7 308.6,197.3 313.5,200.9 318.4,204.3 323.3,207.5 328.1,210.6 333,213.4 337.9,215.9 342.8,218.2 347.6,220.2 352.5,221.9 357.4,223.4 362.3,224.7 367.1,225.8 372,226.6 376.9,227.4 381.8,228 386.6,228.4 391.5,228.8 396.4,229.1 401.3,229.3 406.1,229.5 411,229.6 415.9,229.7 420.8,229.8 425.6,229.9 430.5,229.9 435.4,229.9 440.3,230 445.1,230 450,230"/>
+        <line x1="255" y1="230" x2="255" y2="38" stroke="#d82632" stroke-width="4"/>
+        <polygon points="255,26 248,42 262,42" fill="#d82632"/>
+        <text x="266" y="40" fill="#d82632">มวล 50% ที่ศูนย์พอดี</text>
+        <text x="300" y="100" fill="#6d28d9" font-size="14">Normal ที่ variance 0.5</text>
+        <text x="64" y="200" fill="#d82632" font-size="14">หางของจริง 1.14%</text>
+        <text x="64" y="182" fill="#6d28d9" font-size="14">Normal ให้ 0.23%</text>
+      </g>
+    </svg>
+    <figcaption>พอร์ตครึ่งต่อครึ่ง $L=(X+Y)/2$ ของคู่ $Y=WX$ มี mean 0 และ variance 0.5 ตรงกับสูตร เส้นประม่วงคือ Normal ที่ variance 0.5 ซึ่งเป็นสิ่งที่ “ใช้ mean กับ covariance แล้วสมมติ Normal” ให้ ของจริง (สีแดง) คือมวลครึ่งหนึ่งกองอยู่ที่ศูนย์ (ลูกศร) บวกกับครึ่งหนึ่งของ Normal มาตรฐาน หางซ้ายเลย −2 ของจริงคือ $\tfrac12\Phi(-2)\approx1.14\%$ แต่สูตร Normal ให้ $\Phi(-2/\sqrt{0.5})\approx0.23\%$ ต่ำไปเกือบห้าเท่า</figcaption>
+  </figure>
+  <p><strong>mean และ covariance เท่ากันทุกตัว VaR ยังต่างได้</strong> สมมติผลตอบแทนพอร์ต 50/30/20 มาจากสองภาวะตลาด 75% ของเวลาเป็น Normal ที่ SD 7.31% และ 25% ของเวลาเป็น Normal ที่ SD 14.43% mean 6.4% ทั้งคู่ variance รวมคือ $0.75(7.31^2)+0.25(14.43^2)\approx92.16=9.6^2$ เท่ากับ Normal เดิมพอดี แต่ VaR 99% กลายเป็น \$18.99 ล้าน (สูงกว่า \$15.93 ล้าน 19%) และ ES 99% เป็น \$24.73 ล้าน (สูงกว่า \$19.19 ล้าน 29%) ที่ระดับ 95% แบบผสมกลับให้ VaR ต่ำกว่า (\$8.87 ล้าน เทียบ \$9.39 ล้าน) แต่ ES ยังสูงกว่า (\$14.98 ล้าน เทียบ \$13.40 ล้าน) VaR ระดับเดียวไม่เห็นหางที่เลยออกไป variance ใช้เป็นตัววัดความเสี่ยงได้ครบเฉพาะเมื่อ distribution เป็น Normal</p>
+  <div class="table-wrap"><table><thead><tr><th>ทางลัด</th><th>ตัวเลข</th><th>ผิดเพราะอะไร</th></tr></thead><tbody>
+    <tr><td>เฉลี่ย SD ถ่วงน้ำหนัก</td><td>$0.5(18)+0.3(6)+0.2(15)=13.8\%$</td><td>เท่ากับสมมติ correlation เป็น 1 ทุกคู่ สูงกว่าค่าจริง 9.6% ถึง 44%</td></tr>
+    <tr><td>ใช้ correlation matrix แทน covariance</td><td>$w^{\mathsf T}Cw=0.36$</td><td>เป็น variance ของผลรวมตัวแปรที่ถูกหารด้วย SD แล้ว ไม่ใช่ SD 60%</td></tr>
+    <tr><td>ลืมพจน์ไขว้</td><td>SD ประมาณ 9.656%</td><td>เท่ากับแอบสมมติว่าทุกคู่ covariance เป็นศูนย์</td></tr>
+  </tbody></table></div>
 </section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>VaR แบบ parametric หรือ delta-normal ที่ระบบความเสี่ยงคำนวณได้ในเสี้ยววินาทีคือขั้นที่ 3 และ 4 ของหน้านี้ เอาน้ำหนักคูณ covariance ได้ SD ของพอร์ต แล้วคูณ $z_p$ มันเร็วและอธิบายง่าย แต่ทั้งหมดยืนอยู่บนสมมติฐาน joint Normal และ payoff เชิงเส้น ส่วน<a href="12.5.html">Markowitz portfolio selection</a> ที่เลือกพอร์ตด้วย mean กับ variance อย่างเดียว ก็ยืนอยู่บนเหตุผลเดียวกัน คือเมื่อพอร์ตเป็น Normal สองตัวเลขนี้บอกทุกอย่าง พอร์ตที่มี option หรือผลตอบแทนที่หางหนา ต้องใช้การจำลองแทน</p>
+</section>
+
 <section class="example">
-  <h4>สามโจทย์ตรวจหน่วยและขอบเขตของ theorem</h4>
-  <p><strong>1.</strong> เพิ่ม annual risky weights ทั้งสามเป็นสองเท่า โดยยืมเงินเท่ากับ NAV เดิมที่ต้นทุนแน่นอน 2% ของช่วงนั้น Mean, variance และ loss VaR บน NAV \$100 ล้าน เป็นเท่าไร?</p>
-  <details><summary>เฉลย</summary><p>Payoff $2R_p-0.02$ ยัง Gaussian เพราะเป็น affine map Mean $2(0.064)-0.02=0.108$, variance $4(0.009216)=0.036864$, SD 19.2%, loss VaR ประมาณ \$33.8659 ล้าน ซึ่งมากกว่าสองเท่าของเดิมอีก \$2 ล้าน จาก cost ไม่ใช่รับ mean 12.8% โดยลืม borrowing</p></details>
-  <p><strong>2.</strong> ถ้า covariance เป็น $\begin{bmatrix}0.04&amp;-0.015\\-0.015&amp;0.01\end{bmatrix}$ และ weights (0.2,0.8) variance contributions จะติดลบได้หรือไม่?</p>
-  <details><summary>เฉลย</summary><p>Sigma w=(−0.004,0.005), contributions=(−0.0008,0.004), รวมเป็น variance 0.0032 สัดส่วนจึงเป็น −25% และ 125% ตัวแรกลดความเสี่ยงผ่าน covariance ของพอร์ต ไม่ใช่มี negative probability</p></details>
-  <p><strong>3.</strong> Joint Gaussian ที่มี $R=(Z,Z)$ และ $Z\sim N(0,1)$ ถ้าเลือก spread (1, −1) ต้องใช้ Normal density ที่ variance เท่าไร?</p>
-  <details><summary>เฉลย</summary><p>Spread เป็นศูนย์แน่นอน มี variance 0 จึงไม่มี ordinary Normal density ที่หารด้วย SD ได้ ใช้ point mass ที่ศูนย์ นี่เป็น degenerate Gaussian ที่ theorem อนุญาต ไม่ใช่ error ว่า closure ใช้กับ singular covariance ไม่ได้</p></details>
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> เพิ่มน้ำหนักเสี่ยงของพอร์ต 50/30/20 เป็นสองเท่า โดยกู้เงินเท่ากับมูลค่าพอร์ตเดิมที่ต้นทุนแน่นอน 2% ต่อปี mean, SD และ VaR 99% บนพอร์ต \$100 ล้าน เป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ผลตอบแทนคือ $2R_p-0.02$ ยังเป็น Normal เพราะเป็น affine transformation mean $2(0.064)-0.02=0.108$ variance $4(0.009216)=0.036864$ SD 19.2% VaR 99% $=10^8(2.3263\times0.192-0.108)\approx$ \$33.87 ล้าน มากกว่าสองเท่าของเดิม (\$31.87 ล้าน) อีก \$2 ล้าน ซึ่งคือดอกเบี้ยที่ต้องจ่ายแน่นอน ค่าคงที่ไม่เปลี่ยน SD แต่เลื่อนทั้ง distribution</p></details>
+  <p><strong>2.</strong> สองสินทรัพย์มี covariance $\begin{bmatrix}0.04&amp;-0.015\\-0.015&amp;0.01\end{bmatrix}$ และน้ำหนัก $(0.2,\ 0.8)$ variance contribution ติดลบได้หรือไม่</p>
+  <details><summary>เฉลย</summary><p>$\Sigma w=(0.04(0.2)-0.015(0.8),\ -0.015(0.2)+0.01(0.8))=(-0.004,\ 0.005)$ contribution คือ $(0.2(-0.004),\ 0.8(0.005))=(-0.0008,\ 0.004)$ รวมเป็น variance 0.0032 สัดส่วนจึงเป็น −25% และ 125% สินทรัพย์แรกเคลื่อนสวนทางกับพอร์ต การถือเพิ่มเล็กน้อยจึงลดความเสี่ยง ไม่ได้แปลว่ามีโอกาสติดลบ</p></details>
+  <p><strong>3.</strong> สองสินทรัพย์มีผลตอบแทน $\mathcal N(1,\ 0.1)$ และ $\mathcal N(2,\ 0.5)$ (หน่วยเปอร์เซ็นต์ และเปอร์เซ็นต์ยกกำลังสอง) correlation −0.25 และเป็น joint Normal พอร์ต 70/30 มี distribution อะไร โอกาสที่ได้ต่ำกว่า 1% เป็นเท่าไร และน้ำหนักไหนให้ variance ต่ำสุด</p>
+  <details><summary>เฉลย</summary><p>covariance คือ $-0.25\sqrt{0.1\times0.5}\approx-0.0559$ mean $0.7(1)+0.3(2)=1.3$ variance $0.1(0.49)+0.5(0.09)+2(-0.0559)(0.21)=0.049+0.045-0.02348=0.07052$ SD ราว 0.2656 พอร์ตจึงเป็น $\mathcal N(1.3,\ 0.07052)$ และ $P(L\lt1)=\Phi(-0.3/0.2656)=\Phi(-1.130)\approx12.9\%$ ส่วนน้ำหนัก $x$ ในตัวแรกที่ทำให้ $0.1x^2+0.5(1-x)^2-0.1118x(1-x)$ ต่ำสุด หาจากอนุพันธ์เป็นศูนย์ ได้ $x=(0.5+0.0559)/(0.6+0.1118)\approx0.781$ SD 0.2566 และ mean 1.219 ซึ่งต่ำกว่าแต่ละตัวทั้งคู่ นี่คือผลของ correlation ติดลบ</p></details>
 </section>
+
 <section class="code">
-  <h4>คำนวณ moments และ Gaussian quantiles คนละขั้น</h4>
-  <p>JavaScript นี้ตรวจ dimensions, symmetry และ variance ของ directions ที่ขอ แต่ไม่แทนการตรวจ PSD ทุกทิศหรือทดสอบ Gaussianity ของข้อมูล ต้องรับ covariance model ที่ผ่านการตรวจแล้วตาม 7.6 สูตร risk shares ใช้เมื่อ variance บวก; กรณี point mass คืน shares เป็น null แทนหารด้วยศูนย์</p>
-  <pre><code class="language-javascript" data-example="8.8">function finiteVector(v, n) {
-  if (!Array.isArray(v) || v.length !== n || ![...v].every(Number.isFinite)) throw new TypeError('Need a matching finite vector');
-}
-function finite(x) {
-  if (!Number.isFinite(x)) throw new RangeError('Arithmetic overflow');
-  return x;
-}
-function dot(a, b) {
-  if (!Array.isArray(a) || a.length === 0) throw new TypeError('Need a nonempty vector');
-  finiteVector(a, a.length); finiteVector(b, a.length);
-  return finite(a.reduce((s, x, i) =&gt; s + x * b[i], 0));
-}
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript">// Portfolio moments (any distribution) and Gaussian VaR / ES (needs joint Normal).
+const dot = (a, b) =&gt; a.reduce((s, x, i) =&gt; s + x * b[i], 0);
 function project(mu, S, a, shift = 0) {
-  if (!Array.isArray(mu) || mu.length === 0 || !Number.isFinite(shift)) throw new TypeError('Invalid projection inputs');
-  const n = mu.length; finiteVector(mu, n); finiteVector(a, n);
-  if (!Array.isArray(S) || S.length !== n) throw new TypeError('Need a square covariance');
-  for (const row of [...S]) finiteVector(row, n);
-  for (let i = 0; i &lt; n; i++) for (let j = 0; j &lt; n; j++) {
-    if (S[i][j] !== S[j][i]) throw new RangeError('Covariance must be symmetric');
-  }
-  const u = S.map(row =&gt; dot(row, a)), mean = finite(dot(a, mu) + shift);
-  const variance = dot(a, u);
-  if (variance &lt; 0) throw new RangeError('Negative projected variance');
-  const sd = Math.sqrt(variance), contributions = a.map((x, i) =&gt; finite(x * u[i]));
-  return {mean, variance, sd, u, contributions,
-    shares: variance === 0 ? null : contributions.map(x =&gt; x / variance),
-    marginalSD: sd === 0 ? null : u.map(x =&gt; x / sd)};
+  const u = S.map(row =&gt; dot(row, a)), variance = dot(a, u);
+  return {mean: dot(a, mu) + shift, variance, sd: Math.sqrt(variance), u,
+    shares: a.map((x, i) =&gt; x * u[i] / variance)};
 }
-function normalLogMGF(t, mean, variance) {
-  if (![t, mean, variance].every(Number.isFinite) || variance &lt; 0) throw new RangeError('Invalid Gaussian MGF arguments');
-  return finite(t * mean + .5 * t * (t * variance)); // t*(t*v): t*t alone can underflow or overflow first
+const phi = z =&gt; Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+function Phi(x) { // Simpson's rule
+  const n = 20000, h = Math.abs(x) / n; let s = 0;
+  for (let i = 0; i &lt;= n; i++) s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * phi(i * h);
+  return 0.5 + Math.sign(x) * s * h / 3;
 }
-function gaussianRisk(p, V) {
-  if (!Number.isFinite(V) || V &lt; 0) throw new RangeError('Invalid NAV');
-  if (!p || ![p.mean, p.sd].every(Number.isFinite) || p.sd &lt; 0) throw new RangeError('Invalid portfolio moments');
-  const returnQuantile = finite(p.mean - 2.3263478740408408 * p.sd);
-  return {returnQuantile, lossVaR99: finite(-V * returnQuantile)};
+const z99 = 2.3263478740408408, z95 = 1.6448536269514722;
+const gaussVaR = (p, V, z) =&gt; V * (z * p.sd - p.mean);
+const gaussES = (p, V, z, tail) =&gt; V * (p.sd * phi(z) / tail - p.mean);
+
+const mu = [0.09, 0.03, 0.05], w = [0.5, 0.3, 0.2], V = 1e8;
+const S = [[0.0324, -0.00216, 0.00135], [-0.00216, 0.0036, 0.00225], [0.00135, 0.00225, 0.0225]];
+const p = project(mu, S, w);
+
+// Two-regime mixture with the same mean and the same variance as p
+const k = Math.sqrt(0.75 * 0.76 ** 2 + 0.25 * 1.5 ** 2), a1 = 0.76 / k, a2 = 1.5 / k;
+const mixCDF = z =&gt; 0.75 * Phi(z / a1) + 0.25 * Phi(z / a2);
+function mixQuantile(q) { let lo = -20, hi = 20;
+  for (let i = 0; i &lt; 200; i++) { const m = (lo + hi) / 2; if (mixCDF(m) &lt; q) lo = m; else hi = m; }
+  return (lo + hi) / 2; }
+function mixRisk(tail) {
+  const z = mixQuantile(tail);
+  const es = (0.75 * a1 * phi(z / a1) + 0.25 * a2 * phi(z / a2)) / tail; // mean of -Z below z
+  return {VaR: V * (-z * p.sd - p.mean), ES: V * (es * p.sd - p.mean)};
 }
-function Phi(x) {
-  if (!Number.isFinite(x) || Math.abs(x) &gt; 6) throw new RangeError('CDF demo requires finite scores within 6');
-  const n = 12000, h = Math.abs(x) / n;
-  const phi = z =&gt; Math.exp(-.5 * z * z) / Math.sqrt(2 * Math.PI);
-  let sum = 0, correction = 0;
-  for (let i = 0; i &lt;= n; i++) {
-    const term = (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * phi(i * h) - correction;
-    const next = sum + term; correction = (next - sum) - term; sum = next;
-  }
-  return .5 + Math.sign(x) * sum * h / 3;
-}
-const mu = [.09,.03,.05], vols = [.18,.06,.15], w = [.5,.3,.2];
-const S = [[.0324,-.00216,.00135],[-.00216,.0036,.00225],[.00135,.00225,.0225]];
-const C = [[1,-.2,.05],[-.2,1,.25],[.05,.25,1]], V = 1e8;
-const annual = project(mu,S,w), risk = gaussianRisk(annual,V);
-const diagonal = S.map((row,i) =&gt; row.map((x,j) =&gt; i === j ? x : 0));
-const stressS = vols.map(x =&gt; vols.map(y =&gt; x * y));
-const dailyMu = [.0004,.0003], dailyS = [[.0004,.00024],[.00024,.0009]];
-const daily = project(dailyMu,dailyS,[.6,.4]);
-const rpWeights = [.2114643969612439,.5869298153731021,.20160578766565407];
-const extraDaily = {mean: annual.mean / 252, sd: annual.sd / Math.sqrt(252)};
-console.log(JSON.stringify({annual, risk,
-  noCovariance: project(mu,diagonal,w), weightedSD: dot(w,vols),
-  standardized: project([0,0,0],C,w), stress: project(mu,stressS,w),
-  stressRisk: gaussianRisk(project(mu,stressS,w),V),
-  stockOnlyRisk: gaussianRisk(project(mu,S,[1,0,0]),V),
-  riskParity: project(mu,S,rpWeights),
-  stockToBondSD: project(mu,S,[.49,.31,.2]).sd,
-  budgetSlope: (annual.u[1] - annual.u[0]) / annual.sd,
-  daily, dailyNoCovariance: project(dailyMu,[[.0004,0],[0,.0009]],[.6,.4]),
-  spread: project(dailyMu,dailyS,[1,-1]),
-  curveMinimum: project(dailyMu,dailyS,[33/41,8/41]),
-  projectionLength: Math.hypot(.6,.4),
-  projectionIdentity: {direct: dot([.6,.4],[.01,-.02]),
-    centered: daily.mean + Math.hypot(.6,.4) * dot([.6,.4].map(x =&gt; x / Math.hypot(.6,.4)), [.01-dailyMu[0],-.02-dailyMu[1]])},
-  extraDaily: {...extraDaily, ...gaussianRisk(extraDaily,V)},
-  double: project(mu,S,w.map(x =&gt; 2*x),-.02),
-  doubleRisk: gaussianRisk(project(mu,S,w.map(x =&gt; 2*x),-.02),V),
-  negativeContributions: project([0,0],[[.04,-.015],[-.015,.01]],[.2,.8]),
-  pointMass: project([0,0],[[1,1],[1,1]],[1,-1]),
-  mixture: {variance:.5, massAtZero:.5, actualTail:.5*Phi(-2), normalTail:Phi(-2/Math.sqrt(.5)),
-    actualMGF:.5+.5*Math.exp(.5), assumedNormalMGF:Math.exp(normalLogMGF(1,0,.5))},
-  logMGF: [-1,0,1,2].map(t =&gt; [t, normalLogMGF(t,annual.mean,annual.variance),
-    dot(w.map(x =&gt; t*x),mu) + .5*dot(w.map(x =&gt; t*x),S.map(row =&gt; dot(row,w.map(x =&gt; t*x))))])}));</code></pre>
+const daily = project([0.04, 0.03], [[4, 2.4], [2.4, 9]], [0.6, 0.4]); // percent units
+
+console.log({
+  portfolio: p,
+  normal99: {VaR: gaussVaR(p, V, z99), ES: gaussES(p, V, z99, 0.01)},
+  normal95: {VaR: gaussVaR(p, V, z95), ES: gaussES(p, V, z95, 0.05)},
+  mixture99: mixRisk(0.01), mixture95: mixRisk(0.05),
+  stockOnlyVaR: gaussVaR(project(mu, S, [1, 0, 0]), V, z99),
+  leveredVaR: gaussVaR(project(mu, S, w.map(x =&gt; 2 * x), -0.02), V, z99),
+  daily, bandMinus4toMinus2: Phi((-2 - daily.mean) / daily.sd) - Phi((-4 - daily.mean) / daily.sd),
+  spread: project([0.04, 0.03], [[4, 2.4], [2.4, 9]], [1, -1]),
+  dailyFromAnnual: {mean: p.mean / 252, sd: p.sd / Math.sqrt(252), q01: p.mean / 252 - z99 * p.sd / Math.sqrt(252)},
+  negativeShares: project([0, 0], [[0.04, -0.015], [-0.015, 0.01]], [0.2, 0.8]).shares,
+  xPlusWX: {trueTail: 0.5 * Phi(-2), normalTail: Phi(-2 / Math.sqrt(0.5))}
+});</code></pre>
+  </details>
 </section>
+
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>Finite moments ให้ $\mathbb E[a^{\mathsf T}R]=a^{\mathsf T}\mu$ และ variance $a^{\mathsf T}\Sigma a$ โดยไม่ต้อง independent หรือ Normal</li>
-    <li>Joint Gaussianity เพิ่มคำตอบว่า affine combinations ยัง Gaussian รวม degenerate cases; Normal marginals อย่างเดียวไม่พอ</li>
-    <li>Portfolio SD ไม่ใช่ weighted average ของ SDs และ risk contribution ไม่ใช่ loss probability</li>
-    <li>Loss quantile ต้องประกาศ distribution, horizon, หน่วย และฐานเงิน; model VaR ไม่ใช่ maximum loss หรือ guarantee</li>
-    <li>Weights เริ่มต้นของ buy-and-hold ใช้ได้แม้ระหว่างทาง drift แต่ rebalancing, nonlinear payoffs และเปลี่ยน horizon ต้องเพิ่มสมมติฐาน</li>
+    <li>mean $a^{\mathsf T}\mu$ และ variance $a^{\mathsf T}\Sigma a$ ของผลรวมถูกกับทุก distribution ที่มี variance จำกัด ไม่ต้องอิสระหรือ Normal</li>
+    <li>ถ้า $R$ เป็น MVN ทุก affine combination เป็น Normal พิสูจน์ด้วย MGF ในบรรทัดเดียว และนิยาม MVN กลับทางได้ว่าทุก linear combination เป็น Normal</li>
+    <li>ใน Normal ทั้ง VaR $=V(z_p\sigma-\mu)$ และ ES $=V(\sigma\varphi(z_p)/(1-p)-\mu)$ ถูกกำหนดด้วย mean กับ SD เท่านั้น</li>
+    <li>risk contribution $w_i(\Sigma w)_i$ แบ่ง variance ตามการเคลื่อนไปกับทั้งพอร์ต เงิน 50% อาจเป็นความเสี่ยง 86%</li>
+    <li>mean และ covariance เท่ากันไม่ได้แปลว่าหางเท่ากัน marginal เป็น Normal ก็ไม่พอ Gaussian closure เป็นสมมติฐานที่ต้องประกาศ</li>
   </ul>
-  <p>8.9 จะใช้ทิศทางกลับกัน: สร้าง joint Gaussian draws จาก independent standard Normals โดยให้ covariance ของผลลัพธ์ตรงกับโมเดลที่ตั้งไว้ แล้วตรวจว่าการจำลองไม่ได้เผลอเปลี่ยน ordering หรือหน่วย</p>
+  <p>หน้าถัดไปเดินทางกลับ: แทนที่จะรวม MVN เป็นตัวเลขตัวเดียว เราจะสร้าง MVN ทั้งก้อนจากเลขสุ่มที่อิสระต่อกัน เพื่อจำลอง scenario ของพอร์ตที่สูตรปิดในหน้านี้ใช้ไม่ได้ ไปต่อที่ <a href="8.9.html">การจำลอง MVN ด้วย Cholesky</a></p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
