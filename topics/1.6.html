@@ -18,379 +18,356 @@
 <article class="topic" data-number="1.6" data-depends-on="1.3 1.4 1.5">
 <header class="topic-header">
   <h1><span class="tnum">1.6</span> The Poisson Distribution</h1>
-  <p class="subtitle">จากอัตราการเกิดเหตุการณ์ สู่โอกาสของจำนวนครั้งและจำนวนเงินที่เสีย</p>
+  <p class="subtitle">Poisson นับจำนวนเหตุการณ์ที่เกิดในช่วงหนึ่ง เมื่อเหตุการณ์มีโอกาสเกิดได้หลายจุดแต่แต่ละจุดโอกาสน้อย และต้องรู้แค่จำนวนเฉลี่ย $\lambda$ ตัวเดียว</p>
 </header>
 
 <div class="hook">
-  <p>ระบบรับคำสั่งซื้อขายได้ 25 รายการต่อวินาที ส่วนคำสั่งเข้าเฉลี่ย 20 รายการต่อวินาที แค่นี้พอจะบอกได้ไหมว่าระบบรับไหว?</p>
-  <p>ยังไม่ได้ ค่าเฉลี่ยไม่บอกว่าคำสั่งเข้ากระจายสม่ำเสมอหรือมาเป็นชุด หากจำนวนคำสั่งในหนึ่งวินาทีเป็น Poisson ที่มีค่าเฉลี่ย 20 โอกาสที่จะเข้าเกิน 25 รายการอยู่ที่ประมาณ 11.22% แต่ถ้ารูปแบบการมาถึงต่างออกไป โอกาสนี้ก็เปลี่ยนได้</p>
-  <p>หัวข้อนี้จะสร้าง Poisson จาก Binomial ก่อน แล้วนำไปคำนวณการผิดนัดของพอร์ตหุ้นกู้ เราจะแยกให้ชัดระหว่าง “ขาดทุนเฉลี่ยเท่าไร” กับ “มีโอกาสขาดทุนเกินระดับที่กำหนดเท่าไร”</p>
+  <p>พอร์ตถือหุ้นกู้ของบริษัทต่างกัน 200 ราย รายละ \$5 ล้าน แต่ละรายมีโอกาสผิดนัดชำระในหนึ่งปี 1.5% และถ้าผิดนัดจะได้เงินคืน 40% (ตัวเลขสมมติเพื่อฝึกคิด) ฝ่ายความเสี่ยงคำนวณว่าคาดว่าจะเสียหายปีละ \$9 ล้าน แล้วเสนอให้ตั้งงบรองรับความเสียหายไว้ \$9 ล้านพอดี หัวหน้าถามว่า งบนี้จะไม่พอบ่อยแค่ไหน</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>บ่อยกว่าหนึ่งในสามปี จำนวนรายผิดนัดเฉลี่ย $200\times1.5\%=3$ ราย และแต่ละรายเสีย \$5 ล้าน × 60% = \$3 ล้าน ค่าเฉลี่ยจึงเป็น \$9 ล้านจริง แต่งบ \$9 ล้านไม่พอทุกปีที่ผิดนัดตั้งแต่ 4 รายขึ้นไป ตามสูตร Poisson ที่หน้านี้จะสร้าง โอกาสนั้นคือ $1-e^{-3}(1+3+4.5+4.5)=1-13e^{-3}\approx35.3\%$ ส่วนปีที่เสียตั้งแต่ \$15 ล้าน (5 รายขึ้นไป) มีโอกาสราว 18.5% ค่าเฉลี่ยจึงไม่ใช่ระดับที่ควรใช้เป็นงบรองรับ</p></details>
 </div>
 
 <section class="prose">
-  <h4>ต่างจาก Binomial ตรงไหน</h4>
-  <p>Binomial เริ่มจากจำนวนครั้งทดลองที่กำหนดไว้ เช่นผู้กู้ 200 ราย แต่ละรายผิดนัดหรือไม่ผิดนัด ส่วน Poisson ใช้แบบจำลองของจำนวนเหตุการณ์ในช่วงที่กำหนด เช่นจำนวนคำสั่งในหนึ่งวินาที ซึ่งไม่มีจำนวนครั้งทดลองปรากฏอยู่ในสูตร</p>
-  <p>เขียน $X\sim\mathrm{Poisson}(\lambda)$ โดย $X$ เป็นจำนวนเหตุการณ์ และ $\lambda$ เป็นจำนวนเฉลี่ยในช่วงที่กำลังศึกษา ไม่ใช่ความน่าจะเป็น ดังนั้น $\lambda$ อาจมากกว่าหนึ่งได้ แต่ $X$ ต้องเป็นจำนวนเต็มไม่ติดลบ</p>
-  <p>การรู้ค่าเฉลี่ยเพียงอย่างเดียวไม่ได้พิสูจน์ว่า $X$ เป็น Poisson แบบจำลองการมาถึงที่เราจะใช้ยังต้องมีอัตราคงที่ จำนวนเหตุการณ์ในช่วงที่ไม่ทับกันเป็นอิสระ และโอกาสเกิดหลายเหตุการณ์ในช่วงสั้นมากต้องเล็กเมื่อเทียบกับความยาวช่วงนั้น</p>
-</section>
-
-<section class="table">
-  <h4>แยกอัตราต่อเวลาออกจากจำนวนเฉลี่ยในช่วง</h4>
-  <table>
-    <thead><tr><th>อัตราที่กำหนด</th><th>ช่วงที่ถาม</th><th>ค่า $\lambda$ ที่ต้องใส่ในสูตร</th></tr></thead>
-    <tbody>
-      <tr><td>กริ่งเฉลี่ย 2 ครั้งต่อชั่วโมง</td><td>1 ชั่วโมง</td><td>$2\times1=2$</td></tr>
-      <tr><td>กริ่งเฉลี่ย 2 ครั้งต่อชั่วโมง</td><td>ครึ่งชั่วโมง</td><td>$2\times0.5=1$</td></tr>
-      <tr><td>คำสั่งเฉลี่ย 20 รายการต่อวินาที</td><td>0.1 วินาที</td><td>$20\times0.1=2$</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">เมื่ออัตราคงที่ ใช้ $\lambda=\text{อัตรา}\times\text{ความยาวช่วง}$ โดยหน่วยเวลาต้องตรงกัน หากอัตราเปลี่ยนตามเวลา ต้องคำนวณจำนวนเฉลี่ยของช่วงนั้นให้เหมาะสมก่อน ไม่ใช้ค่าเฉลี่ยทั้งวันแทนทุกวินาทีโดยอัตโนมัติ</p>
-</section>
-
-<section class="prose">
-  <h4>สร้างสูตรจากคำถามเล็ก: ทำไมบางชั่วโมงกริ่งจึงไม่ดังเลย</h4>
-  <p>สมมติว่ากริ่งมีอัตรา 2 ครั้งต่อชั่วโมงตามเงื่อนไขข้างต้น แบ่งหนึ่งชั่วโมงเป็น $n$ ช่วงย่อย แล้วใช้แบบจำลองชั่วคราวที่แต่ละช่วงมีเหตุการณ์ได้ไม่เกินหนึ่งครั้ง ด้วยโอกาส $2/n$ อย่างเป็นอิสระ จำนวนครั้งรวมจึงเป็น Binomial ที่มีค่าเฉลี่ย 2</p>
-  <p>เมื่อแบ่งละเอียดขึ้น ข้อจำกัดไม่เกินหนึ่งครั้งต่อช่วงรบกวนแบบจำลองน้อยลง เราจะดูผลเมื่อ $n$ โตโดยคงจำนวนเฉลี่ยไว้ ไม่ใช่เพิ่มทั้งจำนวนช่วงและจำนวนเหตุการณ์เฉลี่ยไปพร้อมกัน</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — โอกาสไม่มีเหตุการณ์ในทุกช่วงย่อย</h4>
-  <div class="math">\[
-\begin{aligned}
-P(X_n=0)&=\left(1-\frac{2}{n}\right)^n\\
-n=60&:\quad P(X_n=0)\approx0.130799\\
-n=3600&:\quad P(X_n=0)\approx0.135260\\
-n\to\infty&:\quad P(X_n=0)\to e^{-2}\\
-&\hspace{38pt}\approx0.135335
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ผลลัพธ์เข้าใกล้ 13.53% ภายใต้แบบจำลองนี้ จึงมีชั่วโมงที่เงียบได้แม้ค่าเฉลี่ยเป็นสองครั้ง การเงียบหนึ่งชั่วโมงไม่พิสูจน์ว่ากริ่งเสีย แต่ก็ไม่ใช่หลักฐานยืนยันว่ากริ่งยังทำงาน ต้องแยกคำถามทางสถิติออกจากการตรวจอุปกรณ์</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — อธิบายเลข $e$ ที่ปรากฏในคำตอบ</h4>
-  <p>Exponential มีสมบัติ $e^a=\lim_{n\to\infty}(1+a/n)^n$ ซึ่งใช้เป็นนิยามได้ เมื่อแทน $a=-\lambda$ จะได้ขีดจำกัดในขั้นแรก อีกทางหนึ่งใช้ natural logarithm และสมบัติความชันของ $\ln$ ใกล้ 1 ดังนี้</p>
-  <div class="math">\[
-\begin{aligned}
-\lim_{u\to0}\frac{\ln(1-u)}{u}&=-1\\
-n\ln\left(1-\frac{\lambda}{n}\right)
-&=\lambda\frac{\ln(1-\lambda/n)}{\lambda/n}\\
-&\longrightarrow-\lambda\\
-\left(1-\frac{\lambda}{n}\right)^n&\longrightarrow e^{-\lambda}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>บรรทัดแรกใช้ความชันของ logarithm ที่จุด 1 และเครื่องหมายลบจาก $1-u$ ถ้ายังไม่เรียนอนุพันธ์ ให้ใช้ค่านิยามขีดจำกัดและตารางในขั้นแรกก่อน ส่วนนี้อธิบายที่มาของสูตร ไม่จำเป็นต้องคำนวณขีดจำกัดใหม่ทุกครั้งที่ใช้ Poisson</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — จากศูนย์ครั้ง ไปสู่โอกาสเกิดพอดี $r$ ครั้ง</h4>
-  <p>เริ่มจาก $X_n\sim\mathrm{Binomial}(n,\lambda/n)$ แล้วตรึง $r$ ไว้ขณะเพิ่ม $n$ แยกตัวประกอบเพื่อดูขีดจำกัดทีละส่วน</p>
-  <div class="math">\[
-\begin{aligned}
-P(X_n=r)&=\binom nr\left(\frac{\lambda}{n}\right)^r
-\left(1-\frac{\lambda}{n}\right)^{n-r}\\
-&=\frac{\lambda^r}{r!}\,A_nB_nC_n\\
-A_n&=\prod_{j=0}^{r-1}\left(1-\frac jn\right)\longrightarrow1\\
-B_n&=\left(1-\frac{\lambda}{n}\right)^n\longrightarrow e^{-\lambda}\\
-C_n&=\left(1-\frac{\lambda}{n}\right)^{-r}\longrightarrow1\\
-P(X=r)&=\boxed{\frac{\lambda^r e^{-\lambda}}{r!}},\quad r=0,1,2,\ldots
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>$A_n$ มาจากการกาง $\binom nr$ แล้วหารด้วย $n^r$ ส่วน $B_n$ คือโอกาสศูนย์ครั้งที่หาแล้ว และ $C_n$ ชดเชยกำลัง $n-r$ ให้ตรงกับสูตรเดิม เมื่อ $r$ คงที่ แต่ละตัวประกอบใน $A_n$ และ $C_n$ เข้าใกล้หนึ่ง</p>
-    <p>สูตรนี้คือ Poisson PMF สำหรับ $\lambda\gt0$ ถ้า $\lambda=0$ แบบจำลองเป็นกรณีแน่นอนว่า $X=0$ ด้วยโอกาสหนึ่ง ไม่มีเหตุการณ์เกิดขึ้น จึงไม่ต้องจัดการนิพจน์ $0^0$ เอง</p>
-  </div>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>จำนวนรายผิดนัดจาก 200 รายเป็น binomial ได้ตาม<a href="1.5.html">หน้า binomial distribution</a> แต่สถานการณ์แบบนี้มีลักษณะพิเศษ: จุดที่เหตุการณ์อาจเกิดมีมาก (200 ราย) แต่ละจุดมีโอกาสน้อย (1.5%) และสิ่งที่เรารู้แน่ ๆ จริง ๆ คือจำนวนเฉลี่ยต่อช่วง (3 รายต่อปี) สถานการณ์แบบเดียวกันมีทั่วไปในตลาด: จำนวนคำสั่งซื้อขายที่เข้ามาในหนึ่งวินาที จำนวนครั้งที่ระบบล่มในหนึ่งเดือน จำนวนวันที่ราคากระโดดแรงในหนึ่งปี</p>
+  <p>เมื่อแบ่งช่วงให้ละเอียดขึ้นเรื่อย ๆ โดยรักษาจำนวนเฉลี่ยไว้ binomial จะเข้าใกล้ distribution ที่ใช้แค่ตัวเลขเดียว คือจำนวนเฉลี่ย $\lambda$ เรียกว่า Poisson distribution สูตรคือ $P(X=r)=\lambda^r e^{-\lambda}/r!$ และมีสมบัติเด่นว่าค่าเฉลี่ยกับ variance เท่ากับ $\lambda$ ทั้งคู่</p>
+  <p>หน้านี้จะแปลงอัตราเป็น $\lambda$ สร้างสูตรจาก binomial ตรวจว่ารวมได้หนึ่ง พิสูจน์ค่าเฉลี่ยและ variance แล้วใช้กับพอร์ตหุ้นกู้: ความเสียหายเฉลี่ย โอกาสเกินงบ ระดับความเสียหาย 99% และสิ่งที่เกิดเมื่อการผิดนัดไม่ได้อิสระกันจริง</p>
 </section>
 
 <figure class="plot">
-  <h4>Figure 1.6a — เพิ่ม $n$ แต่คง $np=3$ ไว้</h4>
-  <img src="../figures/1.6-1.svg" alt="Binomial หลายขนาดจำนวนครั้ง เปรียบเทียบกับ Poisson โดยคงค่าเฉลี่ยเท่ากับ 3" loading="lazy">
-  <figcaption><p>ทุกแบบในภาพมีค่าเฉลี่ยเท่ากัน แต่ PMF ยังต่างกันเมื่อ $n$ มีขนาดเล็ก Poisson เป็นขีดจำกัด ไม่ใช่ชื่อใหม่ของ Binomial ทุกตัวที่มีค่าเฉลี่ย 3</p></figcaption>
+  <h4>รูป — หลายจุดเสี่ยง โอกาสน้อยต่อจุด นับรวมได้ Poisson</h4>
+  <svg viewBox="0 0 480 350" role="img" aria-label="ตาราง 200 ช่องแทนหุ้นกู้ 200 ราย มีสามช่องสีแดงที่ผิดนัดในปีสมมติ ด้านล่างเป็นแท่ง Poisson ที่มีค่าเฉลี่ยสาม แท่งสองและสามสูงเท่ากันราว 0.22" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <text x="40" y="28" fill="#5b6472">หุ้นกู้ 200 ราย: ปีนี้ผิดนัด 3 ราย (สมมติ)</text>
+      <g fill="#d7dce3">
+        <rect x="40" y="40" width="9" height="9"/><rect x="51" y="40" width="9" height="9"/><rect x="62" y="40" width="9" height="9"/><rect x="73" y="40" width="9" height="9"/><rect x="84" y="40" width="9" height="9"/><rect x="95" y="40" width="9" height="9"/><rect x="106" y="40" width="9" height="9"/><rect x="117" y="40" width="9" height="9"/><rect x="128" y="40" width="9" height="9"/><rect x="139" y="40" width="9" height="9"/><rect x="150" y="40" width="9" height="9"/><rect x="161" y="40" width="9" height="9"/><rect x="172" y="40" width="9" height="9"/><rect x="183" y="40" width="9" height="9"/><rect x="194" y="40" width="9" height="9"/><rect x="205" y="40" width="9" height="9"/><rect x="216" y="40" width="9" height="9"/><rect x="227" y="40" width="9" height="9"/><rect x="238" y="40" width="9" height="9"/><rect x="249" y="40" width="9" height="9"/>
+        <rect x="40" y="51" width="9" height="9"/><rect x="51" y="51" width="9" height="9"/><rect x="62" y="51" width="9" height="9"/><rect x="73" y="51" width="9" height="9"/><rect x="95" y="51" width="9" height="9"/><rect x="106" y="51" width="9" height="9"/><rect x="117" y="51" width="9" height="9"/><rect x="128" y="51" width="9" height="9"/><rect x="139" y="51" width="9" height="9"/><rect x="150" y="51" width="9" height="9"/><rect x="161" y="51" width="9" height="9"/><rect x="172" y="51" width="9" height="9"/><rect x="183" y="51" width="9" height="9"/><rect x="194" y="51" width="9" height="9"/><rect x="205" y="51" width="9" height="9"/><rect x="216" y="51" width="9" height="9"/><rect x="227" y="51" width="9" height="9"/><rect x="238" y="51" width="9" height="9"/><rect x="249" y="51" width="9" height="9"/>
+        <rect x="40" y="62" width="9" height="9"/><rect x="51" y="62" width="9" height="9"/><rect x="62" y="62" width="9" height="9"/><rect x="73" y="62" width="9" height="9"/><rect x="84" y="62" width="9" height="9"/><rect x="95" y="62" width="9" height="9"/><rect x="106" y="62" width="9" height="9"/><rect x="117" y="62" width="9" height="9"/><rect x="128" y="62" width="9" height="9"/><rect x="139" y="62" width="9" height="9"/><rect x="150" y="62" width="9" height="9"/><rect x="161" y="62" width="9" height="9"/><rect x="172" y="62" width="9" height="9"/><rect x="183" y="62" width="9" height="9"/><rect x="194" y="62" width="9" height="9"/><rect x="205" y="62" width="9" height="9"/><rect x="216" y="62" width="9" height="9"/><rect x="227" y="62" width="9" height="9"/><rect x="238" y="62" width="9" height="9"/><rect x="249" y="62" width="9" height="9"/>
+        <rect x="40" y="73" width="9" height="9"/><rect x="51" y="73" width="9" height="9"/><rect x="62" y="73" width="9" height="9"/><rect x="73" y="73" width="9" height="9"/><rect x="84" y="73" width="9" height="9"/><rect x="95" y="73" width="9" height="9"/><rect x="106" y="73" width="9" height="9"/><rect x="117" y="73" width="9" height="9"/><rect x="128" y="73" width="9" height="9"/><rect x="139" y="73" width="9" height="9"/><rect x="150" y="73" width="9" height="9"/><rect x="161" y="73" width="9" height="9"/><rect x="172" y="73" width="9" height="9"/><rect x="183" y="73" width="9" height="9"/><rect x="194" y="73" width="9" height="9"/><rect x="205" y="73" width="9" height="9"/><rect x="216" y="73" width="9" height="9"/><rect x="238" y="73" width="9" height="9"/><rect x="249" y="73" width="9" height="9"/>
+        <rect x="40" y="84" width="9" height="9"/><rect x="51" y="84" width="9" height="9"/><rect x="62" y="84" width="9" height="9"/><rect x="73" y="84" width="9" height="9"/><rect x="84" y="84" width="9" height="9"/><rect x="95" y="84" width="9" height="9"/><rect x="106" y="84" width="9" height="9"/><rect x="117" y="84" width="9" height="9"/><rect x="128" y="84" width="9" height="9"/><rect x="139" y="84" width="9" height="9"/><rect x="150" y="84" width="9" height="9"/><rect x="161" y="84" width="9" height="9"/><rect x="172" y="84" width="9" height="9"/><rect x="183" y="84" width="9" height="9"/><rect x="194" y="84" width="9" height="9"/><rect x="205" y="84" width="9" height="9"/><rect x="216" y="84" width="9" height="9"/><rect x="227" y="84" width="9" height="9"/><rect x="238" y="84" width="9" height="9"/><rect x="249" y="84" width="9" height="9"/>
+        <rect x="40" y="95" width="9" height="9"/><rect x="51" y="95" width="9" height="9"/><rect x="62" y="95" width="9" height="9"/><rect x="73" y="95" width="9" height="9"/><rect x="84" y="95" width="9" height="9"/><rect x="95" y="95" width="9" height="9"/><rect x="106" y="95" width="9" height="9"/><rect x="117" y="95" width="9" height="9"/><rect x="128" y="95" width="9" height="9"/><rect x="139" y="95" width="9" height="9"/><rect x="150" y="95" width="9" height="9"/><rect x="161" y="95" width="9" height="9"/><rect x="172" y="95" width="9" height="9"/><rect x="183" y="95" width="9" height="9"/><rect x="194" y="95" width="9" height="9"/><rect x="205" y="95" width="9" height="9"/><rect x="216" y="95" width="9" height="9"/><rect x="227" y="95" width="9" height="9"/><rect x="238" y="95" width="9" height="9"/><rect x="249" y="95" width="9" height="9"/>
+        <rect x="40" y="106" width="9" height="9"/><rect x="51" y="106" width="9" height="9"/><rect x="62" y="106" width="9" height="9"/><rect x="73" y="106" width="9" height="9"/><rect x="84" y="106" width="9" height="9"/><rect x="95" y="106" width="9" height="9"/><rect x="106" y="106" width="9" height="9"/><rect x="117" y="106" width="9" height="9"/><rect x="128" y="106" width="9" height="9"/><rect x="139" y="106" width="9" height="9"/><rect x="150" y="106" width="9" height="9"/><rect x="161" y="106" width="9" height="9"/><rect x="172" y="106" width="9" height="9"/><rect x="194" y="106" width="9" height="9"/><rect x="205" y="106" width="9" height="9"/><rect x="216" y="106" width="9" height="9"/><rect x="227" y="106" width="9" height="9"/><rect x="238" y="106" width="9" height="9"/><rect x="249" y="106" width="9" height="9"/>
+        <rect x="40" y="117" width="9" height="9"/><rect x="51" y="117" width="9" height="9"/><rect x="62" y="117" width="9" height="9"/><rect x="73" y="117" width="9" height="9"/><rect x="84" y="117" width="9" height="9"/><rect x="95" y="117" width="9" height="9"/><rect x="106" y="117" width="9" height="9"/><rect x="117" y="117" width="9" height="9"/><rect x="128" y="117" width="9" height="9"/><rect x="139" y="117" width="9" height="9"/><rect x="150" y="117" width="9" height="9"/><rect x="161" y="117" width="9" height="9"/><rect x="172" y="117" width="9" height="9"/><rect x="183" y="117" width="9" height="9"/><rect x="194" y="117" width="9" height="9"/><rect x="205" y="117" width="9" height="9"/><rect x="216" y="117" width="9" height="9"/><rect x="227" y="117" width="9" height="9"/><rect x="238" y="117" width="9" height="9"/><rect x="249" y="117" width="9" height="9"/>
+        <rect x="40" y="128" width="9" height="9"/><rect x="51" y="128" width="9" height="9"/><rect x="62" y="128" width="9" height="9"/><rect x="73" y="128" width="9" height="9"/><rect x="84" y="128" width="9" height="9"/><rect x="95" y="128" width="9" height="9"/><rect x="106" y="128" width="9" height="9"/><rect x="117" y="128" width="9" height="9"/><rect x="128" y="128" width="9" height="9"/><rect x="139" y="128" width="9" height="9"/><rect x="150" y="128" width="9" height="9"/><rect x="161" y="128" width="9" height="9"/><rect x="172" y="128" width="9" height="9"/><rect x="183" y="128" width="9" height="9"/><rect x="194" y="128" width="9" height="9"/><rect x="205" y="128" width="9" height="9"/><rect x="216" y="128" width="9" height="9"/><rect x="227" y="128" width="9" height="9"/><rect x="238" y="128" width="9" height="9"/><rect x="249" y="128" width="9" height="9"/>
+        <rect x="40" y="139" width="9" height="9"/><rect x="51" y="139" width="9" height="9"/><rect x="62" y="139" width="9" height="9"/><rect x="73" y="139" width="9" height="9"/><rect x="84" y="139" width="9" height="9"/><rect x="95" y="139" width="9" height="9"/><rect x="106" y="139" width="9" height="9"/><rect x="117" y="139" width="9" height="9"/><rect x="128" y="139" width="9" height="9"/><rect x="139" y="139" width="9" height="9"/><rect x="150" y="139" width="9" height="9"/><rect x="161" y="139" width="9" height="9"/><rect x="172" y="139" width="9" height="9"/><rect x="183" y="139" width="9" height="9"/><rect x="194" y="139" width="9" height="9"/><rect x="205" y="139" width="9" height="9"/><rect x="216" y="139" width="9" height="9"/><rect x="227" y="139" width="9" height="9"/><rect x="238" y="139" width="9" height="9"/><rect x="249" y="139" width="9" height="9"/>
+      </g>
+      <g fill="#d82632"><rect x="84" y="51" width="9" height="9"/><rect x="227" y="73" width="9" height="9"/><rect x="183" y="106" width="9" height="9"/></g>
+      <text x="280" y="72" fill="#5b6472">รายละ 1.5% ต่อปี</text>
+      <text x="280" y="96" fill="#5b6472">เฉลี่ย 200 × 1.5% = 3 ราย</text>
+      <text x="40" y="168" fill="#5b6472">โอกาสของจำนวนรายผิดนัดในหนึ่งปี</text>
+      <line x1="40" y1="310" x2="460" y2="310" stroke="#181818" stroke-width="1.5"/>
+      <g fill="#2455d6"><rect x="47" y="280.1" width="26" height="29.9"/><rect x="85" y="220.4" width="26" height="89.6"/><rect x="123" y="175.6" width="26" height="134.4"/><rect x="199" y="209.2" width="26" height="100.8"/><rect x="237" y="249.5" width="26" height="60.5"/><rect x="275" y="279.8" width="26" height="30.2"/><rect x="313" y="297" width="26" height="13"/><rect x="351" y="305.1" width="26" height="4.9"/><rect x="389" y="308.4" width="26" height="1.6"/><rect x="427" y="309.4" width="26" height="0.6"/></g>
+      <rect x="161" y="175.6" width="26" height="134.4" fill="#d82632"/>
+      <g font-size="13" text-anchor="middle" fill="#2455d6"><text x="60" y="274">.050</text><text x="98" y="214">.149</text><text x="136" y="170">.224</text><text x="212" y="203">.168</text><text x="250" y="243">.101</text><text x="288" y="274">.050</text><text x="326" y="291">.022</text></g>
+      <text x="174" y="170" font-size="13" text-anchor="middle" fill="#d82632">.224</text>
+      <g fill="#5b6472" text-anchor="middle"><text x="60" y="328">0</text><text x="98" y="328">1</text><text x="136" y="328">2</text><text x="174" y="328">3</text><text x="212" y="328">4</text><text x="250" y="328">5</text><text x="288" y="328">6</text><text x="326" y="328">7</text><text x="364" y="328">8</text><text x="402" y="328">9</text><text x="440" y="328">10</text></g>
+      <text x="250" y="347" text-anchor="middle">จำนวนรายผิดนัดในหนึ่งปี</text>
+    </g>
+  </svg>
+  <figcaption>ด้านบน: หุ้นกู้ 200 ราย แต่ละช่องมีโอกาสผิดนัด 1.5% ต่อปี ปีสมมตินี้มีสามช่องสีแดง ด้านล่าง: โอกาสของจำนวนรายผิดนัดตาม Poisson ที่มีค่าเฉลี่ย 3 ปีนี้ตกที่แท่งสีแดง (3 ราย) แต่แท่งอื่นมีโอกาสรวมกันมากกว่า 75% แท่ง 2 กับ 3 สูงเท่ากันพอดี และหางขวายาวไปถึง 7–10 ราย แม้แต่ละแท่งจะเตี้ย สิ่งที่ต้องรู้เพื่อวาดแท่งทั้งหมดคือตัวเลขเฉลี่ย 3 ตัวเดียว ไม่ต้องรู้ 200 กับ 1.5% แยกกัน</figcaption>
 </figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — ตรวจว่า PMF รวมได้หนึ่ง และคำนวณแท่งถัดไป</h4>
-  <p>อนุกรมของ exponential คือ $e^a=\sum_{r=0}^{\infty}a^r/r!$ จึงใช้ตรวจผลรวมของ PMF ได้ ส่วนการคำนวณหลายแท่งติดกันไม่ต้องเริ่มยกกำลังและหา factorial ใหม่ทุกแท่ง</p>
-  <div class="math">\[
-\begin{aligned}
-\sum_{r=0}^{\infty}P(X=r)
-&=e^{-\lambda}\sum_{r=0}^{\infty}\frac{\lambda^r}{r!}\\
-&=e^{-\lambda}e^\lambda=1\\[3pt]
-\frac{P(X=r)}{P(X=r-1)}&=\frac{\lambda}{r},\quad r\ge1\\
-P(X=0)&=e^{-\lambda}\\
-P(X=r)&=P(X=r-1)\frac{\lambda}{r}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เมื่อ $\lambda=3$ เริ่มจาก $e^{-3}\approx0.049787$ แล้วคูณด้วย 3, 3/2, 3/3, 3/4 ตามลำดับ จึงได้แท่งที่ 1, 2, 3, 4 วิธีนี้ช่วยทั้งคำนวณและตรวจคำตอบด้วยเครื่องคิดเลข</p></div>
-</section>
-
-<section class="example">
-  <h4>ลองใช้สูตรกับกริ่งก่อนเข้าสู่พอร์ตหุ้นกู้</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: จำนวนครั้งในหนึ่งชั่วโมงเป็น Poisson ที่ $\lambda=2$ ต้องการโอกาสดังพอดีสองครั้ง และอย่างน้อยสี่ครั้ง</p>
-  <p>พอดีสองครั้ง: $P(X=2)=2^2e^{-2}/2!=2e^{-2}\approx27.07\%$</p>
-  <p>อย่างน้อยสี่ครั้ง: รวมแท่งศูนย์ถึงสามก่อน ได้ $e^{-2}(1+2+2+4/3)\approx0.857123$ แล้วลบจากหนึ่ง จึงได้ประมาณ 14.29%</p>
-  <p>ตรวจเองใน 10 วินาที: ค่าเฉลี่ยสองครั้งไม่ได้แปลว่าส่วนใหญ่ต้องดังพอดีสองครั้ง และ 14.29% ไม่เท่ากับโอกาสเงียบ 13.53% แม้ทั้งสองค่าจะใกล้กัน</p>
-</section>
-
-<section class="prose">
-  <h4>โจทย์หลัก: พอร์ตผิดนัดน้อยราย แต่แต่ละรายเสียเงินมาก</h4>
-  <p>พอร์ตตัวอย่างถือหุ้นกู้ของบริษัทต่างกัน 200 ราย สมมติว่ารายหนึ่งมีโอกาสผิดนัดในหนึ่งปี 1.5% เท่ากันทุกรายและเป็นอิสระกัน แต่ละรายมีเงินต้นที่เสี่ยง \$5 ล้าน หากผิดนัดจะได้เงินคืน 40% แบบคงที่ ตัวเลขนี้เป็นสมมติฐานเพื่อฝึกคำนวณ ไม่ใช่ค่าประเมินเครดิตจริง</p>
-  <p>จำนวนรายผิดนัดตามสมมติฐานเป็น Binomial(200, 0.015) เราจะลองประมาณด้วย Poisson โดยใช้ค่าเฉลี่ยเดียวกัน แล้วตรวจความคลาดเคลื่อนกับ Binomial ภายหลัง</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — เตรียมจำนวนเฉลี่ยและความเสียหายต่อราย</h4>
-  <p>ให้ $L$ เป็นจำนวนเงินที่เสียต่อหนึ่งราย และ $S=LX$ เป็นความเสียหายรวม ในที่นี้ LGD หมายถึงสัดส่วนที่เสียหลังหัก recovery ไม่ใช่จำนวนเงิน $L$</p>
-  <div class="math">\[
-\begin{aligned}
-\lambda&=np=200(0.015)=3\\
-\mathrm{LGD}&=1-0.40=0.60\\
-L&=\$5{,}000{,}000(0.60)=\$3{,}000{,}000\\
-S&=LX=\$3{,}000{,}000\,X
-\end{aligned}
-\]</div>
-  <div class="reading"><p>สามรายเป็นจำนวนเฉลี่ยในหนึ่งปี ส่วนสามล้านดอลลาร์เป็นความเสียหายต่อราย ห้ามนำสองเลขนี้มาใช้สลับกัน เราสมมติเงินที่เสี่ยงและ recovery คงที่ หากสองส่วนนี้สุ่มด้วย ต้องเพิ่มแบบจำลองความเสียหาย ไม่ใช่นับจำนวนรายอย่างเดียว</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ตอบโอกาสศูนย์ราย สามราย และตั้งแต่ห้าราย</h4>
-  <div class="math">\[
-\begin{aligned}
-P(X=0)&=e^{-3}\approx4.9787\%\\
-P(X=3)&=\frac{3^3e^{-3}}{3!}\approx22.4042\%\\[3pt]
-P(X\le4)&=e^{-3}\left(1+3+\frac92+\frac{27}{6}+\frac{81}{24}\right)\\
-&=16.375e^{-3}\approx0.815263\\
-P(X\ge5)&=1-P(X\le4)\\
-&\approx\boxed{18.4737\%}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ห้ารายขึ้นไปทำให้เสียตั้งแต่ \$15 ล้านขึ้นไป ดังนั้นภายใต้ค่าประมาณนี้ โอกาสขาดทุนถึงระดับนั้นอยู่ที่ 18.47% ต่อปี ไม่ได้หมายความว่าจะเกิดตรงทุกห้าปี และไม่ใช่โอกาสผิดนัดของบริษัทหนึ่งซึ่งโจทย์ให้ไว้ที่ 1.5%</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.6b — แท่งหนึ่งกับหางหลายแท่งตอบคนละคำถาม</h4>
-  <img src="../figures/1.6-2.svg" alt="Poisson ที่มีค่าเฉลี่ย 3 โดยแสดงโอกาสศูนย์รายและสามราย" loading="lazy">
-  <figcaption><p>แท่งศูนย์ให้โอกาสไม่มีรายผิดนัด ส่วนแท่งสามให้โอกาสสามรายพอดี หากถามความเสียหายตั้งแต่ \$15 ล้าน ต้องรวมทุกแท่งตั้งแต่ห้าราย ไม่ใช่อ่านแค่แท่งห้า</p></figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — พิสูจน์ว่าค่าเฉลี่ยของ Poisson เท่ากับ $\lambda$</h4>
-  <p>ใช้ค่าเฉลี่ยแบบถ่วงน้ำหนักจากหัวข้อ 1.3 ตัวคูณ $r$ ตัดกับ factorial ได้หนึ่งชั้น ส่วนพจน์ศูนย์ไม่ส่งผลต่อค่าเฉลี่ย</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[X]&=\sum_{r=1}^{\infty}r\frac{\lambda^re^{-\lambda}}{r!}\\
-&=\lambda e^{-\lambda}\sum_{r=1}^{\infty}\frac{\lambda^{r-1}}{(r-1)!}\\
-&=\lambda e^{-\lambda}\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}\\
-&=\lambda e^{-\lambda}e^\lambda=\lambda
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เปลี่ยนตัวนับจาก $r$ เป็น $k=r-1$ เพื่อให้เห็นอนุกรมเดิมจากขั้นที่ 4 ชัดขึ้น ไม่ได้เปลี่ยนค่าในผลรวม เมื่อใช้ $\lambda=3$ จึงได้จำนวนรายเฉลี่ยสามรายตามที่ตั้งแบบจำลองไว้</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — พิสูจน์ variance โดยเริ่มจาก $X(X-1)$</h4>
-  <p>$r(r-1)$ ตัดกับ factorial ได้สองชั้น จากนั้นใช้ $X^2=X(X-1)+X$ เพื่อกลับไปหาค่าเฉลี่ยกำลังสอง</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[X(X-1)]&=\sum_{r=2}^{\infty}\frac{\lambda^re^{-\lambda}}{(r-2)!}\\
-&=\lambda^2e^{-\lambda}\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}=\lambda^2\\
-\mathbb E[X^2]&=\lambda^2+\lambda\\
-\mathrm{Var}(X)&=(\lambda^2+\lambda)-\lambda^2=\lambda\\
-\mathrm{SD}(X)&=\sqrt\lambda\\
-\lambda=3&:\quad\mathrm{SD}(X)=\sqrt3\approx1.7321
-\end{aligned}
-\]</div>
-  <div class="reading"><p>Poisson มีค่าเฉลี่ยและ variance เท่ากันในเชิงตัวเลข แต่มีหน่วยต่างกัน ค่าเฉลี่ยเป็นจำนวนครั้ง ส่วน variance เป็นครั้ง² และ standard deviation กลับมาเป็นจำนวนครั้งเหมือนเดิม</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — เปลี่ยนจำนวนรายเป็นความเสียหายเฉลี่ยและความผันผวน</h4>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[S]&=L\mathbb E[X]\\
-&=\$3{,}000{,}000(3)=\boxed{\$9{,}000{,}000}\\
-\mathrm{Var}(S)&=L^2\mathrm{Var}(X)\\
-\mathrm{SD}(S)&=L\sqrt\lambda\\
-&=\$3{,}000{,}000\sqrt3\\
-&\approx\$5{,}196{,}152
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เงินเก้าล้านดอลลาร์คือ expected loss ตามสมมติฐาน ไม่ใช่ขาดทุนสูงสุด และ standard deviation ประมาณ 5.20 ล้านไม่ใช่ขอบเขตที่รับรองว่าความเสียหายต้องอยู่ภายใน แบบจำลองนี้ไม่ใช่ Normal จึงไม่ควรนำกฎช่วง 68–95–99.7% มาใช้ทันที</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.6c — ค่าเฉลี่ยของแบบจำลองไม่บังคับผลของแต่ละปี</h4>
-  <img src="../figures/1.6-3.svg" alt="จำนวนรายผิดนัดในข้อมูลจำลอง 20 ปีจาก Poisson ที่มีค่าเฉลี่ย 3" loading="lazy">
-  <figcaption><p>ทุกปีในตัวอย่างใช้ค่าเฉลี่ยของแบบจำลองเท่ากับสาม แต่จำนวนที่เกิดจริงเปลี่ยนไป ค่าเฉลี่ยจากข้อมูลจำลองเพียง 20 ปีก็ไม่จำเป็นต้องเท่ากับสามพอดี เช่นเดียวกับความต่างระหว่างค่าเฉลี่ยตัวอย่างกับ expectation ในหัวข้อ 1.3</p></figcaption>
-</figure>
-
-<section class="pitfall">
-  <h4>Expected loss ไม่ใช่คำสั่งให้ตั้งสำรองหรือกันเงินสดเท่าตัวเลขนี้</h4>
-  <p>Provision เป็นรายการทางบัญชีที่ต้องพิจารณามาตรฐานและวิธีประเมินที่ใช้ ส่วนเงินกองทุนและสภาพคล่องมีวัตถุประสงค์และเกณฑ์ของตนเอง คำว่า reserve ก็อาจมีความหมายต่างกันในแต่ละบริบท จึงไม่ควรสรุปจากโจทย์นี้ว่าต้องกันเงินสดเก้าล้านดอลลาร์ตามกฎจริง</p>
-  <p>สิ่งที่คำนวณได้แน่นอนภายใต้สมมติฐานคือ expected loss เก้าล้านดอลลาร์ และ distribution ของความเสียหายตามแบบจำลอง หากต้องการระดับรองรับความเสียหาย ต้องระบุโอกาสเป้าหมายและช่วงเวลาด้วย</p>
-</section>
-
-<section class="example">
-  <h4>Worked Example — หาระดับความเสียหายที่ครอบคลุมอย่างน้อย 99%</h4>
-  <p>ของที่มี: $X\sim\mathrm{Poisson}(3)$ และเสีย \$3 ล้านต่อราย ต้องการจำนวนเต็มที่น้อยที่สุด $k$ ซึ่งทำให้ $P(X\le k)\ge0.99$ นี่คือ quantile ไม่ใช่ค่าเฉลี่ย</p>
-  <p>รวม PMF ตั้งแต่ศูนย์ถึงเจ็ดได้ $P(X\le7)\approx0.988095$ ซึ่งยังไม่ถึงเป้า เมื่อเพิ่มแท่งแปดได้ $P(X\le8)\approx0.996197$ จึงได้คำตอบ $k=8$</p>
-  <p>ระดับความเสียหายที่ตรงกันคือ $8\times\$3$ ล้าน = \$24 ล้าน ครอบคลุมประมาณ 99.62% ไม่ใช่ 99% พอดี เพราะจำนวนรายเพิ่มทีละจำนวนเต็ม</p>
-  <p>ตรวจเองใน 10 วินาที: หากตอบ \$21 ล้าน จะรองรับเพียงเจ็ดรายซึ่งยังไม่ถึง 99% และ \$24 ล้านก็ไม่ใช่ขาดทุนสูงสุด Poisson ยังให้โอกาสผิดนัดเกินแปดราย</p>
-</section>
-
-<section class="table">
-  <h4>ตรวจค่าประมาณกับ Binomial ที่ตรงสมมติฐานพอร์ต</h4>
-  <table>
-    <thead><tr><th>คำถาม</th><th>Binomial(200, 0.015)</th><th>Poisson(3)</th></tr></thead>
-    <tbody>
-      <tr><td>ไม่มีรายผิดนัด</td><td>4.8668%</td><td>4.9787%</td></tr>
-      <tr><td>ผิดนัดพอดีสามราย</td><td>22.5740%</td><td>22.4042%</td></tr>
-      <tr><td>ผิดนัดอย่างน้อยห้าราย</td><td>18.3459%</td><td>18.4737%</td></tr>
-      <tr><td>ค่าเฉลี่ยจำนวนราย</td><td>3</td><td>3</td></tr>
-      <tr><td>Variance ของจำนวนราย</td><td>$200(0.015)(0.985)=2.955$</td><td>3</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">ใช้ $P(X=r)=\binom{200}{r}(0.015)^r(0.985)^{200-r}$ สำหรับคอลัมน์ Binomial กรณีศูนย์ราย Poisson สูงกว่าโดยประมาณ 0.112 จุดเปอร์เซ็นต์ หรือ 2.30% เมื่อเทียบกับค่า Binomial ต้องบอกให้ชัดว่ารายงานความต่างแบบไหน</p>
-</section>
-
-<section class="prose">
-  <h4>ตรงกับสมมติฐาน ไม่ได้แปลว่าตรงกับโลกจริง</h4>
-  <p>Binomial เป็นคำตอบตรงภายใต้จำนวนราย โอกาสรายละเท่ากัน และ independence ที่กำหนดไว้ ไม่ใช่ “ค่าจริงของตลาด” ส่วน Poisson เป็นค่าประมาณอีกชั้นหนึ่ง แม้โอกาสหลายข้อจะใกล้กัน ก็ยังต้องตรวจสมมติฐานร่วมของทั้งสองแบบ</p>
-  <p>อีกความต่างคือ Binomial ให้ผิดนัดได้ไม่เกิน 200 ราย ขณะที่ Poisson ไม่มีเพดานจำนวนครั้ง แม้โอกาสเกิน 200 จะเล็กมากในตัวอย่างนี้ แต่ข้อจำกัดทางกายภาพยังอยู่ การประมาณไม่ได้ลบข้อจำกัดนั้นออกจากโจทย์จริง</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.6d — ค่าเฉลี่ยเท่ากันยังให้ความเสี่ยงหางต่างกันได้</h4>
-  <img src="../figures/1.6-4.svg" alt="เปรียบเทียบแบบจำลองค่าเฉลี่ย 3 ที่มี variance 3 กับแบบจำลองที่มี variance 9" loading="lazy">
-  <figcaption><p>ภาพเปรียบเทียบ Poisson ที่มีค่าเฉลี่ยและ variance เท่ากับสาม กับแบบจำลองที่มีค่าเฉลี่ยเท่าเดิมแต่ variance เท่ากับเก้า เส้นเปรียบเทียบมีหางขวาหนักกว่าในช่วงที่แสดง อย่างไรก็ตาม การรู้เพียงค่าเฉลี่ยสามและ variance เก้ายังไม่กำหนดโอกาสหางได้เป็นค่าเดียว</p></figcaption>
-</figure>
-
-<section class="table">
-  <h4>เมื่อข้อมูลไม่เหมือน Poisson ให้ตรวจอะไรต่อ</h4>
-  <table>
-    <thead><tr><th>สิ่งที่เห็น</th><th>คำถามที่ควรตรวจ</th></tr></thead>
-    <tbody>
-      <tr><td>ช่วงเปิดตลาดมีคำสั่งมากกว่าช่วงกลางวัน</td><td>นำช่วงที่มีอัตราต่างกันมารวมเป็นค่าเฉลี่ยเดียวหรือไม่?</td></tr>
-      <tr><td>เหตุการณ์ตามกันมาเป็นชุด</td><td>มีปัจจัยร่วม เหตุการณ์หนึ่งกระตุ้นอีกเหตุการณ์ หรือการส่งเป็นกลุ่มหรือไม่?</td></tr>
-      <tr><td>Variance ของตัวอย่างสูงกว่าค่าเฉลี่ยมาก</td><td>เกิดจากอัตราเปลี่ยน ข้อมูลปะปน dependence หรือความคลาดเคลื่อนจากตัวอย่างขนาดเล็ก?</td></tr>
-      <tr><td>ค่าเฉลี่ยกับ variance ใกล้กัน</td><td>PMF และโอกาสหางเข้ากันด้วยหรือไม่? ความใกล้กันของสอง moment ยังพิสูจน์ distribution ไม่ได้</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">การเปรียบเทียบ variance กับค่าเฉลี่ยเป็นสัญญาณให้ตรวจต่อ ไม่ใช่การทดสอบที่ชี้ขาดทันที และ variance สูงไม่ได้แปลว่าโอกาสเกินทุกเกณฑ์ต้องสูงขึ้นเสมอ</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.6e — จำนวนเฉลี่ยมากขึ้น แต่ความผันผวนสัมพัทธ์ลดลง</h4>
-  <img src="../figures/1.6-5.svg" alt="Poisson PMF ที่มีค่าเฉลี่ย 1, 4 และ 10" loading="lazy">
-  <figcaption><p>สำหรับ $\lambda=1,4,10$ standard deviation เท่ากับ 1, 2 และประมาณ 3.16 ตามลำดับ แต่เมื่อหารด้วยค่าเฉลี่ยจะได้ $1/\sqrt\lambda$ คือ 100%, 50% และประมาณ 31.62% ข้อนี้อธิบายแบบจำลอง Poisson ไม่ใช่คำรับประกันว่าพอร์ตที่ใหญ่ขึ้นทุกแบบจะปลอดภัยขึ้น</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>ทำไม Poisson(3) มีแท่งสูงสุดสองแท่ง</h4>
-  <p>จากอัตราส่วน $P(X=r)/P(X=r-1)=\lambda/r$ แท่งจะสูงขึ้นเมื่อ $r\lt\lambda$ เท่ากันเมื่อ $r=\lambda$ และลดลงเมื่อ $r\gt\lambda$ ที่ $\lambda=3$ แท่งสองกับสามจึงสูงเท่ากันประมาณ 22.40% ทั้งคู่เป็น mode</p>
-  <p>โดยทั่วไป ถ้า $\lambda$ ไม่เป็นจำนวนเต็ม mode คือจำนวนเต็มที่ปัด $\lambda$ ลง หาก $\lambda$ เป็นจำนวนเต็มบวกจะมีสอง mode คือ $\lambda-1$ กับ $\lambda$ ส่วนกรณี $\lambda=0$ มีเพียงศูนย์</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.6f — ค่าเฉลี่ยกับ mode ไม่จำเป็นต้องมีจำนวนเดียวกัน</h4>
-  <img src="../figures/1.6-6.svg" alt="Poisson(3) มีแท่งที่ 2 และ 3 สูงเท่ากัน" loading="lazy">
-  <figcaption><p>ค่าเฉลี่ยเท่ากับสาม แต่ค่าที่มีโอกาสมากที่สุดมีทั้งสองและสาม การมี mode สูงสุดไม่ได้แปลว่าค่านั้นมีโอกาสเกินครึ่งหนึ่ง</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>ส่วนต่อยอด: เก็บ moment หลายลำดับไว้ใน function เดียว</h4>
-  <p>ส่วนนี้ใช้อนุพันธ์ หากยังไม่เรียนสามารถกลับมาอ่านภายหลังได้ วิธีหาค่าเฉลี่ยและ variance ข้างต้นยังสมบูรณ์ด้วยตัวเอง Moment Generating Function หรือ MGF นิยามว่า $M_X(t)=\mathbb E[e^{tX}]$ เมื่อ expectation นี้มีค่าจำกัดในช่วงรอบศูนย์</p>
-  <p>เหตุผลที่อนุพันธ์ดึง moment ออกมาได้คืออนุพันธ์ลำดับที่ $k$ ของ $e^{tX}$ เท่ากับ $X^ke^{tX}$ เมื่อแทน $t=0$ จึงเหลือ $X^k$ สำหรับ Poisson สามารถสลับการหาอนุพันธ์กับ expectation ได้ และ MGF มีค่าจำกัดสำหรับ $t$ จริงทุกค่า</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — สร้าง MGF แล้วตรวจ moment เดิม</h4>
-  <div class="math">\[
-\begin{aligned}
-M_X(t)&=e^{-\lambda}\sum_{r=0}^{\infty}\frac{(\lambda e^t)^r}{r!}\\
-&=e^{-\lambda}e^{\lambda e^t}=e^{\lambda(e^t-1)}\\
-M'_X(t)&=\lambda e^tM_X(t)\\
-M''_X(t)&=[\lambda e^t+(\lambda e^t)^2]M_X(t)\\
-M'''_X(t)&=[\lambda e^t+3(\lambda e^t)^2+(\lambda e^t)^3]M_X(t)\\[3pt]
-M'_X(0)&=\lambda\\
-M''_X(0)&=\lambda+\lambda^2\\
-M'''_X(0)&=\lambda+3\lambda^2+\lambda^3\\
-\lambda=3&:\quad\mathbb E[X^3]=3+27+27=57
-\end{aligned}
-\]</div>
-  <div class="reading"><p>แถว MGF ใช้อนุกรม exponential เดิมโดยเปลี่ยนจาก $\lambda$ เป็น $\lambda e^t$ ส่วนแถวอนุพันธ์ใช้ product rule และ chain rule ผลสองลำดับแรกตรงกับการบวก PMF ที่พิสูจน์แล้ว ลำดับสามเป็น raw moment ไม่ใช่ skewness โดยตรง</p></div>
-</section>
-
-<section class="example">
-  <h4>ลองทำเอง — เปลี่ยนช่วงเวลาและเปลี่ยน recovery</h4>
-  <p>ข้อแรก: กริ่งมีอัตราคงที่สองครั้งต่อชั่วโมงตามแบบจำลองเดิม โอกาสเงียบตลอดครึ่งชั่วโมงเป็นเท่าไร? ข้อสอง: พอร์ตเดิมได้ recovery 20% แทน 40% โดยคงสมมติฐานอื่น โอกาสผิดนัดอย่างน้อยห้ารายและ expected loss เปลี่ยนอย่างไร?</p>
-  <details>
-    <summary>เปิดคำตอบพร้อมเหตุผล</summary>
-    <p>ครึ่งชั่วโมงใช้ $\lambda=2(0.5)=1$ จึงมีโอกาสศูนย์ครั้ง $e^{-1}\approx36.79\%$ ห้ามใส่สองเพียงเพราะอัตราที่ให้มาคือสองต่อชั่วโมง</p>
-    <p>Recovery ใหม่ทำให้ $L=(1-0.20)\$5$ ล้าน = \$4 ล้าน expected loss จึงเป็น \$12 ล้าน ส่วนโอกาสผิดนัดอย่างน้อยห้ารายยังประมาณ 18.47% เท่าเดิม เพราะ distribution ของจำนวนรายไม่เปลี่ยน แต่เหตุการณ์นั้นทำให้เสียตั้งแต่ \$20 ล้านแทน \$15 ล้าน</p>
-  </details>
-</section>
 
 <details class="jargon">
-  <summary>ศัพท์สำหรับกลับมาทบทวน</summary>
+  <summary>ศัพท์ที่ใช้ในหน้านี้</summary>
   <dl>
-    <dt>Poisson distribution / Poisson process</dt><dd>Distribution บอกโอกาสของจำนวนครั้งในช่วงหนึ่ง ส่วน process อธิบายการเกิดเหตุการณ์ตามเวลา เงื่อนไขการมาถึงที่ใช้ในบทนี้ทำให้จำนวนครั้งในช่วงมี Poisson distribution</dd>
-    <dt>default / recovery / LGD</dt><dd>Default คือเหตุการณ์ผิดนัดตามเกณฑ์ที่กำหนด Recovery คือส่วนที่ได้คืน ส่วน LGD ในบทนี้คือสัดส่วนที่เสียหลังหัก recovery ต้องคูณเงินที่เสี่ยงจึงได้ความเสียหายเป็นดอลลาร์</dd>
-    <dt>expected loss / loss quantile</dt><dd>Expected loss เป็นค่าเฉลี่ยของความเสียหาย ส่วน quantile เป็นระดับที่ความเสียหายไม่เกินด้วยโอกาสตามเป้าหมาย ทั้งคู่ขึ้นกับแบบจำลองและช่วงเวลา</dd>
-    <dt>overdispersion</dt><dd>การที่ variance สูงกว่าค่าเฉลี่ยในแบบจำลองการนับ อาจเกิดจากหลายสาเหตุ ไม่ได้ระบุสาเหตุหรือโอกาสหางครบถ้วนด้วยตัวเอง</dd>
-    <dt>mode / moment / MGF</dt><dd>Mode คือค่าที่มีโอกาสสูงสุด Raw moment ลำดับ $k$ คือ $\mathbb E[X^k]$ และ MGF เป็นเครื่องมือใช้อนุพันธ์เพื่อหา moment เมื่อเงื่อนไขการมีอยู่ของ function และการสลับอนุพันธ์เป็นจริง</dd>
+    <dt>Poisson distribution</dt><dd>distribution ของจำนวนเหตุการณ์ในช่วงที่กำหนด $P(X=r)=\lambda^re^{-\lambda}/r!$ ใช้นับการผิดนัด คำสั่งซื้อขายที่เข้ามา หรือการกระโดดของราคา</dd>
+    <dt>λ (intensity)</dt><dd>จำนวนเหตุการณ์เฉลี่ยในช่วงที่ถาม เท่ากับอัตราต่อหน่วยเวลาคูณความยาวช่วง ไม่ใช่โอกาส จึงมากกว่าหนึ่งได้</dd>
+    <dt>default / recovery / LGD</dt><dd>การผิดนัดชำระ, สัดส่วนเงินที่ได้คืนหลังผิดนัด, และสัดส่วนที่เสีย (loss given default) $=1-$ recovery ใช้แปลงจำนวนรายผิดนัดเป็นเงิน</dd>
+    <dt>expected loss</dt><dd>ค่าเฉลี่ยของความเสียหาย ใช้ตั้งราคาสินเชื่อ แต่ไม่ใช่ระดับที่ปลอดภัยสำหรับปีแย่</dd>
+    <dt>overdispersion</dt><dd>ข้อมูลนับที่ variance มากกว่าค่าเฉลี่ย สัญญาณว่าเหตุการณ์เกิดเป็นกลุ่ม ซึ่ง Poisson จะประเมินหางต่ำไป</dd>
   </dl>
 </details>
 
 <details class="symbols">
-  <summary>สัญลักษณ์ที่ต้องไม่สลับกัน</summary>
+  <summary>สัญลักษณ์ ความหมาย และหน่วย</summary>
   <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$\lambda$</td><td>จำนวนเหตุการณ์เฉลี่ยในช่วงที่เลือก ไม่ใช่โอกาสเกิดเหตุการณ์</td></tr>
-      <tr><td>$X,r$</td><td>จำนวนครั้งที่เป็นตัวแปรสุ่ม / จำนวนเต็มที่กำลังถามโอกาส</td></tr>
-      <tr><td>$n,p$</td><td>จำนวนครั้งและโอกาสต่อครั้งของ Binomial ที่ใช้สร้างหรือเปรียบเทียบกับ Poisson</td></tr>
-      <tr><td>$L,S$</td><td>ความเสียหายต่อรายที่สมมติคงที่ / ความเสียหายรวม $S=LX$ ทั้งคู่มีหน่วยเงิน</td></tr>
-      <tr><td>$e,\ln,r!$</td><td>ฐาน exponential ประมาณ 2.71828 / logarithm ฐาน $e$ / factorial โดย $0!=1$</td></tr>
-      <tr><td>$M_X(t)$</td><td>MGF โดย $t$ เป็นตัวแปรช่วย ไม่ใช่ความยาวช่วงเวลาในส่วนนี้</td></tr>
+      <tr><td>$X$, $r$</td><td>จำนวนรายผิดนัด (สุ่ม), ค่าที่กำลังถาม</td><td>ราย</td></tr>
+      <tr><td>$\lambda$</td><td>จำนวนรายเฉลี่ยในหนึ่งปี</td><td>ราย</td></tr>
+      <tr><td>$n$, $p$</td><td>จำนวนช่องย่อยหรือจำนวนราย, โอกาสต่อช่อง</td><td>ช่อง, ไม่มีหน่วย</td></tr>
+      <tr><td>$L$</td><td>ความเสียหายต่อหนึ่งราย</td><td>ดอลลาร์</td></tr>
+      <tr><td>$S=LX$</td><td>ความเสียหายรวมในหนึ่งปี</td><td>ดอลลาร์</td></tr>
+      <tr><td>$e$</td><td>ฐานของ exponential ≈ 2.71828</td><td>ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
 
+<section class="formula">
+  <h4>ขั้นที่ 1 — λ คือจำนวนเฉลี่ยในช่วงที่ถาม</h4>
+  <p>ทุกโจทย์ Poisson เริ่มที่ตัวเลขเดียว คือจำนวนเหตุการณ์เฉลี่ยในช่วงที่ถาม ถ้ารู้เป็นอัตรา ให้คูณด้วยความยาวช่วงในหน่วยเวลาเดียวกัน ถ้ารู้เป็นจำนวนจุดเสี่ยงกับโอกาสต่อจุด ให้คูณสองตัวนั้น</p>
+  <div class="math">\[\begin{aligned}
+\lambda_{\mathrm{bonds}}&=np=200\times0.015=3\\[4pt]
+\lambda_{\mathrm{orders}}&=20\times0.1=2\\[4pt]
+\lambda_{\mathrm{alarm}}&=2\times0.5=1
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกคือพอร์ต 200 ราย รายละ 1.5% บรรทัดที่สองคือคำสั่งซื้อขายที่เข้ามาเฉลี่ย 20 รายการต่อวินาที ถามช่วง 0.1 วินาที บรรทัดสุดท้ายคือระบบเตือนที่ดังเฉลี่ย 2 ครั้งต่อชั่วโมง ถามช่วงครึ่งชั่วโมง $\lambda$ ไม่ใช่โอกาส จึงเป็น 3 หรือ 20 ก็ได้ ความผิดพลาดที่พบบ่อยที่สุดคือใช้อัตราผิดช่วง: ระบบเตือนที่ดังเฉลี่ย 2 ครั้งต่อชั่วโมง ถ้าถามครึ่งชั่วโมงต้องใช้ $\lambda=1$ ไม่ใช่ 2 การคูณแบบนี้ถูกเมื่ออัตราคงที่ตลอดช่วง ถ้าคำสั่งซื้อขายเข้ามาหนาแน่นตอนเปิดตลาดและเบาบางตอนเที่ยง ต้องหาจำนวนเฉลี่ยของช่วงที่ถามจริง ๆ ไม่ใช่ใช้ค่าเฉลี่ยทั้งวัน</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — โอกาสที่ไม่มีเหตุการณ์เลย และที่มาของ e</h4>
+  <p>เริ่มจากคำถามง่ายที่สุด: ปีหนึ่งไม่มีรายใดผิดนัดเลยมีโอกาสเท่าไร แบ่งปีเป็น $n$ ช่องย่อย (หรือมอง $n$ ราย) แต่ละช่องมีเหตุการณ์ด้วยโอกาส $\lambda/n$ อย่างอิสระ ให้ทุกช่องเงียบ แล้วดูว่าเกิดอะไรเมื่อแบ่งละเอียดขึ้นโดยค่าเฉลี่ยยังเป็น 3</p>
+  <div class="math">\[\begin{aligned}
+P(X_n=0)&=\Big(1-\frac{\lambda}{n}\Big)^n\\[4pt]
+n=12&:\ 0.75^{12}\approx 0.0317\\
+n=200&:\ 0.985^{200}\approx 0.0487\\
+n=10{,}000&:\ \approx 0.0498\\[4pt]
+\Big(1-\frac{\lambda}{n}\Big)^n&\longrightarrow e^{-\lambda}=e^{-3}\approx 0.0498
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ทำไมได้ $e$: ใส่ log แล้วได้ $n\ln(1-\lambda/n)$ เมื่อ $u$ เล็ก $\ln(1-u)\approx -u$ (ความชันของ $\ln$ ที่จุด 1 คือ 1) จึงได้ $n\times(-\lambda/n)=-\lambda$ ถอด log กลับได้ $e^{-\lambda}$ ความหมายคือ เมื่อจุดเสี่ยงมากขึ้นแต่ค่าเฉลี่ยคงที่ คำตอบหยุดเปลี่ยนและนิ่งที่ $e^{-\lambda}$ ที่ $n=200$ ซึ่งคือพอร์ตจริงของเรา ได้ 4.87% ใกล้ค่าขีดจำกัด 4.98% แล้ว ปีที่ไม่มีใครผิดนัดเลยจึงเกิดราวหนึ่งปีในยี่สิบ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — แบ่งละเอียดขึ้น โอกาสศูนย์ครั้งนิ่งที่ e⁻³</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="จุดของค่าหนึ่งลบสามส่วน n ยกกำลัง n เมื่อ n เป็น 4, 6, 12, 50, 200, 1000 และ 10000 บนแกนล็อก เพิ่มขึ้นจาก 0.004 เข้าใกล้เส้น e ยกกำลังลบสาม เท่ากับ 0.0498" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1"><line x1="60" y1="178" x2="440" y2="178"/><line x1="60" y1="106" x2="440" y2="106"/></g>
+      <g stroke="#181818" stroke-width="1.5"><line x1="60" y1="250" x2="444" y2="250"/><line x1="60" y1="250" x2="60" y2="40"/></g>
+      <line x1="60" y1="70.8" x2="440" y2="70.8" stroke="#2455d6" stroke-width="2.5" stroke-dasharray="7 4"/>
+      <text x="440" y="60" text-anchor="end" fill="#2455d6">e⁻³ ≈ 0.0498</text>
+      <polyline fill="none" stroke="#a65f00" stroke-width="2" points="60.0,235.9 79.7,193.8 113.4,136.0 182.7,86.8 250.0,74.8 328.2,71.6 440.0,70.8"/>
+      <g fill="#a65f00"><circle cx="60" cy="235.9" r="5"/><circle cx="79.7" cy="193.8" r="5"/><circle cx="113.4" cy="136" r="5"/><circle cx="182.7" cy="86.8" r="5"/><circle cx="328.2" cy="71.6" r="5"/><circle cx="440" cy="70.8" r="5"/></g>
+      <circle cx="250" cy="74.8" r="7" fill="#d82632"/>
+      <text x="256" y="100" fill="#d82632">n = 200 (พอร์ตจริง): 0.0487</text>
+      <text x="120" y="150" fill="#a65f00">n = 12: 0.0317</text>
+      <g fill="#5b6472" text-anchor="end"><text x="54" y="255">0</text><text x="54" y="183">0.02</text><text x="54" y="111">0.04</text></g>
+      <g fill="#5b6472" text-anchor="middle"><text x="60" y="270">4</text><text x="113.4" y="270">12</text><text x="182.7" y="270">50</text><text x="250" y="270">200</text><text x="328.2" y="270">1,000</text><text x="440" y="270">10,000</text></g>
+      <text x="250" y="292" text-anchor="middle">จำนวนช่องย่อย n (สเกล log) โดยค่าเฉลี่ยคงที่ที่ 3</text>
+      <text x="18" y="150" text-anchor="middle" transform="rotate(-90 18 150)">โอกาสไม่มีเหตุการณ์</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละจุดคือโอกาสที่ไม่มีเหตุการณ์เลยเมื่อแบ่งเป็น $n$ ช่อง ช่องละโอกาส $3/n$ ถ้าแบ่งหยาบ (4 ช่อง ช่องละ 75%) โอกาสเงียบทั้งหมดต่ำมาก พอแบ่งละเอียดขึ้น จุดไต่ขึ้นแล้วแบนติดเส้นประน้ำเงินที่ $e^{-3}$ จุดสีแดงคือพอร์ต 200 รายของเรา ซึ่งอยู่ใกล้เส้นแล้ว นี่คือเหตุผลที่ใช้ Poisson แทน binomial ได้เมื่อ $n$ ใหญ่และ $p$ เล็ก</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — จากศูนย์ครั้งไปสู่ r ครั้ง</h4>
+  <p>ทำแบบเดียวกันกับโอกาสที่เกิดพอดี $r$ ครั้ง เริ่มจาก binomial ที่มี $n$ ช่อง ช่องละโอกาส $\lambda/n$ แยกสูตรเป็นตัวประกอบ แล้วดูว่าแต่ละตัวไปไหนเมื่อ $n$ โตโดย $r$ คงที่</p>
+  <div class="math">\[\begin{aligned}
+P(X_n=r)&=\binom nr\Big(\frac{\lambda}{n}\Big)^r\Big(1-\frac{\lambda}{n}\Big)^{n-r}\\
+&=\frac{\lambda^r}{r!}\cdot A_n\cdot B_n\cdot C_n\\[4pt]
+A_n&=\frac{n(n-1)\cdots(n-r+1)}{n^r}\to 1\\
+B_n&=\Big(1-\frac{\lambda}{n}\Big)^{n}\to e^{-\lambda}\\
+C_n&=\Big(1-\frac{\lambda}{n}\Big)^{-r}\to 1\\[4pt]
+P(X=r)&=\boxed{\frac{\lambda^r e^{-\lambda}}{r!}},\quad r=0,1,2,\ldots
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>$A_n$ มาจากตัวเศษของ $\binom nr$ หารด้วย $n^r$ ซึ่งยืมมาจาก $(\lambda/n)^r$ มันคือผลคูณ $r$ ตัวที่แต่ละตัวใกล้ 1 เช่น $(n-1)/n$ เมื่อ $n$ ใหญ่ $B_n$ คือโอกาสเงียบทั้งหมดที่เพิ่งหา ส่วน $C_n$ ชดเชยที่เราเขียนกำลัง $n$ แทน $n-r$ และเข้าใกล้ 1 เพราะ $r$ คงที่ ที่เหลือคือ $\lambda^r/r!$ คูณ $e^{-\lambda}$ นี่คือ Poisson PMF</p>
+    <p>สังเกตว่า $n$ กับ $p$ หายไปจากสูตร เหลือแค่ $\lambda=np$ นี่คือข้อได้เปรียบหลัก: เราไม่ต้องรู้ว่าปีหนึ่งมีกี่ “โอกาสที่จะผิดนัด” แค่รู้ค่าเฉลี่ยก็พอ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — binomial ที่ค่าเฉลี่ยเท่ากัน เข้าใกล้ Poisson เมื่อ n โต</h4>
+  <img src="../figures/1.6-1.svg" alt="PMF ของ binomial หลายขนาด n โดยคง np เท่ากับ 3 เปรียบเทียบกับ Poisson ที่มีค่าเฉลี่ย 3" loading="lazy">
+  <figcaption><p>ทุกแบบในรูปมีค่าเฉลี่ย 3 แต่เมื่อ $n$ เล็ก binomial ยังแคบกว่า Poisson เพราะจำนวนครั้งเกิน $n$ ไม่ได้ เมื่อ $n$ โตขึ้น แท่งของ binomial ทาบกับแท่งของ Poisson เกือบสนิท Poisson จึงเป็นขีดจำกัด ไม่ใช่ binomial ทุกตัวที่ค่าเฉลี่ย 3</p></figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — ตรวจว่ารวมได้หนึ่ง และคำนวณแท่งถัดไปจากแท่งก่อน</h4>
+  <p>Poisson มีค่าที่เป็นไปได้ไม่สิ้นสุด 0, 1, 2, … จึงต้องตรวจว่าผลรวมทั้งหมดได้หนึ่งจริง เครื่องมือคืออนุกรมของ exponential $e^{a}=\sum_{r\ge0}a^r/r!$ อนุกรมเดียวกันให้วิธีคำนวณแท่งทีละแท่งที่ใช้เครื่องคิดเลขได้</p>
+  <div class="math">\[\begin{aligned}
+\sum_{r=0}^{\infty}\frac{\lambda^re^{-\lambda}}{r!}&=e^{-\lambda}\sum_{r=0}^{\infty}\frac{\lambda^r}{r!}\\
+&=e^{-\lambda}e^{\lambda}=1\\[4pt]
+\frac{P(X=r)}{P(X=r-1)}&=\frac{\lambda}{r}\\[4pt]
+P(X=0)&=e^{-3}\approx0.0498\\
+P(X=1)&=0.0498\times3\approx0.1494\\
+P(X=2)&=0.1494\times\tfrac32\approx0.2240\\
+P(X=3)&=0.2240\times\tfrac33\approx0.2240
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>อัตราส่วนของแท่งติดกันคือ $\lambda/r$ แท่งจึงสูงขึ้นตราบที่ $r\lt\lambda$ เท่ากันที่ $r=\lambda$ และลดลงหลังจากนั้น เมื่อ $\lambda=3$ แท่ง 2 กับแท่ง 3 จึงสูงเท่ากันพอดีที่ 22.40% ค่าที่มีโอกาสมากที่สุดจึงมีสองค่า และไม่มีค่าไหนมีโอกาสเกินหนึ่งในสี่ แท่งต่อไปคือ $0.2240\times\tfrac34\approx0.1680$, $\times\tfrac35\approx0.1008$ และต่อไปเรื่อย ๆ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ค่าเฉลี่ยและ variance เท่ากับ λ ทั้งคู่</h4>
+  <p>เราตั้ง $\lambda$ เป็นจำนวนเฉลี่ยตั้งแต่แรก จึงควรตรวจว่าสูตรให้ค่าเฉลี่ยเป็น $\lambda$ จริง แล้วหา variance ด้วยเทคนิคเดียวกัน กลเม็ดคือให้ตัวคูณ $r$ ไปตัดกับ $r!$ ข้างล่าง</p>
+  <div class="math">\[\begin{aligned}
+\mathbb E[X]&=\sum_{r=1}^{\infty}r\,\frac{\lambda^re^{-\lambda}}{r!}\\
+&=\lambda\sum_{r=1}^{\infty}\frac{\lambda^{r-1}e^{-\lambda}}{(r-1)!}\\
+&=\lambda\sum_{k=0}^{\infty}\frac{\lambda^{k}e^{-\lambda}}{k!}=\lambda\\[4pt]
+\mathbb E[X(X-1)]&=\lambda^2\sum_{k=0}^{\infty}\frac{\lambda^{k}e^{-\lambda}}{k!}=\lambda^2\\
+\mathrm{Var}(X)&=\mathbb E[X(X-1)]+\mathbb E[X]-\lambda^2\\
+&=\lambda^2+\lambda-\lambda^2=\lambda
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกเริ่มที่ $r=1$ เพราะพจน์ $r=0$ คูณด้วยศูนย์ หายไปเอง จากนั้น $r/r!=1/(r-1)!$ ดึง $\lambda$ หนึ่งตัวออกมา แล้วเปลี่ยนตัวนับเป็น $k=r-1$ ผลรวมที่เหลือคือ PMF ทั้งก้อนซึ่งรวมได้หนึ่ง ค่าเฉลี่ยจึงเป็น $\lambda$ variance ใช้ $X(X-1)$ เพราะ $r(r-1)$ ตัดกับ $r!$ ได้สองชั้น แล้วใช้ $X^2=X(X-1)+X$ กับสูตรลัด $\mathrm{Var}(X)=\mathbb E[X^2]-(\mathbb E[X])^2$</p>
+    <p>ผลคือ standard deviation $=\sqrt\lambda$ ที่ $\lambda=3$ ได้ 1.73 ราย การแกว่งเทียบกับค่าเฉลี่ยคือ $1/\sqrt\lambda$ ซึ่งลดลงเมื่อ $\lambda$ โต พอร์ตที่คาดว่าผิดนัด 100 รายจะแกว่งราว 10% ของค่าเฉลี่ย ส่วนพอร์ตที่คาดว่าผิดนัด 3 รายแกว่งถึง 58% ค่าเฉลี่ยกับ variance เท่ากันยังเป็นวิธีตรวจข้อมูลจริงด้วย: ถ้า variance ของจำนวนที่นับได้สูงกว่าค่าเฉลี่ยมาก Poisson อาจไม่เหมาะ</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — แปลงจำนวนรายเป็นเงิน แล้วตอบคำถามเรื่องงบ</h4>
+  <p>ตอนนี้ใช้กับพอร์ตได้ ให้ $L$ เป็นความเสียหายต่อหนึ่งรายที่ผิดนัด และสมมติให้คงที่ ความเสียหายรวม $S=LX$ เป็นแค่ $X$ คูณค่าคงที่ จึงใช้ linearity และกฎการขยาย variance ได้ทันที</p>
+  <div class="math">\[\begin{aligned}
+L&=\$5{,}000{,}000\times(1-0.40)\\
+&=\$3{,}000{,}000\\[4pt]
+\mathbb E[S]&=L\,\lambda=\$9{,}000{,}000\\
+\mathrm{SD}(S)&=L\sqrt\lambda\approx\$5{,}196{,}152\\[4pt]
+P(S\gt\$9{,}000{,}000)&=P(X\ge4)\\
+&=1-e^{-3}\big(1+3+4.5+4.5\big)\\
+&=1-13e^{-3}\approx 35.28\%\\[4pt]
+P(S\ge\$15{,}000{,}000)&=P(X\ge5)\\
+&\approx 18.47\%
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ความเสียหายเกิดเป็นก้อนละ \$3 ล้าน เกิน \$9 ล้านได้ก็ต่อเมื่อผิดนัดอย่างน้อย 4 ราย เราจึงเปลี่ยนคำถามเรื่องเงินเป็นคำถามเรื่องจำนวนราย แล้วใช้หลักแบ่งกอง: หนึ่งลบโอกาสของ 0 ถึง 3 ราย ได้ 35.28% งบที่ตั้งเท่าค่าเฉลี่ยจึงไม่พอเกินหนึ่งในสามของปี เหตุผลคือ distribution เบ้ขวา: ฝั่งซ้ายของค่าเฉลี่ยถูกตันที่ศูนย์ราย ส่วนฝั่งขวายืดไปได้ไกล</p>
+    <p>สมมติฐาน “recovery คงที่ 40%” ทำให้งานง่าย ในความจริง recovery มักต่ำลงในปีที่ผิดนัดกันมาก ซึ่งทำให้หางขวาของความเสียหายหนักกว่าที่คำนวณนี้อีก</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ความเสียหายทั้งปีกับงบที่ตั้งเท่าค่าเฉลี่ย</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="แท่งโอกาสของความเสียหาย 0, 3, 6 ถึง 30 ล้านดอลลาร์ เส้นประที่ค่าเฉลี่ย 9 ล้าน แท่งตั้งแต่ 12 ล้านขึ้นไปรวมกัน 35.3 เปอร์เซ็นต์ และแท่งตั้งแต่ 15 ล้านรวม 18.5 เปอร์เซ็นต์" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="30" y1="250" x2="460" y2="250" stroke="#181818" stroke-width="1.5"/>
+      <g fill="#2455d6"><rect x="37" y="220.1" width="26" height="29.9"/><rect x="75" y="160.4" width="26" height="89.6"/><rect x="113" y="115.6" width="26" height="134.4"/><rect x="151" y="115.6" width="26" height="134.4"/></g>
+      <rect x="189" y="149.2" width="26" height="100.8" fill="#a65f00"/>
+      <g fill="#d82632"><rect x="227" y="189.5" width="26" height="60.5"/><rect x="265" y="219.8" width="26" height="30.2"/><rect x="303" y="237" width="26" height="13"/><rect x="341" y="245.1" width="26" height="4.9"/><rect x="379" y="248.4" width="26" height="1.6"/><rect x="417" y="249.4" width="26" height="0.6"/></g>
+      <line x1="164" y1="30" x2="164" y2="250" stroke="#2455d6" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="158" y="40" text-anchor="end" fill="#2455d6">ค่าเฉลี่ย 9</text>
+      <g stroke="#a65f00" stroke-width="2.5" fill="none"><polyline points="186,128 186,120 446,120 446,128"/></g>
+      <text x="316" y="110" text-anchor="middle" fill="#a65f00">เกิน 9 ล้าน: 35.3%</text>
+      <g stroke="#d82632" stroke-width="2.5" fill="none"><polyline points="224,182 224,174 446,174 446,182"/></g>
+      <text x="335" y="165" text-anchor="middle" fill="#d82632">ตั้งแต่ 15 ล้าน: 18.5%</text>
+      <g fill="#5b6472" text-anchor="middle"><text x="50" y="268">0</text><text x="88" y="268">3</text><text x="126" y="268">6</text><text x="164" y="268">9</text><text x="202" y="268">12</text><text x="240" y="268">15</text><text x="278" y="268">18</text><text x="316" y="268">21</text><text x="354" y="268">24</text><text x="392" y="268">27</text><text x="430" y="268">30</text></g>
+      <text x="245" y="292" text-anchor="middle">ความเสียหายทั้งปี (ล้านดอลลาร์)</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละแท่งคือโอกาสของความเสียหายหนึ่งระดับ ห่างกันทีละ \$3 ล้าน เพราะความเสียหายมาเป็นก้อนรายละ \$3 ล้าน เส้นประน้ำเงินคือค่าเฉลี่ย \$9 ล้าน ซึ่งตรงกับแท่ง 3 ราย แท่งสีส้มกับแดงทั้งหมดอยู่เกินงบ \$9 ล้าน รวม 35.3% แท่งแดงคือปีที่เสียตั้งแต่ \$15 ล้าน รวม 18.5% หางขวายาวกว่าฝั่งซ้ายมาก ค่าเฉลี่ยจึงอยู่ต่ำกว่าระดับที่ปลอดภัย</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — ระดับความเสียหายที่ครอบคลุม 99% ของปี</h4>
+  <p>ถ้างบเท่าค่าเฉลี่ยไม่พอ ควรตั้งเท่าไร คำถามที่ถูกคือ “ระดับที่ไม่ถูกเกินใน 99% ของปี” ซึ่งคือ quantile 99% ของความเสียหาย ใช้กติกาเดียวกับ<a href="1.1.html">หน้า CDF</a>: หาจำนวนรายที่น้อยที่สุด $k$ ซึ่ง $P(X\le k)$ ถึง 0.99</p>
+  <div class="math">\[\begin{aligned}
+P(X\le 6)&\approx 0.9665\lt 0.99\\
+P(X\le 7)&\approx 0.9881\lt 0.99\\
+P(X\le 8)&\approx 0.9962\ge 0.99\\[4pt]
+k&=8\\
+8\times\$3{,}000{,}000&=\boxed{\$24{,}000{,}000}
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ยอดสะสมถึง 7 รายได้ 98.81% ยังขาดอีกนิด พอถึง 8 รายได้ 99.62% เกิน 99% ไปแล้ว ระดับ 99% จึงเป็น \$24 ล้าน หรือราว 2.7 เท่าของค่าเฉลี่ย จำนวนรายขึ้นทีละหนึ่ง เลยไม่มีระดับที่ให้ 99% พอดี ระดับนี้ไม่ใช่ความเสียหายสูงสุด ยังเหลือโอกาสราว 0.38% ที่จะผิดนัดเกิน 8 ราย และทั้งหมดนี้ถูกต้องเท่าที่สมมติฐาน “ผิดนัดอิสระกัน” ถูกต้อง</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — เส้น 99% ชนบันไดที่ 8 ราย</h4>
+  <svg viewBox="0 0 480 330" role="img" aria-label="ภาพขยาย CDF ของ Poisson ค่าเฉลี่ยสาม ช่วงโอกาสสะสม 0.95 ถึง 1 เส้น 0.99 สีส้มชนการกระโดดที่แปดราย ซึ่งคือ 24 ล้านดอลลาร์" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1"><line x1="50" y1="60" x2="440" y2="60"/></g>
+      <g stroke="#181818" stroke-width="1.5"><line x1="50" y1="260" x2="444" y2="260"/><line x1="50" y1="260" x2="50" y2="52"/></g>
+      <g stroke="#2455d6" stroke-width="3"><line x1="50" y1="260" x2="115" y2="260"/><line x1="115" y1="194" x2="180" y2="194"/><line x1="180" y1="107.6" x2="245" y2="107.6"/><line x1="245" y1="75.2" x2="310" y2="75.2"/><line x1="310" y1="64.4" x2="375" y2="64.4"/><line x1="375" y1="61.2" x2="440" y2="61.2"/></g>
+      <g stroke="#5b6472" stroke-width="1.5" stroke-dasharray="3 3"><line x1="115" y1="260" x2="115" y2="194"/><line x1="180" y1="194" x2="180" y2="107.6"/><line x1="310" y1="75.2" x2="310" y2="64.4"/><line x1="375" y1="64.4" x2="375" y2="61.2"/></g>
+      <line x1="245" y1="107.6" x2="245" y2="75.2" stroke="#a65f00" stroke-width="4"/>
+      <g fill="#2455d6"><circle cx="115" cy="194" r="5"/><circle cx="180" cy="107.6" r="5"/><circle cx="245" cy="75.2" r="5"/><circle cx="310" cy="64.4" r="5"/><circle cx="375" cy="61.2" r="5"/></g>
+      <line x1="50" y1="100" x2="440" y2="100" stroke="#a65f00" stroke-width="2" stroke-dasharray="6 4"/>
+      <line x1="245" y1="100" x2="245" y2="250" stroke="#a65f00" stroke-width="2"/>
+      <polygon points="239,246 251,246 245,258" fill="#a65f00"/>
+      <text x="56" y="252" fill="#5b6472">5 ราย: 0.916 (ต่ำกว่ากรอบ)</text>
+      <text x="186" y="126" fill="#5b6472">7 ราย: 0.9881</text>
+      <text x="252" y="94" fill="#2455d6">8 ราย: 0.9962</text>
+      <text x="252" y="200" fill="#a65f00">k = 8 → 24 ล้านดอลลาร์</text>
+      <g fill="#5b6472" text-anchor="end"><text x="44" y="265">0.95</text><text x="44" y="105" fill="#a65f00">0.99</text><text x="44" y="65">1</text></g>
+      <g fill="#5b6472" text-anchor="middle"><text x="50" y="280">5</text><text x="115" y="280">6</text><text x="180" y="280">7</text><text x="245" y="280">8</text><text x="310" y="280">9</text><text x="375" y="280">10</text></g>
+      <g fill="#5b6472" text-anchor="middle" font-size="14"><text x="50" y="298">15</text><text x="115" y="298">18</text><text x="180" y="298">21</text><text x="245" y="298">24</text><text x="310" y="298">27</text><text x="375" y="298">30</text></g>
+      <text x="245" y="322" text-anchor="middle">จำนวนรายผิดนัด (บน) และความเสียหาย ล้านดอลลาร์ (ล่าง)</text>
+    </g>
+  </svg>
+  <figcaption>ภาพนี้ขยายเฉพาะช่วงโอกาสสะสม 0.95 ถึง 1 เพื่อให้เห็นจุดตัด บันไดน้ำเงินคือ $P(X\le k)$ เส้นประส้มที่ระดับ 0.99 ผ่านเหนือขั้น 7 ราย (0.9881) แล้วไปชนช่วงกระโดดที่ 8 ราย (จาก 0.9881 ขึ้นเป็น 0.9962) ลูกศรลงมาที่ 8 ราย หรือ \$24 ล้าน ขั้นถัด ๆ ไปเตี้ยลงเรื่อย ๆ แต่ไม่เคยแตะ 1 เพราะ Poisson ให้โอกาสกับจำนวนรายที่มากเท่าไรก็ได้</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — ตรวจกับ binomial จริง แล้วดูว่าเมื่อไร Poisson ใช้ไม่ได้</h4>
+  <p>ภายใต้สมมติฐานของโจทย์ คำตอบตรงคือ $\mathrm{Bin}(200,0.015)$ ควรเทียบให้เห็นว่าการประมาณพลาดเท่าไร แล้วถามคำถามที่สำคัญกว่า: ถ้าการผิดนัดไม่อิสระกันจริงล่ะ ลองแบบจำลองที่เศรษฐกิจมีสองสภาพ (สมมติ): ปีปกติ (โอกาส 60%) เฉลี่ยผิดนัด 1.5 ราย และปีถดถอย (40%) เฉลี่ย 5.25 ราย ค่าเฉลี่ยรวมยังเป็น $0.6(1.5)+0.4(5.25)=3$ เท่าเดิม</p>
+  <div class="math">\[\begin{aligned}
+\mathrm{Bin}&:\ P(X=0)=4.87\%\\
+&\quad\ P(X\ge5)=18.35\%\\
+\mathrm{Poisson}&:\ P(X=0)=4.98\%\\
+&\quad\ P(X\ge5)=18.47\%\\[4pt]
+\text{2 states}&:\ \mathrm{Var}(X)=3+0.6(1.5)^2\\
+&\quad\ +0.4(2.25)^2=6.375\\
+&\quad\ P(X\ge5)=25.20\%
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>binomial กับ Poisson ต่างกันไม่ถึง 0.2 จุดเปอร์เซ็นต์ การประมาณจึงไม่ใช่ปัญหา ปัญหาจริงอยู่ที่ independence ในความจริงบริษัทผิดนัดพร้อมกันเพราะเศรษฐกิจตัวเดียวกันกระทบทุกราย ในแบบจำลองสองสภาพ เมื่อรู้สภาพเศรษฐกิจแล้ว การผิดนัดยังอิสระกัน (conditional independence) แต่เมื่อไม่รู้ ปีแย่จะมีหลายรายพร้อมกัน variance จึงขึ้นจาก 3 เป็น 6.375 ทั้งที่ค่าเฉลี่ยเท่าเดิม และโอกาสเสียตั้งแต่ \$15 ล้านขึ้นจาก 18.47% เป็น 25.20% ระดับ 99% ก็ขยับจาก 8 รายเป็น 10 ราย หรือ \$30 ล้าน</p>
+    <p>variance 6.375 แยกเป็นสองส่วน: 3 มาจากความแกว่งภายในแต่ละสภาพ และ 3.375 มาจากการที่ค่าเฉลี่ยของสองสภาพต่างกัน นี่คือ <a href="2.2.html">law of total variance</a> ส่วนแนวคิด “อิสระกันเมื่อรู้ปัจจัยร่วม” คือแกนของ <a href="5.6.html">conditional independence และ Gaussian copula</a> ซึ่งเป็นแบบจำลองที่ตลาดใช้ตั้งราคาพอร์ตสินเชื่อจนถึงวิกฤตปี 2008</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ค่าเฉลี่ยเท่ากัน หางต่างกัน</h4>
+  <img src="../figures/1.6-4.svg" alt="เปรียบเทียบแบบจำลองการนับที่ค่าเฉลี่ย 3 variance 3 กับแบบจำลองที่ค่าเฉลี่ย 3 แต่ variance 9" loading="lazy">
+  <figcaption><p>แท่งของ Poisson ที่มีค่าเฉลี่ยและ variance เท่ากับ 3 เทียบกับแบบจำลองการนับที่ค่าเฉลี่ยเท่ากันแต่ variance สูงกว่า แบบหลังมีทั้งปีที่เงียบมากกว่าและปีที่ผิดนัดจำนวนมากกว่า หางขวาหนักกว่า ข้อมูลการผิดนัดจริงมักเป็นแบบหลัง</p></figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>จุดที่พลาดแล้วได้คำตอบผิดโดยไม่รู้ตัว</h4>
+  <p><strong>ใช้ค่าเฉลี่ยเป็นงบ:</strong> งบ \$9 ล้านเท่า expected loss ไม่พอ 35.3% ของปี เพราะ distribution ของการนับที่ค่าเฉลี่ยเล็กเบ้ขวาเสมอ ถ้าต้องการระดับที่ไม่ถูกเกินใน 99% ของปี ต้องใช้ quantile (\$24 ล้าน) ไม่ใช่ค่าเฉลี่ย</p>
+  <p><strong>ใช้อัตราผิดช่วงเวลา:</strong> ระบบเตือนดังเฉลี่ย 2 ครั้งต่อชั่วโมง โอกาสเงียบตลอดครึ่งชั่วโมงคือ $e^{-1}=36.79\%$ ถ้าเผลอใช้ $\lambda=2$ จะได้ $e^{-2}=13.53\%$ ต่างกันเกือบสามเท่า</p>
+  <p><strong>อ่านแท่งเดียวแทนหาง:</strong> $P(X=5)=10.08\%$ ไม่ใช่โอกาสเสียตั้งแต่ \$15 ล้าน ซึ่งต้องรวมทุกแท่งตั้งแต่ 5 ราย ได้ 18.47%</p>
+  <p><strong>เชื่อ independence ในจุดที่ไม่มี:</strong> Poisson และ binomial ต่างสมมติว่าเหตุการณ์ไม่เกี่ยวกัน การผิดนัด ความล้มเหลวของระบบที่ใช้โครงสร้างเดียวกัน และคำสั่งขายตอนตลาดตื่นตระหนก ล้วนเกิดเป็นกลุ่ม ถ้าข้อมูลมี variance สูงกว่าค่าเฉลี่ยมาก ให้สงสัยก่อนใช้หางของ Poisson</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ทีมระบบซื้อขายใช้ Poisson วางแผนความจุ: ถ้าคำสั่งเข้าเฉลี่ย 20 รายการต่อวินาที และระบบรับได้ 25 รายการต่อวินาที โอกาสที่วินาทีหนึ่งมีคำสั่งเกินความจุคือ $P(X\gt25)\approx11.2\%$ ไม่ใช่ศูนย์แม้ค่าเฉลี่ยต่ำกว่าความจุ ถ้าแต่ละคำสั่งถูกจับคู่สำเร็จอย่างอิสระด้วยโอกาส 30% จำนวนคำสั่งที่สำเร็จต่อวินาทีก็เป็น Poisson เช่นกัน มีค่าเฉลี่ย $20\times0.3=6$ ผลนี้ได้จากการใช้ indicator กับแต่ละคำสั่ง (<a href="2.4.html">Poisson thinning</a>) ในด้านเครดิต แนวคิดอัตราการผิดนัดต่อหน่วยเวลาถูกพัฒนาต่อเป็น hazard rate ที่ใช้ตั้งราคาหุ้นกู้และ CDS (<a href="20.6.html">defaultable bonds และ hazard rates</a>)</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ระบบเตือนดังเฉลี่ย 2 ครั้งต่อชั่วโมงด้วยอัตราคงที่ โอกาสที่ไม่ดังเลยตลอดครึ่งชั่วโมง และโอกาสที่ดังอย่างน้อย 4 ครั้งในหนึ่งชั่วโมงคือเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ครึ่งชั่วโมง: $\lambda=2\times0.5=1$ จึงได้ $e^{-1}\approx36.79\%$ หนึ่งชั่วโมง: $\lambda=2$ รวมแท่ง 0 ถึง 3 ได้ $e^{-2}(1+2+2+\tfrac43)=6.333e^{-2}\approx0.8571$ จึงได้ $P(X\ge4)\approx14.29\%$ สองตัวเลขนี้ใช้ $\lambda$ คนละค่าเพราะถามคนละช่วงเวลา</p></details>
+  <p><strong>2.</strong> พอร์ตเดิม แต่ recovery เหลือ 20% แทน 40% โดยสมมติฐานอื่นเท่าเดิม expected loss โอกาสผิดนัดอย่างน้อย 5 ราย และระดับความเสียหาย 99% เปลี่ยนอย่างไร</p>
+  <details><summary>เฉลย</summary><p>ความเสียหายต่อรายเป็น \$5 ล้าน × 0.80 = \$4 ล้าน expected loss เป็น $3\times\$4=\$12$ ล้าน โอกาสผิดนัดอย่างน้อย 5 รายยังเป็น 18.47% เพราะ distribution ของจำนวนรายไม่เปลี่ยน แต่เหตุการณ์นั้นตอนนี้หมายถึงเสียตั้งแต่ \$20 ล้าน ระดับ 99% ยังเป็น 8 ราย แต่เป็นเงิน $8\times\$4=\$32$ ล้าน recovery เปลี่ยนขนาดของแต่ละก้อน ไม่เปลี่ยนจำนวนก้อน</p></details>
+  <p><strong>3.</strong> คำสั่งซื้อขายเข้าเฉลี่ย 20 รายการต่อวินาที แต่ละคำสั่งถูกจับคู่สำเร็จอย่างอิสระด้วยโอกาส 30% จำนวนคำสั่งที่สำเร็จในหนึ่งวินาทีมีค่าเฉลี่ยเท่าไร และโอกาสที่ไม่มีคำสั่งสำเร็จเลยในวินาทีหนึ่งคือเท่าไร</p>
+  <details><summary>เฉลย</summary><p>คำสั่งที่สำเร็จเป็น Poisson ที่มีค่าเฉลี่ย $20\times0.3=6$ รายการต่อวินาที โอกาสไม่มีเลยคือ $e^{-6}\approx0.25\%$ หรือราวหนึ่งวินาทีใน 400 วินาที ค่าเฉลี่ย 6 ตรวจได้ด้วย indicator: ถ้ามีคำสั่ง $N$ รายการ จำนวนที่สำเร็จเฉลี่ยคือ $0.3N$ แล้วเฉลี่ยข้าม $N$ ได้ $0.3\times20=6$</p></details>
+</section>
+
 <section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
   <details>
-    <summary>ตรวจ PMF, CDF และโจทย์พอร์ตด้วย JavaScript</summary>
-    <pre><code>function poisson(lambda, last) {
+    <summary>เปิดดูโค้ด</summary>
+    <pre><code class="language-javascript">// PMF ของ Poisson ด้วยสูตรแท่งถัดไป = แท่งก่อน × λ / r
+function poisson(lambda, last) {
   const p = [Math.exp(-lambda)];
   for (let r = 1; r &lt;= last; r++) p.push(p[r - 1] * lambda / r);
   return p;
 }
-const p = poisson(3, 80);
+const p = poisson(3, 60);
 const cdf = k =&gt; p.slice(0, k + 1).reduce((a, b) =&gt; a + b, 0);
+console.log(p[0], p[3]);                 // 0.0498 0.2240
+console.log(1 - cdf(3), 1 - cdf(4));     // 0.3528 0.1847
+console.log(cdf(7), cdf(8));             // 0.9881 0.9962 → 8 ราย
 const mean = p.reduce((s, v, r) =&gt; s + r * v, 0);
-const second = p.reduce((s, v, r) =&gt; s + r * r * v, 0);
-console.log(p[0]);                          // 0.049787068...
-console.log(p[3]);                          // 0.224041808...
-console.log(1 - cdf(4));                    // 0.184736755...
-console.log([mean, second - mean ** 2]);     // ประมาณ [3, 3]
-console.log([cdf(7), cdf(8)]);               // [0.988095496..., 0.996197008...]
-console.log(3_000_000 * mean);               // ประมาณ 9000000
-const orders = poisson(20, 25);
-console.log(1 - orders.reduce((a, b) =&gt; a + b, 0)); // 0.112184973...</code></pre>
+const varX = p.reduce((s, v, r) =&gt; s + r * r * v, 0) - mean ** 2;
+console.log(mean, varX);                 // 3 3
+
+console.log((1 - 3 / 200) ** 200, Math.exp(-3)); // 0.0487 0.0498
+
+// แบบจำลองสองสภาพเศรษฐกิจ (สมมติ)
+const good = poisson(1.5, 60), bad = poisson(5.25, 60);
+const tail = (q, k) =&gt; 1 - q.slice(0, k).reduce((a, b) =&gt; a + b, 0);
+console.log(0.6 * tail(good, 5) + 0.4 * tail(bad, 5)); // 0.2520
+
+const orders = poisson(20, 80);
+console.log(1 - orders.slice(0, 26).reduce((a, b) =&gt; a + b, 0)); // 0.1122</code></pre>
   </details>
-  <p>การบวกถึง 80 เป็นการตัดอนุกรมเพื่อคำนวณ ไม่ใช่การพิสูจน์ผลรวมอนันต์ พอเพียงสำหรับความแม่นยำที่แสดงเมื่อ $\lambda=3$ แต่โค้ดนี้ไม่ใช่ตัวคำนวณสำหรับทุกพารามิเตอร์ โดยเฉพาะค่าเฉลี่ยใหญ่มากหรือหางเล็กมากที่ต้องใช้วิธีรักษาเสถียรภาพเชิงตัวเลข</p>
 </section>
 
 <section class="takeaways">
-  <h4>สรุป — นับเหตุการณ์ก่อน แล้วค่อยแปลงเป็นผลกระทบ</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>Poisson เป็นแบบจำลอง ไม่ได้ตามมาจากการรู้ค่าเฉลี่ยอย่างเดียว ต้องตรวจเงื่อนไขการเกิดเหตุการณ์และช่วงเวลาที่ใช้</li>
-    <li>สูตร $P(X=r)=\lambda^re^{-\lambda}/r!$ มาจาก Binomial เมื่อเพิ่มจำนวนครั้ง ลดโอกาสต่อครั้ง และคง $np=\lambda$ ไว้</li>
-    <li>ค่าเฉลี่ยและ variance เท่ากับ $\lambda$ ส่วน standard deviation เท่ากับ $\sqrt\lambda$ ทั้งสามคำมีความหมายและหน่วยต่างกัน</li>
-    <li>พอร์ตตัวอย่างมี expected loss \$9 ล้าน แต่ Poisson approximation ให้โอกาสเสียตั้งแต่ \$15 ล้านประมาณ 18.47% ค่าเฉลี่ยจึงไม่ใช่ระดับรองรับปีที่แย่</li>
-    <li>ระดับขาดทุน 99% ตามแบบจำลองนี้เท่ากับ \$24 ล้าน ไม่ใช่ข้อกำหนดเงินสำรองจริง และไม่คุ้มครองความผิดพลาดของสมมติฐาน</li>
+    <li>Poisson เกิดจาก binomial เมื่อจุดเสี่ยงมาก โอกาสต่อจุดน้อย และค่าเฉลี่ย $\lambda=np$ คงที่ สูตรคือ $P(X=r)=\lambda^re^{-\lambda}/r!$ และ $\lambda$ ต้องเป็นจำนวนเฉลี่ยของช่วงที่ถามจริง</li>
+    <li>ค่าเฉลี่ยและ variance เท่ากับ $\lambda$ ทั้งคู่ การแกว่งเทียบกับค่าเฉลี่ยคือ $1/\sqrt\lambda$</li>
+    <li>พอร์ตหุ้นกู้ตัวอย่างมี expected loss \$9 ล้าน แต่งบเท่านั้นไม่พอ 35.3% ของปี และระดับ 99% คือ \$24 ล้าน</li>
+    <li>การประมาณ binomial ด้วย Poisson พลาดไม่ถึง 0.2 จุดเปอร์เซ็นต์ในตัวอย่างนี้ ความเสี่ยงที่ใหญ่กว่าคือการผิดนัดเกิดเป็นกลุ่ม ซึ่งเพิ่ม variance และหางได้มากโดยค่าเฉลี่ยไม่เปลี่ยน</li>
   </ul>
-  <p>หัวข้อถัดไปเปลี่ยนทิศทางคำถาม จาก “เมื่อรู้แบบจำลองแล้ว ข้อมูลนี้เกิดได้แค่ไหน” เป็น “เมื่อเห็นข้อมูลแล้ว ควรปรับความเชื่อเรื่องแบบจำลองอย่างไร” ด้วย Bayes' theorem</p>
+  <p>หน้าถัดไป <a href="1.7.html">Bayes' theorem</a> กลับทิศคำถาม: จากเดิมที่ถามว่า “ถ้ารู้แบบจำลอง ข้อมูลนี้เกิดได้แค่ไหน” เป็น “เมื่อเห็นข้อมูลแล้ว ควรเชื่อแบบจำลองไหนมากขึ้นเท่าไร” ซึ่งคือคำถามที่ค้างไว้ตอนประเมินผู้จัดการกองทุน</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

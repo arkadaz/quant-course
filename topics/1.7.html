@@ -18,430 +18,514 @@
 <article class="topic" data-number="1.7" data-depends-on="1.1 1.2 1.3">
 <header class="topic-header">
   <h1><span class="tnum">1.7</span> Bayes' Theorem</h1>
-  <p class="subtitle">เห็นสัญญาณแล้ว ต้องเปลี่ยนกลุ่มที่นับ ก่อนเปลี่ยนความเชื่อ</p>
+  <p class="subtitle">เมื่อเห็นหลักฐานแล้ว โอกาสของแต่ละสาเหตุคือส่วนแบ่งของมันในบรรดาทุกทางที่ทำให้เกิดหลักฐานนั้น</p>
 </header>
 
 <div class="hook">
-  <p>ระบบเตือนล่วงหน้าตรวจจับวัน crash ได้ 90% วันนี้ระบบเตือนแล้ว โอกาสเกิด crash จึงเป็น 90% ใช่ไหม?</p>
-  <details>
-    <summary>เปิดคำตอบตั้งต้น</summary>
-    <p>ยังตอบไม่ได้ ต้องรู้อีกสองอย่าง: วัน crash พบได้บ่อยเพียงใด และระบบเตือนในวันที่ไม่ crash บ่อยเพียงใด ตัวเลข 90% นับจากกลุ่มวัน crash แต่คำถามของเราต้องนับจากกลุ่มวันที่ระบบเตือน</p>
-  </details>
-  <p>เราจะเริ่มจากตารางสี่ช่องที่นับได้ แล้วค่อยย่อเป็น Bayes' theorem จากนั้นจะแยกการปรับความน่าจะเป็นออกจากการตัดสินใจ ซึ่งยังต้องรู้ผลเสียและต้นทุนด้วย</p>
+  <p>ฝ่ายความเสี่ยงซื้อระบบเตือน crash มาใช้ ผู้ขายบอกว่าในวันที่ตลาด crash ระบบเตือนล่วงหน้าได้ 90% แต่ในวันปกติระบบก็เตือนผิด 10% ส่วนวัน crash จริงเกิดราว 1 วันในทุก 1,000 วันซื้อขาย หรือ 0.1% (ตัวเลขสมมติ) เช้านี้ระบบเตือน หัวหน้าโต๊ะถามว่า “วันนี้มีโอกาส crash เท่าไร ต้องลดพอร์ตทันทีหรือเปล่า”</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ใช่ 90% ลองนึกถึง 10,000 วัน จะมีวัน crash 10 วันซึ่งระบบเตือน 9 วัน และมีวันปกติ 9,990 วันซึ่งระบบเตือนผิด 999 วัน วันที่ระบบเตือนจึงมีทั้งหมด 1,008 วัน แต่เป็น crash จริงเพียง 9 วัน โอกาสคือ $9/1{,}008\approx0.89\%$ สูงกว่าเดิม (0.1%) เกือบ 9 เท่า แต่ยังไม่ถึง 1% ส่วนจะลดพอร์ตหรือไม่ต้องดูต้นทุนด้วย ซึ่งจะคำนวณในตัวอย่างท้ายหน้า</p></details>
 </div>
 
 <section class="prose">
-  <h4>กำหนดเหตุการณ์และข้อมูลที่รู้ก่อน</h4>
-  <p>ให้ $A$ หมายถึงวันนั้นเกิด crash ตามเกณฑ์ที่กำหนดไว้ล่วงหน้า และ $B$ หมายถึงระบบเตือนก่อนถึงเวลาตัดสินใจ สมมติว่า $P(A)=0.001$ ระบบเตือนในวัน crash ด้วยโอกาส 0.90 และเตือนในวันที่ไม่ crash ด้วยโอกาส 0.10</p>
-  <p>ทั้งหมดเป็นตัวเลขสมมติสำหรับบทเรียน ไม่ใช่ผลทดสอบระบบตลาดจริง เราจะถือว่าพารามิเตอร์เหล่านี้ตรงกับกลุ่มวันที่กำลังประเมิน หากนำไปใช้จริง ต้องตรวจทั้งนิยามเหตุการณ์ ช่วงเวลา และข้อมูลที่มีอยู่ ณ เวลาส่งสัญญาณ</p>
-</section>
-
-<section class="table">
-  <h4>สามความน่าจะเป็นที่ต้องไม่อ่านสลับกัน</h4>
-  <table>
-    <thead><tr><th>ข้อมูลที่ให้</th><th>กลุ่มที่ใช้เป็นฐาน</th><th>ค่าตัวอย่าง</th></tr></thead>
-    <tbody>
-      <tr><td>$P(A)$: prior หรือ base rate</td><td>วันทั้งหมดก่อนรู้สัญญาณ</td><td>0.1%</td></tr>
-      <tr><td>$P(B\mid A)$: sensitivity</td><td>เฉพาะวัน crash</td><td>90%</td></tr>
-      <tr><td>$P(B\mid A^c)$: false positive rate</td><td>เฉพาะวันที่ไม่ crash</td><td>10%</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">$A^c$ หมายถึงเหตุการณ์ตรงข้ามกับ $A$ และเครื่องหมาย $\mid$ อ่านว่า “เมื่อรู้ว่า” สิ่งที่โจทย์ถามคือ $P(A\mid B)$ ซึ่งใช้วันที่ระบบเตือนเป็นฐาน จึงยังไม่ใช่ค่าใดในตาราง</p>
-</section>
-
-<section class="example">
-  <h4>Worked Example — เปลี่ยนเปอร์เซ็นต์เป็นจำนวนในกลุ่มอ้างอิง 10,000 วัน</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: base rate 0.1%, sensitivity 90%, false positive rate 10%</p>
-  <p>ใช้ 10,000 วันเป็นกลุ่มอ้างอิงเพื่อคิดสัดส่วน จะมีวัน crash $10{,}000(0.001)=10$ วัน และวันที่ไม่ crash 9,990 วัน ระบบเตือนในกองแรก $10(0.90)=9$ วัน และในกองหลัง $9{,}990(0.10)=999$ วัน</p>
-  <p>จำนวนนี้เป็นการแปลงความน่าจะเป็นให้เห็นภาพ ไม่ใช่ข้อมูลที่เก็บจริง และไม่ได้รับรองว่าตัวอย่างจริง 10,000 วันต้องนับได้ตรงตามนี้</p>
-</section>
-
-<section class="table">
-  <h4>ตารางเดียวตอบได้ทั้งสองทิศทาง</h4>
-  <table>
-    <thead><tr><th></th><th>เตือน $B$</th><th>ไม่เตือน $B^c$</th><th>รวม</th></tr></thead>
-    <tbody>
-      <tr><td>Crash $A$</td><td>9</td><td>1</td><td>10</td></tr>
-      <tr><td>ไม่ crash $A^c$</td><td>999</td><td>8,991</td><td>9,990</td></tr>
-      <tr><td>รวม</td><td>1,008</td><td>8,992</td><td>10,000</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">ถ้ารู้ว่า crash ให้อ่านแถวแรก: เตือน 9 จาก 10 ถ้ารู้ว่าเตือน ให้อ่านคอลัมน์แรก: crash 9 จาก 1,008 จุดต่างอยู่ที่ตัวหาร ไม่ใช่ว่าตารางใดผิด</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — นิยาม conditional probability ด้วยกลุ่มที่เหลืออยู่</h4>
-  <p>เมื่อรู้ว่า $B$ เกิด เราตัดกรณีที่ $B$ ไม่เกิดออก แล้วปรับสัดส่วนให้กลุ่มที่เหลือรวมเป็นหนึ่ง ใช้นิยามนี้เมื่อ $P(B)\gt0$</p>
-  <div class="math">\[
-\begin{aligned}
-P(A\mid B)&\equiv\frac{P(A\cap B)}{P(B)}\\
-&=\frac{9/10{,}000}{1{,}008/10{,}000}\\
-&=\frac9{1{,}008}=\frac1{112}\\
-&\approx\boxed{0.8929\%}\\[3pt]
-P(B\mid A)&=\frac9{10}=90\%
-\end{aligned}
-\]</div>
-  <div class="reading"><p>$A\cap B$ คือกรณีที่ทั้ง crash และเตือน ค่า 0.8929% เป็น posterior หรือความน่าจะเป็นหลังรู้สัญญาณ เพิ่มจาก prior 0.1% แต่ยังต่ำกว่า 90% มาก การเพิ่มขึ้นจริงกับการยังมีค่าน้อยเกิดพร้อมกันได้</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.7a — วันที่เตือนมาจากสองเส้นทาง</h4>
-  <img src="../figures/1.7-1.svg" alt="เส้นทางเตือนจากวัน crash และจากวันที่ไม่ crash" loading="lazy">
-  <figcaption><p>เส้นทาง crash แล้วเตือนคิดเป็น 0.09% ของทุกวัน ส่วนไม่ crash แต่เตือนคิดเป็น 9.99% ของทุกวัน อัตราส่วน $999/9=111$ บอกว่าในกลุ่มเตือนมีกรณีหลอกมากกว่ากรณีจริง 111 เท่า ไม่ใช่ว่าเครื่องเตือนทุกวันผิดด้วยโอกาส 10% ของวันทั้งหมด</p></figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — สร้างตัวเศษและตัวหารจากข้อมูลที่โจทย์ให้</h4>
-  <p>นิยาม conditional probability ให้กฎคูณ ส่วนวันที่เตือนแบ่งเป็น crash กับไม่ crash ได้โดยไม่ซ้ำและไม่ตกหล่น จึงใช้กฎบวกได้</p>
-  <div class="math">\[
-\begin{aligned}
-P(A\cap B)&=P(B\mid A)P(A)\\
-&=0.90(0.001)=0.0009\\
-P(A^c\cap B)&=P(B\mid A^c)P(A^c)\\
-&=0.10(0.999)=0.0999\\
-P(B)&=P(A\cap B)+P(A^c\cap B)\\
-&=0.0009+0.0999=0.1008
-\end{aligned}
-\]</div>
-  <div class="reading"><p>กฎคูณตรงนี้ไม่ได้สมมติว่า $A$ กับ $B$ เป็นอิสระ เพราะใช้ความน่าจะเป็นแบบมีเงื่อนไขอยู่แล้ว ส่วนกฎบวกตัวหารเรียกว่า law of total probability: รวมทุกเส้นทางที่ทำให้สัญญาณเกิด</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — ประกอบเป็น Bayes' theorem</h4>
-  <p>ใส่ผลขั้นที่ 2 ลงในนิยามขั้นที่ 1 เขียนตัวหารแยกไว้เพื่อให้เห็นว่ารวมอะไรบ้าง</p>
-  <div class="math">\[
-\begin{aligned}
-P(B)&=P(B\mid A)P(A)+P(B\mid A^c)P(A^c)\\
-P(A\mid B)&=\frac{P(B\mid A)P(A)}{P(B)}\\
-&=\frac{0.90(0.001)}{0.1008}\\
-&=\frac{0.0009}{0.1008}\approx0.008929
-\end{aligned}
-\]</div>
-  <div class="reading"><p>อ่านเป็นลำดับ: prior บอกน้ำหนักตั้งต้นของกรณี likelihood บอกโอกาสเห็นหลักฐานภายใต้กรณีนั้น คูณกันได้ส่วนที่ทั้งกรณีและหลักฐานเกิด จากนั้นหารด้วยโอกาสเห็นหลักฐานทั้งหมด จึงได้ posterior ที่รวมกับกรณีอื่นแล้วเป็นหนึ่ง</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.7b — สองแท่งใช้คนละกลุ่มเป็นฐาน</h4>
-  <img src="../figures/1.7-2.svg" alt="เปรียบเทียบ sensitivity 90% กับ posterior ประมาณ 0.89%" loading="lazy">
-  <figcaption><p>90% ตอบว่า “เมื่อ crash ระบบเตือนบ่อยแค่ไหน” ส่วน 0.89% ตอบว่า “เมื่อระบบเตือน crash บ่อยแค่ไหน” ความต่างนี้ไม่ใช่ข้อขัดแย้ง แต่เป็นเหตุผลที่ต้องเขียนเงื่อนไขให้ครบก่อนใช้คำว่าแม่นยำ</p></figcaption>
-</figure>
-
-<section class="table">
-  <h4>คงเครื่องเดิม แต่เปลี่ยน base rate</h4>
-  <table>
-    <thead><tr><th>Prior ของ crash</th><th>ส่วน crash และเตือน</th><th>ส่วนไม่ crash แต่เตือน</th><th>Posterior เมื่อเตือน</th></tr></thead>
-    <tbody>
-      <tr><td>0.1%</td><td>$0.90(0.001)=0.0009$</td><td>$0.10(0.999)=0.0999$</td><td>0.8929%</td></tr>
-      <tr><td>1%</td><td>$0.90(0.01)=0.009$</td><td>$0.10(0.99)=0.099$</td><td>$0.009/0.108=8.3333\%$</td></tr>
-      <tr><td>10%</td><td>$0.90(0.10)=0.09$</td><td>$0.10(0.90)=0.09$</td><td>$0.09/0.18=50\%$</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">ทุกแถวใช้ sensitivity 90% และ false positive rate 10% เท่ากัน แต่สัดส่วนวันสองกลุ่มต่างกัน จึงให้ posterior ต่างกัน การละเลย base rate เรียกว่า base-rate neglect</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.7c — สัญญาณเดียวกันไม่ได้ให้ posterior เดียวกันทุกกลุ่ม</h4>
-  <img src="../figures/1.7-3.svg" alt="Posterior เมื่อเตือนเปลี่ยนตาม prior โดยคง sensitivity และ false positive rate" loading="lazy">
-  <figcaption><p>เส้นนี้คงคุณภาพแบบมีเงื่อนไขของระบบไว้ แล้วเปลี่ยน prior จึงไม่ควรยกค่า posterior ที่วัดจากตลาดหรือช่วงเวลาหนึ่งไปใช้กับอีกกลุ่ม โดยไม่ตรวจว่าความถี่พื้นฐานและ likelihood ยังเหมือนเดิมหรือไม่</p></figcaption>
-</figure>
-
-<section class="example">
-  <h4>ตรวจสูตรด้วยลูกเต๋าที่แจกแจงได้ครบทุกคู่</h4>
-  <p>ทอยลูกเต๋ายุติธรรมสองลูกอย่างเป็นอิสระ ให้ $A$ คือแต้มลูกแรกตั้งแต่ 4 ขึ้นไป และ $B$ คือผลรวมตั้งแต่ 8 ขึ้นไป ครั้งนี้ $A,B$ เป็นเหตุการณ์ของลูกเต๋า ไม่ใช่ของ crash</p>
-  <p>มีคู่แต้มที่เป็นไปได้ 36 คู่และโอกาสเท่ากัน เงื่อนไขความยุติธรรมและ independence เป็นสมมติฐานที่ทำให้เรานับคู่แล้วหาร 36 ได้ ไม่ใช่สิ่งที่ลูกเต๋าทุกคู่ต้องมีโดยอัตโนมัติ</p>
-</section>
-
-<section class="table">
-  <h4>นับผลรวมที่ผ่านเกณฑ์ แล้วนับส่วนที่ลูกแรกสูงด้วย</h4>
-  <table>
-    <thead><tr><th>ผลรวม</th><th>คู่แต้มที่เป็นไปได้</th><th>ทั้งหมดใน $B$</th><th>อยู่ใน $A$ ด้วย</th></tr></thead>
-    <tbody>
-      <tr><td>8</td><td>(2,6), (3,5), (4,4), (5,3), (6,2)</td><td>5</td><td>3</td></tr>
-      <tr><td>9</td><td>(3,6), (4,5), (5,4), (6,3)</td><td>4</td><td>3</td></tr>
-      <tr><td>10</td><td>(4,6), (5,5), (6,4)</td><td>3</td><td>3</td></tr>
-      <tr><td>11</td><td>(5,6), (6,5)</td><td>2</td><td>2</td></tr>
-      <tr><td>12</td><td>(6,6)</td><td>1</td><td>1</td></tr>
-      <tr><td>รวม</td><td></td><td>15</td><td>12</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — เทียบการนับตรงกับ Bayes</h4>
-  <div class="math">\[
-\begin{aligned}
-P(A)&=\frac{18}{36}=\frac12,\qquad P(B)=\frac{15}{36}\\
-P(A\cap B)&=\frac{12}{36}\\
-P(A\mid B)&=\frac{12/36}{15/36}=\frac{12}{15}=0.80\\[3pt]
-P(B\mid A)&=\frac{12}{18}=\frac23\\
-P(B\mid A^c)&=\frac3{18}=\frac16\\
-P(B)&=\frac23\frac12+\frac16\frac12=\frac5{12}\\
-P(A\mid B)&=\frac{(2/3)(1/2)}{5/12}=0.80
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ลูกแรกออก 4, 5 หรือ 6 ได้ 18 คู่จาก 36 คู่ ในกลุ่มนี้มี 12 คู่ที่ผลรวมถึง 8 ส่วนอีกฝั่งเหลือเพียง (2,6), (3,5), (3,6) สามคู่ การนับตรงกับสูตรจึงให้ผลเดียวกัน และ $P(B\mid A)=2/3$ ไม่เท่ากับ $P(A\mid B)=0.8$</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.7e — รู้ผลรวมแล้ว เหลือเพียง 15 คู่ให้พิจารณา</h4>
-  <img src="../figures/1.7-5.svg" alt="ตารางคู่แต้มลูกเต๋า 36 ช่อง เหลือ 15 ช่องที่ผลรวมตั้งแต่ 8 และ 12 ช่องที่ลูกแรกตั้งแต่ 4" loading="lazy">
-  <figcaption><p>การวางเงื่อนไขเปลี่ยนกลุ่มที่นำมาหาสัดส่วน จากเดิม 36 คู่เหลือ 15 คู่ ไม่ใช่การเปลี่ยนแต้มที่ออกไปแล้ว และไม่ได้ทำให้การทอยลูกหนึ่งเป็นสาเหตุของแต้มอีกลูก</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>เปลี่ยนรูปการเขียน: จาก probability เป็น odds</h4>
-  <p>Probability เปรียบเทียบเหตุการณ์กับทุกกรณี ส่วน odds เปรียบเทียบเหตุการณ์กับกรณีที่ไม่เกิด เช่น probability 20% มี odds $0.20/0.80=1/4$ หรือหนึ่งต่อสี่ ไม่ใช่ 20 ต่อ 80 เปอร์เซ็นต์สองชุดใหม่</p>
-  <p>ข้อดีของ odds คือ Bayes กลายเป็นการคูณ prior odds ด้วย likelihood ratio หรือ LR ซึ่งวัดว่าหลักฐานที่เห็นมีโอกาสเกิดภายใต้กรณีหนึ่งมากกว่าอีกกรณีกี่เท่า</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — หาร Bayes สองฝั่งเพื่อตัดตัวหารร่วม</h4>
-  <p>ใช้รูปต่อไปนี้เมื่อโอกาสและตัวหารที่เกี่ยวข้องไม่เป็นศูนย์ หากพบค่าศูนย์ ให้กลับไปตรวจนิยามเหตุการณ์และสูตร Bayes โดยตรง</p>
-  <div class="math">\[
-\begin{aligned}
-\frac{P(A\mid B)}{P(A^c\mid B)}
-&=\frac{P(B\mid A)P(A)/P(B)}{P(B\mid A^c)P(A^c)/P(B)}\\
-&=\frac{P(A)}{P(A^c)}\frac{P(B\mid A)}{P(B\mid A^c)}\\
-\text{posterior odds}&=\text{prior odds}\times LR\\[3pt]
-o&=\frac{p}{1-p}\\
-o(1-p)&=p\quad\Longrightarrow\quad p=\frac{o}{1+o}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>$LR\gt1$ ทำให้ odds ของ $A$ เพิ่ม $LR\lt1$ ทำให้ลด และ $LR=1$ ไม่เปลี่ยน odds รูปคูณนี้ไม่ใช่การคูณ probability ตรง ๆ หลังคูณแล้วต้องแปลง odds กลับด้วย $o/(1+o)$ ก่อนรายงานเป็นเปอร์เซ็นต์</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — ตรวจทั้งโจทย์ crash และลูกเต๋าด้วย odds</h4>
-  <div class="math">\[
-\begin{aligned}
-\text{crash prior odds}&=\frac{0.001}{0.999}=\frac1{999}\\
-LR_{\text{alarm}}&=\frac{0.90}{0.10}=9\\
-o_{\text{new}}&=\frac9{999}=\frac1{111}\\
-p_{\text{new}}&=\frac{1/111}{1+1/111}=\frac1{112}\\[3pt]
-\text{dice prior odds}&=\frac{1/2}{1/2}=1\\
-LR_{\text{dice}}&=\frac{2/3}{1/6}=4\\
-p_{\text{new}}&=\frac4{1+4}=0.80
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ทั้งสองโจทย์ให้คำตอบเดิม รูป odds มีประโยชน์เวลาอัปเดตทีละชิ้น แต่ไม่ได้ให้ข้อมูลเพิ่มกว่าสูตร Bayes เป็นเพียงการจัดรูปให้คำนวณสะดวกขึ้น</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.7d — ความน่าจะเป็นของสองกรณียังรวมเป็นหนึ่ง</h4>
-  <img src="../figures/1.7-4.svg" alt="เปรียบเทียบ prior และ posterior ของ crash กับไม่ crash" loading="lazy">
-  <figcaption><p>โอกาส crash เพิ่มจาก 0.1% เป็นประมาณ 0.89% ขณะที่ไม่ crash ลดจาก 99.9% เป็นประมาณ 99.11% การอัปเดตทำให้สัดส่วนเปลี่ยน ไม่ใช่เพิ่มโอกาสให้ฝั่งหนึ่งโดยปล่อยอีกฝั่งไว้จนผลรวมเกินหนึ่ง</p></figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — สองสัญญาณ: ใช้ข้อมูลใหม่จริงหรือแค่นับซ้ำ</h4>
-  <p>ให้ $B_1,B_2$ เป็นสัญญาณสองเครื่อง การอัปเดตครั้งที่สองต้องใช้ likelihood เมื่อรู้สัญญาณแรกแล้ว การคูณ LR เดิมซ้ำใช้ได้เมื่อสัญญาณเป็นอิสระแบบมีเงื่อนไขทั้งในกลุ่ม crash และในกลุ่มไม่ crash</p>
-  <div class="math">\[
-\begin{aligned}
-o(A\mid B_1,B_2)&=o(A)\,LR_1\,LR_{2\mid1}\\
-LR_{2\mid1}&\equiv\frac{P(B_2\mid A,B_1)}{P(B_2\mid A^c,B_1)}\\[3pt]
-\text{if }LR_1=LR_{2\mid1}=9&:\quad o_{\text{new}}=\frac{81}{999}\\
-P(A\mid B_1,B_2)&=\frac{81}{999+81}=7.5\%
-\end{aligned}
-\]</div>
-  <div class="reading"><p>การใช้ข้อมูลคนละแหล่งยังไม่พิสูจน์ conditional independence หากเครื่องสองลอกเครื่องแรก เมื่อรู้ว่าเครื่องแรกเตือนแล้ว เครื่องสองย่อมเตือนแน่นอนในทั้งสองกลุ่ม จึงได้ $LR_{2\mid1}=1/1=1$ ไม่ใช่ 9 คำตอบยังเป็น 0.8929% เท่าเดิม</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — มากกว่าสองกรณีก็ใช้วิธีคูณแล้วหารผลรวม</h4>
-  <p>สมมติวันหนึ่งอยู่ในสภาวะใดสภาวะหนึ่ง: สงบ 90%, ตึงเครียด 9%, วิกฤติ 1% ระบบเตือนในแต่ละสภาวะด้วยโอกาส 5%, 40%, 90% ตามลำดับ แต่ละสภาวะต้องไม่ทับกันและรวมกันครอบคลุมทุกกรณี</p>
-  <div class="math">\[
-\begin{aligned}
-w_{\text{calm}}&=0.90(0.05)=0.045\\
-w_{\text{stressed}}&=0.09(0.40)=0.036\\
-w_{\text{crisis}}&=0.01(0.90)=0.009\\
-P(B)&=0.045+0.036+0.009=0.090\\
-P(\text{calm}\mid B)&=0.045/0.090=50\%\\
-P(\text{stressed}\mid B)&=0.036/0.090=40\%\\
-P(\text{crisis}\mid B)&=0.009/0.090=10\%
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ตรวจได้ทันทีว่า posterior ทั้งสามรวมเป็น 100% กฎทั่วไปคือให้ $w_i=P(B\mid A_i)P(A_i)$ แล้วหารแต่ละ $w_i$ ด้วย $\sum_jw_j$ ถ้าลืมกรณีหนึ่งในตัวหาร posterior ของกรณีที่เหลือจะสูงเกินจริง</p></div>
-</section>
-
-<section class="prose">
-  <h4>สัญญาณซื้อ: “ถูก 60%” ยังไม่ใช่นิยามที่ชัดพอ</h4>
-  <p>สมมติตลาดปิดบวก 52% ของวัน สัญญาณซื้อเกิดในวันบวก 60% และเกิดในวันที่ไม่บวก 40% ให้ $U$ แทนวันบวก และ $S$ แทนวันที่มีสัญญาณ โดยสัญญาณต้องเกิดก่อนช่วงผลตอบแทนที่ต้องการทำนาย</p>
-  <p>คำว่า “ถูก 60%” อาจหมายถึงหลายตัวเลข ในโจทย์นี้เราระบุชัดว่า 60% คือ $P(S\mid U)$ ไม่ใช่ $P(U\mid S)$ และไม่ใช่สัดส่วนทำนายถูกจากทุกวัน หากผู้ขายไม่บอกนิยาม ต้องถามก่อนแทนค่าในสูตร</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — คำนวณทั้งวันที่มีสัญญาณและวันที่ไม่มี</h4>
-  <div class="math">\[
-\begin{aligned}
-P(S)&=0.60(0.52)+0.40(0.48)=0.504\\
-P(U\mid S)&=\frac{0.312}{0.504}=\frac{13}{21}\approx61.90\%\\
-P(S^c)&=1-0.504=0.496\\
-P(U\mid S^c)&=\frac{0.40(0.52)}{0.496}\\
-&=\frac{0.208}{0.496}=\frac{13}{31}\approx41.94\%\\[3pt]
-P(U)&=P(S)P(U\mid S)+P(S^c)P(U\mid S^c)\\
-&=0.504\frac{13}{21}+0.496\frac{13}{31}\\
-&=0.312+0.208=0.52
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ไม่มีสัญญาณก็เป็นข้อมูลในแบบจำลองนี้ แต่ยังสรุปขนาดสถานะไม่ได้ การถ่วง posterior ของทั้งสองกิ่งกลับมาต้องให้ prior เดิม เป็นวิธีตรวจบัญชีความน่าจะเป็นที่เร็ว และเชื่อมกับ law of iterated expectations ในหัวข้อ 2.1</p></div>
-</section>
-
-<section class="table">
-  <h4>สัญญาณคุณภาพเดิม แต่ prior ของวันบวกเปลี่ยน</h4>
-  <table>
-    <thead><tr><th>Prior $p$</th><th>โอกาสเกิดสัญญาณ $0.6p+0.4(1-p)$</th><th>Posterior $0.6p/P(S)$</th></tr></thead>
-    <tbody>
-      <tr><td>52%</td><td>0.504</td><td>61.90%</td></tr>
-      <tr><td>30%</td><td>0.460</td><td>39.13%</td></tr>
-      <tr><td>10%</td><td>0.420</td><td>14.29%</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">LR เท่ากับ 1.5 ทุกแถว จึงคูณ odds เดิมด้วยตัวคูณเดียวกัน แต่การเพิ่มในหน่วยจุดเปอร์เซ็นต์ไม่เท่ากัน ความแรงของหลักฐานแบบ LR กับระดับ posterior เป็นคนละสิ่ง</p>
-</section>
-
-<section class="pitfall">
-  <h4>โอกาสทายถูกสูง ไม่ได้รับรองกำไร และโอกาสต่ำไม่ได้แปลว่าควรละเลย</h4>
-  <p>ถ้าชนะได้ 1R แพ้เสีย 2R และมีต้นทุน 0.02R ต่อครั้ง ความน่าจะเป็นชนะ $p=13/21$ ให้กำไรเฉลี่ย $p(1)-(1-p)(2)-0.02\approx-0.1629R$ แม้จะชนะ 61.90% การเพิ่มโอกาสจาก 52% เป็น 61.90% จึงไม่ใช่ expected P&amp;L 9.90%</p>
-  <p>ในทิศกลับกัน สัญญาณ crash ที่ให้ posterior เพียง 0.8929% อาจยังคุ้มแก่การตอบสนอง หากการพลาดมีความเสียหายสูงมาก การตัดสินใจต้องเทียบผลเสียของแต่ละทางเลือก ไม่ใช่ตัดสินจากจำนวน false alarms อย่างเดียว</p>
-</section>
-
-<section class="example">
-  <h4>Worked Example — ใช้ posterior ตัดสินใจภายใต้ต้นทุนที่ระบุ</h4>
-  <p>สมมติทางเลือกไม่ทำอะไรเสีย \$1 ล้านเฉพาะเมื่อ crash อีกทางเลือกป้องกันความเสียหายได้ทั้งหมด โดยเสียต้นทุน \$1,000 เฉพาะเมื่อเป็น false alarm แบบจำลองต้นทุนนี้ตั้งขึ้นเพื่อแยกแนวคิด ไม่ใช่คำแนะนำป้องกันความเสี่ยงจริง</p>
-  <p>ให้ $q=1/112$ เป็น posterior หลังเตือน ค่าเสียหายคาดหมายของการไม่ทำอะไรคือ $q(\$1{,}000{,}000)\approx\$8{,}928.57$ ส่วนการตอบสนองคือ $(1-q)(\$1{,}000)\approx\$991.07$ ทางเลือกหลังมีค่าเสียหายคาดหมายต่ำกว่าในโจทย์นี้</p>
-  <p>เกณฑ์ทั่วไปของต้นทุนแบบนี้คือ $qC_{\text{miss}}\gt(1-q)C_{\text{false}}$ หรือ $q\gt C_{\text{false}}/(C_{\text{miss}}+C_{\text{false}})$ ถ้าเปลี่ยนต้นทุน ประสิทธิผลของการป้องกัน หรือเวลาที่ทำได้ การตัดสินใจก็อาจเปลี่ยน</p>
-</section>
-
-<section class="table">
-  <h4>ปรับระบบเตือนแล้ว posterior เปลี่ยนอย่างไร</h4>
-  <table>
-    <thead><tr><th>Prior 0.1% เหมือนเดิม</th><th>การคำนวณ posterior เมื่อเตือน</th><th>ผลลัพธ์</th></tr></thead>
-    <tbody>
-      <tr><td>Sensitivity 99%, false positive 10%</td><td>$0.00099/(0.00099+0.0999)$</td><td>0.9813%</td></tr>
-      <tr><td>Sensitivity 90%, false positive 1%</td><td>$0.0009/(0.0009+0.00999)$</td><td>8.2645%</td></tr>
-      <tr><td>Sensitivity 90%, false positive 0.1%</td><td>$0.0009/(0.0009+0.000999)$</td><td>47.3934%</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">ในตัวเลขชุดนี้ การลด false positive rate มีผลต่อ posterior มาก แต่ไม่ได้พิสูจน์ว่าควรให้ความสำคัญกับมันเหนือ sensitivity เสมอ ต้องดูต้นทุนของการพลาด และในระบบจริงการปรับเกณฑ์มักทำให้สองอัตราเปลี่ยนพร้อมกัน</p>
-</section>
-
-<section class="prose">
-  <h4>ส่วนต่อยอด: ทำไม Kelly ต้องรู้ผลตอบแทน ไม่ใช่แค่ posterior</h4>
-  <p>พิจารณาการเดิมพันสมมติที่ชนะได้เท่าที่ลง แพ้เสียเท่าที่ลง ไม่มีต้นทุน และรู้ $p=13/21$ แน่นอน หากลงสัดส่วน $f$ ของทุน ทุนจะคูณด้วย $1+f$ หรือ $1-f$ เราจะหา $f$ ที่ทำให้ expected log growth สูงสุด ไม่ใช่ให้กำไรเงินสดครั้งเดียวสูงสุด</p>
-  <p>การตีความเป็นอัตราเติบโตระยะยาวต้องมีเงื่อนไขของลำดับการเดิมพัน เช่นโอกาสคงที่และ independence ส่วนนี้ใช้อนุพันธ์ และเป็นสะพานไปหัวข้อ 17.2 ไม่ใช่สูตรนำความน่าจะเป็นของวันบวกไปแปลงเป็นขนาดซื้อหุ้นตรง ๆ</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — สร้างและหาจุดสูงสุดของ expected log growth</h4>
-  <div class="math">\[
-\begin{aligned}
-g(f)&\equiv p\ln(1+f)+(1-p)\ln(1-f),\quad -1\lt f\lt1\\
-g'(f)&=\frac{p}{1+f}-\frac{1-p}{1-f}\\
-g'(f)=0&\quad\Longrightarrow\quad p(1-f)=(1-p)(1+f)\\
-f^*&=2p-1=\frac5{21}\approx0.238095\\
-g''(f)&=-\frac{p}{(1+f)^2}-\frac{1-p}{(1-f)^2}\lt0\\[3pt]
-g(f^*)&\approx0.028619\\
-g(f^*/2)&\approx0.021343\\
-g(2f^*)&\approx-0.005237
-\end{aligned}
-\]</div>
-  <div class="reading">
-    <p>อนุพันธ์อันดับสองติดลบจึงยืนยันจุดสูงสุดในแบบจำลองนี้ ผลลัพธ์เป็น log growth ต่อครั้ง ไม่ใช่เปอร์เซ็นต์ผลตอบแทนธรรมดา และการลงสองเท่าของจุดเหมาะสมให้ expected log growth ติดลบในตัวอย่างนี้</p>
-    <p>Half Kelly ลดขนาดลงและยังให้ log growth เป็นบวกที่พารามิเตอร์นี้ แต่ไม่ใช่คำรับประกันความปลอดภัย หาก $p$ ประมาณผิด ผลตอบแทนไม่สมมาตร มีต้นทุน หรือแพ้เกินขนาดที่สมมติ ต้องแก้แบบจำลองก่อน</p>
-  </div>
-</section>
-
-<section class="example">
-  <h4>ลองทำเอง — วันเงียบกับสัญญาณซ้ำ</h4>
-  <p>ข้อแรก: ระบบ crash เดิมไม่เตือน โอกาส crash ยังเป็น 0.1% หรือไม่? ข้อสอง: มีหน้าจอสามจอแสดงสัญญาณเดียวกันจากระบบเดียว ควรคูณ LR เท่ากับ 9 สามครั้งหรือไม่?</p>
-  <details>
-    <summary>เปิดคำตอบ</summary>
-    <p>วันเงียบใช้คอลัมน์ที่สองของตาราง: crash 1 จาก 8,992 หรือ $P(A\mid B^c)=1/8992\approx0.01112\%$ ต่ำกว่า prior แต่ไม่เป็นศูนย์ เพราะระบบยังพลาดวัน crash ได้</p>
-    <p>สามหน้าจอไม่ใช่หลักฐานอิสระสามชิ้น เมื่อรู้สัญญาณแรกแล้วอีกสองหน้าจอไม่เพิ่มข้อมูล ให้ใช้ LR ครั้งเดียว การวัดจากคนละหน้าจอไม่ได้เปลี่ยนที่มาของหลักฐาน</p>
-  </details>
-  <p>ตรวจเองใน 10 วินาที: ผลในวันเตือนและวันเงียบ เมื่อถ่วงด้วยโอกาสของสองกิ่ง ต้องกลับมาเป็น prior 0.1% ไม่ใช่นำ posterior สองค่ามาเฉลี่ยด้วยน้ำหนักครึ่งต่อครึ่ง</p>
-</section>
-
-<section class="table">
-  <h4>ตรวจข้อมูลก่อนเชื่อ posterior</h4>
-  <table>
-    <thead><tr><th>สิ่งที่ต้องตรวจ</th><th>เหตุผล</th></tr></thead>
-    <tbody>
-      <tr><td>นิยามเหตุการณ์และจังหวะของสัญญาณ</td><td>ข้อมูลหลังเกิดผลใช้เป็นหลักฐานทำนายล่วงหน้าไม่ได้ ต้องกัน look-ahead bias</td></tr>
-      <tr><td>Base rate ของกลุ่มเป้าหมาย</td><td>กลุ่มที่เลือกมาเฉพาะวันผิดปกติอาจมี prior ต่างจากวันทั้งหมด</td></tr>
-      <tr><td>ความไม่แน่นอนของ likelihood</td><td>ผล backtest เป็นค่าประมาณ ต้องตรวจนอกตัวอย่างและติดตามเมื่อสภาพตลาดเปลี่ยน</td></tr>
-      <tr><td>ความสัมพันธ์ระหว่างหลักฐาน</td><td>Conditional independence ต้องตรวจภายในแต่ละกรณี ไม่ใช่ดูเพียงว่าตัวแปรคนละชื่อ</td></tr>
-      <tr><td>ผลเสียและผลตอบแทนของการลงมือ</td><td>Posterior อย่างเดียวไม่บอกความคุ้มค่าหรือขนาดสถานะ ไม่มีเกณฑ์ LR เดียวที่ใช้ทิ้งทุกสัญญาณได้</td></tr>
-    </tbody>
-  </table>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>ตัวเลข 90% ตอบคำถาม “ถ้ารู้ว่าเป็นวัน crash ระบบเตือนบ่อยแค่ไหน” แต่หัวหน้าโต๊ะถามกลับทิศ “ถ้ารู้ว่าระบบเตือน เป็นวัน crash บ่อยแค่ไหน” สองคำถามนี้ใช้คนละกลุ่มเป็นตัวหาร คำถามแรกนับในกลุ่มวัน crash ส่วนคำถามหลังนับในกลุ่มวันที่เตือน ซึ่งเต็มไปด้วยวันปกติที่เตือนผิด เพราะวันปกติมีมากกว่าวัน crash เกือบพันเท่า</p>
+  <p>Bayes' theorem คือวิธีกลับทิศคำถามอย่างเป็นระบบ เริ่มจากโอกาสตั้งต้นของแต่ละสาเหตุ (prior) คูณด้วยโอกาสที่สาเหตุนั้นจะให้หลักฐานที่เห็น (likelihood) แล้วหารด้วยผลรวมของทุกทางที่ให้หลักฐานเดียวกัน ผลที่ได้คือโอกาสหลังเห็นหลักฐาน (posterior)</p>
+  <p>หน้านี้จะสร้างสูตรจากการนับในต้นไม้ด้านล่าง ตรวจกับลูกเต๋าที่นับได้ครบ เขียนใหม่ในรูป odds ที่อัปเดตด้วยการคูณ แล้วนำไปใช้กับสภาวะตลาดหลายแบบ การประเมินฝีมือผู้จัดการกองทุน และการตัดสินใจซื้อประกัน</p>
+  <figure class="plot">
+    <h4>รูป — 10,000 วันแยกตามสาเหตุและสัญญาณ</h4>
+    <svg viewBox="0 0 480 310" role="img" aria-label="ต้นไม้นับวัน 10,000 วัน แยกเป็นวัน crash 10 วันและวันปกติ 9,990 วัน วัน crash ระบบเตือน 9 วัน วันปกติระบบเตือนผิด 999 วัน รวมวันที่เตือน 1,008 วัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <line x1="95" y1="150" x2="235" y2="75" stroke="#d82632" stroke-width="3"/>
+        <line x1="95" y1="150" x2="235" y2="225" stroke="#2455d6" stroke-width="3"/>
+        <line x1="235" y1="75" x2="355" y2="35" stroke="#a65f00" stroke-width="3"/>
+        <line x1="235" y1="75" x2="355" y2="115" stroke="#5b6472" stroke-width="2"/>
+        <line x1="235" y1="225" x2="355" y2="185" stroke="#a65f00" stroke-width="3"/>
+        <line x1="235" y1="225" x2="355" y2="265" stroke="#5b6472" stroke-width="2"/>
+        <circle cx="95" cy="150" r="7" fill="#181818"/>
+        <circle cx="235" cy="75" r="7" fill="#d82632"/>
+        <circle cx="235" cy="225" r="7" fill="#2455d6"/>
+        <circle cx="355" cy="35" r="7" fill="#a65f00"/>
+        <circle cx="355" cy="115" r="6" fill="#5b6472"/>
+        <circle cx="355" cy="185" r="7" fill="#a65f00"/>
+        <circle cx="355" cy="265" r="6" fill="#5b6472"/>
+        <text x="84" y="146" text-anchor="end">10,000</text>
+        <text x="84" y="166" text-anchor="end">วัน</text>
+        <text x="235" y="52" text-anchor="middle" fill="#d82632">crash 10</text>
+        <text x="235" y="262" text-anchor="middle" fill="#2455d6">ปกติ 9,990</text>
+        <text x="368" y="40" fill="#a65f00">เตือน 9</text>
+        <text x="368" y="120" fill="#5b6472">เงียบ 1</text>
+        <text x="368" y="190" fill="#a65f00">เตือน 999</text>
+        <text x="368" y="270" fill="#5b6472">เงียบ 8,991</text>
+        <g font-size="15" fill="#5b6472" text-anchor="middle">
+          <text x="148" y="100">0.1%</text>
+          <text x="150" y="215">99.9%</text>
+          <text x="292" y="44">90%</text>
+          <text x="292" y="113">10%</text>
+          <text x="292" y="194">10%</text>
+          <text x="292" y="262">90%</text>
+        </g>
+        <text x="240" y="300" text-anchor="middle" fill="#a65f00">วันที่เตือน: 9 + 999 = 1,008 วัน</text>
+      </g>
+    </svg>
+    <figcaption>กิ่งสีแดงคือวัน crash กิ่งสีน้ำเงินคือวันปกติ ปลายกิ่งสีส้มคือวันที่ระบบเตือน ให้ดูสองปลายสีส้ม: ปลายบนมี 9 วัน ปลายล่างมี 999 วัน เมื่อรู้ว่าระบบเตือน เราอยู่ที่ปลายสีส้มปลายใดปลายหนึ่ง และโอกาสที่จะอยู่ปลายบนคือ 9 ใน 1,008 นี่คือ Bayes' theorem ทั้งหมดในภาพเดียว</figcaption>
+  </figure>
 </section>
 
 <details class="jargon">
-  <summary>ศัพท์สำหรับอ่านรายงานสัญญาณให้ตรงความหมาย</summary>
+  <summary>ศัพท์ที่ใช้ในหน้านี้</summary>
   <dl>
-    <dt>prior / likelihood / posterior</dt><dd>Prior คือความน่าจะเป็นก่อนใช้หลักฐานชุดนี้ Likelihood คือโอกาสเห็นหลักฐานภายใต้กรณีที่กำหนด Posterior คือความน่าจะเป็นของกรณีหลังใช้หลักฐาน ต้องไม่สลับทิศทางเงื่อนไข</dd>
-    <dt>sensitivity / false positive rate / precision</dt><dd>Sensitivity คือโอกาสเตือนเมื่อเหตุการณ์จริง False positive rate คือโอกาสเตือนเมื่อเหตุการณ์ไม่จริง ส่วน precision คือสัดส่วนเหตุการณ์จริงในกลุ่มที่เตือน ซึ่งตรงกับ posterior ของตัวอย่างนี้</dd>
-    <dt>odds / likelihood ratio</dt><dd>Odds คือ $p/(1-p)$ ส่วน LR เปรียบเทียบโอกาสเห็นหลักฐานภายใต้สองกรณี Posterior odds เท่ากับ prior odds คูณ LR</dd>
-    <dt>conditional independence</dt><dd>เมื่อกำหนดกรณีที่สนใจแล้ว การรู้หลักฐานชิ้นหนึ่งไม่เปลี่ยนโอกาสของอีกชิ้น การคูณ LR แยกชิ้นต้องมีเงื่อนไขนี้ในทั้งสองกรณีที่เปรียบเทียบ</dd>
-    <dt>base-rate neglect / inverse probability fallacy</dt><dd>อย่างแรกคือละเลยความถี่ตั้งต้น อย่างหลังคือสลับ $P(A\mid B)$ กับ $P(B\mid A)$ ทั้งสองอาจทำให้แปลผลสัญญาณผิดอย่างมาก</dd>
+    <dt>prior หรือ base rate</dt><dd>โอกาสของสาเหตุก่อนเห็นหลักฐานชิ้นนี้ เช่นวัน crash 0.1% ใช้เป็นน้ำหนักตั้งต้นของแต่ละสาเหตุ</dd>
+    <dt>likelihood</dt><dd>โอกาสเห็นหลักฐานเมื่อสมมติว่าสาเหตุหนึ่งเป็นจริง เช่น $P(W\mid C)=0.90$ ใช้วัดว่าสาเหตุนั้นอธิบายหลักฐานได้ดีแค่ไหน</dd>
+    <dt>sensitivity และ false positive rate</dt><dd>sensitivity คือโอกาสที่ระบบเตือนในวันที่เหตุการณ์เกิดจริง ส่วน false positive rate คือโอกาสที่ระบบเตือนผิดในวันที่ไม่เกิด สองตัวนี้คือ likelihood ของระบบเตือน</dd>
+    <dt>posterior หรือ precision</dt><dd>โอกาสของสาเหตุหลังเห็นหลักฐาน เช่น $P(C\mid W)\approx0.89\%$ งาน classification เรียกตัวนี้ว่า precision ใช้เป็นข้อมูลตัดสินใจขั้นต่อไป</dd>
+    <dt>law of total probability</dt><dd>โอกาสของหลักฐานเท่ากับผลรวมของทุกเส้นทางที่ทำให้เกิดหลักฐานนั้น ใช้หาตัวหารของ Bayes</dd>
+    <dt>odds และ likelihood ratio (LR)</dt><dd>odds คือ $p/(1-p)$ ส่วน LR คือ likelihood ของสาเหตุหนึ่งหารด้วยของอีกสาเหตุ ใช้อัปเดตแบบคูณ: posterior odds เท่ากับ prior odds คูณ LR</dd>
+    <dt>conditional independence</dt><dd>เมื่อรู้สาเหตุแล้ว หลักฐานสองชิ้นไม่บอกอะไรเกี่ยวกันอีก ต้องมีเงื่อนไขนี้จึงคูณ LR ของหลักฐานหลายชิ้นต่อกันได้</dd>
   </dl>
 </details>
 
 <details class="symbols">
-  <summary>สัญลักษณ์หลัก</summary>
+  <summary>สัญลักษณ์</summary>
   <table>
-    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th></tr></thead>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$A^c,B^c$</td><td>เหตุการณ์ที่ $A$ หรือ $B$ ไม่เกิด</td></tr>
-      <tr><td>$A\cap B$</td><td>ทั้ง $A$ และ $B$ เกิด</td></tr>
-      <tr><td>$P(A\mid B)$</td><td>โอกาสของ $A$ เมื่อใช้ $B$ เป็นเงื่อนไข</td></tr>
-      <tr><td>$o,LR$</td><td>Odds และ likelihood ratio ไม่ใช่เปอร์เซ็นต์</td></tr>
-      <tr><td>$f,g(f)$</td><td>สัดส่วนเดิมพันและ expected log growth ในโจทย์ Kelly เท่านั้น</td></tr>
+      <tr><td>$C,\ N$</td><td>วันนั้นเป็นวัน crash, วันนั้นเป็นวันปกติ</td><td>เหตุการณ์</td></tr>
+      <tr><td>$W,\ S$</td><td>ระบบเตือน, ระบบเงียบ</td><td>เหตุการณ์</td></tr>
+      <tr><td>$P(C\mid W)$</td><td>โอกาสของ $C$ เมื่อรู้แล้วว่า $W$ เกิด อ่านขีดตั้งว่า “เมื่อรู้ว่า”</td><td>โอกาส</td></tr>
+      <tr><td>$P(C,W)$</td><td>โอกาสที่ $C$ และ $W$ เกิดพร้อมกัน</td><td>โอกาส</td></tr>
+      <tr><td>$o,\ LR$</td><td>odds และ likelihood ratio</td><td>เท่า (ไม่ใช่เปอร์เซ็นต์)</td></tr>
     </tbody>
   </table>
 </details>
 
+<section class="formula">
+  <h4>ขั้นที่ 1 — conditional probability คือการหดกลุ่มที่นับ</h4>
+  <p>เมื่อรู้ว่าระบบเตือน วันที่ระบบเงียบหลุดออกจากการพิจารณาทันที เหลือกลุ่มใหม่ 1,008 วัน โอกาสแบบมีเงื่อนไขจึงเป็นสัดส่วนภายในกลุ่มที่เหลือ เขียนเป็นสูตรได้ด้วยการหารด้วยขนาดของกลุ่มที่เหลือ (ใช้ได้เมื่อกลุ่มนั้นมีโอกาสมากกว่าศูนย์)</p>
+  <div class="math">\[
+\begin{aligned}
+P(C\mid W)&=\frac{P(C,W)}{P(W)}\\
+&=\frac{9/10{,}000}{1{,}008/10{,}000}\\
+&=\frac{9}{1{,}008}\approx0.89\%\\
+P(W\mid C)&=\frac{P(C,W)}{P(C)}\\
+&=\frac{9}{10}=90\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ตัวเศษของสองบรรทัดเป็นตัวเดียวกัน คือ 9 วันที่ทั้ง crash และเตือน ต่างกันแค่ตัวหาร บรรทัดบนหารด้วยวันที่เตือนทั้งหมด บรรทัดล่างหารด้วยวัน crash ทั้งหมด การหาร 10,000 ทั้งเศษและส่วนไม่เปลี่ยนคำตอบ จึงใช้จำนวนวันหรือโอกาสก็ได้ การสลับสองตัวนี้เป็นความผิดพลาดที่พบบ่อยจนมีชื่อเรียกว่า inverse fallacy</p></div>
+  <figure class="plot">
+    <h4>รูป — ตัวเศษเดียวกัน ตัวหารต่างกัน</h4>
+    <svg viewBox="0 0 480 220" role="img" aria-label="แท่งบนคือวัน crash 10 วัน ส่วนที่เตือนกินพื้นที่ 90% ของแท่ง แท่งล่างคือวันที่เตือน 1,008 วัน ส่วนที่เป็น crash เป็นเพียงเส้นบางสีแดงประมาณ 0.89% ของแท่ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <text x="40" y="30">กลุ่มวัน crash 10 วัน</text>
+        <text x="440" y="30" text-anchor="end" fill="#a65f00">เตือน 9 = 90%</text>
+        <rect x="40" y="40" width="360" height="36" fill="#a65f00"/>
+        <rect x="400" y="40" width="40" height="36" fill="#d7dce3"/>
+        <text x="220" y="64" text-anchor="middle" fill="#ffffff">เตือน 9</text>
+        <text x="420" y="64" text-anchor="middle">1</text>
+        <text x="40" y="120">กลุ่มวันที่เตือน 1,008 วัน</text>
+        <text x="440" y="120" text-anchor="end" fill="#d82632">crash 9 ≈ 0.89%</text>
+        <rect x="40" y="130" width="3.6" height="36" fill="#d82632"/>
+        <rect x="43.6" y="130" width="396.4" height="36" fill="#2455d6"/>
+        <text x="240" y="154" text-anchor="middle" fill="#ffffff">วันปกติที่เตือนผิด 999</text>
+        <line x1="78" y1="196" x2="46" y2="170" stroke="#d82632" stroke-width="2.5"/>
+        <text x="84" y="205" fill="#d82632">crash 9 วันอยู่ตรงนี้</text>
+      </g>
+    </svg>
+    <figcaption>แท่งบนคือคำถามของผู้ขาย (ในวัน crash เตือนกี่วัน) แท่งล่างคือคำถามของหัวหน้าโต๊ะ (ในวันที่เตือน crash กี่วัน) ทั้งสองแท่งมี 9 วันเดียวกัน แต่ในแท่งล่าง 9 วันนั้นจมอยู่ในวันปกติ 999 วันจนเหลือเป็นเส้นบางสีแดง</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — สร้างตัวเศษจากข้อมูลที่ผู้ขายให้</h4>
+  <p>งานจริงไม่มีตาราง 10,000 วันให้นับ เรามีแค่ prior กับ likelihood ย้ายตัวหารในนิยามของขั้นที่แล้วไปคูณอีกฝั่งจะได้กฎคูณ ซึ่งคือการเดินตามกิ่งของต้นไม้</p>
+  <div class="math">\[
+\begin{aligned}
+P(C,W)&=P(W\mid C)\,P(C)\\
+&=0.90\times0.001=0.0009\\
+P(N,W)&=P(W\mid N)\,P(N)\\
+&=0.10\times0.999=0.0999
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดแรกคือเดินกิ่ง crash ด้วยโอกาส 0.001 แล้วเดินต่อกิ่งเตือนด้วยโอกาส 0.90 ได้ 0.0009 หรือ 9 วันใน 10,000 วันตรงกับต้นไม้ กฎคูณนี้ไม่ได้สมมติว่า crash กับการเตือนเป็นอิสระกัน เพราะตัวคูณตัวที่สองเป็นโอกาสแบบมีเงื่อนไขอยู่แล้ว ถ้าทั้งสองอิสระกันจริง likelihood ในวัน crash กับวันปกติจะเท่ากัน และระบบเตือนก็ไร้ประโยชน์</p></div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — ตัวหารคือทุกทางที่ทำให้เตือน แล้วประกอบเป็น Bayes</h4>
+  <p>วันที่เตือนมาได้สองทางเท่านั้น คือ crash แล้วเตือน หรือปกติแล้วเตือน สองทางนี้ไม่ซ้อนกันและครอบคลุมทุกกรณี จึงบวกกันได้ กฎนี้ชื่อ law of total probability แล้วนำผลรวมไปเป็นตัวหารของตัวเศษจากขั้นที่แล้ว</p>
+  <div class="math">\[
+\begin{aligned}
+P(W)&=P(W\mid C)P(C)\\
+&\quad+P(W\mid N)P(N)\\
+&=0.0009+0.0999=0.1008\\
+P(C\mid W)&=\frac{P(W\mid C)\,P(C)}{P(W)}\\
+&=\frac{0.0009}{0.1008}\approx0.00893\\
+P(A_i\mid W)&=\frac{P(W\mid A_i)P(A_i)}{\sum_j P(W\mid A_j)P(A_j)}
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สี่คือ Bayes' theorem: posterior เท่ากับ likelihood คูณ prior หารด้วยโอกาสของหลักฐาน ตัวหาร 0.1008 มาจากวันปกติที่เตือนผิดถึง 0.0999 นี่คือเหตุผลที่ posterior ต่ำ บรรทัดสุดท้ายคือรูปทั่วไปเมื่อมีหลายสาเหตุ $A_1, A_2, \ldots$ ที่ไม่ซ้อนกันและครอบคลุมทุกกรณี: คิดน้ำหนัก likelihood × prior ของทุกสาเหตุ แล้วแบ่งสัดส่วน ถ้าลืมสาเหตุใดในตัวหาร posterior ที่เหลือจะสูงเกินจริง</p></div>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 4 — ตรวจสูตรกับลูกเต๋าที่นับได้ครบ</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ทอยลูกเต๋ายุติธรรมสองลูกอย่างอิสระกัน ให้ $Y_1$ เป็นแต้มลูกแรก $Y_2$ เป็นแต้มลูกที่สอง และ $X=Y_1+Y_2$ ถามว่า $P(Y_1\ge4\mid X\ge8)$ เท่าไร ทั้ง 36 คู่แต้มมีโอกาสเท่ากัน จึงนับช่องในตารางได้ตรง ๆ แล้วเทียบกับสูตร Bayes</p>
+  <div class="math">\[
+\begin{aligned}
+P(Y_1\ge4\mid X\ge8)&=\frac{12}{15}=0.8\\
+P(X\ge8\mid Y_1\ge4)&=\frac{12}{18}=\frac23\\
+P(X\ge8\mid Y_1\le3)&=\frac{3}{18}=\frac16\\
+P(X\ge8)&=\frac23\cdot\frac12+\frac16\cdot\frac12\\
+&=\frac{5}{12}=\frac{15}{36}\\
+P(Y_1\ge4\mid X\ge8)&=\frac{(2/3)(1/2)}{5/12}=0.8
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> 0.8 ทั้งสองวิธี บรรทัดแรกนับตรงในตาราง: ผลรวมตั้งแต่ 8 มี 15 ช่อง ในนั้น 12 ช่องลูกแรกได้ 4 ขึ้นไป บรรทัดถัดมาใช้ Bayes โดยให้ “ลูกแรกสูง” กับ “ลูกแรกต่ำ” เป็นสองสาเหตุ แต่ละสาเหตุมี prior $18/36=1/2$ ตัวหาร $5/12$ ตรงกับ 15 ช่องจาก 36 ช่อง</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $P(X\ge8\mid Y_1\ge4)=2/3$ ไม่เท่ากับ $P(Y_1\ge4\mid X\ge8)=0.8$ แม้ในโลกลูกเต๋าที่ไม่มีอะไรซับซ้อน การกลับทิศเงื่อนไขก็ให้คนละตัวเลข</p>
+  <figure class="plot">
+    <h4>รูป — ตาราง 36 คู่แต้ม เหลือ 15 ช่องเมื่อรู้ว่าผลรวมตั้งแต่ 8</h4>
+    <svg viewBox="0 0 420 390" role="img" aria-label="ตาราง 6 คูณ 6 ของผลรวมแต้มลูกเต๋าสองลูก ช่องผลรวมตั้งแต่ 8 มี 15 ช่อง ระบายสีส้มเข้ม 12 ช่องที่ลูกแรกตั้งแต่ 4 และสีส้มอ่อน 3 ช่องที่ลูกแรกไม่เกิน 3 กรอบเส้นประสีน้ำเงินล้อมสามคอลัมน์ที่ลูกแรกตั้งแต่ 4" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+<rect x="80" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="301" text-anchor="middle" fill="#5b6472">2</text>
+<rect x="80" y="220" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="251" text-anchor="middle" fill="#5b6472">3</text>
+<rect x="80" y="170" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="201" text-anchor="middle" fill="#5b6472">4</text>
+<rect x="80" y="120" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="151" text-anchor="middle" fill="#5b6472">5</text>
+<rect x="80" y="70" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="101" text-anchor="middle" fill="#5b6472">6</text>
+<rect x="80" y="20" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="105" y="51" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="130" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="155" y="301" text-anchor="middle" fill="#5b6472">3</text>
+<rect x="130" y="220" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="155" y="251" text-anchor="middle" fill="#5b6472">4</text>
+<rect x="130" y="170" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="155" y="201" text-anchor="middle" fill="#5b6472">5</text>
+<rect x="130" y="120" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="155" y="151" text-anchor="middle" fill="#5b6472">6</text>
+<rect x="130" y="70" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="155" y="101" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="130" y="20" width="50" height="50" fill="#f6e3cc" stroke="#d7dce3" stroke-width="2"/><text x="155" y="51" text-anchor="middle" fill="#181818">8</text>
+<rect x="180" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="205" y="301" text-anchor="middle" fill="#5b6472">4</text>
+<rect x="180" y="220" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="205" y="251" text-anchor="middle" fill="#5b6472">5</text>
+<rect x="180" y="170" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="205" y="201" text-anchor="middle" fill="#5b6472">6</text>
+<rect x="180" y="120" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="205" y="151" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="180" y="70" width="50" height="50" fill="#f6e3cc" stroke="#d7dce3" stroke-width="2"/><text x="205" y="101" text-anchor="middle" fill="#181818">8</text>
+<rect x="180" y="20" width="50" height="50" fill="#f6e3cc" stroke="#d7dce3" stroke-width="2"/><text x="205" y="51" text-anchor="middle" fill="#181818">9</text>
+<rect x="230" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="255" y="301" text-anchor="middle" fill="#5b6472">5</text>
+<rect x="230" y="220" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="255" y="251" text-anchor="middle" fill="#5b6472">6</text>
+<rect x="230" y="170" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="255" y="201" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="230" y="120" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="255" y="151" text-anchor="middle" fill="#ffffff">8</text>
+<rect x="230" y="70" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="255" y="101" text-anchor="middle" fill="#ffffff">9</text>
+<rect x="230" y="20" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="255" y="51" text-anchor="middle" fill="#ffffff">10</text>
+<rect x="280" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="305" y="301" text-anchor="middle" fill="#5b6472">6</text>
+<rect x="280" y="220" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="305" y="251" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="280" y="170" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="305" y="201" text-anchor="middle" fill="#ffffff">8</text>
+<rect x="280" y="120" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="305" y="151" text-anchor="middle" fill="#ffffff">9</text>
+<rect x="280" y="70" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="305" y="101" text-anchor="middle" fill="#ffffff">10</text>
+<rect x="280" y="20" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="305" y="51" text-anchor="middle" fill="#ffffff">11</text>
+<rect x="330" y="270" width="50" height="50" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/><text x="355" y="301" text-anchor="middle" fill="#5b6472">7</text>
+<rect x="330" y="220" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="355" y="251" text-anchor="middle" fill="#ffffff">8</text>
+<rect x="330" y="170" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="355" y="201" text-anchor="middle" fill="#ffffff">9</text>
+<rect x="330" y="120" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="355" y="151" text-anchor="middle" fill="#ffffff">10</text>
+<rect x="330" y="70" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="355" y="101" text-anchor="middle" fill="#ffffff">11</text>
+<rect x="330" y="20" width="50" height="50" fill="#a65f00" stroke="#d7dce3" stroke-width="2"/><text x="355" y="51" text-anchor="middle" fill="#ffffff">12</text>
+        <rect x="228" y="18" width="154" height="304" fill="none" stroke="#2455d6" stroke-width="3" stroke-dasharray="8 5"/>
+        <g text-anchor="middle" fill="#5b6472">
+          <text x="105" y="342">1</text><text x="155" y="342">2</text><text x="205" y="342">3</text>
+          <text x="255" y="342">4</text><text x="305" y="342">5</text><text x="355" y="342">6</text>
+        </g>
+        <g text-anchor="end" fill="#5b6472">
+          <text x="70" y="301">1</text><text x="70" y="251">2</text><text x="70" y="201">3</text>
+          <text x="70" y="151">4</text><text x="70" y="101">5</text><text x="70" y="51">6</text>
+        </g>
+        <text x="230" y="372" text-anchor="middle">แต้มลูกแรก Y₁</text>
+        <text transform="translate(30,170) rotate(-90)" text-anchor="middle">แต้มลูกที่สอง Y₂</text>
+      </g>
+    </svg>
+    <figcaption>ตัวเลขในช่องคือผลรวมแต้ม ช่องสีส้มทั้งเข้มและอ่อนคือ 15 ช่องที่ผลรวมตั้งแต่ 8 ซึ่งเป็นกลุ่มที่เหลือหลังรู้เงื่อนไข ในนั้นสีส้มเข้ม 12 ช่องอยู่ในกรอบเส้นประสีน้ำเงิน (ลูกแรกตั้งแต่ 4) จึงได้ 12/15 = 0.8 ส่วนกรอบน้ำเงินทั้งกรอบมี 18 ช่อง ถ้าเริ่มจากกรอบนั้นแทนจะได้ 12/18 ซึ่งเป็นคำถามกลับทิศ</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ระบบเดิม แต่ base rate เปลี่ยน คำตอบเปลี่ยนตาม</h4>
+  <p>ระบบเตือนตัวเดียวกันอาจถูกนำไปใช้ในตลาดที่ crash บ่อยกว่า เช่นตลาดเกิดใหม่หรือช่วงที่ตลาดตึงเครียด ลองเขียน posterior เป็น function ของ prior $p$ โดยคง likelihood 0.90 และ 0.10 ไว้</p>
+  <div class="math">\[
+\begin{aligned}
+P(C\mid W)&=\frac{0.9p}{0.9p+0.1(1-p)}\\
+p=0.1\%&:\quad\frac{0.0009}{0.1008}=0.89\%\\
+p=1\%&:\quad\frac{0.009}{0.108}=8.3\%\\
+p=10\%&:\quad\frac{0.09}{0.18}=50\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ระบบเดียวกันให้คำตอบต่างกันเกือบ 60 เท่า เพราะสัดส่วนวันที่เตือนผิดในกลุ่มวันที่เตือนเปลี่ยนไปตามจำนวนวันปกติ ที่ prior 10% วันที่เตือนผิด ($0.1\times0.9=0.09$) เท่ากับวันที่เตือนถูก ($0.9\times0.1=0.09$) พอดี posterior จึงเป็น 50% การลืม prior เรียกว่า base-rate neglect ผลในทางปฏิบัติคือ precision ที่วัดจากตลาดหนึ่งย้ายไปใช้กับตลาดที่ base rate ต่างกันไม่ได้</p></div>
+  <figure class="plot">
+    <h4>รูป — โอกาสหลังเตือนเทียบกับ base rate</h4>
+    <svg viewBox="0 0 480 290" role="img" aria-label="เส้นโค้งสีน้ำเงินแสดงโอกาส crash หลังระบบเตือนเมื่อ base rate เปลี่ยนจาก 0.03% ถึง 50% บนแกนนอนแบบ log จุดที่ 0.1% ให้ 0.89% จุดที่ 1% ให้ 8.3% จุดที่ 10% ให้ 50% เส้นประสีเทาคือกรณีไม่มีสัญญาณ" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="15" fill="#181818">
+        <g stroke="#d7dce3" stroke-width="1.5">
+          <line x1="60" y1="20" x2="450" y2="20"/><line x1="60" y1="72.5" x2="450" y2="72.5"/>
+          <line x1="60" y1="125" x2="450" y2="125"/><line x1="60" y1="177.5" x2="450" y2="177.5"/>
+          <line x1="121" y1="20" x2="121" y2="230"/><line x1="242.9" y1="20" x2="242.9" y2="230"/><line x1="364.8" y1="20" x2="364.8" y2="230"/>
+        </g>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="60" y1="20" x2="60" y2="230" stroke="#181818" stroke-width="2"/>
+        <polyline fill="none" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 5" points="60.0,229.9 99.0,229.9 138.0,229.7 177.0,229.4 216.0,228.7 255.0,227.4 294.0,224.5 320.0,221.0 346.0,215.3 372.0,205.9 398.0,190.7 411.0,179.7 424.0,165.7 437.0,147.9 450.0,125.0"/>
+        <polyline fill="none" stroke="#2455d6" stroke-width="3" points="60.0,229.4 73.0,229.2 86.0,229.0 99.0,228.8 112.0,228.4 125.0,228.0 138.0,227.4 151.0,226.7 164.0,225.8 177.0,224.7 190.0,223.2 203.0,221.4 216.0,219.1 229.0,216.3 242.0,212.8 255.0,208.4 268.0,203.1 281.0,196.6 294.0,189.0 307.0,180.0 320.0,169.6 333.0,157.9 346.0,145.1 359.0,131.3 372.0,117.0 385.0,102.5 398.0,88.3 411.0,74.8 424.0,62.3 437.0,51.0 450.0,41.0"/>
+        <circle cx="121" cy="228.1" r="6" fill="#d82632"/>
+        <circle cx="242.9" cy="212.5" r="6" fill="#d82632"/>
+        <circle cx="364.8" cy="125" r="6" fill="#d82632"/>
+        <text x="121" y="214" text-anchor="middle" fill="#d82632">0.89%</text>
+        <text x="242.9" y="198" text-anchor="middle" fill="#d82632">8.3%</text>
+        <text x="352" y="118" text-anchor="end" fill="#d82632">50%</text>
+        <text x="72" y="45" fill="#5b6472">เส้นประ: ไม่มีสัญญาณ</text>
+        <text x="72" y="66" fill="#2455d6">เส้นทึบ: หลังระบบเตือน</text>
+        <g text-anchor="end" fill="#5b6472">
+          <text x="52" y="235">0</text><text x="52" y="182">25</text><text x="52" y="130">50</text><text x="52" y="77">75</text><text x="52" y="25">100</text>
+        </g>
+        <g text-anchor="middle" fill="#5b6472">
+          <text x="121" y="250">0.1%</text><text x="242.9" y="250">1%</text><text x="364.8" y="250">10%</text><text x="446" y="250">50%</text>
+        </g>
+        <text x="255" y="278" text-anchor="middle">base rate ของ crash (สเกล log)</text>
+        <text transform="translate(16,125) rotate(-90)" text-anchor="middle">โอกาสหลังเตือน (%)</text>
+      </g>
+    </svg>
+    <figcaption>เส้นน้ำเงินคือโอกาส crash หลังระบบเตือน เส้นประคือโอกาสเดิมถ้าไม่มีสัญญาณ ระยะห่างระหว่างสองเส้นคือสิ่งที่สัญญาณเพิ่มให้ ดูจุดแดงซ้ายสุด: ที่ base rate 0.1% สัญญาณดันโอกาสขึ้นได้แค่ 0.89% ซึ่งแทบติดพื้น ระบบเดียวกันจะดูมีประโยชน์มากก็ต่อเมื่อเหตุการณ์ไม่หายากเกินไป</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — เขียนใหม่ในรูป odds: อัปเดตด้วยการคูณ</h4>
+  <p>เมื่อหลักฐานมาทีละชิ้น การคำนวณตัวหารใหม่ทุกครั้งเสียเวลา ถ้านำ Bayes ของวัน crash หารด้วย Bayes ของวันปกติ ตัวหาร $P(W)$ ที่เหมือนกันจะตัดกันเอง เหลือเพียงการคูณ</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{P(C\mid W)}{P(N\mid W)}&=\frac{P(C)}{P(N)}\cdot\frac{P(W\mid C)}{P(W\mid N)}\\
+\text{posterior odds}&=\text{prior odds}\times LR\\
+&=\frac{1}{999}\times\frac{0.9}{0.1}\\
+&=\frac{9}{999}=\frac{1}{111}\\
+p&=\frac{o}{1+o}=\frac{1/111}{112/111}=\frac{1}{112}
+\end{aligned}
+\]</div>
+  <div class="reading"><p>odds $1/111$ อ่านว่า crash หนึ่งส่วนต่อวันปกติ 111 ส่วน ซึ่งก็คือ 9 ต่อ 999 วันในต้นไม้ภาพรวมนั่นเอง LR เท่ากับ 9 วัดว่าหลักฐานนี้เกิดในวัน crash บ่อยกว่าวันปกติกี่เท่า LR มากกว่า 1 ดัน odds ขึ้น น้อยกว่า 1 ดันลง เท่ากับ 1 ไม่เปลี่ยนอะไร ขั้นสุดท้ายต้องแปลง odds กลับเป็นโอกาสด้วย $o/(1+o)$ ก่อนรายงาน เพราะการคูณ 9 ใช้กับ odds ไม่ใช่กับเปอร์เซ็นต์ (0.1% × 9 = 0.9% ใกล้เคียงแต่ไม่ใช่คำตอบ และจะผิดมากเมื่อ prior ไม่เล็ก)</p></div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — หลักฐานสองชิ้น: คูณ LR ต่อกันได้เมื่อไร</h4>
+  <p>สมมติมีระบบเตือนเครื่องที่สองที่คุณภาพเท่ากัน และวันนี้เตือนทั้งสองเครื่อง คำถามคือคูณ LR = 9 สองครั้งได้หรือไม่ คำตอบขึ้นกับว่าเครื่องที่สองให้ข้อมูลใหม่จริงหรือแค่ทวนเครื่องแรก LR ตัวที่สองจึงต้องคิด “เมื่อรู้แล้วว่าเครื่องแรกเตือน”</p>
+  <div class="math">\[
+\begin{aligned}
+o(C\mid W_1,W_2)&=o(C)\cdot LR_1\cdot LR_{2\mid1}\\
+LR_{2\mid1}&=\frac{P(W_2\mid C,W_1)}{P(W_2\mid N,W_1)}\\
+\text{independent}&:\quad LR_{2\mid1}=9\\
+o&=\frac{81}{999},\quad p=\frac{81}{1{,}080}=7.5\%\\
+\text{copy}&:\quad LR_{2\mid1}=\frac11=1,\quad p=0.89\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ถ้าสองเครื่องเป็นอิสระแบบมีเงื่อนไข คือเมื่อรู้แล้วว่าวันนี้เป็นวัน crash หรือวันปกติ การเตือนของเครื่องหนึ่งไม่บอกอะไรเกี่ยวกับอีกเครื่อง LR ตัวที่สองก็เป็น 9 ตามเดิม และโอกาสขึ้นไปถึง 7.5% แต่ถ้าเครื่องที่สองแค่ลอกสัญญาณจากเครื่องแรก มันจะเตือนทุกครั้งที่เครื่องแรกเตือน ทั้งในวัน crash และวันปกติ ตัวเศษกับตัวส่วนของ LR จึงเป็น 1 ทั้งคู่ และคำตอบค้างอยู่ที่ 0.89% การมาจากคนละผู้ขายไม่ได้รับประกันความอิสระ ถ้าทั้งสองเครื่องดูความผันผวนตัวเดียวกัน ข้อมูลก็ซ้ำกันบางส่วน แนวคิดเดียวกันนี้เป็นแกนของ <a href="5.6.html">conditional independence และ Gaussian copula</a></p></div>
+  <figure class="plot">
+    <h4>รูป — ไม้บรรทัด odds: ทุกครั้งที่คูณ 9 คือก้าวยาวเท่าเดิม</h4>
+    <svg viewBox="0 0 480 200" role="img" aria-label="แกน odds สเกล log จาก 1 ต่อ 1000 ถึง 1 ต่อ 1 จุด prior 1 ต่อ 999 เลื่อนไปทางขวาหนึ่งก้าวยาว log 9 เมื่อเครื่องแรกเตือน ได้ 0.89% และอีกหนึ่งก้าวเท่าเดิมเมื่อเครื่องที่สองที่เป็นอิสระเตือน ได้ 7.5%" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <defs><marker id="b17-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker></defs>
+      <g font-size="16" fill="#181818">
+        <line x1="40" y1="150" x2="440" y2="150" stroke="#181818" stroke-width="2"/>
+        <g stroke="#181818" stroke-width="2">
+          <line x1="62.2" y1="144" x2="62.2" y2="156"/><line x1="173.3" y1="144" x2="173.3" y2="156"/>
+          <line x1="284.4" y1="144" x2="284.4" y2="156"/><line x1="395.6" y1="144" x2="395.6" y2="156"/>
+        </g>
+        <g font-size="15" fill="#5b6472" text-anchor="middle">
+          <text x="62.2" y="174">1:1000</text><text x="173.3" y="174">1:100</text><text x="284.4" y="174">1:10</text><text x="395.6" y="174">1:1</text>
+        </g>
+        <text x="240" y="196" text-anchor="middle" font-size="15">odds ของ crash (สเกล log)</text>
+        <line x1="70" y1="90" x2="158" y2="90" stroke="#a65f00" stroke-width="3" marker-end="url(#b17-arrow)"/>
+        <line x1="176" y1="90" x2="264" y2="90" stroke="#a65f00" stroke-width="3" marker-end="url(#b17-arrow)"/>
+        <text x="115" y="80" text-anchor="middle" fill="#a65f00">×9</text>
+        <text x="221" y="80" text-anchor="middle" fill="#a65f00">×9</text>
+        <circle cx="62.3" cy="90" r="7" fill="#181818"/>
+        <circle cx="168.3" cy="90" r="7" fill="#a65f00"/>
+        <circle cx="274.3" cy="90" r="7" fill="#d82632"/>
+        <text x="62.3" y="45" text-anchor="middle" font-size="15">ก่อนเตือน</text>
+        <text x="168.3" y="45" text-anchor="middle" font-size="15">1 เครื่อง</text>
+        <text x="280" y="45" text-anchor="middle" font-size="15">2 เครื่องอิสระ</text>
+        <text x="62.3" y="122" text-anchor="middle">0.1%</text>
+        <text x="168.3" y="122" text-anchor="middle" fill="#a65f00">0.89%</text>
+        <text x="274.3" y="122" text-anchor="middle" fill="#d82632">7.5%</text>
+      </g>
+    </svg>
+    <figcaption>แกนนอนเป็น odds แบบ log ระยะเท่ากันบนแกนนี้คือการคูณด้วยตัวเลขเท่ากัน ลูกศรสีส้มแต่ละอันคือการคูณ LR = 9 ตัวเลขใต้จุดคือโอกาสหลังแปลงกลับ ถ้าเครื่องที่สองเป็นแค่สำเนาของเครื่องแรก ลูกศรอันที่สองจะหายไป และจุดค้างอยู่ที่ 0.89%</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — มากกว่าสองสาเหตุ: สภาวะตลาดสามแบบ</h4>
+  <p>ตลาดจริงไม่ได้มีแค่ crash กับไม่ crash สมมติว่าแต่ละวันอยู่ในสภาวะหนึ่งในสามแบบ: สงบ 90%, ตึงเครียด 9%, วิกฤติ 1% และระบบเตือนในแต่ละสภาวะด้วยโอกาส 5%, 40% และ 90% ตามลำดับ สามสภาวะไม่ซ้อนกันและครอบคลุมทุกวัน จึงใช้รูปทั่วไปของ Bayes จากขั้นที่ 3 ได้ตรง ๆ</p>
+  <div class="math">\[
+\begin{aligned}
+w_{\text{calm}}&=0.90\times0.05=0.045\\
+w_{\text{stress}}&=0.09\times0.40=0.036\\
+w_{\text{crisis}}&=0.01\times0.90=0.009\\
+P(W)&=0.045+0.036+0.009=0.090\\
+P(\text{calm}\mid W)&=0.045/0.090=50\%\\
+P(\text{stress}\mid W)&=0.036/0.090=40\%\\
+P(\text{crisis}\mid W)&=0.009/0.090=10\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>น้ำหนัก $w$ ของแต่ละสภาวะคือ prior × likelihood เหมือนกิ่งในต้นไม้ แล้วแบ่งสัดส่วนด้วยผลรวม ตรวจได้ทันทีว่า posterior สามตัวรวมกันได้ 100% สังเกตว่าแม้ระบบเตือน สภาวะที่น่าจะเป็นที่สุดก็ยังเป็น “สงบ” เพราะวันสงบมีมากจนการเตือนผิดเพียง 5% ก็ยังเป็นก้อนใหญ่ที่สุดในตัวหาร</p></div>
+  <figure class="plot">
+    <h4>รูป — สัดส่วนสามสภาวะก่อนและหลังระบบเตือน</h4>
+    <svg viewBox="0 0 480 200" role="img" aria-label="แท่งบนก่อนเห็นสัญญาณ สงบ 90% ตึงเครียด 9% วิกฤติ 1% แท่งล่างหลังระบบเตือน สงบ 50% ตึงเครียด 40% วิกฤติ 10%" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <text x="40" y="30">ก่อนเห็นสัญญาณ</text>
+        <rect x="40" y="40" width="360" height="36" fill="#2455d6"/>
+        <rect x="400" y="40" width="36" height="36" fill="#a65f00"/>
+        <rect x="436" y="40" width="4" height="36" fill="#d82632"/>
+        <text x="220" y="64" text-anchor="middle" fill="#ffffff">สงบ 90%</text>
+        <text x="440" y="96" text-anchor="end" font-size="15"><tspan fill="#a65f00">ตึงเครียด 9%</tspan> · <tspan fill="#d82632">วิกฤติ 1%</tspan></text>
+        <text x="40" y="122">หลังระบบเตือน</text>
+        <rect x="40" y="132" width="200" height="36" fill="#2455d6"/>
+        <rect x="240" y="132" width="160" height="36" fill="#a65f00"/>
+        <rect x="400" y="132" width="40" height="36" fill="#d82632"/>
+        <text x="140" y="156" text-anchor="middle" fill="#ffffff">สงบ 50%</text>
+        <text x="320" y="156" text-anchor="middle" fill="#ffffff">ตึงเครียด 40%</text>
+        <text x="420" y="156" text-anchor="middle" fill="#ffffff" font-size="15">10%</text>
+        <text x="440" y="190" text-anchor="end" font-size="15" fill="#d82632">วิกฤติ 10%</text>
+      </g>
+    </svg>
+    <figcaption>ความยาวทั้งแท่งคือ 100% ทั้งสองแท่ง การเตือนไม่ได้เพิ่มโอกาสให้สภาวะใดลอย ๆ แต่แบ่งสัดส่วนใหม่ ชิ้นสีแดง (วิกฤติ) ขยายจาก 1% เป็น 10% และชิ้นสีส้มขยายจาก 9% เป็น 40% โดยเอาพื้นที่มาจากชิ้นสีน้ำเงิน</figcaption>
+  </figure>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 9 — ผู้จัดการกองทุนชนะตลาด 8 ใน 10 ปี มีฝีมือจริงไหม</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใน <a href="1.5.html">Binomial distribution</a> เราพบว่าผู้จัดการที่ไม่มีฝีมือชนะตลาดตั้งแต่ 8 ใน 10 ปีได้ด้วยโอกาส 5.47% แต่ตัวเลขนั้นคือ “โอกาสของ track record เมื่อไม่มีฝีมือ” ไม่ใช่ “โอกาสที่ไม่มีฝีมือเมื่อเห็น track record” Bayes ตอบคำถามหลังได้ สมมติว่าผู้มีฝีมือ ($G$) ชนะแต่ละปีด้วยโอกาส 0.7 ผู้ไม่มีฝีมือ ($L$) ชนะด้วยโอกาส 0.5 แต่ละปีเป็นอิสระกัน และในตลาดมีผู้มีฝีมือจริงประมาณ 5% (สมมติ) ให้ $K$ เป็นจำนวนปีที่ชนะ ซึ่งเป็น Binomial ($n=10$) ภายใต้แต่ละสาเหตุ</p>
+  <div class="math">\[
+\begin{aligned}
+P(K\ge8\mid L)&=\frac{45+10+1}{1{,}024}\approx0.0547\\
+P(K\ge8\mid G)&=45(0.7)^8(0.3)^2\\
+&\quad+10(0.7)^9(0.3)+0.7^{10}\\
+&\approx0.2335+0.1211+0.0282=0.3828\\
+LR&=\frac{0.3828}{0.0547}\approx7.0\\
+o&=\frac{5}{95}\times7.0\approx0.368\\
+p&=\frac{0.368}{1.368}\approx27\%
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> หลังเห็น track record โอกาสที่เขามีฝีมือจริงอยู่ที่ราว 27% เท่านั้น หลักฐานแรงพอสมควร (LR = 7: track record แบบนี้เกิดกับผู้มีฝีมือบ่อยกว่า 7 เท่า) แต่ prior ต่ำมาก คนโชคดีที่ไม่มีฝีมือมีจำนวนมากพอที่จะผลิต track record แบบนี้ได้บ่อย ภาระพิสูจน์จึงอยู่ที่ผู้จัดการ</p>
+  <p>ยังมีกับดักอีกชั้น ถ้าคนนี้ถูกคัดมาเพราะเป็นคนที่ดีที่สุดจากผู้จัดการ 100 คนที่ทีมดูมา หลักฐานที่แท้จริงคือ “คนที่ดีที่สุดใน 100 คนชนะตั้งแต่ 8 ปี” ถ้าทั้ง 100 คนไม่มีฝีมือ โอกาสของหลักฐานนี้คือ $1-(1-0.0547)^{100}\approx99.6\%$ ไม่ใช่ 5.47% likelihood ใต้สมมติฐานโชคช่วยแทบเป็นหนึ่ง LR จึงหดเหลือราว 1 และหลักฐานแทบไม่มีค่า เรื่องการคัดผลที่ดีที่สุดจากหลายตัวเลือกจะกลับมาใน <a href="3.6.html">multiple testing</a></p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าเชื่อตั้งแต่แรกว่าครึ่งตลาดมีฝีมือ (prior odds = 1) จะได้ odds 7.0 และโอกาส $7/8\approx87.5\%$ ข้อมูลชุดเดียวกันให้ 27% หรือ 87.5% ขึ้นกับ prior นี่คือเหตุผลที่ต้องเขียน prior ออกมาให้เห็นเสมอ</p>
+  <figure class="plot">
+    <h4>รูป — จำนวนปีที่ชนะใน 10 ปี ภายใต้สองสาเหตุ</h4>
+    <svg viewBox="0 0 480 290" role="img" aria-label="แท่งสีน้ำเงินคือ Binomial 10 ปีโอกาสชนะ 0.5 แท่งสีเขียวคือโอกาสชนะ 0.7 พื้นที่แรเงาด้านขวาคือชนะตั้งแต่ 8 ปี ซึ่งมีโอกาส 5.47% กับ 38.3%" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="15" fill="#181818">
+        <rect x="352" y="40" width="111" height="190" fill="#f6e3cc"/>
+        <text x="407" y="58" text-anchor="middle" fill="#a65f00">K ≥ 8</text>
+        <g stroke="#d7dce3" stroke-width="1.5">
+          <line x1="50" y1="163.3" x2="465" y2="163.3"/><line x1="50" y1="96.7" x2="465" y2="96.7"/>
+        </g>
+<rect x="58" y="229.3" width="15" height="0.7" fill="#2455d6"/><rect x="74" y="230.0" width="15" height="0.0" fill="#047857"/><text x="73.5" y="250" text-anchor="middle">0</text>
+<rect x="95" y="223.5" width="15" height="6.5" fill="#2455d6"/><rect x="111" y="229.9" width="15" height="0.1" fill="#047857"/><text x="110.5" y="250" text-anchor="middle">1</text>
+<rect x="132" y="200.7" width="15" height="29.3" fill="#2455d6"/><rect x="148" y="229.0" width="15" height="1.0" fill="#047857"/><text x="147.5" y="250" text-anchor="middle">2</text>
+<rect x="169" y="151.9" width="15" height="78.1" fill="#2455d6"/><rect x="185" y="224.0" width="15" height="6.0" fill="#047857"/><text x="184.5" y="250" text-anchor="middle">3</text>
+<rect x="206" y="93.3" width="15" height="136.7" fill="#2455d6"/><rect x="222" y="205.5" width="15" height="24.5" fill="#047857"/><text x="221.5" y="250" text-anchor="middle">4</text>
+<rect x="243" y="65.9" width="15" height="164.1" fill="#2455d6"/><rect x="259" y="161.4" width="15" height="68.6" fill="#047857"/><text x="258.5" y="250" text-anchor="middle">5</text>
+<rect x="280" y="93.3" width="15" height="136.7" fill="#2455d6"/><rect x="296" y="96.6" width="15" height="133.4" fill="#047857"/><text x="295.5" y="250" text-anchor="middle">6</text>
+<rect x="317" y="151.9" width="15" height="78.1" fill="#2455d6"/><rect x="333" y="52.1" width="15" height="177.9" fill="#047857"/><text x="332.5" y="250" text-anchor="middle">7</text>
+<rect x="354" y="200.7" width="15" height="29.3" fill="#2455d6"/><rect x="370" y="74.3" width="15" height="155.7" fill="#047857"/><text x="369.5" y="250" text-anchor="middle">8</text>
+<rect x="391" y="223.5" width="15" height="6.5" fill="#2455d6"/><rect x="407" y="149.3" width="15" height="80.7" fill="#047857"/><text x="406.5" y="250" text-anchor="middle">9</text>
+<rect x="428" y="229.3" width="15" height="0.7" fill="#2455d6"/><rect x="444" y="211.2" width="15" height="18.8" fill="#047857"/><text x="443.5" y="250" text-anchor="middle">10</text>
+        <line x1="50" y1="230" x2="465" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="50" y1="30" x2="50" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472"><text x="44" y="235">0</text><text x="44" y="168">0.1</text><text x="44" y="102">0.2</text></g>
+        <rect x="62" y="16" width="14" height="14" fill="#2455d6"/><text x="82" y="28">ไม่มีฝีมือ (0.5)</text>
+        <rect x="210" y="16" width="14" height="14" fill="#047857"/><text x="230" y="28">มีฝีมือ (0.7)</text>
+        <text x="258" y="276" text-anchor="middle">จำนวนปีที่ชนะตลาด K</text>
+      </g>
+    </svg>
+    <figcaption>แท่งน้ำเงินคือ PMF ของคนไม่มีฝีมือ แท่งเขียวคือของคนมีฝีมือ ในแถบสีส้ม (ชนะตั้งแต่ 8 ปี) แท่งเขียวสูงกว่าแท่งน้ำเงินมาก รวมได้ 38.3% เทียบกับ 5.47% อัตราส่วนนี้คือ LR ประมาณ 7 แต่ภาพนี้ไม่ได้บอกว่ามีคนแต่ละแบบกี่คน ส่วนนั้นคือ prior ที่ต้องใส่เพิ่ม</figcaption>
+  </figure>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 10 — จาก posterior ไปสู่การตัดสินใจซื้อประกัน</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กลับมาที่ระบบเตือน crash ถ้าวันนี้ crash พอร์ตจะเสีย \$1 ล้าน ถ้าซื้อ put option ป้องกันจะไม่เสียเลย แต่จ่ายค่า premium \$5,000 ต่อวันไม่ว่า crash หรือไม่ (ตัวเลขสมมติ) ควรซื้อประกันเมื่อไร</p>
+  <div class="math">\[
+\begin{aligned}
+\text{no hedge}&:\quad q\times\$1{,}000{,}000\\
+\text{hedge}&:\quad\$5{,}000\\
+\text{hedge if}&\quad q\gt\frac{5{,}000}{1{,}000{,}000}=0.5\%\\
+\text{prior}&:\quad 0.1\%\to\$1{,}000\\
+\text{alarm}&:\quad 0.893\%\to\$8{,}929\\
+\text{silent}&:\quad 0.0111\%\to\$111
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ซื้อประกันเฉพาะวันที่ระบบเตือน เพราะความเสียหายคาดหวัง \$8,929 สูงกว่าค่า premium \$5,000 ส่วนวันปกติที่ไม่มีระบบ (0.1%) และวันที่ระบบเงียบ (0.0111%) ความเสียหายคาดหวังต่ำกว่าค่า premium จึงไม่ซื้อ ระบบที่ “ถูกแค่ 0.89%” จึงยังเปลี่ยนการตัดสินใจได้ เพราะเกณฑ์ตัดสินใจขึ้นกับอัตราส่วนต้นทุน ไม่ใช่ขึ้นกับว่า posterior เกิน 50% หรือไม่</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> เกณฑ์ 0.5% มาจาก premium หารด้วยความเสียหาย ถ้า premium เพิ่มเป็น \$10,000 เกณฑ์จะเป็น 1% และวันที่เตือน (0.893%) ก็ไม่คุ้มซื้อแล้ว</p>
+</section>
+
+<section class="pitfall">
+  <h4>ความผิดพลาดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>สลับทิศเงื่อนไข:</strong> “ระบบแม่น 90%” หมายถึง $P(W\mid C)=90\%$ แต่คนฟังมักได้ยินเป็น $P(C\mid W)=90\%$ ในตัวอย่างนี้ค่าจริงคือ 0.89% ต่างกันกว่า 100 เท่า ทุกครั้งที่เห็นเปอร์เซ็นต์ความแม่น ให้ถามก่อนว่าใช้กลุ่มไหนเป็นตัวหาร</p>
+  <p><strong>ลืม base rate เมื่อย้ายตลาด:</strong> backtest ในช่วงที่ crash บ่อย 10% ได้ precision 50% พอนำมาใช้ในช่วงปกติที่ crash 0.1% precision จะหล่นเหลือ 0.89% ทั้งที่ระบบไม่ได้เปลี่ยนเลย</p>
+  <p><strong>นับหลักฐานซ้ำ:</strong> หน้าจอสามจอแสดงสัญญาณเดียวกันจากระบบเดียว ถ้าคูณ LR = 9 สามครั้งจะได้ odds $729/999$ หรือโอกาสราว 42% ทั้งที่คำตอบที่ถูกยังเป็น 0.89%</p>
+  <p><strong>ชนะบ่อยไม่ได้แปลว่ากำไร:</strong> สัญญาณซื้อที่ให้โอกาสวันขึ้น $13/21\approx61.9\%$ (ดูโจทย์ข้อ 2 ด้านล่าง) ถ้าวันขึ้นได้ +1R และวันลงเสีย −2R กำไรคาดหวังคือ $\tfrac{13}{21}(1)-\tfrac{8}{21}(2)=-\tfrac{3}{21}\approx-0.143R$ ต่อครั้ง Posterior ที่สูงไม่ได้บอกขนาดของกำไรหรือขาดทุน การกำหนดขนาดสถานะต้องใช้ทั้งสองอย่าง ซึ่งเป็นเรื่องของ <a href="17.2.html">Kelly criterion</a></p>
+  <p><strong>หลักฐานที่ผ่านการคัดมาแล้ว:</strong> track record ที่ถูกเลือกเพราะดีที่สุดในหลายคน ต้องคิด likelihood ของ “คนที่ดีที่สุด” ไม่ใช่ของ “คนหนึ่งคน” ตามตัวอย่างผู้จัดการ 100 คนที่ likelihood ใต้โชคช่วยกระโดดจาก 5.47% เป็น 99.6%</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ทุกที่ที่มีสัญญาณเตือนหรือ classifier ต้องคิดแบบ Bayes: ระบบเตือนลูกหนี้ใกล้ผิดนัด ระบบจับการซื้อขายผิดปกติของฝ่าย compliance ระบบคัดกรองการทุจริต และสัญญาณซื้อขายเชิงปริมาณ สิ่งที่ผู้ใช้ต้องการคือ posterior และต้นทุนของการตัดสินใจผิดทั้งสองทาง ไม่ใช่ sensitivity ที่ผู้ขายโฆษณา</p>
+  <p>อีกการใช้งานคือตรวจบัญชีความน่าจะเป็น: posterior ของทุกกิ่งเมื่อถ่วงด้วยโอกาสของกิ่งนั้นต้องกลับมาเท่ากับ prior เดิม ตัวอย่างเช่น $0.1008\times\tfrac{1}{112}+0.8992\times\tfrac{1}{8{,}992}=0.0009+0.0001=0.001$ ซึ่งคือ 0.1% พอดี กฎนี้คือ <a href="2.1.html">tower property</a> (ค่าเฉลี่ยของค่าเฉลี่ยแบบมีเงื่อนไขคือค่าเฉลี่ยเดิม) ในรูปของโอกาส</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ระบบเตือน crash เดิมเงียบในวันนี้ โอกาส crash เป็นเท่าไร เป็นศูนย์หรือไม่</p>
+  <details><summary>เฉลย</summary><p>ใช้ likelihood ของการเงียบ: $P(S\mid C)=0.10$ และ $P(S\mid N)=0.90$ ได้ $P(S)=0.1\times0.001+0.9\times0.999=0.0001+0.8991=0.8992$ และ $P(C\mid S)=0.0001/0.8992=1/8{,}992\approx0.0111\%$ ตรงกับต้นไม้ที่มี crash แต่เงียบ 1 วันจากวันเงียบ 8,992 วัน โอกาสลดจาก 0.1% ลงเกือบ 9 เท่า แต่ไม่เป็นศูนย์ เพราะระบบยังพลาดวัน crash ได้ 10%</p></details>
+  <p><strong>2.</strong> ตลาดปิดบวก 52% ของวัน สัญญาณซื้อเกิดในวันบวก 60% และเกิดในวันที่ไม่บวก 40% หาโอกาสวันบวกเมื่อมีสัญญาณ และเมื่อไม่มีสัญญาณ แล้วตรวจว่าถ่วงกลับได้ 52%</p>
+  <details><summary>เฉลย</summary><p>$P(\text{sig})=0.6\times0.52+0.4\times0.48=0.312+0.192=0.504$ ได้ $P(\text{up}\mid\text{sig})=0.312/0.504=13/21\approx61.90\%$ ส่วนไม่มีสัญญาณ $P(\text{no sig})=0.496$ และ $P(\text{up}\mid\text{no sig})=0.4\times0.52/0.496=0.208/0.496=13/31\approx41.94\%$ ถ่วงกลับ: $0.504\times\tfrac{13}{21}+0.496\times\tfrac{13}{31}=0.312+0.208=0.52$ ถูกต้อง LR ของสัญญาณคือ $0.6/0.4=1.5$ เท่านั้น หลักฐานจึงอ่อน และโอกาสขยับจาก 52% เป็นแค่ 61.9%</p></details>
+  <p><strong>3.</strong> ผู้ขายเสนออัปเกรดระบบ crash สองแบบ (prior 0.1% เท่าเดิม): แบบ A เพิ่ม sensitivity เป็น 99% โดย false positive rate 10% เท่าเดิม แบบ B คง sensitivity 90% แต่ลด false positive rate เป็น 1% แบบไหนดัน posterior ได้มากกว่า</p>
+  <details><summary>เฉลย</summary><p>แบบ A: LR $=0.99/0.10=9.9$ ได้ odds $9.9/999$ และโอกาส $0.00099/(0.00099+0.0999)\approx0.98\%$ แทบไม่ต่างจากเดิม แบบ B: LR $=0.90/0.01=90$ ได้ odds $90/999$ และโอกาส $0.0009/(0.0009+0.00999)\approx8.26\%$ ดีขึ้นเกือบ 10 เท่า เมื่อเหตุการณ์หายาก ตัวหารถูกครอบงำด้วยวันปกติที่เตือนผิด การลด false positive rate จึงได้ผลมากกว่า แต่ต้องชั่งกับต้นทุนของวัน crash ที่ระบบพลาดด้วย</p></details>
+</section>
+
 <section class="code">
-  <details>
-    <summary>ตรวจตาราง Bayes และ conditional probability ด้วย JavaScript</summary>
-    <pre><code>function bayes(prior, hit, falsePositive) {
-  const trueFlag = prior * hit;
-  const falseFlag = (1 - prior) * falsePositive;
-  if (trueFlag + falseFlag === 0) throw new Error('Impossible evidence');
-  return trueFlag / (trueFlag + falseFlag);
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <details><summary>เปิดดูโค้ด</summary>
+<pre><code class="language-javascript">// posterior of cause A after evidence, two causes
+const bayes = (prior, hit, falseHit) =&gt;
+  prior * hit / (prior * hit + (1 - prior) * falseHit);
+
+console.log(bayes(0.001, 0.90, 0.10));   // 0.00893 = 9/1008
+console.log(bayes(0.001, 0.10, 0.90));   // 0.000111 = 1/8992 (silent day)
+console.log([0.001, 0.01, 0.10].map(p =&gt; bayes(p, 0.9, 0.1))); // 0.0089, 0.083, 0.5
+
+// dice: P(Y1 &gt;= 4 | sum &gt;= 8)
+let inB = 0, both = 0;
+for (let a = 1; a &lt;= 6; a++) for (let b = 1; b &lt;= 6; b++) {
+  if (a + b &gt;= 8) { inB++; if (a &gt;= 4) both++; }
 }
-console.log(bayes(0.001, 0.90, 0.10)); // 0.008928571...
-console.log(bayes(0.001, 0.10, 0.90)); // 0.000111210...: ไม่เตือน
-console.log(bayes(0.001, 0.81, 0.01)); // 0.075: เตือนสองเครื่องตามเงื่อนไข
-let countA = 0, countB = 0, both = 0;
-for (let a = 1; a &lt;= 6; a++) {
-  for (let b = 1; b &lt;= 6; b++) {
-    if (a &gt;= 4) countA++;
-    if (a + b &gt;= 8) countB++;
-    if (a &gt;= 4 &amp;&amp; a + b &gt;= 8) both++;
-  }
-}
-console.log([countA, countB, both, both / countB]); // [18, 15, 12, 0.8]
-const on = bayes(0.52, 0.60, 0.40);
-const off = bayes(0.52, 0.40, 0.60);
-console.log([on, off]);                 // 13/21 และ 13/31
-console.log(0.504 * on + 0.496 * off); // 0.52
-const f = 2 * on - 1;
-const g = x =&gt; on * Math.log1p(x) + (1 - on) * Math.log1p(-x);
-console.log([f, g(f), g(f / 2), g(2 * f)]);</code></pre>
+console.log(both, inB, both / inB);       // 12 15 0.8
+
+// odds form, two independent alarms
+const odds = 1 / 999 * 9 * 9;
+console.log(odds / (1 + odds));           // 0.075
+
+// three regimes
+const w = [0.90 * 0.05, 0.09 * 0.40, 0.01 * 0.90];
+const tot = w.reduce((s, x) =&gt; s + x, 0);
+console.log(w.map(x =&gt; x / tot));          // 0.5 0.4 0.1
+
+// fund manager, 8+ wins out of 10
+const C = (n, k) =&gt; { let r = 1; for (let i = 1; i &lt;= k; i++) r = r * (n - k + i) / i; return r; };
+const tail = (p) =&gt; { let s = 0; for (let k = 8; k &lt;= 10; k++) s += C(10, k) * p ** k * (1 - p) ** (10 - k); return s; };
+const LR = tail(0.7) / tail(0.5);
+const o = 5 / 95 * LR;
+console.log(tail(0.5), tail(0.7), LR, o / (1 + o)); // 0.0547 0.3828 7.0 0.27
+console.log(1 - (1 - tail(0.5)) ** 100);  // 0.996: best of 100 lucky managers
+
+// hedge decision: buy when q * 1,000,000 &gt; 5,000
+const q = bayes(0.001, 0.9, 0.1);
+console.log(q * 1e6, q * 1e6 &gt; 5000);     // 8928.6 true</code></pre>
   </details>
 </section>
 
 <section class="takeaways">
-  <h4>สรุป — ระบุตัวหารให้ถูก แล้วแยกความเชื่อออกจากการตัดสินใจ</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>เขียนก่อนว่าอะไรเป็นสิ่งที่รู้และอะไรกำลังถาม $P(A\mid B)$ กับ $P(B\mid A)$ ใช้คนละกลุ่มเป็นฐาน</li>
-    <li>Bayes มาจากนิยาม conditional probability กฎคูณ และการรวมทุกเส้นทางของหลักฐาน ไม่ต้องสมมติว่าเหตุการณ์กับสัญญาณเป็นอิสระ</li>
-    <li>ในตัวอย่าง crash สัดส่วนจริงในกลุ่มเตือนคือ 9 จาก 1,008 หรือ 0.8929% ไม่ใช่ sensitivity 90%</li>
-    <li>Posterior odds เท่ากับ prior odds คูณ LR หากใช้หลายชิ้นต้องคิดข้อมูลที่ซ้ำและเงื่อนไขของหลักฐานใหม่ด้วย</li>
-    <li>ผลตอบแทน ต้นทุน และความเสียหายยังจำเป็นต่อการตัดสินใจ โอกาสชนะสูงไม่รับรองกำไร และเหตุการณ์ที่โอกาสต่ำอาจยังควรป้องกัน</li>
+    <li>$P(C\mid W)$ กับ $P(W\mid C)$ มีตัวเศษเดียวกันแต่ตัวหารต่างกัน ในตัวอย่าง crash คือ 0.89% กับ 90%</li>
+    <li>Bayes' theorem คือ prior × likelihood หารด้วยผลรวมของทุกเส้นทางที่ให้หลักฐานเดียวกัน และตรวจได้ด้วยการนับในต้นไม้หรือตาราง</li>
+    <li>ระบบเดียวกันให้ posterior ต่างกันมากเมื่อ base rate เปลี่ยน: 0.89%, 8.3% และ 50% ที่ prior 0.1%, 1% และ 10%</li>
+    <li>posterior odds เท่ากับ prior odds คูณ LR และคูณ LR ของหลักฐานหลายชิ้นต่อกันได้เมื่อหลักฐานเป็นอิสระแบบมีเงื่อนไขเท่านั้น</li>
+    <li>track record 8 ใน 10 ปีให้โอกาสมีฝีมือราว 27% เมื่อ prior 5% และแทบไม่มีค่าถ้าคนนั้นถูกคัดมาเพราะดีที่สุดใน 100 คน</li>
+    <li>การตัดสินใจใช้ posterior คู่กับต้นทุน: posterior 0.89% ก็คุ้มซื้อประกันได้ ถ้าเกณฑ์ต้นทุนอยู่ที่ 0.5%</li>
   </ul>
-  <p>หัวข้อ 1.8 จะขยายจากการนับค่าแยกกัน ไปสู่ตัวแปรต่อเนื่องซึ่งต้องใช้พื้นที่ใต้ density แทนความสูงของแท่ง PMF</p>
+  <p>ทุกตัวอย่างในหน้านี้นับผลลัพธ์ได้เป็นกรณี ๆ หน้าถัดไป <a href="1.8.html">ตัวแปรต่อเนื่องและ PDF</a> จะดูตัวแปรอย่างเวลารอหรือผลตอบแทนที่มีค่าได้ทุกจุดในช่วง ซึ่งต้องเปลี่ยนจากการนับแท่งมาเป็นการวัดพื้นที่</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

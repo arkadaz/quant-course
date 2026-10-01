@@ -18,410 +18,442 @@
 <article class="topic" data-number="1.11" data-depends-on="1.4 1.6 1.7 1.8 1.9 1.10">
 <header class="topic-header">
   <h1><span class="tnum">1.11</span> A Zoo of Distributions</h1>
-  <p class="subtitle">เลือกแบบจำลองจากสิ่งที่วัด: เวลารอ ความไม่แน่นอนของ scale และเหตุการณ์ในหาง</p>
+  <p class="subtitle">distribution แต่ละตัวคือเรื่องเล่าว่าข้อมูลเกิดขึ้นอย่างไร เลือกจากกลไกและหาง ไม่ใช่จากการจับค่าเฉลี่ยกับ SD ให้ตรง</p>
 </header>
 
 <div class="hook">
-  <p>เวลารอคำสั่งซื้อมีค่าเฉลี่ย 5 วินาทีและ SD 5 วินาที ถ้าใช้ Normal ที่มีสองค่านี้ตรงกัน จะได้แบบจำลองที่เหมาะแล้วหรือยัง?</p>
-  <details>
-    <summary>เปิดคำตอบตั้งต้น</summary>
-    <p>ยัง เพราะ $P(X\lt0)=\Phi(-1)\approx15.87\%$ แบบจำลองจึงให้เวลารอติดลบ ทั้งที่ของจริงเป็นไปไม่ได้ การจับ mean และ variance ให้ตรงเป็นเพียงส่วนหนึ่ง ต้องตรวจขอบเขตค่าและกลไกด้วย</p>
-  </details>
-  <p>บทนี้เพิ่ม Exponential สำหรับเวลารอ Student-t สำหรับความไม่แน่นอนที่มีหางหนา และ Pareto สำหรับหางแบบ power law พร้อมเรียนวิธีสร้างเลขสุ่มจาก Uniform ไม่มีตัวใดเป็นคำตอบอัตโนมัติสำหรับข้อมูลทุกชุด</p>
+  <p>ทีม execution วัดเวลารอจนมีคำสั่งซื้อขายเข้ามาครั้งถัดไปในหุ้นตัวหนึ่ง ได้ค่าเฉลี่ย 5 วินาทีและ SD 5 วินาที นักวิเคราะห์ใส่ Normal ที่มีค่าเฉลี่ยและ SD ตรงกันลงในระบบจำลอง แล้วบอกว่า “แบบจำลองตรงกับข้อมูลแล้ว” จริงไหม</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่จริง Normal นี้ให้โอกาสเวลารอติดลบ $\Phi\big(\tfrac{0-5}{5}\big)=\Phi(-1)\approx15.9\%$ ซึ่งเป็นไปไม่ได้ การจับค่าเฉลี่ยและ SD ให้ตรงไม่ได้แปลว่าจับรูปทรงได้ ตัวที่เหมาะคือ Exponential ซึ่งเกิดจากกลไกที่คำสั่งเข้ามาแบบสุ่มด้วยอัตราคงที่ และมีค่าเฉลี่ยเท่ากับ SD พอดีโดยธรรมชาติ</p></details>
 </div>
 
-<section class="table">
-  <h4>ก่อนเลือกชื่อ distribution ให้ตอบสี่คำถาม</h4>
-  <table>
-    <thead><tr><th>ถามอะไร?</th><th>ทำไมจึงต้องถาม?</th></tr></thead>
-    <tbody>
-      <tr><td>ตัวแปรเป็นจำนวนครั้ง เวลา ราคา หรือผลตอบแทน?</td><td>ชนิดตัวแปรบอกว่าควรเริ่มจาก PMF หรือ PDF และค่าติดลบเป็นไปได้หรือไม่</td></tr>
-      <tr><td>อะไรเป็นกลไกสร้างข้อมูล?</td><td>จำนวนครั้งในช่วงคงที่ต่างจากเวลารอครั้งถัดไป แม้จะมาจาก process เดียวกัน</td></tr>
-      <tr><td>กำลังใช้ส่วนกลางหรือหาง?</td><td>สอง distribution อาจ fit ส่วนกลางคล้ายกัน แต่ให้โอกาสขาดทุนรุนแรงต่างกันมาก</td></tr>
-      <tr><td>Moment ที่จะใช้มีอยู่จริงหรือไม่?</td><td>มี sample mean หรือ sample SD ให้คำนวณ ไม่ได้แปลว่า population mean หรือ variance ต้องมีค่าจำกัด</td></tr>
-    </tbody>
-  </table>
-</section>
-
 <section class="prose">
-  <h4>เส้นทางอ่านของบท</h4>
-  <p>เริ่มจากเวลารอที่ต่อจาก Poisson แล้วใช้ CDF สร้างข้อมูลจำลอง จากนั้นกลับมาดู Student-t ว่าเหตุใดตัวหารที่สุ่มได้จึงเพิ่มหาง ก่อนปิดด้วย Pareto และแบบฝึกเลือกแบบจำลอง ส่วน Gamma และ chi-square เป็นสะพานพิสูจน์ Student-t ไม่ใช่ชื่อที่ต้องจำแยกโดยไม่มีหน้าที่</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.11a — เปรียบเทียบรูปร่าง แต่เริ่มตัดสินจากความหมาย</h4>
-  <img src="../figures/1.11-1.svg" alt="รูปร่าง distribution เพิ่มเติมสำหรับหางหนา ค่าที่กระจายสม่ำเสมอ และเวลารอ" loading="lazy">
-  <figcaption><p>เส้นที่ดูต่างกันไม่ได้แข่งขันกันตอบคำถามเดียวเสมอไป Uniform จำกัดอยู่ในช่วง Exponential อยู่ด้านบวก ส่วน Student-t มีค่าทั้งสองด้าน การใช้ภาพต้องอ่านหน่วยและพารามิเตอร์ควบคู่กัน</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>ส่วนที่ 1 — จากจำนวนคำสั่งเป็นเวลารอ</h4>
-  <p>สมมติคำสั่งเข้าตาม homogeneous Poisson process ด้วยอัตราคงที่ $\lambda=0.2$ รายการต่อวินาที หรือ 12 รายการต่อนาที ให้ $N(t)$ เป็นจำนวนคำสั่งใน $t$ วินาที และ $X$ เป็นเวลารอคำสั่งถัดไป</p>
-  <p>อัตราเฉลี่ยเพียงอย่างเดียวยังไม่ทำให้เป็น Poisson process ต้องมี independent increments และสมมติฐานการเกิดเหตุการณ์ของ process นี้ด้วย เมื่อรับสมมติฐานแล้ว “ยังต้องรอเกิน $t$” ก็คือ “ยังไม่มีคำสั่งในช่วง $t$”</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 1 — สร้าง Exponential จากเหตุการณ์ไม่มีคำสั่ง</h4>
-  <div class="math">\[
-\begin{aligned}
-N(t)&\sim\operatorname{Poisson}(\lambda t)\\
-P(X\gt t)&=P(N(t)=0)=e^{-\lambda t},\quad t\ge0\\
-F_X(t)&=1-e^{-\lambda t}\\
-f_X(t)&=F_X'(t)=\lambda e^{-\lambda t}\\
-P(X\gt10)&=e^{-0.2(10)}\approx\boxed{13.5335\%}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>นี่คือนิยามของ $X\sim\operatorname{Exponential}(\lambda)$ แบบใช้ rate parameter ด้าน $t\lt0$ ทั้ง CDF และ PDF เป็นศูนย์ สัญลักษณ์ $\lambda$ ในบทนี้เป็นอัตราต่อวินาที ส่วนค่าเฉลี่ยจำนวนเหตุการณ์ในช่วงยาว $t$ คือ $\lambda t$ อย่าสลับอัตรากับจำนวนเฉลี่ย</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 2 — หา mean และ variance จากพื้นที่หาง</h4>
-  <p>สำหรับตัวแปรไม่ติดลบ ใช้เอกลักษณ์ tail integral: $\mathbb E[X]=\int_0^\infty P(X\gt t)\,dt$ และ $\mathbb E[X^2]=2\int_0^\infty tP(X\gt t)\,dt$ โดยบรรทัดที่สองคำนวณด้วย integration by parts</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[X]&=\int_0^\infty e^{-\lambda t}\,dt=\frac1\lambda\\
-\mathbb E[X^2]&=2\int_0^\infty te^{-\lambda t}\,dt\\
-&=\left[-\frac{2t}{\lambda}e^{-\lambda t}\right]_0^\infty
- +\frac2\lambda\int_0^\infty e^{-\lambda t}\,dt\\
-&=\frac2{\lambda^2}\\
-\operatorname{Var}(X)&=\frac2{\lambda^2}-\frac1{\lambda^2}=\frac1{\lambda^2}\\
-\lambda=0.2&:\quad\mathbb E[X]=5\text{ s},\quad\operatorname{SD}(X)=5\text{ s}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>Mean เท่ากับ SD เป็นลักษณะของ Exponential ไม่ใช่ข้อกำหนดของเวลารอทุกชนิด ถ้าข้อมูลไม่เข้าเงื่อนไขนี้ อาจมาจากอัตราที่เปลี่ยนตามเวลา การพึ่งพากัน หรือกลไกอื่น ยังสรุปสาเหตุเดียวจากความต่างของสองสถิติไม่ได้</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 3 — แปล memoryless ด้วย conditional probability</h4>
-  <p>รอมาแล้ว $a$ วินาทีและยังไม่มีคำสั่ง โอกาสต้องรอต่ออีกเกิน $b$ วินาทีเป็นเท่าไร?</p>
-  <div class="math">\[
-\begin{aligned}
-P(X\gt a+b\mid X\gt a)&=\frac{P(X\gt a+b)}{P(X\gt a)}\\
-&=\frac{e^{-\lambda(a+b)}}{e^{-\lambda a}}\\
-&=e^{-\lambda b}=P(X\gt b)\\[3pt]
-a=b=10&:\quad\frac{e^{-4}}{e^{-2}}=e^{-2}\approx13.5335\%
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เวลาที่รอมาแล้วหักออกจากสมการ นี่คือ memoryless property ภายใต้ Exponential เวลารอที่เหลือเฉลี่ยยังเป็น 5 วินาที ไม่ได้หมายความว่าเวลารอทั้งหมดจนถึงคำสั่งจะเฉลี่ย 5 วินาทีหลังเรารอมาแล้ว 10 วินาที</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 4 — Mean ไม่ใช่จุดแบ่งครึ่ง: หา quantile ของเวลารอ</h4>
-  <div class="math">\[
-\begin{aligned}
-F_X(q_p)&=1-e^{-\lambda q_p}=p\\
-q_p&=-\frac{\ln(1-p)}{\lambda}\\
-q_{0.5}&=\frac{\ln2}{0.2}\approx\boxed{3.4657\text{ s}}\\
-q_{0.95}&=-\frac{\ln0.05}{0.2}\approx14.9787\text{ s}\\
-P(X\le\mathbb E[X])&=1-e^{-1}\approx63.2121\%
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ครึ่งหนึ่งของเวลารอสั้นกว่า 3.47 วินาที ไม่ใช่ 5 วินาที หางด้านขวาดึง mean ให้สูงกว่า median ดังนั้นประโยคว่า “รอเฉลี่ย 5 วินาที” ยังไม่บอกเวลาที่ 95% ของคำสั่งจะมาถึง</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.11c — เวลารอสั้นพบมาก แต่เวลารอนานยังมีโอกาส</h4>
-  <img src="../figures/1.11-3.svg" alt="Exponential ของเวลารอคำสั่งที่อัตรา 0.2 รายการต่อวินาที" loading="lazy">
-  <figcaption><p>Mean 5 วินาทีอยู่ทางขวาของ median ประมาณ 3.47 วินาที พื้นที่หลัง 10 วินาทีเท่ากับ $e^{-2}\approx13.53\%$ แม้เป็นสองเท่าของ mean แล้ว โอกาสรอถึงระดับนี้ก็ไม่ได้เป็นศูนย์</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>ส่วนที่ 2 — ให้ CDF เป็นสะพานจากเลขสุ่มไปเป็นข้อมูลจำลอง</h4>
-  <p>Uniform บน $(0,1)$ ให้โอกาสแก่ช่วงย่อยตามความยาวช่วง เช่นช่วง 0.2 ถึง 0.3 กับ 0.7 ถึง 0.8 มีโอกาสเท่ากันที่ 0.1 ไม่ใช่หมายความว่าความน่าจะเป็นของทุกจุดเท่ากับหนึ่ง</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 5 — ย้อน CDF เพื่อสุ่มตัวแปรที่ต้องการ</h4>
-  <p>สำหรับ $U\sim\operatorname{Uniform}(0,1)$ มี density เท่ากับหนึ่งในช่วงนั้นและเป็นศูนย์นอกช่วง ถ้า CDF เป้าหมาย $F$ ต่อเนื่องและเพิ่มอย่างเคร่งครัด ให้กำหนด $X=F^{-1}(U)$</p>
-  <div class="math">\[
-\begin{aligned}
-P(X\le x)&=P(F^{-1}(U)\le x)\\
-&=P(U\le F(x))=F(x)\\[3pt]
-X\sim\operatorname{Exponential}(\lambda)&:\quad X=-\frac{\ln(1-U)}{\lambda}\\
-U=0.63,\ \lambda=0.2&:\quad X=-\frac{\ln0.37}{0.2}\approx\boxed{4.9713\text{ s}}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>Probability ถูกแปลงเป็น quantile ของเวลา การสุ่มซ้ำด้วย Uniform อิสระจึงได้เวลารอตามแบบจำลอง สำหรับ CDF ที่มีจุดกระโดดก็ใช้วิธีนี้ได้เมื่อใช้นิยาม generalized inverse แทนการย้อน function แบบธรรมดา</p></div>
-</section>
-
-<section class="prose">
-  <h4>Uniform บนช่วงทั่วไปและวิธีสุ่ม Normal</h4>
-  <p>ถ้าต้องการ Uniform บน $(a,b)$ ใช้ $a+(b-a)U$ ได้ โดย density คือ $1/(b-a)$ ค่าเฉลี่ยอยู่ที่ $(a+b)/2$ และ variance เท่ากับ $(b-a)^2/12$ จากการ integrate กำลังสองรอบจุดกลางบนช่วงนั้น</p>
-  <p>สำหรับ Normal ใช้ inverse CDF เชิงตัวเลขได้ อีกทางคือ Box–Muller ซึ่งเปลี่ยน Uniform อิสระสองตัวเป็น Normal อิสระสองตัว ใช้ความสมมาตรของความหนาแน่นสองมิติในพิกัดเชิงขั้ว</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 6 — Box–Muller: สุ่มรัศมีและมุม แล้วกลับมาเป็นแกน x,y</h4>
-  <p>Normal มาตรฐานสองตัวมี joint density $e^{-(z_1^2+z_2^2)/2}/(2\pi)$ ในพิกัดเชิงขั้ว ตัวปรับพื้นที่ทำให้ density ของรัศมีเป็น $re^{-r^2/2}$ และมุมเป็น Uniform อิสระบน $(0,2\pi)$</p>
-  <div class="math">\[
-\begin{aligned}
-P(R\gt r)&=\int_r^\infty ue^{-u^2/2}\,du=e^{-r^2/2}\\
-R&=\sqrt{-2\ln U_1},\qquad\Theta=2\pi U_2\\
-Z_1&=R\cos\Theta,\qquad Z_2=R\sin\Theta\\[3pt]
-U_1=0.25,\ U_2=0.60&:\quad R\approx1.665109\\
-Z_1&\approx-1.347102,\qquad Z_2\approx-0.978727
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ผลลัพธ์คู่นี้เป็นค่าจำลองหนึ่งคู่ ไม่ใช่ค่าที่ต้องออกทุกครั้ง ต้องใช้ Uniform อิสระและหลีกเลี่ยง input ศูนย์ใน logarithm การจำลองในคอมพิวเตอร์ยังขึ้นกับคุณภาพของตัวสร้างเลขสุ่มและความละเอียดของตัวเลขด้วย</p></div>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.11d — Uniform เดียวกัน เมื่อผ่าน quantile ต่างกันก็ให้ข้อมูลต่างกัน</h4>
-  <img src="../figures/1.11-4.svg" alt="การแปลงเลข Uniform ผ่าน inverse CDF เพื่อสร้างข้อมูลจาก distribution เป้าหมาย" loading="lazy">
-  <figcaption><p>เลขในช่วงศูนย์ถึงหนึ่งเป็นระดับ probability ไม่ใช่ราคาหรือเวลา ต้องแปลงผ่าน CDF ของเป้าหมายก่อน Uniform 0.63 จึงกลายเป็นเวลารอประมาณ 4.97 วินาทีในตัวอย่าง ไม่ใช่ 0.63 วินาที</p></figcaption>
-</figure>
-
-<section class="prose">
-  <h4>ส่วนที่ 3 — Student-t: เมื่อตัวหารก็ไม่แน่นอน</h4>
-  <p>มีผลตอบแทนเพียงสามครั้งคือ 0.5%, 0.6%, 0.7% ได้ sample mean 0.6% และ sample SD 0.1% หากทดสอบค่าเฉลี่ยศูนย์ สถิติ $\bar X/(S/\sqrt3)\approx10.3923$ มีตัวหารที่ประมาณจากข้อมูลเพียงสามค่า จึงไม่ใช่ z-score ที่ใช้ population SD ซึ่งทราบแน่นอน</p>
-  <p>ภายใต้ข้อมูล iid Normal และสมมติฐานค่าเฉลี่ยศูนย์ สถิตินี้มี Student-t ที่ $\nu=n-1=2$ degrees of freedom ความเป็น t แบบตรงนี้ต้องใช้เงื่อนไขดังกล่าว ไม่ได้เกิดจากการมีข้อมูลน้อยเพียงอย่างเดียว</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 7 — สร้าง Student-t จาก Normal และ chi-square อิสระ</h4>
-  <p>ให้ $Z,Z_1,\ldots,Z_\nu$ เป็น Standard Normal อิสระ สำหรับ $\nu$ ที่เป็นจำนวนเต็มบวก สร้าง $V$ จากผลรวมกำลังสอง แล้วใช้มันเป็นตัวปรับ scale</p>
-  <div class="math">\[
-\begin{aligned}
-V&\equiv\sum_{i=1}^{\nu}Z_i^2\sim\chi_\nu^2\\
-\tau&\equiv\frac{Z}{\sqrt{V/\nu}}\sim t_\nu\\
-\mathbb E[V]&=\sum_{i=1}^{\nu}\mathbb E[Z_i^2]=\nu\\
-\operatorname{Var}(Z_i^2)&=\mathbb E[Z_i^4]-(\mathbb E[Z_i^2])^2\\
-&=3-1=2\\
-\operatorname{Var}(V)&=2\nu\\
-\nu=3&:\quad\mathbb E[V]=3,\quad\operatorname{Var}(V)=6
-\end{aligned}
-\]</div>
-  <div class="reading"><p>Moments 1 และ 3 ของ Normal มาจากหัวข้อ 1.9 เมื่อ $V$ บางครั้งเล็ก ตัวหารจะเล็กและทำให้ $\tau$ มีขนาดใหญ่ได้บ่อยขึ้น นี่เป็นกลไกของหางหนา ไม่จำเป็นต้องเริ่มจากการจำสมการ density</p></div>
-</section>
-
-<section class="prose">
-  <h4>Gamma ทำหน้าที่ normalize chi-square และ Student-t</h4>
-  <p>นิยาม $\Gamma(a)=\int_0^\infty u^{a-1}e^{-u}\,du$ สำหรับ $a\gt0$ Integration by parts ให้ $\Gamma(a+1)=a\Gamma(a)$ เมื่อ $\Gamma(1)=1$ จึงได้ $\Gamma(2)=1,\Gamma(3)=2,\Gamma(4)=6$ นอกจากนี้ $\Gamma(1/2)=\sqrt\pi$ จาก Gaussian integral</p>
-  <p>Chi-square เป็น Gamma distribution แบบ shape $\nu/2$ และ scale 2 จึงขยายจากผลรวมกำลังสองที่ใช้ $\nu$ เต็ม ไปเป็น $\nu\gt0$ ที่ไม่ต้องเป็นจำนวนเต็มได้ ส่วนนี้ใช้เป็นเครื่องมือคำนวณ ไม่ต้องสร้าง Normal เป็นเศษส่วนตัว</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 8 — เฉลี่ย conditional density เพื่อได้ density ของ t</h4>
-  <p>เมื่อรู้ $V=v$ แล้ว $\tau$ เป็น Normal ที่มี variance $\nu/v$ จึงคูณ density ของ $V$ แล้ว integrate ทุกค่า $v$ ที่เป็นไปได้</p>
-  <div class="math">\[
-\begin{aligned}
-f_V(v)&=\frac{v^{\nu/2-1}e^{-v/2}}{2^{\nu/2}\Gamma(\nu/2)},\quad v\gt0\\
-f_{\tau\mid V}(x\mid v)&=\sqrt{\frac{v}{2\pi\nu}}e^{-vx^2/(2\nu)}\\
-f_\tau(x)&=\int_0^\infty f_{\tau\mid V}(x\mid v)f_V(v)\,dv\\
-&=\frac{\int_0^\infty v^{(\nu+1)/2-1}e^{-v(1+x^2/\nu)/2}\,dv}
- {\sqrt{2\pi\nu}\,2^{\nu/2}\Gamma(\nu/2)}\\
-&=\boxed{\frac{\Gamma((\nu+1)/2)}{\sqrt{\nu\pi}\,\Gamma(\nu/2)}
- \left(1+\frac{x^2}{\nu}\right)^{-(\nu+1)/2}}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>บรรทัดสุดท้ายใช้การแทน $u=v(1+x^2/\nu)/2$ ให้ integral กลับเป็น Gamma density ของ t ลดตามกำลังของ $|x|$ ในหาง ต่างจาก Normal ที่ลดแบบ exponential ของ $x^2$ เมื่อ $\nu$ เพิ่มมาก t จะเข้าใกล้ Standard Normal</p></div>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 9 — ก่อนเทียบหาง ต้องปรับ variance ให้ตรงกัน</h4>
-  <p>เมื่อ $\nu\gt2$ มี mean ศูนย์และ variance จำกัด ใช้ความอิสระของ $Z,V$ หา second moment โดยคำนวณ $\mathbb E[1/V]$ จาก density ข้างต้น</p>
-  <div class="math">\[
-\begin{aligned}
-\mathbb E[1/V]&=\frac{2^{\nu/2-1}\Gamma(\nu/2-1)}{2^{\nu/2}\Gamma(\nu/2)}\\
-&=\frac1{\nu-2}\\
-\operatorname{Var}(\tau)&=\mathbb E[Z^2]\,\nu\,\mathbb E[1/V]\\
-&=\frac{\nu}{\nu-2}\\
-\nu=3&:\quad\operatorname{Var}(\tau)=3\\
-Y&=\tau/\sqrt3\quad\Longrightarrow\quad\operatorname{Var}(Y)=1
-\end{aligned}
-\]</div>
-  <div class="reading"><p>Student-t มาตรฐานไม่ได้มี variance หนึ่งทุกค่า $\nu$ การเอา $t_3$ ดิบไปเทียบ $N(0,1)$ ที่เกณฑ์ตัวเลขเท่ากันจึงปนทั้งความต่างของ scale และหาง เราใช้ $Y=\tau/\sqrt3$ เพื่อแยกสองเรื่องนี้</p></div>
-</section>
-
-<section class="table">
-  <h4>Moment ของ t มีอยู่เมื่อไร?</h4>
-  <table>
-    <thead><tr><th>ค่า $\nu$</th><th>สิ่งที่สรุปได้</th></tr></thead>
-    <tbody>
-      <tr><td>$0\lt\nu\le1$</td><td>Mean ไม่มีอยู่ในความหมาย expectation ปกติ แม้กราฟสมมาตร ที่ $\nu=1$ คือ Cauchy</td></tr>
-      <tr><td>$1\lt\nu\le2$</td><td>Mean เท่ากับศูนย์ แต่ second moment ไม่จำกัด จึงไม่มี variance จำกัด</td></tr>
-      <tr><td>$\nu\gt2$</td><td>Variance เท่ากับ $\nu/(\nu-2)$ จึงปรับให้มี SD หนึ่งได้</td></tr>
-      <tr><td>$\nu\gt4$</td><td>Fourth moment จำกัด และ kurtosis เท่ากับ $3(\nu-2)/(\nu-4)$</td></tr>
-    </tbody>
-  </table>
-  <p class="table-note">เงื่อนไข moment มาจากหาง density ที่ลดแบบ $|x|^{-(\nu+1)}$ ทำให้ integral ของ $|x|^k f(x)$ ลู่เข้าเมื่อ $k\lt\nu$ ความสมมาตรอย่างเดียวไม่รับรองว่า mean มีอยู่</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 10 — คำนวณหางของ t สามองศาที่ variance หนึ่ง</h4>
-  <p>แทน $\nu=3$ และเปลี่ยนตัวแปรเป็น $Y=\tau/\sqrt3$ จะได้ density ที่ integrate ได้โดยตรง จึงตรวจตัวเลขหางโดยไม่ต้องใช้ตาราง t</p>
-  <div class="math">\[
-\begin{aligned}
-f_Y(y)&=\sqrt3\,f_{t_3}(\sqrt3y)=\frac2{\pi(1+y^2)^2}\\
-F_Y(y)&=\frac12+\frac1\pi\left(\arctan y+\frac{y}{1+y^2}\right)\\
-P(Y\lt-4)&=F_Y(-4)\approx0.00308269\\
-P(Z\lt-4)&=\Phi(-4)\approx0.0000316712\\
-\frac{P(Y\lt-4)}{P(Z\lt-4)}&\approx\boxed{97.33}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ตรวจ CDF ได้ด้วยการหาอนุพันธ์กลับและดูค่าที่ลบอนันต์กับบวกอนันต์ ที่ระยะลบสี่ SD โอกาสของ t แบบปรับ scale เป็น 0.3083% ส่วน Normal เป็น 0.003167% อัตราส่วนประมาณ 97 เท่านี้ผูกกับเกณฑ์และ $\nu$ ที่เลือก ไม่ใช่ตัวคูณสากลของหาง t</p></div>
-</section>
-
-<section class="example">
-  <h4>Worked Example — ใช้ข้อมูลพอร์ตเดิม แต่เปลี่ยนสมมติฐานหาง</h4>
-  <p>โจทย์ให้อะไรมาบ้าง: ใช้ค่าเฉลี่ยผลตอบแทนรายวัน 0.04% และ SD 1.1% จากหัวข้อ 1.9 เปรียบเทียบ Normal กับ t สามองศาที่ปรับ variance เป็นหนึ่ง โดยยังตรึง mean และ SD ของผลตอบแทนให้เท่ากัน</p>
-  <p>คำถามขาดทุนเกิน 2% ให้เกณฑ์ $( -0.02-0.0004)/0.011\approx-1.854545$ ภายใต้ Normal โอกาสประมาณ 3.1831% แต่ภายใต้ t ที่ปรับ scale โอกาสประมาณ 2.4438% ซึ่งน้อยกว่าได้ เพราะเกณฑ์นี้ยังไม่ไกลเท่าหางสุด</p>
-  <p>เมื่อเปลี่ยนไปที่ลบสี่ SD ผลกลับต่างมากตามขั้นที่ 10 หากวันต่าง ๆ เป็น iid ด้วย เวลารอเฉลี่ยเชิงเรขาคณิต $1/p$ คิดที่ 252 วันต่อปีจะประมาณ 125.3 ปีสำหรับ Normal และ 1.29 ปีสำหรับ t ตัวเลขนี้ไม่ใช่ตารางนัดวิกฤติ</p>
-  <p>ตรวจเองใน 10 วินาที: ลองคูณเกณฑ์ −4 ด้วย $\sqrt3$ ก่อนใช้ CDF ของ $t_3$ ดิบ ถ้าไม่แปลง scale จะไม่ได้กำลังเทียบที่สี่ SD เท่ากัน</p>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.11b — หางหนาไม่ได้แปลว่าทุกเกณฑ์มีโอกาสสูงกว่า</h4>
-  <img src="../figures/1.11-2.svg" alt="เปรียบเทียบความหนาแน่น Normal กับ Student-t ในส่วนกลางและหาง" loading="lazy">
-  <figcaption><p>เมื่ออ่านกราฟให้ตรวจว่าใช้ t ดิบหรือปรับ variance แล้ว และกำลังดูความสูง PDF หรือพื้นที่หาง สำหรับ $Y=t_3/\sqrt3$ อัตรา density ที่ 4 เทียบยอดของตัวเองคือ $1/17^2\approx0.003460$ ไม่ใช่ $(1+16/3)^{-2}\approx0.024931$ ซึ่งเป็นการแทน 4 ใน t ดิบ</p></figcaption>
-</figure>
-
-<section class="formula">
-  <h4>ขั้นที่ 11 — เหตุใดข้อมูลสามค่าจึงใช้เกณฑ์ 1.96 แบบ Normal ไม่ได้</h4>
-  <p>กลับสู่ตัวอย่างสามผลตอบแทน ซึ่งให้ $t_2$ ภายใต้สมมติฐานทดสอบ Density ของ $t_2$ ยุบเป็น $(x^2+2)^{-3/2}$ และมี CDF ตามบรรทัดแรก</p>
-  <div class="math">\[
-\begin{aligned}
-F_{t_2}(x)&=\frac12+\frac{x}{2\sqrt{x^2+2}}\\
-P(|t_2|\gt c)&=1-\frac{c}{\sqrt{c^2+2}},\quad c\ge0\\
-P(|t_2|\gt1.96)&\approx18.9057\%\\
-1-\frac{c}{\sqrt{c^2+2}}&=0.05\\
-c^2&=\frac{2(0.95)^2}{1-(0.95)^2}\\
-c&\approx\boxed{4.30265}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>เกณฑ์สองด้าน 5% จึงประมาณ ±4.303 ไม่ใช่ ±1.96 อัตรา 18.91% คือโอกาสข้ามเกณฑ์ผิดภายใต้สมมติฐานศูนย์ ไม่ใช่ probability ว่าสมมติฐานศูนย์จริงหลังเห็นข้อมูล และเกณฑ์ที่ถูกต้องก็ไม่แก้ปัญหาเลือกเฉพาะข้อมูลสวยหรือไม่เป็น iid Normal</p></div>
-</section>
-
-<section class="prose">
-  <h4>ส่วนที่ 4 — Pareto: มีค่าเฉลี่ยได้ แต่ variance ไม่จำกัด</h4>
-  <p>ให้ขนาดคำสั่ง $X$ ถูกประมาณด้วยตัวแปรต่อเนื่องที่อย่างน้อย $x_m=100$ หุ้น และสมมติ Pareto shape $\alpha=1.5$ โมเดลนี้ใช้ศึกษาหางของขนาดคำสั่ง ไม่ได้แปลว่าจำนวนหุ้นจริงเป็นค่าต่อเนื่องหรือว่า Pareto เหมาะกับทุกตลาด</p>
-</section>
-
-<section class="formula">
-  <h4>ขั้นที่ 12 — สร้าง Pareto จาก survival function แล้วตรวจ moment</h4>
-  <p>นิยาม $P(X\gt x)=(x_m/x)^\alpha$ สำหรับ $x\ge x_m$ และเท่ากับหนึ่งเมื่อ $x\lt x_m$ ค่า $\alpha\gt0$ ควบคุมการลดลงของหาง</p>
-  <div class="math">\[
-\begin{aligned}
-f_X(x)&=-\frac{d}{dx}\left(\frac{x_m}{x}\right)^\alpha
- =\alpha x_m^\alpha x^{-\alpha-1}\\
-\mathbb E[X^k]&=\alpha x_m^\alpha\int_{x_m}^\infty x^{k-\alpha-1}\,dx\\
-&=\frac{\alpha x_m^k}{\alpha-k},\quad k\lt\alpha\\
-\alpha=1.5&:\quad\mathbb E[X]=\frac{1.5(100)}{0.5}=300\text{ shares}\\
-P(X\gt10{,}000)&=\left(\frac{100}{10{,}000}\right)^{1.5}
- =\boxed{0.001=0.1\%}
-\end{aligned}
-\]</div>
-  <div class="reading"><p>ที่ $\alpha=1.5$ mean มีค่าจำกัด แต่ second moment ไม่จำกัด จึงไม่มี variance จำกัด ถ้าใช้ Exponential mean 300 แทน จะได้โอกาสเกิน 10,000 เพียง $e^{-10000/300}\approx3.34\times10^{-15}$ ทั้ง support ช่วงล่างและหางต่างกัน จับ mean ให้ตรงอย่างเดียวจึงไม่พอ</p></div>
-</section>
-
-<section class="pitfall">
-  <h4>Mean และ SD อาจซ่อนทิศทางความเสี่ยง หรือยังประเมินไม่ได้</h4>
-  <p>Skewness วัด moment มาตรฐานลำดับสาม เมื่อมีค่าจำกัด ค่าติดลบชี้การเบ้ด้านซ้าย ส่วน kurtosis คือ moment มาตรฐานลำดับสี่ โดย Normal มีค่า 3 และ excess kurtosis เท่ากับ kurtosis ลบ 3 ทั้งคู่ต้องระบุ convention และเงื่อนไขการมี moment</p>
-  <p>ลองโมเดลที่กำไร 0.2% ด้วยโอกาส 99% แต่ขาดทุน 15% ด้วยโอกาส 1% ได้ mean 0.048% ต่อครั้ง, SD ประมาณ 1.5124%, skewness ประมาณ −9.85 และ kurtosis ประมาณ 98.01 การได้กำไรเกือบทุกครั้งไม่ได้ลบความเสียหายจากหางซ้าย</p>
-  <p>ใน 100 ครั้งอิสระ มีโอกาส $0.99^{100}\approx36.60\%$ ที่ยังไม่เจอขาดทุนเลย หากเห็นแต่กำไร 0.2% เท่ากัน sample SD จะเป็นศูนย์ อัตราส่วนแบบ Sharpe จึงหารศูนย์ ไม่ใช่หลักฐานว่าความเสี่ยงจริงเป็นศูนย์หรือว่ากลยุทธ์มี Sharpe ที่ใช้ตีความได้</p>
-</section>
-
-<section class="table">
-  <h4>เลือกแบบจำลองเป็นสมมติฐาน แล้วหาทางทดสอบมัน</h4>
-  <table>
-    <thead><tr><th>ตัวเลือก</th><th>คำถามที่มักใช้</th><th>เงื่อนไขที่ต้องตรวจ</th></tr></thead>
-    <tbody>
-      <tr><td>Binomial</td><td>สำเร็จกี่ครั้งจากจำนวนครั้งที่กำหนด?</td><td>Trials อิสระและ success probability คงที่หรือไม่?</td></tr>
-      <tr><td>Poisson</td><td>มีเหตุการณ์กี่ครั้งในช่วง?</td><td>กลไกอัตราและ increments สมเหตุผลหรือไม่? Mean อย่างเดียวไม่รับรองรูปทรง</td></tr>
-      <tr><td>Normal</td><td>ผลรวม ความคลาดเคลื่อน หรือค่ากลางที่ใกล้สมมาตร?</td><td>Support เหมาะหรือไม่? เงื่อนไขการประมาณและหางผ่านการตรวจหรือยัง?</td></tr>
-      <tr><td>Lognormal</td><td>ตัวแปรบวกที่ logarithm ใกล้ Normal?</td><td>Log return ไม่ใช่ราคา; มวลที่ศูนย์และความเสี่ยงผิดนัดอยู่ที่ไหน?</td></tr>
-      <tr><td>Exponential</td><td>เวลารอใน homogeneous Poisson process?</td><td>Rate คงที่และ memoryless เหมาะกับข้อมูลหรือไม่?</td></tr>
-      <tr><td>Student-t</td><td>สถิติที่ประมาณ scale หรือหางสองด้านหนา?</td><td>ใช้ raw scale หรือ SD? $\nu$ เท่าไร? Moment ที่จะใช้มีอยู่หรือไม่?</td></tr>
-      <tr><td>Pareto</td><td>หางบวกที่ลดแบบ power law?</td><td>Threshold และ tail index ประมาณได้แค่ไหน? มีขอบบนจริงหรือไม่?</td></tr>
-      <tr><td>Uniform</td><td>เลขสุ่มพื้นฐานหรือความไม่แน่นอนสม่ำเสมอในช่วง?</td><td>ขอบเขตช่วงรู้จริงหรือไม่? การไม่รู้ข้อมูลไม่ได้บังคับให้เป็น Uniform</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<figure class="plot">
-  <h4>Figure 1.11e — แผนที่ทบทวน ไม่ใช่กฎจับคู่ตายตัว</h4>
-  <img src="../figures/1.11-5.svg" alt="ตารางเปรียบเทียบ Normal Lognormal Student-t Poisson Binomial และ Exponential" loading="lazy">
-  <figcaption><p>ใช้รูปนี้ระลึกว่ารูปแบบใดตอบคำถามประเภทไหน แล้วกลับไปตรวจสมมติฐานจริง ผลตอบแทนไม่จำเป็นต้องเป็น Normal ราคาบวกไม่จำเป็นต้องเป็น Lognormal และข้อมูลหางหนาก็ไม่จำเป็นต้องเป็น Student-t เสมอ</p></figcaption>
-</figure>
-
-<section class="example">
-  <h4>ลองทำเอง — เปลี่ยนโจทย์นิดเดียว ต้องเปลี่ยนวิธีตอบหรือไม่?</h4>
-  <p>1. รอคำสั่งมาแล้ว 10 วินาที ภายใต้ Exponential rate 0.2 เวลารอทั้งหมดจนคำสั่งมาถึงมีค่าเฉลี่ยแบบมีเงื่อนไขเท่าไร?</p>
-  <p>2. Pareto shape 1.5 มี sample SD จากข้อมูล 1,000 ค่าได้หรือไม่ และค่านั้นยืนยัน population variance จำกัดหรือไม่?</p>
-  <p>3. ถ้าข้อมูลสงบ fit ทั้ง Normal และ t ได้ดีพอ ๆ กัน ควรทำอย่างไรเมื่อต้องใช้เกณฑ์ขาดทุนไกลในหาง?</p>
-  <details>
-    <summary>เปิดคำตอบและเหตุผล</summary>
-    <p>1. เวลารอที่เหลือเฉลี่ย 5 วินาที จึงได้ $\mathbb E[X\mid X\gt10]=10+5=15$ วินาที ใช้ memoryless กับเวลาที่เหลือ ไม่ใช่ลบเวลาที่ผ่านไปออกจากเรื่องจริง</p>
-    <p>2. คำนวณ sample SD ได้จากตัวอย่างจำกัด แต่ไม่ได้ยืนยัน population variance จำกัด เมื่อสุ่มตัวอย่างใหญ่ขึ้น extreme values อาจเปลี่ยนค่าประมาณมาก และใน Pareto สมมตินี้ second moment ไม่จำกัดอยู่แล้ว</p>
-    <p>3. รายงานความไวต่อแบบจำลอง ตรวจข้อมูลนอกช่วง fit และทำ stress test เพิ่ม ข้อมูลหางมีน้อยจึงไม่ควรแปลความพอดีของส่วนกลางว่าเป็นการยืนยันความแม่นของหาง</p>
-  </details>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>distribution แต่ละตัวเป็นคำตอบของกลไกหนึ่ง: นับความสำเร็จจากการทดลองอิสระ (<a href="1.5.html">Binomial</a>) นับเหตุการณ์หายากในช่วงเวลา (<a href="1.6.html">Poisson</a>) ผลรวมของผลเล็ก ๆ จำนวนมาก (<a href="1.9.html">Normal</a>) ผลคูณของผลเล็ก ๆ จำนวนมาก (<a href="1.10.html">Lognormal</a>) หน้านี้เพิ่มอีกสี่ตัวที่งานการเงินใช้บ่อย: Exponential สำหรับเวลารอ Student-t สำหรับกรณีที่ความผันผวนเองไม่แน่นอน Normal ผสมสำหรับตลาดที่สลับระหว่างช่วงสงบกับช่วงปั่นป่วน และ Pareto สำหรับขนาดที่บางครั้งใหญ่ผิดปกติ</p>
+  <p>เกณฑ์เลือกมีสี่ข้อ: ตัวแปรมีค่าได้ช่วงไหน (support) กลไกที่สร้างข้อมูลคืออะไร คำถามสนใจส่วนกลางหรือหาง และ moment ที่จะใช้มีอยู่จริงหรือไม่ สอง distribution ที่มีค่าเฉลี่ยและ SD เท่ากันอาจให้คำตอบเรื่องหางต่างกันหลายเท่า ดังที่จะคำนวณให้เห็นทั้งหน้า</p>
+  <p>ระหว่างทางจะได้เครื่องมือหนึ่งที่ใช้กับทุก distribution คือการสร้างตัวเลขสุ่มจาก CDF ซึ่งเป็นพื้นฐานของการจำลอง Monte Carlo</p>
+  <figure class="plot">
+    <h4>รูป — ค่าเฉลี่ย 5 และ SD 5 เท่ากัน แต่รูปทรงต่างกัน</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="density สองเส้นที่มีค่าเฉลี่ย 5 วินาทีและ SD 5 วินาทีเท่ากัน เส้น Normal สีน้ำเงินมีพื้นที่ฝั่งเวลาติดลบแรเงาสีแดง 15.9% เส้น Exponential สีเขียวเริ่มสูงสุดที่ศูนย์และลดลงไปทางขวา ไม่มีพื้นที่ฝั่งติดลบ" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <polygon fill="#d82632" fill-opacity="0.8" points="40.0,229.2 45.9,228.9 51.7,228.5 57.6,228.0 63.4,227.4 69.3,226.7 75.1,225.7 81.0,224.6 86.9,223.3 92.7,221.6 98.6,219.7 104.4,217.5 110.3,215.0 116.1,212.1 122.0,208.9 127.9,205.4 133.7,201.6 139.6,197.4 145.4,193.1 151.3,188.6 157.1,184.0 157.1,230 40,230"/>
+        <polyline fill="none" stroke="#2455d6" stroke-width="3" points="40.0,229.2 45.9,228.9 51.7,228.5 57.6,228.0 63.4,227.4 69.3,226.7 75.1,225.7 81.0,224.6 86.9,223.3 92.7,221.6 98.6,219.7 104.4,217.5 110.3,215.0 116.1,212.1 122.0,208.9 127.9,205.4 133.7,201.6 139.6,197.4 145.4,193.1 151.3,188.6 157.1,184.0 163.0,179.4 168.9,175.0 174.7,170.7 180.6,166.7 186.4,163.1 192.3,160.0 198.1,157.5 204.0,155.7 209.9,154.6 215.7,154.2 221.6,154.6 227.4,155.7 233.3,157.5 239.1,160.0 245.0,163.1 250.9,166.7 256.7,170.7 262.6,175.0 268.4,179.4 274.3,184.0 280.1,188.6 286.0,193.1 291.9,197.4 297.7,201.6 303.6,205.4 309.4,208.9 315.3,212.1 321.1,215.0 327.0,217.5 332.9,219.7 338.7,221.6 344.6,223.3 350.4,224.6 356.3,225.7 362.1,226.7 368.0,227.4 373.9,228.0 379.7,228.5 385.6,228.9 391.4,229.2 397.3,229.4 403.1,229.5 409.0,229.7 414.9,229.8 420.7,229.8 426.6,229.9 432.4,229.9 438.3,229.9 444.1,230.0 450.0,230.0"/>
+        <polyline fill="none" stroke="#047857" stroke-width="3" points="40,230 157.1,230 157.1,40.0 163.0,58.1 168.9,74.4 174.7,89.2 180.6,102.6 186.4,114.8 192.3,125.7 198.1,135.6 204.0,144.6 209.9,152.8 215.7,160.1 221.6,166.8 227.4,172.8 233.3,178.2 239.1,183.1 245.0,187.6 250.9,191.6 256.7,195.3 262.6,198.6 268.4,201.6 274.3,204.3 280.1,206.7 286.0,208.9 291.9,211.0 297.7,212.8 303.6,214.4 309.4,215.9 315.3,217.2 321.1,218.4 327.0,219.5 332.9,220.5 338.7,221.4 344.6,222.3 350.4,223.0 356.3,223.7 362.1,224.3 368.0,224.8 373.9,225.3 379.7,225.7 385.6,226.2 391.4,226.5 397.3,226.9 403.1,227.2 409.0,227.4 414.9,227.7 420.7,227.9 426.6,228.1 432.4,228.3 438.3,228.4 444.1,228.6 450.0,228.7"/>
+        <line x1="215.7" y1="60" x2="215.7" y2="230" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="222" y="72" fill="#5b6472" font-size="15">ค่าเฉลี่ย 5</text>
+        <text x="168" y="52" fill="#047857">Exponential</text>
+        <text x="290" y="150" fill="#2455d6">Normal(5, 5²)</text>
+        <text x="60" y="170" fill="#d82632">15.9%</text>
+        <text x="60" y="190" fill="#d82632" font-size="15">เวลาติดลบ</text>
+        <line x1="30" y1="230" x2="460" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="middle" fill="#5b6472" font-size="15">
+          <text x="40" y="250">−10</text><text x="98.6" y="250">−5</text><text x="157.1" y="250">0</text><text x="215.7" y="250">5</text><text x="274.3" y="250">10</text><text x="332.9" y="250">15</text><text x="391.4" y="250">20</text><text x="450" y="250">25</text>
+        </g>
+        <text x="245" y="274" text-anchor="middle">เวลารอคำสั่งถัดไป (วินาที)</text>
+      </g>
+    </svg>
+    <figcaption>สองเส้นมีค่าเฉลี่ย 5 วินาทีและ SD 5 วินาทีเท่ากันทุกประการ เส้นน้ำเงิน (Normal) ล้นไปฝั่งเวลาติดลบถึง 15.9% (พื้นที่สีแดง) และให้น้ำหนักกับเวลารอสั้นมาก ๆ น้อยเกินไป เส้นเขียว (Exponential) เริ่มสูงสุดที่ศูนย์เพราะคำสั่งถัดไปมาเร็วบ่อยที่สุด และมีหางยาวไปทางขวา ตัวเลขสรุปเท่ากันไม่ได้แปลว่าเป็นแบบจำลองเดียวกัน</figcaption>
+  </figure>
 </section>
 
 <details class="jargon">
-  <summary>ศัพท์สำหรับเลือกและตรวจ distribution</summary>
+  <summary>ศัพท์ที่ใช้ในหน้านี้</summary>
   <dl>
-    <dt>support</dt><dd>ขอบเขตค่าที่แบบจำลองยอมให้เกิด ตรวจส่วนนี้ก่อน fit mean และ variance</dd>
-    <dt>survival function / quantile</dt><dd>$P(X\gt x)$ เป็นโอกาสอยู่เหนือเกณฑ์ ส่วน quantile เป็นเกณฑ์ที่ย้อนมาจาก probability</dd>
-    <dt>memoryless</dt><dd>การกระจายของเวลารอที่เหลือ เมื่อรู้ว่ายังรออยู่ ไม่เปลี่ยนตามเวลาที่รอไปแล้ว</dd>
-    <dt>degrees of freedom</dt><dd>พารามิเตอร์ $\nu$ ของ chi-square และ t; สำหรับสถิติ sample mean ของ iid Normal ใช้ $n-1$ เมื่อประมาณ SD จากข้อมูลชุดเดียวกัน</dd>
-    <dt>scale mixture</dt><dd>การเฉลี่ย distribution ที่มี scale ต่างกันตามตัวแปรสุ่ม เช่น Normal ที่ variance เปลี่ยนตาม $V$ ในการสร้าง t</dd>
-    <dt>tail index</dt><dd>พารามิเตอร์กำหนดความเร็วการลดลงของหาง เช่น $\alpha$ ใน Pareto ค่ายิ่งต่ำ หางยิ่งลดช้า</dd>
-    <dt>skewness / kurtosis</dt><dd>Moment มาตรฐานลำดับสามและสี่ ใช้บอกลักษณะเพิ่มเติมจาก mean และ variance เมื่อ moment เหล่านั้นมีอยู่</dd>
+    <dt>support</dt><dd>ช่วงค่าที่ตัวแปรเป็นไปได้ เช่นเวลารอไม่ติดลบ ราคาเป็นบวก ผลตอบแทนเป็นได้ทั้งบวกและลบ ใช้ตัดตัวเลือก distribution ก่อนดูอย่างอื่น</dd>
+    <dt>survival function</dt><dd>$P(X\gt x)=1-F(x)$ โอกาสที่ค่าเกินเกณฑ์ ใช้อ่านหางขวา และใช้เปรียบเทียบความหนาของหางบนกราฟ log</dd>
+    <dt>memoryless และ hazard rate</dt><dd>memoryless คือเวลารอที่เหลือไม่ขึ้นกับว่ารอมาแล้วนานเท่าไร hazard rate คืออัตราที่เหตุการณ์จะเกิดในชั่วขณะถัดไปเมื่อยังไม่เกิด Exponential มี hazard rate คงที่ ใช้กับเวลาผิดนัดชำระหนี้ได้</dd>
+    <dt>inverse transform sampling</dt><dd>การสร้างตัวเลขสุ่มจาก distribution ใดก็ได้โดยใส่เลขสุ่ม Uniform ลงใน inverse ของ CDF ใช้เป็นฐานของการจำลอง Monte Carlo</dd>
+    <dt>degrees of freedom ($\nu$)</dt><dd>พารามิเตอร์ของ Student-t ยิ่ง $\nu$ น้อยหางยิ่งหนา เมื่อ $\nu$ ใหญ่มาก t เข้าใกล้ Normal สำหรับ t-statistic จากข้อมูล $n$ ค่า ใช้ $\nu=n-1$</dd>
+    <dt>tail index ($\alpha$)</dt><dd>เลขชี้กำลังของหางแบบ power law $P(X\gt x)\propto x^{-\alpha}$ ยิ่ง $\alpha$ น้อยหางยิ่งหนา moment ลำดับ $k$ มีค่าจำกัดเฉพาะเมื่อ $k\lt\alpha$</dd>
+    <dt>skewness และ kurtosis</dt><dd>moment มาตรฐานลำดับสามและสี่ skewness ติดลบบอกว่าหางซ้ายยาว kurtosis เกิน 3 บอกว่าค่าสุดโต่งบ่อยกว่า Normal</dd>
   </dl>
 </details>
 
 <details class="symbols">
-  <summary>แยกสัญลักษณ์ที่ใช้ในคนละส่วน</summary>
+  <summary>สัญลักษณ์</summary>
   <table>
-    <thead><tr><th>สัญลักษณ์</th><th>บทบาท</th></tr></thead>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
     <tbody>
-      <tr><td>$\lambda,X,N(t)$</td><td>อัตราเหตุการณ์ต่อเวลา เวลารอ และจำนวนเหตุการณ์ในช่วงยาว $t$</td></tr>
-      <tr><td>$U,\Phi,\Gamma$</td><td>Uniform บน $(0,1)$, Standard Normal CDF และ Gamma function</td></tr>
-      <tr><td>$V,\nu,\tau,Y$</td><td>Chi-square, degrees of freedom, t ดิบ และ t สามองศาที่ปรับ variance เป็นหนึ่ง</td></tr>
-      <tr><td>$x_m,\alpha$</td><td>ขอบล่างและ tail index ของ Pareto</td></tr>
+      <tr><td>$\lambda$</td><td>อัตราการเกิดเหตุการณ์</td><td>ครั้งต่อวินาที</td></tr>
+      <tr><td>$X,\ N(t)$</td><td>เวลารอ, จำนวนเหตุการณ์ในช่วงยาว $t$</td><td>วินาที, ครั้ง</td></tr>
+      <tr><td>$U$</td><td>เลขสุ่ม Uniform ระหว่าง 0 ถึง 1</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$\nu,\ \tau,\ Y$</td><td>degrees of freedom, ตัวแปร t, t ที่ปรับให้ variance เท่ากับ 1</td><td></td></tr>
+      <tr><td>$x_m,\ \alpha$</td><td>ค่าต่ำสุดและ tail index ของ Pareto</td><td>หุ้น, ไม่มีหน่วย</td></tr>
     </tbody>
   </table>
 </details>
 
+<section class="formula">
+  <h4>ขั้นที่ 1 — Exponential: เวลารอระหว่างเหตุการณ์ Poisson</h4>
+  <p>ถ้าคำสั่งเข้ามาแบบสุ่มอิสระด้วยอัตราคงที่ $\lambda=0.2$ ครั้งต่อวินาที (12 ครั้งต่อนาที) จำนวนคำสั่งในช่วงยาว $t$ วินาทีเป็น Poisson ค่าเฉลี่ย $\lambda t$ เคล็ดลับคือมองว่า “ยังต้องรอเกิน $t$ วินาที” เป็นเหตุการณ์เดียวกับ “ไม่มีคำสั่งเข้ามาเลยในช่วง $t$ วินาที”</p>
+  <div class="math">\[
+\begin{aligned}
+P(X\gt t)&=P(N(t)=0)=e^{-\lambda t}\\
+F(t)&=1-e^{-\lambda t},\quad t\ge0\\
+f(t)&=F'(t)=\lambda e^{-\lambda t}\\
+P(X\gt10)&=e^{-0.2\times10}=e^{-2}\approx13.5\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดแรกใช้สูตร Poisson ที่ $k=0$: $\frac{(\lambda t)^0e^{-\lambda t}}{0!}=e^{-\lambda t}$ จากนั้น CDF คือหนึ่งลบ survival และ PDF คือความชันของ CDF ตาม <a href="1.8.html">ตัวแปรต่อเนื่องและ PDF</a> distribution นี้ชื่อ Exponential ($\lambda$) density สูงสุดที่ศูนย์ แปลว่าช่วงรอสั้น ๆ เกิดบ่อยที่สุด ระวังสับสน: $\lambda$ คืออัตราต่อวินาที ส่วนจำนวนเฉลี่ยในช่วง $t$ คือ $\lambda t$</p></div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — ค่าเฉลี่ย SD และ quantile ของเวลารอ</h4>
+  <p>สำหรับตัวแปรไม่ติดลบ ค่าเฉลี่ยเท่ากับพื้นที่ใต้ survival function (บวกชิ้นบาง ๆ “ยังรออยู่ไหม” ทุกวินาที) วิธีนี้สั้นกว่าการ integrate $t\,f(t)$ ตรง ๆ</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbb E[X]&=\int_0^\infty P(X\gt t)\,dt\\
+&=\int_0^\infty e^{-\lambda t}dt=\frac1\lambda\\
+\mathbb E[X^2]&=2\int_0^\infty t\,e^{-\lambda t}dt=\frac{2}{\lambda^2}\\
+\operatorname{Var}(X)&=\frac{2}{\lambda^2}-\frac{1}{\lambda^2}=\frac{1}{\lambda^2}\\
+\lambda=0.2&:\quad\mathbb E[X]=5\ \text{s},\ \operatorname{SD}=5\ \text{s}\\
+q_p&=-\frac{\ln(1-p)}{\lambda}\\
+q_{0.5}&=\frac{\ln2}{0.2}\approx3.47\ \text{s},\quad q_{0.95}\approx14.98\ \text{s}
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สองใช้ integration by parts ซึ่งได้ $\int_0^\infty te^{-\lambda t}dt=1/\lambda^2$ ค่าเฉลี่ยเท่ากับ SD เป็นลายเซ็นของ Exponential นี่คือเหตุผลที่ข้อมูลในโจทย์เปิด (เฉลี่ย 5 SD 5) ชี้ไปที่ Exponential สูตร quantile ได้จากการแก้ $1-e^{-\lambda q}=p$ ครึ่งหนึ่งของเวลารอสั้นกว่า 3.47 วินาที ไม่ใช่ 5 วินาที และ $P(X\le5)=1-e^{-1}\approx63\%$ หางขวาดึงค่าเฉลี่ยขึ้นสูงกว่าค่ากลาง ถ้าระบบต้องรองรับ 95% ของกรณี ต้องเผื่อเวลาเกือบ 15 วินาที</p></div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — memoryless: รอมานานแล้วไม่ได้ทำให้ใกล้ถึงคิว</h4>
+  <p>รอมาแล้ว 10 วินาทียังไม่มีคำสั่ง เทรดเดอร์รู้สึกว่า “น่าจะมาเร็ว ๆ นี้” ลองคำนวณด้วย conditional probability จาก <a href="1.7.html">Bayes' theorem</a>: หดกลุ่มเหลือเฉพาะกรณีที่รอเกิน 10 วินาที แล้วถามสัดส่วนที่รอเกินอีก 5 วินาที</p>
+  <div class="math">\[
+\begin{aligned}
+P(X\gt a+b\mid X\gt a)&=\frac{P(X\gt a+b)}{P(X\gt a)}\\
+&=\frac{e^{-\lambda(a+b)}}{e^{-\lambda a}}=e^{-\lambda b}\\
+a=10,\ b=5&:\quad\frac{e^{-3}}{e^{-2}}=e^{-1}\approx36.8\%\\
+\mathbb E[X\mid X\gt10]&=10+\frac{1}{\lambda}=15\ \text{s}
+\end{aligned}
+\]</div>
+  <div class="reading"><p>เวลาที่รอมาแล้ว $a$ หักล้างกันหมด โอกาสรอต่ออีก 5 วินาทีคือ 36.8% เท่ากับตอนเริ่มรอใหม่ ๆ พอดี คุณสมบัตินี้ชื่อ memoryless และ Exponential เป็น distribution ต่อเนื่องตัวเดียวที่มีคุณสมบัตินี้ ในงานเครดิต ถ้าบริษัทมีอัตราผิดนัดต่อปีคงที่ (hazard rate คงที่) เวลาผิดนัดก็เป็น Exponential และบริษัทที่รอดมาสิบปีก็ไม่ได้ปลอดภัยขึ้นหรืออันตรายขึ้น ซึ่งเป็นสมมติฐานตั้งต้นของ <a href="20.6.html">hazard rate และพันธบัตรที่ผิดนัดได้</a> ถ้าข้อมูลจริงไม่ memoryless แสดงว่าอัตราไม่คงที่</p></div>
+  <figure class="plot">
+    <h4>รูป — survival function ของเวลารอ: ทุก 5 วินาทีคูณ 0.368 เสมอ</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="เส้น survival e ยกกำลัง −0.2t จาก 1 ที่ 0 วินาที ลดเหลือ 0.368 ที่ 5 วินาที 0.135 ที่ 10 วินาที และ 0.050 ที่ 15 วินาที ทุกช่วง 5 วินาทีเส้นถูกคูณด้วย 0.368" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <g stroke="#d7dce3" stroke-width="1.5"><line x1="60" y1="130" x2="440" y2="130"/><line x1="60" y1="30" x2="440" y2="30"/></g>
+        <polyline fill="none" stroke="#047857" stroke-width="3" points="60.0,30.0 69.5,49.0 79.0,66.3 88.5,81.8 98.0,95.9 107.5,108.7 117.0,120.2 126.5,130.7 136.0,140.1 145.5,148.7 155.0,156.4 164.5,163.4 174.0,169.8 183.5,175.5 193.0,180.7 202.5,185.4 212.0,189.6 221.5,193.5 231.0,196.9 240.5,200.1 250.0,202.9 259.5,205.5 269.0,207.8 278.5,209.9 288.0,211.9 297.5,213.6 307.0,215.1 316.5,216.6 326.0,217.8 335.5,219.0 345.0,220.0 354.5,221.0 364.0,221.8 373.5,222.6 383.0,223.3 392.5,224.0 402.0,224.5 411.5,225.1 421.0,225.5 430.5,226.0 440.0,226.3"/>
+        <circle cx="60" cy="30" r="6" fill="#181818"/>
+        <circle cx="155" cy="156.4" r="6" fill="#181818"/>
+        <circle cx="250" cy="202.9" r="6" fill="#a65f00"/>
+        <circle cx="345" cy="220" r="6" fill="#a65f00"/>
+        <text x="72" y="28">1</text>
+        <text x="163" y="150">0.368</text>
+        <text x="258" y="196" fill="#a65f00">0.135</text>
+        <text x="352" y="212" fill="#a65f00">0.050</text>
+        <text x="108" y="84" fill="#5b6472" font-size="15">×0.368</text>
+        <text x="300" y="180" fill="#a65f00" font-size="15">×0.368</text>
+        <line x1="250" y1="202.9" x2="250" y2="230" stroke="#a65f00" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="60" y1="30" x2="60" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472" font-size="15"><text x="54" y="235">0</text><text x="54" y="135">0.5</text><text x="54" y="35">1</text></g>
+        <g text-anchor="middle" fill="#5b6472" font-size="15"><text x="60" y="250">0</text><text x="155" y="250">5</text><text x="250" y="250">10</text><text x="345" y="250">15</text><text x="440" y="250">20</text></g>
+        <text x="250" y="274" text-anchor="middle">t (วินาที)</text>
+        <text x="300" y="60" fill="#047857">P(X &gt; t) = e^(−0.2t)</text>
+      </g>
+    </svg>
+    <figcaption>จาก 0 ถึง 5 วินาที เส้นลดจาก 1 เหลือ 0.368 จาก 10 ถึง 15 วินาที (จุดสีส้ม) เส้นลดจาก 0.135 เหลือ 0.050 ซึ่งก็คือคูณ 0.368 เท่าเดิม ถ้าตัดเส้นตั้งแต่ 10 วินาทีมาขยายให้เริ่มที่ 1 จะได้เส้นเดิมทุกประการ นี่คือความหมายเชิงภาพของ memoryless</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 4 — สร้างตัวเลขสุ่มจาก distribution ใดก็ได้ด้วย inverse CDF</h4>
+  <p>คอมพิวเตอร์สุ่มได้แค่ $U$ ที่กระจายเท่า ๆ กันระหว่าง 0 ถึง 1 ถ้าอยากจำลองเวลารอ ต้องแปลง $U$ เป็นเวลา วิธีคือมองว่า $U$ เป็น “ระดับโอกาส” แล้วถาม CDF กลับทิศว่าเวลาไหนมีโอกาสสะสมเท่านั้น</p>
+  <div class="math">\[
+\begin{aligned}
+X&=F^{-1}(U)\\
+P(X\le x)&=P(F^{-1}(U)\le x)=P(U\le F(x))=F(x)\\
+\text{Exponential}&:\quad X=-\frac{\ln(1-U)}{\lambda}\\
+U=0.63&:\quad X=-\frac{\ln0.37}{0.2}\approx4.97\ \text{s}\\
+\text{Box–Muller}&:\quad Z=\sqrt{-2\ln U_1}\,\cos(2\pi U_2)
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สองคือเหตุผลที่วิธีนี้ถูก: $F$ เป็น function เพิ่ม จึงย้ายข้างอสมการได้โดยทิศไม่เปลี่ยน และโอกาสที่ $U$ ไม่เกิน $F(x)$ ก็คือ $F(x)$ เพราะ $U$ กระจายเท่า ๆ กัน ผลคือ $X$ มี CDF เท่ากับ $F$ พอดี สำหรับ Normal ซึ่ง inverse CDF ไม่มีสูตรปิด มีทางลัด Box–Muller ที่แปลง Uniform อิสระสองตัวเป็น Normal มาตรฐานอิสระ เช่น $U_1=0.25$, $U_2=0.60$ ให้ $Z\approx1.665\cos(216^\circ)\approx-1.347$ วิธีนี้มาจากการที่ Normal สองมิติสมมาตรรอบจุดกำเนิด มุมจึงสุ่มเท่า ๆ กัน และรัศมียกกำลังสองหารสองเป็น Exponential</p></div>
+  <figure class="plot">
+    <h4>รูป — จากระดับโอกาสบนแกนตั้ง ไปเป็นเวลาบนแกนนอน</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="CDF ของเวลารอ 1 ลบ e ยกกำลัง −0.2t เลขสุ่ม U 0.63 บนแกนตั้งลากเส้นแนวนอนไปชนเส้นแล้วลงมาที่ 4.97 วินาที U 0.25 ลงมาที่ 1.44 วินาที และ U 0.95 ลงมาที่ 14.98 วินาที" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <polyline fill="none" stroke="#047857" stroke-width="3" points="60.0,230.0 69.5,211.0 79.0,193.7 88.5,178.2 98.0,164.1 107.5,151.3 117.0,139.8 126.5,129.3 136.0,119.9 145.5,111.3 155.0,103.6 164.5,96.6 174.0,90.2 183.5,84.5 193.0,79.3 202.5,74.6 212.0,70.4 221.5,66.5 231.0,63.1 240.5,59.9 250.0,57.1 259.5,54.5 269.0,52.2 278.5,50.1 288.0,48.1 297.5,46.4 307.0,44.9 316.5,43.4 326.0,42.2 335.5,41.0 345.0,40.0 354.5,39.0 364.0,38.2 373.5,37.4 383.0,36.7 392.5,36.0 402.0,35.5 411.5,34.9 421.0,34.5 430.5,34.0 440.0,33.7"/>
+        <g stroke="#a65f00" stroke-width="2.5" fill="none">
+          <polyline points="60,104 154.5,104 154.5,230"/>
+        </g>
+        <g stroke="#5b6472" stroke-width="1.5" stroke-dasharray="5 4" fill="none">
+          <polyline points="60,180 87.3,180 87.3,230"/>
+          <polyline points="60,40 344.6,40 344.6,230"/>
+        </g>
+        <circle cx="154.5" cy="104" r="6" fill="#a65f00"/>
+        <text x="66" y="98" fill="#a65f00">U = 0.63</text>
+        <text x="160" y="222" fill="#a65f00">4.97 วินาที</text>
+        <text x="94" y="200" fill="#5b6472" font-size="15">0.25 → 1.44</text>
+        <text x="350" y="222" fill="#5b6472" font-size="15">0.95 → 14.98</text>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="60" y1="30" x2="60" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472" font-size="15"><text x="54" y="235">0</text><text x="54" y="135">0.5</text><text x="54" y="35">1</text></g>
+        <g text-anchor="middle" fill="#5b6472" font-size="15"><text x="60" y="250">0</text><text x="155" y="250">5</text><text x="250" y="250">10</text><text x="345" y="250">15</text><text x="440" y="250">20</text></g>
+        <text x="250" y="274" text-anchor="middle">เวลารอ (วินาที)</text>
+      </g>
+    </svg>
+    <figcaption>เส้นเขียวคือ CDF ของเวลารอ เริ่มจากเลขสุ่มบนแกนตั้ง ลากไปทางขวาจนชนเส้น แล้วลงมาอ่านเวลาบนแกนนอน $U=0.63$ กลายเป็น 4.97 วินาที (เส้นส้ม) เพราะเส้นชันมากทางซ้าย เลขสุ่มช่วงกว้างจึงตกลงมาที่เวลาสั้น ๆ และเลขสุ่มที่ใกล้ 1 ส่งไปที่หางยาว เช่น 0.95 ไปที่เกือบ 15 วินาที</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — Student-t: เมื่อตัวหารก็ต้องประมาณจากข้อมูล</h4>
+  <p>นักวิเคราะห์ได้ผลตอบแทนรายเดือนของกลยุทธ์ใหม่เพียงสามเดือน: 0.5%, 0.6%, 0.7% ค่าเฉลี่ย 0.6% SD ตัวอย่าง 0.1% อยากรู้ว่าค่าเฉลี่ยต่างจากศูนย์จริงหรือแค่บังเอิญ ถ้ารู้ SD จริงจะได้ z-score ที่เป็น Normal แต่ที่นี่ SD ก็ประมาณจากข้อมูลสามค่าเดียวกัน ตัวหารจึงสุ่มด้วย</p>
+  <div class="math">\[
+\begin{aligned}
+t&=\frac{\bar x}{s/\sqrt n}=\frac{0.6}{0.1/\sqrt3}\approx10.39\\
+P(|t_2|\gt c)&=1-\frac{c}{\sqrt{c^2+2}}\\
+P(|t_2|\gt1.96)&\approx18.9\%\\
+1-\frac{c}{\sqrt{c^2+2}}=0.05&\quad\Rightarrow\quad c\approx4.30
+\end{aligned}
+\]</div>
+  <div class="reading"><p>ถ้าผลตอบแทนเป็น Normal อิสระและค่าเฉลี่ยจริงเป็นศูนย์ ค่า $t$ นี้มี Student-t distribution ที่ $\nu=n-1=2$ degrees of freedom (บรรทัดที่สองคือ CDF ของ $t_2$ ซึ่งมีสูตรปิด) เกณฑ์สองด้าน 5% จึงเป็น ±4.30 ไม่ใช่ ±1.96 ถ้าใช้ 1.96 จะตัดสินผิดว่า “มีผล” ถึง 18.9% ของเวลาแทนที่จะเป็น 5% ในตัวอย่างนี้ 10.39 ยังเกิน 4.30 แต่ข้อมูลสามเดือนมีปัญหาอื่นที่ใหญ่กว่า เช่นเลือกช่วงเวลาที่สวย เรื่องนี้จะต่อยอดใน <a href="3.5.html">การทดสอบสมมติฐานและ Sharpe ratio</a></p></div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — ทำไม t จึงหางหนา และหนากว่าที่ไหน</h4>
+  <p>นิยาม Student-t ด้วยกลไกที่เห็นในขั้นที่แล้ว: Normal หารด้วยตัวปรับ scale ที่สุ่มได้ ให้ $Z, Z_1,\ldots,Z_\nu$ เป็น Normal มาตรฐานอิสระ และ $V=\sum Z_i^2$ (chi-square ที่มี $\nu$ degrees of freedom มีค่าเฉลี่ย $\nu$)</p>
+  <div class="math">\[
+\begin{aligned}
+\tau&=\frac{Z}{\sqrt{V/\nu}}\\
+f_{\tau\mid V}(x\mid v)&=\sqrt{\tfrac{v}{2\pi\nu}}\,e^{-vx^2/(2\nu)}\\
+f_\tau(x)&=\int_0^\infty f_{\tau\mid V}(x\mid v)\,f_V(v)\,dv\\
+&=\frac{\Gamma\big(\tfrac{\nu+1}{2}\big)}{\sqrt{\nu\pi}\,\Gamma\big(\tfrac{\nu}{2}\big)}\Big(1+\frac{x^2}{\nu}\Big)^{-(\nu+1)/2}\\
+\operatorname{Var}(\tau)&=\frac{\nu}{\nu-2},\quad\nu\gt2\\
+Y&=\tau_3/\sqrt3:\quad P(Y\lt-4)\approx0.308\%\\
+\text{Normal}&:\quad P(Z\lt-4)\approx0.0032\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>บรรทัดที่สองอ่านว่า: เมื่อรู้ $V=v$ แล้ว $\tau$ เป็น Normal ที่มี variance $\nu/v$ ถ้า $V$ บังเอิญเล็ก ตัวหารเล็ก $\tau$ จึงกระจายกว้าง บรรทัดที่สามเฉลี่ย Normal หลายความกว้างเข้าด้วยกันโดยถ่วงด้วย density ของ $V$ integral นี้หาค่าได้ด้วย Gamma function $\Gamma(a)=\int_0^\infty u^{a-1}e^{-u}du$ และให้สูตรบรรทัดที่สี่ หางของมันลดแบบกำลังของ $|x|$ คือ $|x|^{-(\nu+1)}$ ไม่ใช่ $e^{-x^2/2}$ จึงหนากว่า Normal มาก ผลข้างเคียงคือ moment ลำดับ $k$ มีค่าจำกัดเฉพาะเมื่อ $k\lt\nu$: $t_1$ ไม่มีค่าเฉลี่ย $t_2$ ไม่มี variance จำกัด และ kurtosis มีค่าเมื่อ $\nu\gt4$ เท่ากับ $3(\nu-2)/(\nu-4)$</p><p>ก่อนเทียบกับ Normal ต้องปรับให้ variance เท่ากันก่อน $t_3$ มี variance 3 จึงหารด้วย $\sqrt3$ ได้ $Y$ (CDF ของ $Y$ คือ $\tfrac12+\tfrac1\pi\big(\arctan y+\tfrac{y}{1+y^2}\big)$) ที่ −4σ หางของ $Y$ หนากว่า Normal 97 เท่า แต่ที่ −1.85σ (ขาดทุนเกิน 2% ของพอร์ต \$50 ล้านใน <a href="1.9.html">Normal distribution</a>) $Y$ ให้ 2.44% น้อยกว่า Normal ที่ 3.18% สองเส้นตัดกันที่ราว 2.1σ เพราะเมื่อ variance เท่ากัน ถ้าหางกินพื้นที่มากขึ้น ไหล่ต้องบางลงชดเชย</p></div>
+  <figure class="plot">
+    <h4>รูป — หางซ้ายของ Normal กับ t ที่ variance เท่ากัน (แกน log)</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="โอกาสต่ำกว่า −x sigma บนแกน log สำหรับ Normal สีน้ำเงินและ Student-t สามองศาปรับ variance สีส้ม สองเส้นตัดกันที่ประมาณ 2.1 sigma ก่อนจุดตัด Normal สูงกว่า หลังจุดตัด t สูงกว่ามาก ที่ 4 sigma t ให้ 0.31% Normal ให้ 0.0032%" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <g stroke="#d7dce3" stroke-width="1.5">
+          <line x1="60" y1="63.3" x2="440" y2="63.3"/><line x1="60" y1="96.7" x2="440" y2="96.7"/><line x1="60" y1="130" x2="440" y2="130"/><line x1="60" y1="163.3" x2="440" y2="163.3"/><line x1="60" y1="196.7" x2="440" y2="196.7"/>
+        </g>
+        <polyline fill="none" stroke="#2455d6" stroke-width="3" points="60.0,40.0 67.6,41.2 75.2,42.5 82.8,43.9 90.4,45.4 98.0,47.0 105.6,48.7 113.2,50.5 120.8,52.5 128.4,54.5 136.0,56.7 143.6,58.9 151.2,61.3 158.8,63.8 166.4,66.4 174.0,69.2 181.6,72.0 189.2,75.0 196.8,78.2 204.4,81.4 212.0,84.8 219.6,88.3 227.2,91.9 234.8,95.7 242.4,99.5 250.0,103.6 257.6,107.7 265.2,112.0 272.8,116.4 280.4,121.0 288.0,125.7 295.6,130.5 303.2,135.4 310.8,140.5 318.4,145.7 326.0,151.1 333.6,156.6 341.2,162.2 348.8,168.0 356.4,173.9 364.0,180.0 371.6,186.2 379.2,192.5 386.8,199.0 394.4,205.6 402.0,212.3 409.6,219.2 417.2,226.2"/>
+        <polyline fill="none" stroke="#a65f00" stroke-width="3" points="60.0,40.0 67.6,42.0 75.2,44.2 82.8,46.5 90.4,49.0 98.0,51.6 105.6,54.2 113.2,56.9 120.8,59.5 128.4,62.2 136.0,64.7 143.6,67.2 151.2,69.7 158.8,72.0 166.4,74.3 174.0,76.5 181.6,78.6 189.2,80.7 196.8,82.7 204.4,84.6 212.0,86.4 219.6,88.2 227.2,90.0 234.8,91.6 242.4,93.3 250.0,94.8 257.6,96.3 265.2,97.8 272.8,99.2 280.4,100.6 288.0,102.0 295.6,103.3 303.2,104.6 310.8,105.8 318.4,107.0 326.0,108.2 333.6,109.4 341.2,110.5 348.8,111.6 356.4,112.7 364.0,113.7 371.6,114.7 379.2,115.7 386.8,116.7 394.4,117.7 402.0,118.6 409.6,119.5 417.2,120.4 424.8,121.3 432.4,122.2 440.0,123.0"/>
+        <circle cx="219.4" cy="88.2" r="6" fill="#181818"/>
+        <text x="214" y="70" text-anchor="end">ตัดกันที่ 2.1σ</text>
+        <circle cx="364" cy="113.7" r="6" fill="#a65f00"/>
+        <circle cx="364" cy="180" r="6" fill="#2455d6"/>
+        <line x1="364" y1="120" x2="364" y2="174" stroke="#d82632" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="372" y="150" fill="#d82632">×97</text>
+        <text x="372" y="104" fill="#a65f00">t: 0.31%</text>
+        <text x="300" y="196" fill="#2455d6">Normal: 0.0032%</text>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="60" y1="30" x2="60" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472" font-size="15">
+          <text x="54" y="35">100%</text><text x="54" y="101">1%</text><text x="54" y="168">0.01%</text><text x="54" y="235">0.0001%</text>
+        </g>
+        <g text-anchor="middle" fill="#5b6472" font-size="15"><text x="60" y="250">0</text><text x="136" y="250">1</text><text x="212" y="250">2</text><text x="288" y="250">3</text><text x="364" y="250">4</text><text x="440" y="250">5</text></g>
+        <text x="250" y="274" text-anchor="middle">ขาดทุนเกินกี่ σ (x)</text>
+      </g>
+    </svg>
+    <figcaption>แกนตั้งแบบ log บอกโอกาสที่ค่าจะต่ำกว่า −xσ เส้นน้ำเงิน (Normal) โค้งลงชันขึ้นเรื่อย ๆ ส่วนเส้นส้ม (t สามองศาที่ปรับ variance เป็น 1) แทบเป็นเส้นตรง ทางซ้ายของจุดตัดที่ราว 2.1σ เส้นน้ำเงินอยู่สูงกว่า แต่หลังจากนั้นเส้นส้มทิ้งห่าง ที่ 4σ ห่างกัน 97 เท่า หางหนาจึงหมายถึงหางไกลหนา ไม่ใช่ทุกเกณฑ์เสี่ยงกว่า</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — Normal ผสม: ตลาดที่สลับระหว่างช่วงสงบกับช่วงปั่นป่วน</h4>
+  <p>หางหนาในข้อมูลจริงส่วนใหญ่ไม่ได้มาจากวันที่บ้าคลั่งแบบไม่มีเหตุผล แต่มาจากความผันผวนที่ไม่คงที่ ลองแบบจำลองง่ายที่สุด: 75% ของวันเป็นวันสงบที่ผลตอบแทนเป็น Normal SD 0.76 (หน่วย σ ของพอร์ต) อีก 25% เป็นวันปั่นป่วนที่ SD 1.5 ค่าเฉลี่ยศูนย์ทั้งคู่ ตัวเลขชุดนี้เลือกมาให้ variance รวมใกล้ 1 เพื่อเทียบกับ Normal SD 1 และ t ที่ $\nu=12$ ซึ่งปรับให้ variance เป็น 1 อย่างยุติธรรม</p>
+  <div class="math">\[
+\begin{aligned}
+\operatorname{Var}&=0.75(0.76)^2+0.25(1.5)^2\\
+&=0.4332+0.5625=0.9957\\
+\mathbb E[X^4]&=3\big[0.75(0.76)^4+0.25(1.5)^4\big]=4.547\\
+\text{kurtosis}&=\frac{4.547}{0.9957^2}\approx4.59\\
+P(X\lt-3)&=0.75\,\Phi\!\big(\tfrac{-3}{0.76}\big)\\
+&\quad+0.25\,\Phi\!\big(\tfrac{-3}{1.5}\big)\\
+&=0.00003+0.00569\approx0.572\%
+\end{aligned}
+\]</div>
+  <div class="reading"><p>variance ของส่วนผสมคือค่าเฉลี่ยถ่วงของ variance แต่ละสภาวะ (เมื่อค่าเฉลี่ยเท่ากัน) moment ลำดับสี่ก็ถ่วงแบบเดียวกัน โดย Normal แต่ละตัวมี $\mathbb E[X^4]=3\sigma^4$ ผลคือ kurtosis 4.59 ทั้งที่ทุกวันเป็น Normal แค่ความกว้างไม่เท่ากัน บรรทัดสุดท้ายบอกว่าโอกาสขาดทุนเกิน 3σ คือ 0.572% สูงกว่า Normal (0.135%) 4.2 เท่า และเกือบทั้งหมด (0.569%) มาจากวันปั่นป่วน นี่คือแนวคิดของ <a href="16.4.html">GARCH</a>: ภายในแต่ละวันผลตอบแทนอาจเป็น Normal แต่เมื่อรวมทุกวันแล้วหางหนา</p></div>
+  <table>
+    <thead><tr><th>แบบจำลอง (variance ≈ 1)</th><th>VaR 95%</th><th>ES 95%</th><th>VaR 99%</th><th>ES 99%</th></tr></thead>
+    <tbody>
+      <tr><td>Normal</td><td>1.645</td><td>2.063</td><td>2.326</td><td>2.665</td></tr>
+      <tr><td>Student-t ($\nu=12$)</td><td>1.627</td><td>2.139</td><td>2.447</td><td>2.944</td></tr>
+      <tr><td>Normal ผสม 75/25</td><td>1.588</td><td>2.222</td><td>2.640</td><td>3.235</td></tr>
+    </tbody>
+  </table>
+  <p>ตารางนี้คำนวณขาดทุนในหน่วย σ VaR คือ quantile ของขาดทุน ส่วน ES (expected shortfall หรือ CVaR) คือขาดทุนเฉลี่ยในวันที่เกิน VaR ที่ระดับ 95% แบบจำลองหางหนาให้ VaR ต่ำกว่า Normal ด้วยซ้ำ แต่ ES สูงกว่าทุกตัว เพราะ VaR ดูแค่ตำแหน่งขอบ ไม่ได้ดูว่าเลยขอบไปไกลแค่ไหน ที่ระดับ 99% ทั้ง VaR และ ES ของ Normal ผสมสูงกว่า Normal 13% และ 21% ตามลำดับ</p>
+  <figure class="plot">
+    <h4>รูป — VaR และ ES ของสามแบบจำลองที่ variance เท่ากัน</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="แท่งจับกลุ่มสี่กลุ่ม VaR 95% ES 95% VaR 99% และ ES 99% ของ Normal สีน้ำเงิน Student-t 12 องศาสีเขียว และ Normal ผสมสีส้ม ที่ VaR 95% แท่งส้มต่ำสุด ที่ ES 99% แท่งส้มสูงสุด 3.24 เทียบกับ Normal 2.67" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <g stroke="#d7dce3" stroke-width="1.5"><line x1="50" y1="175" x2="460" y2="175"/><line x1="50" y1="120" x2="460" y2="120"/><line x1="50" y1="65" x2="460" y2="65"/></g>
+        <g fill="#2455d6"><rect x="71" y="139.5" width="24" height="90.5"/><rect x="171" y="116.5" width="24" height="113.5"/><rect x="271" y="102.1" width="24" height="127.9"/><rect x="371" y="83.4" width="24" height="146.6"/></g>
+        <g fill="#047857"><rect x="98" y="140.5" width="24" height="89.5"/><rect x="198" y="112.4" width="24" height="117.6"/><rect x="298" y="95.4" width="24" height="134.6"/><rect x="398" y="68.1" width="24" height="161.9"/></g>
+        <g fill="#a65f00"><rect x="125" y="142.7" width="24" height="87.3"/><rect x="225" y="107.8" width="24" height="122.2"/><rect x="325" y="84.8" width="24" height="145.2"/><rect x="425" y="52.1" width="24" height="177.9"/></g>
+        <line x1="50" y1="230" x2="460" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="50" y1="30" x2="50" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472" font-size="15"><text x="44" y="235">0</text><text x="44" y="180">1</text><text x="44" y="125">2</text><text x="44" y="70">3</text></g>
+        <g text-anchor="middle" font-size="15"><text x="110" y="250">VaR 95%</text><text x="210" y="250">ES 95%</text><text x="310" y="250">VaR 99%</text><text x="410" y="250">ES 99%</text></g>
+        <rect x="62" y="16" width="14" height="14" fill="#2455d6"/><text x="82" y="28" font-size="15">Normal</text>
+        <rect x="160" y="16" width="14" height="14" fill="#047857"/><text x="180" y="28" font-size="15">t (ν = 12)</text>
+        <rect x="270" y="16" width="14" height="14" fill="#a65f00"/><text x="290" y="28" font-size="15">Normal ผสม</text>
+        <text x="250" y="274" text-anchor="middle" font-size="15">ขาดทุน (หน่วย σ)</text>
+      </g>
+    </svg>
+    <figcaption>ในกลุ่ม VaR 95% แท่งส้ม (Normal ผสม) เตี้ยที่สุด ถ้าดูแค่ตัวเลขนี้จะคิดว่ามันเสี่ยงน้อยกว่า Normal แต่พอขยับไปทางขวา แท่งส้มแซงขึ้นนำทุกกลุ่ม และสูงสุดที่ ES 99% (3.24 เทียบกับ 2.67 ของ Normal) ทั้งสามแบบจำลองมีค่าเฉลี่ยและ variance เท่ากัน ความต่างทั้งหมดมาจากรูปทรงหาง</figcaption>
+  </figure>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — Pareto: หางแบบ power law ที่ไม่มี variance</h4>
+  <p>ขนาดคำสั่งซื้อขาย ขนาดบริษัท และความเสียหายจากภัยพิบัติมีลักษณะร่วมกัน: ส่วนใหญ่เล็ก แต่บางครั้งใหญ่กว่าปกติหลายร้อยเท่า สมมติขนาดคำสั่งอย่างน้อย $x_m=100$ หุ้น และหางลดแบบ power law ด้วย tail index $\alpha=1.5$</p>
+  <div class="math">\[
+\begin{aligned}
+P(X\gt x)&=\Big(\frac{x_m}{x}\Big)^{\alpha},\quad x\ge x_m\\
+f(x)&=\alpha\,x_m^{\alpha}\,x^{-\alpha-1}\\
+\mathbb E[X^k]&=\alpha x_m^{\alpha}\int_{x_m}^\infty x^{k-\alpha-1}dx\\
+&=\frac{\alpha\,x_m^k}{\alpha-k},\quad k\lt\alpha\\
+\mathbb E[X]&=\frac{1.5\times100}{0.5}=300\ \text{shares}\\
+P(X\gt10{,}000)&=(0.01)^{1.5}=0.1\%\\
+\text{Exponential, mean 300}&:\quad e^{-10{,}000/300}\approx3\times10^{-15}
+\end{aligned}
+\]</div>
+  <div class="reading"><p>integral ในบรรทัดที่สามลู่เข้าเฉพาะเมื่อเลขชี้กำลัง $k-\alpha-1$ น้อยกว่า −1 คือ $k\lt\alpha$ ที่ $\alpha=1.5$ ค่าเฉลี่ยมีค่า (300 หุ้น) แต่ $\mathbb E[X^2]$ เป็นอนันต์ จึงไม่มี variance จำกัด SD ตัวอย่างคำนวณได้เสมอ แต่ไม่ลู่เข้าค่าใด ยิ่งเก็บข้อมูลมากยิ่งเจอคำสั่งยักษ์ที่ดัน SD ขึ้นอีก ถ้าใช้ Exponential ที่ค่าเฉลี่ย 300 เท่ากัน โอกาสคำสั่ง 10,000 หุ้นจะเล็กลงหนึ่งล้านล้านเท่า สำหรับผลตอบแทนหุ้น หางรายวันดูเหมือน power law ที่ $\alpha$ ราว 4: variance มีค่า แต่ moment ลำดับสี่อยู่ตรงขอบพอดี นี่คือเหตุผลที่ kurtosis ตัวอย่างของหุ้นกระโดดไปมามากในแต่ละช่วงข้อมูล</p></div>
+  <figure class="plot">
+    <h4>รูป — survival function บนแกน log ทั้งสองแกน</h4>
+    <svg viewBox="0 0 480 280" role="img" aria-label="โอกาสที่ขนาดคำสั่งเกิน x บนแกน log ทั้งสองแกน Pareto สีม่วงเป็นเส้นตรงลาดลงจาก 1 ที่ 100 หุ้นถึง 0.1% ที่ 10,000 หุ้น Exponential สีเขียวที่ค่าเฉลี่ย 300 เท่ากันดิ่งลงหลัง 1,000 หุ้นและหลุดกรอบก่อน 5,000 หุ้น" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+      <g font-size="16" fill="#181818">
+        <g stroke="#d7dce3" stroke-width="1.5">
+          <line x1="60" y1="96.7" x2="440" y2="96.7"/><line x1="60" y1="163.3" x2="440" y2="163.3"/>
+          <line x1="186.7" y1="30" x2="186.7" y2="230"/><line x1="313.3" y1="30" x2="313.3" y2="230"/>
+        </g>
+        <polyline fill="none" stroke="#6d28d9" stroke-width="3" points="60.0,30.0 72.7,35.0 85.3,40.0 98.0,45.0 110.7,50.0 123.3,55.0 136.0,60.0 148.7,65.0 161.3,70.0 174.0,75.0 186.7,80.0 199.3,85.0 212.0,90.0 224.7,95.0 237.3,100.0 250.0,105.0 262.7,110.0 275.3,115.0 288.0,120.0 300.7,125.0 313.3,130.0 326.0,135.0 338.7,140.0 351.3,145.0 364.0,150.0 376.7,155.0 389.3,160.0 402.0,165.0 414.7,170.0 427.3,175.0 440.0,180.0"/>
+        <polyline fill="none" stroke="#047857" stroke-width="3" points="60.0,34.8 72.7,36.1 85.3,37.6 98.0,39.6 110.7,42.1 123.3,45.3 136.0,49.2 148.7,54.2 161.3,60.4 174.0,68.3 186.7,78.3 199.3,90.7 212.0,106.5 224.7,126.3 237.3,151.2 250.0,182.6 262.7,222.1"/>
+        <circle cx="313.3" cy="130" r="6" fill="#6d28d9"/>
+        <text x="322" y="124" fill="#6d28d9">Pareto: 0.1%</text>
+        <text x="200" y="210" fill="#047857">Exponential</text>
+        <text x="380" y="200" fill="#6d28d9" font-size="15">ความชัน −1.5</text>
+        <line x1="60" y1="230" x2="450" y2="230" stroke="#181818" stroke-width="2"/>
+        <line x1="60" y1="30" x2="60" y2="230" stroke="#181818" stroke-width="2"/>
+        <g text-anchor="end" fill="#5b6472" font-size="15"><text x="54" y="35">1</text><text x="54" y="102">1%</text><text x="54" y="168">0.01%</text><text x="54" y="235">0.0001%</text></g>
+        <g text-anchor="middle" fill="#5b6472" font-size="15"><text x="60" y="250">100</text><text x="186.7" y="250">1,000</text><text x="313.3" y="250">10,000</text><text x="440" y="250">100,000</text></g>
+        <text x="250" y="274" text-anchor="middle">ขนาดคำสั่ง x (หุ้น)</text>
+      </g>
+    </svg>
+    <figcaption>บนแกน log ทั้งสองแกน หางแบบ power law เป็นเส้นตรงที่มีความชัน −α (เส้นม่วง) ส่วนหางแบบ exponential (เส้นเขียว) ดิ่งลงเหมือนตกหน้าผาหลังราว 1,000 หุ้น ทั้งสองเส้นมีค่าเฉลี่ย 300 หุ้นเท่ากันและอยู่ใกล้กันในช่วงต้น แต่ที่ 10,000 หุ้น เส้นม่วงยังอยู่ที่ 0.1% ขณะที่เส้นเขียวหลุดกรอบไปไกลแล้ว วิธีตรวจหาง power law ในข้อมูลจริงคือวาดกราฟแบบนี้แล้วดูว่าหางเป็นเส้นตรงหรือไม่</figcaption>
+  </figure>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 9 — กลยุทธ์ที่ชนะเกือบทุกครั้ง: ค่าเฉลี่ยกับ SD ซ่อนอะไรไว้</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> กลยุทธ์ขาย option ที่ไกลจากราคาปัจจุบันได้กำไร 0.2% ด้วยโอกาส 99% และขาดทุน 15% ด้วยโอกาส 1% ต่อครั้ง (ตัวเลขสมมติ) หาค่าเฉลี่ย SD skewness kurtosis และโอกาสที่ 100 ครั้งแรกไม่เจอขาดทุนเลย</p>
+  <div class="math">\[
+\begin{aligned}
+\mu&=0.99(0.2\%)+0.01(-15\%)=0.048\%\\
+\sigma&=\sqrt{0.99(0.152\%)^2+0.01(15.048\%)^2}\approx1.51\%\\
+\text{skewness}&=\frac{\mathbb E[(X-\mu)^3]}{\sigma^3}\approx-9.85\\
+\text{kurtosis}&=\frac{\mathbb E[(X-\mu)^4]}{\sigma^4}\approx98.0\\
+P(\text{no loss in 100})&=0.99^{100}\approx36.6\%
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ค่าเฉลี่ยเป็นบวกเล็กน้อย 0.048% ต่อครั้ง แต่ skewness −9.85 บอกว่าความเสี่ยงทั้งหมดกองอยู่ในหางซ้าย และ kurtosis 98 คือหางหนากว่า Normal หลายสิบเท่า ที่อันตรายที่สุดคือบรรทัดสุดท้าย: มีโอกาส 36.6% ที่ track record 100 ครั้งแรกจะเป็นกำไร 0.2% ทุกครั้ง SD ตัวอย่างจึงเป็นศูนย์ และ Sharpe ratio ที่คำนวณได้เป็นอนันต์ ทั้งที่ความเสี่ยงจริงยังอยู่ครบ</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ค่าเฉลี่ยและ SD เป็นแค่สองตัวเลขแรกของรูปทรง ถ้า distribution เบ้มาก ต้องรายงาน skewness, ขาดทุนสูงสุดที่เป็นไปได้ หรือ ES ด้วยเสมอ</p>
+</section>
+
+<section class="table">
+  <h4>เลือก distribution จากกลไก แล้วตรวจสมมติฐาน</h4>
+  <table>
+    <thead><tr><th>distribution</th><th>กลไกที่สร้างมัน</th><th>ใช้กับอะไรบนโต๊ะ</th><th>ต้องตรวจอะไร</th></tr></thead>
+    <tbody>
+      <tr><td>Binomial</td><td>นับความสำเร็จใน $n$ ครั้งที่อิสระ</td><td>จำนวนปีที่ชนะตลาด, จำนวนผิดนัดในพอร์ตเล็ก</td><td>อิสระจริงไหม โอกาสคงที่ไหม</td></tr>
+      <tr><td>Poisson</td><td>นับเหตุการณ์หายากในช่วงเวลา</td><td>จำนวนคำสั่งต่อวินาที, จำนวนวันขาดทุนหนัก</td><td>ค่าเฉลี่ยเท่ากับ variance ไหม</td></tr>
+      <tr><td>Exponential</td><td>เวลารอเมื่ออัตราคงที่</td><td>เวลารอคำสั่ง, เวลาผิดนัดเมื่อ hazard คงที่</td><td>ค่าเฉลี่ยเท่ากับ SD ไหม memoryless ไหม</td></tr>
+      <tr><td>Normal</td><td>ผลรวมของผลเล็ก ๆ จำนวนมาก</td><td>ผลตอบแทนพอร์ตระยะยาว, ความคลาดเคลื่อนของค่าประมาณ</td><td>QQ plot, kurtosis, หาง</td></tr>
+      <tr><td>Lognormal</td><td>ผลคูณของผลเล็ก ๆ จำนวนมาก</td><td>ราคาสินทรัพย์ปลายช่วง</td><td>log return เป็น Normal ไหม ราคาเป็นศูนย์ได้ไหม</td></tr>
+      <tr><td>Student-t</td><td>Normal หารด้วย scale ที่สุ่ม</td><td>t-statistic, ผลตอบแทนหางหนา</td><td>ใช้ variance เท่ากันตอนเทียบไหม ค่า $\nu$ เท่าไร</td></tr>
+      <tr><td>Normal ผสม</td><td>หลายสภาวะที่ความผันผวนต่างกัน</td><td>VaR และ ES ที่มีช่วงวิกฤติ</td><td>มีกี่สภาวะ สัดส่วนเท่าไร</td></tr>
+      <tr><td>Pareto</td><td>หางแบบ power law</td><td>ขนาดคำสั่ง, ความเสียหายรุนแรง</td><td>tail index เท่าไร moment ที่ใช้มีอยู่ไหม</td></tr>
+      <tr><td>Uniform</td><td>ทุกจุดในช่วงมีโอกาสเท่ากัน</td><td>เลขสุ่มพื้นฐานของการจำลอง</td><td>ขอบเขตช่วงรู้จริงไหม</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="pitfall">
+  <h4>ความผิดพลาดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>จับค่าเฉลี่ยกับ SD ให้ตรงแล้วจบ:</strong> Normal(5, 5²) ให้เวลารอติดลบ 15.9% และ Exponential กับ Pareto ที่ค่าเฉลี่ย 300 หุ้นเท่ากันให้โอกาสคำสั่ง 10,000 หุ้นต่างกัน $10^{12}$ เท่า</p>
+  <p><strong>เทียบ t ดิบกับ Normal:</strong> $t_3$ ดิบมี variance 3 ถ้าเทียบที่เกณฑ์ตัวเลขเดียวกันจะปนเรื่อง scale กับเรื่องหาง ต้องหาร $\sqrt{\nu/(\nu-2)}$ ก่อน</p>
+  <p><strong>เชื่อ VaR เพียงตัวเดียว:</strong> ที่ระดับ 95% Normal ผสมให้ VaR ต่ำกว่า Normal (1.588 กับ 1.645) แต่ ES สูงกว่า (2.222 กับ 2.063) VaR ไม่เห็นสิ่งที่อยู่เลยขอบ</p>
+  <p><strong>เชื่อ SD ตัวอย่างของข้อมูลหางหนา:</strong> ใน Pareto ที่ $\alpha=1.5$ ไม่มี variance จริงให้ประมาณ และ track record ที่ไม่เคยขาดทุนให้ SD ศูนย์ ทั้งสองกรณี SD ตัวอย่างดูแม่นยำแต่ไม่มีความหมาย</p>
+  <p><strong>ลืมว่า memoryless เป็นสมมติฐาน:</strong> ถ้าอัตราคำสั่งช่วงเปิดตลาดสูงกว่าช่วงบ่าย การใช้ Exponential อัตราเดียวทั้งวันจะให้เวลารอผิดทั้งสองช่วง</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>งาน Monte Carlo ทุกชิ้นเริ่มจาก inverse CDF หรือ Box–Muller ในขั้นที่ 4 แล้วเลือก distribution ของปัจจัยเสี่ยงแต่ละตัว ฝ่ายความเสี่ยงที่ดีจะรัน VaR และ ES ด้วยหลาย distribution คู่กัน (Normal, t, Normal ผสม, ข้อมูลจริง) แล้วรายงานความไวต่อการเลือก ไม่ใช่รายงานตัวเลขเดียว เรื่องนี้ต่อยอดใน <a href="17.1.html">VaR และ expected shortfall</a> และ <a href="17.5.html">Monte Carlo และ bootstrap</a> ส่วนทีม execution ใช้ Exponential และ Poisson จำลองการไหลของคำสั่งใน <a href="18.8.html">order book และคิว</a></p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> รอคำสั่งมาแล้ว 10 วินาทีภายใต้ Exponential อัตรา 0.2 ครั้งต่อวินาที เวลารอทั้งหมดเฉลี่ยเป็นเท่าไร และโอกาสที่ต้องรอรวมเกิน 20 วินาทีเป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>จาก memoryless เวลาที่ยังต้องรอเฉลี่ย $1/\lambda=5$ วินาที เวลารวมจึงเฉลี่ย $10+5=15$ วินาที รอรวมเกิน 20 วินาทีคือรอต่ออีกเกิน 10 วินาที: $P(X\gt20\mid X\gt10)=e^{-0.2\times10}=e^{-2}\approx13.5\%$ เท่ากับโอกาสรอเกิน 10 วินาทีตั้งแต่เริ่ม</p></details>
+  <p><strong>2.</strong> ใช้ Normal ผสม 75% (SD 0.76) กับ 25% (SD 1.5) หาโอกาสขาดทุนเกิน 2σ แล้วเทียบกับ Normal</p>
+  <details><summary>เฉลย</summary><p>$0.75\,\Phi(-2/0.76)+0.25\,\Phi(-2/1.5)=0.75\,\Phi(-2.632)+0.25\,\Phi(-1.333)\approx0.75(0.00425)+0.25(0.0912)=0.0032+0.0228\approx2.60\%$ ส่วน Normal คือ $\Phi(-2)\approx2.28\%$ ที่ 2σ ต่างกันแค่ 1.14 เท่า แต่ที่ 3σ ต่างกัน 4.2 เท่า (0.572% กับ 0.135%) ยิ่งไกลยิ่งห่าง และส่วนใหญ่ของหางมาจากวันปั่นป่วนเสมอ</p></details>
+  <p><strong>3.</strong> สร้างเวลารอสามค่าจากเลขสุ่ม $U=0.10,\ 0.50,\ 0.99$ ด้วยอัตรา 0.2 ครั้งต่อวินาที แล้วอธิบายว่าทำไมค่าสุดท้ายห่างจากค่าอื่นมาก</p>
+  <details><summary>เฉลย</summary><p>$X=-\ln(1-U)/0.2$: $U=0.10$ ให้ $-\ln0.9/0.2\approx0.53$ วินาที $U=0.50$ ให้ $\ln2/0.2\approx3.47$ วินาที (median) $U=0.99$ ให้ $-\ln0.01/0.2\approx23.03$ วินาที เลขสุ่มที่ใกล้ 1 ตกในส่วนที่ CDF แบนมาก ขยับ $U$ นิดเดียวเวลาก็กระโดดไกล นี่คือหางขวาของ Exponential ที่เห็นผ่านการจำลอง</p></details>
+</section>
+
 <section class="code">
-  <details>
-    <summary>ตรวจตัวเลขด้วย JavaScript โดยไม่ใช้ไลบรารีสถิติ</summary>
-    <pre><code>const lambda = 0.2;
-console.log([1 / lambda, Math.exp(-lambda * 10), Math.log(2) / lambda]);
-console.log([-Math.log(0.05) / lambda, -Math.log1p(-0.63) / lambda]);
-console.log([0.6 / (0.1 / Math.sqrt(3)), 1 - 1.96 / Math.sqrt(1.96 ** 2 + 2)]);
-console.log(Math.sqrt(2 * 0.95 ** 2 / (1 - 0.95 ** 2)));
-// CDF of t_3 divided by sqrt(3), so variance is one.
-const t3CDF = y =&gt; 0.5 + (Math.atan(y) + y / (1 + y * y)) / Math.PI;
-console.log([t3CDF((-0.02 - 0.0004) / 0.011), t3CDF(-4)]);
-// Integrate the Normal tail from 4 to 12; the omitted tail is negligible here.
-const n = 10000, h = 8 / n;
-let sum = 0;
-for (let i = 0; i &lt;= n; i++) {
-  const z = 4 + i * h, w = i === 0 || i === n ? 1 : i % 2 ? 4 : 2;
-  sum += w * Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <details><summary>เปิดดูโค้ด</summary>
+<pre><code class="language-javascript">const phi = z =&gt; Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+function Phi(z) {
+  const n = 10000, h = Math.abs(z) / n;
+  let s = 0;
+  for (let i = 0; i &lt;= n; i++) s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * phi(i * h);
+  return 0.5 + Math.sign(z) * h * s / 3;
 }
-const normalTail = sum * h / 3;
-console.log([normalTail, t3CDF(-4) / normalTail]);
-const r = Math.sqrt(-2 * Math.log(0.25)), theta = 2 * Math.PI * 0.60;
-console.log([r, r * Math.cos(theta), r * Math.sin(theta)]);
-console.log([1.5 * 100 / (1.5 - 1), (100 / 10000) ** 1.5]);
-console.log([0.99 ** 100, 0.99 * 0.002 + 0.01 * (-0.15)]);</code></pre>
+// Exponential waiting time, rate 0.2 per second
+const lambda = 0.2;
+console.log(Phi(-1));                                     // 0.159 negative waits under Normal(5, 5^2)
+console.log(Math.exp(-2), Math.log(2) / lambda, -Math.log(0.05) / lambda); // 0.135 3.47 14.98
+console.log(Math.exp(-3) / Math.exp(-2));                 // 0.368 memoryless
+console.log([0.10, 0.50, 0.63, 0.99].map(u =&gt; -Math.log(1 - u) / lambda)); // inverse CDF
+const r = Math.sqrt(-2 * Math.log(0.25)), th = 2 * Math.PI * 0.60;
+console.log(r * Math.cos(th), r * Math.sin(th));           // Box-Muller -1.347 -0.979
+
+// t with 2 degrees of freedom: t-statistic and 5% critical value
+console.log(0.6 / (0.1 / Math.sqrt(3)), 1 - 1.96 / Math.sqrt(1.96 ** 2 + 2));
+console.log(Math.sqrt(2 * 0.95 ** 2 / (1 - 0.95 ** 2)));  // 4.303
+// t3 scaled to unit variance vs Normal
+const FY = y =&gt; 0.5 + (Math.atan(y) + y / (1 + y * y)) / Math.PI;
+console.log(FY(-4), Phi(-4), FY(-4) / Phi(-4));           // 0.00308 0.0000317 97.3
+console.log(FY(-1.854545), Phi(-1.854545));              // 0.0244 0.0318
+
+// two-regime Normal mixture
+const v = 0.75 * 0.76 ** 2 + 0.25 * 1.5 ** 2;
+const m4 = 3 * (0.75 * 0.76 ** 4 + 0.25 * 1.5 ** 4);
+console.log(v, m4 / v ** 2);                              // 0.9957 4.59
+const mixTail = x =&gt; 0.75 * Phi(-x / 0.76) + 0.25 * Phi(-x / 1.5);
+console.log(mixTail(3), Phi(-3), mixTail(2), Phi(-2));    // 0.00572 0.00135 0.0260 0.0228
+
+// Pareto vs Exponential with the same mean of 300 shares
+console.log(1.5 * 100 / 0.5, (100 / 10000) ** 1.5, Math.exp(-10000 / 300));
+
+// short-option strategy
+const p = [0.99, 0.01], x = [0.002, -0.15];
+const mu = p[0] * x[0] + p[1] * x[1];
+const mom = k =&gt; p[0] * (x[0] - mu) ** k + p[1] * (x[1] - mu) ** k;
+console.log(mu, Math.sqrt(mom(2)), mom(3) / mom(2) ** 1.5, mom(4) / mom(2) ** 2, 0.99 ** 100);</code></pre>
   </details>
-  <p>สูตร CDF ของ t ในตัวอย่างใช้เฉพาะสามองศาที่ปรับ scale แล้ว ไม่ใช่ฟังก์ชันทั่วไปสำหรับทุก $\nu$ ส่วนตัวเลข Uniform สองค่ากำหนดไว้เพื่อให้ตรวจซ้ำได้ ไม่ได้เป็นการสุ่มจำลองชุดใหญ่</p>
 </section>
 
 <section class="takeaways">
-  <h4>ปิดบทที่ 1 — Distribution เป็นคำอธิบายพร้อมเงื่อนไข</h4>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>เริ่มจากตัวแปร support และกลไก ก่อนเลือกชื่อ distribution การจับ mean และ SD ให้ตรงยังไม่รับรองความเหมาะสม</li>
-    <li>Exponential เป็นเวลารอใน homogeneous Poisson process; rate 0.2 ให้ mean 5 วินาที median 3.47 วินาที และโอกาสเกิน 10 วินาที 13.53%</li>
-    <li>Uniform ผ่าน inverse CDF สร้างข้อมูลเป้าหมายได้ ส่วน Box–Muller ใช้ Uniform อิสระสองตัวสร้าง Standard Normal สองตัว</li>
-    <li>Student-t มีตัวหารสุ่ม ต้องตรวจทั้ง $\nu$ และ scale ก่อนเทียบกับ Normal ที่สี่ SD, $t_3$ แบบ variance หนึ่งให้หางซ้ายประมาณ 97.33 เท่าของ Normal แต่ไม่มากกว่าทุกเกณฑ์</li>
-    <li>Moment ไม่ได้มีอยู่เสมอ: t บางค่า $\nu$ ไม่มี mean หรือ variance จำกัด และ Pareto shape 1.5 มี mean แต่ไม่มี variance จำกัด</li>
-    <li>เมื่อข้อมูลส่วนหางน้อย ให้แยกความไม่แน่นอนของแบบจำลองออกจากความแม่นของการคำนวณ แล้วทดสอบความไวและภาวะวิกฤติเพิ่ม</li>
+    <li>เลือก distribution จาก support กลไก และหาง ไม่ใช่จากการจับค่าเฉลี่ยกับ SD: Normal(5, 5²) ให้เวลารอติดลบ 15.9%</li>
+    <li>Exponential คือเวลารอของ Poisson: อัตรา 0.2 ให้ค่าเฉลี่ย 5 วินาที median 3.47 วินาที และ memoryless</li>
+    <li>inverse CDF แปลงเลขสุ่ม Uniform เป็น distribution ใดก็ได้ เช่น $U=0.63$ เป็นเวลารอ 4.97 วินาที</li>
+    <li>Student-t คือ Normal ที่ scale สุ่ม หางลดแบบ power law เมื่อปรับ variance เท่ากัน หาง t₃ หนากว่า Normal 97 เท่าที่ 4σ แต่บางกว่าก่อน 2.1σ</li>
+    <li>ส่วนผสมของสภาวะสงบกับปั่นป่วนให้ kurtosis 4.59 และ ES 99% สูงกว่า Normal 21% แม้ทุกวันเป็น Normal</li>
+    <li>moment ไม่ได้มีเสมอ: Pareto ที่ α = 1.5 มีค่าเฉลี่ยแต่ไม่มี variance และ track record ที่ไม่เคยขาดทุนอาจซ่อน skewness −9.85</li>
   </ul>
-  <p>บทที่ 2 จะใช้เครื่องมือเหล่านี้เมื่อมีหลายสภาวะหรือหลายตัวแปร เริ่มจากหาค่าเฉลี่ยภายในแต่ละกลุ่ม แล้วถ่วงกลับเป็นค่าเฉลี่ยรวมด้วย Law of Iterated Expectations</p>
+  <p>บทนี้จัดการทีละตัวแปรและทีละสภาวะ <a href="../chapters/2.html">บทถัดไป</a> จะเริ่มจาก <a href="2.1.html">law of iterated expectations</a> ซึ่งเป็นเครื่องมือทั่วไปของสิ่งที่ทำกับ Normal ผสมในขั้นที่ 7: หาค่าเฉลี่ยภายในแต่ละสภาวะก่อน แล้วถ่วงกลับเป็นค่าเฉลี่ยรวม</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
