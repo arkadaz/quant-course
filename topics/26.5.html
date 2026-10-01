@@ -25,26 +25,85 @@
   <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ตัวเลข 0.7496% ถูก ทางลัดหดค่าเข้าหาศูนย์ด้วยตัวคูณ 0.7613 เสมอ ไม่ว่าเครื่องหมายจะเป็นอะไร เพราะคุณสมบัติใหม่มีส่วนที่ซ้ำกับ market และ momentum อยู่ ส่วนนั้นเพิ่มตัวหารแต่ไม่เพิ่มตัวตั้ง ถ้าหักส่วนที่ซ้ำออกจากคุณสมบัติใหม่ก่อนแล้วค่อย regress จะได้ 0.7496% ตรงทุกหลัก และได้ residual ชุดเดียวกับการรื้อทั้งหมด นี่คือ Frisch–Waugh–Lovell</p></details>
 </div>
 <section class="prose">
-  <h4>สิ่งที่เราจะสร้าง</h4>
-  <p>15.1 แก้ OLS ทีเดียวด้วย normal equations 26.3 ใช้ projection $\mathbf P$ แยกคุณสมบัติใหม่เป็นส่วนเก่ากับส่วนใหม่ และเห็นว่าการใช้ส่วนใหม่ทำให้ factor return เก่าไม่ขยับ หน้านี้พิสูจน์ว่าทำไม ทฤษฎีบทนี้คือใบอนุญาตให้ประมาณ model เป็นขั้น ๆ โดยไม่เสียอะไรเลย</p>
-  <p>เราจะ regress ข้อมูลหุ้น 12 ตัวทีเดียวเป็นคำตอบอ้างอิง ทำเป็นขั้นอย่างถูกวิธีแล้วพิสูจน์ว่าได้เท่ากัน ดูทางลัดสองทางที่คนชอบใช้และพังคนละแบบ ดูว่า model เดิมให้เครดิต momentum เกินจริงแค่ไหน แล้วขยายไปกรณีที่หุ้นแต่ละตัวมีความผันผวนเฉพาะตัวไม่เท่ากัน ซึ่งให้สูตรความคลาดของ factor return ที่บทที่ 27 ใช้</p>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>risk model ที่ใช้งานจริงมีประวัติหลายปี และรายงานทุกฉบับอ้างอิงตัวเลขของมัน เมื่อมีคุณสมบัติใหม่ที่อยากทดสอบ ไม่มีใครอยากรื้อทั้ง model คำถามคือทำเป็นขั้นได้ไหม ประมาณ model เดิมไว้ก่อน แล้วค่อยถามว่าคุณสมบัติใหม่อธิบายส่วนที่เหลือได้แค่ไหน คำตอบคือได้ และได้ตัวเลขเดียวกับการรื้อทั้งหมดทุกหลัก แต่มีเงื่อนไขหนึ่งข้อที่คนข้ามบ่อย</p>
+  <p>เงื่อนไขนั้นคือต้องหักส่วนที่ model เดิมอธิบายได้ออกจากทั้งสองฝั่ง ทั้งจากผลตอบแทนและจากคอลัมน์ใหม่ แล้วค่อย regress ส่วนที่เหลือบนส่วนที่เหลือ รูปข้างล่างคือสองขั้นนี้กับข้อมูลจริงของหน้านี้ ขั้นแรกหักส่วนที่ momentum อธิบายได้ออกจากคุณสมบัติใหม่ ขั้นที่สองวาดผลตอบแทนที่เหลือเทียบกับคุณสมบัติที่เหลือ ความชันของเส้นคือคำตอบ หน้านี้จะพิสูจน์ว่าทำไมมันตรง ดูทางลัดสองทางที่พังคนละแบบ และขยายไปกรณีที่หุ้นเสียงดังไม่เท่ากัน ซึ่งให้สูตรความคลาดของ factor return</p>
 </section>
+<figure class="plot">
+  <h4>รูป — หักส่วนซ้ำออกก่อน แล้ว regress ส่วนที่เหลือบนส่วนที่เหลือ</h4>
+  <svg viewBox="0 0 460 290" role="img" aria-label="สองแผง แผงซ้ายจุดสีน้ำเงินคือคุณสมบัติใหม่เทียบ momentum ของหุ้น 12 ตัว เส้นดำคือเส้นถดถอย เส้นส้มแนวตั้งคือส่วนที่เหลือ แผงขวาจุดสีม่วงคือผลตอบแทนที่เหลือเทียบคุณสมบัติที่เหลือ เส้นดำความชัน 0.7496" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <text x="125" y="26" text-anchor="middle">① หักส่วนซ้ำออก</text>
+      <text x="355" y="26" text-anchor="middle">② regress ส่วนเหลือ</text>
+      <line x1="40" y1="240" x2="210" y2="240" stroke="#5b6472" stroke-width="2"/>
+      <line x1="40" y1="60" x2="40" y2="240" stroke="#5b6472" stroke-width="2"/>
+      <line x1="40" y1="140" x2="210" y2="140" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="146.3" y1="60" x2="146.3" y2="240" stroke="#d7dce3" stroke-width="1"/>
+      <text x="61.3" y="258" text-anchor="middle" fill="#5b6472">−2</text>
+      <text x="146.3" y="258" text-anchor="middle" fill="#5b6472">0</text>
+      <text x="34" y="225" text-anchor="end" fill="#5b6472">−2</text>
+      <text x="34" y="145" text-anchor="end" fill="#5b6472">0</text>
+      <text x="34" y="65" text-anchor="end" fill="#5b6472">2</text>
+      <text x="125" y="280" text-anchor="middle" fill="#5b6472">momentum</text>
+      <text x="46" y="54" fill="#5b6472">x₂ ดิบ</text>
+      <line x1="40" y1="181.3" x2="210" y2="107.5" stroke="#181818" stroke-width="2.5"/>
+      <g stroke="#a65f00" stroke-width="2.5">
+        <line x1="193.0" y1="178.4" x2="193.0" y2="114.9"/>
+        <line x1="160.7" y1="72.4" x2="160.7" y2="128.9"/>
+        <line x1="123.3" y1="134.0" x2="123.3" y2="145.1"/>
+        <line x1="92.7" y1="185.2" x2="92.7" y2="158.4"/>
+        <line x1="65.9" y1="142.4" x2="65.9" y2="170.0"/>
+        <line x1="147.1" y1="138.8" x2="147.1" y2="134.8"/>
+        <line x1="111.8" y1="137.2" x2="111.8" y2="150.1"/>
+        <line x1="109.3" y1="157.6" x2="109.3" y2="151.2"/>
+        <line x1="136.9" y1="110.0" x2="136.9" y2="139.2"/>
+        <line x1="144.1" y1="107.2" x2="144.1" y2="136.1"/>
+        <line x1="49.4" y1="223.6" x2="49.4" y2="177.2"/>
+        <line x1="185.8" y1="137.2" x2="185.8" y2="118.0"/>
+      </g>
+      <g fill="#2455d6">
+        <circle cx="193.0" cy="178.4" r="4"/><circle cx="160.7" cy="72.4" r="4"/><circle cx="123.3" cy="134.0" r="4"/>
+        <circle cx="92.7" cy="185.2" r="4"/><circle cx="65.9" cy="142.4" r="4"/><circle cx="147.1" cy="138.8" r="4"/>
+        <circle cx="111.8" cy="137.2" r="4"/><circle cx="109.3" cy="157.6" r="4"/><circle cx="136.9" cy="110.0" r="4"/>
+        <circle cx="144.1" cy="107.2" r="4"/><circle cx="49.4" cy="223.6" r="4"/><circle cx="185.8" cy="137.2" r="4"/>
+      </g>
+      <line x1="240" y1="40" x2="240" y2="270" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="270" y1="240" x2="440" y2="240" stroke="#5b6472" stroke-width="2"/>
+      <line x1="270" y1="150" x2="440" y2="150" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="355" y1="60" x2="355" y2="240" stroke="#d7dce3" stroke-width="1"/>
+      <text x="312.5" y="258" text-anchor="middle" fill="#5b6472">−1</text>
+      <text x="355" y="258" text-anchor="middle" fill="#5b6472">0</text>
+      <text x="397.5" y="258" text-anchor="middle" fill="#5b6472">1</text>
+      <text x="355" y="280" text-anchor="middle" fill="#a65f00">x₂ ส่วนที่เหลือ (เส้นส้ม)</text>
+      <text x="276" y="54" fill="#6d28d9">ผลตอบแทนที่เหลือ (%)</text>
+      <line x1="270" y1="217.5" x2="440" y2="82.5" stroke="#181818" stroke-width="2.5"/>
+      <g fill="#6d28d9">
+        <circle cx="287.5" cy="208.6" r="4"/><circle cx="415.0" cy="94.1" r="4"/><circle cx="366.8" cy="173.9" r="4"/>
+        <circle cx="326.5" cy="131.9" r="4"/><circle cx="384.3" cy="150.0" r="4"/><circle cx="350.8" cy="187.8" r="4"/>
+        <circle cx="368.7" cy="152.9" r="4"/><circle cx="348.2" cy="139.1" r="4"/><circle cx="386.1" cy="83.4" r="4"/>
+        <circle cx="385.7" cy="121.0" r="4"/><circle cx="305.7" cy="191.3" r="4"/><circle cx="334.6" cy="166.1" r="4"/>
+      </g>
+      <text x="280" y="232">ความชัน 0.7496</text>
+    </g>
+  </svg>
+  <figcaption>ข้อมูลหุ้น 12 ตัวในวันเดียว แผงซ้าย: จุดน้ำเงินคือคุณสมบัติใหม่ $\mathbf x_2$ เทียบ momentum เส้นดำคือส่วนที่ (ค่าคงที่, momentum) อธิบายได้ ความชัน 0.4609 เส้นส้มแนวตั้งคือส่วนที่เหลือ $\tilde{\mathbf x}_2$ ซึ่งเป็นของใหม่จริง แผงขวา: แกนนอนคือความยาวมีเครื่องหมายของเส้นส้มแต่ละเส้น แกนตั้งคือผลตอบแทนที่เหลือหลังหัก (ค่าคงที่, momentum) ออกแบบเดียวกัน จุดม่วงคือหุ้นแต่ละตัว เส้นดำผ่านจุดกำเนิดด้วยความชัน 0.7496 ซึ่งเท่ากับค่าที่ได้จากการ regress ทั้งสามคอลัมน์ทีเดียวทุกหลัก</figcaption>
+</figure>
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Frisch–Waugh–Lovell (FWL)</dt><dd>ทฤษฎีบทที่บอกว่าค่าสัมประสิทธิ์ของคอลัมน์กลุ่มที่สองใน regression เต็ม เท่ากับค่าที่ได้จาก regress ส่วนที่เหลือของ $\mathbf y$ บนส่วนที่เหลือของคอลัมน์กลุ่มนั้น หลังหักกลุ่มแรกออกจากทั้งคู่</dd>
+    <dt>Frisch–Waugh–Lovell (FWL)</dt><dd>ทฤษฎีบทที่บอกว่าค่าสัมประสิทธิ์ของคอลัมน์กลุ่มที่สองใน regression เต็ม เท่ากับค่าที่ได้จาก regress ส่วนที่เหลือของ $\mathbf y$ บนส่วนที่เหลือของคอลัมน์กลุ่มนั้น หลังหักกลุ่มแรกออกจากทั้งคู่ ใช้เป็นใบอนุญาตให้ประมาณ model เป็นขั้น</dd>
     <dt>Residual maker $\mathbf M$</dt><dd>$\mathbf M=\mathbf I-\mathbf P_1$ คูณ vector ไหนก็ได้ส่วนที่คอลัมน์ของ model เดิมอธิบายไม่ได้ ทำซ้ำแล้วได้ผลเดิม</dd>
     <dt>Residualize</dt><dd>การหักส่วนที่คอลัมน์เดิมอธิบายได้ออกจากคอลัมน์ใหม่ ก่อนนำไปใช้ เป็นขั้นกลางที่ข้ามไม่ได้</dd>
     <dt>Omitted variable bias</dt><dd>ค่าสัมประสิทธิ์ที่เอนเมื่อ model ขาดคอลัมน์ที่สัมพันธ์กับคอลัมน์ที่มีอยู่ คอลัมน์ที่มีอยู่รับเครดิตของตัวที่ขาดไป</dd>
-    <dt>Weighted least squares (WLS)</dt><dd>least squares ที่ถ่วงแต่ละแถวด้วย $1/\sigma_i^2$ ใช้เมื่อความคลาดของแต่ละแถวไม่เท่ากัน เป็นวิธีที่ 27.1 ใช้หา factor return</dd>
-    <dt>Estimation error covariance $\mathbf G$</dt><dd>covariance ของความคลาดระหว่าง factor return ที่ประมาณได้กับค่าจริง เท่ากับ $(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B)^{-1}$ ยิ่งหุ้นน้อย ยิ่งใหญ่</dd>
+    <dt>Weighted least squares (WLS)</dt><dd>least squares ที่ถ่วงแต่ละแถวด้วย $1/\sigma_i^2$ ใช้เมื่อความคลาดของแต่ละแถวไม่เท่ากัน เป็นวิธีที่ใช้หา factor return ทุกวัน</dd>
+    <dt>Factor-mimicking portfolio และ $\mathbf G$</dt><dd>พอร์ตที่มี exposure หนึ่งหน่วยต่อ factor หนึ่ง ศูนย์ต่อตัวอื่น และความเสี่ยงเฉพาะตัวต่ำที่สุด ผลตอบแทนของมันคือค่าประมาณของ factor return ส่วน $\mathbf G=(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B)^{-1}$ คือ covariance ของความคลาดของค่าประมาณนั้น</dd>
   </dl>
 </details>
 <details class="symbols">
   <summary>สัญลักษณ์และหน่วย</summary>
   <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
     <tr><td>$\mathbf y$</td><td>ผลตอบแทนของหุ้น 12 ตัวในวันเดียว</td><td>%</td></tr>
-    <tr><td>$\mathbf X_1,\ \mathbf x_2$</td><td>คอลัมน์ของ model เดิม (market, momentum) และคุณสมบัติใหม่</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$\mathbf X_1,\ \mathbf x_2$</td><td>คอลัมน์ของ model เดิม (ค่าคงที่ที่เป็น market และ momentum) และคุณสมบัติใหม่</td><td>ไม่มีหน่วย</td></tr>
     <tr><td>$\hat{\boldsymbol\beta}_1,\ \hat\beta_2,\ \mathbf e$</td><td>ค่าสัมประสิทธิ์และ residual ของ regression เต็ม</td><td>%</td></tr>
     <tr><td>$\hat{\boldsymbol\gamma}_1,\ \hat\gamma_2$</td><td>ค่าที่ได้จากการทำทีละขั้น</td><td>%</td></tr>
     <tr><td>$\mathbf P_1,\ \mathbf M$</td><td>projection ลงบน range ของ $\mathbf X_1$ และ $\mathbf I-\mathbf P_1$</td><td>ไม่มีหน่วย</td></tr>
@@ -55,7 +114,7 @@
 </details>
 <section class="example">
   <h4>ขั้นที่ 1 — ข้อมูล และคำตอบอ้างอิงจากการทำทีเดียว</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้น 12 ตัวในวันเดียว คอลัมน์ market เป็น 1 ทุกแถว (ไม่แสดงในตาราง) คอลัมน์ momentum และคุณสมบัติใหม่ $\mathbf x_2$ กับผลตอบแทนวันนี้เป็น % ตัวเลขสมมติ แก้ normal equations ของ 15.1 ทีเดียวทั้งสามคอลัมน์</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หุ้น 12 ตัวในวันเดียว คอลัมน์ market เป็น 1 ทุกแถว (ไม่แสดงในตาราง) คอลัมน์ momentum และคุณสมบัติใหม่ $\mathbf x_2$ กับผลตอบแทนวันนี้เป็น % ตัวเลขสมมติ แก้ normal equations ของ <a href="15.1.html">OLS regression</a> ทีเดียวทั้งสามคอลัมน์</p>
   <div class="table-wrap"><table><thead><tr><th>หุ้น</th><th>momentum</th><th>$\mathbf x_2$</th><th>ผลตอบแทน (%)</th></tr></thead><tbody>
     <tr><td>1</td><td>1.10</td><td>−0.96</td><td>+0.3333</td></tr>
     <tr><td>2</td><td>0.34</td><td>1.69</td><td>+2.0410</td></tr>
@@ -79,11 +138,11 @@
 \end{aligned}
 \]</div>
   <p><strong>คำตอบ:</strong> วันนี้ market ให้ 0.3330% momentum ให้ 0.7558% ต่อหนึ่งหน่วยของ loading และคุณสมบัติใหม่ให้ 0.7496% ต่อหนึ่งหน่วย เก็บ 0.7496 ไว้เป็นเป้าที่ทุกทางลัดต้องยิงให้โดน</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> momentum กับ $\mathbf x_2$ ขยับไปทางเดียวกันพอสมควร หุ้น 11 มีทั้งคู่ติดลบมากที่สุด (−2.28 กับ −2.09) และผลตอบแทนแย่ที่สุด −3.0054% ความทับซ้อนนี้คือต้นเหตุของทุกเรื่องในหน้านี้</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> momentum กับ $\mathbf x_2$ ขยับไปทางเดียวกันพอสมควร หุ้น 11 มีทั้งคู่ติดลบมากที่สุด (−2.28 กับ −2.09) และผลตอบแทนแย่ที่สุด −3.0054% ความทับซ้อนนี้คือต้นเหตุของทุกเรื่องในหน้านี้ เห็นได้จากจุดน้ำเงินในแผงซ้ายที่เรียงตัวขึ้นไปทางขวา</p>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 2 — ทำทีละขั้น: สามขั้น และขั้นกลางที่ข้ามไม่ได้</h4>
-  <p>ขั้นแรกใช้ model เดิมกับผลตอบแทน แล้วเก็บส่วนที่เหลือ ขั้นกลางหักส่วนที่ model เดิมอธิบายได้ออกจากคุณสมบัติใหม่ด้วย $\mathbf M$ ตัวเดียวกัน ขั้นสุดท้าย regress ส่วนที่เหลือบนส่วนที่เหลือ นี่คือนิยามของขั้นตอน ขั้นที่ 3 พิสูจน์ว่ามันได้คำตอบของขั้นที่ 1</p>
+  <p>ขั้นแรกใช้ model เดิมกับผลตอบแทน แล้วเก็บส่วนที่เหลือ ขั้นกลางหักส่วนที่ model เดิมอธิบายได้ออกจากคุณสมบัติใหม่ด้วย $\mathbf M$ ตัวเดียวกัน ขั้นสุดท้าย regress ส่วนที่เหลือบนส่วนที่เหลือ นี่คือนิยามของขั้นตอน การพิสูจน์ที่ตามมาแสดงว่ามันได้คำตอบเดียวกับการทำทีเดียว</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf P_1&=\mathbf X_1(\mathbf X_1^{\mathsf T}\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T},\\
@@ -93,16 +152,16 @@
 \hat{\boldsymbol\eta}_2&=\hat{\boldsymbol\eta}_1-\tilde{\mathbf x}_2\hat\gamma_2.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>$\mathbf M$ ทำให้ทุกอย่างที่อยู่ใน range ของ $\mathbf X_1$ หายไป $\mathbf M\mathbf X_1=\mathbf 0$ และทำซ้ำแล้วได้ผลเดิม $\mathbf M\mathbf M=\mathbf M$ เพราะ $\mathbf P_1$ เป็น projection (26.3) และ $\mathbf M$ สมมาตร $\hat{\boldsymbol\eta}_1$ คือ residual ของ model เดิม ส่วน $\tilde{\mathbf x}_2$ คือส่วนของคุณสมบัติใหม่ที่ตั้งฉากกับ market และ momentum</p><p>บรรทัดที่สี่เป็น regression ที่มีคอลัมน์เดียวและไม่มีค่าคงที่ คำตอบจึงเป็นผลหารของผลคูณจุดสองตัว ไม่ต้องใช้ matrix เลย</p></div>
+  <div class="reading"><p>$\mathbf M$ ทำให้ทุกอย่างที่อยู่ใน <a href="7.5.html">range ของ $\mathbf X_1$</a> หายไป $\mathbf M\mathbf X_1=\mathbf 0$ และทำซ้ำแล้วได้ผลเดิม $\mathbf M\mathbf M=\mathbf M$ เพราะ $\mathbf P_1$ เป็น <a href="26.3.html">projection</a> และ $\mathbf M$ สมมาตร $\hat{\boldsymbol\eta}_1$ คือ residual ของ model เดิม ส่วน $\tilde{\mathbf x}_2$ คือส่วนของคุณสมบัติใหม่ที่ตั้งฉากกับ market และ momentum ซึ่งคือเส้นส้มในรูปด้านบน</p><p>บรรทัดที่สี่เป็น regression ที่มีคอลัมน์เดียวและไม่มีค่าคงที่ คำตอบจึงเป็นผลหารของผลคูณจุดสองตัว ไม่ต้องใช้ matrix เลย ลำดับนี้คือสูตรสำเร็จสามบรรทัด: ประมาณ model เดิม, regress คอลัมน์ใหม่บน model เดิมแล้วเก็บ residual, regress residual ของผลตอบแทนบน residual ของคอลัมน์</p></div>
 </section>
 <figure class="plot">
-  <h4>Figure 26.5c — หักส่วนที่ซ้ำออก: เรขาคณิตของขั้นกลาง</h4>
+  <h4>รูป — เรขาคณิตของขั้นกลาง: ส่วนที่ตั้งฉากคือส่วนที่ใหม่</h4>
   <img src="../figures/26.5-3.svg" alt="ระนาบเทาคือสิ่งที่ model เดิมพูดได้ ลูกศรดำคือคุณสมบัติใหม่ดิบ เงาน้ำเงินบนระนาบและลูกศรส้มตั้งฉากขึ้นมา" loading="lazy">
-  <figcaption>ภาพวาดประกอบ ไม่ได้วาดตามสเกล ระนาบเทาคือ range ของ $\mathbf X_1$ ทุกอย่างที่ market กับ momentum พูดได้ ลูกศรดำคือ $\mathbf x_2$ ดิบ เงาน้ำเงินบนระนาบคือ $\mathbf P_1\mathbf x_2$ ซึ่ง model เดิมมีอยู่แล้ว ลูกศรส้มที่ตั้งฉากขึ้นมาคือ $\tilde{\mathbf x}_2=\mathbf M\mathbf x_2$ ป้ายในรูปบอกว่าส่วนนี้คือสิ่งที่ต้อง regress</figcaption>
+  <figcaption>ภาพวาดประกอบ ไม่ได้วาดตามสเกล (vector จริงมี 12 มิติ) ระนาบเทาคือ range ของ $\mathbf X_1$ ทุกอย่างที่ market กับ momentum พูดได้ ลูกศรดำคือ $\mathbf x_2$ ดิบ เงาน้ำเงินบนระนาบคือ $\mathbf P_1\mathbf x_2$ ซึ่ง model เดิมมีอยู่แล้ว ลูกศรส้มที่ตั้งฉากขึ้นมาคือ $\tilde{\mathbf x}_2=\mathbf M\mathbf x_2$ ป้ายในรูปบอกว่าส่วนนี้คือสิ่งที่ต้อง regress</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 3 — พิสูจน์: ทำไมสองทางได้ตัวเดียวกัน</h4>
-  <p>เริ่มจาก regression เต็มของขั้นที่ 1 ซึ่ง residual ของมันตั้งฉากกับทุกคอลัมน์ตาม normal equations (15.1) แล้วคูณทั้งสมการด้วย $\mathbf M$ ดูว่าอะไรเหลือ</p>
+  <p>เริ่มจาก regression เต็ม ซึ่ง residual ของมันตั้งฉากกับทุกคอลัมน์ตาม normal equations แล้วคูณทั้งสมการด้วย $\mathbf M$ ดูว่าอะไรเหลือ</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf y&=\mathbf X_1\hat{\boldsymbol\beta}_1+\mathbf x_2\hat\beta_2+\mathbf e,\\
@@ -114,11 +173,11 @@
 \hat{\boldsymbol\eta}_1-\tilde{\mathbf x}_2\hat\gamma_2&=\mathbf e.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดที่สามใช้ $\mathbf P_1\mathbf e=\mathbf X_1(\mathbf X_1^{\mathsf T}\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T}\mathbf e=\mathbf 0$ บรรทัดที่สี่คือบรรทัดแรกหลังคูณ $\mathbf M$ ก้อน $\mathbf X_1\hat{\boldsymbol\beta}_1$ หายไปหมด คูณบรรทัดที่สี่ด้วย $\tilde{\mathbf x}_2^{\mathsf T}$ พจน์ของ $\mathbf e$ เป็นศูนย์ตามบรรทัดที่ห้า จึงได้บรรทัดที่หก ซึ่งตัวตั้งคือ $\tilde{\mathbf x}_2^{\mathsf T}\hat{\boldsymbol\eta}_1$ ของขั้นที่ 2 พอดี</p><p>บรรทัดสุดท้ายคือบรรทัดที่สี่ย้ายข้าง residual ของขั้นสุดท้ายคือ $\mathbf e$ ของ regression เต็มทุกตัว สองทางจึงไม่ได้แค่ใกล้กัน มันคือการคำนวณเดียวกันที่จัดลำดับต่างกัน</p></div>
+  <div class="reading"><p>บรรทัดที่สามใช้ $\mathbf P_1\mathbf e=\mathbf X_1(\mathbf X_1^{\mathsf T}\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T}\mathbf e=\mathbf 0$ บรรทัดที่สี่คือบรรทัดแรกหลังคูณ $\mathbf M$ ก้อน $\mathbf X_1\hat{\boldsymbol\beta}_1$ หายไปหมด คูณบรรทัดที่สี่ด้วย $\tilde{\mathbf x}_2^{\mathsf T}$ พจน์ของ $\mathbf e$ เป็นศูนย์ตามบรรทัดที่ห้า จึงได้บรรทัดที่หก ซึ่งตัวตั้งคือ $\tilde{\mathbf x}_2^{\mathsf T}\hat{\boldsymbol\eta}_1$ ของสูตรทีละขั้นพอดี</p><p>บรรทัดสุดท้ายคือบรรทัดที่สี่ย้ายข้าง residual ของขั้นสุดท้ายคือ $\mathbf e$ ของ regression เต็มทุกตัว สองทางจึงไม่ได้แค่ใกล้กัน มันคือการคำนวณเดียวกันที่จัดลำดับต่างกัน อีกมุมหนึ่ง: คอลัมน์ $[\mathbf X_1\ \tilde{\mathbf x}_2]$ กินพื้นที่เดียวกับ $[\mathbf X_1\ \mathbf x_2]$ ค่าที่ fit ได้และ residual จึงเหมือนกัน และเพราะ $\tilde{\mathbf x}_2$ ตั้งฉากกับ $\mathbf X_1$ ค่าของมันคำนวณแยกได้</p></div>
 </section>
 <section class="example">
   <h4>ขั้นที่ 4 — ตัวเลขของการทำทีละขั้น</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ข้อมูลของขั้นที่ 1 regress $\mathbf y$ บน (1, momentum) ก่อน แล้ว regress $\mathbf x_2$ บน (1, momentum) เก็บ residual ทั้งสองชุด แล้วใช้บรรทัดที่สี่ของขั้นที่ 2</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ข้อมูล 12 หุ้น regress $\mathbf y$ บน (1, momentum) ก่อน แล้ว regress $\mathbf x_2$ บน (1, momentum) เก็บ residual ทั้งสองชุด แล้วใช้สูตรผลหารของผลคูณจุด</p>
   <div class="math">\[
 \begin{aligned}
 \hat{\boldsymbol\gamma}_1&=(0.4235,\ 1.1013)\%,\\
@@ -129,14 +188,9 @@
 \hat\gamma_2&=\frac{6.2133}{8.2894}=0.7496\%.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> 0.7496% ตรงกับขั้นที่ 1 และ residual ทั้ง 12 ตัวของขั้นสุดท้ายต่างจาก residual ของ regression เต็มไม่เกิน $1.2\times10^{-15}$ จุด ซึ่งเป็นแค่เศษของเลขทศนิยมในเครื่อง ส่วน $\hat{\boldsymbol\gamma}_1=(0.4235, 1.1013)$ ไม่เท่ากับ $\hat{\boldsymbol\beta}_1=(0.3330, 0.7558)$ ทฤษฎีบทรับประกันเฉพาะคอลัมน์ที่เติมเข้ามา</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\tilde{\mathbf x}_2$ ต้องรวมกันได้ศูนย์ (ตั้งฉากกับคอลัมน์ market) และผลคูณจุดกับ momentum ต้องเป็นศูนย์ โค้ดท้ายหน้าได้ทั้งสองค่าเล็กกว่า $10^{-15}$</p>
+  <p><strong>คำตอบ:</strong> 0.7496% ตรงกับการทำทีเดียว และ residual ทั้ง 12 ตัวของขั้นสุดท้ายต่างจาก residual ของ regression เต็มไม่เกิน $1.2\times10^{-15}$ จุด ซึ่งเป็นแค่เศษของเลขทศนิยมในเครื่อง ส่วน $\hat{\boldsymbol\gamma}_1=(0.4235, 1.1013)$ ไม่เท่ากับ $\hat{\boldsymbol\beta}_1=(0.3330, 0.7558)$ ทฤษฎีบทรับประกันเฉพาะคอลัมน์ที่เติมเข้ามา</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\tilde{\mathbf x}_2$ ต้องรวมกันได้ศูนย์ (ตั้งฉากกับคอลัมน์ market) และผลคูณจุดกับ momentum ต้องเป็นศูนย์ โค้ดท้ายหน้าได้ทั้งสองค่าเล็กกว่า $10^{-15}$ ในรูปแผงซ้าย เส้นส้มเหนือเส้นดำกับใต้เส้นดำยาวรวมกันเท่ากันพอดี</p>
 </section>
-<figure class="plot">
-  <h4>Figure 26.5a — สองเส้นทางได้คำตอบเดียวกัน เส้นทางที่สามไม่</h4>
-  <img src="../figures/26.5-1.svg" alt="แผนภาพกล่อง สายบนทำสามคอลัมน์พร้อมกัน สายกลางทำ model เดิมก่อนแล้วหักส่วนซ้ำ ทั้งคู่ไปที่ 0.007496 สายล่างใช้คุณสมบัติดิบไปที่ 0.005707" loading="lazy">
-  <figcaption>แผนภาพลำดับงาน สายบน: สามคอลัมน์พร้อมกัน สายกลาง (เขียว): model เดิมก่อน แล้วหักส่วนที่ model เดิมมีออกจากคอลัมน์ใหม่ ทั้งสองสายไปที่ 0.007496 สายล่าง (แดง): model เดิมก่อน แล้วใช้คุณสมบัติดิบ ไปที่ 0.005707 ซึ่งป้ายบอกว่าต่ำไป 24% ตัวเลขในรูปเป็นทศนิยม (0.007496 คือ 0.7496%)</figcaption>
-</figure>
 <section class="formula">
   <h4>ขั้นที่ 5 — ข้ามขั้นกลาง: ค่าหดเข้าหาศูนย์เสมอ</h4>
   <p>ทางลัดของ hook ใช้ $\hat{\boldsymbol\eta}_1$ ที่ถูกต้อง แต่ใช้ $\mathbf x_2$ ดิบแทน $\tilde{\mathbf x}_2$ ตัวตั้งกับตัวหารเปลี่ยนอย่างไร</p>
@@ -150,9 +204,27 @@
 \]</div>
   <div class="reading"><p>ตัวตั้งไม่เปลี่ยน $\mathbf x_2^{\mathsf T}\hat{\boldsymbol\eta}_1=\tilde{\mathbf x}_2^{\mathsf T}\hat{\boldsymbol\eta}_1=6.2133$ เพราะ $\hat{\boldsymbol\eta}_1$ ตั้งฉากกับ range ของ $\mathbf X_1$ ส่วนของ $\mathbf x_2$ ที่อยู่ในนั้นจึงไม่มีอะไรให้อธิบาย แต่ตัวหารโตขึ้นตาม Pythagoras $\mathbf x_2^{\mathsf T}\mathbf x_2=\tilde{\mathbf x}_2^{\mathsf T}\tilde{\mathbf x}_2+\lVert\mathbf P_1\mathbf x_2\rVert^2$ ตัวคูณจึงไม่เกิน 1 เสมอ ค่าหดเข้าหาศูนย์ ไม่ว่า $\hat\gamma_2$ จะบวกหรือลบ</p><p>ตัวคูณ 0.7613 ใกล้ $1-\rho^2=0.7684$ ของ correlation 0.4812 ระหว่าง momentum กับ $\mathbf x_2$ แต่ต่ำกว่าเล็กน้อย เพราะค่าเฉลี่ยของ $\mathbf x_2$ ไม่เป็นศูนย์ ($-0.0917$) และคอลัมน์ market ดูดส่วนนั้นไปด้วย</p></div>
 </section>
+<figure class="plot">
+  <h4>รูป — ตัวหารของทางลัดยาวเกินเพราะนับส่วนที่ซ้ำ</h4>
+  <svg viewBox="0 0 460 270" role="img" aria-label="สามเหลี่ยมมุมฉาก ขานอนสีน้ำเงินคือส่วนที่ model เดิมมี ความยาวกำลังสอง 2.60 ขาตั้งสีส้มคือส่วนใหม่ 8.29 ด้านตรงข้ามคือ x2 ดิบ 10.89 อัตราส่วน 0.7613" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="120" y1="240" x2="232.8" y2="240" stroke="#2455d6" stroke-width="5"/>
+      <line x1="232.8" y1="240" x2="232.8" y2="38.5" stroke="#a65f00" stroke-width="5"/>
+      <line x1="120" y1="240" x2="232.8" y2="38.5" stroke="#181818" stroke-width="3"/>
+      <path d="M220.8 240 V228 H232.8" fill="none" stroke="#5b6472" stroke-width="1.5"/>
+      <text x="176" y="262" text-anchor="middle" fill="#2455d6">ส่วนที่ซ้ำ 2.60</text>
+      <text x="242" y="130" fill="#a65f00">ส่วนใหม่ 8.29</text>
+      <text x="168" y="120" text-anchor="end">x₂ ดิบ 10.89</text>
+      <text x="300" y="200">ทางถูกหารด้วย 8.29</text>
+      <text x="300" y="222">ทางลัดหารด้วย 10.89</text>
+      <text x="300" y="244" fill="#d82632">ค่าหด 0.7613 เท่า</text>
+    </g>
+  </svg>
+  <figcaption>ความยาวของแต่ละด้านวาดตามสเกล ตัวเลขคือความยาวกำลังสอง ขาตั้งสีส้มคือ $\tilde{\mathbf x}_2$ ส่วนที่ใหม่จริง ขานอนสีน้ำเงินคือ $\mathbf P_1\mathbf x_2$ ส่วนที่ market กับ momentum มีอยู่แล้ว ด้านตรงข้ามมุมฉากคือ $\mathbf x_2$ ดิบ ตัวตั้งของทั้งสองทางเท่ากัน (6.2133) เพราะส่วนน้ำเงินไม่มีอะไรให้อธิบายในผลตอบแทนที่เหลือ แต่ทางลัดหารด้วยด้านที่ยาวที่สุด ค่าที่ได้จึงต่ำไปเสมอ</figcaption>
+</figure>
 <section class="formula">
   <h4>ขั้นที่ 6 — model เดิมให้เครดิต momentum เกินจริงแค่ไหน</h4>
-  <p>ขั้นที่ 4 ได้ momentum 1.1013% จาก model เดิม แต่ 0.7558% จาก model เต็ม ส่วนต่างมาจากไหน? แทน $\mathbf y$ ของบรรทัดแรกในขั้นที่ 3 ลงในสูตรของ model เดิม แล้วใช้ $\mathbf X_1^{\mathsf T}\mathbf e=\mathbf 0$</p>
+  <p>model เดิมให้ momentum 1.1013% แต่ model เต็มให้ 0.7558% ส่วนต่างมาจากไหน? แทน $\mathbf y$ ของ regression เต็มลงในสูตรของ model เดิม แล้วใช้ $\mathbf X_1^{\mathsf T}\mathbf e=\mathbf 0$</p>
   <div class="math">\[
 \begin{aligned}
 \hat{\boldsymbol\gamma}_1&=(\mathbf X_1^{\mathsf T}\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T}\mathbf y\\
@@ -164,12 +236,12 @@
 \frac{1.1013}{0.7558}-1&=45.7\%.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>$\boldsymbol\delta$ คือ regression ของคุณสมบัติใหม่บน (1, momentum) หุ้นที่ momentum สูงหนึ่งหน่วยมีคุณสมบัติใหม่สูงกว่าเฉลี่ย 0.4609 หน่วย เมื่อ model ขาดคอลัมน์ใหม่ momentum จึงรับเครดิต $0.4609\times0.7496=0.3455$ จุดที่เป็นของคุณสมบัตินั้น ตัวเลขเก่าไม่ได้คำนวณผิด มันเอนจริง และการเพิ่มคอลัมน์คือการแก้ความเอนนั้น</p><p>ราคาของการมีสองคอลัมน์ที่ทับกันคือ variance inflation $1/(1-0.4812^2)=1.301$ variance ของ $\hat\beta_2$ โตขึ้น 30% ส่วน SE โต $\sqrt{1.301}=1.141$ เท่า ยังรับได้ ถ้า correlation เป็น 0.95 variance จะพอง 10.26 เท่า (15.3 ขั้นที่ 3)</p></div>
+  <div class="reading"><p>$\boldsymbol\delta$ คือ regression ของคุณสมบัติใหม่บน (1, momentum) ซึ่งคือเส้นดำในแผงซ้ายของรูปแรก หุ้นที่ momentum สูงหนึ่งหน่วยมีคุณสมบัติใหม่สูงกว่าเฉลี่ย 0.4609 หน่วย เมื่อ model ขาดคอลัมน์ใหม่ momentum จึงรับเครดิต $0.4609\times0.7496=0.3455$ จุดที่เป็นของคุณสมบัตินั้น ตัวเลขเก่าไม่ได้คำนวณผิด มันเอนจริง และการเพิ่มคอลัมน์คือการแก้ความเอนนั้น</p><p>ราคาของการมีสองคอลัมน์ที่ทับกันคือ variance inflation $1/(1-0.4812^2)=1.301$ variance ของ $\hat\beta_2$ โตขึ้น 30% ส่วน SE โต $\sqrt{1.301}=1.141$ เท่า ยังรับได้ ถ้า correlation เป็น 0.95 variance จะพอง 10.26 เท่า (สูตร $\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}$ ของความคลาดใน <a href="15.3.html">multi-factor model</a> ยิ่งคอลัมน์เกือบซ้ำกัน $\mathbf X^{\mathsf T}\mathbf X$ ยิ่งเกือบหา inverse ไม่ได้)</p></div>
 </section>
 <figure class="plot">
-  <h4>Figure 26.5b — momentum ดูเก่งเกินจริง ตราบที่ยังขาดคอลัมน์ใหม่</h4>
+  <h4>รูป — momentum ดูเก่งเกินจริง ตราบที่ยังขาดคอลัมน์ใหม่</h4>
   <img src="../figures/26.5-2.svg" alt="เส้นน้ำเงินไต่ขึ้นตาม correlation ระหว่างคุณสมบัติใหม่กับ momentum เส้นประแดงที่ 0.7558 จุดดำที่ correlation 0.4812 ค่า 1.1013" loading="lazy">
-  <figcaption>แกนนอนคือ correlation ระหว่างคุณสมบัติใหม่กับ momentum 0 ถึง 0.95 (40 ค่า) แกนตั้งคือค่าสัมประสิทธิ์ของ momentum ที่ model เดิมรายงาน (%) เส้นน้ำเงินมาจากการจำลองหุ้น 4,000 ตัวต่อจุด (seed 31) ที่คอลัมน์มี variance หนึ่ง จึงวิ่งตาม $0.7558+0.7496\rho$ เส้นประแดงคือค่าจริง 0.7558% จุดดำคือข้อมูล 12 หุ้นของหน้านี้ที่ correlation 0.4812 รายงาน 1.1013% สูงเกิน 45.7% จุดนี้อยู่ต่ำกว่าเส้นเล็กน้อย (เส้นให้ 1.1165) เพราะใน 12 หุ้น ความชัน $\delta$ คือ 0.4609 ไม่ใช่ 0.4812</figcaption>
+  <figcaption>แกนนอนคือ correlation ระหว่างคุณสมบัติใหม่กับ momentum 0 ถึง 0.95 แกนตั้งคือค่าสัมประสิทธิ์ของ momentum ที่ model เดิมรายงาน (%) เส้นน้ำเงินมาจากการจำลองหุ้น 4,000 ตัวต่อจุดที่คอลัมน์มี variance หนึ่ง จึงวิ่งตาม $0.7558+0.7496\rho$ เส้นประแดงคือค่าที่ไม่เอน 0.7558% จุดดำคือข้อมูล 12 หุ้นของหน้านี้ที่ correlation 0.4812 รายงาน 1.1013% สูงเกิน 45.7% จุดนี้อยู่ต่ำกว่าเส้นเล็กน้อย (เส้นให้ 1.1165) เพราะใน 12 หุ้น ความชัน $\delta$ คือ 0.4609 ไม่ใช่ 0.4812</figcaption>
 </figure>
 <section class="example">
   <h4>ขั้นที่ 7 — ทางลัดอีกแบบ: ค่าถูก แต่ residual ผิด</h4>
@@ -182,17 +254,17 @@
 \frac{4.2088}{1.8360}&=2.29.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> ค่าสัมประสิทธิ์ถูกทุกหลัก เพราะ $\tilde{\mathbf x}_2^{\mathsf T}\mathbf y=\tilde{\mathbf x}_2^{\mathsf T}\mathbf M\mathbf y$ ($\tilde{\mathbf x}_2$ ตั้งฉากกับ $\mathbf X_1$ ส่วนของ $\mathbf y$ ที่อยู่ใน range ของ $\mathbf X_1$ จึงไม่ถูกนับ) แต่ residual ใหญ่กว่าของจริง 2.29 เท่า เพราะทางนี้ไม่เคยหักสิ่งที่ market กับ momentum อธิบายได้ออกจาก $\mathbf y$ ถ้าเอา residual นี้ไปประมาณความผันผวนเฉพาะตัว (27.4) จะได้ค่าสูงเกินจริงราว 2.3 เท่า</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> แผงขวาของ Figure 26.5d เขียน 0.0184, 0.0184, 0.0421 และ 0.0212 ในหน่วยทศนิยม ซึ่งคือ 1.8360, 1.8360, 4.2088 และ 2.1172 ในหน่วย % ตัวสุดท้ายคือ residual ของทางลัดในขั้นที่ 5</p>
+  <p><strong>คำตอบ:</strong> ค่าสัมประสิทธิ์ถูกทุกหลัก เพราะ $\tilde{\mathbf x}_2^{\mathsf T}\mathbf y=\tilde{\mathbf x}_2^{\mathsf T}\mathbf M\mathbf y$ ($\tilde{\mathbf x}_2$ ตั้งฉากกับ $\mathbf X_1$ ส่วนของ $\mathbf y$ ที่อยู่ใน range ของ $\mathbf X_1$ จึงไม่ถูกนับ) แต่ residual ใหญ่กว่าของจริง 2.29 เท่า เพราะทางนี้ไม่เคยหักสิ่งที่ market กับ momentum อธิบายได้ออกจาก $\mathbf y$ ถ้าเอา residual นี้ไป<a href="27.4.html">ประมาณความผันผวนเฉพาะตัว</a> จะได้ค่าสูงเกินจริงราว 2.3 เท่า ในทางกลับกัน ถ้าต้องการแค่ factor return ของคอลัมน์ใหม่ ทางนี้ใช้ได้และไม่ต้องเก็บ residual ของ model เดิม</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> แผงขวาของรูปเทียบสี่เส้นทางข้างล่างเขียน 0.0184, 0.0184, 0.0421 และ 0.0212 ในหน่วยทศนิยม ซึ่งคือ 1.8360, 1.8360, 4.2088 และ 2.1172 ในหน่วย % ตัวสุดท้ายคือ residual ของทางลัดที่ข้ามขั้นกลาง</p>
 </section>
 <figure class="plot">
-  <h4>Figure 26.5d — ค่าเท่ากัน แต่ residual คนละเรื่อง</h4>
+  <h4>รูป — สี่เส้นทาง ค่าเท่ากันสามทาง residual ถูกแค่สองทาง</h4>
   <img src="../figures/26.5-4.svg" alt="แผงซ้ายค่าสัมประสิทธิ์สี่เส้นทาง 0.7496 สามแท่ง 0.5707 หนึ่งแท่ง แผงขวาขนาด residual 0.0184 0.0184 0.0421 0.0212" loading="lazy">
   <figcaption>สี่เส้นทาง: ทีเดียว, ทีละขั้นอย่างถูกต้อง, ทีละขั้นบนผลตอบแทนดิบ, และทีละขั้นที่ข้ามขั้นกลาง แผงซ้ายคือค่าสัมประสิทธิ์ของคอลัมน์ใหม่ (%) 0.7496, 0.7496, 0.7496 และ 0.5707 แผงขวาคือความยาวของ residual ในหน่วยทศนิยม 0.0184, 0.0184, 0.0421 และ 0.0212 มีแค่สองเส้นทางแรกที่ได้ทั้งค่าและ residual ถูก</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 8 — เมื่อหุ้นแต่ละตัวเสียงดังไม่เท่ากัน: WLS และความคลาด $\mathbf G$</h4>
-  <p>ใน risk model แต่ละหุ้นมีความผันผวนเฉพาะตัว $\sigma_i$ ไม่เท่ากัน คูณสมการ $\mathbf r=\mathbf B\mathbf f+\boldsymbol\epsilon$ ด้วย $1/\sigma_i$ ทีละแถว ความคลาดใหม่มี variance หนึ่งทุกแถว แล้วใช้ OLS ของ 15.1 กับข้อมูลที่ปรับแล้ว ได้ WLS ในสัญลักษณ์ของ 27.1</p>
+  <p>ใน risk model แต่ละหุ้นมีความผันผวนเฉพาะตัว $\sigma_i$ ไม่เท่ากัน หุ้นที่เสียงดังควรมีน้ำหนักน้อย คูณสมการ $\mathbf r=\mathbf B\mathbf f+\boldsymbol\epsilon$ ด้วย $1/\sigma_i$ ทีละแถว ความคลาดใหม่มี variance หนึ่งทุกแถว แล้วใช้ OLS กับข้อมูลที่ปรับแล้ว ได้ WLS ซึ่งเป็นวิธีที่ <a href="27.1.html">regression ข้ามหุ้น</a>ใช้หา factor return ทุกวัน</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf W&=\boldsymbol\Omega_\epsilon^{-1},\\
@@ -205,11 +277,11 @@
 &=(\mathbf B^{\mathsf T}\mathbf W\mathbf B)^{-1}.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>$\mathbf H\mathbf B=\mathbf I$ เห็นได้จากการคูณตรง ๆ ความคลาดของ factor return จึงเป็นผลรวมถ่วงของส่วนเฉพาะตัวเท่านั้น บรรทัดสุดท้ายแทน $\mathbf H$ สองครั้ง ตรงกลางเหลือ $\mathbf W\boldsymbol\Omega_\epsilon\mathbf W=\mathbf W$ แล้ว $(\mathbf B^{\mathsf T}\mathbf W\mathbf B)^{-1}$ ตัดกับ $\mathbf B^{\mathsf T}\mathbf W\mathbf B$ ไปหนึ่งคู่ นี่คือ $\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}$ ของ 15.3 ขั้นที่ 3 ในแบบถ่วงน้ำหนัก</p><p>FWL ใช้ได้เหมือนเดิมหลังปรับข้อมูล โดย $\mathbf M$ กลายเป็น $\mathbf I-\mathbf X_1(\mathbf X_1^{\mathsf T}\mathbf W\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T}\mathbf W$ โค้ดท้ายหน้าตรวจกับข้อมูล 12 หุ้นด้วยความผันผวนสมมติ ได้ 0.7450% ทั้งสองทาง แถวของ $\mathbf H$ คือ factor-mimicking portfolio ที่ 27.1 ใช้ และ $\mathbf G$ คือสิ่งที่ 27.2 ต้องหักออก</p></div>
+  <div class="reading"><p>$\mathbf H\mathbf B=\mathbf I$ เห็นได้จากการคูณตรง ๆ ความคลาดของ factor return จึงเป็นผลรวมถ่วงของส่วนเฉพาะตัวเท่านั้น บรรทัดสุดท้ายแทน $\mathbf H$ สองครั้ง ตรงกลางเหลือ $\mathbf W\boldsymbol\Omega_\epsilon\mathbf W=\mathbf W$ แล้ว $(\mathbf B^{\mathsf T}\mathbf W\mathbf B)^{-1}$ ตัดกับ $\mathbf B^{\mathsf T}\mathbf W\mathbf B$ ไปหนึ่งคู่ นี่คือ $\sigma^2(\mathbf X^{\mathsf T}\mathbf X)^{-1}$ ของ OLS ในแบบถ่วงน้ำหนัก</p><p>แต่ละแถวของ $\mathbf H$ เป็นพอร์ตหุ้น ($n$ ตัวเลข) ที่มี exposure หนึ่งหน่วยต่อ factor ของมันและศูนย์ต่อ factor อื่น ($\mathbf H\mathbf B=\mathbf I$) และมีความเสี่ยงเฉพาะตัวต่ำที่สุดในบรรดาพอร์ตแบบนั้น เรียกว่า factor-mimicking portfolio ผลตอบแทนของมันคือ factor return ที่ประมาณได้ FWL ใช้ได้เหมือนเดิมหลังปรับข้อมูล โดย $\mathbf M$ กลายเป็น $\mathbf I-\mathbf X_1(\mathbf X_1^{\mathsf T}\mathbf W\mathbf X_1)^{-1}\mathbf X_1^{\mathsf T}\mathbf W$ โค้ดท้ายหน้าตรวจกับข้อมูล 12 หุ้นด้วยความผันผวนสมมติ ได้ 0.7450% ทั้งสองทาง และ $\mathbf G$ คือสิ่งที่ต้องหักออกตอน<a href="27.2.html">ประมาณ covariance ของ factor</a></p></div>
 </section>
 <section class="example">
   <h4>ขั้นที่ 9 — ค่า $\mathbf G$ ของ model สี่หุ้น</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\mathbf B$ ของ 26.1 ความผันผวนเฉพาะตัว 1.80%, 2.20%, 1.50% และ 2.60% ต่อวัน ผลตอบแทนวันนี้ (0.90, 1.05, 0.65, 0.90)% ซึ่งสร้างจาก $\mathbf f$ จริง (0.80, −0.50, 0.30)% ค่าในบรรทัดคำนวณด้วยโค้ดท้ายหน้า</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> loadings ของหุ้นสี่ตัวสาม factor จาก<a href="26.1.html">สมการ factor model</a> ความผันผวนเฉพาะตัว 1.80%, 2.20%, 1.50% และ 2.60% ต่อวัน ผลตอบแทนวันนี้ (0.90, 1.05, 0.65, 0.90)% ซึ่งสร้างจาก $\mathbf f$ จริง (0.80, −0.50, 0.30)% ค่าในบรรทัดคำนวณด้วยโค้ดท้ายหน้า</p>
   <div class="math">\[
 \begin{aligned}
 \operatorname{diag}(\mathbf G)&=(1.7014,\ 1.3144,\\
@@ -221,33 +293,67 @@
 &\qquad -0.0010)\%.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> ด้วยหุ้นแค่สี่ตัว SE ของ momentum คือ 1.15% ต่อวัน ขณะที่ momentum factor เองผันผวนแค่ 0.35% ค่าประมาณรายวันจึงเป็นเสียงรบกวนเกือบทั้งหมด วันนี้คลาดไป 0.388 จุด ซึ่งเป็นแค่ 0.34 เท่าของ SE ถ้าหุ้นมี 400 ตัวที่ loading และความผันผวนซ้ำชุดเดิม 100 ชุด $\mathbf B^{\mathsf T}\mathbf W\mathbf B$ คูณ 100 และ $\mathbf G$ หาร 100 SE จึงเหลือ (0.130, 0.115, 0.198)%</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> WLS ต้องไม่แย่กว่า OLS แนวทแยงของ covariance ของ OLS บนข้อมูลเดียวกันคือ 1.9134, 1.3182 และ 4.3283 มากกว่า 1.7014, 1.3144 และ 3.9045 ทุกตัว ตามที่ Gauss–Markov บอก</p>
+  <p><strong>คำตอบ:</strong> ด้วยหุ้นแค่สี่ตัว SE ของ momentum คือ 1.15% ต่อวัน ขณะที่ momentum factor เองผันผวนแค่ 0.35% ค่าประมาณรายวันจึงเป็นเสียงรบกวนเกือบทั้งหมด วันนี้คลาดไป 0.388 จุด ซึ่งเป็นแค่ 0.34 เท่าของ SE ถ้าหุ้นมี 400 ตัวที่ loading และความผันผวนซ้ำชุดเดิม 100 ชุด $\mathbf B^{\mathsf T}\mathbf W\mathbf B$ คูณ 100 และ $\mathbf G$ หาร 100 SE จึงเหลือ (0.130, 0.115, 0.198)% ยิ่งตลาดใหญ่ ค่าประมาณรายวันยิ่งน่าเชื่อ</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> WLS ต้องไม่แย่กว่า OLS แนวทแยงของ covariance ของ OLS บนข้อมูลเดียวกันคือ 1.9134, 1.3182 และ 4.3283 มากกว่า 1.7014, 1.3144 และ 3.9045 ทุกตัว ตามที่ทฤษฎีบท Gauss–Markov บอกว่าการถ่วงด้วย $1/\sigma_i^2$ ให้ค่าประมาณที่แกว่งน้อยที่สุด</p>
 </section>
-<section class="prose">
-  <h4>คำถามที่ควรถามออกมาดัง ๆ</h4>
-  <p><strong>ถ้าทำเป็นขั้นได้เท่ากันเป๊ะ ทำไมไม่รื้อทีเดียวไปเลย?</strong> เพราะ model ที่ใช้อยู่มีประวัติหลายปีและรายงานทุกฉบับอ้างอิงมัน ทำเป็นขั้นทำให้ทดสอบคุณสมบัติใหม่ได้โดยไม่แตะตัวเลขเก่า ถ้าไม่มีอะไรก็ทิ้งไป ถ้ามีค่อยตัดสินว่าจะรับเข้า model ถาวรแบบไหน</p>
-  <p><strong>ลำดับของขั้นสำคัญไหม?</strong> สำหรับคอลัมน์ที่เติมเข้ามา ไม่สำคัญ ได้ 0.7496% ทุกทางที่ถูก แต่ค่าของคอลัมน์เดิมจากขั้นแรกคือ $\hat{\boldsymbol\gamma}_1$ ไม่ใช่ $\hat{\boldsymbol\beta}_1$ ถ้าจะรายงานผลของ momentum ที่หักคุณสมบัติใหม่แล้ว ต้องใช้ model เต็ม</p>
-</section>
+<figure class="plot">
+  <h4>รูป — ความคลาดของ factor return เทียบกับตัว factor เอง</h4>
+  <svg viewBox="0 0 460 278" role="img" aria-label="แท่งสามสีต่อ factor ความผันผวนของ factor 1.00 0.35 0.55 SE จาก 4 หุ้น 1.30 1.15 1.98 SE จาก 400 หุ้น 0.13 0.12 0.20 เปอร์เซ็นต์ต่อวัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <rect x="60" y="10" width="14" height="14" fill="#5b6472"/><text x="80" y="22">factor เอง</text>
+      <rect x="185" y="10" width="14" height="14" fill="#d82632"/><text x="205" y="22">SE 4 หุ้น</text>
+      <rect x="305" y="10" width="14" height="14" fill="#007f8f"/><text x="325" y="22">SE 400 หุ้น</text>
+      <line x1="56" y1="60" x2="455" y2="60" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="56" y1="105" x2="455" y2="105" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="56" y1="150" x2="455" y2="150" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="56" y1="195" x2="455" y2="195" stroke="#d7dce3" stroke-width="1"/>
+      <line x1="56" y1="240" x2="455" y2="240" stroke="#5b6472" stroke-width="2"/>
+      <text x="50" y="65" text-anchor="end" fill="#5b6472">2.0</text>
+      <text x="50" y="110" text-anchor="end" fill="#5b6472">1.5</text>
+      <text x="50" y="155" text-anchor="end" fill="#5b6472">1.0</text>
+      <text x="50" y="200" text-anchor="end" fill="#5b6472">0.5</text>
+      <text x="50" y="245" text-anchor="end" fill="#5b6472">0</text>
+      <text x="14" y="150" text-anchor="middle" transform="rotate(-90 14 150)" fill="#5b6472">% ต่อวัน</text>
+      <rect x="79" y="150" width="30" height="90" fill="#5b6472"/><text x="94" y="144" text-anchor="middle">1.00</text>
+      <rect x="115" y="123" width="30" height="117" fill="#d82632"/><text x="130" y="117" text-anchor="middle">1.30</text>
+      <rect x="151" y="228.3" width="30" height="11.7" fill="#007f8f"/><text x="166" y="222" text-anchor="middle">0.13</text>
+      <rect x="209" y="208.5" width="30" height="31.5" fill="#5b6472"/><text x="224" y="202" text-anchor="middle">0.35</text>
+      <rect x="245" y="136.5" width="30" height="103.5" fill="#d82632"/><text x="260" y="130" text-anchor="middle">1.15</text>
+      <rect x="281" y="229.65" width="30" height="10.35" fill="#007f8f"/><text x="296" y="223" text-anchor="middle">0.12</text>
+      <rect x="339" y="190.5" width="30" height="49.5" fill="#5b6472"/><text x="354" y="184" text-anchor="middle">0.55</text>
+      <rect x="375" y="61.8" width="30" height="178.2" fill="#d82632"/><text x="390" y="55" text-anchor="middle">1.98</text>
+      <rect x="411" y="222.2" width="30" height="17.8" fill="#007f8f"/><text x="426" y="216" text-anchor="middle">0.20</text>
+      <text x="130" y="262" text-anchor="middle">market</text>
+      <text x="260" y="262" text-anchor="middle">momentum</text>
+      <text x="390" y="262" text-anchor="middle">tech</text>
+    </g>
+  </svg>
+  <figcaption>ต่อ factor หนึ่งตัวมีสามแท่ง แท่งเทาคือความผันผวนรายวันของ factor จริง แท่งแดงคือ SE ของค่าประมาณรายวันจากหุ้นสี่ตัว ($\sqrt{G_{jj}}$) แท่งเขียวอมฟ้าคือ SE เมื่อหุ้นมี 400 ตัว (หาร 10) กับหุ้นสี่ตัว แท่งแดงสูงกว่าแท่งเทาทุก factor ค่าประมาณเป็นเสียงรบกวนมากกว่าสัญญาณ momentum แย่ที่สุด ความคลาด 1.15 ต่อตัวจริง 0.35 กับหุ้น 400 ตัว ความคลาดเหลือราวหนึ่งในสามของตัวจริง</figcaption>
+</figure>
 <section class="pitfall">
   <h4>ความผิดที่ให้ตัวเลขผิดแบบไม่มีอาการ</h4>
   <p><strong>ใช้คุณสมบัติดิบกับ residual:</strong> ได้ 0.5707% แทน 0.7496% ต่ำไป 23.9% ความผิดนี้หดเข้าหาศูนย์เสมอ คุณสมบัติที่ดีจริงจึงดูแย่กว่าที่เป็น และอาจถูกทิ้งเพราะไม่ผ่านการทดสอบนัยสำคัญ</p>
   <p><strong>เก็บ residual จากทางลัดบนผลตอบแทนดิบ:</strong> ค่าสัมประสิทธิ์ถูกทุกหลัก แต่ residual ใหญ่ 2.29 เท่า residual คือส่วนเฉพาะตัวที่ใช้ประมาณความเสี่ยงและวัดฝีมือต่อ ความผิดตรงนี้ไหลไปทุกที่</p>
-  <p><strong>รายงานค่าของขั้นแรกเป็นค่าสุดท้าย:</strong> momentum 1.1013% จาก model เดิมสูงกว่าค่าใน model เต็ม 0.7558% อยู่ 45.7% เพราะรับเครดิตของคุณสมบัติที่ขาดไป</p>
+  <p><strong>รายงานค่าของขั้นแรกเป็นค่าสุดท้าย:</strong> momentum 1.1013% จาก model เดิมสูงกว่าค่าใน model เต็ม 0.7558% อยู่ 45.7% เพราะรับเครดิตของคุณสมบัติที่ขาดไป ถ้าจะรายงานผลของ momentum ที่หักคุณสมบัติใหม่แล้ว ต้องใช้ model เต็ม</p>
   <p><strong>ลืม $\mathbf G$:</strong> กับหุ้นน้อย ความคลาดของ factor return ใหญ่กว่าตัว factor เอง (1.15% เทียบ 0.35% ใน model สี่หุ้น) ถ้าคิด covariance ของ factor จากค่าประมาณรายวันตรง ๆ จะได้ variance สูงเกินจริงเสมอ</p>
 </section>
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>ขั้นตอนเพิ่ม factor ใหม่บนโต๊ะคือสี่ขั้น หักส่วนที่ model เดิมอธิบายได้ออกจากคุณสมบัติใหม่ด้วย WLS ได้ loading ที่ตั้งฉาก ประมาณ factor return ใหม่ทุกวันด้วยการ regress residual ของ model เดิมบน loading นั้น (ซึ่งให้ค่าเดียวกับการ regress ผลตอบแทนดิบ) หาค่าเฉลี่ยและ Sharpe Ratio ของ factor ใหม่จากประวัติ แล้วตัดสินว่าจะรับเข้า model ไหม ประวัติของ factor เก่าไม่ถูกแตะเลย นี่คือ <a href="26.3.html">push-out</a> ที่ทำงานจริง และ FWL คือเหตุผลที่มันถูกต้อง</p>
+</section>
 <section class="example">
-  <h4>สามโจทย์ตรวจความเข้าใจ</h4>
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
   <p><strong>1.</strong> ถ้า correlation ระหว่าง momentum กับคุณสมบัติใหม่เป็น 0.9 หรือ 0.95 variance ของค่าประมาณพองกี่เท่า และ SE พองกี่เท่า</p>
   <details><summary>เฉลย</summary><p>0.9: $1/(1-0.81)=5.26$ เท่า SE $\sqrt{5.26}=2.29$ เท่า 0.95: $1/(1-0.9025)=10.26$ เท่า SE 3.20 เท่า ที่ 0.4812 ของหน้านี้แค่ 1.30 เท่าและ 1.14 เท่า</p></details>
-  <p><strong>2.</strong> ถ้าทีมเติม $\tilde{\mathbf x}_2$ แทน $\mathbf x_2$ เข้าไปใน model เดิม (push-out ของ 26.3) ค่าสัมประสิทธิ์ทั้งสามเป็นเท่าไร</p>
-  <details><summary>เฉลย</summary><p>(0.4235, 1.1013, 0.7496)% สองตัวแรกเท่ากับ model เดิมเพราะ $\tilde{\mathbf x}_2$ ตั้งฉากกับคอลัมน์เดิม ตัวที่สามเท่ากับ model เต็ม ประวัติของ market กับ momentum จึงไม่ขยับ แต่ momentum ในรายงานนี้ยังรวมเครดิต 0.3455 จุดที่ขั้นที่ 6 แยกให้ดู</p></details>
-  <p><strong>3.</strong> ต้องมีหุ้นกี่ชุดของสี่ตัวในขั้นที่ 9 SE ของ momentum ถึงจะไม่เกิน 0.035% หนึ่งในสิบของความผันผวนของ factor เอง</p>
+  <p><strong>2.</strong> ถ้าทีมเติม $\tilde{\mathbf x}_2$ แทน $\mathbf x_2$ เข้าไปใน model เดิม (push-out) ค่าสัมประสิทธิ์ทั้งสามเป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>(0.4235, 1.1013, 0.7496)% สองตัวแรกเท่ากับ model เดิมเพราะ $\tilde{\mathbf x}_2$ ตั้งฉากกับคอลัมน์เดิม ตัวที่สามเท่ากับ model เต็ม ประวัติของ market กับ momentum จึงไม่ขยับ แต่ momentum ในรายงานนี้ยังรวมเครดิต 0.3455 จุดที่การแยกความเอนแสดงให้ดู</p></details>
+  <p><strong>3.</strong> ต้องมีหุ้นกี่ชุดของสี่ตัวในตัวอย่าง $\mathbf G$ SE ของ momentum ถึงจะไม่เกิน 0.035% หนึ่งในสิบของความผันผวนของ factor เอง</p>
   <details><summary>เฉลย</summary><p>SE หารด้วย $\sqrt k$ เมื่อมี $k$ ชุด ต้องการ $1.1465/\sqrt k\le0.035$ คือ $k\ge(1.1465/0.035)^2=1{,}073.01$ จึงต้อง 1,074 ชุด หรือหุ้น 4,296 ตัว ตลาดใหญ่จึงสำคัญต่อคุณภาพของ factor return รายวัน</p></details>
 </section>
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
-  <p>รันใน Node.js ได้โดยไม่ต้องติดตั้งอะไร โค้ดแก้ WLS (น้ำหนักเท่ากันคือ OLS) หา residual ของ model เดิม ทำ FWL ทีละขั้น ทางลัดทั้งสองแบบ ความเอนของ model เดิม ตรวจ FWL แบบถ่วงน้ำหนัก และคำนวณ $\mathbf H$, $\mathbf G$ ของ model สี่หุ้น ตรวจว่าข้อมูลเป็นตัวเลขจริง น้ำหนักเป็นบวก และคอลัมน์ไม่ซ้ำกัน</p>
+  <details><summary>เปิดดูโค้ด</summary>
+  <p>รันใน Node.js ได้โดยไม่ต้องติดตั้งอะไร โค้ดแก้ WLS (น้ำหนักเท่ากันคือ OLS) หา residual ของ model เดิม ทำ FWL ทีละขั้น ทางลัดทั้งสองแบบ ความเอนของ model เดิม ตรวจ FWL แบบถ่วงน้ำหนัก และคำนวณ $\mathbf H$, $\mathbf G$ ของ model สี่หุ้น</p>
   <pre><code class="language-javascript" data-example="26.5">const {sqrt, abs, max} = Math;
 function checkMatrix(A, name) {
   if (!Array.isArray(A) || A.length === 0 || !A.every(row =&gt; Array.isArray(row) &amp;&amp; row.length === A[0].length &amp;&amp; row.every(Number.isFinite))) {
@@ -326,30 +432,18 @@ console.log(JSON.stringify({
     olsVar: Gols.map((row, i) =&gt; row[i]), wlsVar: est.G.map((row, i) =&gt; row[i]), se400: se.map(v =&gt; v / 10)},
   exercise3: Math.ceil((se[1] / 0.035) ** 2)
 }));</code></pre>
-</section>
-<section class="prose">
-  <h4>ที่มาที่ไป</h4>
-  <p>Ragnar Frisch กับ Frederick Waugh แสดงในปี 1933 ว่าการหักแนวโน้มตามเวลาออกจากตัวแปรก่อน แล้วค่อย regress ให้ค่าเดียวกับการใส่แนวโน้มเป็นคอลัมน์หนึ่งใน regression Michael Lovell ขยายผลเป็นกรณีทั่วไปในปี 1963 ชื่อของทฤษฎีบทจึงมีสามคน</p>
-</section>
-<section class="table">
-  <h4>ข้อจำกัด: สี่เส้นทาง อันไหนให้อะไรถูก</h4>
-  <div class="table-wrap"><table><thead><tr><th>เส้นทาง</th><th>ค่าของคอลัมน์ใหม่</th><th>residual</th><th>ใช้ได้ไหม</th></tr></thead><tbody>
-    <tr><td>ประมาณทุกคอลัมน์พร้อมกัน</td><td>0.7496% ถูก</td><td>ถูก</td><td>ได้ แต่ค่าของคอลัมน์เก่าเปลี่ยน</td></tr>
-    <tr><td>หักส่วนซ้ำจากทั้งสองฝั่ง แล้ว regress</td><td>0.7496% ถูก</td><td>ถูก</td><td>ได้ และไม่ต้องแตะ model เดิม</td></tr>
-    <tr><td>หักส่วนซ้ำจากคอลัมน์ใหม่ ใช้ผลตอบแทนดิบ</td><td>0.7496% ถูก</td><td>ใหญ่เกิน 2.29 เท่า</td><td>ใช้ได้แค่ค่าสัมประสิทธิ์</td></tr>
-    <tr><td>ใช้คอลัมน์ใหม่ดิบกับ residual</td><td>0.5707% ต่ำไป 23.9%</td><td>ผิด</td><td>ไม่ได้ และมองไม่เห็นว่าผิด</td></tr>
-  </tbody></table></div>
+  </details>
 </section>
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
     <li>regress ส่วนที่เหลือของ $\mathbf y$ บนส่วนที่เหลือของ $\mathbf x_2$ (หลังหัก $\mathbf X_1$ ออกจากทั้งคู่) ได้ค่าและ residual เดียวกับ regression เต็ม: 0.7496% ทั้งสองทาง</li>
-    <li>ข้ามการหักส่วนซ้ำจากคอลัมน์ใหม่ ค่าหดด้วยตัวคูณ $\tilde{\mathbf x}_2^{\mathsf T}\tilde{\mathbf x}_2/\mathbf x_2^{\mathsf T}\mathbf x_2=0.7613$ เข้าหาศูนย์เสมอ</li>
+    <li>ข้ามการหักส่วนซ้ำจากคอลัมน์ใหม่ ค่าหดด้วยตัวคูณ $\tilde{\mathbf x}_2^{\mathsf T}\tilde{\mathbf x}_2/\mathbf x_2^{\mathsf T}\mathbf x_2=0.7613$ เข้าหาศูนย์เสมอ เพราะตัวหารนับส่วนที่ซ้ำด้วย</li>
     <li>model ที่ขาดคอลัมน์ให้เครดิตคอลัมน์ที่มีอยู่ตาม $\hat{\boldsymbol\gamma}_1=\hat{\boldsymbol\beta}_1+\boldsymbol\delta\hat\beta_2$ momentum ดูเก่งเกินจริง 45.7%</li>
     <li>regress ผลตอบแทนดิบบน $\tilde{\mathbf x}_2$ ได้ค่าถูกแต่ residual ใหญ่ 2.29 เท่า</li>
-    <li>WLS ให้ $\hat{\mathbf f}=\mathbf H\mathbf r$ กับ $\mathbf H\mathbf B=\mathbf I$ และความคลาดมี covariance $\mathbf G=(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B)^{-1}$ ซึ่งใน model สี่หุ้นใหญ่กว่าตัว factor เอง</li>
+    <li>WLS ให้ $\hat{\mathbf f}=\mathbf H\mathbf r$ กับ $\mathbf H\mathbf B=\mathbf I$ แถวของ $\mathbf H$ คือ factor-mimicking portfolio และความคลาดมี covariance $\mathbf G=(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B)^{-1}$ ซึ่งใน model สี่หุ้นใหญ่กว่าตัว factor เอง</li>
   </ul>
-  <p>26.6 ใช้ทุกชิ้นของบทนี้ประกอบรายงานว่ากำไรขาดทุนที่เกิดขึ้นจริงมาจากไหน ทั้งจากการถือ จากการเทรด จาก factor และจากการเลือกหุ้น และใช้ $\mathbf G$ บอกว่าการแบ่งนั้นคลาดได้แค่ไหน</p>
+  <p>หน้าถัดไป <a href="26.6.html">performance attribution</a> ใช้ทุกชิ้นของบทนี้ประกอบรายงานว่ากำไรขาดทุนที่เกิดขึ้นจริงมาจากไหน ทั้งจากการเทรด จาก factor และจากการเลือกหุ้น และใช้ $\mathbf G$ บอกว่าการแบ่งนั้นคลาดได้แค่ไหน</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

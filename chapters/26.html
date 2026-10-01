@@ -22,26 +22,62 @@
 
 <section class="prose">
   <h2>คำถามหลักของบท</h2>
-  <p>พอร์ต long–short หุ้นสี่ตัว ถือ A \$3 ล้าน B −\$2 ล้าน C \$4 ล้าน D −\$5 ล้าน เงินสองฝั่งเท่ากันพอดี วันนี้ขาดทุน \$13,000 โต๊ะต้องตอบหกข้อ: ขาดทุนนี้มาจากการเลือกหุ้นหรือจากเดิมพันที่ไม่ได้ตั้งใจ พอร์ตเสี่ยงวันละเท่าไร สัญญาณที่นักวิจัยเสนอมีส่วนไหนเป็นฝีมือจริง ทำไมรายงานสองฉบับจาก model เดียวกันจึงโทษ factor ต่างกัน ถ้าต้องลดความเสี่ยงควรลดกลุ่มไหน และคุณสมบัติใหม่ควรเพิ่มเข้า model อย่างไรโดยไม่ทำลายตัวเลขเก่า บทนี้ตอบทั้งหกข้อด้วย factor model ตัวเดียวกันตลอดบท</p>
-  <p>เส้นเรื่องที่ร้อยทั้งบทคือ “เงินที่เท่ากันไม่ได้แปลว่าเดิมพันที่เป็นกลาง”: พอร์ตในตัวอย่างไม่มี exposure ต่อตลาด แต่ 98.6% ของขนาดพอร์ตเป็นเดิมพัน momentum ทุกหัวข้อจึงแยกผลตอบแทน ความเสี่ยง และกำไรขาดทุนตามแหล่งที่มันมาจริง แล้วถามว่าการแยกนั้นขึ้นกับการเลือกของเราแค่ไหน</p>
-  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับผลคูณจุดและ norm จาก 6.4–6.5 การคูณ matrix, range และ rank จาก 7.3 และ 7.5 eigenvalue จาก 7.6 ความเสี่ยงของพอร์ต $\mathbf w^{\mathsf T}\boldsymbol\Sigma\mathbf w$ จาก 8.2 และ risk contribution จาก 8.8 Cholesky จาก 8.9 marginal risk จาก 12.2 OLS จาก 15.1 model หลายปัจจัยและ covariance $B\Sigma_fB^{\mathsf T}+D$ จาก 15.3 และความคลาดของ Sharpe Ratio จาก 3.5</p>
+  <p>พอร์ต long–short หุ้นสี่ตัว ถือ A \$3 ล้าน B −\$2 ล้าน C \$4 ล้าน D −\$5 ล้าน เงินสองฝั่งเท่ากันพอดี วันนี้ตลาดขึ้น 0.80% แต่พอร์ตขาดทุน \$13,000 ผู้จัดการพอร์ตโทษการเลือกหุ้น โต๊ะต้องตอบให้ได้ว่า ขาดทุนนี้มาจากการเลือกหุ้นหรือจากเดิมพันที่ไม่ได้ตั้งใจ พอร์ตเสี่ยงวันละเท่าไร สัญญาณที่นักวิจัยเสนอมีส่วนไหนเป็นฝีมือจริง ทำไมรายงานสองฉบับจาก model เดียวกันจึงโทษ factor ต่างกัน ถ้าต้องลดความเสี่ยงควรลดกลุ่มไหน คุณสมบัติใหม่ควรเพิ่มเข้า model อย่างไรโดยไม่ทำลายตัวเลขเก่า และสิ้นปีกำไรมาจากฝีมือหรือโชค บทนี้ตอบทุกข้อด้วย factor model ตัวเดียวกันตลอดบท</p>
+  <p>เส้นเรื่องที่ร้อยทั้งบทคือ “เงินที่เท่ากันไม่ได้แปลว่าเดิมพันที่เป็นกลาง” พอร์ตในตัวอย่างไม่มี exposure ต่อตลาด แต่ 98.6% ของขนาดพอร์ตเป็นเดิมพัน momentum วันนั้นการเลือกหุ้นทำเงิน \$53,000 แต่ momentum เสีย \$69,000 ทุกหัวข้อจึงแยกผลตอบแทน ความเสี่ยง และกำไรขาดทุนตามแหล่งที่มันมาจริง แล้วถามว่าการแยกนั้นขึ้นกับการเลือกของเราแค่ไหน</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ<a href="../topics/6.5.html">ผลคูณจุด มุม และ Cauchy–Schwarz</a> กับ<a href="../topics/6.4.html">norm</a> เพราะทั้งบทคือเรขาคณิตของ vector, <a href="../topics/7.3.html">การคูณ matrix</a> และ<a href="../topics/7.5.html">range กับ rank</a> ซึ่งบอกว่าส่วนของ factor ถูกขังในกี่มิติ, <a href="../topics/7.6.html">eigenvalue</a> และ <a href="../topics/8.9.html">Cholesky</a> ที่ใช้ทำให้ factor ไม่สัมพันธ์กัน, <a href="../topics/8.2.html">ความเสี่ยงของพอร์ต</a> $\mathbf w^{\mathsf T}\boldsymbol\Sigma\mathbf w$ และกฎ covariance ของการแปลงเชิงเส้น, <a href="../topics/15.1.html">OLS regression</a> ซึ่งคือ projection ที่ใช้ทุกหน้า, <a href="../topics/15.3.html">multi-factor model</a> ที่ให้ covariance แบบ $\mathbf B\boldsymbol\Omega_f\mathbf B^{\mathsf T}+\mathbf D$ มาแล้ว, <a href="../topics/12.2.html">gradient</a> สำหรับความชันของความเสี่ยง และ<a href="../topics/3.5.html">ความคลาดของ Sharpe Ratio</a> สำหรับแยกฝีมือออกจากโชค</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — แผนที่ของบท: แต่ละความคิดป้อนให้ความคิดไหน</h4>
+  <svg viewBox="0 0 460 335" role="img" aria-label="แผนผังหกกล่อง สมการ factor model อยู่บนสุด ชี้ลงไปที่ alpha spanned และ orthogonal ที่ rotation projection push-out และที่การแบ่งความเสี่ยง rotation ชี้ไปที่การแบ่งความเสี่ยงและ Frisch–Waugh–Lovell สองกล่องนั้นชี้ลงไปที่ performance attribution ซึ่งชี้ต่อไปที่การสร้าง model จากข้อมูลจริง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="ah26g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5b6472"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <g stroke="#5b6472" stroke-width="2" fill="none" marker-end="url(#ah26g)">
+        <line x1="190" y1="58" x2="128" y2="100"/>
+        <line x1="270" y1="58" x2="330" y2="100"/>
+        <line x1="230" y1="58" x2="182" y2="186"/>
+        <line x1="290" y1="138" x2="184" y2="196"/>
+        <line x1="345" y1="138" x2="345" y2="180"/>
+        <line x1="110" y1="218" x2="190" y2="256"/>
+        <line x1="345" y1="218" x2="275" y2="256"/>
+        <line x1="230" y1="293" x2="230" y2="308"/>
+      </g>
+      <rect x="145" y="22" width="170" height="36" rx="8" fill="#e9eefb" stroke="#2455d6" stroke-width="2"/>
+      <text x="230" y="45" text-anchor="middle">สมการ factor model</text>
+      <rect x="10" y="102" width="170" height="36" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2"/>
+      <text x="95" y="125" text-anchor="middle">alpha สองชนิด</text>
+      <rect x="240" y="102" width="210" height="36" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2"/>
+      <text x="345" y="125" text-anchor="middle">rotation · projection · push-out</text>
+      <rect x="10" y="182" width="170" height="36" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2"/>
+      <text x="95" y="205" text-anchor="middle">แบ่งความเสี่ยง · MCR</text>
+      <rect x="260" y="182" width="170" height="36" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2"/>
+      <text x="345" y="205" text-anchor="middle">Frisch–Waugh–Lovell</text>
+      <rect x="130" y="257" width="200" height="36" rx="8" fill="#e9eefb" stroke="#2455d6" stroke-width="2"/>
+      <text x="230" y="280" text-anchor="middle">performance attribution</text>
+      <text x="230" y="328" text-anchor="middle" fill="#5b6472">ต่อไป: สร้าง model จากข้อมูลจริง</text>
+    </g>
+  </svg>
+  <figcaption>ลูกศรอ่านว่า “ใช้ผลของ” สมการ factor model ป้อนทุกอย่าง: การฉาย alpha ลงบนคอลัมน์ loading ให้ alpha สองชนิด การแทรก $\mathbf C^{-1}\mathbf C$ ให้ rotation และพี่น้อง และการคูณด้วยพอร์ตให้การแบ่งความเสี่ยง rotation บอกว่าต้องตรึงแบบของ model ก่อนแบ่งความเสี่ยง และ push-out ถูกพิสูจน์ด้วย Frisch–Waugh–Lovell ซึ่งยังให้ความคลาดของ factor return การแบ่งความเสี่ยงกับความคลาดนั้นมารวมกันใน performance attribution ซึ่งพาไปสู่การสร้าง model จากข้อมูลจริง</figcaption>
+</figure>
 
 <section class="prose">
   <h2>เส้นทางที่ 1 — สมการ และสิ่งที่มันแยก</h2>
-  <p>เขียนผลตอบแทนเป็นส่วนคงที่ แรงร่วม และส่วนเฉพาะตัว แล้วอ่านสมการสามทาง ทางที่สามย่อพอร์ตให้เหลือ exposure $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ แยกกำไรขาดทุนและความเสี่ยงเป็นสองก้อน จากนั้นแยก alpha ด้วย projection ส่วนที่อยู่ใน range ของ $\mathbf B$ คือเดิมพัน factor ที่ซื้อได้ถูก ส่วนที่ตั้งฉากคือเดิมพันหลายร้อยครั้งที่ความเสี่ยงหักล้างกัน</p>
+  <p>เขียนผลตอบแทนเป็นส่วนคงที่ แรงร่วม และส่วนเฉพาะตัว แล้วอ่านสมการสามทาง เป็นกราฟของเส้นเชื่อม เป็นผลรวมของคอลัมน์ และเป็นผลคูณจุดที่ย่อพอร์ตให้เหลือ exposure $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ ทางที่สามแยกกำไรขาดทุนและความเสี่ยงเป็นสองก้อน จากนั้นแยก alpha ด้วย projection ส่วนที่อยู่ใน range ของ $\mathbf B$ คือเดิมพัน factor ที่ซื้อได้ถูก ส่วนที่ตั้งฉากคือเดิมพันหลายร้อยครั้งที่ความเสี่ยงหักล้างกัน</p>
 </section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/26.1.html"><span class="toc-number">26.1</span><span class="toc-name">The Factor Model Equation and Three Ways to Read It<span class="toc-why">พอร์ตที่เงินสองฝั่งเท่ากันเสีย \$13,000 เพราะ factor −\$66,000 ทั้งที่เลือกหุ้นได้ +\$53,000 และความเสี่ยง \$48,063 กับ \$159,223 รวมกันได้ \$166,319 ไม่ใช่ \$207,286</span></span></a></li>
+  <li><a href="../topics/26.1.html"><span class="toc-number">26.1</span><span class="toc-name">The Factor Model Equation and Three Ways to Read It<span class="toc-why">พอร์ตที่เงินสองฝั่งเท่ากันเสีย \$13,000 เพราะ factor −\$66,000 ทั้งที่เลือกหุ้นได้ +\$53,000 และความเสี่ยง \$48,063 กับ \$159,223 ต่อกันเป็นสามเหลี่ยมมุมฉากได้ \$166,319 ไม่ใช่ \$207,286</span></span></a></li>
   <li><a href="../topics/26.2.html"><span class="toc-number">26.2</span><span class="toc-name">Alpha Spanned and Alpha Orthogonal<span class="toc-why">สัญญาณที่ทายหุ้นละ 2% บนหุ้น 500 ตัวได้ Sharpe Ratio อย่างน้อย 1.278 เดิมพัน momentum ได้ 0.375 และรวมกันอย่างดีที่สุดได้แค่ 1.332</span></span></a></li>
 </ol>
 <section class="example">
   <p><strong>จุดตรวจ:</strong> ทำไม exposure ต่อ market ของพอร์ตจึงเท่ากับ NMV พอดี และทำไมพอร์ตที่ชี้ไปทาง $\boldsymbol\alpha_\perp$ จึงได้ผลตอบแทนคาดหวังเท่ากับความยาวของ $\boldsymbol\alpha_\perp$ ไม่ใช่ค่าเฉลี่ยของมัน</p>
+  <details><summary>เฉลย</summary><p>คอลัมน์ market เป็น 1 ทุกแถว exposure ต่อ market คือ $\sum_iw_i\times1$ ซึ่งคือเงินฝั่งซื้อลบฝั่งขาย ส่วนพอร์ต $\mathbf w=\boldsymbol\alpha_\perp/\lVert\boldsymbol\alpha_\perp\rVert$ ไม่มี exposure ต่อ factor ผลตอบแทนคาดหวังจึงเหลือ $\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp=\lVert\boldsymbol\alpha_\perp\rVert^2/\lVert\boldsymbol\alpha_\perp\rVert$ ซึ่งโตอย่างน้อยตาม $\sqrt n$</p></details>
 </section>
 
 <section class="prose">
   <h2>เส้นทางที่ 2 — model เดียวกันหลายหน้าตา และการแบ่งความเสี่ยง</h2>
-  <p>แทรก $\mathbf C^{-1}\mathbf C$ เข้าไปใน $\mathbf B\mathbf f$ แล้วผลตอบแทนหุ้น กำไรขาดทุนรวม และความเสี่ยงรวมไม่ขยับ แต่คำตอบว่า factor ไหนทำเงินขยับตามแบบที่เลือก เมื่อตรึงแบบแล้ว แบ่งความเสี่ยงเป็นกลุ่มได้สามตัววัด ส่วนแบ่ง variance ซึ่งคือ beta, MCR ซึ่งคือ correlation และ Sharpe sensitivity ซึ่งบอกทิศที่ควรขยายหรือหด</p>
+  <p>แทรก $\mathbf C^{-1}\mathbf C$ เข้าไปใน $\mathbf B\mathbf f$ แล้วผลตอบแทนหุ้น กำไรขาดทุนรวม และความเสี่ยงรวมไม่ขยับ แต่คำตอบว่า factor ไหนทำเงินขยับตามแบบที่เลือก เหมือนลูกศรเดียวกันที่อ่านด้วยแกนคนละชุด เมื่อตรึงแบบแล้ว แบ่งความเสี่ยงเป็นกลุ่มได้สามตัววัด ส่วนแบ่ง variance ซึ่งคือ beta, MCR ซึ่งคือ correlation และ Sharpe sensitivity ซึ่งบอกทิศที่ควรขยายหรือหด</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="3">
   <li><a href="../topics/26.3.html"><span class="toc-number">26.3</span><span class="toc-name">Rotations, Projections, and Push-Outs<span class="toc-why">รายงานที่ market เสีย \$5,528 ทั้งที่ exposure ต่อ market เป็นศูนย์ ถูกพอ ๆ กับรายงานที่ momentum เสีย \$69,000 และคุณสมบัติใหม่ที่เสนอมามีของใหม่จริงแค่ 12.5%</span></span></a></li>
@@ -49,6 +85,7 @@
 </ol>
 <section class="example">
   <p><strong>จุดตรวจ:</strong> การดึงค่าเฉลี่ยออกจากคอลัมน์ loading เป็น rotation ได้เมื่อไร และทำไมกลุ่มที่ MCR สูงที่สุดอาจเป็นกลุ่มที่ควรขยาย</p>
+  <details><summary>เฉลย</summary><p>เป็น rotation ได้เมื่อ vector ที่เป็น 1 ทุกตัวเขียนเป็นผลรวมถ่วงของคอลัมน์ loading ได้ เช่นมีคอลัมน์ market หรือชุด industry ที่รวมกันได้ 1 ทุกแถว ส่วนกลุ่มที่ควรขยายคือกลุ่มที่ $\text{SR}_i/\text{SR}_{\rm tot}$ มากกว่า MCR ของมัน ส่วนเฉพาะตัวมี MCR 0.7507 แต่อัตราส่วน Sharpe 1.0312 จึงยังคุ้ม</p></details>
 </section>
 
 <section class="prose">
@@ -56,32 +93,33 @@
   <p>Frisch–Waugh–Lovell บอกว่าหักส่วนที่ model เดิมอธิบายได้ออกจากทั้งผลตอบแทนและคอลัมน์ใหม่ แล้ว regress ส่วนที่เหลือบนกัน ได้คำตอบเดียวกับทำทีเดียวทุกหลัก สูตรเดียวกันในแบบถ่วงน้ำหนักให้ factor-mimicking portfolio $\mathbf H$ และความคลาด $\mathbf G$ ของ factor return จากนั้นประกอบทุกชิ้นเป็นรายงานว่ากำไรมาจาก trading, factor หรือการเลือกหุ้น และตัวเลขแต่ละบรรทัดมีโชคปนแค่ไหน</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="5">
-  <li><a href="../topics/26.5.html"><span class="toc-number">26.5</span><span class="toc-name">The Frisch–Waugh–Lovell Theorem<span class="toc-why">ทางลัดที่ใช้คุณสมบัติดิบได้ 0.5707% แทน 0.7496% หดเข้าหาศูนย์ด้วยตัวคูณ 0.7613 เสมอ และ SE ของ momentum จากหุ้นสี่ตัวคือ 1.15% มากกว่าความผันผวนของ factor เอง</span></span></a></li>
+  <li><a href="../topics/26.5.html"><span class="toc-number">26.5</span><span class="toc-name">The Frisch–Waugh–Lovell Theorem<span class="toc-why">ทางลัดที่ใช้คุณสมบัติดิบได้ 0.5707% แทน 0.7496% หดเข้าหาศูนย์ด้วยตัวคูณ 0.7613 เสมอ และ SE ของ momentum จากหุ้นสี่ตัวคือ 1.15% มากกว่าความผันผวนของ factor เอง 0.35%</span></span></a></li>
   <li><a href="../topics/26.6.html"><span class="toc-number">26.6</span><span class="toc-name">Performance Attribution: Factor PnL and Idiosyncratic PnL<span class="toc-why">ต้นทุนวันละ \$3,000 กิน Sharpe Ratio 0.297 ตามการออกแบบ (0.287 ในปีจริง) style ที่ทำเงิน \$0.77 ล้านวัด Sharpe Ratio ได้ 0.74 ± 1.00 และขยายสองเท่าแล้วพอร์ตแย่ลงเป็น 1.5087</span></span></a></li>
 </ol>
 <section class="example">
   <p><strong>จุดตรวจ:</strong> ทำไมการ regress residual ของ model เดิมบนคุณสมบัติดิบจึงหดค่าเข้าหาศูนย์ไม่ว่าเครื่องหมายจะเป็นอะไร และทำไมความคลาดของ factor return จึงไม่เปลี่ยนกำไรรวม แต่เปลี่ยนการแบ่งระหว่าง factor กับเฉพาะตัว</p>
+  <details><summary>เฉลย</summary><p>ตัวตั้งเท่าเดิมเพราะ residual ตั้งฉากกับส่วนที่ซ้ำ แต่ตัวหาร $\mathbf x_2^{\mathsf T}\mathbf x_2$ ใหญ่กว่า $\tilde{\mathbf x}_2^{\mathsf T}\tilde{\mathbf x}_2$ ตาม Pythagoras อัตราส่วนจึงน้อยกว่า 1 เสมอ ส่วนความคลาด $\mathbf b^{\mathsf T}\mathbf H\boldsymbol\epsilon$ ถูกบวกเข้าบรรทัด factor และลบออกจากบรรทัดเฉพาะตัวพร้อมกัน ผลรวมจึงไม่ขยับ</p></details>
 </section>
 
 <section class="example">
   <h2>โจทย์เชื่อมทั้งบท — พอร์ตใหม่บน model เดิม</h2>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> model สี่หุ้นสาม factor ของ 26.1 วันเดียวกัน factor return (0.80, −0.50, 0.30)% ส่วนเฉพาะตัว (0.40, −0.25, 0.15, −0.60)% ความผันผวนและ correlation ของ factor และความผันผวนเฉพาะตัวชุดเดิม พอร์ตใหม่ถือ A \$2 ล้าน B −\$1 ล้าน C \$1 ล้าน D −\$2 ล้าน หน่วยในเฉลยคือ \$10,000 (\$1 ล้าน × 1%) ตัวเลขทั้งหมดสมมติ</p>
-  <p><strong>1.</strong> exposure ของพอร์ตคืออะไร และกำไรขาดทุนวันนี้แยกเป็น factor กับเฉพาะตัวเท่าไร (26.1)?</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> model สี่หุ้นสาม factor (market, momentum, tech) วันเดียวกัน factor return (0.80, −0.50, 0.30)% ส่วนเฉพาะตัว (0.40, −0.25, 0.15, −0.60)% ความผันผวนรายวันของ factor 1.00%, 0.35%, 0.55% correlation −0.20, +0.50, −0.10 และความผันผวนเฉพาะตัว 1.80%, 2.20%, 1.50%, 2.60% พอร์ตใหม่ถือ A \$2 ล้าน B −\$1 ล้าน C \$1 ล้าน D −\$2 ล้าน หน่วยในเฉลยคือ \$10,000 (\$1 ล้าน × 1%) ตัวเลขทั้งหมดสมมติ</p>
+  <p><strong>1.</strong> exposure ของพอร์ตคืออะไร และกำไรขาดทุนวันนี้แยกเป็น factor กับเฉพาะตัวเท่าไร (ใช้<a href="../topics/26.1.html">การอ่านสมการทั้งพอร์ต</a>)?</p>
   <details><summary>ดูเฉลยข้อ 1</summary><p>$\mathbf b=(2-1+1-2,\ 2.4+0.4+0.6+2.8,\ 2-1)=(0, 6.2, 1)$ factor PnL $6.2(-0.50)+0.30=-2.80$ หรือ −\$28,000 idiosyncratic PnL $2(0.40)+0.25+0.15+2(0.60)=2.40$ หรือ +\$24,000 รวม −\$4,000 ตรวจตรง ๆ $2(0.90)-1.05+0.65-2(0.90)=-0.40$ เท่ากัน</p></details>
-  <p><strong>2.</strong> ความเสี่ยงรายวันของพอร์ตแยกเป็นสองก้อนเท่าไร (26.1)?</p>
+  <p><strong>2.</strong> ความเสี่ยงรายวันของพอร์ตแยกเป็นสองก้อนเท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 2</summary><p>factor: $6.2^2(0.1225)+0.3025+2(6.2)(-0.01925)=4.7089+0.3025-0.2387=4.7727$ คือ \$21,847 เฉพาะตัว: $4(3.24)+4.84+2.25+4(6.76)=47.09$ คือ \$68,622 รวม $\sqrt{51.8627}=7.2016$ คือ \$72,016 ต่อวัน ไม่ใช่ผลบวก \$90,469</p></details>
-  <p><strong>3.</strong> ถ้าสัญญาณให้ alpha $(1.0, 0.0, 0.5, -0.5)\%$ ต่อปี ส่วน orthogonal คืออะไร และคิดเป็นกี่เปอร์เซ็นต์ของความยาวกำลังสอง (26.2)?</p>
+  <p><strong>3.</strong> ถ้าสัญญาณให้ alpha $(1.0, 0.0, 0.5, -0.5)\%$ ต่อปี ส่วน orthogonal คืออะไร และคิดเป็นกี่เปอร์เซ็นต์ของความยาวกำลังสอง (ใช้<a href="../topics/26.2.html">การแยก alpha</a> กับทิศ $\mathbf u=(1, -1, -0.8, 0.8)$)?</p>
   <details><summary>ดูเฉลยข้อ 3</summary><p>$\boldsymbol\alpha^{\mathsf T}\mathbf u=1.0-0-0.4-0.4=0.2$ จึงได้ $\boldsymbol\alpha_\perp=(0.2/3.28)\mathbf u=(0.0610, -0.0610, -0.0488, 0.0488)$ ความยาวกำลังสอง $0.04/3.28=0.012195$ จาก $\lVert\boldsymbol\alpha\rVert^2=1.5$ คือ 0.81% ที่เหลือ 99.19% เป็นเดิมพัน factor โดย $\boldsymbol\lambda=(0.2195, 0.5488, 0.0610)$</p></details>
-  <p><strong>4.</strong> ในรายงานแบบ Cholesky ของ 26.3 ที่วัด factor หลังหักตลาด สามบรรทัดของวันนี้เป็นเท่าไร?</p>
+  <p><strong>4.</strong> ในรายงานแบบ Cholesky ที่วัด factor หลังหักตลาด (<a href="../topics/26.3.html">rotation</a>) สามบรรทัดของวันนี้เป็นเท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 4</summary><p>market: $(0+6.2(-0.07)+1(0.275))(0.80)=-0.159(0.80)=-0.1272$ momentum: $6.2(-0.444)=-2.7528$ tech: $1(0.08)=0.08$ คือ −\$1,272, −\$27,528 และ +\$800 รวม −\$28,000 เท่ากับข้อ 1 แม้ exposure ต่อ market จะเป็นศูนย์</p></details>
-  <p><strong>5.</strong> แบ่งความเสี่ยงเป็นกลุ่ม momentum, tech และเฉพาะตัว ส่วนแบ่ง variance และ MCR ของแต่ละกลุ่มเป็นเท่าไร (26.4)?</p>
+  <p><strong>5.</strong> แบ่งความเสี่ยงเป็นกลุ่ม momentum, tech และเฉพาะตัว ส่วนแบ่ง variance และ MCR ของแต่ละกลุ่มเป็นเท่าไร (<a href="../topics/26.4.html">การแบ่งความเสี่ยง</a>)?</p>
   <details><summary>ดูเฉลยข้อ 5</summary><p>ช่องไขว้ momentum กับ tech คือ $6.2(1)(-0.01925)=-0.11935$ ผลรวมแถว $4.7089-0.11935=4.58955$, $0.3025-0.11935=0.18315$ และ 47.09 หารด้วย 51.8627 ได้ส่วนแบ่ง 8.85%, 0.35% และ 90.80% MCR คือผลรวมแถวหารด้วย $v_iv_{\rm tot}$: $4.58955/(2.17\times7.2016)=0.2937$, $0.18315/(0.55\times7.2016)=0.0462$ และ $47.09/(6.8622\times7.2016)=0.9529$</p></details>
-  <p><strong>6.</strong> ถ้าประมาณ factor return ด้วย WLS จากหุ้นสี่ตัวนี้เอง ได้ $\hat{\mathbf f}=(0.7237, -0.1120, 0.2990)\%$ ของ 26.5 รายงานจะแบ่งอย่างไร และความคลาดของการแบ่งมีส่วนเบี่ยงเบนมาตรฐานเท่าไร (26.5 และ 26.6)?</p>
+  <p><strong>6.</strong> ถ้าประมาณ factor return ด้วย WLS จากหุ้นสี่ตัวนี้เอง ได้ $\hat{\mathbf f}=(0.7237, -0.1120, 0.2990)\%$ และ $\mathbf G$ ที่มี $G_{22}=1.3144$, $G_{33}=3.9045$, $G_{23}=-0.6018$ รายงานจะแบ่งอย่างไร และความคลาดของการแบ่งมีส่วนเบี่ยงเบนมาตรฐานเท่าไร (<a href="../topics/26.5.html">Frisch–Waugh–Lovell</a> และ <a href="../topics/26.6.html">performance attribution</a>)?</p>
   <details><summary>ดูเฉลยข้อ 6</summary><p>factor ที่วัดได้ $6.2(-0.1120)+0.2990=-0.3953$ หรือ −\$3,953 เฉพาะตัวที่วัดได้ $-0.40+0.3953=-0.0047$ หรือ −\$47 เทียบกับค่าจริง −\$28,000 และ +\$24,000 ผลรวม −\$4,000 ยังถูก ความคลาด $\mathbf b^{\mathsf T}\mathbf G\mathbf b=6.2^2(1.3144)+3.9045+2(6.2)(-0.6018)=50.53+3.90-7.46=46.97$ ส่วนเบี่ยงเบนมาตรฐาน $\sqrt{46.97}=6.853$ หรือ \$68,534 ต่อวัน ใหญ่กว่าเงินทั้งสองบรรทัด จึงต้องประมาณ factor return จากหุ้นจำนวนมาก</p></details>
 </section>
 
 <section class="takeaways">
-  <h2>ก่อนเดินต่อบท 27</h2>
+  <h2>ก่อนไปสร้าง model จากข้อมูลจริง</h2>
   <ul>
     <li>$\mathbf r=\boldsymbol\alpha+\mathbf B\mathbf f+\boldsymbol\epsilon$ ย่อพอร์ตให้เหลือ exposure $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ กำไรขาดทุนแยกเป็น $\mathbf b^{\mathsf T}\mathbf f+\mathbf w^{\mathsf T}\boldsymbol\epsilon$ และ variance แยกเป็น $\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b+\mathbf w^{\mathsf T}\boldsymbol\Omega_\epsilon\mathbf w$ ที่บวกกันแบบกำลังสอง</li>
     <li>alpha ส่วนที่อยู่ใน range ของ $\mathbf B$ คือเดิมพัน factor ส่วนที่ตั้งฉากให้ Sharpe Ratio ที่โตตาม $\sqrt n$ ได้จนกว่า alpha ต่อหุ้นจะหด</li>
@@ -89,7 +127,7 @@
     <li>ส่วนแบ่ง variance คือ beta MCR คือ correlation และกลุ่มควรขยายเมื่อ $\text{SR}_i/\text{SR}_{\rm tot}\gt m_i$ เท่านั้น ความชันใช้ได้เฉพาะแถวจุดปัจจุบัน</li>
     <li>FWL ทำให้เพิ่มคอลัมน์เป็นขั้นได้โดยไม่เสียความแม่น และความคลาดของ factor return คือ $\mathbf G=(\mathbf B^{\mathsf T}\boldsymbol\Omega_\epsilon^{-1}\mathbf B)^{-1}$ ซึ่งย้ายเงินระหว่างบรรทัด factor กับเฉพาะตัวโดยไม่เปลี่ยนผลรวม</li>
   </ul>
-  <p>บทที่ 27 เลิกสมมติว่ามี factor return ให้ใช้ เริ่มจากคุณสมบัติบริษัทกับผลตอบแทนดิบ หา factor return ทุกวันด้วย WLS ข้ามหุ้นตาม 26.5 แล้วสร้าง covariance ของ factor และของส่วนเฉพาะตัวที่ใช้กับพอร์ตจริงได้</p>
+  <p><a href="27.html">บทถัดไป</a>เลิกสมมติว่ามี factor return ให้ใช้ เริ่มจากคุณสมบัติบริษัทกับผลตอบแทนดิบ หา factor return ทุกวันด้วย <a href="../topics/27.1.html">regression ข้ามหุ้น</a> แบบ WLS ที่ Frisch–Waugh–Lovell ปูทางไว้ แล้วสร้าง covariance ของ factor และของส่วนเฉพาะตัวที่ใช้กับพอร์ตจริงได้</p>
 </section>
 </div>
 </body>
