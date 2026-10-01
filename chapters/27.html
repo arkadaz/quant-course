@@ -17,77 +17,113 @@
   <div class="chapter-path">PART 7 / 7 · Running a Quant Equity Book</div>
   <h1>บทที่ 27</h1>
   <p>Building and Testing a Risk Model · 5 หัวข้อ</p>
-  <p class="chapter-sequence">จากคุณสมบัติบริษัทกับผลตอบแทนดิบ ไปจนถึง risk model ที่ส่งให้ optimizer ได้ทุกเช้า: หา factor return ด้วย regression ข้ามหุ้นทุกวัน ทำ covariance ของ factor ที่ไม่เอน ให้มันตามพายุทันด้วยภาพตัดขวาง สร้าง covariance ของส่วนเฉพาะตัวที่รู้จักคู่หุ้นพิเศษ และคัดค่าประหลาดโดยไม่ทิ้งข่าวจริง</p>
+  <p class="chapter-sequence">จากคุณสมบัติบริษัทกับผลตอบแทนดิบ ไปจนถึง risk model ที่ส่งให้ optimizer ได้ทุกเช้า: คัดค่าประหลาดโดยไม่ทิ้งข่าวจริง หา factor return ด้วย regression ข้ามหุ้นทุกวัน ทำ covariance ของ factor ที่ไม่เอน ให้มันตามพายุทันด้วยภาพตัดขวางของทุก factor และสร้าง covariance ของส่วนเฉพาะตัวที่รู้จักคู่หุ้นพิเศษ</p>
 </header>
 
 <section class="prose">
   <h2>คำถามหลักของบท</h2>
-  <p>ทีม risk model ได้รับจักรวาลหุ้น 600 ตัว สิ่งที่มีคือคุณสมบัติของบริษัท (กลุ่มอุตสาหกรรม momentum มูลค่าตลาด) กับผลตอบแทนรายวันดิบ ๆ ต้องส่งรายงานความเสี่ยงให้โต๊ะก่อนตลาดเปิดทุกเช้า และต้องตอบห้าข้อ: factor return ของเมื่อวานคือเท่าไร เมื่อสมการมีคำตอบนับไม่ถ้วน covariance ของ factor ควรคิดอย่างไรให้ไม่เอน ตัวเลขจะตามพายุทันแค่ไหน คู่หุ้นไหนที่ข้อสมมติแนวทแยงผิด และราคาประหลาดของเช้านี้ตัวไหนควรแก้ ตัวไหนห้ามแตะ</p>
-  <p>บทนี้ตอบทั้งห้าข้อด้วยตัวอย่างที่ต่อกันตลอดบท: หุ้นแปดตัวของ 27.1 ซ้ำ 75 ชุดเป็นจักรวาล 600 ตัว และเมื่อต้องการ factor จำนวนมาก (27.2 ขั้นที่ 4 และ 27.3) ใช้ model 40 factor</p>
-  <p>เส้นเรื่องที่ร้อยทั้งบทคือ “factor return ทุกตัวคือผลตอบแทนของพอร์ตที่ซื้อได้จริง” (factor-mimicking portfolio) มันอธิบายว่าทำไมการเลือกทางแก้ของ 27.1 เปลี่ยนความหมายของ market ทำไม covariance ที่วัดได้เอนขึ้นเสมอใน 27.2 และทำไมการตัดข่าวจริงทิ้งใน 27.5 จึงผิด ส่วน 27.3 และ 27.4 ใช้อีกความคิดหนึ่งซ้ำ: นับว่าข้อมูลแต่ละก้อนมีหลักฐานจริงเท่าไร ก่อนเชื่อหรือทิ้งมัน</p>
-  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ rank และ range จาก 7.5 eigenvalue และ positive definite จาก 7.6 covariance จาก 8.1 ตัวคูณ Lagrange จาก 12.4 OLS จาก 15.1 AR(1) จาก 16.2 log return และหางหนาจาก 25.1–25.2 EWMA กับ Kalman filter จาก 25.5 และบทที่ 26 ทั้งบท โดยเฉพาะ $\mathbf r=\mathbf B\mathbf f+\boldsymbol\epsilon$ ของ 26.1 และ $\mathbf H$, $\mathbf G$ ของ 26.5</p>
+  <p>ทีม risk model ได้รับจักรวาลหุ้น 600 ตัว สิ่งที่มีคือคุณสมบัติของบริษัท (กลุ่มอุตสาหกรรม momentum มูลค่าตลาด) กับผลตอบแทนรายวันดิบ ๆ และต้องส่งรายงานความเสี่ยงให้โต๊ะก่อนตลาดเปิดทุกเช้า เช้านี้มีห้าคำถามรออยู่: factor return ของเมื่อวานคือเท่าไร ทั้งที่ไลบรารีคืน market −0.0324% มาจากสมการที่มีคำตอบนับไม่ถ้วน ความผันผวนของ momentum ที่วัดได้ 0.3693% เชื่อได้ไหม เมื่อพายุเข้า ตัวเลขจะตามทันภายในกี่วัน คู่หุ้นไหนที่แบบจำลองแนวทแยงรายงานความเสี่ยงผิดไปเกือบเท่าตัว และราคา +340% ของเช้านี้ควรแก้ ตัด หรือเก็บ</p>
+  <p>บทนี้ตอบทั้งห้าข้อด้วยตัวอย่างที่ต่อกันตลอดบท: หุ้นแปดตัว (tech สาม banks สอง energy สาม) ซ้ำ 75 ชุดเป็นจักรวาล 600 ตัว และเมื่อต้องการ factor จำนวนมาก ใช้แบบจำลอง 40 factor เส้นเรื่องที่ร้อยทั้งบทคือ “factor return ทุกตัวคือผลตอบแทนของพอร์ตที่ซื้อได้จริง” (factor-mimicking portfolio) มันอธิบายว่าทำไมการเลือกเงื่อนไขเปลี่ยนความหมายของ market ทำไม covariance ที่วัดได้เอนขึ้นเสมอ และทำไมการตัดข่าวจริงทิ้งจึงผิด อีกความคิดที่ใช้ซ้ำคือการนับว่าข้อมูลแต่ละก้อนมีหลักฐานจริงเท่าไร ก่อนเชื่อหรือทิ้งมัน</p>
+  <p><strong>ก่อนเริ่ม:</strong> บทนี้สร้างชิ้นส่วนที่ <a href="../chapters/26.html">factor model</a> ใช้ราวกับมีอยู่แล้ว จึงควรคุ้นกับ <a href="../topics/26.1.html">สมการ factor model</a> $\mathbf r=\mathbf B\mathbf f+\boldsymbol\epsilon$ และ <a href="../topics/26.6.html">การแยก PnL เป็นส่วนของ factor กับส่วนเฉพาะตัว</a> ส่วนเครื่องมือที่ใช้ระหว่างทางคือ <a href="../topics/15.1.html">OLS regression</a> (สมการ normal equations) <a href="../topics/7.5.html">rank</a> ของ matrix (คอลัมน์ที่เป็นอิสระกันจริงมีกี่คอลัมน์) <a href="../topics/12.4.html">ตัวคูณ Lagrange</a> สำหรับเติมเงื่อนไข <a href="../topics/7.6.html">eigenvalue และ positive definite</a> <a href="../topics/8.1.html">covariance matrix</a> <a href="../topics/16.2.html">AR(1)</a> และ <a href="../topics/25.5.html">EWMA กับ Kalman filter</a> ที่ลืมอดีตด้วย half-life</p>
 </section>
+
+<figure class="plot">
+  <h4>รูป — แผนที่ของบท: จากข้อมูลดิบถึง risk model</h4>
+  <svg viewBox="0 0 480 365" role="img" aria-label="แผนผังลูกศร ผลตอบแทนดิบกับ loading ไหลลงไปที่ winsorization แล้วไปที่ cross-sectional regression ซึ่งแตกเป็นสองทาง ทางซ้ายไปที่ factor covariance แล้วไปที่ short-term volatility updating ทางขวาไปที่ idiosyncratic covariance ทั้งสองทางไหลรวมลงที่ risk model ที่ส่งให้ optimizer มีลูกศรประจาก idiosyncratic covariance ย้อนกลับไปที่ regression เพื่อให้น้ำหนักของวันถัดไป และลูกศรประจาก short-term volatility updating ไปที่ idiosyncratic covariance สำหรับ earnings tent" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs><marker id="ahc27" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5b6472"/></marker></defs>
+    <g font-size="14" fill="#181818" text-anchor="middle">
+      <rect x="140" y="12" width="200" height="34" rx="8" fill="#fff" stroke="#5b6472" stroke-width="2"/>
+      <text x="240" y="34">ผลตอบแทนดิบ + loading</text>
+      <a href="../topics/27.5.html"><rect x="140" y="66" width="200" height="42" rx="8" fill="#fff" stroke="#d82632" stroke-width="2.5"/><text x="240" y="84">winsorization</text><text x="240" y="101" font-size="13" fill="#5b6472">คัดราคาผิด เก็บข่าวจริง</text></a>
+      <a href="../topics/27.1.html"><rect x="130" y="128" width="220" height="42" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2.5"/><text x="240" y="146">cross-sectional regression</text><text x="240" y="163" font-size="13" fill="#5b6472">factor return วันละชุด</text></a>
+      <a href="../topics/27.2.html"><rect x="20" y="196" width="200" height="42" rx="8" fill="#fff" stroke="#2455d6" stroke-width="2.5"/><text x="120" y="214">factor covariance</text><text x="120" y="231" font-size="13" fill="#5b6472">หัก G, shrink, half-life</text></a>
+      <a href="../topics/27.4.html"><rect x="260" y="196" width="200" height="42" rx="8" fill="#fff" stroke="#047857" stroke-width="2.5"/><text x="360" y="214">idiosyncratic covariance</text><text x="360" y="231" font-size="13" fill="#5b6472">แนวทแยง + กลุ่มคู่หุ้น</text></a>
+      <a href="../topics/27.3.html"><rect x="20" y="262" width="200" height="42" rx="8" fill="#fff" stroke="#a65f00" stroke-width="2.5"/><text x="120" y="280">short-term vol updating</text><text x="120" y="297" font-size="13" fill="#5b6472">ตัวคูณจาก 40 factor</text></a>
+      <rect x="140" y="320" width="200" height="34" rx="8" fill="#f3f4f6" stroke="#181818" stroke-width="2"/>
+      <text x="240" y="342">risk model ส่งให้ optimizer</text>
+      <g stroke="#5b6472" stroke-width="2" fill="none" marker-end="url(#ahc27)">
+        <line x1="240" y1="46" x2="240" y2="64"/>
+        <line x1="240" y1="108" x2="240" y2="126"/>
+        <line x1="190" y1="170" x2="140" y2="194"/>
+        <line x1="290" y1="170" x2="340" y2="194"/>
+        <line x1="120" y1="238" x2="120" y2="260"/>
+        <line x1="160" y1="304" x2="205" y2="318"/>
+        <line x1="380" y1="238" x2="300" y2="318"/>
+      </g>
+      <g stroke="#5b6472" stroke-width="1.8" fill="none" stroke-dasharray="5 4" marker-end="url(#ahc27)">
+        <path d="M440 196 C440 165 410 150 352 150"/>
+        <line x1="220" y1="276" x2="276" y2="240"/>
+      </g>
+      <text x="408" y="128" font-size="13" fill="#5b6472">σ เมื่อวาน → น้ำหนัก</text>
+      <text x="262" y="276" font-size="13" fill="#5b6472" text-anchor="start">tent</text>
+    </g>
+  </svg>
+  <figcaption>กล่องที่มีกรอบสีคือหัวข้อของบท กดที่กล่องเพื่อไปหน้านั้นได้ ข้อมูลไหลจากบนลงล่าง: ผลตอบแทนดิบผ่าน winsorization ก่อนเข้า cross-sectional regression ซึ่งให้สองผลลัพธ์ทุกวัน factor return (ทางซ้าย) กลายเป็น factor covariance แล้วถูกคูณด้วยตัวคูณระยะสั้น ส่วนเฉพาะตัว (ทางขวา) กลายเป็น idiosyncratic covariance ทั้งสองรวมเป็น risk model เส้นประคือการพึ่งกันย้อนทาง: ความผันผวนเฉพาะตัวของเมื่อวานเป็นน้ำหนักของ regression วันนี้ และความคิดเรื่องตัวคูณถูกใช้ซ้ำกับส่วนเฉพาะตัวรอบวันประกาศผลประกอบการ</figcaption>
+</figure>
 
 <section class="prose">
   <h2>เส้นทางที่ 1 — จากผลตอบแทนดิบถึง covariance ของ factor</h2>
-  <p>ทุกคืนแก้ WLS ข้ามหุ้นหนึ่งครั้ง น้ำหนัก $1/\sigma_i^2$ แต่ market บวก industry ทำให้คอลัมน์ขาด rank หนึ่ง ต้องเลือกเงื่อนไขที่มีความหมาย (ถ่วงมูลค่าตลาดเป็นศูนย์) แล้วเก็บ factor return วันละชุด เอา 251 ชุดมาทำ covariance ซึ่งต้องหักความคลาด $\mathbf G$ ของพอร์ตออก ดึงเข้าหาเป้าเมื่อ factor เยอะ แยก half-life ของความผันผวนกับ correlation และเติม lag ของ Newey–West</p>
+  <p>ทุกคืนแก้ regression ข้ามหุ้นหนึ่งครั้ง ถ่วงด้วย $1/\sigma_i^2$ เพราะหุ้นที่เหวี่ยงน้อยบอกเรื่อง factor ได้ชัดกว่า แต่ market บวก industry ทำให้คอลัมน์ขาด rank หนึ่ง ข้อมูลกำหนดได้แค่ผลรวม market + industry ของแต่ละกลุ่ม จึงต้องเลือกเงื่อนไขที่มีความหมาย (industry ถ่วงมูลค่าตลาดรวมเป็นศูนย์) แล้วเก็บ factor return วันละชุด เอา 251 ชุดของหนึ่งปีมาทำ covariance ซึ่งต้องหักความคลาด $\mathbf G$ ของพอร์ตเลียนแบบ factor ออก ดึง eigenvalue เข้าหากันเมื่อ factor เยอะเทียบกับจำนวนวัน แยก half-life ของความผันผวนกับ correlation และเติม lag ของ Newey–West</p>
 </section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/27.1.html"><span class="toc-number">27.1</span><span class="toc-name">Cross-Sectional Regression and Rank-Deficient Loadings<span class="toc-why">ไลบรารีคืน market −0.0324% มาเงียบ ๆ จากสมการที่มีคำตอบนับไม่ถ้วน ทุกทางแก้ให้ momentum 0.4741% เท่ากัน แต่การลบคอลัมน์ energy ทำให้ market กลายเป็น −0.6466%</span></span></a></li>
+  <li><a href="../topics/27.1.html"><span class="toc-number">27.1</span><span class="toc-name">Cross-Sectional Regression and Rank-Deficient Loadings<span class="toc-why">ไลบรารีคืน market −0.0324% มาเงียบ ๆ จากสมการที่มีคำตอบนับไม่ถ้วน ทุกทางแก้ให้ momentum 0.4741% เท่ากัน แต่การลบคอลัมน์ energy ทำให้ “market” กลายเป็นพอร์ตที่ลงเงินเกือบทั้งหมดในหุ้น energy</span></span></a></li>
   <li><a href="../topics/27.2.html"><span class="toc-number">27.2</span><span class="toc-name">Estimating the Factor Covariance Matrix<span class="toc-why">momentum ที่วัดได้ 0.3693% ต่อวันผันผวนจริงแค่ 0.35% เพราะ variance เอน 11.35% และ 40 factor กับ 126 วันทำให้ทิศที่ดูปลอดภัยที่สุดเสี่ยงจริง 2.29 เท่า</span></span></a></li>
 </ol>
 <section class="example">
-  <p><strong>จุดตรวจ:</strong> ทำไมทุกทางแก้ของ 27.1 ให้ momentum เท่ากันแต่ market ไม่เท่ากัน และทำไม $G$ ของ momentum จึงคิดได้จากแถวเดียวของ $\mathbf H$ โดยไม่ต้องสนใจว่าเลือกทางแก้ไหน</p>
+  <p><strong>จุดตรวจ:</strong> ทำไมทุกทางแก้ของความกำกวม market กับ industry ให้ momentum เท่ากันแต่ market ไม่เท่ากัน และทำไม $G$ ของ momentum จึงคิดได้จากแถวเดียวของ $\mathbf H$ โดยไม่ต้องสนใจว่าเลือกทางแก้ไหน</p>
+  <details><summary>เฉลย</summary><p>ทุกทางแก้ต่างกันแค่ในทิศ $\mathbf v=(1,-1,-1,-1,0)$ ซึ่งช่องของ momentum เป็นศูนย์ momentum และคำทำนายจึงไม่ขยับ ส่วน market ขยับตาม $s$ ที่แต่ละทางเลือก แถว momentum ของ $\mathbf H$ ก็เหมือนกันทุกทางด้วยเหตุผลเดียวกัน $G_{\rm mom}=\sum_i h_i^2\sigma_i^2=1.0430$ (%²) จึงเท่ากันทุกทาง</p></details>
 </section>
 
 <section class="prose">
   <h2>เส้นทางที่ 2 — ความเร็ว: ตามพายุให้ทัน</h2>
-  <p>EWMA ที่ลืมอดีตอย่างราบรื่นตามการกระโดดของตลาดช้า แต่ทุกวันมี factor 40 ตัวให้ดูพร้อมกัน หลัง whitening ขนาดรวมของมันบอกระดับความปั่นป่วนของวันนั้นด้วยความคลาดแค่ 11.2% ตัวคูณที่เฉลี่ยสิ่งนี้ด้วย half-life สั้นคือ Kalman filter แบบ 25.5 อีกชั้นหนึ่ง ซึ่งเร็วกว่าและคลาดน้อยกว่าชั้นล่างพร้อมกัน</p>
+  <p>EWMA ที่ลืมอดีตอย่างราบรื่นตามการกระโดดของตลาดช้า แต่ทุกวันมี factor 40 ตัวให้ดูพร้อมกัน หลังหารด้วยความผันผวนและถอด correlation ออก ขนาดรวมของมันบอกระดับความปั่นป่วนของวันนั้นด้วยความคลาดแค่ 11.2% ตัวคูณที่เฉลี่ยสิ่งนี้ด้วย half-life 15 วันคือ Kalman filter อีกชั้นหนึ่งบนชั้นล่างเดิม ซึ่งทั้งเร็วกว่าและคลาดน้อยกว่าชั้นล่าง เพราะเห็นข้อมูลมากกว่า 40 เท่าต่อวัน</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="3">
   <li><a href="../topics/27.3.html"><span class="toc-number">27.3</span><span class="toc-name">Short-Term Volatility Updating<span class="toc-why">half-life 63 วันพาความผันผวนมาครึ่งทางของพายุในวันที่ 46 ไม่ใช่วันที่ 63 ตัวคูณที่ดู 40 factor พร้อมกันพาไปถึงในวันที่ 10 และหลังพายุจบ 80 วัน ชั้นล่างอย่างเดียวยังบังคับพอร์ตให้เล็กไป 37.9%</span></span></a></li>
 </ol>
 <section class="example">
   <p><strong>จุดตรวจ:</strong> ทำไมความผันผวนมาถึงครึ่งทางเร็วกว่า half-life และทำไมตัวคูณที่ half-life 15 วันจึงคลาดน้อยกว่า EWMA ของ factor แต่ละตัวที่ half-life 63 วัน</p>
+  <details><summary>เฉลย</summary><p>half-life คือจุดที่ variance มาครึ่งทาง ความผันผวนเป็นรากของ variance ซึ่งโค้งขึ้นเร็วตอนต้น จึงถึงครึ่งทาง (1.75 ของพายุ 2.5 เท่า) เมื่อ variance ไปถึงแค่ 3.0625 จาก 6.25 ส่วนตัวคูณเห็นข้อมูล $40\times43.29=1{,}731.5$ ชิ้น คลาด 1.70% ขณะที่ชั้นล่างเห็น 181.8 ชิ้นต่อ factor คลาด 5.24%</p></details>
 </section>
 
 <section class="prose">
   <h2>เส้นทางที่ 3 — ส่วนเฉพาะตัวและข้อมูลสกปรก</h2>
-  <p>ในพอร์ตที่กระจายดี ส่วนเฉพาะตัวคือก้อนความเสี่ยงที่ใหญ่กว่า model บอกว่า matrix ของมันเป็นแนวทแยง ซึ่งถูกเกือบทุกคู่ ต้องหาคู่ที่ผิดด้วยเกณฑ์ที่เสียงรบกวนข้ามไม่ได้ แล้วตรวจว่า matrix ยังใช้ได้ สุดท้ายคือข้อมูลที่ป้อนเข้าทุกขั้น: ค่าประหลาดที่เป็นราคาผิดต้องแก้ที่ต้นทาง ส่วนที่เป็นข่าวจริงต้องเก็บ</p>
+  <p>ในพอร์ตที่กระจายดี ส่วนเฉพาะตัวคือก้อนความเสี่ยงที่ใหญ่กว่า แบบจำลองบอกว่า matrix ของมันเป็นแนวทแยง ซึ่งถูกเกือบทุกคู่ แต่ผิดแรงกับหุ้นสองชั้นของบริษัทเดียวกันหรือธีมแคบ ๆ ต้องหาคู่ที่ผิดด้วยเกณฑ์ที่เสียงรบกวนข้ามไม่ได้ แล้วตรวจว่า matrix ยังใช้ได้ สุดท้ายคือข้อมูลที่ป้อนเข้าทุกขั้น: ค่าประหลาดที่เป็นราคาผิดต้องแก้ที่ต้นทาง ส่วนที่เป็นข่าวจริงต้องเก็บ เพราะพอร์ตที่ถือหุ้นนั้นเจ็บจริง</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="4">
-  <li><a href="../topics/27.4.html"><span class="toc-number">27.4</span><span class="toc-name">The Idiosyncratic Covariance Matrix and Off-Diagonal Clustering<span class="toc-why">model แนวทแยงให้ \$25,640 กับทั้งพอร์ต long หุ้นสองชั้นและพอร์ตเก็บส่วนต่าง ความจริงคือ \$33,594 และ \$13,647 และเกณฑ์ 0.20 ปล่อยคู่ปลอมเข้ามาเฉลี่ย 275.3 คู่</span></span></a></li>
-  <li><a href="../topics/27.5.html"><span class="toc-number">27.5</span><span class="toc-name">Winsorization: Which Outliers to Keep<span class="toc-why">ราคาผิดหนึ่งตัวจาก 600 ดัน momentum 101.00 bp ข่าวจริงขยับ −5.43 bp การ winsorize ที่ 10 ลบความผิดได้ 95.8% แต่ทิ้งข่าวจริงไป 29.5%</span></span></a></li>
+  <li><a href="../topics/27.4.html"><span class="toc-number">27.4</span><span class="toc-name">The Idiosyncratic Covariance Matrix and Off-Diagonal Clustering<span class="toc-why">แบบจำลองแนวทแยงให้ \$25,640 กับทั้งพอร์ต long หุ้นสองชั้นและพอร์ตเก็บส่วนต่าง ความจริงคือ \$33,594 และ \$13,647 และเกณฑ์ 0.20 ปล่อยคู่ปลอมเข้ามาเฉลี่ย 275.3 คู่</span></span></a></li>
+  <li><a href="../topics/27.5.html"><span class="toc-number">27.5</span><span class="toc-name">Winsorization: Which Outliers to Keep<span class="toc-why">ราคาผิดหนึ่งตัวจาก 600 ทำให้ momentum คลาด 104.64 bp winsorize ที่ 10 เหลือ 7.86 bp แต่ยังผิดทิศ และทิ้งข่าวจริงไป 29.5% ทางที่ถูกคือปรับการรวมหุ้นที่ต้นทาง</span></span></a></li>
 </ol>
 <section class="example">
-  <p><strong>จุดตรวจ:</strong> ทำไม model แนวทแยงให้ความเสี่ยงเท่ากันกับพอร์ตที่ long ทั้งคู่และพอร์ตที่ long ตัวหนึ่ง short อีกตัว และทำไมการ winsorize ข่าวจริงทำให้ factor return ไม่ใช่ผลตอบแทนของพอร์ตไหนเลย</p>
+  <p><strong>จุดตรวจ:</strong> ทำไมแบบจำลองแนวทแยงให้ความเสี่ยงเท่ากันกับพอร์ตที่ long ทั้งคู่และพอร์ตที่ long ตัวหนึ่ง short อีกตัว และทำไมการ winsorize ข่าวจริงทำให้ factor return ไม่ใช่ผลตอบแทนของพอร์ตไหนเลย</p>
+  <details><summary>เฉลย</summary><p>variance ของพอร์ตสองหุ้นคือ $w_1^2\sigma_1^2+w_2^2\sigma_2^2+2w_1w_2\rho\sigma_1\sigma_2$ แบบจำลองแนวทแยงตั้ง $\rho=0$ พจน์ไขว้ที่มีเครื่องหมายของ $w_1w_2$ จึงหายไป สองพอร์ตเหลือตัวเลขเดียวกัน ส่วน factor return คือ $\mathbf H\mathbf r$ ถ้าดึง −18% ขึ้นเป็น −12.62% ตัวเลขที่ได้คือผลตอบแทนของพอร์ตบนราคาที่ไม่เคยเกิด พอร์ต momentum จริงได้ 0.41990% แต่รายงานบอก 0.43589%</p></details>
 </section>
 
 <section class="example">
   <h2>โจทย์เชื่อมทั้งบท — จักรวาลที่ใหญ่ขึ้นเท่าตัว</h2>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> model ของ 27.1 ทาง C ความผันผวนเฉพาะตัวชุดเดิม ในจักรวาลเดียวกับบท (หุ้นแปดตัวซ้ำ 75 ชุด) ยกเว้นข้อ 1 และ 2 ที่ขยายเป็นหุ้น 1,200 ตัว (150 ชุด) ความผันผวนจริงของ momentum 0.35% และ market 1.0% ต่อวัน ชั้นล่าง half-life 63 วัน ตัวคูณ half-life 15 วัน ค่า $G$ ของหุ้นแปดตัว (27.2 ขั้นที่ 2) คือ 1.0430 สำหรับ momentum และ 0.5274 สำหรับ market ตัวเลขทั้งหมดสมมติ</p>
-  <p><strong>1.</strong> ในจักรวาล 1,200 ตัว variance ของ momentum ที่วัดได้เอนกี่เปอร์เซ็นต์ และความผันผวนที่วัดได้คือเท่าไร (27.2)?</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> แบบจำลองหุ้นแปดตัวที่ใช้เงื่อนไขถ่วงมูลค่าตลาด ความผันผวนเฉพาะตัวชุดเดิม ในจักรวาลเดียวกับบท (หุ้นแปดตัวซ้ำ 75 ชุด) ยกเว้นข้อ 1 และ 2 ที่ขยายเป็นหุ้น 1,200 ตัว (150 ชุด) ความผันผวนจริงของ momentum 0.35% และ market 1.0% ต่อวัน ชั้นล่าง half-life 63 วัน ตัวคูณ half-life 15 วัน ค่า $G$ ของหุ้นแปดตัวคือ 1.0430 สำหรับ momentum และ 0.5274 สำหรับ market ตัวเลขทั้งหมดสมมติ</p>
+  <p><strong>1.</strong> ในจักรวาล 1,200 ตัว variance ของ momentum ที่วัดได้เอนกี่เปอร์เซ็นต์ และความผันผวนที่วัดได้คือเท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 1</summary><p>$G=1.0430/150=0.006953$ อัตราส่วน $1+0.006953/0.1225=1.0568$ variance เอน 5.68% ครึ่งหนึ่งของ 11.35% ในจักรวาล 600 ตัว เพราะ $G$ หารด้วยจำนวนชุด ความผันผวนที่วัดได้ $\sqrt{0.1225+0.006953}=0.3598\%$ แทน 0.35%</p></details>
-  <p><strong>2.</strong> ในจักรวาลเดียวกัน market ที่ผันผวนจริง 1.0% จะวัดได้เท่าไร (27.2)?</p>
+  <p><strong>2.</strong> ในจักรวาลเดียวกัน market ที่ผันผวนจริง 1.0% จะวัดได้เท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 2</summary><p>$G=0.5274/150=0.003516$ วัดได้ $\sqrt{1+0.003516}=1.0018\%$ สูงไปแค่ 0.18% factor ใหญ่แทบไม่เป็นไร factor เล็กเจ็บหนัก เหมือนเดิม</p></details>
-  <p><strong>3.</strong> พายุทำให้ความผันผวนจริงของทุก factor เป็นสองเท่า ชั้นล่างอย่างเดียวรายงานถึงครึ่งทาง (1.5 เท่า) ในวันที่เท่าไร และสองชั้นถึงในวันที่เท่าไร (27.3)?</p>
-  <details><summary>ดูเฉลยข้อ 3</summary><p>$v_k=4-3\lambda^k$ ต้องการ $v_k=1.5^2=2.25$ จึง $\lambda^k=(4-2.25)/3=0.5833$ และ $k=63\times\log_2(1/0.5833)=63\times0.7776=48.99$ ชั้นล่างถึงในวันที่ 49 เดินระบบสองชั้นแบบไม่มีเสียงรบกวนของ 27.3 ขั้นที่ 5 ด้วย 2 แทน 2.5 ได้วันที่ 10</p></details>
-  <p><strong>4.</strong> หุ้นสองชั้นที่ผันผวนเฉพาะตัว 2.0% ทั้งคู่ correlation ของส่วนเฉพาะตัว 0.75 โต๊ะ long \$2 ล้าน short \$2 ล้าน model แนวทแยงรายงานความเสี่ยงเท่าไร และความจริงเท่าไร (27.4)?</p>
-  <details><summary>ดูเฉลยข้อ 4</summary><p>แนวทแยง $2.0\%\times\sqrt2=2.8284\%$ ของ \$2 ล้าน คือ \$56,569 ต่อวัน ความจริง $2.0\%\times\sqrt{2-2(0.75)}=1.4142\%$ ของ \$2 ล้าน คือ \$28,284 model สูงไปสองเท่าพอดี การเทรดนี้จึงทำได้แค่ครึ่งขนาดใต้เพดานเดิม</p></details>
-  <p><strong>5.</strong> หุ้นธนาคารตัวที่ 4 ชุดหนึ่ง (momentum −1.4 ปกติได้ −0.60% น้ำหนักในพอร์ต momentum −0.22295 ต่อแปดตัว ผันผวน 2.6% ต่อวัน) ถูกรายงานผิดเป็น −60% momentum ขยับเท่าไร คะแนนความประหลาดเท่าไร และถ้า winsorize ที่ 10 เหลือความผิดเท่าไร (27.5)?</p>
+  <p><strong>3.</strong> พายุทำให้ความผันผวนจริงของทุก factor เป็นสองเท่า ชั้นล่างอย่างเดียวรายงานถึงครึ่งทาง (1.5 เท่า) ในวันที่เท่าไร และสองชั้นถึงในวันที่เท่าไร?</p>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>$v_k=4-3\lambda^k$ ต้องการ $v_k=1.5^2=2.25$ จึง $\lambda^k=(4-2.25)/3=0.5833$ และ $k=63\times\log_2(1/0.5833)=63\times0.7776=48.99$ ชั้นล่างถึงในวันที่ 49 เดินระบบสองชั้นแบบไม่มีเสียงรบกวน (ตัวคูณอัปเดตด้วย $2/\sqrt{v}$ ทุกวัน) ได้วันที่ 10 สูงสุดเลยไปที่ 2.16 เท่า</p></details>
+  <p><strong>4.</strong> หุ้นสองชั้นที่ผันผวนเฉพาะตัว 2.0% ทั้งคู่ correlation ของส่วนเฉพาะตัว 0.75 โต๊ะ long \$2 ล้าน short \$2 ล้าน แบบจำลองแนวทแยงรายงานความเสี่ยงเท่าไร และความจริงเท่าไร?</p>
+  <details><summary>ดูเฉลยข้อ 4</summary><p>แนวทแยง $2.0\%\times\sqrt2=2.8284\%$ ของ \$2 ล้าน คือ \$56,569 ต่อวัน ความจริง $2.0\%\times\sqrt{2-2(0.75)}=1.4142\%$ ของ \$2 ล้าน คือ \$28,284 แบบจำลองสูงไปสองเท่าพอดี การเทรดนี้จึงทำได้แค่ครึ่งขนาดใต้เพดานเดิม</p></details>
+  <p><strong>5.</strong> หุ้นธนาคารตัวที่ 4 ชุดหนึ่ง (momentum −1.4 ปกติได้ −0.60% น้ำหนักในพอร์ต momentum −0.22295 ต่อแปดตัว ผันผวน 2.6% ต่อวัน) ถูกรายงานผิดเป็น −60% ทั้งที่จริงได้ −0.60% ตามปกติ momentum ขยับเท่าไร คะแนนความประหลาดเท่าไร และถ้า winsorize ที่ 10 เหลือความผิดเท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 5</summary><p>น้ำหนักต่อชุด $-0.22295/75=-0.002973$ การเปลี่ยน $-0.60+0.006=-0.594$ momentum ขยับ $(-0.002973)(-0.594)=+17.66$ bp $s=0.6745\times2.6\%=1.754\%$ คะแนน $\lvert\ln0.4\rvert/0.01754=0.9163/0.01754=52.25$ เพดาน $e^{-10(0.01754)}-1=-16.09\%$ การเปลี่ยนเหลือ $-0.1549$ ความผิดเหลือ +4.60 bp ลบไปได้ 73.9% ที่เหลือต้องแก้ที่ต้นทาง</p></details>
 </section>
 
 <section class="takeaways">
   <h2>สิ่งที่ควรพกออกจากบทนี้</h2>
   <ul>
-    <li>factor return คือผลตอบแทนของพอร์ตที่ซื้อได้จริง $\hat{\mathbf f}=\mathbf H\mathbf r$ ทางแก้ของ rank ที่ขาดเปลี่ยนความหมายของ market แต่ไม่เปลี่ยน momentum และคำทำนาย</li>
+    <li>factor return คือผลตอบแทนของพอร์ตที่ซื้อได้จริง $\hat{\mathbf f}=\mathbf H\mathbf r$ ทางแก้ของ rank ที่ขาดเปลี่ยนความหมายของ market แต่ไม่เปลี่ยน momentum คำทำนาย และความเสี่ยง</li>
     <li>covariance ที่วัดจาก factor return ที่ประมาณได้เอนขึ้นเท่ากับ $\mathbf G$ เสมอ factor เล็กเจ็บหนักที่สุด และเมื่อ factor เยอะเทียบกับจำนวนวัน eigenvalue กระจายเองจน shrinkage จำเป็น</li>
     <li>ความผันผวนกับ correlation ต้องการข้อมูลคนละปริมาณ จึงใช้ half-life ต่างกัน และตัวคูณจากภาพตัดขวางทำให้ตามพายุทันโดยไม่เหวี่ยง</li>
     <li>ส่วนเฉพาะตัวเป็นแนวทแยงเกือบทุกคู่ คู่ที่ไม่ใช่หาได้ด้วยเกณฑ์ที่เสียงรบกวนข้ามไม่ได้ และหลังตัดต้องตรวจ eigenvalue ทุกครั้ง</li>
     <li>ราคาผิดแก้ที่ต้นทาง ข่าวจริงห้ามแตะ winsorization เป็นตาข่ายชั้นสุดท้ายที่ต้องบันทึกทุกครั้งที่ทำงาน</li>
   </ul>
-  <p>บทที่ 27 คือบทสุดท้ายของหนังสือ ไม่มีบทที่ 28 ต่อจากนี้ ถ้าอยากเห็นว่าทุกชิ้นที่ใช้ในบทนี้มาจากไหน ตั้งแต่ความน่าจะเป็นใน Part แรกจนถึง factor model ใน Part 7 ให้กลับไปที่<a href="../index.html">สารบัญ</a></p>
+  <p>บทนี้คือบทสุดท้ายของหนังสือ ไม่มีบทต่อจากนี้ ถ้าอยากเห็นว่าทุกชิ้นที่ใช้ในบทนี้มาจากไหน ตั้งแต่ความน่าจะเป็นในส่วนแรกของหนังสือจนถึง factor model ในส่วนสุดท้าย ให้กลับไปที่<a href="../index.html">สารบัญ</a></p>
 </section>
 </div>
 </body>
