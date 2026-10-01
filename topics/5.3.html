@@ -17,245 +17,390 @@
 <article class="topic" data-number="5.3" data-depends-on="5.1 5.2">
 <header class="topic-header">
 <h1><span class="tnum">5.3</span> Conditional Distributions</h1>
-<p class="subtitle">เมื่อรู้ข้อมูลเพิ่ม ต้องเปลี่ยนทั้งกลุ่มอ้างอิงและมาตราส่วนความน่าจะเป็น</p>
+<p class="subtitle">เมื่อรู้ค่าของตัวแปรหนึ่งแล้ว ให้เลือกเฉพาะส่วนของ joint distribution ที่ตรงกับสิ่งที่รู้ แล้วหารด้วยมวลของส่วนนั้นให้รวมได้ 1 อีกครั้ง</p>
 </header>
-<section class="hook">
-<h2>จาก “วันทั่วไป” เป็น “วันที่ MSFT ลง”</h2>
-<p>ในหัวข้อก่อน เรารวมทุกสถานะของ MSFT เพื่อดู AAPL เพียงตัวเดียว คราวนี้คำถามเปลี่ยนเป็น “ในวันที่ MSFT ลง AAPL มีโอกาสลง 2% เท่าไร?” เราจะไม่รวมทั้งตาราง แต่เลือกเฉพาะคอลัมน์ที่ตรงเงื่อนไข แล้วปรับผลรวมของคอลัมน์นั้นให้เป็นหนึ่ง</p>
-<p><strong>Conditional distribution</strong> คือการแจกแจงภายใต้ข้อมูลที่ระบุ ไม่ใช่เพียงค่าเฉลี่ยใหม่ และไม่ได้บอกเหตุและผลด้วยตัวมันเอง ในตัวอย่างผลตอบแทนรายวันร่วม การรู้ผลตอบแทนของ MSFT ทั้งวันเป็นเงื่อนไขเชิงสถานการณ์ ไม่ใช่สัญญาณที่รู้ล่วงหน้าได้กลางวัน</p>
-</section>
-<section class="example">
-<h2>1. ตัดคอลัมน์ แล้วหารด้วยโอกาสของเงื่อนไข</h2>
-<p>ใช้ตารางสมมติเดียวกับ 5.2 ให้ $X$ เป็นผลตอบแทน AAPL หน่วยจุดเปอร์เซ็นต์ และ $Y$ เป็นสถานะ MSFT:</p>
-<div class="table-wrap">
-<table><thead><tr><th>$X$</th><th>MSFT ขึ้น</th><th>MSFT ลง</th><th>marginal</th></tr></thead>
-<tbody><tr><td>−2</td><td>0.05</td><td>0.15</td><td>0.20</td></tr><tr><td>0</td><td>0.30</td><td>0.20</td><td>0.50</td></tr><tr><td>2</td><td>0.25</td><td>0.05</td><td>0.30</td></tr><tr><th>รวม</th><td>0.60</td><td>0.40</td><td>1</td></tr></tbody></table>
+
+<div class="hook">
+  <p>ตารางโอกาสร่วม (สมมติ) ของผลตอบแทน AAPL กับทิศทาง MSFT บอกว่าในวันทั่วไป AAPL ลง 2% ด้วยโอกาส 0.20 และให้ผลตอบแทนเฉลี่ย +0.2% ต่อวัน หัวหน้า desk ถามคำถามแบบ stress test: “ในวันที่ MSFT ลง AAPL ลง 2% บ่อยแค่ไหน และผลตอบแทนเฉลี่ยของ AAPL ในวันแบบนั้นเป็นเท่าไร” ข้อมูลที่มีคือช่อง “AAPL −2% และ MSFT ลง” มีโอกาส 0.15 ช่อง “AAPL 0% และ MSFT ลง” 0.20 ช่อง “AAPL +2% และ MSFT ลง” 0.05</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>สามช่องนี้รวมกันได้ 0.40 คือโอกาสที่ MSFT ลง เมื่อรู้ว่าวันนี้ MSFT ลง โลกของเราเหลือแค่ 40% ของวันนี้ จึงต้องหารด้วย 0.40: AAPL ลง 2% ด้วยโอกาส $0.15/0.40=0.375$ สูงขึ้นเกือบสองเท่าจาก 0.20 ผลตอบแทนเฉลี่ยคือ $(-2)(0.375)+0(0.5)+2(0.125)=-0.5\%$ แทนที่จะเป็น +0.2% คำตอบ 0.15 ผิด เพราะนั่นคือสัดส่วนของ<em>ทุกวัน</em> ไม่ใช่ของวันที่ MSFT ลง</p></details>
 </div>
-<p>คอลัมน์ลงมีมวลเพียง 0.40 ค่า 0.15 ในช่องแรกหมายถึง “AAPL ลง 2% และ MSFT ลง” จากทุกวัน แต่เมื่อกลุ่มอ้างอิงเหลือเฉพาะวัน MSFT ลง เราต้องหารด้วย 0.40:</p>
-<div class="math">\[
-\begin{aligned}
-P(X=-2\mid Y=\mathrm{down})&=0.15/0.40=0.375,\\
-P(X=0\mid Y=\mathrm{down})&=0.20/0.40=0.500,\\
-P(X=2\mid Y=\mathrm{down})&=0.05/0.40=0.125.
-\end{aligned}
-\]</div>
-<p>ผลรวมใหม่เป็นหนึ่ง จากนั้นคำนวณค่าเฉลี่ยด้วยน้ำหนักใหม่:</p>
-<div class="math">\[
-\begin{aligned}
-E[X\mid Y=\mathrm{down}]&=(-2)(0.375)+2(0.125)=-0.5,\\
-E[X]&=(-2)(0.20)+2(0.30)=0.2.
-\end{aligned}
-\]</div>
-<p>ทั้งสองค่ามีหน่วยจุดเปอร์เซ็นต์ต่อวัน ค่าเฉลี่ยตามเงื่อนไขเป็น −0.5% เทียบกับค่าเฉลี่ยทุกวัน 0.2% ไม่ได้แปลว่า AAPL จะให้ผลตอบแทน −0.5% ทุกครั้ง และอย่าสลับเป็น $P(Y=\mathrm{down}\mid X=-2)=0.15/0.20=0.75$ ซึ่งตอบอีกคำถามหนึ่ง</p>
+
+<section class="prose">
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p><a href="5.2.html">marginal distribution</a> ตอบคำถามเรื่องตัวเดียวโดยรวมทุกกรณีของอีกตัว <strong>conditional distribution</strong> ทำตรงข้าม: เมื่อรู้แล้วว่าอีกตัวเป็นค่าใด ให้ทิ้งกรณีอื่นทั้งหมด เหลือเฉพาะส่วนที่ตรงกับสิ่งที่รู้ แล้วหารด้วยมวลของส่วนนั้นเพื่อให้โอกาสรวมเป็น 1 อีกครั้ง สองท่านี้คือ “เลือก” กับ “ปรับสเกล”</p>
+  <p>รูปด้านล่างแสดงทั้งสองท่าในภาพเดียว แท่งเทาคือ marginal ของ AAPL แท่งส้มอ่อนคือคอลัมน์ MSFT ลงตามที่อยู่ในตาราง (รวมได้แค่ 0.40) แท่งส้มเข้มคือคอลัมน์เดียวกันหลังหารด้วย 0.40 รูปร่างของส้มอ่อนกับส้มเข้มเหมือนกันทุกประการ ต่างกันแค่สเกล และมันเอียงไปทางซ้ายกว่าแท่งเทา นั่นคือข้อมูลที่การรู้ว่า MSFT ลงให้เรา</p>
+  <p>หน้านี้จะทำท่านี้กับตาราง สลับทิศของเงื่อนไขด้วย Bayes แก้ปัญหาตัวแปรต่อเนื่องที่โอกาสของจุดเดียวเป็นศูนย์ แล้วดูว่าค่าเฉลี่ยตามเงื่อนไขเป็นฟังก์ชันของข้อมูล เฉลี่ยกลับแล้วได้ค่าเฉลี่ยเดิม และในแบบจำลอง Gaussian ให้ทั้งค่าคาดหมายและความกว้างใหม่ ซึ่งเป็นรากของ hedge ratio</p>
 </section>
-<section class="formula">
-<h2>2. กรณีต่อเนื่อง: ทำไมไม่หารด้วย $P(Y=y)$?</h2>
-<p>ถ้า $Y$ ต่อเนื่อง โอกาส $P(Y=y)$ เป็นศูนย์ เราจึงเริ่มจากช่วงแคบ $y\le Y\le y+h$ ที่มีโอกาสเป็นบวก แล้วค่อยลดความกว้างช่วง ไม่ใช้สูตรเหตุการณ์แบบตรง ๆ จนกลายเป็น $0/0$</p>
-<div class="math">\[
-\begin{aligned}
-&P(X\le x\mid y\le Y\le y+h)\\
-&=\frac{\displaystyle\int_{-\infty}^{x}\int_y^{y+h}
- f_{X,Y}(u,v)\,dv\,du}
- {\displaystyle\int_y^{y+h}f_Y(v)\,dv}.
-\end{aligned}
-\]</div>
-<p>หารทั้งเศษและส่วนด้วย $h$ แล้วให้ $h\to0$ ที่จุดซึ่ง density มีพฤติกรรมเหมาะสมและ $f_Y(y)\gt0$ ค่าเฉลี่ยบนช่วงจะเข้าใกล้ density ที่ $y$:</p>
-<div class="math">\[
-\begin{aligned}
-F_{X\mid Y}(x\mid y)&=\int_{-\infty}^{x}
- \frac{f_{X,Y}(u,y)}{f_Y(y)}\,du,\\
-f_{X\mid Y}(x\mid y)&=\frac{f_{X,Y}(x,y)}{f_Y(y)},\\
-\int_{-\infty}^{\infty}f_{X\mid Y}(x\mid y)\,dx
- &=\frac{\int f_{X,Y}(x,y)\,dx}{f_Y(y)}=1.
-\end{aligned}
-\]</div>
-<p>นี่คือการเลือก <strong>รอยตัด</strong> ของ joint PDF แล้ว normalize ด้วยพื้นที่ใต้รอยตัด หน่วยของ joint PDF หารหน่วยของ $f_Y$ แล้วเหลือส่วนกลับของหน่วย $X$ ถูกต้องตาม density ของตัวแปรเดียว</p>
-<p>สูตรอัตราส่วนกำหนด conditional density ได้เกือบทุกค่าของเงื่อนไขที่เกี่ยวข้องกับการแจกแจง หาก $f_Y(y)=0$ สูตรนี้ใช้ไม่ได้ อย่าให้โปรแกรมแทนผลหารด้วยศูนย์เป็นการแจกแจงที่มีความหมายเอง</p>
-</section>
-<section class="formula">
-<h2>3. ค่าเฉลี่ยใหม่เป็นฟังก์ชันของข้อมูล</h2>
-<div class="math">\[
-\begin{aligned}
-m(y)&=E[X\mid Y=y]
- =\int_{-\infty}^{\infty}x f_{X\mid Y}(x\mid y)\,dx,\\
-v(y)&=\operatorname{Var}(X\mid Y=y)\\
- &=\int_{-\infty}^{\infty}(x-m(y))^2 f_{X\mid Y}(x\mid y)\,dx.
-\end{aligned}
-\]</div>
-<p>เมื่อทราบ $y$ แล้ว $m(y)$ เป็นตัวเลข แต่ก่อนทราบค่า $m(Y)=E[X\mid Y]$ เป็นตัวแปรสุ่มที่เปลี่ยนตามข้อมูล ฟังก์ชันนี้เรียกว่า regression function และไม่จำเป็นต้องเป็นเส้นตรง หากต้องการค่าคาดหมาย ต้องมี $E[|X|]\lt\infty$ และหากต้องการใช้สูตร variance ต่อไป ต้องมี $E[X^2]\lt\infty$</p>
-</section>
-<section class="example">
-<h2>4. ตัวอย่างสามเหลี่ยม: คำนวณได้ทั้ง distribution และ mean</h2>
-<p>ให้ $f_{X,Y}(x,y)=2$ บน $0\le y\le x\le1$ และศูนย์ที่อื่น ตัวแปรไม่มีหน่วย จาก 5.2 เรามี $f_Y(y)=2(1-y)$ สำหรับ $0\le y\le1$ เมื่อ $0\le y\lt1$:</p>
-<div class="math">\[
-\begin{aligned}
-f_{X\mid Y}(x\mid y)&=\frac{1}{1-y},&&y\le x\le1,\\
-\int_y^1\frac{1}{1-y}\,dx&=1,\\
-X\mid Y=y&\sim\mathrm{Uniform}(y,1).
-\end{aligned}
-\]</div>
-<p>ส่วน conditional density เป็นศูนย์นอกช่วงนั้น การสะสมและการหาค่าเฉลี่ยให้</p>
-<div class="math">\[
-F_{X\mid Y}(x\mid y)=
-\begin{cases}
-0,&x\lt y,\\
-(x-y)/(1-y),&y\le x\le1,\\
-1,&x\gt1,
-\end{cases}
-\]</div>
-<div class="math">\[
-\begin{aligned}
-m(y)&=\frac{1}{1-y}\int_y^1x\,dx
- =\frac{1-y^2}{2(1-y)}=\frac{1+y}{2},\\
-E[X^2\mid Y=y]&=\frac{1}{1-y}\int_y^1x^2\,dx
- =\frac{1+y+y^2}{3},\\
-v(y)&=\frac{1+y+y^2}{3}-\left(\frac{1+y}{2}\right)^2\\
- &=\frac{(1-y)^2}{12}.
-\end{aligned}
-\]</div>
-<p>เช่น เมื่อ $y=0.3$ เราเหลือ uniform บน $[0.3,1]$ มี density $10/7$ ค่าเฉลี่ย 0.65 และ variance $0.49/12\approx0.0408333$ โอกาส $X\le0.6$ เท่ากับ $0.3/0.7=3/7$ ที่ $y=1$ ตัวหารเป็นศูนย์ สูตรนี้จึงไม่กำหนดคำตอบ แม้อาจนิยามลิมิตให้เป็นมวลจุดที่ 1 ได้ แต่นั่นเป็นการเลือกต่อเติม ไม่ใช่ผลจากการหาร density</p>
-</section>
-<section class="formula">
-<h2>5. เฉลี่ยกลับต้องได้ของเดิม: Tower property</h2>
-<p>ถ้าเอาค่าเฉลี่ยของแต่ละกลุ่มมาถ่วงด้วยความถี่ของกลุ่ม เราต้องได้ค่าเฉลี่ยรวม เห็นได้โดยแทน $m(y)$ แล้วคืน joint density:</p>
-<div class="math">\[
-\begin{aligned}
-E[m(Y)]&=\int\left[\int x f_{X\mid Y}(x\mid y)\,dx\right]f_Y(y)\,dy\\
- &=\iint x f_{X,Y}(x,y)\,dx\,dy=E[X].
-\end{aligned}
-\]</div>
-<p>ในสามเหลี่ยม $E[Y]=1/3$ จึงได้ $E[(1+Y)/2]=(1+1/3)/2=2/3$ ตรงกับการอินทิเกรต $x f_X(x)=2x^2$ โดยตรง ห้ามเฉลี่ยค่า $m(y)$ แบบให้น้ำหนักทุก $y$ เท่ากัน เพราะ $Y$ ไม่ได้ uniform</p>
-</section>
-<section class="formula">
-<h2>6. แยกความผันผวน “ภายในกลุ่ม” และ “ระหว่างกลุ่ม”</h2>
-<p>เขียน $X-E[X]=(X-m(Y))+(m(Y)-E[X])$ เมื่อยกกำลังสองแล้วเฉลี่ย พจน์คูณข้ามเป็นศูนย์ เพราะ $E[X-m(Y)\mid Y]=0$ จึงได้กฎความแปรปรวนรวม:</p>
-<div class="math">\[
-\operatorname{Var}(X)
-=E[\operatorname{Var}(X\mid Y)]
-+\operatorname{Var}(E[X\mid Y]).
-\]</div>
-<p>สำหรับสามเหลี่ยม $E[X^2]=1/2$ และ $\operatorname{Var}(Y)=1/18$ ดังนั้น</p>
-<div class="math">\[
-\begin{aligned}
-\operatorname{Var}(X)&=\frac12-\left(\frac23\right)^2=\frac1{18},\\
-\operatorname{Var}(m(Y))&=\frac14\operatorname{Var}(Y)=\frac1{72},\\
-E[v(Y)]&=\int_0^1\frac{(1-y)^2}{12}\,2(1-y)\,dy=\frac1{24},\\
-\frac1{72}+\frac1{24}&=\frac1{18}.
-\end{aligned}
-\]</div>
-<p>ข้อสรุปคือ <strong>variance ตามเงื่อนไขลดลงโดยเฉลี่ย</strong> ไม่ใช่ทุกค่า $y$ ตัวอย่างเช่น $y=0.1$ ให้ $v(0.1)=0.81/12=0.0675$ มากกว่า variance รวม $1/18\approx0.05556$ ได้โดยไม่ขัดกับกฎนี้</p>
-</section>
-<section class="figure">
-<h2>7. กรณี Gaussian: เห็นทั้งตำแหน่งและความกว้างที่เปลี่ยน</h2>
-<p>รูปทั้งสี่ใช้แบบจำลอง <strong>jointly Gaussian</strong> สมมติ ค่าเฉลี่ยทั้งคู่ศูนย์ ส่วนเบี่ยงเบนมาตรฐาน AAPL 2.5 และ MSFT 3 จุดเปอร์เซ็นต์ กับ $\rho=0.6$ ภายใต้เงื่อนไข Gaussian และ $|\rho|\lt1$:</p>
-<div class="math">\[
-\begin{aligned}
-X\mid Y=y&\sim N(m(y),s^2),\\
-m(y)&=\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y),\\
-s^2&=\sigma_X^2(1-\rho^2).
-\end{aligned}
-\]</div>
-<details><summary>ที่มาของสูตร: แยกส่วนที่รู้แล้วออกจากส่วนที่ยังสุ่ม</summary>
-<p>ให้ $U,V$ เป็น standard Normal ที่เป็นอิสระกัน และให้ $\sigma_X,\sigma_Y\gt0$ เราสร้าง jointly Gaussian ที่มี mean, SD และ correlation ตามต้องการได้ดังนี้:</p>
-<div class="math">\[
-\begin{aligned}
-Y&=\mu_Y+\sigma_Y U,\\
-X&=\mu_X+\sigma_X\bigl(\rho U+\sqrt{1-\rho^2}\,V\bigr),\\
-\operatorname{Var}(X)&=\sigma_X^2\bigl(\rho^2+1-\rho^2\bigr)=\sigma_X^2,\\
-\operatorname{Cov}(X,Y)&=\rho\sigma_X\sigma_Y.
-\end{aligned}
-\]</div>
-<p>joint Gaussian ถูกกำหนดด้วย mean และ covariance จึงใช้การสร้างนี้แทนโมเดลข้างต้นได้ เมื่อรู้ $Y=y$ เรารู้ $U=(y-\mu_Y)/\sigma_Y$ แต่ $V$ ยังเป็น standard Normal ตัวเดิม เพราะเป็นอิสระจาก $U$:</p>
-<div class="math">\[
-\begin{aligned}
-X\mid Y=y
- &=\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y)\\
- &\quad+\sigma_X\sqrt{1-\rho^2}\,V.
-\end{aligned}
-\]</div>
-<p>สองพจน์แรกเป็นค่าคงที่เมื่อรู้ $y$ จึงเป็น conditional mean ส่วนพจน์สุดท้ายมี mean ศูนย์และ variance $\sigma_X^2(1-\rho^2)$ นี่คือที่มาของทั้งสองสูตร ไม่ใช่กฎสำหรับข้อมูลที่เพียงแค่มี correlation เท่ากัน</p>
+
+<figure class="plot">
+  <h4>รูป — เลือกคอลัมน์ MSFT ลง แล้วปรับสเกลให้รวมได้ 1</h4>
+  <svg viewBox="0 0 440 320" role="img" aria-label="แท่งสามกลุ่มสำหรับ AAPL ลบสอง ศูนย์ และบวกสองเปอร์เซ็นต์ แต่ละกลุ่มมีแท่ง marginal สีเทา แท่งร่วมกับ MSFT ลงสีส้มอ่อน และแท่งตามเงื่อนไขสีส้มเข้ม" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <rect x="40" y="10" width="14" height="14" fill="#5b6472" fill-opacity="0.35" stroke="#5b6472" stroke-width="2"/>
+      <text x="60" y="23" font-size="14">ทุกวัน (marginal)</text>
+      <rect x="40" y="32" width="14" height="14" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="60" y="45" font-size="14">ช่องในตาราง (รวม 0.40)</text>
+      <rect x="250" y="10" width="14" height="14" fill="#a65f00" fill-opacity="0.6" stroke="#a65f00" stroke-width="2"/>
+      <text x="270" y="23" font-size="14">หารด้วย 0.40 แล้ว</text>
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="60" y1="170" x2="420" y2="170"/>
+        <line x1="60" y1="70" x2="420" y2="70"/>
+      </g>
+      <rect x="77" y="190" width="26" height="80" fill="#5b6472" fill-opacity="0.35" stroke="#5b6472" stroke-width="2"/>
+      <rect x="107" y="210" width="26" height="60" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2" stroke-dasharray="4 3"/>
+      <rect x="137" y="120" width="26" height="150" fill="#a65f00" fill-opacity="0.6" stroke="#a65f00" stroke-width="2"/>
+      <rect x="197" y="70" width="26" height="200" fill="#5b6472" fill-opacity="0.35" stroke="#5b6472" stroke-width="2"/>
+      <rect x="227" y="190" width="26" height="80" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2" stroke-dasharray="4 3"/>
+      <rect x="257" y="70" width="26" height="200" fill="#a65f00" fill-opacity="0.6" stroke="#a65f00" stroke-width="2"/>
+      <rect x="317" y="150" width="26" height="120" fill="#5b6472" fill-opacity="0.35" stroke="#5b6472" stroke-width="2"/>
+      <rect x="347" y="250" width="26" height="20" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2" stroke-dasharray="4 3"/>
+      <rect x="377" y="220" width="26" height="50" fill="#a65f00" fill-opacity="0.6" stroke="#a65f00" stroke-width="2"/>
+      <g font-size="13" text-anchor="middle">
+        <text x="90" y="184">0.20</text>
+        <text x="120" y="204">0.15</text>
+        <text x="150" y="114">0.375</text>
+        <text x="210" y="64">0.50</text>
+        <text x="240" y="184">0.20</text>
+        <text x="270" y="64">0.50</text>
+        <text x="330" y="144">0.30</text>
+        <text x="360" y="244">0.05</text>
+        <text x="390" y="214">0.125</text>
+      </g>
+      <line x1="60" y1="270" x2="420" y2="270" stroke="#181818" stroke-width="2"/>
+      <g font-size="14" fill="#5b6472">
+        <text x="52" y="275" text-anchor="end">0</text>
+        <text x="52" y="175" text-anchor="end">0.25</text>
+        <text x="52" y="75" text-anchor="end">0.5</text>
+      </g>
+      <text x="120" y="292" text-anchor="middle">−2%</text>
+      <text x="240" y="292" text-anchor="middle">0%</text>
+      <text x="360" y="292" text-anchor="middle">+2%</text>
+      <text x="240" y="314" text-anchor="middle">ผลตอบแทน AAPL</text>
+    </g>
+  </svg>
+  <figcaption>ในแต่ละกลุ่ม แท่งส้มเข้มคือแท่งส้มอ่อนคูณ $1/0.40=2.5$ เท่า สัดส่วนระหว่างสามค่าจึงเท่าเดิม ($0.15:0.20:0.05=3:4:1$) แต่รวมกันได้ 1 เมื่อเทียบกับแท่งเทา วันที่ MSFT ลงทำให้ AAPL −2% เกิดบ่อยขึ้น (0.20 เป็น 0.375) และ AAPL +2% เกิดน้อยลง (0.30 เป็น 0.125) ตัวเลขเหล่านี้มาจากตารางสมมติ</figcaption>
+</figure>
+
+<details class="jargon">
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>Conditional distribution</dt>
+    <dd>การแจกแจงของตัวแปรหนึ่งเมื่อรู้ค่าของอีกตัวแล้ว ได้จากการเลือกส่วนของ joint ที่ตรงกับสิ่งที่รู้แล้วหารด้วยมวลของส่วนนั้น ใช้ตอบคำถามแบบ “ถ้า ... แล้ว ...” เช่น stress test</dd>
+    <dt>Conditional density $f_{X\mid Y}(x\mid y)$</dt>
+    <dd>density ของ $X$ เมื่อรู้ $Y=y$ เท่ากับ $f_{X,Y}(x,y)/f_Y(y)$ ใช้ได้เมื่อ $f_Y(y)\gt0$ เป็นรอยตัดของ joint density ที่ถูกปรับสเกลให้พื้นที่เป็น 1</dd>
+    <dt>Conditional expectation $E[X\mid Y=y]$</dt>
+    <dd>ค่าเฉลี่ยของ $X$ ภายใต้ conditional distribution เป็นตัวเลขเมื่อรู้ $y$ และเป็นฟังก์ชันของ $Y$ ก่อนรู้ ใช้เป็นค่าพยากรณ์ที่ดีที่สุดในความหมาย mean squared error</dd>
+    <dt>Regression function</dt>
+    <dd>ชื่อเรียก $m(y)=E[X\mid Y=y]$ เมื่อมองเป็นฟังก์ชันของ $y$ ไม่จำเป็นต้องเป็นเส้นตรง ในแบบจำลอง Gaussian มันเป็นเส้นตรงและความชันคือ hedge ratio</dd>
+    <dt>Conditional variance</dt>
+    <dd>ความผันผวนที่เหลืออยู่หลังรู้ข้อมูล $\operatorname{Var}(X\mid Y=y)$ ใช้วัดว่าข้อมูลช่วยลดความไม่แน่นอนได้แค่ไหน</dd>
+  </dl>
 </details>
-<p>เมื่อ $y=-3$ ได้ $m=-1.5$ จุดเปอร์เซ็นต์ และ $s=2$ จุดเปอร์เซ็นต์ เทียบกับ marginal ที่ mean 0 และ SD 2.5 จุดเปอร์เซ็นต์ สูตร variance ที่ไม่ขึ้นกับ $y$ เป็นคุณสมบัติเฉพาะของ Gaussian นี้ ไม่ใช่ของทุก conditional distribution</p>
-<figure class="plot">
-<img src="../figures/5.3-1.svg" alt="conditional density ของ AAPL หลัง normalize เมื่อ MSFT เท่ากับลบสามเปอร์เซ็นต์" loading="lazy">
-</figure>
-<p>รูป 5.3a แสดง density ที่ normalize แล้ว มีจุดกึ่งกลาง −1.5% และพื้นที่เกือบหนึ่งในช่วงที่วาด ไม่ใช่รอยตัดดิบของ joint PDF</p>
-<figure class="plot">
-<img src="../figures/5.3-2.svg" alt="เปรียบเทียบ marginal กับ conditional normal density ที่เลื่อนไปทางซ้ายและแคบลง" loading="lazy">
-</figure>
-<p>รูป 5.3b เทียบ marginal กับ conditional: เส้นตามเงื่อนไขเลื่อนไปซ้ายและแคบลงตามพารามิเตอร์ที่คำนวณข้างต้น</p>
-<figure class="plot">
-<img src="../figures/5.3-3.svg" alt="เส้น conditional mean ของ AAPL เท่ากับครึ่งหนึ่งของผลตอบแทน MSFT" loading="lazy">
-</figure>
-<p>รูป 5.3c แสดง $m(y)=0.5y$ จุดที่ $y=-3,0,3$ ให้ mean −1.5, 0, 1.5 ตามลำดับ ความสัมพันธ์นี้เป็นการคาดหมายตามเงื่อนไข ไม่ใช่ผลตอบแทนจริงทุกครั้งหรือข้อสรุปเชิงเหตุผล</p>
-<figure class="plot">
-<img src="../figures/5.3-4.svg" alt="แท่งพื้นที่ใต้ conditional densities สามกรณีของ MSFT เทียบเส้นหนึ่ง" loading="lazy">
-</figure>
-<p>รูป 5.3d เป็นกราฟแท่งของ <em>พื้นที่ใต้ density</em> ในกรณี MSFT −3%, 0%, +3% ทุกแท่งใกล้หนึ่ง เป็นการตรวจ normalization ไม่ใช่แผนภูมิโอกาสของสามค่าผลตอบแทน MSFT</p>
+
+<details class="symbols">
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$P(X=x\mid Y=y)$</td><td>โอกาสของ $X=x$ ในวันที่ $Y=y$</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$f_{X\mid Y}(x\mid y)$</td><td>conditional density</td><td>ต่อหน่วย $X$</td></tr>
+      <tr><td>$m(y)$</td><td>$E[X\mid Y=y]$ ค่าเฉลี่ยตามเงื่อนไข</td><td>หน่วยของ $X$</td></tr>
+      <tr><td>$v(y)$</td><td>$\operatorname{Var}(X\mid Y=y)$</td><td>หน่วยของ $X$ กำลังสอง</td></tr>
+      <tr><td>$\sigma_X,\ \sigma_Y,\ \rho$</td><td>ส่วนเบี่ยงเบนมาตรฐานและ correlation ของแบบจำลอง Gaussian</td><td>จุดเปอร์เซ็นต์, ไม่มีหน่วย</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<section class="example">
+  <h4>ขั้นที่ 1 — เลือกคอลัมน์ แล้วหารด้วยโอกาสของเงื่อนไข</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตารางเดียวกับใน <a href="5.2.html">marginal distribution</a> $X$ คือผลตอบแทน AAPL หน่วยจุดเปอร์เซ็นต์ $Y$ คือทิศทาง MSFT</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>$X$</th><th>MSFT ขึ้น</th><th>MSFT ลง</th><th>marginal</th></tr></thead>
+    <tbody>
+      <tr><td>−2</td><td>0.05</td><td>0.15</td><td>0.20</td></tr>
+      <tr><td>0</td><td>0.30</td><td>0.20</td><td>0.50</td></tr>
+      <tr><td>2</td><td>0.25</td><td>0.05</td><td>0.30</td></tr>
+      <tr><th>รวม</th><td>0.60</td><td>0.40</td><td>1</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="math">\[\begin{aligned}
+P(X=x\mid Y=y)&=\frac{P(X=x,\,Y=y)}{P(Y=y)},\\
+P(X=-2\mid\text{down})&=\tfrac{0.15}{0.40}=0.375,\\
+P(X=0\mid\text{down})&=\tfrac{0.20}{0.40}=0.500,\\
+P(X=2\mid\text{down})&=\tfrac{0.05}{0.40}=0.125,\\
+E[X\mid\text{down}]&=(-2)(0.375)+2(0.125)\\
+&=-0.5.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> ในวันที่ MSFT ลง AAPL ลง 2% ด้วยโอกาส 0.375 และให้ผลตอบแทนเฉลี่ย −0.5% เทียบกับวันทั่วไปที่ 0.20 และ +0.2% บรรทัดแรกคือนิยาม: ตัวเศษเลือกช่อง ตัวส่วนคือมวลของคอลัมน์ที่เลือก ซึ่งต้องเป็นบวก</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $0.375+0.500+0.125=1$ ทุกการแจกแจงตามเงื่อนไขต้องรวมได้ 1 ถ้าไม่ได้ แปลว่าหารด้วยตัวเลขผิด</p>
 </section>
+
 <section class="formula">
-<h2>8. Bayes และเงื่อนไขที่เป็นกลุ่มตัวแปร</h2>
-<p>แบ่งเวกเตอร์เป็นข้อมูล $\mathbf A$ กับสิ่งที่สนใจ $\mathbf B$ หลักเลือกและ normalize ยังเหมือนเดิม เมื่อ $f_{\mathbf A}(\mathbf a)\gt0$:</p>
-<div class="math">\[
-\begin{aligned}
-f_{\mathbf B\mid\mathbf A}(\mathbf b\mid\mathbf a)
- &=\frac{f_{\mathbf A,\mathbf B}(\mathbf a,\mathbf b)}{f_{\mathbf A}(\mathbf a)}\\
- &=\frac{f_{\mathbf A\mid\mathbf B}(\mathbf a\mid\mathbf b)
- f_{\mathbf B}(\mathbf b)}{f_{\mathbf A}(\mathbf a)},\\
-F_{\mathbf B\mid\mathbf A}(\mathbf b\mid\mathbf a)
- &=\int_{\mathbf u\le\mathbf b}
- f_{\mathbf B\mid\mathbf A}(\mathbf u\mid\mathbf a)\,d\mathbf u.
-\end{aligned}
-\]</div>
-<p>อสมการของเวกเตอร์หมายถึงทุกพิกัดผ่านเกณฑ์พร้อมกัน สูตร Bayes สลับทิศของเงื่อนไขด้วยน้ำหนัก marginal ไม่ใช่สลับชื่อในวงเล็บเฉย ๆ แนวคิดการปรับความเชื่อจากข้อมูลของ Bayes และ Laplace จึงเชื่อมต่อกับการ normalize density ได้โดยตรง</p>
+  <h4>ขั้นที่ 2 — สลับทิศของเงื่อนไขด้วย Bayes</h4>
+  <p>คำถาม “ในวันที่ MSFT ลง AAPL ลง 2% บ่อยแค่ไหน” กับ “ในวันที่ AAPL ลง 2% MSFT ลงบ่อยแค่ไหน” ฟังคล้ายกัน แต่ตัวหารต่างกัน และมักสลับกันโดยไม่ตั้งใจ</p>
+  <div class="math">\[\begin{aligned}
+P(\text{down}\mid X=-2)&=\frac{0.15}{0.20}=0.75,\\
+f_{Y\mid X}(y\mid x)&=\frac{f_{X\mid Y}(x\mid y)\,f_Y(y)}{f_X(x)},\\
+P(\text{down}\mid X=-2)&=\frac{0.375\times0.40}{0.20}=0.75.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกเลือก<em>แถว</em> $X=-2$ แทนคอลัมน์ จึงหารด้วยมวลของแถว 0.20 ได้ 0.75 ซึ่งต่างจาก 0.375 มาก บรรทัดที่สองคือ <a href="1.7.html">Bayes' theorem</a> ในรูปของการแจกแจง: เขียนโอกาสร่วมเป็น “conditional คูณ marginal” ได้สองแบบ แล้วจับเท่ากัน บรรทัดสุดท้ายแทนตัวเลขของคอลัมน์ MSFT ลงที่หาไว้แล้ว เพื่อยืนยันว่าได้ 0.75 เหมือนกัน</p>
+    <p>ความต่างนี้มีผลจริง: 0.75 บอกว่าวัน AAPL ลง 2% เกือบทุกวันเป็นวันที่ MSFT ลงด้วย ส่วน 0.375 บอกว่าวัน MSFT ลงส่วนใหญ่ AAPL <em>ไม่ได้</em>ลง 2% ทั้งสองค่าจริงพร้อมกัน เพราะวัน MSFT ลง (0.40) มีมากกว่าวัน AAPL ลง 2% (0.20) สองเท่า</p>
+  </div>
 </section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — ตัวแปรต่อเนื่อง: หารด้วยศูนย์ไม่ได้ จึงใช้แถบแคบ</h4>
+  <p>ถ้า MSFT เป็นผลตอบแทนต่อเนื่อง โอกาสที่มันเท่ากับ −3% พอดีคือศูนย์ สูตร “เลือกแล้วหาร” ของตารางจะกลายเป็น $0/0$ วิธีแก้คือเริ่มจากแถบแคบ $y\le Y\le y+h$ ซึ่งมีโอกาสเป็นบวก แล้วค่อยบีบแถบให้แคบลง</p>
+  <div class="math">\[\begin{aligned}
+&P(X\le x\mid y\le Y\le y+h)\\
+&=\frac{\int_{-\infty}^{x}\int_y^{y+h}f_{X,Y}(u,v)\,dv\,du}
+{\int_y^{y+h}f_Y(v)\,dv}\\
+&\approx\frac{h\int_{-\infty}^{x}f_{X,Y}(u,y)\,du}{h\,f_Y(y)},\\
+f_{X\mid Y}(x\mid y)&=\frac{f_{X,Y}(x,y)}{f_Y(y)},\qquad f_Y(y)\gt0.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกเป็นโอกาสตามเงื่อนไขธรรมดาแบบเดียวกับตาราง เพราะเงื่อนไขเป็นแถบที่มีโอกาสเป็นบวก บรรทัดที่สองใช้ว่าในแถบแคบมาก density แทบคงที่ตาม $v$ อินทิกรัลตาม $v$ ทั้งเศษและส่วนจึงประมาณความกว้าง $h$ คูณค่าที่ $v=y$ ตรงนี้คือท่าสำคัญ: $h$ ตัดกันเอง เหลืออัตราส่วนของ density ที่ไม่เป็น $0/0$ อีกต่อไป</p>
+    <p>บรรทัดสุดท้ายอ่านว่า “ตัดรอยของ joint density ที่ $Y=y$ แล้วหารด้วยพื้นที่ใต้รอยนั้น” พื้นที่ใต้รอยคือ $f_Y(y)$ ตามที่เห็นใน <a href="5.2.html">marginal distribution</a> หน่วยก็ลงตัว: ต่อจุดเปอร์เซ็นต์กำลังสอง หารด้วยต่อจุดเปอร์เซ็นต์ เหลือต่อจุดเปอร์เซ็นต์ ซึ่งเป็นหน่วยของ density ตัวแปรเดียว</p>
+    <p>ตัวอย่างในรูปด้านล่าง (แบบจำลอง Gaussian สมมติ ส่วนเบี่ยงเบนมาตรฐาน 2.5 และ 3 จุดเปอร์เซ็นต์ correlation 0.6): ที่ MSFT = −3% พื้นที่ใต้รอยตัดคือ $f_Y(-3)=0.0807$ ต่อจุดเปอร์เซ็นต์ รอยตัดดิบจึงเตี้ยมาก การหารด้วย 0.0807 ยืดมันขึ้น 12.4 เท่า</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — รอยตัดดิบเทียบกับ conditional density ที่ MSFT = −3%</h4>
+  <svg viewBox="0 0 440 320" role="img" aria-label="เส้นโค้งส้มอ่อนเตี้ยคือรอยตัดดิบของ joint density พื้นที่ 0.0807 เส้นส้มเข้มคือรอยเดียวกันหลังหารด้วย 0.0807 ยอดอยู่ที่ลบ 1.5 เส้นประเทาคือ marginal ของ AAPL" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="50" y1="150" x2="420" y2="150"/>
+        <line x1="50" y1="40" x2="420" y2="40"/>
+        <line x1="261.4" y1="30" x2="261.4" y2="260"/>
+      </g>
+      <polygon points="50,260 50,259.9 55.3,259.9 60.6,259.8 65.9,259.8 71.1,259.7 76.4,259.6 81.7,259.5 87,259.3 92.3,259.1 97.6,258.9 102.9,258.6 108.1,258.2 113.4,257.8 118.7,257.4 124,256.8 129.3,256.2 134.6,255.5 139.9,254.7 145.1,253.8 150.4,252.9 155.7,251.9 161,250.9 166.3,249.8 171.6,248.7 176.9,247.7 182.2,246.6 187.4,245.7 192.7,244.8 198,244 203.3,243.4 208.6,242.8 213.9,242.5 219.2,242.3 224.4,242.3 229.7,242.5 235,242.8 240.3,243.4 245.6,244 250.9,244.8 256.2,245.7 261.4,246.6 266.7,247.7 272,248.7 277.3,249.8 282.6,250.9 287.9,251.9 293.2,252.9 298.4,253.8 303.7,254.7 309,255.5 314.3,256.2 319.6,256.8 324.9,257.4 330.2,257.8 335.4,258.2 340.7,258.6 346,258.9 351.3,259.1 356.6,259.3 361.9,259.5 367.2,259.6 372.4,259.7 377.7,259.8 383,259.8 388.3,259.9 393.6,259.9 398.9,259.9 404.2,260 420,260" fill="#a65f00" fill-opacity="0.3" stroke="#a65f00" stroke-width="2"/>
+      <polyline points="50,259 55.3,258.6 60.6,258.3 65.9,257.8 71.1,257.2 76.4,256.5 81.7,255.7 87,254.6 92.3,253.4 97.6,251.9 102.9,250.1 108.1,248.1 113.4,245.7 118.7,243 124,239.8 129.3,236.2 134.6,232.2 139.9,227.7 145.1,222.7 150.4,217.2 155.7,211.2 161,204.7 166.3,197.8 171.6,190.4 176.9,182.6 182.2,174.6 187.4,166.2 192.7,157.8 198,149.3 203.3,140.8 208.6,132.5 213.9,124.5 219.2,117 224.4,109.9 229.7,103.6 235,98 240.3,93.2 245.6,89.4 250.9,86.7 256.2,85 261.4,84.5 266.7,85 272,86.7 277.3,89.4 282.6,93.2 287.9,98 293.2,103.6 298.4,109.9 303.7,117 309,124.5 314.3,132.5 319.6,140.8 324.9,149.3 330.2,157.8 335.4,166.2 340.7,174.6 346,182.6 351.3,190.4 356.6,197.8 361.9,204.7 367.2,211.2 372.4,217.2 377.7,222.7 383,227.7 388.3,232.2 393.6,236.2 398.9,239.8 404.2,243 409.4,245.7 414.7,248.1 420,250.1" fill="none" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 4"/>
+      <polyline points="50,258.9 55.3,258.5 60.6,257.9 65.9,257.2 71.1,256.2 76.4,255 81.7,253.4 87,251.5 92.3,249.1 97.6,246.1 102.9,242.5 108.1,238.2 113.4,233.2 118.7,227.2 124,220.4 129.3,212.5 134.6,203.8 139.9,194 145.1,183.3 150.4,171.8 155.7,159.5 161,146.7 166.3,133.6 171.6,120.3 176.9,107.1 182.2,94.4 187.4,82.4 192.7,71.4 198,61.7 203.3,53.6 208.6,47.3 213.9,43 219.2,40.9 224.4,40.9 229.7,43 235,47.3 240.3,53.6 245.6,61.7 250.9,71.4 256.2,82.4 261.4,94.4 266.7,107.1 272,120.3 277.3,133.6 282.6,146.7 287.9,159.5 293.2,171.8 298.4,183.3 303.7,194 309,203.8 314.3,212.5 319.6,220.4 324.9,227.2 330.2,233.2 335.4,238.2 340.7,242.5 346,246.1 351.3,249.1 356.6,251.5 361.9,253.4 367.2,255 372.4,256.2 377.7,257.2 383,257.9 388.3,258.5 393.6,258.9 398.9,259.2 404.2,259.4 409.4,259.6 414.7,259.7 420,259.8" fill="none" stroke="#a65f00" stroke-width="3"/>
+      <line x1="221.8" y1="36" x2="221.8" y2="260" stroke="#a65f00" stroke-width="1.5" stroke-dasharray="3 4"/>
+      <line x1="294" y1="24" x2="314" y2="24" stroke="#a65f00" stroke-width="3"/>
+      <text x="320" y="29" fill="#a65f00" font-size="14">หารแล้ว พื้นที่ 1</text>
+      <rect x="294" y="40" width="20" height="12" fill="#a65f00" fill-opacity="0.3" stroke="#a65f00" stroke-width="1.5"/>
+      <text x="320" y="51" fill="#a65f00" font-size="14">ดิบ พื้นที่ 0.0807</text>
+      <line x1="294" y1="68" x2="314" y2="68" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="320" y="73" fill="#5b6472" font-size="14">ทุกวัน (marginal)</text>
+      <text x="221.8" y="30" text-anchor="middle" fill="#a65f00" font-size="14">−1.5</text>
+      <line x1="50" y1="260" x2="420" y2="260" stroke="#181818" stroke-width="2"/>
+      <g font-size="14" fill="#5b6472">
+        <text x="50" y="280" text-anchor="middle">−8</text>
+        <text x="102.9" y="280" text-anchor="middle">−6</text>
+        <text x="155.7" y="280" text-anchor="middle">−4</text>
+        <text x="208.6" y="280" text-anchor="middle">−2</text>
+        <text x="261.4" y="280" text-anchor="middle">0</text>
+        <text x="314.3" y="280" text-anchor="middle">2</text>
+        <text x="367.2" y="280" text-anchor="middle">4</text>
+        <text x="420" y="280" text-anchor="middle">6</text>
+        <text x="44" y="265" text-anchor="end">0</text>
+        <text x="44" y="155" text-anchor="end">0.1</text>
+        <text x="44" y="45" text-anchor="end">0.2</text>
+      </g>
+      <text x="235" y="304" text-anchor="middle">ผลตอบแทน AAPL (%)</text>
+      <text transform="translate(14 150) rotate(-90)" text-anchor="middle" font-size="14">density ต่อจุดเปอร์เซ็นต์</text>
+    </g>
+  </svg>
+  <figcaption>เนินส้มอ่อนที่เตี้ยมากคือรอยตัดของ joint density ตามแนว MSFT = −3% ยังไม่ได้หาร พื้นที่ของมันคือ 0.0807 เส้นส้มเข้มคือรอยเดียวกันหลังหารด้วย 0.0807 รูปร่างเหมือนเดิม แต่สูงขึ้น 12.4 เท่าจนพื้นที่เป็น 1 ยอดของมันอยู่ที่ −1.5% (เส้นประส้ม) และแคบกว่าเส้นประเทาซึ่งคือ marginal ของ AAPL (ค่าเฉลี่ย 0 ส่วนเบี่ยงเบน 2.5) การรู้ว่า MSFT ลง 3% จึงทั้งเลื่อนและบีบการแจกแจงของ AAPL</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 4 — สามเหลี่ยม: เมื่อรู้ $Y$ แล้ว $X$ เหลือ uniform</h4>
+  <p>แบบจำลอง Gaussian หาอัตราส่วนด้วยมือยาก ขั้นนี้ใช้สามเหลี่ยมจาก <a href="5.2.html">marginal distribution</a> ที่หาได้ครบทุกบรรทัด</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $f_{X,Y}(x,y)=2$ บน $0\le y\le x\le1$ และศูนย์ที่อื่น ตัวแปรไร้หน่วย marginal ของ $Y$ คือ $f_Y(y)=2(1-y)$ ต้องการการแจกแจงของ $X$ เมื่อรู้ $Y=y$ โดย $0\le y\lt1$</p>
+  <div class="math">\[\begin{aligned}
+f_{X\mid Y}(x\mid y)&=\frac{2}{2(1-y)}=\frac{1}{1-y},\quad y\le x\le1,\\
+\int_y^1\frac{1}{1-y}\,dx&=1,\\
+f_{X\mid Y}(x\mid 0.3)&=\tfrac{1}{0.7}=\tfrac{10}{7}\approx1.43,\\
+P(X\le0.6\mid Y=0.3)&=\frac{0.6-0.3}{0.7}=\tfrac37\approx0.43.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> เมื่อรู้ $Y=y$ ค่า $X$ กระจายสม่ำเสมอระหว่าง $y$ กับ 1 รอยตัดแนวนอนของสามเหลี่ยมมีความสูงคงที่ 2 และยาว $1-y$ หารด้วยพื้นที่ $2(1-y)$ จึงได้ความสูง $1/(1-y)$ ตลอดช่วง นอกช่วงนี้ conditional density เป็นศูนย์ เพราะ $X$ ต่ำกว่า $Y$ ไม่ได้</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ที่ $y=1$ ตัวหาร $2(1-y)$ เป็นศูนย์ สูตรนี้จึงไม่ให้คำตอบ ซึ่งสมเหตุสมผล: ในสามเหลี่ยมนี้ $Y=1$ เกิดได้เฉพาะเมื่อ $X=1$ ด้วย แต่มวลที่จุดนั้นเป็นศูนย์ อย่าให้โปรแกรมหารด้วยศูนย์แล้วคืนค่าที่ดูเหมือนใช้ได้</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ยิ่งรู้ว่า Y สูง ช่วงของ X ยิ่งแคบและยิ่งสูง</h4>
+  <svg viewBox="0 0 440 300" role="img" aria-label="สี่เหลี่ยมผืนผ้าสามรูปบนแกน x เมื่อ y เท่ากับศูนย์ ช่วงศูนย์ถึงหนึ่งสูงหนึ่ง เมื่อ y เท่ากับ 0.3 ช่วง 0.3 ถึงหนึ่งสูง 1.43 เมื่อ y เท่ากับ 0.6 ช่วง 0.6 ถึงหนึ่งสูง 2.5 ทุกรูปมีพื้นที่หนึ่ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="60" y1="174" x2="400" y2="174"/>
+        <line x1="60" y1="88" x2="400" y2="88"/>
+      </g>
+      <rect x="60" y="174" width="340" height="86" fill="#2455d6" fill-opacity="0.12" stroke="#2455d6" stroke-width="2.5"/>
+      <rect x="162" y="137" width="238" height="123" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2.5"/>
+      <rect x="264" y="45" width="136" height="215" fill="#047857" fill-opacity="0.15" stroke="#047857" stroke-width="2.5"/>
+      <text x="70" y="166" fill="#2455d6" font-size="14">Y = 0: สูง 1</text>
+      <text x="70" y="130" fill="#a65f00" font-size="14">Y = 0.3: สูง 1.43</text>
+      <text x="258" y="38" fill="#047857" font-size="14" text-anchor="end">Y = 0.6: สูง 2.5</text>
+      <line x1="60" y1="260" x2="400" y2="260" stroke="#181818" stroke-width="2"/>
+      <line x1="60" y1="30" x2="60" y2="260" stroke="#181818" stroke-width="2"/>
+      <g font-size="14" fill="#5b6472">
+        <text x="60" y="280" text-anchor="middle">0</text>
+        <text x="162" y="280" text-anchor="middle">0.3</text>
+        <text x="264" y="280" text-anchor="middle">0.6</text>
+        <text x="400" y="280" text-anchor="middle">1</text>
+        <text x="52" y="265" text-anchor="end">0</text>
+        <text x="52" y="179" text-anchor="end">1</text>
+        <text x="52" y="93" text-anchor="end">2</text>
+      </g>
+      <text x="230" y="298" text-anchor="middle">ค่าของ X</text>
+      <text transform="translate(22 150) rotate(-90)" text-anchor="middle" font-size="14">conditional density</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละสี่เหลี่ยมคือ conditional density ของ $X$ เมื่อรู้ $Y$ หนึ่งค่า ทั้งสามมีพื้นที่ 1: $1\times1$, $0.7\times1.43$ และ $0.4\times2.5$ การรู้ว่า $Y$ สูงขึ้นตัดตัวเลือกของ $X$ ที่ต่ำกว่า $Y$ ทิ้ง มวลที่เหลือจึงต้องอัดอยู่ในช่วงที่แคบลง ความสูงเกิน 1 ได้เพราะเป็น density</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ค่าเฉลี่ยตามเงื่อนไขเป็นฟังก์ชันของข้อมูล</h4>
+  <p>เมื่อได้ conditional distribution แล้ว ทุกสิ่งที่ทำกับการแจกแจงหนึ่งตัวแปรทำได้ทันที ที่ใช้บ่อยที่สุดคือค่าเฉลี่ยและ variance ซึ่งตอนนี้ขึ้นกับค่าที่รู้</p>
+  <div class="math">\[\begin{aligned}
+m(y)&=E[X\mid Y=y]=\int x\,f_{X\mid Y}(x\mid y)\,dx,\\
+m(y)&=\frac{1}{1-y}\int_y^1x\,dx=\frac{1+y}{2},\\
+v(y)&=\operatorname{Var}(X\mid Y=y)=\frac{(1-y)^2}{12},\\
+m(0.3)&=0.65,\qquad v(0.3)=\tfrac{0.49}{12}\approx0.0408.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกคือนิยาม: ค่าเฉลี่ยธรรมดา แต่ใช้ conditional density เป็นน้ำหนัก บรรทัดที่สองแทน density ของสามเหลี่ยม อินทิกรัลได้ $(1-y^2)/2$ และ $1-y^2=(1-y)(1+y)$ ตัวหาร $1-y$ จึงตัดกันเหลือ $(1+y)/2$ ซึ่งคือจุดกึ่งกลางของช่วง $y$ ถึง 1 ตามที่คาดจาก uniform บรรทัดที่สามคือ variance ของ uniform บนช่วงยาว $1-y$ ซึ่งเท่ากับความยาวกำลังสองหารด้วย 12</p>
+    <p>จุดที่ต้องหยุดคิด: เมื่อรู้ $y$ แล้ว $m(y)$ เป็นตัวเลข แต่ก่อนรู้ $Y$ เรายังไม่รู้ว่าจะได้ $m$ ของค่าไหน $m(Y)=E[X\mid Y]$ จึงเป็นตัวแปรสุ่มที่ขึ้นกับ $Y$ ฟังก์ชัน $m$ นี้เรียกว่า regression function ในตัวอย่างนี้มันเป็นเส้นตรง แต่โดยทั่วไปไม่จำเป็น</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — เฉลี่ยกลับแล้วต้องได้ค่าเฉลี่ยเดิม</h4>
+  <p>ถ้าเอาค่าเฉลี่ยในแต่ละกรณีมาถ่วงด้วยความถี่ของกรณีนั้น ต้องได้ค่าเฉลี่ยรวม นี่คือ <a href="2.1.html">tower property</a> และเป็นการตรวจว่า conditional distribution ที่หามาถูกต้อง</p>
+  <div class="math">\[\begin{aligned}
+E[m(Y)]&=\int m(y)\,f_Y(y)\,dy=E[X],\\
+E\!\left[\tfrac{1+Y}{2}\right]&=\frac{1+\tfrac13}{2}=\tfrac23,\\
+E[X]&=0.60\left(\tfrac{0.4}{0.6}\right)+0.40(-0.5)\\
+&=0.4-0.2=0.2.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกได้จากการแทน $f_{X\mid Y}f_Y=f_{X,Y}$ แล้วอินทิเกรตทั้งสองแกน (บทพิสูจน์เต็มอยู่ใน <a href="2.1.html">tower property</a>) บรรทัดที่สองใช้ $E[Y]=1/3$ จาก <a href="5.2.html">marginal distribution</a> ได้ $2/3$ ตรงกับ $E[X]$ ที่หาจาก marginal $2x$ โดยตรง บรรทัดสุดท้ายทำแบบเดียวกันกับตาราง: ค่าเฉลี่ย AAPL ในวัน MSFT ขึ้นคือ $(-2)(0.05)+2(0.25)$ หารด้วย 0.60 ได้ $0.4/0.6=0.667$ ถ่วงกับ −0.5 ของวัน MSFT ลง ได้ 0.2 ตรงกับค่าเฉลี่ยรวม</p>
+    <p>กับดักคือเฉลี่ย $m(y)$ โดยให้น้ำหนักทุกกรณีเท่ากัน ในตาราง $(0.667-0.5)/2=0.083$ ไม่ใช่ 0.2 เพราะวัน MSFT ขึ้นมีมากกว่าวัน MSFT ลง น้ำหนักต้องเป็นการแจกแจงของตัวแปรที่ใช้เป็นเงื่อนไข</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — ความผันผวนแยกเป็นส่วนภายในกับส่วนระหว่าง</h4>
+  <p>ข้อมูลช่วยลดความไม่แน่นอนได้แค่ไหน ใช้ <a href="2.2.html">law of total variance</a> แยกความผันผวนรวมของ $X$ เป็นสองส่วน</p>
+  <div class="math">\[\begin{aligned}
+\operatorname{Var}(X)&=E[v(Y)]+\operatorname{Var}(m(Y)),\\
+E[v(Y)]&=\int_0^1\frac{(1-y)^2}{12}\,2(1-y)\,dy=\tfrac{1}{24},\\
+\operatorname{Var}(m(Y))&=\tfrac14\operatorname{Var}(Y)=\tfrac14\cdot\tfrac{1}{18}=\tfrac{1}{72},\\
+\tfrac{1}{24}+\tfrac{1}{72}&=\tfrac{4}{72}=\tfrac{1}{18}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ส่วนแรกคือความผันผวนที่ยังเหลือหลังรู้ $Y$ เฉลี่ยข้ามทุกค่า $Y$ ส่วนที่สองคือความผันผวนของค่าเฉลี่ยตามเงื่อนไขเอง เพราะ $m(Y)=(1+Y)/2$ เป็นเส้นตรงที่มีความชัน $\tfrac12$ variance ของมันจึงเป็น $\tfrac14$ ของ $\operatorname{Var}(Y)$ ผลรวม $1/18$ ตรงกับ $\operatorname{Var}(X)=E[X^2]-(E[X])^2=\tfrac12-\tfrac49=\tfrac{1}{18}$</p>
+    <p>ข้อความนี้สัญญาแค่ว่า<em>โดยเฉลี่ย</em>การรู้ $Y$ ลดความผันผวน (จาก $1/18\approx0.0556$ เหลือ $1/24\approx0.0417$) ไม่ได้สัญญาว่าทุกค่า $y$ จะลด ที่ $y=0.1$ ได้ $v(0.1)=0.81/12=0.0675$ ซึ่ง<em>มากกว่า</em> variance รวม เพราะช่วงของ $X$ ยาวถึง 0.9 แต่ uniform บนช่วงนั้นกระจายกว่าการแจกแจง $2x$ ที่กองอยู่ทางขวา</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — Gaussian: ค่าเฉลี่ยเลื่อนเป็นเส้นตรง ความกว้างหดคงที่</h4>
+  <p>กลับมาที่หุ้นสองตัว ในแบบจำลอง Gaussian เราหา conditional distribution ได้เป็นสูตรปิด และมันให้คำตอบของคำถาม desk ว่า “ถ้า MSFT ลง 3% AAPL ควรลงเท่าไร”</p>
+  <div class="math">\[\begin{aligned}
+Y&=\mu_Y+\sigma_Y U,\\
+X&=\mu_X+\sigma_X\big(\rho U+\sqrt{1-\rho^2}\,V\big),\\
+m(y)&=\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y),\\
+s^2&=\sigma_X^2(1-\rho^2),\\
+m(-3)&=0.6\cdot\tfrac{2.5}{3}\cdot(-3)=-1.5,\\
+s&=2.5\sqrt{1-0.36}=2.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>สองบรรทัดแรกสร้างคู่ Gaussian จาก $U,V$ ที่เป็น normal มาตรฐานอิสระกัน ตรวจได้ว่า $X$ มีส่วนเบี่ยงเบน $\sigma_X\sqrt{\rho^2+1-\rho^2}=\sigma_X$ และ covariance กับ $Y$ คือ $\rho\sigma_X\sigma_Y$ ตามต้องการ คู่ Gaussian ถูกกำหนดด้วยค่าเฉลี่ยกับ covariance จึงใช้การสร้างนี้แทนแบบจำลองได้</p>
+    <p>ท่าสำคัญ: รู้ $Y=y$ คือรู้ $U=(y-\mu_Y)/\sigma_Y$ แต่ $V$ ยังสุ่มเหมือนเดิม เพราะไม่เกี่ยวกับ $U$ แทน $U$ ลงในบรรทัดที่สองได้ส่วนคงที่ซึ่งคือ $m(y)$ กับส่วนสุ่ม $\sigma_X\sqrt{1-\rho^2}V$ ซึ่งมี variance $s^2$ ผลคือ $X$ เมื่อรู้ $Y=y$ เป็น normal ค่าเฉลี่ย $m(y)$ ส่วนเบี่ยงเบน $s$</p>
+    <p>ตัวเลข: ถ้า MSFT ลง 3% ค่าเฉลี่ยของ AAPL คือ −1.5% และส่วนเบี่ยงเบนลดจาก 2.5 เหลือ 2 จุดเปอร์เซ็นต์ โอกาสที่ AAPL ลงเกิน 2% เพิ่มจาก $\Phi(-2/2.5)=0.212$ เป็น $\Phi\big((-2+1.5)/2\big)=\Phi(-0.25)=0.401$ ความชัน $\rho\sigma_X/\sigma_Y=0.5$ คือจำนวนจุดที่ AAPL คาดว่าจะขยับต่อ MSFT หนึ่งจุด ซึ่งคือ hedge ratio ใน <a href="8.7.html">MVN conditional distribution</a> ส่วน $s$ ที่ไม่ขึ้นกับ $y$ เป็นคุณสมบัติเฉพาะของ Gaussian ไม่ใช่ของทุกแบบจำลอง ในตัวอย่างสามเหลี่ยม $v(y)=(1-y)^2/12$ ที่เปลี่ยนตาม $y$</p>
+    <p>เมื่อแบ่งเวกเตอร์เป็นกลุ่มที่รู้ $\mathbf X_1$ กับกลุ่มที่สนใจ $\mathbf X_2$ หลักเดิมยังใช้ได้ทุกมิติ: $f_{\mathbf X_2\mid\mathbf X_1}=f_{\mathbf X}/f_{\mathbf X_1}$ เมื่อตัวหารเป็นบวก ส่วนสูตรปิดของกรณี Gaussian หลายมิติอยู่ในหน้าเดียวกันนั้น</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ค่าเฉลี่ยของ AAPL เมื่อรู้ผลตอบแทน MSFT</h4>
+  <img src="../figures/5.3-3.svg" alt="เส้นตรงผ่านจุดกำเนิดความชันครึ่งหนึ่ง แกนนอนผลตอบแทน MSFT แกนตั้งค่าเฉลี่ยตามเงื่อนไขของ AAPL" loading="lazy">
+  <figcaption>เส้นตรง $m(y)=0.5y$ ของแบบจำลอง Gaussian สมมติ MSFT −3% ให้ค่าเฉลี่ย AAPL −1.5% MSFT +3% ให้ +1.5% เส้นนี้คือค่าคาดหมาย ไม่ใช่ผลที่จะเกิดทุกครั้ง รอบเส้นยังมีความผันผวนส่วนเบี่ยงเบน 2 จุดเปอร์เซ็นต์ และไม่ได้บอกว่า MSFT เป็นสาเหตุให้ AAPL ขยับ</figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>สลับทิศของเงื่อนไข:</strong> ใช้ $P(\text{down}\mid X=-2)=0.75$ แทน $P(X=-2\mid\text{down})=0.375$ ทำให้ประเมินโอกาส AAPL ลงแรงในวันที่ MSFT ลงสูงไปสองเท่า ตรวจทุกครั้งว่าตัวหารคือมวลของ<em>สิ่งที่รู้แล้ว</em></p>
+  <p><strong>ลืมหาร:</strong> ใช้ 0.15 ตรง ๆ แทน 0.375 คือการใช้สัดส่วนของทุกวันกับคำถามที่จำกัดเฉพาะวัน MSFT ลง ต่ำไป 2.5 เท่า ตรวจได้ทันทีเพราะคอลัมน์ที่ไม่หารรวมได้ 0.40 ไม่ใช่ 1</p>
+  <p><strong>เฉลี่ยกลับด้วยน้ำหนักเท่ากัน:</strong> $(0.667+(-0.5))/2=0.083$ แทนค่าเฉลี่ยจริง 0.2 น้ำหนักต้องเป็น 0.60 กับ 0.40</p>
+  <p><strong>เชื่อว่าการรู้ข้อมูลลดความเสี่ยงทุกกรณี:</strong> สามเหลี่ยมที่ $y=0.1$ ให้ variance 0.0675 สูงกว่าค่ารวม 0.0556 กฎแยก variance รับรองแค่ค่าเฉลี่ยข้ามทุกกรณี</p>
+  <p><strong>ใช้ข้อมูลที่ยังไม่มีตอนตัดสินใจ:</strong> “ถ้า MSFT ปิดลบ 3% วันนี้” เป็นเงื่อนไขของ stress scenario ไม่ใช่สัญญาณที่รู้ล่วงหน้า backtest ที่ใช้ผลตอบแทนปิดตลาดของวันเดียวกันเป็นตัวพยากรณ์จะดูดีเกินจริง</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>stress test เกือบทุกแบบคือ conditional distribution: “ถ้าดัชนีลง 10% พอร์ตจะขาดทุนเฉลี่ยเท่าไร และกระจายแค่ไหน” hedge ratio คือความชันของ $m(y)$ ในแบบจำลอง Gaussian ซึ่งเป็นตัวเดียวกับ beta ใน <a href="15.2.html">CAPM</a> เมื่อ $Y$ คือตลาด ส่วนการพยากรณ์ด้วยสัญญาณใด ๆ ก็คือการหา $E[\text{ผลตอบแทนวันพรุ่งนี้}\mid\text{ข้อมูลวันนี้}]$ ซึ่งต้องระวังว่าข้อมูลที่ใช้เป็นเงื่อนไขมีอยู่จริง ณ เวลาที่ตัดสินใจ ในเครดิต การคำนวณโอกาสผิดนัดพร้อมกันเริ่มจากการตรึงภาวะเศรษฐกิจไว้ก่อน ซึ่งเป็นหัวใจของ <a href="5.6.html">Gaussian copula</a></p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> จากตาราง จงหาการแจกแจงของ AAPL ในวันที่ MSFT ขึ้น และ $E[X\mid\text{up}]$</p>
+  <details><summary>เฉลย</summary><p>หารคอลัมน์ขึ้นด้วย 0.60: $0.05/0.60=0.083$, $0.30/0.60=0.5$, $0.25/0.60=0.417$ รวมได้ 1 ค่าเฉลี่ย $(-2)(0.083)+2(0.417)=0.667$ จุดเปอร์เซ็นต์ (เท่ากับ $0.4/0.6$) ตรวจด้วยการเฉลี่ยกลับ: $0.60(0.667)+0.40(-0.5)=0.2$ ตรงกับค่าเฉลี่ยรวม</p></details>
+  <p><strong>2.</strong> ในสามเหลี่ยม เมื่อรู้ $Y=0.6$ จงหา $P(X\gt0.8\mid Y=0.6)$ ค่าเฉลี่ย และส่วนเบี่ยงเบนมาตรฐานตามเงื่อนไข</p>
+  <details><summary>เฉลย</summary><p>$X$ เป็น uniform บนช่วง 0.6 ถึง 1 ซึ่งยาว 0.4 โอกาส $(1-0.8)/0.4=0.5$ ค่าเฉลี่ย $(1+0.6)/2=0.8$ variance $0.4^2/12=0.01333$ ส่วนเบี่ยงเบน $0.115$</p></details>
+  <p><strong>3.</strong> แบบจำลอง Gaussian ของหุ้นสองตัว ถ้า MSFT ขึ้น 3% จงหาค่าเฉลี่ยตามเงื่อนไขของ AAPL และโอกาสที่ AAPL ยังติดลบ</p>
+  <details><summary>เฉลย</summary><p>$m(3)=0.5\times3=1.5\%$ ส่วนเบี่ยงเบน 2 เท่าเดิม โอกาสติดลบ $\Phi\big((0-1.5)/2\big)=\Phi(-0.75)=0.227$ ในวันทั่วไปโอกาสนี้คือ $\Phi(0)=0.5$ การรู้ว่า MSFT ขึ้นแรงลดโอกาสนี้ลงเกินครึ่ง แต่ยังไม่ใช่ศูนย์</p></details>
+</section>
+
 <section class="code">
-<h3>JavaScript: ตรวจ conditional, tower และ total variance</h3>
-<pre><code class="language-javascript" data-example="5.3">const down = [.15,.20,.05].map(p =&gt; p/.40);
-const values = [-2,0,2];
-const downMean = down.reduce((s,p,i) =&gt; s+p*values[i],0);
-function integrate(f,a,b,n=10000) {
-  const h=(b-a)/n; let s=0;
-  for(let i=0;i&lt;n;i++) s+=f(a+(i+.5)*h)*h;
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="5.3">// 1) table: rows X = -2, 0, 2 ; columns MSFT up, down
+const joint = [[.05, .15], [.30, .20], [.25, .05]], xs = [-2, 0, 2];
+const colSum = j =&gt; joint.reduce((s, r) =&gt; s + r[j], 0);
+const given = j =&gt; joint.map(r =&gt; r[j] / colSum(j));          // select, then rescale
+const mean = p =&gt; p.reduce((s, q, i) =&gt; s + q * xs[i], 0);
+const down = given(1), up = given(0);
+console.log({ down, meanDown: mean(down), meanUp: mean(up),
+  tower: colSum(0) * mean(up) + colSum(1) * mean(down),   // 0.2
+  reverse: joint[0][1] / (joint[0][0] + joint[0][1]) });  // P(down | X=-2) = 0.75
+
+// 2) triangle: X | Y=y is uniform on [y, 1]
+const integrate = (g, a, b, n = 20000) =&gt; {
+  let s = 0; const h = (b - a) / n;
+  for (let i = 0; i &lt; n; i++) s += g(a + (i + .5) * h) * h;
   return s;
+};
+const m = y =&gt; (1 + y) / 2, v = y =&gt; (1 - y) ** 2 / 12, fY = y =&gt; 2 * (1 - y);
+console.log({ m03: m(.3), v03: v(.3), p: (.6 - .3) / .7,
+  EmY: integrate(y =&gt; m(y) * fY(y), 0, 1),                // 2/3
+  within: integrate(y =&gt; v(y) * fY(y), 0, 1),             // 1/24
+  between: integrate(y =&gt; (m(y) - 2 / 3) ** 2 * fY(y), 0, 1), // 1/72
+  v01: v(.1) });                                           // 0.0675 &gt; 1/18
+
+// 3) Gaussian model: sx = 2.5, sy = 3, rho = 0.6
+function Phi(x) {
+  const a = Math.abs(x); let t = a, s = a;
+  for (let k = 1; k &lt; 200; k++) { t *= a * a / (2 * k + 1); s += t; }
+  const half = Math.exp(-a * a / 2) / Math.sqrt(2 * Math.PI) * s;
+  return x &lt; 0 ? .5 - half : .5 + half;
 }
-function conditional(x,y) {
-  if(y&lt;0 || y&gt;=1) throw new RangeError('Need 0 &lt;= y &lt; 1');
-  return x&lt;y || x&gt;1 ? 0 : 1/(1-y);
-}
-const y=.3, m=(1+y)/2;
-const mean = integrate(x =&gt; x*conditional(x,y),y,1);
-const variance = integrate(x =&gt; (x-m)**2*conditional(x,y),y,1);
-const tower = integrate(t =&gt; ((1+t)/2)*2*(1-t),0,1);
-const within = integrate(t =&gt; ((1-t)**2/12)*2*(1-t),0,1);
-const between = integrate(t =&gt; (((1+t)/2)-2/3)**2*2*(1-t),0,1);
-let rejectsBoundary=false;
-try { conditional(1,1); } catch(e) { rejectsBoundary=e instanceof RangeError; }
-console.log({down,downMean,mean,variance,
-  area:integrate(x =&gt; conditional(x,y),y,1),
-  probability:integrate(x =&gt; conditional(x,y),y,.6),
-  tower,within,between,total:within+between,
-  gaussianMean:.6*2.5/3*(-3),
-  gaussianSD:2.5*Math.sqrt(1-.6**2),
-  largerConditionalVariance:(1-.1)**2/12,rejectsBoundary});</code></pre>
-<p>ผลสำคัญ: mean 0.65, variance ประมาณ 0.0408333, tower ประมาณ 0.666667 และผลรวม within กับ between ประมาณ 0.0555556 โค้ดตั้งใจปฏิเสธขอบ $y=1$ แทนการให้ค่าที่ดูใช้ได้แต่ผิดความหมาย</p>
+const sx = 2.5, sy = 3, r = .6;
+const slope = r * sx / sy, s = sx * Math.sqrt(1 - r * r);
+const fYm3 = Math.exp(-0.5) / Math.sqrt(2 * Math.PI) / sy;  // area under the raw slice
+console.log({ slope, s, mGivenMinus3: slope * -3, fYm3, stretch: 1 / fYm3,
+  before: Phi(-2 / sx), after: Phi((-2 + 1.5) / s), upCase: Phi(-1.5 / s) });
+// slope 0.5, s 2, -1.5, 0.0807, 12.4, 0.212, 0.401, 0.227</code></pre>
+  </details>
 </section>
-<section class="exercises">
-<h2>ฝึกเปลี่ยนกลุ่มอ้างอิง</h2>
-<ol><li>จากตาราง หา $E[X\mid Y=\mathrm{up}]$ และใช้ตรวจค่าเฉลี่ยรวม
-<details><summary>เฉลย</summary><p>$( -2(0.05)+2(0.25))/0.60=2/3$ จุดเปอร์เซ็นต์ แล้ว $0.60(2/3)+0.40(-0.5)=0.2$ ตรงกับ marginal mean</p></details></li>
-<li>ในสามเหลี่ยม เมื่อ $Y=0.6$ โอกาส $X\gt0.8$ และค่าเฉลี่ยเป็นเท่าไร?
-<details><summary>เฉลย</summary><p>ช่วงใหม่คือ $[0.6,1]$ โอกาส $(1-0.8)/(1-0.6)=0.5$ และ mean $(1+0.6)/2=0.8$</p></details></li>
-<li>การ conditioning ทำให้ variance ลดลงทุกกรณีหรือไม่?
-<details><summary>เฉลย</summary><p>ไม่ กฎรวมรับรองเพียง $E[v(Y)]\le\operatorname{Var}(X)$ เมื่อ variance มีค่าจำกัด ตัวอย่าง $y=0.1$ ข้างต้นมี variance มากกว่าค่ารวม</p></details></li></ol>
-</section>
-<section class="pitfalls">
-<h2>ข้อจำกัดในการนำไปใช้</h2>
-<p>หากเงื่อนไขอยู่ในหางที่ $f_Y(y)$ เล็กมาก การประมาณ joint หรือ marginal ผิดเพียงเล็กน้อยอาจทำให้อัตราส่วนไม่นิ่ง ควรตรวจข้อมูลในบริเวณนั้นและทดสอบความไวของแบบจำลอง การสร้าง forecast ต้องกำหนดเวลาของ $X,Y$ ให้ชัดและใช้เฉพาะข้อมูลที่ทราบ ณ เวลาพยากรณ์ ไม่ใช่ผลตอบแทนอนาคตที่ยังไม่เกิด</p>
-</section>
+
 <section class="takeaways">
-<h2>สิ่งที่ควรจำ</h2>
-<ul><li>conditional คือเลือกกลุ่มแล้ว normalize ส่วน marginal คือรวมทุกกลุ่ม</li><li>ตัวหารต้องเป็น marginal ของตัวแปรเงื่อนไข และต้องเป็นบวก</li><li>ค่าเฉลี่ยตามเงื่อนไขเป็นฟังก์ชันของข้อมูล; tower property ใช้น้ำหนักการแจกแจงของข้อมูลนั้น</li><li>Total variance แยกความผันผวนภายในกลุ่มกับระหว่างกลุ่ม ไม่ได้สัญญาว่าทุกกลุ่มจะมี variance ต่ำลง</li></ul>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>conditional distribution คือเลือกส่วนที่ตรงกับสิ่งที่รู้แล้วหารด้วยมวลของส่วนนั้น: วัน MSFT ลง ทำให้ AAPL −2% มีโอกาส $0.15/0.40=0.375$</li>
+    <li>ตัวหารต้องเป็นมวลของสิ่งที่ใช้เป็นเงื่อนไข สลับทิศแล้วได้ 0.75 ซึ่งตอบอีกคำถาม และ Bayes เชื่อมสองทิศเข้าหากัน</li>
+    <li>สำหรับตัวแปรต่อเนื่อง $f_{X\mid Y}=f_{X,Y}/f_Y$ คือรอยตัดของ joint ที่ถูกยืดให้พื้นที่เป็น 1 ใช้ได้เมื่อ $f_Y(y)\gt0$</li>
+    <li>$E[X\mid Y]$ เป็นฟังก์ชันของ $Y$ เฉลี่ยกลับด้วยการแจกแจงของ $Y$ แล้วได้ $E[X]$ และ variance รวมแยกเป็นส่วนภายในกับส่วนระหว่าง โดยไม่ได้สัญญาว่าทุกกรณีจะผันผวนน้อยลง</li>
+    <li>ในแบบจำลอง Gaussian: MSFT −3% ให้ AAPL ค่าเฉลี่ย −1.5% ส่วนเบี่ยงเบน 2 ความชัน 0.5 คือ hedge ratio</li>
+  </ul>
+  <p>ถ้าการรู้ $Y$ ไม่เปลี่ยน conditional distribution ของ $X$ เลยสักค่า ตารางทั้งตารางจะเป็นผลคูณของ marginal หน้าถัดไป <a href="5.4.html">independence</a> นิยามสถานการณ์นี้อย่างแม่นยำ และแสดงว่าต้องตรวจอะไรให้ครบก่อนจะคูณโอกาสได้</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

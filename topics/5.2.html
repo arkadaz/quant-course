@@ -17,179 +17,412 @@
 <article class="topic" data-number="5.2" data-depends-on="5.1">
 <header class="topic-header">
 <h1><span class="tnum">5.2</span> Marginal Distributions</h1>
-<p class="subtitle">ตอบคำถามของตัวแปรเดียว โดยรวมทุกกรณีของตัวแปรที่ไม่ได้ถาม</p>
+<p class="subtitle">ถ้าสนใจตัวแปรเดียว ให้รวมทุกกรณีของตัวแปรที่ไม่ได้ถาม ไม่ใช่เลือกกรณีใดกรณีหนึ่งของมัน</p>
 </header>
-<section class="hook">
-<h2>อยากรู้แค่ AAPL ทำไมต้องเลือกสถานะของ MSFT?</h2>
-<p>คุณมีตารางผลตอบแทนร่วมของหุ้นสองตัว แต่รายงานวันนี้ถามเพียงว่า “AAPL มีโอกาสลง 2% เท่าไร?” การเลือกเฉพาะวันที่ MSFT ลงจะเปลี่ยนคำถามโดยไม่รู้ตัว วิธีที่ถูกคือรวมทั้งกรณี MSFT ขึ้นและลง เราเรียกการดึงการแจกแจงรายตัวจากการแจกแจงร่วมว่า <strong>marginalization</strong></p>
-<p>คำว่า marginal มาจากผลรวมที่เขียนไว้ตามขอบตาราง ไม่ได้หมายถึงความเสี่ยงส่วนเพิ่ม ในหัวข้อนี้เราจะเริ่มจากบวกช่องในตาราง แล้วใช้เหตุผลเดียวกันกับอินทิกรัลที่มีขอบเขตไม่เป็นสี่เหลี่ยม</p>
-</section>
-<section class="example">
-<h2>1. รวมให้ครบก่อนคำนวณเรื่องอื่น</h2>
-<p>ตารางต่อไปนี้เป็นแบบจำลองสมมติ ให้ $X$ เป็นผลตอบแทนรายวันของ AAPL หน่วยจุดเปอร์เซ็นต์ และ $Y$ เป็นสถานะ MSFT ขึ้นหรือลง ตัวเลขในช่องเป็นความน่าจะเป็น ไม่ใช่ขนาดผลตอบแทนของ MSFT</p>
-<div class="table-wrap">
-<table>
-<thead><tr><th>$X$</th><th>$Y=\text{up}$</th><th>$Y=\text{down}$</th><th>$p_X$</th></tr></thead>
-<tbody><tr><td>−2</td><td>0.05</td><td>0.15</td><td>0.20</td></tr>
-<tr><td>0</td><td>0.30</td><td>0.20</td><td>0.50</td></tr>
-<tr><td>2</td><td>0.25</td><td>0.05</td><td>0.30</td></tr>
-<tr><th>$p_Y$</th><td>0.60</td><td>0.40</td><td>1.00</td></tr></tbody>
-</table>
+
+<div class="hook">
+  <p>รายงานความเสี่ยงเช้านี้ถามบรรทัดเดียว: “AAPL มีโอกาสลง 2% ในหนึ่งวันเท่าไร” ข้อมูลที่ desk มีคือตารางโอกาสร่วม (สมมติ) ของผลตอบแทน AAPL กับทิศทางของ MSFT ช่อง “AAPL −2% และ MSFT ลง” มีโอกาส 0.15 ช่อง “AAPL −2% และ MSFT ขึ้น” มีโอกาส 0.05 และ MSFT ลงในวันทั่วไปด้วยโอกาส 0.40 นักวิเคราะห์คนหนึ่งตอบ 0.15 อีกคนตอบ $0.15/0.40=0.375$ ใครถูก</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่มีใครถูก คำตอบคือ $0.05+0.15=0.20$ คำถามไม่ได้พูดถึง MSFT เลย จึงต้องรวมทั้งวันที่ MSFT ขึ้นและวันที่ MSFT ลง คำตอบ 0.15 ทิ้งวันที่ MSFT ขึ้นไป ส่วน 0.375 ตอบอีกคำถามหนึ่ง คือ “ในวันที่ MSFT ลง AAPL ลง 2% บ่อยแค่ไหน” ซึ่งเป็นเรื่องของ <a href="5.3.html">conditional distribution</a> หน้าถัดไป</p></details>
 </div>
-<p>แถวแรกบอกว่า AAPL ลง 2% ได้ทั้งเมื่อ MSFT ขึ้นและลง สองกรณีนี้ไม่ทับกันและครอบคลุมสถานะของ $Y$ ทั้งหมด จึงบวกได้ $0.05+0.15=0.20$ ส่วน MSFT ขึ้นให้บวกทั้งคอลัมน์ ได้ $0.05+0.30+0.25=0.60$</p>
-<div class="math">\[
-\begin{aligned}
-p_X(x)&=\sum_y p_{X,Y}(x,y),\\
-p_Y(y)&=\sum_x p_{X,Y}(x,y).
-\end{aligned}
-\]</div>
-<p>ตรวจผลรวมแยกกัน: $0.20+0.50+0.30=1$ และ $0.60+0.40=1$ ไม่ต้องนำ marginal ทั้งสองชุดมาบวกกันให้ได้หนึ่ง เพราะแต่ละชุดเป็นการแจกแจงคนละตัวแปร</p>
+
+<section class="prose">
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>joint distribution ตอบได้ทุกคำถามเกี่ยวกับสองตัวแปร แต่หลายคำถามสนใจตัวเดียว การดึงการแจกแจงของตัวเดียวออกมาเรียกว่า <strong>marginalization</strong> หลักคือรวมทุกค่าของตัวแปรที่ไม่ได้ถาม ชื่อ marginal มาจากผลรวมที่เขียนไว้ตามขอบ (margin) ของตาราง ไม่ได้แปลว่า “ส่วนเพิ่ม”</p>
+  <p>รูปด้านล่างวาดแต่ละค่าของ AAPL เป็นแท่งที่ต่อจากสองส่วน ส่วนน้ำเงินคือวันที่ MSFT ขึ้น ส่วนส้มคือวันที่ MSFT ลง ความยาวรวมของแท่งคือ marginal ของ AAPL สีภายในแท่งไม่มีผลต่อความยาวรวม นั่นคือความหมายของ “ไม่สนใจ MSFT”</p>
+  <p>หน้านี้ทำท่าเดียวกันสามแบบ: บวกช่องในตาราง ดันเกณฑ์ของ joint CDF ไปที่อนันต์ และอินทิเกรต density ตามอีกแกน แล้วจะเห็นว่าเมื่อ support ไม่ใช่สี่เหลี่ยม ขอบของอินทิกรัลคือจุดที่คนพลาด สุดท้ายจะเห็นว่า marginal ทิ้งข้อมูลอะไรไป</p>
 </section>
-<section class="formula">
-<h2>2. จากการบวกช่อง สู่การรวมตามแกน</h2>
-<p>สำหรับตัวแปรต่อเนื่องที่มี joint PDF การถามว่า $X\le x$ โดยไม่จำกัด $Y$ คือการรวมทั้งแถบที่ทอดยาวตลอดแกน $Y$:</p>
-<div class="math">\[
-\begin{aligned}
-F_X(x)&=P(X\le x)\\
- &=\int_{-\infty}^{x}\int_{-\infty}^{\infty}
- f_{X,Y}(u,v)\,dv\,du,\\
-f_X(x)&=\frac{dF_X(x)}{dx}\\
- &=\int_{-\infty}^{\infty}f_{X,Y}(x,v)\,dv.
-\end{aligned}
-\]</div>
-<p>เมื่อหาอนุพันธ์ตามขอบบน $x$ อินทิกรัลชั้นนอกหายไป แต่ยังต้องรวมทุกค่า $v$ ของอีกแกน ตรงนี้คือเหตุผล ไม่ใช่กฎจำว่า “ตัดอีกตัวทิ้ง” สำหรับ $f_Y$ ให้สลับบทบาทกัน:</p>
-<div class="math">\[
-\begin{aligned}
-f_Y(y)&=\int_{-\infty}^{\infty}f_{X,Y}(u,y)\,du,\\
-F_X(x)&=\int_{-\infty}^{x}f_X(u)\,du\\
- &=\lim_{y\to\infty}F_{X,Y}(x,y).
-\end{aligned}
-\]</div>
-<p>สูตรลิมิตของ CDF ใช้ได้แม้ไม่มี density ส่วนสูตรอินทิกรัลใช้ในกรณีที่มี density หากผลตอบแทนวัดเป็นจุดเปอร์เซ็นต์ joint PDF มีหน่วยต่อจุดเปอร์เซ็นต์กำลังสอง การอินทิเกรตหนึ่งแกนจึงเหลือหน่วยของ marginal PDF เป็นต่อจุดเปอร์เซ็นต์</p>
-<div class="math">\[
-\int_{-\infty}^{\infty} f_X(x)\,dx
-=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}
- f_{X,Y}(x,y)\,dy\,dx=1.
-\]</div>
-<p>การรวมสลับลำดับทำได้สำหรับ density ที่ไม่ติดลบ และ normalization ของ joint ทำให้ marginal แต่ละตัวมีมวลหนึ่งโดยอัตโนมัติ การคำนวณเชิงตัวเลขอาจคลาดเล็กน้อยจากการตัดหางหรือความละเอียด แต่ค่าที่ผิดมากเป็นสัญญาณให้ย้อนดูขอบเขต</p>
-</section>
-<section class="figure">
-<h2>3. รูปช่วยแยก “รวมทั้งแกน” ออกจาก “เลือกรอยตัด”</h2>
+
 <figure class="plot">
-<img src="../figures/5.2-1.svg" alt="joint Gaussian และเส้น marginal ของ AAPL ที่ย่อขนาดไว้ด้านล่าง" loading="lazy">
+  <h4>รูป — marginal คือความยาวรวมของแท่ง ไม่ว่าแต่ละส่วนเป็นสีอะไร</h4>
+  <svg viewBox="0 0 460 290" role="img" aria-label="แท่งแนวนอนสามแท่งสำหรับผลตอบแทน AAPL ลบสอง ศูนย์ และบวกสองเปอร์เซ็นต์ แต่ละแท่งต่อจากส่วน MSFT ขึ้นสีน้ำเงินกับ MSFT ลงสีส้ม ความยาวรวม 0.20 0.50 และ 0.30" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="100" y1="40" x2="100" y2="232"/>
+        <line x1="160" y1="40" x2="160" y2="232"/>
+        <line x1="220" y1="40" x2="220" y2="232"/>
+        <line x1="280" y1="40" x2="280" y2="232"/>
+        <line x1="340" y1="40" x2="340" y2="232"/>
+        <line x1="400" y1="40" x2="400" y2="232"/>
+      </g>
+      <rect x="120" y="12" width="14" height="14" fill="#2455d6" fill-opacity="0.45" stroke="#2455d6" stroke-width="2"/>
+      <text x="140" y="25">MSFT ขึ้น</text>
+      <rect x="240" y="12" width="14" height="14" fill="#a65f00" fill-opacity="0.45" stroke="#a65f00" stroke-width="2"/>
+      <text x="260" y="25">MSFT ลง</text>
+      <rect x="100" y="50" width="150" height="40" fill="#2455d6" fill-opacity="0.35" stroke="#2455d6" stroke-width="2"/>
+      <rect x="250" y="50" width="30" height="40" fill="#a65f00" fill-opacity="0.35" stroke="#a65f00" stroke-width="2"/>
+      <rect x="100" y="115" width="180" height="40" fill="#2455d6" fill-opacity="0.35" stroke="#2455d6" stroke-width="2"/>
+      <rect x="280" y="115" width="120" height="40" fill="#a65f00" fill-opacity="0.35" stroke="#a65f00" stroke-width="2"/>
+      <rect x="100" y="180" width="30" height="40" fill="#2455d6" fill-opacity="0.35" stroke="#2455d6" stroke-width="2"/>
+      <rect x="130" y="180" width="90" height="40" fill="#a65f00" fill-opacity="0.35" stroke="#a65f00" stroke-width="2"/>
+      <text x="175" y="76" text-anchor="middle">0.25</text>
+      <text x="190" y="141" text-anchor="middle">0.30</text>
+      <text x="340" y="141" text-anchor="middle">0.20</text>
+      <text x="175" y="206" text-anchor="middle">0.15</text>
+      <text x="288" y="76" font-size="17" fill="#047857">รวม 0.30</text>
+      <text x="408" y="141" font-size="17" fill="#047857">0.50</text>
+      <text x="228" y="206" font-size="17" fill="#047857">รวม 0.20</text>
+      <text x="92" y="76" text-anchor="end">+2%</text>
+      <text x="92" y="141" text-anchor="end">0%</text>
+      <text x="92" y="206" text-anchor="end">−2%</text>
+      <g font-size="14" fill="#5b6472">
+        <text x="100" y="250" text-anchor="middle">0</text>
+        <text x="220" y="250" text-anchor="middle">0.2</text>
+        <text x="340" y="250" text-anchor="middle">0.4</text>
+      </g>
+      <text x="250" y="276" text-anchor="middle">โอกาส</text>
+      <text transform="translate(22 135) rotate(-90)" text-anchor="middle">ผลตอบแทน AAPL</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละแท่งคือหนึ่งค่าของผลตอบแทน AAPL (ตารางสมมติ) ความยาวส่วนน้ำเงินคือโอกาสร่วมกับวันที่ MSFT ขึ้น ส่วนส้มคือโอกาสร่วมกับวันที่ MSFT ลง ตัวเลขเขียวคือความยาวรวม ซึ่งเป็น marginal ของ AAPL แท่งล่างสุดตอบคำถามในโจทย์: $0.05+0.15=0.20$ (ส่วนน้ำเงินของแท่งนี้แคบ 0.05 จึงไม่ได้เขียนตัวเลขไว้) คำตอบ 0.15 คือการอ่านเฉพาะส่วนส้ม</figcaption>
 </figure>
-<p>รูป 5.2a ใช้ Gaussian สมมติที่ค่าเฉลี่ยศูนย์ $\sigma_X=2.5,\sigma_Y=3$ จุดเปอร์เซ็นต์ และ $\rho=0.6$ เส้นแดงด้านล่างคือ <em>รูปทรง</em> ของ marginal AAPL ซึ่งปรับสเกลและเลื่อนตำแหน่งเพื่อให้เห็นร่วมกับแผนที่ความหนาแน่น จึงห้ามอ่านระดับแนวตั้งของเส้นแดงเป็นผลตอบแทน MSFT หรือ density จริง</p>
-<figure class="plot">
-<img src="../figures/5.2-2.svg" alt="marginal normal PDFs ของ AAPL และ MSFT บนแกนผลตอบแทน" loading="lazy">
-</figure>
-<p>รูป 5.2b แสดง PDF รายตัวในสเกลจริง ทั้งสองเส้นมีพื้นที่ใต้กราฟทั่วแกนเท่ากับหนึ่ง MSFT มีส่วนเบี่ยงเบนมาตรฐานมากกว่า จึงกว้างและยอดต่ำกว่า ไม่ได้มีความน่าจะเป็นรวมมากกว่า</p>
-<figure class="plot">
-<img src="../figures/5.2-3.svg" alt="รอยตัด joint density ที่ AAPL เท่ากับศูนย์และพื้นที่ใต้รอยตัด" loading="lazy">
-</figure>
-<p>รูป 5.2c ตรึง $x=0$ แล้วลากไปตาม $y$ พื้นที่ใต้รอยตัดประมาณ 0.1596 เท่ากับ $f_X(0)=1/(2.5\sqrt{2\pi})$ นี่คือ <strong>ความสูงหนึ่งจุดของ marginal</strong> ไม่ใช่โอกาสที่ $X=0$ และไม่ใช่การแจกแจงตามเงื่อนไขที่ normalize แล้ว</p>
-<figure class="plot">
-<img src="../figures/5.2-4.svg" alt="marginal CDFs ของผลตอบแทนหุ้นสองตัวที่เข้าใกล้หนึ่งทางขวา" loading="lazy">
-</figure>
-<p>รูป 5.2d เปลี่ยน PDF เป็น CDF โดยสะสมพื้นที่ เส้นทั้งคู่เข้าใกล้ 0 และ 1 ที่ปลายแกน สำหรับ Gaussian ต้องใช้ลิมิตที่อนันต์ ไม่จำเป็นต้องได้ 1 พอดีที่ขอบขวาของกราฟที่วาด</p>
-</section>
+
+<details class="jargon">
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>Marginal distribution</dt>
+    <dd>การแจกแจงของตัวแปรหนึ่งตัว (หรือกลุ่มย่อย) ที่ได้จาก joint distribution โดยรวมทุกค่าของตัวแปรที่เหลือ ใช้รายงานความเสี่ยงรายสินทรัพย์ หาควอนไทล์ และตรวจแบบจำลองทีละตัว</dd>
+    <dt>Marginalization (การรวมทิ้ง)</dt>
+    <dd>การบวกตามแถวหรือคอลัมน์ในกรณีตาราง หรืออินทิเกรตตามแกนที่ไม่สนใจในกรณี density ใช้กำจัดตัวแปรที่ไม่อยู่ในคำถาม</dd>
+    <dt>Joint marginal</dt>
+    <dd>marginal ของกลุ่มตัวแปรมากกว่าหนึ่งตัว เช่น ดึงคู่ AAPL กับ MSFT ออกจากพอร์ต 50 หุ้น กลุ่มที่เก็บไว้ยังมีโครงสร้างร่วมภายในครบ</dd>
+    <dt>Support</dt>
+    <dd>บริเวณที่ density เป็นบวก กำหนดขอบของอินทิกรัล ถ้าขอบของตัวแปรหนึ่งขึ้นกับอีกตัว ช่วงอินทิเกรตก็เปลี่ยนตามจุดที่ตรึง</dd>
+    <dt>Fréchet bounds</dt>
+    <dd>ช่วงของโอกาสร่วมที่เป็นไปได้เมื่อรู้แค่ marginal ใช้แสดงว่า marginal อย่างเดียวบอกโอกาสเกิดพร้อมกันไม่ได้</dd>
+  </dl>
+</details>
+
+<details class="symbols">
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$p_{X,Y}(x,y)$</td><td>โอกาสร่วมในตาราง</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$p_X(x),\ p_Y(y)$</td><td>marginal PMF ของแต่ละตัว</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$f_{X,Y}(x,y)$</td><td>joint density</td><td>ต่อ (หน่วย $X$ × หน่วย $Y$)</td></tr>
+      <tr><td>$f_X(x)$</td><td>marginal density ของ $X$</td><td>ต่อหน่วย $X$</td></tr>
+      <tr><td>$F_X(x)$</td><td>marginal CDF ของ $X$</td><td>ไม่มีหน่วย</td></tr>
+    </tbody>
+  </table>
+</details>
+
 <section class="example">
-<h2>4. เมื่อ support เป็นสามเหลี่ยม ขอบอินทิกรัลต้องเปลี่ยน</h2>
-<p>พิจารณาตัวแปรไร้หน่วยในแบบจำลองของเล่น:</p>
-<div class="math">\[
-f_{X,Y}(x,y)=
-\begin{cases}2,&0\le y\le x\le1,\\0,&\text{ที่อื่น}.
-\end{cases}
-\]</div>
-<p><strong>support</strong> คือบริเวณที่ density อาจเป็นบวก ที่นี่เป็นสามเหลี่ยมมุม $(0,0),(1,0),(1,1)$ มีพื้นที่ $1/2$ จึงมีมวลรวม $2(1/2)=1$ ความสูงคงที่ไม่ได้ทำให้ marginal เป็น uniform เพราะความยาวของรอยตัดเปลี่ยนไปตามจุดที่ตรึง</p>
-<p>ตรึง $x$ แล้วลากแนวตั้ง: $y$ วิ่งได้จาก 0 ถึง $x$ แต่ตรึง $y$ แล้วลากแนวนอน: $x$ วิ่งจาก $y$ ถึง 1 เราจึงได้</p>
-<div class="math">\[
-\begin{aligned}
-f_X(x)&=\int_0^x2\,dy=2x,&&0\le x\le1,\\
-f_Y(y)&=\int_y^12\,dx=2(1-y),&&0\le y\le1.
-\end{aligned}
-\]</div>
-<p>ทั้งคู่เป็นศูนย์นอกช่วง $[0,1]$ ถ้าอินทิเกรตค่าคงที่ 2 ตั้งแต่ 0 ถึง 1 ทุกครั้ง จะได้ marginal ผิดเป็น 2 ตลอดช่วงและมีมวลรวม 2 เพราะรวมบริเวณนอก support เข้าไปด้วย</p>
-<div class="math">\[
-\begin{aligned}
-\int_0^1 2x\,dx&=1,&\int_0^1 2(1-y)\,dy&=1,\\
-F_X(x)&=x^2,&F_Y(y)&=2y-y^2
-\quad(0\le x,y\le1).
-\end{aligned}
-\]</div>
-<p>นอกช่วงให้ CDF เป็น 0 ทางซ้ายและ 1 ทางขวา ที่เกณฑ์ 0.3 ได้ $f_X(0.3)=0.6$ แต่ $P(X\le0.3)=0.09$ ส่วน $f_Y(0.3)=1.4$ แต่ $P(Y\le0.3)=0.51$ จึงเห็นอีกครั้งว่า density สูงกว่า 1 ได้โดยไม่ละเมิดกฎความน่าจะเป็น</p>
+  <h4>ขั้นที่ 1 — บวกตามแถว: marginal จากตาราง</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตารางสมมติ $X$ คือผลตอบแทนรายวันของ AAPL หน่วยจุดเปอร์เซ็นต์ $Y$ คือทิศทางของ MSFT ตัวเลขในช่องคือโอกาสร่วม รวมทั้งตารางได้ 1</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>$X$</th><th>$Y=$ ขึ้น</th><th>$Y=$ ลง</th><th>$p_X(x)$</th></tr></thead>
+    <tbody>
+      <tr><td>−2</td><td>0.05</td><td>0.15</td><td>0.20</td></tr>
+      <tr><td>0</td><td>0.30</td><td>0.20</td><td>0.50</td></tr>
+      <tr><td>2</td><td>0.25</td><td>0.05</td><td>0.30</td></tr>
+      <tr><th>$p_Y(y)$</th><td>0.60</td><td>0.40</td><td>1</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="math">\[\begin{aligned}
+p_X(x)&=\sum_y p_{X,Y}(x,y),\\
+p_X(-2)&=0.05+0.15=0.20,\\
+p_Y(\text{down})&=0.15+0.20+0.05=0.40,\\
+E[X]&=(-2)(0.20)+0(0.50)+2(0.30)\\
+&=0.20.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> AAPL ลง 2% ด้วยโอกาส 0.20 สองกรณีของ MSFT ไม่ทับกันและครอบคลุมทุกวัน การบวกจึงนับแต่ละวันครั้งเดียวพอดี marginal ของ MSFT ได้จากการบวกตามคอลัมน์ ค่าเฉลี่ยผลตอบแทน AAPL คือ 0.20 จุดเปอร์เซ็นต์ต่อวัน คำนวณจาก marginal ได้เลยโดยไม่ต้องรู้ว่า MSFT ทำอะไร</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> marginal แต่ละชุดรวมได้ 1 แยกกัน $0.20+0.50+0.30=1$ และ $0.60+0.40=1$ ไม่ต้องเอาสองชุดมาบวกกันเป็น 1 เพราะเป็นการแจกแจงของคนละตัวแปร</p>
 </section>
+
 <section class="formula">
-<h2>5. อ่านค่าเฉลี่ยจาก marginal ที่ได้</h2>
-<div class="math">\[
-\begin{aligned}
-E[X]&=\int_0^1x(2x)\,dx
- =2\left[\frac{x^3}{3}\right]_0^1=\frac23,\\
-E[Y]&=\int_0^1y\,2(1-y)\,dy\\
- &=2\left[\frac{y^2}{2}-\frac{y^3}{3}\right]_0^1=\frac13.
-\end{aligned}
-\]</div>
-<p>$X$ มีแนวโน้มอยู่สูงกว่า $Y$ ซึ่งสอดคล้องกับข้อกำหนด $Y\le X$ ทั้งสอง marginal ไม่สมมาตรแม้ joint density คงที่ ผลรวมค่าเฉลี่ยเท่ากับ 1 เป็นคุณสมบัติของแบบจำลอง uniform บนสามเหลี่ยมนี้ ไม่ใช่กฎของทุก density บนสามเหลี่ยมเดียวกัน และไม่ได้บอกว่า $X+Y=1$ ทุกครั้ง</p>
-<p>อีกวิธีสร้างแบบจำลองนี้คือสุ่ม $U,V$ อิสระแบบ uniform บน $[0,1]$ แล้วให้ $X=\max(U,V),Y=\min(U,V)$ การพับสี่เหลี่ยมตามเส้นทแยงทำให้แต่ละจุดภายในสามเหลี่ยมรับมวลจากสองจุด จึงได้ density 2 เราจะใช้แนวคิดนี้ตรวจค่าคาดหมายด้วยตารางจุดในโค้ด</p>
+  <h4>ขั้นที่ 2 — marginal จาก joint CDF: ปลดเงื่อนไขของอีกตัว</h4>
+  <p>ถ้าแบบจำลองให้มาเป็น joint CDF แทนตาราง เราไม่ต้องบวกช่อง แค่ปล่อยให้เกณฑ์ของตัวที่ไม่สนใจไปถึงอนันต์ ท่านี้ใช้ได้กับการแจกแจงทุกชนิด และใช้กับกลุ่มตัวแปรได้ด้วย</p>
+  <div class="math">\[\begin{aligned}
+F_X(x)&=P(X\le x)\\
+&=\lim_{y\to\infty}P(X\le x,\,Y\le y)\\
+&=F_{X,Y}(x,+\infty),\\
+F_{X_i,X_j}(x_i,x_j)&=F_{\mathbf X}(\infty,\ldots,x_i,\ldots,x_j,\ldots,\infty).
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>เงื่อนไข $Y\le y$ ที่ $y$ ใหญ่มาก แทบไม่ตัดวันไหนทิ้ง เมื่อ $y\to\infty$ เงื่อนไขนี้หายไป เหลือแค่ $X\le x$ ลิมิตนี้ใช้ได้เพราะเหตุการณ์ $X\le x,\,Y\le y$ ขยายขึ้นเรื่อย ๆ จนเท่ากับ $X\le x$ และโอกาสของเหตุการณ์ที่ขยายขึ้นต่อเนื่องเข้าหาโอกาสของเหตุการณ์ปลายทาง ในตาราง 100 วันของ <a href="5.1.html">joint CDF</a> คือ $F(-1,+\infty)=0.20$</p>
+    <p>บรรทัดสุดท้ายคือ joint marginal: จากเวกเตอร์ผลตอบแทน 50 หุ้น ถ้าใส่ $\infty$ ทุกตำแหน่งยกเว้นตำแหน่งที่ $i$ และ $j$ จะได้ joint CDF ของคู่นั้น ผลที่ได้ยังเก็บความสัมพันธ์ภายในคู่ไว้ครบ สิ่งที่หายไปคือความสัมพันธ์กับอีก 48 ตัว</p>
+  </div>
 </section>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — กรณีต่อเนื่อง: อินทิเกรตอีกแกนทิ้ง</h4>
+  <p>ในตาราง เราบวกตามแถว ในกรณี density การบวกกลายเป็นอินทิกรัล ขั้นนี้แสดงว่าทำไมสูตร “อินทิเกรตอีกแกน” จึงถูก ไม่ใช่กฎที่ต้องจำ</p>
+  <div class="math">\[\begin{aligned}
+F_X(x)&=F_{X,Y}(x,+\infty)\\
+&=\int_{-\infty}^{x}\left[\int_{-\infty}^{\infty}f_{X,Y}(u,v)\,dv\right]du,\\
+f_X(x)&=\frac{d}{dx}F_X(x)\\
+&=\int_{-\infty}^{\infty}f_{X,Y}(x,v)\,dv,\\
+f_Y(y)&=\int_{-\infty}^{\infty}f_{X,Y}(u,y)\,du.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกคือท่าดันเกณฑ์ของอีกตัวไปที่อนันต์ บวกกับความสัมพันธ์ CDF–PDF ของ joint: มุมซ้ายล่างที่ขอบบนเป็นอนันต์คือแถบแนวตั้งทั้งแถบทางซ้ายของ $x$ วงเล็บเหลี่ยมคือ “ผลรวมตามแนวตั้ง” ที่ตำแหน่ง $u$</p>
+    <p>บรรทัดที่สองใช้ทฤษฎีบทหลักมูลของแคลคูลัส: อนุพันธ์ของอินทิกรัลตามขอบบน คือค่าของสิ่งที่อยู่ในอินทิกรัลที่ขอบบนนั้น อินทิกรัลชั้นนอกจึงหายไป เหลือวงเล็บเหลี่ยมที่ $u=x$ คือรอยตัดแนวตั้งของ density ที่ตำแหน่ง $x$ แล้วรวมตลอดแนว</p>
+    <p>หน่วยลงตัวเอง: joint density มีหน่วยต่อ (จุดเปอร์เซ็นต์)² อินทิเกรตตาม $v$ คูณหน่วยจุดเปอร์เซ็นต์เข้าไปหนึ่งครั้ง จึงเหลือต่อจุดเปอร์เซ็นต์ ซึ่งเป็นหน่วยของ density ตัวแปรเดียว และเพราะ joint รวมทั้งระนาบได้ 1 marginal ก็รวมได้ 1 โดยอัตโนมัติ</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — รอยตัดที่ AAPL = 0% และพื้นที่ใต้รอยตัด</h4>
+  <img src="../figures/5.2-3.svg" alt="กราฟรอยตัดของ joint Gaussian density เมื่อผลตอบแทน AAPL เท่ากับศูนย์ ลากไปตามผลตอบแทน MSFT พื้นที่ใต้เส้นเท่ากับ 0.1596" loading="lazy">
+  <figcaption>แบบจำลอง Gaussian เดียวกับใน <a href="5.1.html">joint CDF และ joint PDF</a> (ส่วนเบี่ยงเบนมาตรฐาน 2.5 และ 3 จุดเปอร์เซ็นต์ correlation 0.6) ตรึง AAPL ไว้ที่ 0% แล้วลากไปตามผลตอบแทน MSFT ได้เส้นโค้งนี้ พื้นที่ใต้เส้นคือ 0.1596 ซึ่งเท่ากับ $f_X(0)=1/(2.5\sqrt{2\pi})$ พอดี พื้นที่นี้เป็น<em>ความสูงหนึ่งจุด</em>ของ marginal density ไม่ใช่โอกาสที่ AAPL เท่ากับ 0% และเพราะยังไม่ได้หารด้วยอะไร รอยตัดนี้จึงยังไม่ใช่การแจกแจงของ MSFT เมื่อรู้ AAPL</figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>รูป — marginal density ของสองหุ้นจากแบบจำลองเดียวกัน</h4>
+  <img src="../figures/5.2-2.svg" alt="เส้น normal density สองเส้น AAPL แคบกว่าและยอดสูงกว่า MSFT" loading="lazy">
+  <figcaption>อินทิเกรต joint Gaussian ตามแกนหนึ่งทิ้งได้ normal ของอีกแกน: AAPL มีส่วนเบี่ยงเบน 2.5 MSFT มี 3 จุดเปอร์เซ็นต์ (ผลทั่วไปอยู่ใน <a href="8.6.html">marginals ของ MVN</a>) เส้น MSFT กว้างกว่าและยอดต่ำกว่า แต่พื้นที่ใต้เส้นเท่ากันคือ 1 สังเกตว่า correlation 0.6 ไม่ปรากฏในรูปนี้เลย marginal ทิ้งข้อมูลความสัมพันธ์ไปหมด</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 4 — support สามเหลี่ยม: ขอบอินทิกรัลเปลี่ยนตามจุดที่ตรึง</h4>
+  <p>กับ Gaussian เราอินทิเกรตจาก $-\infty$ ถึง $\infty$ ได้ทุกครั้ง แต่หลายแบบจำลองมีข้อจำกัดระหว่างตัวแปร เช่นราคาต่ำสุดของวันไม่มีทางเกินราคาสูงสุดของวัน ขั้นนี้ใช้ตัวอย่างที่มีข้อจำกัดแบบนั้น</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตัวแปรไร้หน่วย $f_{X,Y}(x,y)=2$ เมื่อ $0\le y\le x\le1$ และเป็นศูนย์ที่อื่น support คือสามเหลี่ยมมุม $(0,0),\ (1,0),\ (1,1)$ พื้นที่ $\tfrac12$ มวลรวมจึงเป็น $2\times\tfrac12=1$</p>
+  <div class="math">\[\begin{aligned}
+f_X(x)&=\int_0^{x}2\,dy=2x,\qquad 0\le x\le1,\\
+f_Y(y)&=\int_y^{1}2\,dx=2(1-y),\qquad 0\le y\le1,\\
+f_X(0.6)&=1.2,\qquad f_Y(0.3)=1.4.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> ตรึง $x$ แล้วลากแนวตั้ง $y$ วิ่งได้จาก 0 ถึง $x$ เท่านั้น เพราะเหนือนั้นออกนอกสามเหลี่ยม ตรึง $y$ แล้วลากแนวนอน $x$ วิ่งจาก $y$ ถึง 1 ความสูง density เท่ากันทุกจุด แต่ความยาวของรอยตัดไม่เท่ากัน marginal จึงไม่เป็นค่าคงที่ นอกช่วง 0 ถึง 1 marginal ทั้งสองเป็นศูนย์</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ถ้าอินทิเกรต 2 จาก 0 ถึง 1 ทุกครั้งโดยไม่ดู support จะได้ marginal เป็น 2 ตลอดช่วงและมวลรวม 2 ซึ่งเป็นไปไม่ได้ ตัวเลขที่เกิน 1 ตรงนี้คือสัญญาณว่าขอบอินทิกรัลผิด</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — รอยตัดของสามเหลี่ยมยาวไม่เท่ากัน</h4>
+  <svg viewBox="0 0 440 360" role="img" aria-label="สามเหลี่ยมสีน้ำเงินใต้เส้นทแยงในสี่เหลี่ยมหน่วย เส้นแนวตั้งสีส้มที่ x เท่ากับ 0.6 ยาว 0.6 และเส้นแนวนอนสีเขียวที่ y เท่ากับ 0.3 ยาว 0.7" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <rect x="70" y="40" width="280" height="280" fill="none" stroke="#d7dce3" stroke-width="1.5"/>
+      <polygon points="70,320 350,320 350,40" fill="#2455d6" fill-opacity="0.18" stroke="#2455d6" stroke-width="2.5"/>
+      <line x1="238" y1="320" x2="238" y2="152" stroke="#a65f00" stroke-width="5"/>
+      <line x1="154" y1="236" x2="350" y2="236" stroke="#047857" stroke-width="5"/>
+      <text x="300" y="300" fill="#2455d6">f = 2</text>
+      <text x="80" y="66" fill="#a65f00" font-size="14">แนวตั้งที่ x = 0.6</text>
+      <text x="80" y="86" fill="#a65f00" font-size="14">ยาว 0.6 → f(x) = 1.2</text>
+      <text x="80" y="122" fill="#047857" font-size="14">แนวนอนที่ y = 0.3</text>
+      <text x="80" y="142" fill="#047857" font-size="14">ยาว 0.7 → f(y) = 1.4</text>
+      <g font-size="14" fill="#5b6472">
+        <text x="70" y="340" text-anchor="middle">0</text>
+        <text x="154" y="340" text-anchor="middle">0.3</text>
+        <text x="238" y="340" text-anchor="middle">0.6</text>
+        <text x="350" y="340" text-anchor="middle">1</text>
+        <text x="62" y="325" text-anchor="end">0</text>
+        <text x="62" y="241" text-anchor="end">0.3</text>
+        <text x="62" y="157" text-anchor="end">0.6</text>
+        <text x="62" y="45" text-anchor="end">1</text>
+      </g>
+      <text x="210" y="358" text-anchor="middle">x</text>
+      <text transform="translate(24 180) rotate(-90)" text-anchor="middle">y</text>
+    </g>
+  </svg>
+  <figcaption>density สูง 2 เท่ากันทั้งสามเหลี่ยม marginal ของ $x$ ที่ตำแหน่งหนึ่งคือ 2 คูณความยาวของเส้นแนวตั้งที่ตัดผ่านสามเหลี่ยม เส้นส้มที่ $x=0.6$ ยาว 0.6 จึงได้ 1.2 ยิ่งไปทางขวาเส้นยิ่งยาว $f_X$ จึงเพิ่มขึ้น ส่วน marginal ของ $y$ ใช้เส้นแนวนอน เส้นเขียวที่ $y=0.3$ เริ่มที่ $x=0.3$ ไม่ใช่ที่ 0 จึงยาว 0.7 และได้ 1.4 ยิ่งขึ้นข้างบนเส้นยิ่งสั้น</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 5 — CDF และค่าเฉลี่ยจาก marginal</h4>
+  <p>เมื่อได้ marginal แล้ว ทุกเครื่องมือของตัวแปรเดียวใช้ได้ทันที ขั้นนี้หา CDF ค่าเฉลี่ย และดูว่า density ที่สูงเกิน 1 ไม่ได้ทำให้อะไรผิด</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $f_X(x)=2x$ และ $f_Y(y)=2(1-y)$ บนช่วง 0 ถึง 1 จากรอยตัดของสามเหลี่ยมด้านบน</p>
+  <div class="math">\[\begin{aligned}
+\int_0^1 2x\,dx&=1,\qquad \int_0^1 2(1-y)\,dy=1,\\
+F_X(x)&=x^2,\qquad F_Y(y)=2y-y^2,\\
+P(X\le0.3)&=0.09,\qquad P(Y\le0.3)=0.51,\\
+E[X]&=\int_0^1 x\cdot2x\,dx=\tfrac23,\\
+E[Y]&=\int_0^1 y\cdot2(1-y)\,dy=1-\tfrac23=\tfrac13.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> $X$ มักอยู่สูง ($E[X]=2/3$) และ $Y$ มักอยู่ต่ำ ($E[Y]=1/3$) สอดคล้องกับข้อจำกัด $Y\le X$ ที่ $0.3$ density ของ $Y$ สูง 1.4 ซึ่งเกิน 1 แต่โอกาสสะสม $P(Y\le0.3)=0.6-0.09=0.51$ ยังไม่เกิน 1 ความสูงกับโอกาสเป็นคนละเรื่องกัน</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $E[X]+E[Y]=1$ ในแบบจำลองนี้ เพราะสามเหลี่ยมเกิดจากการพับสี่เหลี่ยมที่มีค่าเฉลี่ยของแต่ละแกน $\tfrac12$ (ดูการพับสี่เหลี่ยมด้านล่าง) แต่นั่นไม่ได้แปลว่า $X+Y=1$ ทุกครั้ง</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — marginal density สองเส้น และพื้นที่ถึง 0.3</h4>
+  <svg viewBox="0 0 440 310" role="img" aria-label="เส้นตรงสีน้ำเงิน 2x เพิ่มขึ้นจากศูนย์ถึงสอง เส้นตรงสีส้ม 2 ลบ 2y ลดลงจากสองถึงศูนย์ พื้นที่ใต้เส้นน้ำเงินถึง 0.3 เท่ากับ 0.09 พื้นที่ใต้เส้นส้มถึง 0.3 เท่ากับ 0.51" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="60" y1="160" x2="400" y2="160"/>
+        <line x1="60" y1="60" x2="400" y2="60"/>
+        <line x1="230" y1="60" x2="230" y2="260"/>
+      </g>
+      <polygon points="60,260 60,60 162,120 162,260" fill="#a65f00" fill-opacity="0.2"/>
+      <polygon points="60,260 162,260 162,200" fill="#2455d6" fill-opacity="0.35"/>
+      <line x1="60" y1="260" x2="400" y2="60" stroke="#2455d6" stroke-width="2.5"/>
+      <line x1="60" y1="60" x2="400" y2="260" stroke="#a65f00" stroke-width="2.5"/>
+      <line x1="162" y1="60" x2="162" y2="260" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <line x1="60" y1="260" x2="400" y2="260" stroke="#181818" stroke-width="2"/>
+      <line x1="60" y1="50" x2="60" y2="260" stroke="#181818" stroke-width="2"/>
+      <text x="128" y="252" fill="#2455d6" font-size="14" text-anchor="middle">0.09</text>
+      <text x="108" y="160" fill="#a65f00" text-anchor="middle">0.51</text>
+      <text x="330" y="88" fill="#2455d6">f(x) = 2x</text>
+      <text x="282" y="222" fill="#a65f00">f(y) = 2(1 − y)</text>
+      <g font-size="14" fill="#5b6472">
+        <text x="60" y="280" text-anchor="middle">0</text>
+        <text x="162" y="280" text-anchor="middle">0.3</text>
+        <text x="230" y="280" text-anchor="middle">0.5</text>
+        <text x="400" y="280" text-anchor="middle">1</text>
+        <text x="52" y="265" text-anchor="end">0</text>
+        <text x="52" y="165" text-anchor="end">1</text>
+        <text x="52" y="65" text-anchor="end">2</text>
+      </g>
+      <text x="230" y="302" text-anchor="middle">ค่าของ x หรือ y</text>
+      <text transform="translate(22 160) rotate(-90)" text-anchor="middle">density</text>
+    </g>
+  </svg>
+  <figcaption>เส้นน้ำเงินคือ $f_X$ เส้นส้มคือ $f_Y$ ทั้งคู่มีพื้นที่ใต้เส้นเท่ากับ 1 (สามเหลี่ยมฐาน 1 สูง 2) พื้นที่ทางซ้ายของเส้นประที่ 0.3 คือ CDF ที่ 0.3: ใต้เส้นน้ำเงินเป็นสามเหลี่ยมเล็กพื้นที่ $\tfrac12(0.3)(0.6)=0.09$ ใต้เส้นส้มเป็นสี่เหลี่ยมคางหมูพื้นที่ $0.3\times\tfrac{2+1.4}{2}=0.51$ เส้นส้มสูงกว่า 1 ทางซ้าย แต่พื้นที่ทั้งหมดก็ยังเป็น 1</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 6 — ที่มาของสามเหลี่ยม: พับสี่เหลี่ยมตามเส้นทแยง</h4>
+  <p>density 2 บนสามเหลี่ยมดูเหมือนถูกตั้งขึ้นลอย ๆ ขั้นนี้แสดงว่ามันเกิดจากกลไกง่าย ๆ และใช้กลไกนั้นตรวจ marginal ที่ได้อีกทาง</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> สุ่ม $U,V$ สองตัวแบบ uniform บนช่วง 0 ถึง 1 อย่างอิสระ แล้วตั้ง $X=\max(U,V)$ และ $Y=\min(U,V)$ เช่นราคาสูงสุดและต่ำสุดของสองช่วงเวลา (ในหน่วยที่ปรับให้อยู่ในช่วง 0 ถึง 1)</p>
+  <div class="math">\[\begin{aligned}
+P(X\le x)&=P(U\le x,\,V\le x)=x\cdot x=x^2,\\
+P(Y\gt y)&=P(U\gt y,\,V\gt y)=(1-y)^2,\\
+P(Y\le y)&=1-(1-y)^2=2y-y^2.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> ได้ $F_X=x^2$ และ $F_Y=2y-y^2$ ตรงกับ CDF ที่ได้จาก marginal density ด้านบนทุกตัว บรรทัดแรกใช้ว่าค่ามากสุดไม่เกิน $x$ ก็ต่อเมื่อทั้งสองตัวไม่เกิน $x$ และการคูณ $x\cdot x$ ใช้ได้เพราะ $U,V$ สุ่มอย่างอิสระ (ทำไมจึงคูณได้อยู่ใน <a href="5.4.html">independence</a>) บรรทัดที่สองคิดฝั่งตรงข้าม: ค่าน้อยสุดเกิน $y$ ก็ต่อเมื่อทั้งสองตัวเกิน $y$</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ค่าเฉลี่ยของ max บวก min เท่ากับค่าเฉลี่ยของ $U+V$ คือ $\tfrac12+\tfrac12=1$ จึงได้ $E[X]+E[Y]=1$ ตามที่สังเกตไว้ตอนหาค่าเฉลี่ยจาก marginal</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — สองจุดในสี่เหลี่ยมพับมาเป็นจุดเดียวในสามเหลี่ยม</h4>
+  <svg viewBox="0 0 440 250" role="img" aria-label="ซ้ายคือสี่เหลี่ยมหน่วยมีจุด 0.3 0.7 และ 0.7 0.3 อยู่คนละฝั่งเส้นทแยง ลูกศรพาทั้งสองจุดไปที่จุดเดียวกันในสามเหลี่ยมด้านขวา density จึงเป็นสองเท่า" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="m52f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <rect x="30" y="30" width="170" height="170" fill="#2455d6" fill-opacity="0.09" stroke="#181818" stroke-width="2"/>
+      <line x1="30" y1="200" x2="200" y2="30" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 4"/>
+      <polygon points="250,200 420,200 420,30" fill="#2455d6" fill-opacity="0.18" stroke="#181818" stroke-width="2"/>
+      <circle cx="81" cy="81" r="6" fill="#a65f00"/>
+      <circle cx="149" cy="149" r="6" fill="#047857"/>
+      <circle cx="369" cy="149" r="8" fill="#6d28d9"/>
+      <text x="81" y="66" text-anchor="middle" fill="#a65f00" font-size="14">(0.3, 0.7)</text>
+      <text x="149" y="174" text-anchor="middle" fill="#047857" font-size="14">(0.7, 0.3)</text>
+      <path d="M88,76 C200,20 330,60 362,140" fill="none" stroke="#a65f00" stroke-width="2" marker-end="url(#m52f)"/>
+      <path d="M156,152 C230,175 300,165 359,152" fill="none" stroke="#047857" stroke-width="2" marker-end="url(#m52f)"/>
+      <text x="369" y="180" text-anchor="middle" fill="#6d28d9" font-size="14">(0.7, 0.3)</text>
+      <text x="115" y="222" text-anchor="middle" fill="#5b6472">(U, V): density 1</text>
+      <text x="335" y="222" text-anchor="middle" fill="#5b6472">(max, min): density 2</text>
+    </g>
+  </svg>
+  <figcaption>ซ้ายคือคู่ $(U,V)$ ซึ่งกระจายสม่ำเสมอบนสี่เหลี่ยม density 1 จุดส้ม $(0.3,0.7)$ กับจุดเขียว $(0.7,0.3)$ อยู่คนละฝั่งเส้นทแยง แต่ให้ max เท่ากับ 0.7 และ min เท่ากับ 0.3 เหมือนกัน ทั้งสองจึงไปลงที่จุดม่วงจุดเดียวในสามเหลี่ยมด้านขวา ทุกจุดในสามเหลี่ยมรับมวลจากสองจุด density จึงเป็น 2 และพื้นที่ครึ่งหนึ่งคูณ 2 ได้มวลรวม 1</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 7 — marginal บอกโอกาสเกิดพร้อมกันไม่ได้</h4>
+  <p>marginal สะดวกมาก แต่มันทิ้งอะไรไป ขั้นนี้ใช้ตาราง 100 วันจาก <a href="5.1.html">joint CDF</a> ซึ่งมี marginal ของ AAPL และ MSFT เป็น 0.20 ทั้งคู่ แล้วถามว่าถ้ารู้แค่ marginal โอกาสลงพร้อมกันอาจเป็นเท่าไรได้บ้าง</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $P(X\le-1)=p=0.20$ และ $P(Y\le-1)=q=0.20$ ให้ $j$ แทนโอกาสที่ลงพร้อมกัน</p>
+  <div class="math">\[\begin{aligned}
+j&\le\min(p,q)=0.20,\\
+p+q-j&\le1\ \text{ so }\ j\ge p+q-1,\\
+\max(0,\,p+q-1)&\le j\le\min(p,q),\\
+0&\le j\le0.20.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> โอกาสลงพร้อมกันเป็นอะไรก็ได้ตั้งแต่ 0 ถึง 0.20 บรรทัดแรก: วันที่ลงทั้งคู่เป็นส่วนหนึ่งของวันที่ AAPL ลง จึงมากกว่า 0.20 ไม่ได้ บรรทัดที่สอง: โอกาสที่อย่างน้อยหนึ่งตัวลงคือ $p+q-j$ ตามที่เห็นใน <a href="5.1.html">joint CDF</a> และโอกาสนี้เกิน 1 ไม่ได้ ที่ 0 คือหุ้นสองตัวไม่เคยลงวันเดียวกัน ที่ 0.04 คือกรณีอิสระ ที่ 0.10 คือข้อมูลจริงในตาราง และที่ 0.20 คือลงพร้อมกันทุกครั้ง ทั้งสี่แบบมี marginal เหมือนกันเป๊ะ ช่วงนี้มีชื่อว่า Fréchet bounds</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> เติมตาราง 2×2 ที่ $j=0.20$: ช่องลงทั้งคู่ 20 วัน ช่อง AAPL ลงตัวเดียว 0 วัน MSFT ลงตัวเดียว 0 วัน ไม่ลงเลย 80 วัน ขอบตารางยังเป็น 20 กับ 80 ทุกด้าน</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — marginal เดียวกัน แต่โอกาสลงพร้อมกันอยู่ได้ทั้งช่วง</h4>
+  <svg viewBox="0 0 440 180" role="img" aria-label="เส้นจำนวนจากศูนย์ถึง 0.2 แท่งเขียวคือช่วงที่เป็นไปได้ จุดที่ศูนย์ไม่เคยลงพร้อมกัน 0.04 อิสระ 0.10 ข้อมูลในตาราง และ 0.20 ลงพร้อมกันทุกครั้ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="40" y1="90" x2="400" y2="90" stroke="#047857" stroke-width="8" stroke-opacity="0.35"/>
+      <line x1="40" y1="90" x2="400" y2="90" stroke="#181818" stroke-width="2"/>
+      <g stroke="#181818" stroke-width="2">
+        <line x1="40" y1="82" x2="40" y2="98"/>
+        <line x1="112" y1="82" x2="112" y2="98"/>
+        <line x1="220" y1="82" x2="220" y2="98"/>
+        <line x1="400" y1="82" x2="400" y2="98"/>
+      </g>
+      <circle cx="40" cy="90" r="7" fill="#5b6472"/>
+      <circle cx="112" cy="90" r="7" fill="#a65f00"/>
+      <circle cx="220" cy="90" r="7" fill="#2455d6"/>
+      <circle cx="400" cy="90" r="7" fill="#d82632"/>
+      <text x="40" y="122" text-anchor="middle">0</text>
+      <text x="112" y="122" text-anchor="middle">0.04</text>
+      <text x="220" y="122" text-anchor="middle">0.10</text>
+      <text x="400" y="122" text-anchor="middle">0.20</text>
+      <text x="40" y="66" fill="#5b6472" font-size="14">ไม่เคยพร้อมกัน</text>
+      <text x="112" y="148" text-anchor="middle" fill="#a65f00" font-size="14">อิสระกัน</text>
+      <text x="220" y="66" text-anchor="middle" fill="#2455d6" font-size="14">ข้อมูลในตาราง</text>
+      <text x="400" y="66" text-anchor="end" fill="#d82632" font-size="14">พร้อมกันทุกครั้ง</text>
+      <text x="220" y="172" text-anchor="middle" fill="#5b6472">โอกาสที่ลงถึง −1% พร้อมกัน</text>
+    </g>
+  </svg>
+  <figcaption>ทุกจุดบนแถบเขียวเข้ากันได้กับ marginal 0.20 และ 0.20 ทั้งสิ้น จุดน้ำเงินคือข้อมูล 100 วันที่ใช้ใน <a href="5.1.html">joint CDF</a> จุดส้มคือคำตอบที่ได้ถ้าคูณ marginal ซึ่งเป็นแค่หนึ่งจุดในช่วงนี้ marginal จึงตอบคำถาม “ลงพร้อมกันบ่อยแค่ไหน” ไม่ได้ ต้องมีข้อมูลการเกิดร่วมเพิ่ม</figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>อ่านคอลัมน์เดียวเป็น marginal:</strong> คอลัมน์ MSFT ลงคือ 0.15, 0.20, 0.05 รวมกันได้แค่ 0.40 ไม่ใช่การแจกแจงของ AAPL ใช้ 0.15 แทน 0.20 ทำให้โอกาส AAPL ลง 2% ต่ำไป 25%</p>
+  <p><strong>อินทิเกรตเต็มช่วงโดยไม่ดู support:</strong> ในสามเหลี่ยม ถ้าใช้ $\int_0^1 2\,dy$ ทุกครั้งจะได้ $f_X=2$ และมวลรวม 2 ผิดไปเท่าตัว วาด support ก่อนตั้งขอบทุกครั้ง</p>
+  <p><strong>เข้าใจว่ารอยตัดคือการแจกแจงของอีกตัว:</strong> รอยตัด Gaussian ที่ AAPL = 0% มีพื้นที่ 0.1596 ไม่ใช่ 1 ถ้าใช้มันเป็น density ของ MSFT โอกาสทุกตัวจะเล็กไป 6.3 เท่า ($1/0.1596$) การแจกแจงของ MSFT เมื่อรู้ AAPL ต้องหารด้วยพื้นที่นี้ก่อน</p>
+  <p><strong>คิดว่า marginal พอสำหรับความเสี่ยงพอร์ต:</strong> marginal 0.20 กับ 0.20 อนุญาตให้โอกาสลงพร้อมกันเป็นอะไรก็ได้ตั้งแต่ 0 ถึง 0.20 การบวก VaR รายตัวแล้วเรียกว่า VaR ของพอร์ตก็ผิดในทำนองเดียวกัน ผลรวมอาจสูงหรือต่ำกว่าค่าจริงขึ้นกับการแจกแจงร่วม</p>
+</section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>รายงานความเสี่ยงรายสินทรัพย์ เช่นโอกาสขาดทุนเกินเกณฑ์ของหุ้นแต่ละตัว หรือควอนไทล์ 1% ของผลตอบแทนรายตัว ใช้ marginal ทั้งหมด การตรวจแบบจำลองหลายตัวแปรก็เริ่มที่ marginal: ถ้าแบบจำลองให้ marginal ของแต่ละหุ้นไม่ตรงกับข้อมูล ส่วนร่วมก็ไม่น่าเชื่อ แนวคิด copula ใน <a href="5.6.html">Gaussian copula</a> ใช้ประโยชน์จากการแยกนี้โดยตรง: ประมาณ marginal ของแต่ละตัวจากข้อมูลของมันเอง แล้วกำหนดรูปแบบการเกิดร่วมแยกต่างหาก ซึ่งเป็นส่วนที่ marginal บอกไม่ได้ ตามที่ Fréchet bounds แสดง</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> จากตาราง AAPL–MSFT จงหา $P(X\le0)$ และ marginal ของ MSFT แล้วตอบว่าการรู้ marginal ทั้งสองชุดพอจะหาโอกาส “AAPL −2% และ MSFT ลง” ได้หรือไม่</p>
+  <details><summary>เฉลย</summary><p>$P(X\le0)=0.20+0.50=0.70$ marginal ของ MSFT คือขึ้น 0.60 ลง 0.40 จาก marginal อย่างเดียวหาโอกาสร่วมไม่ได้ ช่วงที่เป็นไปได้คือ $\max(0,\,0.20+0.40-1)=0$ ถึง $\min(0.20,0.40)=0.20$ ค่าจริงในตาราง 0.15 อยู่ในช่วงนี้ ส่วนค่าที่ได้ถ้าอิสระคือ 0.08</p></details>
+  <p><strong>2.</strong> ในตัวอย่างสามเหลี่ยม จงหา $P(X\gt0.5)$ และ $P(Y\le0.5)$</p>
+  <details><summary>เฉลย</summary><p>$P(X\gt0.5)=1-F_X(0.5)=1-0.25=0.75$ และ $P(Y\le0.5)=2(0.5)-0.5^2=0.75$ ได้ค่าเท่ากันแต่เป็นคนละเหตุการณ์ ตรวจด้วยกลไกพับ: max เกิน 0.5 เมื่อมีอย่างน้อยตัวหนึ่งเกิน 0.5 โอกาส $1-0.5^2=0.75$ ส่วน min ไม่เกิน 0.5 ก็เมื่อมีอย่างน้อยตัวหนึ่งไม่เกิน 0.5 โอกาสเท่ากัน</p></details>
+  <p><strong>3.</strong> ลูกหนี้สองรายมีโอกาสผิดนัดในหนึ่งปี 0.7 และ 0.6 (พอร์ตสินเชื่อคุณภาพต่ำมาก สมมติ) โอกาสที่ผิดนัดทั้งคู่อาจเป็นเท่าไรได้บ้าง ถ้ารู้แค่ marginal</p>
+  <details><summary>เฉลย</summary><p>ขอบล่าง $\max(0,\,0.7+0.6-1)=0.3$ ขอบบน $\min(0.7,0.6)=0.6$ ช่วงนี้ไม่เริ่มที่ศูนย์ เพราะโอกาสรวมเกิน 1 ทำให้สองเหตุการณ์ต้องทับกันอย่างน้อย 0.3 ถ้าอิสระจะได้ $0.42$ ซึ่งอยู่ในช่วง</p></details>
+</section>
+
 <section class="code">
-<h3>JavaScript: บวกตาราง อินทิเกรต และพับสี่เหลี่ยม</h3>
-<p>ผลคาดหวังคือ marginal ของตาราง $[0.2,0.5,0.3]$ และ $[0.6,0.4]$ ส่วนค่าเฉลี่ยสามเหลี่ยมใกล้ $2/3,1/3$ การใช้ midpoint grid ทำให้ผลทำซ้ำได้โดยไม่ต้องใช้การสุ่ม</p>
-<pre><code class="language-javascript" data-example="5.2">const joint = [[.05,.15],[.30,.20],[.25,.05]];
-const rows = joint.map(row =&gt; row.reduce((a,b) =&gt; a+b,0));
-const cols = [0,1].map(j =&gt; joint.reduce((s,row) =&gt; s+row[j],0));
-function integrate(f,a,b,n=10000) {
-  let s=0, h=(b-a)/n;
-  for(let i=0;i&lt;n;i++) s+=f(a+(i+.5)*h)*h;
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="5.2">// 1) table: rows X = -2, 0, 2 ; columns MSFT up, down
+const joint = [[.05, .15], [.30, .20], [.25, .05]];
+const xs = [-2, 0, 2];
+const pX = joint.map(row =&gt; row[0] + row[1]);                 // [0.2, 0.5, 0.3]
+const pY = [0, 1].map(j =&gt; joint.reduce((s, row) =&gt; s + row[j], 0)); // [0.6, 0.4]
+const meanX = pX.reduce((s, p, i) =&gt; s + p * xs[i], 0);        // 0.2
+console.log({ pX, pY, meanX });
+
+// 2) triangle f = 2 on 0 &lt;= y &lt;= x &lt;= 1: marginals by midpoint integration
+const integrate = (g, a, b, n = 10000) =&gt; {
+  let s = 0; const h = (b - a) / n;
+  for (let i = 0; i &lt; n; i++) s += g(a + (i + .5) * h) * h;
   return s;
+};
+const fX = x =&gt; (x &lt; 0 || x &gt; 1) ? 0 : integrate(() =&gt; 2, 0, x);   // 2x
+const fY = y =&gt; (y &lt; 0 || y &gt; 1) ? 0 : integrate(() =&gt; 2, y, 1);   // 2(1-y)
+console.log({ fX06: fX(.6), fY03: fY(.3),
+  cdfX03: integrate(x =&gt; 2 * x, 0, .3), cdfY03: integrate(y =&gt; 2 * (1 - y), 0, .3),
+  EX: integrate(x =&gt; 2 * x * x, 0, 1), EY: integrate(y =&gt; 2 * y * (1 - y), 0, 1) });
+
+// 3) fold check: X = max(U,V), Y = min(U,V) on a fine grid of (U,V)
+let below = 0, minBelow = 0; const m = 400;
+for (let i = 0; i &lt; m; i++) for (let j = 0; j &lt; m; j++) {
+  const u = (i + .5) / m, v = (j + .5) / m;
+  if (Math.max(u, v) &lt;= .3) below++;
+  if (Math.min(u, v) &lt;= .3) minBelow++;
 }
-const fX = x =&gt; x&lt;0 || x&gt;1 ? 0 : integrate(() =&gt; 2,0,x,100);
-const fY = y =&gt; y&lt;0 || y&gt;1 ? 0 : integrate(() =&gt; 2,y,1,100);
-let maxMean=0, minMean=0;
-const n=200;
-for(let i=0;i&lt;n;i++) for(let j=0;j&lt;n;j++) {
-  const u=(i+.5)/n, v=(j+.5)/n;
-  maxMean+=Math.max(u,v)/(n*n);
-  minMean+=Math.min(u,v)/(n*n);
-}
-console.log({rows,cols, fx:fX(.3),fy:fY(.3),
-  normX:integrate(x =&gt; 2*x,0,1),
-  normY:integrate(y =&gt; 2*(1-y),0,1),
-  ex:integrate(x =&gt; 2*x*x,0,1),
-  ey:integrate(y =&gt; 2*y*(1-y),0,1),
-  cdfX:integrate(x =&gt; 2*x,0,.3),
-  cdfY:integrate(y =&gt; 2*(1-y),0,.3),
-  outside:fX(-.1)+fY(1.1),maxMean,minMean});</code></pre>
+console.log({ PmaxLE03: below / m / m, PminLE03: minBelow / m / m }); // 0.09, 0.51
+
+// 4) Frechet bounds for marginals p and q
+const frechet = (p, q) =&gt; [Math.max(0, p + q - 1), Math.min(p, q)];
+console.log(frechet(.2, .2), frechet(.2, .4), frechet(.7, .6));
+// [0, 0.2]  [0, 0.2]  [0.3, 0.6]</code></pre>
+  </details>
 </section>
-<section class="formula">
-<h2>6. เก็บทั้งกลุ่ม ไม่จำเป็นต้องเหลือตัวเดียว</h2>
-<p>แบ่งเวกเตอร์เป็น $\mathbf X=(X_1,\ldots,X_k)$ ที่อยากเก็บ และ $\mathbf Z=(X_{k+1},\ldots,X_n)$ ที่ไม่อยู่ในคำถาม marginal ของกลุ่มแรกคือ</p>
-<div class="math">\[
-\begin{aligned}
-f_{\mathbf X}(\mathbf x)
- &=\int_{\mathbb R^{n-k}}f_{\mathbf X,\mathbf Z}(\mathbf x,\mathbf z)\,d\mathbf z,\\
-F_{\mathbf X}(\mathbf x)
- &=F_{\mathbf X,\mathbf Z}(\mathbf x,+\infty,\ldots,+\infty).
-\end{aligned}
-\]</div>
-<p>ผลลัพธ์ยังคงการแจกแจงร่วมของตัวแปรที่เก็บไว้ทั้งหมด เช่น การรวมปัจจัยตราสารหนี้ออกยังเหลือความสัมพันธ์ระหว่างหุ้นสองตัวได้ แต่หากเก็บเพียง marginal แยกรายตัว จะไม่สามารถย้อนสร้าง joint ได้โดยทั่วไป</p>
-</section>
-<section class="exercises">
-<h2>ตรวจความเข้าใจ</h2>
-<ol><li>จากตารางแรก หา $P(X\le0)$ และ $E[X]$ พร้อมหน่วย
-<details><summary>เฉลย</summary><p>$P(X\le0)=0.20+0.50=0.70$ และ $E[X]=(-2)(0.20)+0(0.50)+2(0.30)=0.20$ จุดเปอร์เซ็นต์ หรือผลตอบแทนเฉลี่ย 0.2% ต่อวันในแบบจำลองสมมตินี้</p></details></li>
-<li>สำหรับสามเหลี่ยม หา $P(X\gt0.5)$ และ $P(Y\le0.5)$
-<details><summary>เฉลย</summary><p>$1-F_X(0.5)=1-0.25=0.75$ และ $F_Y(0.5)=1-0.25=0.75$ เหตุการณ์ต่างกันแต่มีโอกาสเท่ากันในแบบจำลองนี้</p></details></li>
-<li>คอลัมน์ MSFT ลงมีค่า $0.15,0.20,0.05$ นี่เป็น marginal ของ AAPL หรือไม่?
-<details><summary>เฉลย</summary><p>ไม่ใช่ เพราะยังไม่ได้รวมคอลัมน์ขึ้น และผลรวมเป็นเพียง 0.40 ถ้าหารแต่ละช่องด้วย 0.40 จะได้ conditional distribution ของหัวข้อถัดไป</p></details></li></ol>
-</section>
-<section class="pitfalls">
-<h2>ขอบเขตของคำตอบ</h2>
-<p>Marginalization ไม่ต้องสมมติความเป็นอิสระ แต่ต้องรวมทุกค่าที่เป็นไปได้ของตัวแปรที่ตัดออก การเห็น marginal สองเส้นเหมือนกันไม่ได้แปลว่าตัวแปรสัมพันธ์กันแบบใดแบบหนึ่ง ข้อมูลการเกิดพร้อมกันสูญหายไปเมื่อเหลือเพียงรายตัว</p>
-<p>ใช้ marginal เพื่อรายงานความเสี่ยงรายสินทรัพย์ ตรวจแบบจำลอง และหาควอนไทล์ได้ แต่ห้ามบวก Value at Risk รายตัวแล้วเรียกว่า VaR ของพอร์ตโดยอัตโนมัติ ทิศทางของความคลาดเคลื่อนขึ้นอยู่กับการแจกแจงและมาตรวัดความเสี่ยง ไม่มีกฎว่าผลบวกต้องสูงกว่าความเสี่ยงรวมเสมอ</p>
-</section>
+
 <section class="takeaways">
-<h2>สรุปเส้นทางคิด</h2>
-<ul><li>คำว่า “ไม่สนใจอีกตัว” หมายถึงรวมทุกค่าของมัน ไม่ใช่ตรึงมันไว้</li><li>แบบไม่ต่อเนื่องใช้ผลรวม แบบมี density ใช้อินทิกรัล และแต่ละ marginal ต้อง normalize เป็นหนึ่ง</li><li>วาด support ก่อนตั้งขอบ โดยเฉพาะเมื่อขอบของตัวหนึ่งขึ้นกับอีกตัว</li><li>marginal ของกลุ่มยังเก็บโครงสร้างร่วมภายในกลุ่ม แต่ marginal รายตัวไม่พอระบุความเสี่ยงของพอร์ต</li></ul>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>“ไม่สนใจอีกตัว” แปลว่ารวมทุกค่าของมัน: AAPL ลง 2% คือ $0.05+0.15=0.20$ ไม่ใช่ 0.15 และไม่ใช่ 0.375</li>
+    <li>จาก joint CDF ได้ marginal ด้วยการดันเกณฑ์ของอีกตัวไปที่อนันต์ และใช้ท่าเดียวกันดึงกลุ่มย่อยออกจากเวกเตอร์ได้</li>
+    <li>จาก density ได้ marginal ด้วยการอินทิเกรตตามแกนที่ไม่สนใจ โดยขอบอินทิกรัลมาจาก support เช่น $2x$ และ $2(1-y)$ บนสามเหลี่ยม</li>
+    <li>marginal density สูงเกิน 1 ได้ ($f_Y(0.3)=1.4$) แต่พื้นที่รวมต้องเป็น 1 เสมอ</li>
+    <li>marginal ไม่กำหนดโอกาสเกิดพร้อมกัน: marginal 0.20 กับ 0.20 อนุญาตให้โอกาสร่วมอยู่ที่ใดก็ได้ตั้งแต่ 0 ถึง 0.20</li>
+  </ul>
+  <p>marginal รวมทุกกรณีของอีกตัว หน้าถัดไป <a href="5.3.html">conditional distribution</a> ทำตรงข้าม: เลือกเฉพาะกรณีที่รู้แล้ว เช่นวันที่ MSFT ลง แล้วปรับสเกลให้รวมได้ 1 อีกครั้ง ซึ่งคือที่มาของคำตอบ 0.375 ในโจทย์ต้นหน้า</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
