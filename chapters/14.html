@@ -17,52 +17,104 @@
   <div class="chapter-path">PART 3 / 7 · Stochastic Calculus and Black–Scholes</div>
   <h1>บทที่ 14</h1>
   <p>Black–Scholes and the Greeks · 8 หัวข้อ</p>
-  <p class="chapter-sequence">จาก call ที่ขายไปหนึ่งล็อต ไปสู่ราคาที่ได้จากพอร์ตทำซ้ำ ความเสี่ยงที่อ่านจาก Greeks ผืนความผันผวนที่ตลาดใช้จริง และสัญญาที่ซื้อขายความผันผวนเอง: ทุกหัวข้อตอบว่าเงินที่รับมาต้องเอาไปทำอะไรจึงจ่ายคืนได้</p>
+  <p class="chapter-sequence">จาก call ที่ขายไปหนึ่งล็อต ไปสู่ราคาที่ได้จากพอร์ตทำซ้ำ ความเสี่ยงที่อ่านจาก Greeks ผืนความผันผวนที่ตลาดใช้จริง โครงสร้างที่ซื้อขายความผันผวน แบบจำลองที่ให้ความผันผวนเดินสุ่ม และสัญญาที่จ่ายตาม variance ตรง ๆ: ทุกหัวข้อตอบว่าเงินที่รับมาต้องเอาไปทำอะไรจึงจ่ายคืนได้ และส่วนที่ยังเสี่ยงอยู่คืออะไร</p>
 </header>
 <section class="prose">
   <h2>คำถามหลักของบท</h2>
   <p>โต๊ะขาย European call 100 สัญญา (10,000 หุ้นอ้างอิง) บนหุ้นราคา \$100 strike \$105 อายุ 3 เดือน ดอกเบี้ย 4% ความผันผวน 20% ต่อปี หัวหน้าถามห้าข้อ: ราคาที่ถูกคือเท่าไร ต้องถือหุ้นกี่หุ้นจึงไม่ได้เดาทิศทาง ถ้าพรุ่งนี้หุ้นแกว่งแรงจะเสียเท่าไร ราคานี้เข้ากับ put และ smile ที่ตลาดเสนอไหม และถ้าความผันผวนเองเปลี่ยน จะตั้งราคาและปิดความเสี่ยงนั้นอย่างไร</p>
-  <p>บทนี้ตอบทีละข้อ 14.1 สร้าง call จากหุ้นกับเงินสดจนได้ PDE และ 14.2 แก้ออกมาเป็นสูตร 14.3 แยกความเสี่ยงที่เหลือเป็น Greeks 14.4 และ 14.5 เอาราคาตลาดมาตรวจ ซึ่งบอกว่าตลาดไม่ได้ใช้ความผันผวนตัวเดียว สามหัวข้อสุดท้ายซื้อขายความผันผวนเอง: ด้วยโครงสร้าง option ด้วยแบบจำลองที่ให้ความผันผวนสุ่ม และด้วยสัญญาที่จ่ายตาม variance ตรง ๆ</p>
-  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ GBM และ log return จากบท 10 และ Itô's lemma, Itô integral, การแก้ SDE และการเปลี่ยน measure จากบท 13 รวมถึง Normal CDF, density และค่าคาดหมายจากบทต้น ๆ 14.7 ใช้ Cholesky สองมิติจาก 8.9 ด้วย</p>
+  <p>บทนี้ตอบทีละข้อ พอร์ตหุ้นกับเงินกู้ที่ปรับทุกขณะทำซ้ำ call ได้ จึงได้ PDE ที่ไม่มี drift ของหุ้นอยู่เลย แก้ออกมาเป็นสูตรสองขา (ขาหุ้นลบขา strike) แล้วหาอนุพันธ์ของสูตรเป็น Greeks ที่บอกว่าพอร์ตที่ hedge แล้วยังเสี่ยงอะไร จากนั้นเอาราคาตลาดมาตรวจ: put–call parity ผูก call กับ put โดยไม่ใช้แบบจำลอง แต่ความผันผวนที่ทำให้สูตรตรงกับตลาดกลับต่างกันทุก strike และทุกอายุ ส่วนสุดท้ายซื้อขายความผันผวนเอง: ด้วยโครงสร้าง option หลายขา ด้วยแบบจำลองที่ให้ variance เดินสุ่ม และด้วยสัญญาที่จ่ายตาม variance ตรง ๆ</p>
+  <p><strong>ก่อนเริ่ม:</strong> ควรคุ้นกับ<a href="../topics/10.1.html">นิยามของ geometric Brownian motion</a> และ log return ที่เป็น Normal กับ<a href="../topics/1.10.html">lognormal distribution</a> ใช้<a href="../topics/13.2.html">Itô's lemma</a> (chain rule ที่เก็บพจน์ $(dW)^2=dt$ ไว้) และ<a href="../topics/13.5.html">Itô หลายตัวแปร</a> สำหรับสองแหล่งสุ่ม รู้ว่า<a href="../topics/13.3.html">Itô integral</a> มีค่าเฉลี่ยศูนย์ รู้จัก<a href="../topics/13.4.html">การแก้ SDE ของ GBM, Vasicek และ CIR</a> ซึ่ง CIR คือรูปของ variance ในแบบจำลอง Heston รู้ว่า<a href="../topics/13.6.html">Girsanov และ risk-neutral measure</a> ให้หุ้นโตเท่าดอกเบี้ยในโลกที่ใช้ตั้งราคา และ<a href="../topics/13.7.html">Feynman–Kac</a> บอกว่าค่าเฉลี่ยแบบมีเงื่อนไขทำตาม PDE ใช้ $\Phi$ ของ<a href="../topics/1.9.html">Normal distribution</a> อ่านโอกาส หัวข้อ dispersion ใช้<a href="../topics/8.8.html">variance ของผลรวมเชิงเส้น</a> และหัวข้อ Heston ใช้<a href="../topics/8.9.html">Cholesky</a> สร้างแรงสุ่มสองตัวที่มี correlation</p>
 </section>
+<figure class="plot">
+  <h4>รูป — แนวคิดในบทนี้ส่งต่อกันอย่างไร</h4>
+  <svg viewBox="0 0 480 305" role="img" aria-label="แผนผังแนวคิด แถวบนสีน้ำเงิน พอร์ตทำซ้ำไปสู่สูตร Black–Scholes ไปสู่ Greeks แถวกลางสีเขียว put–call parity กับสูตรที่ย้อนหาความผันผวนไปสู่ volatility smile ไปสู่ผืนความผันผวน แถวล่างสีส้ม Greeks และผืนไปสู่โครงสร้างเทรดความผันผวน ผืนไปสู่ Heston และ variance swap ส่วน Heston และโครงสร้างไปสู่ variance swap" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs><marker id="m14c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker></defs>
+    <g font-size="14" fill="#181818">
+      <g fill="#fff" stroke="#2455d6" stroke-width="2.5">
+        <rect x="15" y="20" width="130" height="46" rx="8"/><rect x="170" y="20" width="130" height="46" rx="8"/><rect x="325" y="20" width="130" height="46" rx="8"/>
+      </g>
+      <g fill="#fff" stroke="#047857" stroke-width="2.5">
+        <rect x="15" y="115" width="130" height="46" rx="8"/><rect x="170" y="115" width="130" height="46" rx="8"/><rect x="325" y="115" width="130" height="46" rx="8"/>
+      </g>
+      <g fill="#fff" stroke="#a65f00" stroke-width="2.5">
+        <rect x="15" y="210" width="130" height="46" rx="8"/><rect x="170" y="210" width="130" height="46" rx="8"/><rect x="325" y="210" width="130" height="46" rx="8"/>
+      </g>
+      <g text-anchor="middle">
+        <text x="80" y="40" fill="#2455d6">พอร์ตทำซ้ำ</text><text x="80" y="58" fill="#2455d6">PDE, μ หายไป</text>
+        <text x="235" y="40" fill="#2455d6">Black–Scholes</text><text x="235" y="58" fill="#2455d6">สูตรสองขา</text>
+        <text x="390" y="40" fill="#2455d6">Greeks</text><text x="390" y="58" fill="#2455d6">Δ Γ ν Θ</text>
+        <text x="80" y="135" fill="#047857">put–call parity</text><text x="80" y="153" fill="#047857">ไม่ใช้แบบจำลอง</text>
+        <text x="235" y="135" fill="#047857">volatility smile</text><text x="235" y="153" fill="#047857">IV ต่อ strike</text>
+        <text x="390" y="135" fill="#047857">ผืนความผันผวน</text><text x="390" y="153" fill="#047857">เชื่อมบน σ²T</text>
+        <text x="80" y="230" fill="#a65f00">Heston</text><text x="80" y="248" fill="#a65f00">variance สุ่ม</text>
+        <text x="235" y="230" fill="#a65f00">variance swap</text><text x="235" y="248" fill="#a65f00">strip 1/K²</text>
+        <text x="390" y="230" fill="#a65f00">โครงสร้าง vol</text><text x="390" y="248" fill="#a65f00">realized ↔ implied</text>
+      </g>
+      <g stroke="#5b6472" stroke-width="2" marker-end="url(#m14c)" fill="none">
+        <line x1="145" y1="43" x2="168" y2="43"/>
+        <line x1="300" y1="43" x2="323" y2="43"/>
+        <line x1="235" y1="66" x2="235" y2="113"/>
+        <line x1="145" y1="138" x2="168" y2="138"/>
+        <line x1="300" y1="138" x2="323" y2="138"/>
+        <line x1="390" y1="161" x2="390" y2="208"/>
+        <path d="M455,43 H470 V233 H457"/>
+        <line x1="335" y1="161" x2="147" y2="209"/>
+        <line x1="360" y1="161" x2="264" y2="209"/>
+        <line x1="145" y1="233" x2="168" y2="233"/>
+        <line x1="325" y1="233" x2="302" y2="233"/>
+      </g>
+      <g fill="#5b6472" font-size="13">
+        <text x="243" y="95">ย้อนหา IV</text>
+        <text x="398" y="190">ซื้อขายผืน</text>
+        <text x="200" y="178">fit</text>
+        <text x="324" y="200">1/K²</text>
+      </g>
+      <text x="240" y="290" text-anchor="middle" font-size="13" fill="#5b6472">น้ำเงิน: ราคาจากการทำซ้ำ · เขียว: ราคาตลาด · ส้ม: ซื้อขายความผันผวน</text>
+    </g>
+  </svg>
+  <figcaption>แถวบนคือเส้นทางแรก: พอร์ตทำซ้ำให้ PDE ที่แก้ได้เป็นสูตรสองขา อนุพันธ์ของสูตรคือ Greeks แถวกลางคือเส้นทางที่สอง: parity ผูก call กับ put ส่วนสูตรที่ใช้ย้อนจากราคาตลาดให้ implied volatility ทีละ strike (smile) แล้ววางทุกอายุเป็นผืน แถวล่างคือเส้นทางที่สาม: Greeks (เส้นทางอ้อมขวา) กับผืนรวมกันเป็นโครงสร้างที่เทรดความผันผวน ผืนเป็นเป้าที่ Heston ต้อง fit และ strip ของ option ทุก strike บนผืนถ่วงด้วย $1/K^2$ คือ variance swap ซึ่งเป็นทั้งคู่แข่งของโครงสร้างที่ได้เงินถ่วงด้วย gamma และของ variance เฉลี่ยที่ Heston คาดไว้</figcaption>
+</figure>
 <section class="prose">
   <h2>เส้นทางที่ 1 — ราคาจากการทำซ้ำ และความเสี่ยงที่ยังเหลือ</h2>
-  <p>เริ่มจากคำถามว่าต้องถือหุ้นกี่หุ้น แล้วพบว่าพอร์ตหุ้นกับเงินสดที่ปรับทุกขณะทำซ้ำ call ได้ ราคาจึงไม่ขึ้นกับว่าหุ้นจะโตเร็วแค่ไหน แก้ PDE ออกมาเป็นสูตรที่อ่านได้ทีละขา แล้ววัดว่าพอร์ตที่ hedge แล้วยังได้เสียจากอะไร</p>
+  <p>เริ่มจากคำถามว่าต้องถือหุ้นกี่หุ้น แล้วพบว่าพอร์ตหุ้นกับเงินสดที่ปรับทุกขณะทำซ้ำ call ได้ ราคาจึงไม่ขึ้นกับว่าหุ้นจะโตเร็วแค่ไหน แก้ PDE ออกมาเป็นสูตรที่อ่านได้ทีละขา แล้ววัดว่าพอร์ตที่ hedge แล้วยังได้เสียจากอะไร: ผู้ขายที่ hedge แล้วได้ค่าเวลา (theta) แลกกับการเสียเมื่อหุ้นแกว่งแรง (gamma)</p>
 </section>
 <ol class="chapter-topics chapter-topics-full">
-  <li><a href="../topics/14.1.html"><span class="toc-number">14.1</span><span class="toc-name">The Replicating Portfolio and the Black–Scholes Partial Differential Equation (PDE)<span class="toc-why">ขาย call 10,000 ตัวแล้วต้องถือหุ้น 3,677 หุ้น ไม่ใช่ครบหรือไม่มีเลย: หุ้นกับเงินสดทำซ้ำ call ได้ drift ของหุ้นหายจาก PDE และ hedge รายวันยังเหลือ SD \$0.4436 ต่อ call หรือ 18.6% ของเบี้ย</span></span></a></li>
-  <li><a href="../topics/14.2.html"><span class="toc-number">14.2</span><span class="toc-name">The Black–Scholes Formula<span class="toc-why">ใส่ราคาเฉลี่ย \$101.005 ลงใน payoff ได้ศูนย์ แต่ call ราคา \$2.3909 เพราะ 33.07% ของเส้นทางภายใต้ $\mathbb Q$ จบเหนือ strike และ $\Phi(d_2)$ ไม่ใช่โอกาสจริง ที่ drift 12% โอกาสจริงคือ 40.60%</span></span></a></li>
-  <li><a href="../topics/14.3.html"><span class="toc-number">14.3</span><span class="toc-name">The Greeks<span class="toc-why">premium หารด้วย 91.25 วันได้ \$144 ต่อวัน แต่ theta จริงคือ \$98.85 และเร่งเป็น \$246 เมื่อเหลือ 5 วัน ผู้ขายที่ hedge แล้วเริ่มขาดทุนเมื่อหุ้นแกว่งเกิน \$0.4397 ต่อวัน</span></span></a></li>
+  <li><a href="../topics/14.1.html"><span class="toc-number">14.1</span><span class="toc-name">The Replicating Portfolio and the Black–Scholes Partial Differential Equation (PDE)<span class="toc-why">ขาย call 10,000 ตัวแล้วต้องถือหุ้น 3,677 หุ้น กู้ \$343,810 ไม่ใช่ครบหรือไม่มีเลย: ในโลกสองราคาได้ \$2.5 ไม่ว่าหุ้นจะขึ้นด้วยโอกาส 99% หรือ 1% drift หายจาก PDE และงบรายวันคือได้ค่าเวลา \$244.15 เสียความโค้ง \$206.47 เมื่อหุ้นขยับ \$1.05</span></span></a></li>
+  <li><a href="../topics/14.2.html"><span class="toc-number">14.2</span><span class="toc-name">The Black–Scholes Formula<span class="toc-why">ใส่ราคาเฉลี่ย \$101.01 ลงใน payoff ได้ศูนย์ แต่ call ราคา \$2.3909 เพราะ 33.07% ของเส้นทางภายใต้ risk-neutral measure จบเหนือ strike และจ่ายเฉลี่ย \$7.30 ส่วน $\Phi(d_2)$ ไม่ใช่โอกาสจริง ที่ drift 12% โอกาสจริงคือ 40.60%</span></span></a></li>
+  <li><a href="../topics/14.3.html"><span class="toc-number">14.3</span><span class="toc-name">The Greeks<span class="toc-why">premium หารด้วย 91.25 วันได้ \$144 ต่อวัน แต่ theta จริงคือ \$98.85 และเร่งเป็น \$246 เมื่อเหลือ 5 วัน ผู้ขาย call \$36 ที่ hedge ด้วย 4,471 หุ้นแล้วเริ่มขาดทุนเมื่อหุ้นแกว่งเกิน \$0.44 ต่อวัน</span></span></a></li>
 </ol>
 <section class="example">
-  <p><strong>จุดตรวจ:</strong> ทำไม drift ของหุ้นหายไปจาก PDE ใน 14.1 ทั้งที่ $\Phi(d_2)$ ใน 14.2 ดูเหมือนโอกาสใช้สิทธิ์? และผู้ขายที่ hedge delta ครบแล้วตามสูตรของ 14.3 ยังเดิมพันกับอะไรอยู่?</p>
+  <p><strong>จุดตรวจ:</strong> ทำไม drift ของหุ้นหายไปจาก PDE ของพอร์ตทำซ้ำ ทั้งที่ $\Phi(d_2)$ ในสูตร Black–Scholes ดูเหมือนโอกาสใช้สิทธิ์? และผู้ขายที่ hedge delta ครบแล้วยังเดิมพันกับอะไรอยู่?</p>
+  <details><summary>เฉลย</summary><p>หุ้นที่ถือไว้จำนวน delta ดูดทั้งความสุ่มและ drift ออกไปพร้อมกัน สิ่งที่เหลือในพอร์ตจึงไม่มี $\mu$ และ $\Phi(d_2)$ คือโอกาสภายใต้ risk-neutral measure ที่หุ้นโตเท่าดอกเบี้ย (33.07% ในตัวอย่าง เทียบกับโอกาสจริง 40.60% ถ้าหุ้นโต 12%) ผู้ขายที่ hedge แล้วยังเดิมพันว่าหุ้นจะแกว่งน้อยกว่าที่ความผันผวนในราคาคิดไว้: ได้ theta ทุกวัน เสีย $\tfrac12\Gamma x^2$ เมื่อหุ้นขยับ $x$ และเท่าทุนที่ $x=\sigma S\sqrt{\delta t}$</p></details>
 </section>
 <section class="prose">
   <h2>เส้นทางที่ 2 — ตลาดไม่ได้ใช้ความผันผวนตัวเดียว</h2>
-  <p>ราคาจากสูตรต้องผ่านการตรวจของตลาด parity ผูก call กับ put โดยไม่ต้องใช้แบบจำลอง แล้ว implied volatility ของแต่ละ strike ก็วาด smile ออกมา เมื่อมีหลายอายุ ผืนความผันผวนต้องต่อบน total variance และผ่านกฎ calendar กับ butterfly จึงไม่เปิดช่องเงินฟรี</p>
+  <p>ราคาจากสูตรต้องผ่านการตรวจของตลาด parity ผูก call กับ put โดยไม่ต้องใช้แบบจำลอง แล้ว implied volatility ของแต่ละ strike ก็วาด smile ออกมา เมื่อมีหลายอายุ ผืนความผันผวนต้องเชื่อมบน total variance $\sigma^2T$ และผ่านกฎแกนเวลา (calendar) กับกฎแกน strike (butterfly) จึงไม่เปิดช่องเงินฟรี และความโค้งของราคาตาม strike บอก distribution ของราคาปลายทางที่ตลาดคิด</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="4">
-  <li><a href="../topics/14.4.html"><span class="toc-number">14.4</span><span class="toc-name">Put–Call Parity and the Volatility Smile<span class="toc-why">call 300 กับ put 235 บน SPX ต่างกัน 65 จุดดูเหมือนเงินฟรี แต่ parity ต้องการ 61.65 จุด ส่วนเกินจริง 3.35 จุดเท่ากับค่ากู้ที่แพงกว่า 4% แค่ 13.7 bp</span></span></a></li>
-  <li><a href="../topics/14.5.html"><span class="toc-number">14.5</span><span class="toc-name">The Volatility Surface and Term Structure<span class="toc-why">ความผันผวน 2 เดือนระหว่าง 30% กับ 24% คือ 25.63% ไม่ใช่ 27% เพราะสิ่งที่บวกกันตามเวลาคือ variance คูณเวลา ที่ 27% call แพงไป \$1,110 ต่อสัญญา</span></span></a></li>
+  <li><a href="../topics/14.4.html"><span class="toc-number">14.4</span><span class="toc-name">Put–Call Parity and the Volatility Smile<span class="toc-why">call 300 กับ put 235 บน SPX ต่างกัน 65 จุดดูเหมือนเงินฟรี แต่ parity ต้องการ 61.65 จุด ส่วนเกินจริง 3.35 จุดเท่ากับค่ากู้ที่แพงกว่า 4% แค่ 13.7 bp และ put strike 800 แพงกว่าราคาที่ความผันผวนเดียว 9.2 เท่า</span></span></a></li>
+  <li><a href="../topics/14.5.html"><span class="toc-number">14.5</span><span class="toc-name">The Volatility Surface and Term Structure<span class="toc-why">ความผันผวน 2 เดือนระหว่าง 30% กับ 24% คือ 25.63% ไม่ใช่ 27% เพราะสิ่งที่บวกกันตามเวลาคือ variance คูณเวลา ที่ 27% call แพงไป \$1,110 ต่อสัญญา butterfly 112/80/47 ราคา −1 คือเงินฟรี และ knock-in บนผืนเดียวกันราคาได้ตั้งแต่ 0.0020 ถึง 0.0390</span></span></a></li>
 </ol>
 <section class="example">
   <p><strong>จุดตรวจ:</strong> ถ้า call กับ put strike เดียวกันอายุเดียวกันมี implied volatility ต่างกัน parity บอกอะไรเกี่ยวกับราคาคู่นั้น? และทำไมการเชื่อมสองอายุบนความผันผวนตรง ๆ จึงเปิดช่อง arbitrage ได้?</p>
+  <details><summary>เฉลย</summary><p>สูตร Black–Scholes ทำตาม parity ทุกความผันผวน ถ้าคู่ call กับ put ราคาตาม parity มันต้องมี implied volatility เดียวกัน ถ้าต่างกัน แปลว่าราคาคู่นั้นผิด parity และมีเงินฟรีจาก conversion หรือ reversal (ก่อนหักต้นทุนและค่ากู้) ส่วนการเชื่อมบนความผันผวนตรง ๆ ทำให้ total variance ลดลงตามอายุได้ เช่น 30% กับ 18% เชื่อมได้ 24% ที่ 2 เดือน total variance ลดจาก 0.0096 เหลือ 0.0081 call อายุสั้นจึงแพงกว่าอายุยาว ขายสั้นซื้อยาวได้เงินฟรี</p></details>
 </section>
 <section class="prose">
   <h2>เส้นทางที่ 3 — ซื้อขายความผันผวนเอง</h2>
-  <p>เมื่อรู้ว่าความผันผวนเปลี่ยนได้ โต๊ะจึงซื้อขายมันโดยตรง ประกอบ option หลายขาให้เหลือเฉพาะความเสี่ยงที่อยากถือ ให้ variance เป็นตัวแปรสุ่มที่ถูกดึงกลับหาระดับระยะยาว แล้วสร้างสัญญาที่จ่ายตาม variance ที่เกิดจริง ซึ่งราคายุติธรรมอ่านได้จาก option ทุก strike</p>
+  <p>เมื่อรู้ว่าความผันผวนเปลี่ยนได้ โต๊ะจึงซื้อขายมันโดยตรง ประกอบ option หลายขาให้เหลือเฉพาะความเสี่ยงที่อยากถือ (option ที่ hedge แล้วคือเดิมพัน realized เทียบกับ implied ที่ถ่วงด้วย gamma) ให้ variance เป็นตัวแปรสุ่มที่ถูกดึงกลับหาระดับระยะยาวจน smile และ term structure เกิดขึ้นเอง แล้วสร้างสัญญาที่จ่ายตาม variance ที่เกิดจริง ซึ่งราคายุติธรรมอ่านได้จาก option ทุก strike โดยไม่ต้องเชื่อแบบจำลอง</p>
 </section>
 <ol class="chapter-topics chapter-topics-full" start="6">
-  <li><a href="../topics/14.6.html"><span class="toc-number">14.6</span><span class="toc-name">Volatility Trading Structures: the Desk Playbook<span class="toc-why">straddle 1,000 หน่วยที่ \$7.9755 จบที่ \$105 ยังเสีย \$2,975.52: ราคา straddle คือขนาดการขยับเฉลี่ยราว $0.8\,S\sigma\sqrt T$ มันได้กำไรเมื่อหุ้นขยับมากกว่าที่ราคาคิด ไม่ใช่แค่ขยับ</span></span></a></li>
-  <li><a href="../topics/14.7.html"><span class="toc-number">14.7</span><span class="toc-name">Stochastic Volatility and the Heston Model<span class="toc-why">ความผันผวน 30% ที่ถูกดึงกลับหา 20% ให้ variance เฉลี่ย 24.82% แต่ Heston ตั้งราคา call ATM 1 ปีที่ \$10.43 (implied 24.15%) ต่ำกว่า Black–Scholes ที่ 24.82% อยู่ \$0.26 และ $\rho$ ติดลบทำให้ smile เอียงเอง</span></span></a></li>
-  <li><a href="../topics/14.8.html"><span class="toc-number">14.8</span><span class="toc-name">Variance Swaps and Log-Contract Replication<span class="toc-why">option 81 strike ถ่วงด้วย $1/K^2$ ให้ fair variance 20.05% จากตลาดที่แบน 20% และหลัง 10 จาก 21 วันที่ 21.88% ผู้ขาย variance เสียราว \$3,656 ไม่ใช่ \$7,677</span></span></a></li>
+  <li><a href="../topics/14.6.html"><span class="toc-number">14.6</span><span class="toc-name">Volatility Trading Structures: the Desk Playbook<span class="toc-why">straddle 1,000 หน่วยที่ \$7.9755 จบที่ \$105 ยังเสีย \$2,975.52 เพราะราคาของมันคือขนาดการขยับเฉลี่ยราว $0.8\,S\sigma\sqrt T$ และขาย call ที่ 30% แล้ว hedge 50 ครั้งบนเส้นทางที่แกว่ง 24.9% ได้ \$55,392</span></span></a></li>
+  <li><a href="../topics/14.7.html"><span class="toc-number">14.7</span><span class="toc-name">Stochastic Volatility and the Heston Model<span class="toc-why">ความผันผวน 30% ที่ถูกดึงกลับหา 20% ให้ variance เฉลี่ย 24.82% แต่ Heston ตั้งราคา call ATM 1 ปีที่ \$10.43 (implied 24.15%) ต่ำกว่า Black–Scholes อยู่ \$0.26: \$0.18 จากความสุ่มของ variance และ \$0.08 จาก correlation ติดลบที่ทำให้ smile เอียงเอง</span></span></a></li>
+  <li><a href="../topics/14.8.html"><span class="toc-number">14.8</span><span class="toc-name">Variance Swaps and Log-Contract Replication<span class="toc-why">option 81 strike ถ่วงด้วย $1/K^2$ ให้ fair variance 20.05% จากตลาดที่แบน 20% เพราะ strip นี้มี dollar gamma คงที่ $1/T$ ทุกระดับราคา และหลัง 10 จาก 21 วันที่ 21.88% ผู้ขาย variance เสียราว \$3,656 ไม่ใช่ \$7,677</span></span></a></li>
 </ol>
 <section class="example">
-  <p><strong>จุดตรวจ:</strong> straddle, Heston และ variance swap ต่างกันอย่างไรเมื่อตอบคำถาม “ความผันผวนจะเป็นเท่าไร”? ตัวไหนต้องเชื่อแบบจำลอง ตัวไหนไม่ต้อง และตัวไหนยังเสียเมื่อราคากระโดด?</p>
+  <p><strong>จุดตรวจ:</strong> straddle ที่ hedge แล้ว Heston และ variance swap ต่างกันอย่างไรเมื่อตอบคำถาม “ความผันผวนจะเป็นเท่าไร”? ตัวไหนต้องเชื่อแบบจำลอง ตัวไหนไม่ต้อง และตัวไหนยังเสียเมื่อราคากระโดด?</p>
+  <details><summary>เฉลย</summary><p>straddle ที่ hedge แล้วได้ realized ลบ implied ถ่วงด้วย gamma ซึ่งขึ้นกับว่าหุ้นแกว่งตอนอยู่ใกล้ strike หรือไม่ ใช้สูตร Black–Scholes เพื่อหา delta Heston ต้องเชื่อแบบจำลองห้าตัวเลขที่ปรับให้ตรงตลาด และให้ variance เฉลี่ยที่คาดไว้ (0.0616 ใน 1 ปีของตัวอย่าง) variance swap ไม่ต้องเชื่อแบบจำลอง ราคามาจาก strip ของ option ทุก strike แต่ทั้ง strip และ delta hedge สมมติราคาเดินต่อเนื่อง วันที่ log return เป็น −10% ผู้ขาย variance swap 21 วัน notional \$1 ล้านที่ hedge ครบยังเสีย \$3,902</p></details>
 </section>
 <section class="example">
   <h2>โจทย์เชื่อมทั้งบท — call ล็อตเดียว ตั้งแต่ราคาถึงความเสี่ยงความผันผวน</h2>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> โต๊ะขาย call 10,000 ตัว (100 สัญญา) หุ้น $S=100$ strike $K=105$ อายุ $T=0.25$ ปี ดอกเบี้ย $r=4\%$ ความผันผวน $\sigma=20\%$ ไม่มีปันผล วันละ $\delta t=1/365$ ปีตามเวลาปฏิทินแบบ 14.3 ใช้ $\phi(x)=e^{-x^2/2}/\sqrt{2\pi}$ และ $\Phi$ ของบทต้น ๆ</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> โต๊ะขาย call 10,000 ตัว (100 สัญญา) หุ้น $S=100$ strike $K=105$ อายุ $T=0.25$ ปี ดอกเบี้ย $r=4\%$ ความผันผวน $\sigma=20\%$ ไม่มีปันผล วันละ $\delta t=1/365$ ปีตามเวลาปฏิทิน ใช้ $\phi(x)=e^{-x^2/2}/\sqrt{2\pi}$ และ $\Phi$ ของ Normal distribution</p>
   <p><strong>1.</strong> คิด $d_1$, $d_2$ ราคา call และ premium ที่รับมา</p>
   <details><summary>ดูเฉลยข้อ 1</summary>
   <div class="math">\[
@@ -74,12 +126,12 @@ C&=100(0.367719)-103.955233(0.330729)\\
 &=36.771866-34.380989=2.390877.
 \end{aligned}
 \]</div>
-  <p>$\Phi(d_1)=0.367719$ และ $\Phi(d_2)=0.330729$ ส่วน $105e^{-0.01}=103.955233$ premium คือ $10{,}000\times2.390877=\$23{,}909$ ตรงกับที่ 14.1 ได้จากการแก้ PDE บนกริด และ 14.2 ได้จากสูตร</p>
+  <p>$\Phi(d_1)=0.367719$ และ $\Phi(d_2)=0.330729$ ส่วน $105e^{-0.01}=103.955233$ premium คือ $10{,}000\times2.390877=\$23{,}909$ ตรงกับที่<a href="../topics/14.1.html">พอร์ตทำซ้ำ</a>ได้จากการแก้ PDE บนกริด และ<a href="../topics/14.2.html">สูตร Black–Scholes</a>ได้จากสูตรปิด</p>
   </details>
   <p><strong>2.</strong> ต้องถือหุ้นกี่หุ้นจึงไม่ได้เดาทิศทาง?</p>
-  <details><summary>ดูเฉลยข้อ 2</summary><p>delta ของ call คือ $\Phi(d_1)=0.367719$ ผู้ขาย 10,000 ตัวจึงซื้อหุ้น $10{,}000(0.367719)=3{,}677$ หุ้น ถ้าหุ้นขยับ \$0.01 ขาหุ้นกับ call ที่ขายไว้หักกันเกือบหมด และต้องปรับจำนวนนี้เมื่อราคาเปลี่ยน (14.1 และ 14.3)</p></details>
+  <details><summary>ดูเฉลยข้อ 2</summary><p>delta ของ call คือ $\Phi(d_1)=0.367719$ ผู้ขาย 10,000 ตัวจึงซื้อหุ้น $10{,}000(0.367719)=3{,}677$ หุ้น ถ้าหุ้นขยับ \$0.01 ขาหุ้นกับ call ที่ขายไว้หักกันเกือบหมด และต้องปรับจำนวนนี้เมื่อราคาเปลี่ยน เพราะ delta เปลี่ยนตาม gamma</p></details>
   <p><strong>3.</strong> put strike 105 อายุเดียวกันราคาเท่าไร ถ้าไม่ใช้สูตร put เลย?</p>
-  <details><summary>ดูเฉลยข้อ 3</summary><p>ใช้ parity ของ 14.4: $P=C-S+Ke^{-rT}=2.390877-100+103.955233=6.346110$ ตรงกับสูตร put ของ 14.2 ทุกหลัก เพราะ parity มาจาก payoff อย่างเดียว ไม่ขึ้นกับแบบจำลอง</p></details>
+  <details><summary>ดูเฉลยข้อ 3</summary><p>ใช้ <a href="../topics/14.4.html">put–call parity</a>: $P=C-S+Ke^{-rT}=2.390877-100+103.955233=6.346110$ ตรงกับสูตร put ทุกหลัก เพราะ parity มาจาก payoff อย่างเดียว ไม่ขึ้นกับแบบจำลอง</p></details>
   <p><strong>4.</strong> gamma ของ call เป็นเท่าไร หุ้นต้องแกว่งวันละเท่าไรผู้ขายที่ hedge แล้วจึงเริ่มขาดทุน และวันที่หุ้นขยับ \$2 กับ \$0.50 ได้เสียเท่าไร?</p>
   <details><summary>ดูเฉลยข้อ 4</summary>
   <div class="math">\[
@@ -92,22 +144,22 @@ x=0.5:\ &10{,}000\cdot\tfrac12(0.037681)(1.095890-0.25)\\
 &=+159.37.
 \end{aligned}
 \]</div>
-  <p>ใช้สูตรขั้นที่ 9 ของ 14.3: หลัง hedge delta และหักดอกเบี้ยของเงินกู้ ผู้ขายได้ $\tfrac12\Gamma(\sigma^2S^2\delta t-x^2)$ ต่อตัว โดย $\sigma^2S^2\delta t=400/365=1.095890$ วันที่หุ้นขยับ \$2 เสีย \$547.14 วันที่ขยับ \$0.50 ได้ \$159.37 จุดเท่าทุน \$1.0468 คือ 1-SD ของหนึ่งวันที่ความผันผวน 20% พอดี</p>
+  <p>ใช้งบรายวันของผู้ขายที่ hedge แล้วจาก<a href="../topics/14.3.html">หน้า Greeks</a>: หลัง hedge delta และหักดอกเบี้ยของเงินกู้ ผู้ขายได้ $\tfrac12\Gamma(\sigma^2S^2\delta t-x^2)$ ต่อตัว โดย $\sigma^2S^2\delta t=400/365=1.095890$ วันที่หุ้นขยับ \$2 เสีย \$547.14 วันที่ขยับ \$0.50 ได้ \$159.37 จุดเท่าทุน \$1.0468 คือ 1-SD ของหนึ่งวันที่ความผันผวน 20% พอดี</p>
   </details>
   <p><strong>5.</strong> ตลาดมี skew และเสนอ strike 105 ที่ implied volatility 22% ไม่ใช่ 20% ถ้าตั้งราคาที่ 20% ต่อไป ขายถูกไปเท่าไรทั้งล็อต และ vega ประมาณได้ใกล้แค่ไหน?</p>
-  <details><summary>ดูเฉลยข้อ 5</summary><p>ที่ 22% สูตรของ 14.2 ให้ 2.770222 มากกว่าเดิม 0.379345 ต่อตัว ทั้งล็อตขายถูกไป \$3,793 vega คือ $S\phi(d_1)\sqrt T=100(0.376805)(0.5)=18.840$ ต่อความผันผวน 1.00 หรือ 0.188403 ต่อจุด สองจุดจึงประมาณได้ 0.376805 ห่างจากคำตอบจริงไม่ถึง 1% เพราะ vega เองโตขึ้นเล็กน้อยเมื่อความผันผวนขึ้น (14.3 และ 14.4)</p></details>
+  <details><summary>ดูเฉลยข้อ 5</summary><p>ที่ 22% สูตร Black–Scholes ให้ 2.770222 มากกว่าเดิม 0.379345 ต่อตัว ทั้งล็อตขายถูกไป \$3,793 vega คือ $S\phi(d_1)\sqrt T=100(0.376805)(0.5)=18.840$ ต่อความผันผวน 1.00 หรือ 0.188403 ต่อจุด สองจุดจึงประมาณได้ 0.376805 ห่างจากคำตอบจริงไม่ถึง 1% เพราะ vega เองโตขึ้นเล็กน้อยเมื่อความผันผวนขึ้น ความผันผวนที่ใช้ต้องอ่านจาก<a href="../topics/14.5.html">ผืนความผันผวน</a>ที่ strike และอายุของสัญญา ไม่ใช่ค่าเดียวทั้งตลาด</p></details>
   <p><strong>6.</strong> โต๊ะอยากปิดความเสี่ยงความผันผวนที่เหลือด้วย variance swap อายุ 3 เดือน variance notional \$100,000 บนตลาดที่แบน 20% fair strike คือเท่าไร ถ้าความผันผวนที่เกิดจริงคือ 25% ผู้ซื้อได้เท่าไร และแยกเป็นส่วนเส้นตรงกับส่วนโค้งอย่างไร?</p>
-  <details><summary>ดูเฉลยข้อ 6</summary><p>strip ของ 14.8 บนตลาดที่แบน 20% ให้ fair strike $0.2^2=0.04$ ผู้ซื้อได้ $100{,}000(0.25^2-0.04)=100{,}000(0.0225)=\$2{,}250$ vega notional คือ $100{,}000(2)(0.2)(0.01)=\$400$ ต่อจุด ห้าจุดจึงเป็นส่วนเส้นตรง \$2,000 อีก $100{,}000(0.05)^2=\$250$ คือส่วนโค้ง ผู้ขาย call ที่ hedge delta แล้วเสียเมื่อหุ้นแกว่งแรง (ข้อ 4) การซื้อ variance จึงชดเชยส่วนนั้นได้โดยไม่ต้องเดาทิศทาง</p></details>
+  <details><summary>ดูเฉลยข้อ 6</summary><p>strip ของ <a href="../topics/14.8.html">log contract</a> บนตลาดที่แบน 20% ให้ fair strike $0.2^2=0.04$ ผู้ซื้อได้ $100{,}000(0.25^2-0.04)=100{,}000(0.0225)=\$2{,}250$ vega notional คือ $100{,}000(2)(0.2)(0.01)=\$400$ ต่อจุด ห้าจุดจึงเป็นส่วนเส้นตรง \$2,000 อีก $100{,}000(0.05)^2=\$250$ คือส่วนโค้ง ผู้ขาย call ที่ hedge delta แล้วเสียเมื่อหุ้นแกว่งแรง (ข้อ 4) การซื้อ variance จึงชดเชยส่วนนั้นได้โดยไม่ต้องเดาทิศทาง และต่างจากการซื้อ straddle ตรงที่ได้เงินเท่ากันไม่ว่าหุ้นจะแกว่งตอนอยู่ระดับไหน</p></details>
 </section>
 <section class="takeaways">
-  <h2>ก่อนเดินต่อบท 15</h2>
+  <h2>ก่อนเดินต่อ</h2>
   <ul>
-    <li>ราคา option คือต้นทุนของพอร์ตที่ทำซ้ำ payoff: drift ของหุ้นไม่อยู่ในราคา และ $\Phi(d_2)$ เป็นน้ำหนักภายใต้ $\mathbb Q$ ไม่ใช่โอกาสจริง</li>
-    <li>Greeks บอกว่าพอร์ตที่ hedge แล้วยังเสี่ยงอะไร: ผู้ขายที่ hedge delta ได้ theta แลกกับ gamma และขาดทุนเมื่อหุ้นแกว่งเกิน $\sigma S\sqrt{\delta t}$</li>
-    <li>parity ไม่ต้องใช้แบบจำลองและบังคับ call กับ put ให้มี implied volatility เดียวกัน ส่วนผืนความผันผวนต้องต่อบน total variance และผ่านกฎ calendar กับ butterfly</li>
-    <li>ความผันผวนซื้อขายได้เอง: straddle เดิมพันขนาดการขยับ Heston ให้ความผันผวนสุ่มจน smile เอียง และ variance swap อ่าน fair variance จาก option ทุก strike โดยไม่ใช้แบบจำลอง ตราบที่ราคาไม่กระโดด</li>
+    <li>ราคา option คือต้นทุนของพอร์ตที่ทำซ้ำ payoff: drift ของหุ้นไม่อยู่ในราคา และ $\Phi(d_2)$ เป็นน้ำหนักภายใต้ risk-neutral measure ไม่ใช่โอกาสจริง</li>
+    <li>Greeks บอกว่าพอร์ตที่ hedge แล้วยังเสี่ยงอะไร: ผู้ขายที่ hedge delta ได้ theta แลกกับ gamma และขาดทุนเมื่อหุ้นแกว่งเกิน $\sigma S\sqrt{\delta t}$ ต่อวัน</li>
+    <li>parity ไม่ต้องใช้แบบจำลองและบังคับ call กับ put ให้มี implied volatility เดียวกัน ส่วนผืนความผันผวนต้องเชื่อมบน total variance ผ่านกฎ calendar กับ butterfly และตั้งราคาได้เฉพาะสัญญาที่ขึ้นกับราคาวันเดียว</li>
+    <li>ความผันผวนซื้อขายได้เอง: option ที่ hedge แล้วเดิมพัน realized กับ implied ที่ถ่วงด้วย gamma Heston ให้ variance สุ่มจน smile เอียงแต่ปุ่มของมันแยกกันยาก และ variance swap อ่าน fair variance จาก option ทุก strike โดยไม่ใช้แบบจำลอง ตราบที่ราคาไม่กระโดด</li>
   </ul>
-  <p>บท 15 เปลี่ยนจากการตั้งราคาไปที่การประมาณจากข้อมูลย้อนหลัง: เริ่มจาก regression แบบ OLS แล้วใช้มันกับ CAPM และ pairs trading</p>
+  <p>บทถัดไป <a href="15.html">Regression, CAPM และ pairs trading</a> เปลี่ยนจากการตั้งราคาไปที่การประมาณจากข้อมูลย้อนหลัง เริ่มจาก<a href="../topics/15.1.html">OLS regression</a> แล้วใช้มันกับ CAPM และ pairs trading ส่วนเครื่องมือตัวเลขที่ใช้ปรับ Heston ให้ตรงตลาด (Fourier pricing และ optimizer หลายตัวแปร) กลับมาในหัวข้อ<a href="../topics/21.3.html">Fourier และ FFT pricing</a></p>
 </section>
 </div>
 </body>
