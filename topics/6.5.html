@@ -18,279 +18,474 @@
 <article class="topic" data-number="6.5" data-depends-on="1.4 5.4 6.1 6.4">
 <header class="topic-header">
 <h1><span class="tnum">6.5</span> Inner Product, Angle, and Correlation</h1>
-<p class="subtitle">จากการคูณวันต่อวัน สู่มุมของข้อมูลและขนาด hedge ที่มีเหตุผล</p>
+<p class="subtitle">Correlation คือ cosine ของมุมระหว่างสองชุดผลตอบแทนหลังหักค่าเฉลี่ย และขนาด hedge ที่ดีที่สุดคือเงาของชุดหนึ่งที่ตกบนอีกชุด</p>
 </header>
+
 <div class="hook">
-<p>ผลตอบแทนสมมติสามวันของ A คือ 1%, 2%, 3% ส่วน B คือ 3%, 2%, 1% ทั้งคู่เป็นบวกทุกวัน และผลคูณวันต่อวันรวมกันเป็นบวก แปลว่า correlation เป็นบวกด้วยหรือไม่?</p>
-<details><summary>ลองหักค่าเฉลี่ยก่อนเปิดคำตอบ</summary><p>ไม่ใช่ ทั้งสองชุดเฉลี่ย 2% หักออกแล้วได้ $(-1,0,1)$ กับ $(1,0,-1)$ ซึ่งตรงข้ามกันพอดี จึงมี sample correlation −1 ส่วน cosine ของข้อมูลดิบเท่ากับ $10/14\approx0.7143$ เป็นคนละคำถาม</p></details>
-<p>Correlation คือ cosine ของมุมระหว่าง <strong>ข้อมูลที่หักค่าเฉลี่ยแล้ว</strong> ไม่ใช่ cosine ของข้อมูลใด ๆ โดยอัตโนมัติ เมื่อแยกเรื่องนี้ได้ เราจะใช้ projection อธิบายว่า hedge เอาการเคลื่อนไหวร่วมออกเท่าไร และเหลืออะไรไว้</p>
+<p>ผลตอบแทนสามวันของหุ้น A คือ 1%, 2%, 3% ของหุ้น B คือ 3%, 2%, 1% (ตัวเลขสมมติ) ทั้งคู่บวกทุกวัน และผลคูณวันต่อวันรวมกันเป็นบวก $1(3)+2(2)+3(1)=10$ นักวิเคราะห์จึงสรุปว่า “สองตัวนี้ไปทางเดียวกัน ใช้ hedge กันไม่ได้” สรุปถูกไหม correlation ของสองชุดนี้เท่าไร</p>
+<details><summary>ลองตอบก่อนเปิดเฉลย</summary>
+<p>สรุปผิด ทั้งสองชุดเฉลี่ย 2% หักออกแล้วได้ $(-1,0,1)$ กับ $(1,0,-1)$ ซึ่งชี้ตรงข้ามกันพอดี correlation จึงเป็น −1: วันไหน A ดีกว่าค่าเฉลี่ย B แย่กว่าค่าเฉลี่ยเท่ากันพอดี ตัวเลข 10 ที่บวกนั้นมาจากค่าเฉลี่ยร่วมที่เป็นบวก ถ้าคิด cosine ของข้อมูลดิบจะได้ $10/14\approx0.71$ ซึ่งตอบคนละคำถาม</p>
+</details>
 </div>
+
 <section class="prose">
-<h2>1. Inner product จับคู่พิกัด ไม่ได้วัดขนาดอย่างเดียว</h2>
-<p>ในหน้านี้ใช้ Euclidean inner product ของ vectors จริง ซึ่งก็คือ dot product จากหัวข้อ 6.1:</p>
-<div class="math">\[
-\langle\mathbf x,\mathbf y\rangle
-=\mathbf x^{\mathsf T}\mathbf y=\sum_{i=1}^n x_i y_i,
-\qquad
-\|\mathbf x\|_2=\sqrt{\langle\mathbf x,\mathbf x\rangle}.
-\]</div>
-<p>มันสมมาตรเมื่อสลับสอง vector, เป็นเชิงเส้นในแต่ละตัว และคูณ vector ที่ไม่เป็นศูนย์กับตัวเองแล้วได้บวก แต่ inner product ของคนละ vector อาจเป็นบวก ศูนย์ หรือลบได้</p>
-<p>ถ้าพิกัดเป็นวันซื้อขาย ต้องจับคู่วันเดียวกัน ใช้ช่วงเวลาตรงกัน และคัดข้อมูลที่ขาดแบบเป็นคู่ก่อนหาค่าเฉลี่ย การเติมวันขาดด้วยศูนย์หรือจับคู่ผิดวันอาจเปลี่ยน correlation โดยที่สูตรยังคำนวณได้ตามปกติ</p>
+<h4>ภาพรวมก่อนลงสูตร</h4>
+<p><a href="6.4.html">norms</a> วัดว่า vector ยาวแค่ไหน หน้านี้วัดว่าสอง vector ชี้ไปทางเดียวกันแค่ไหน เครื่องมือคือ inner product หรือ dot product ตัวเดิมจาก <a href="6.1.html">row และ column vectors</a>: คูณช่องต่อช่องแล้วบวก หารด้วยความยาวทั้งสองได้ cosine ของมุมระหว่างมัน</p>
+<p>เมื่อเอาผลตอบแทนหลายวันมาเป็น vector (หนึ่งช่องต่อหนึ่งวัน) แล้วหักค่าเฉลี่ยของตัวเองออกก่อน cosine ของมุมนั้นคือ sample correlation พอดี การหักค่าเฉลี่ยมีความหมายทางเรขาคณิตที่ชัดเจน: ตัดส่วนที่ชี้ไปทาง “ทุกวันเท่ากัน” ออก รูปด้านล่างแสดงว่าทำไมโจทย์ต้นหน้าจึงกลับจากมุม 44 องศาเป็น 180 องศา</p>
+<p>หน้านี้จะพิสูจน์ว่าทำไม dot product บอกมุมได้ ทำไม cosine ไม่หลุดช่วง −1 ถึง 1 เชื่อมมุมกับ correlation อ่าน correlation จริงของสินทรัพย์แปดกลุ่ม ใช้มุมอธิบายความเสี่ยงของพอร์ตสองสินทรัพย์ แล้วใช้ projection หาขนาด hedge ที่ทำให้ส่วนเหลือสั้นที่สุด ซึ่งคือ beta ของ CAPM</p>
 </section>
-<section class="formula">
-<h2>2. ทำไม dot product จึงบอกมุมได้?</h2>
-<p>สำหรับ vectors ไม่เป็นศูนย์สองตัว ใช้กฎโคไซน์กับสามเหลี่ยมที่มีด้าน $\mathbf x,\mathbf y,\mathbf x-\mathbf y$ แล้วเทียบกับการกระจายผลคูณ:</p>
-<div class="math">\[
-\begin{aligned}
-\|\mathbf x-\mathbf y\|_2^2
- &=\|\mathbf x\|_2^2+\|\mathbf y\|_2^2
- -2\|\mathbf x\|_2\|\mathbf y\|_2\cos\theta,\\
-\|\mathbf x-\mathbf y\|_2^2
- &=\|\mathbf x\|_2^2+\|\mathbf y\|_2^2
- -2\langle\mathbf x,\mathbf y\rangle,\\
-\cos\theta&=\frac{\langle\mathbf x,\mathbf y\rangle}
- {\|\mathbf x\|_2\|\mathbf y\|_2}.
-\end{aligned}
-\]</div>
-<p>Dot product บวกจึงหมายถึงมุมแหลม ศูนย์คือมุมฉาก และลบคือมุมป้าน มุมนี้อยู่ระหว่าง 0 ถึง 180 องศา ถ้า vector ใดเป็นศูนย์จะไม่มีทิศทางให้วัดมุม จึงไม่ควรแทนคำตอบด้วยศูนย์องศา</p>
-<h3>Cauchy–Schwarz รับประกันว่า cosine ไม่หลุดช่วง</h3>
-<p>ให้ $\mathbf y\ne\mathbf0$ ผลรวมกำลังสองต่อไปนี้ไม่ติดลบ เลือก $t$ ให้เห็นขอบเขตได้ทันที:</p>
-<div class="math">\[
-\begin{aligned}
-0&\le\|\mathbf x-t\mathbf y\|_2^2\\
- &=\|\mathbf x\|_2^2-2t\langle\mathbf x,\mathbf y\rangle
-   +t^2\|\mathbf y\|_2^2,\\
-t&=\frac{\langle\mathbf x,\mathbf y\rangle}{\|\mathbf y\|_2^2},\\
-0&\le\|\mathbf x\|_2^2-
-\frac{\langle\mathbf x,\mathbf y\rangle^2}{\|\mathbf y\|_2^2},\\
-|\langle\mathbf x,\mathbf y\rangle|
- &\le\|\mathbf x\|_2\|\mathbf y\|_2.
-\end{aligned}
-\]</div>
-<p>จึงได้ $-1\le\cos\theta\le1$ และจะเท่ากับปลายช่วงเมื่อ vectors ไม่เป็นศูนย์อยู่บนเส้นเดียวกัน หลักเดียวกันยังพิสูจน์ triangle inequality ของ L2 โดยแทนขอบบนของ $\langle\mathbf x,\mathbf y\rangle$ ใน $\|\mathbf x+\mathbf y\|_2^2$</p>
-</section>
-<section class="formula">
-<h2>3. Correlation เกิดจากมุมหลัง centering</h2>
-<p>ให้ข้อมูลจับคู่มี $n\ge2$ วัน ใช้ $x_i=a_i-\bar a$ และ $y_i=b_i-\bar b$ เป็นค่าหลังหักค่าเฉลี่ย หากทั้งสองชุดมีความแปรปรวนบวก sample covariance และ sample SD จะเป็น</p>
-<div class="math">\[
-\begin{aligned}
-s_{ab}&=\frac{\sum_i x_i y_i}{n-1},\\
-s_a&=\frac{\|\mathbf x\|_2}{\sqrt{n-1}},\qquad
-s_b=\frac{\|\mathbf y\|_2}{\sqrt{n-1}},\\
-\widehat\rho&=\frac{s_{ab}}{s_as_b}
- =\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf x\|_2\|\mathbf y\|_2}
- =\cos\theta.
-\end{aligned}
-\]</div>
-<p>ตัวหาร $n-1$ ตัดกันพอดี ไม่ได้แปลว่าเราละขั้นหักค่าเฉลี่ยได้ ถ้าข้อมูลคงที่ทั้งชุด SD เป็นศูนย์ จึงนิยาม correlation ไม่ได้ แม้จะมีข้อมูลหลายวันก็ตาม</p>
-<div class="table-wrap"><table>
-<thead><tr><th>วิธีแปลง</th><th>ทำอะไร</th></tr></thead>
+
+<figure class="plot">
+<h4>รูป — หักค่าเฉลี่ยคือตัดส่วนที่ชี้ทาง “ทุกวันเท่ากัน” ทิ้ง</h4>
+<svg viewBox="0 0 480 340" role="img" aria-label="แกนนอนคือทิศทุกวันเท่ากัน ลูกศร A และ B ข้อมูลดิบชี้ขึ้นและลงจากแกนนอนเป็นมุมรวม 44 องศา ทั้งสองมีเงาบนแกนนอนจุดเดียวกัน ส่วนที่เหลือหลังหักค่าเฉลี่ยเป็นลูกศรตั้งชี้ขึ้นและลงตรงข้ามกัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a65b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a65o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a65g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="40" y1="170" x2="440" y2="170" stroke="#d7dce3" stroke-width="2"/>
+    <text x="440" y="196" text-anchor="end" font-size="14" fill="#5b6472">ทิศ “ทุกวันเท่ากัน” (1, 1, 1)</text>
+    <line x1="60" y1="170" x2="298" y2="170" stroke="#5b6472" stroke-width="4" marker-end="url(#a65g)"/>
+    <line x1="60" y1="170" x2="299" y2="72" stroke="#2455d6" stroke-width="3" marker-end="url(#a65b)"/>
+    <line x1="60" y1="170" x2="299" y2="268" stroke="#a65f00" stroke-width="3" marker-end="url(#a65o)"/>
+    <line x1="302.5" y1="170" x2="302.5" y2="75" stroke="#2455d6" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a65b)"/>
+    <line x1="302.5" y1="170" x2="302.5" y2="265" stroke="#a65f00" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a65o)"/>
+    <path d="M 120 145.4 A 65 65 0 0 1 120 194.6" fill="none" stroke="#181818" stroke-width="2"/>
+    <text x="130" y="175">44°</text>
+    <text x="310" y="68" fill="#2455d6">A = (1, 2, 3)</text>
+    <text x="310" y="285" fill="#a65f00">B = (3, 2, 1)</text>
+    <text x="308" y="120" fill="#2455d6" font-size="14">หักค่าเฉลี่ย (−1, 0, 1)</text>
+    <text x="308" y="228" fill="#a65f00" font-size="14">หักค่าเฉลี่ย (1, 0, −1)</text>
+    <text x="180" y="160" fill="#5b6472" font-size="14">ค่าเฉลี่ย 2 ทุกวัน</text>
+  </g>
+</svg>
+<figcaption>สามเวกเตอร์ A, B และ (1, 1, 1) อยู่บนระนาบเดียวกันพอดี (เพราะ A + B = 4(1, 1, 1)) รูปนี้จึงวาดมุมจริงได้ ลูกศรเทาคือส่วนค่าเฉลี่ย 2% ทุกวัน ซึ่ง A และ B มีเท่ากัน มุมระหว่างข้อมูลดิบแคบแค่ 44 องศาเพราะส่วนร่วมนี้ใหญ่ เส้นประคือส่วนที่เหลือหลังหักค่าเฉลี่ย ซึ่งตั้งฉากกับแกนเทาและชี้ตรงข้ามกัน (180 องศา) correlation วัดมุมของเส้นประ ไม่ใช่มุมของลูกศรทึบ</figcaption>
+</figure>
+
+<details class="jargon">
+<summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+<dl>
+<dt>Inner product (dot product)</dt>
+<dd>$\mathbf x^{\mathsf T}\mathbf y=\sum_ix_iy_i$ ใช้วัดว่าสอง vector จับคู่กันไปทางเดียวกันแค่ไหน และให้ความยาว $\|\mathbf x\|_2=\sqrt{\mathbf x^{\mathsf T}\mathbf x}$</dd>
+<dt>Orthogonal</dt>
+<dd>สอง vector ที่ dot product เป็นศูนย์ คือตั้งฉากกัน สำหรับข้อมูลที่หักค่าเฉลี่ยแล้ว แปลว่า correlation ในตัวอย่างเป็นศูนย์</dd>
+<dt>Centering</dt>
+<dd>หักค่าเฉลี่ยของชุดตัวเองออกจากทุกค่า ทำให้ vector ตั้งฉากกับทิศ (1, 1, …, 1) ต้องทำก่อนอ่าน cosine เป็น correlation</dd>
+<dt>Correlation</dt>
+<dd>covariance หารด้วยผลคูณ standard deviation ซึ่งเท่ากับ cosine ของมุมระหว่างข้อมูลที่หักค่าเฉลี่ยแล้ว อยู่ระหว่าง −1 ถึง 1 ใช้วัดการเคลื่อนไหวร่วมแบบเส้นตรง</dd>
+<dt>Projection</dt>
+<dd>ส่วนของ vector หนึ่งที่อยู่ตามทิศของอีก vector หนึ่ง เหมือนเงาที่ตกตั้งฉาก ใช้หาว่า hedge ตัดความเสี่ยงออกได้เท่าไร</dd>
+<dt>Residual</dt>
+<dd>ส่วนที่เหลือหลังลบ projection ออก ตั้งฉากกับทิศที่ใช้ hedge คือความเสี่ยงที่ hedge ตัวนั้นเอาออกไม่ได้</dd>
+<dt>Hedge ratio และ beta</dt>
+<dd>ตัวคูณ $h=\operatorname{cov}(x,y)/\operatorname{var}(y)$ ที่ทำให้ variance ของ $x-hy$ ต่ำสุด เมื่อ $y$ คือตลาด ตัวคูณนี้เรียกว่า beta</dd>
+</dl>
+</details>
+
+<details class="symbols">
+<summary>สัญลักษณ์และหน่วย</summary>
+<table>
+<thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
 <tbody>
-<tr><td>Center: $x_i=a_i-\bar a$</td><td>เอาค่าเฉลี่ยของตัวเองออก ไม่ใช่หักผลตอบแทนตลาด</td></tr>
-<tr><td>Standardize: $z_i=x_i/s_a$</td><td>SD ตัวอย่างเท่ากับหนึ่ง แต่ความยาว vector เท่ากับ $\sqrt{n-1}$</td></tr>
-<tr><td>Unit vector: $u_i=x_i/\|\mathbf x\|_2$</td><td>ความยาวหนึ่ง จึงใช้ $\mathbf u^{\mathsf T}\mathbf v=\widehat\rho$ ได้ตรง ๆ</td></tr>
-</tbody></table></div>
-<p>Standardize กับทำให้ความยาวหนึ่งไม่ใช่ขั้นเดียวกัน สำหรับข้อมูลที่ standardized แล้ว จะมี $\mathbf z_a^{\mathsf T}\mathbf z_b=(n-1)\widehat\rho$ ไม่ใช่ $\widehat\rho$ เสมอไป</p>
-</section>
-<section class="example">
-<h2>4. ตัวอย่างสามวัน: มุม 60 องศามาจากไหน?</h2>
-<p>ใช้ค่าผลตอบแทนเป็นจุดเปอร์เซ็นต์ (เลข 1 หมายถึง return 1%) และเลือกตัวอย่างที่เฉลี่ยศูนย์อยู่แล้ว:</p>
-<div class="math">\[
-\begin{aligned}
-\mathbf x&=(1,-1,0)^{\mathsf T},\qquad
-\mathbf y=(1,0,-1)^{\mathsf T},\\
-\mathbf x^{\mathsf T}\mathbf y&=1,\qquad
-\|\mathbf x\|_2^2=\|\mathbf y\|_2^2=2,\\
-s_{xy}&=1/(3-1)=0.5,\qquad s_x=s_y=1,\\
-\widehat\rho&=\frac1{\sqrt2\sqrt2}=0.5,\\
-\theta&=\arccos(0.5)=60^\circ.
-\end{aligned}
-\]</div>
-<p>หากเปรียบเทียบ $\mathbf x$ กับ $(1,1,-2)$ จะได้ dot ศูนย์และมุม 90 องศา ถ้าเปรียบเทียบกับ $(-1,2,-1)$ จะได้ dot −3 และ cosine $-3/\sqrt{12}=-\sqrt3/2$ จึงเป็นมุม 150 องศา ทุกชุดนี้มีค่าเฉลี่ยศูนย์</p>
-<figure class="plot">
-<img src="../figures/6.5-1.svg" alt="ภาพสองมิติแสดงdotproductบวกศูนย์ลบกับvectorอ้างอิงหนึ่งติดลบหนึ่ง" loading="lazy">
-<figcaption>รูป 6.5a วาดเพียงสองพิกัดแรก จึงสื่อเครื่องหมาย dot ได้ในตัวอย่างนี้เพราะพิกัดที่สามของ x เป็นศูนย์ แต่ไม่รักษาความยาวของ vectors อื่น อย่าวัดมุม 60 หรือ 150 องศาของข้อมูลสามมิติจากภาพสองมิตินี้</figcaption>
-</figure>
-<figure class="plot">
-<img src="../figures/6.5-2.svg" alt="dotproduct1หารด้วยผลคูณความยาว2ได้cosineและcorrelation0.5ในตัวอย่างที่centerแล้ว" loading="lazy">
-<figcaption>รูป 6.5b จาก dot 1 หารด้วยผลคูณความยาว 2 ได้ 0.5 ซึ่งเท่ากับ correlation เพราะข้อมูลชุดนี้ centered แล้ว</figcaption>
-</figure>
-</section>
-<section class="example">
-<h2>5. ตัวอย่างห้าวัน: correlation ส่งผลต่อความเสี่ยงรวมอย่างไร?</h2>
-<p>ใช้ข้อมูลสมมติอีกชุด หน่วยยังเป็นจุดเปอร์เซ็นต์และทั้งสองคอลัมน์เฉลี่ยศูนย์ ตัวอย่างสั้นนี้ใช้สอนการคำนวณ ไม่ใช่ประมาณการความสัมพันธ์ในตลาดที่น่าเชื่อถือ:</p>
-<div class="table-wrap"><table>
-<thead><tr><th>วัน</th><th>A</th><th>B</th><th>60% A + 40% B</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>1.2</td><td>0.9</td><td>1.08</td></tr>
-<tr><td>2</td><td>−0.8</td><td>−0.3</td><td>−0.60</td></tr>
-<tr><td>3</td><td>0.5</td><td>1.1</td><td>0.74</td></tr>
-<tr><td>4</td><td>−1.5</td><td>−1.2</td><td>−1.38</td></tr>
-<tr><td>5</td><td>0.6</td><td>−0.5</td><td>0.16</td></tr>
-</tbody></table></div>
-<div class="math">\[
-\begin{aligned}
-\mathbf a^{\mathsf T}\mathbf b
- &=1.08+0.24+0.55+1.80-0.30=3.37,\\
-\|\mathbf a\|_2^2&=4.94,\qquad \|\mathbf b\|_2^2=3.80,\\
-\widehat\rho&=\frac{3.37}{\sqrt{4.94(3.80)}}\approx0.777812,\\
-\theta&\approx38.9393^\circ,\\
-s_a&=\sqrt{4.94/4}\approx1.111306,\\
-s_b&=\sqrt{3.80/4}\approx0.974679,\qquad s_{ab}=3.37/4=0.8425.
-\end{aligned}
-\]</div>
-<p>Covariance 0.8425 มีหน่วยจุดเปอร์เซ็นต์กำลังสอง ถ้าแปลง return ทั้งคู่เป็นเศษส่วน covariance จะเป็น 0.00008425 แต่ correlation และมุมไม่เปลี่ยน เพราะการคูณด้วยตัวประกอบบวกถูกตัดออกจากเศษและส่วน</p>
-<p>ให้ $\mathbf p=0.6\mathbf a+0.4\mathbf b$ กระจาย dot product ของผลรวมกับตัวเองจะได้พจน์ covariance ที่ห้ามทิ้ง:</p>
-<div class="math">\[
-\begin{aligned}
-\|\mathbf p\|_2^2
- &=0.6^2(4.94)+0.4^2(3.80)+2(0.6)(0.4)(3.37)\\
- &=1.7784+0.6080+1.6176=4.004,\\
-s_p&=\sqrt{4.004/4}\approx1.000500.
-\end{aligned}
-\]</div>
-<p>ตรวจได้อีกทางด้วยคอลัมน์พอร์ตในตาราง: ผลรวมกำลังสองเท่ากับ 4.004 เช่นกัน ถ้าตั้ง covariance เป็นศูนย์โดยไม่มีเหตุผล จะได้ SD เพียง $\sqrt{(1.7784+0.6080)/4}\approx0.772399$ ต่ำกว่าที่ข้อมูลชุดเดียวกันบอก</p>
-</section>
+<tr><td>$\mathbf a,\mathbf b$</td><td>ผลตอบแทนดิบของสองสินทรัพย์ $n$ วัน</td><td>% หรือเศษส่วน</td></tr>
+<tr><td>$\mathbf x,\mathbf y$</td><td>ผลตอบแทนหลังหักค่าเฉลี่ย $x_i=a_i-\bar a$</td><td>เหมือน $\mathbf a$</td></tr>
+<tr><td>$\theta$</td><td>มุมระหว่างสอง vector</td><td>องศา</td></tr>
+<tr><td>$s_x$, $s_{xy}$</td><td>sample standard deviation และ sample covariance</td><td>%, %²</td></tr>
+<tr><td>$\hat\rho$</td><td>sample correlation</td><td>ไม่มีหน่วย</td></tr>
+<tr><td>$h$, $\mathbf e$</td><td>hedge ratio และ residual $\mathbf x-h\mathbf y$</td><td>ไม่มีหน่วย, เหมือน $\mathbf x$</td></tr>
+</tbody>
+</table>
+</details>
+
 <section class="formula">
-<h2>6. Projection หา hedge ที่ทำให้ส่วนเหลือสั้นที่สุด</h2>
-<p>ให้ $\mathbf x$ เป็น return ของ basket ที่ centered แล้ว และ $\mathbf y$ เป็น return ของเครื่องมือ hedge ที่ centered แล้ว ต้องการเลือก $h$ ให้ residual $\mathbf e=\mathbf x-h\mathbf y$ มีผลรวมกำลังสองต่ำที่สุด:</p>
+<h4>ขั้นที่ 1 — inner product: จับคู่ช่องแล้วบวก</h4>
+<p>ทุกอย่างในหน้านี้สร้างจากการคูณแถวกับคอลัมน์ตัวเดียว ขั้นแรกจึงทวนนิยามและคุณสมบัติที่จะใช้ทุกขั้นถัดไป</p>
 <div class="math">\[
 \begin{aligned}
-\|\mathbf x-h\mathbf y\|_2^2
- &=\|\mathbf x\|_2^2-2h\mathbf x^{\mathsf T}\mathbf y+h^2\|\mathbf y\|_2^2,\\
-h^*&=\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf y\|_2^2},\\
-\|\mathbf x-h\mathbf y\|_2^2
- &=\|\mathbf y\|_2^2(h-h^*)^2
-  +\|\mathbf x\|_2^2-\frac{(\mathbf x^{\mathsf T}\mathbf y)^2}{\|\mathbf y\|_2^2}.
+\mathbf x^{\mathsf T}\mathbf y&=\sum_{i=1}^nx_iy_i,\\
+\mathbf x^{\mathsf T}\mathbf y&=\mathbf y^{\mathsf T}\mathbf x,\\
+\mathbf x^{\mathsf T}(a\mathbf y+b\mathbf z)&=a\,\mathbf x^{\mathsf T}\mathbf y+b\,\mathbf x^{\mathsf T}\mathbf z,\\
+\mathbf x^{\mathsf T}\mathbf x&=\|\mathbf x\|_2^2.
 \end{aligned}
 \]</div>
-<p>เมื่อ $\mathbf y\ne\mathbf0$ พจน์แรกต่ำสุดที่ $h=h^*$ อย่างชัดเจน และ residual ณ จุดนั้นตั้งฉากกับ hedge:</p>
-<div class="math">\[
-\begin{aligned}
-\mathbf e^{\mathsf T}\mathbf y
- &=\mathbf x^{\mathsf T}\mathbf y-h^*\|\mathbf y\|_2^2=0,\\
-h^*&=\frac{s_{xy}}{s_y^2}=\widehat\rho\frac{s_x}{s_y},\\
-s_e^2&=s_x^2-\frac{s_{xy}^2}{s_y^2}
- =s_x^2(1-\widehat\rho^2).
-\end{aligned}
-\]</div>
-<p>สูตรนี้เป็นการลด sample variance บนวันชุดเดียวกัน โดยไม่จำกัด $h$ และไม่รวมต้นทุน มันไม่ใช่การหา expected profit สูงสุด หากใช้ข้อมูลดิบและลด mean squared return แทน variance จะเป็นคนละ objective ต้องบอกให้ชัด</p>
-<p>ในมุม regression ที่มี intercept จะได้ intercept $\bar a-h^*\bar b$ การ center ช่วยแยกค่าเฉลี่ยออกจากความผันผวน แต่การ hedge จริงไม่ได้ซื้อ intercept โดยอัตโนมัติ ยังมีค่าเฉลี่ยของผลตอบแทน เงินสด ดอกเบี้ยและค่าธรรมเนียมให้พิจารณา</p>
+<div class="reading">
+<p>สลับลำดับได้ (บรรทัดสอง) เพราะ $x_iy_i=y_ix_i$ ทุกช่อง กระจายเข้าวงเล็บได้ (บรรทัดสาม) เพราะเป็นผลบวกของผลคูณ และ dot product ของ vector กับตัวเองคือผลรวมกำลังสอง ซึ่งคือ L2 ยกกำลังสอง ค่านี้บวกเสมอถ้า vector ไม่เป็นศูนย์ แต่ dot product ของสอง vector ต่างกันเป็นบวก ศูนย์ หรือลบก็ได้ เครื่องหมายนั้นแหละที่บอกทิศ</p>
+<p>เมื่อช่องคือวันซื้อขาย ต้องจับคู่วันเดียวกันก่อน วันที่ข้อมูลขาดตัวใดตัวหนึ่งต้องตัดทิ้งทั้งคู่ ถ้าเติมวันที่ขาดด้วยศูนย์หรือเลื่อนวันผิดหนึ่งวัน สูตรยังคำนวณได้ แต่ได้ตัวเลขของคำถามอื่น</p>
+</div>
 </section>
-<section class="example">
-<h2>7. แปลง hedge ratio เป็น USD และตรวจสิ่งที่เหลือ</h2>
-<p>สมมติอีกแบบจำลองหนึ่งใช้สถิติจากหน้าต่าง 60 วันของ basket กับ QQQ โดยวัด return เป็นเศษส่วน ข้อมูลต่อไปนี้เป็นค่าที่กำหนดเพื่อสาธิต ไม่ใช่สถิติจริงของ QQQ:</p>
+
+<section class="formula">
+<h4>ขั้นที่ 2 — ทำไม dot product บอกมุมได้</h4>
+<p>เรขาคณิตมัธยมมีกฎโคไซน์สำหรับสามเหลี่ยมที่มีด้าน $\mathbf x$, $\mathbf y$ และ $\mathbf x-\mathbf y$ ส่วนพีชคณิตกระจาย $\|\mathbf x-\mathbf y\|^2$ ได้อีกแบบ เทียบสองแบบแล้วมุมโผล่ออกมาเอง</p>
 <div class="math">\[
 \begin{aligned}
-s_B^2&=0.000162,\qquad s_Q^2=0.000180,\\
-s_{BQ}&=0.000153,\\
-h^*&=0.000153/0.000180=0.85,\\
-\widehat\rho&=\frac{0.000153}{\sqrt{0.000162(0.000180)}}
- \approx0.895979.
+\|\mathbf x-\mathbf y\|^2&=\|\mathbf x\|^2+\|\mathbf y\|^2-2\|\mathbf x\|\|\mathbf y\|\cos\theta,\\
+\|\mathbf x-\mathbf y\|^2&=(\mathbf x-\mathbf y)^{\mathsf T}(\mathbf x-\mathbf y)\\
+&=\|\mathbf x\|^2+\|\mathbf y\|^2-2\,\mathbf x^{\mathsf T}\mathbf y,\\
+\cos\theta&=\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf x\|\,\|\mathbf y\|}.
 \end{aligned}
 \]</div>
-<p>สำหรับ long basket 12 ล้าน USD กำหนด P&amp;L เป็น $12{,}000{,}000(R_B-hR_Q)$ โดยยังไม่รวมดอกเบี้ยหรือค่า short จึงต้อง short QQQ $12{,}000{,}000(0.85)=10{,}200{,}000$ USD ถ้าสมมติราคา QQQ เท่ากับ 500 USD ต่อหน่วย จะเท่ากับ 20,400 หน่วย ตัวเลขราคาเป็นสมมติเช่นกัน</p>
-<div class="math">\[
-\begin{aligned}
-\widehat\rho^2&\approx0.802778,\\
-s_e^2&=0.000162-\frac{0.000153^2}{0.000180}\\
- &=0.00003195,\\
-s_B&\approx1.272792\%,\qquad s_e\approx0.565243\%.
-\end{aligned}
-\]</div>
-<p>Variance ลดราว 80.28% แต่ SD ลดราว 55.59% ไม่ใช่ตัวเลขเดียวกัน SD หลัง hedge นี้วัด P&amp;L ต่อฐาน notional basket เดิม ไม่ใช่หารด้วย gross exposure ใหม่หรือ net exposure ของสองขา</p>
+<div class="reading">
+<p>บรรทัดแรกคือกฎโคไซน์ บรรทัดสองกับสามกระจายผลคูณด้วยคุณสมบัติจากขั้นก่อน ($\mathbf x^{\mathsf T}\mathbf y=\mathbf y^{\mathsf T}\mathbf x$ จึงรวมพจน์ไขว้เป็น $2\mathbf x^{\mathsf T}\mathbf y$) สองบรรทัดนี้คือความยาวด้านเดียวกัน ตัดส่วนที่เหมือนกันทิ้งได้บรรทัดสุดท้าย (หน้านี้ $\|\cdot\|$ หมายถึง L2 เสมอ) dot product บวกคือมุมแหลม ศูนย์คือมุมฉาก ลบคือมุมป้าน ถ้า vector ใดเป็นศูนย์ ไม่มีทิศให้วัด มุมจึงไม่มีนิยาม อย่าแทนด้วยศูนย์องศา</p>
+<p>ตัวอย่างในรูปถัดไป: $\mathbf x=(3,1)$, $\mathbf y=(1,2)$ ได้ $\mathbf x^{\mathsf T}\mathbf y=5$, $\|\mathbf x\|=\sqrt{10}$, $\|\mathbf y\|=\sqrt5$ cosine $=5/\sqrt{50}\approx0.707$ คือ 45 องศา ตรวจกับกฎโคไซน์: $\mathbf x-\mathbf y=(2,-1)$ ยาวกำลังสอง 5 และ $10+5-2(5)=5$ ตรงกัน</p>
+</div>
+</section>
+
 <figure class="plot">
-<img src="../figures/6.5-3.svg" alt="longbasketสองหนึ่งลบhedgeหนึ่งจุดเจ็ดศูนย์จุดห้าเหลือศูนย์จุดสามศูนย์จุดห้า" loading="lazy">
-<figcaption>รูป 6.5c แสดง residual จาก hedge ที่กำหนดไว้ ไม่ใช่ภาพ projection ที่เหมาะที่สุด: $(0.3,0.5)\cdot(1.7,0.5)=0.76\ne0$ จึงยังไม่ตั้งฉาก รูปนี้ไม่ใช่กราฟของสถิติ 60 วันข้างต้น</figcaption>
+<h4>รูป — สามเหลี่ยมของ x, y และ x − y</h4>
+<svg viewBox="0 0 480 290" role="img" aria-label="ลูกศร x ไปที่ 3 กับ 1 ลูกศร y ไปที่ 1 กับ 2 มุมระหว่างกัน 45 องศา และลูกศร x ลบ y ต่อจากปลาย y ไปปลาย x" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a65tb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a65to" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a65tp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6d28d9"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <g stroke="#d7dce3" stroke-width="1.5">
+      <line x1="130" y1="250" x2="130" y2="60"/><line x1="190" y1="250" x2="190" y2="60"/><line x1="250" y1="250" x2="250" y2="60"/>
+      <line x1="70" y1="190" x2="300" y2="190"/><line x1="70" y1="130" x2="300" y2="130"/>
+    </g>
+    <line x1="70" y1="250" x2="310" y2="250" stroke="#5b6472" stroke-width="2"/>
+    <line x1="70" y1="250" x2="70" y2="50" stroke="#5b6472" stroke-width="2"/>
+    <line x1="70" y1="250" x2="247" y2="191" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a65tb)"/>
+    <line x1="70" y1="250" x2="129" y2="133" stroke="#a65f00" stroke-width="3.5" marker-end="url(#a65to)"/>
+    <line x1="130" y1="130" x2="247" y2="188.5" stroke="#6d28d9" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#a65tp)"/>
+    <path d="M 127 231 A 60 60 0 0 0 96.8 196.3" fill="none" stroke="#181818" stroke-width="2"/>
+    <text x="112" y="226" font-size="14">45°</text>
+    <text x="258" y="196" fill="#2455d6">x = (3, 1)</text>
+    <text x="100" y="118" fill="#a65f00">y = (1, 2)</text>
+    <text x="200" y="146" fill="#6d28d9">x − y = (2, −1)</text>
+    <text x="130" y="268" text-anchor="middle" font-size="14">1</text>
+    <text x="190" y="268" text-anchor="middle" font-size="14">2</text>
+    <text x="250" y="268" text-anchor="middle" font-size="14">3</text>
+    <text x="62" y="195" text-anchor="end" font-size="14">1</text>
+    <text x="62" y="135" text-anchor="end" font-size="14">2</text>
+  </g>
+</svg>
+<figcaption>ลูกศรน้ำเงินและส้มเริ่มที่จุดกำเนิด เส้นประม่วงคือ $\mathbf x-\mathbf y$ ซึ่งเป็นด้านที่สามของสามเหลี่ยม แกนทั้งสองใช้สเกลเดียวกันจึงวัดมุม 45 องศาได้จริงในรูป ความยาวด้านม่วงยกกำลังสองคือ 5 ซึ่งกฎโคไซน์และการกระจาย dot product ให้ค่าเดียวกัน</figcaption>
 </figure>
-<p>หากต้องการ projection ในเรขาคณิตของรูปจริง ๆ ตัวคูณของ $(1.7,0.5)$ ต้องเป็น $(2(1.7)+1(0.5))/(1.7^2+0.5^2)=3.9/3.14\approx1.2420$ ไม่ใช่ 1 เราควรตรวจ residual แทนการเชื่อภาพว่ามัน optimal อยู่แล้ว</p>
-<p>แม้ sample hedge จะ optimal แต่ covariance อาจเปลี่ยนในอนาคต ค่าซื้อขาย ข้อจำกัด short, liquidity และความต่างระหว่าง basket กับ QQQ ยังอยู่ การปัดจำนวนหน่วยหรือตั้ง limit ของ $h$ ก็ทำให้ต้องตรวจ P&amp;L และ variance ใหม่</p>
+
+<section class="formula">
+<h4>ขั้นที่ 3 — Cauchy–Schwarz: ทำไม cosine ไม่หลุดช่วง</h4>
+<p>สูตรมุมใช้ได้ก็ต่อเมื่อเศษส่วนอยู่ระหว่าง −1 ถึง 1 เสมอ ในมิติสูงเรามองไม่เห็นสามเหลี่ยม จึงต้องพิสูจน์ด้วยพีชคณิต ใช้ความจริงง่าย ๆ ว่าความยาวกำลังสองไม่ติดลบ</p>
+<div class="math">\[
+\begin{aligned}
+0&\le\|\mathbf x-t\mathbf y\|^2\\
+&=\|\mathbf x\|^2-2t\,\mathbf x^{\mathsf T}\mathbf y+t^2\|\mathbf y\|^2,\\
+t&=\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf y\|^2},\\
+0&\le\|\mathbf x\|^2-\frac{(\mathbf x^{\mathsf T}\mathbf y)^2}{\|\mathbf y\|^2},\\
+|\mathbf x^{\mathsf T}\mathbf y|&\le\|\mathbf x\|\,\|\mathbf y\|.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>บรรทัดแรกจริงสำหรับทุก $t$ เพราะเป็นความยาวกำลังสอง เราเลือก $t$ ตัวที่ทำให้ด้านขวาเล็กที่สุด (จุดต่ำสุดของพาราโบลาใน $t$) แทนลงไปได้บรรทัดสี่ คูณ $\|\mathbf y\|^2$ แล้วถอดรากได้ Cauchy–Schwarz ดังนั้น $-1\le\cos\theta\le1$ เสมอ และเท่ากับปลายช่วงเฉพาะเมื่อ $\mathbf x-t\mathbf y=\mathbf 0$ คือสอง vector อยู่บนเส้นเดียวกัน $t$ ตัวนี้จะกลับมาอีกครั้งในฐานะ hedge ratio</p>
+</div>
 </section>
+
+<section class="formula">
+<h4>ขั้นที่ 4 — correlation คือ cosine หลังหักค่าเฉลี่ย</h4>
+<p>นิยามทางสถิติของ sample correlation คือ covariance หารด้วยผลคูณ standard deviation ขั้นนี้แสดงว่าถ้าเขียนข้อมูลที่หักค่าเฉลี่ยแล้วเป็น vector สูตรนี้คือ cosine พอดี ให้ $x_i=a_i-\bar a$ และ $y_i=b_i-\bar b$ สำหรับ $n\ge2$ วัน</p>
+<div class="math">\[
+\begin{aligned}
+s_{xy}&=\frac{\sum_ix_iy_i}{n-1}=\frac{\mathbf x^{\mathsf T}\mathbf y}{n-1},\\
+s_x&=\frac{\|\mathbf x\|}{\sqrt{n-1}},\quad s_y=\frac{\|\mathbf y\|}{\sqrt{n-1}},\\
+\hat\rho&=\frac{s_{xy}}{s_xs_y}
+=\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf x\|\,\|\mathbf y\|}=\cos\theta.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>ตัวหาร $n-1$ ในเศษกับส่วนตัดกันพอดี จึงเหลือ cosine ล้วน ๆ แต่การตัดนี้ไม่ได้ทำให้ข้ามการหักค่าเฉลี่ยได้ โจทย์ต้นหน้า: ข้อมูลดิบ $\mathbf a^{\mathsf T}\mathbf b=10$, $\|\mathbf a\|^2=\|\mathbf b\|^2=14$ ได้ cosine $10/14\approx0.714$ (44 องศา) หลังหักค่าเฉลี่ย $\mathbf x=(-1,0,1)$, $\mathbf y=(1,0,-1)$ ได้ $\mathbf x^{\mathsf T}\mathbf y=-2$, $\|\mathbf x\|^2=\|\mathbf y\|^2=2$ ได้ $\hat\rho=-1$</p>
+<p>ทำไมต้องหัก: vector $\mathbf a$ แยกได้เป็น $\bar a(1,\ldots,1)+\mathbf x$ ส่วนแรกคือเงาของ $\mathbf a$ บนทิศ “ทุกวันเท่ากัน” ส่วนที่สองตั้งฉากกับทิศนั้น (ผลรวมของ $x_i$ เป็นศูนย์) ถ้าสองหุ้นมีค่าเฉลี่ยเป็นบวกทั้งคู่ ส่วนแรกจะดันมุมให้แคบลงโดยไม่เกี่ยวกับว่าวันไหนดีวันไหนแย่ตามกัน รูปต้นหน้าคือภาพนี้ ถ้าข้อมูลชุดใดคงที่ทุกวัน $\mathbf x=\mathbf 0$ standard deviation เป็นศูนย์ และ correlation ไม่มีนิยาม</p>
+</div>
+</section>
+
+<section class="example">
+<h4>ขั้นที่ 5 — มุม 60, 90 และ 150 องศาจากข้อมูลสามวัน</h4>
+<p>ข้อมูลสามวันที่หักค่าเฉลี่ยแล้วทุกชุดอยู่บนระนาบเดียวกัน (ระนาบที่ตั้งฉากกับ $(1,1,1)$) จึงวาดมุมจริงในสองมิติได้ ขั้นนี้คำนวณมุมของสี่ชุดเทียบกับชุดแรก</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> หน่วยเป็นจุดเปอร์เซ็นต์ ทุกชุดเฉลี่ยศูนย์อยู่แล้ว $\mathbf x=(1,-1,0)$, $\mathbf y=(1,0,-1)$, $\mathbf z=(1,1,-2)$, $\mathbf u=(-1,2,-1)$</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf x^{\mathsf T}\mathbf y&=1,\quad \|\mathbf x\|^2=\|\mathbf y\|^2=2,\\
+\hat\rho_{xy}&=\frac{1}{\sqrt2\sqrt2}=0.5,\quad \theta=60^\circ,\\
+\mathbf x^{\mathsf T}\mathbf z&=1-1+0=0,\quad \theta=90^\circ,\\
+\mathbf x^{\mathsf T}\mathbf u&=-1-2+0=-3,\\
+\hat\rho_{xu}&=\frac{-3}{\sqrt2\sqrt6}=-\frac{\sqrt3}{2}\approx-0.866,\quad \theta=150^\circ.
+\end{aligned}
+\]</div>
+<p><strong>คำตอบ:</strong> correlation 0.5, 0 และ −0.866 คือมุม 60, 90 และ 150 องศา covariance ของคู่แรกคือ $1/(3-1)=0.5$ และ standard deviation ทั้งคู่คือ $\sqrt{2/2}=1$ จึงได้ 0.5 ตรงกับ cosine</p>
+<p><strong>ตรวจเองใน 10 วินาที:</strong> $\cos60^\circ=0.5$, $\cos90^\circ=0$, $\cos150^\circ=-0.866$</p>
+</section>
+
+<figure class="plot">
+<h4>รูป — ข้อมูลสามวันที่หักค่าเฉลี่ยแล้ว วาดได้ครบในระนาบเดียว</h4>
+<svg viewBox="0 0 480 290" role="img" aria-label="ลูกศรสี่เส้นจากจุดเดียวกัน x ชี้ไปทางขวา y ทำมุม 60 องศา z ตั้งฉาก และ u ทำมุม 150 องศา" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a65fb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a65fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#047857"/></marker>
+    <marker id="a65fp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker>
+    <marker id="a65fr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d82632"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="40" y1="260" x2="440" y2="260" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="240" y1="260" x2="322" y2="260" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a65fb)"/>
+    <line x1="240" y1="260" x2="281" y2="189" stroke="#047857" stroke-width="3.5" marker-end="url(#a65fg)"/>
+    <line x1="240" y1="260" x2="240" y2="116" stroke="#5b6472" stroke-width="3.5" marker-end="url(#a65fp)"/>
+    <line x1="240" y1="260" x2="115" y2="188" stroke="#d82632" stroke-width="3.5" marker-end="url(#a65fr)"/>
+    <path d="M 290 260 A 50 50 0 0 0 265 216.7" fill="none" stroke="#047857" stroke-width="2"/>
+    <path d="M 275 260 A 35 35 0 0 0 240 225" fill="none" stroke="#5b6472" stroke-width="2"/>
+    <path d="M 310 260 A 70 70 0 0 0 179.4 225" fill="none" stroke="#d82632" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="330" y="265" fill="#2455d6">x = (1, −1, 0)</text>
+    <text x="290" y="182" fill="#047857">y = (1, 0, −1)</text>
+    <text x="248" y="112" fill="#5b6472">z = (1, 1, −2)</text>
+    <text x="60" y="178" fill="#d82632">u = (−1, 2, −1)</text>
+    <text x="296" y="236" fill="#047857" font-size="14">60°</text>
+    <text x="246" y="246" fill="#5b6472" font-size="14">90°</text>
+    <text x="196" y="214" fill="#d82632" font-size="14">150°</text>
+  </g>
+</svg>
+<figcaption>ทุกชุดที่ผลรวมเป็นศูนย์ในสามวันอยู่บนระนาบเดียว รูปนี้จึงรักษาทั้งความยาวและมุมจริง: $\mathbf x$ กับ $\mathbf y$ ยาว $\sqrt2$, $\mathbf z$ กับ $\mathbf u$ ยาว $\sqrt6$ มุมจาก $\mathbf x$ คือ 60 องศา (correlation 0.5), 90 องศา (correlation 0) และ 150 องศา (correlation −0.866) ข้อมูลยาวกว่าสามวันมีมิติเกินกระดาษ แต่ <em>สอง</em> vector ใดก็อยู่ในระนาบเดียวกันเสมอ มุมระหว่างคู่จึงวาดได้ทุกครั้ง</figcaption>
+</figure>
+
+<section class="example">
+<h4>ขั้นที่ 6 — อ่าน correlation จริงจาก covariance matrix ของสินทรัพย์แปดกลุ่ม</h4>
+<p>งานจริงไม่ค่อยเริ่มจากผลตอบแทนรายวัน แต่เริ่มจาก covariance matrix ที่ประมาณไว้แล้ว ความสัมพันธ์ $\sigma_{ij}=\rho_{ij}\sigma_i\sigma_j$ กลับด้านได้เป็น $\rho_{ij}=\sigma_{ij}/(\sigma_i\sigma_j)$ ตัวเลขต่อไปนี้มาจาก covariance matrix รายปีใน workbook ของคอร์สเรื่อง mean-variance</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> variance ของ US Large Growth 0.059852 ของ US Small Growth 0.102488 ของ US Bonds 0.001005 covariance ระหว่าง Large Growth กับ Small Growth 0.063497 ระหว่าง Large Growth กับ Bonds −0.000579</p>
+<div class="math">\[
+\begin{aligned}
+\sigma_{LG}&=\sqrt{0.059852}=24.46\%,\quad \sigma_{SG}=32.01\%,\\
+\rho_{LG,SG}&=\frac{0.063497}{0.2446(0.3201)}\approx0.811,\\
+\theta&=\arccos0.811\approx35.8^\circ,\\
+\rho_{LG,B}&=\frac{-0.000579}{0.2446(0.0317)}\approx-0.075,\\
+\theta&\approx94.3^\circ.
+\end{aligned}
+\]</div>
+<p><strong>คำตอบ:</strong> หุ้นใหญ่สายเติบโตกับหุ้นเล็กสายเติบโตชี้ห่างกันแค่ 36 องศา ส่วน bond สหรัฐเกือบตั้งฉากกับหุ้น (94 องศา) correlation −0.075 ใกล้ศูนย์มาก นี่คือเหตุผลเชิงเรขาคณิตที่ bond ช่วยกระจายความเสี่ยงของพอร์ตหุ้นได้ดีในข้อมูลชุดนี้</p>
+</section>
+
+<figure class="plot">
+<h4>รูป — สินทรัพย์แปดกลุ่มเป็นลูกศร: ยาวตามความผันผวน เอียงตามมุมจาก US Large Growth</h4>
+<svg viewBox="0 0 480 330" role="img" aria-label="ลูกศรแปดเส้นจากจุดเดียวกัน US Large Growth นอนตามแนวนอน US Small Growth ยาวที่สุดทำมุม 36 องศา Int'l Emerging ทำมุม 46 องศา หุ้นอื่นอยู่ระหว่าง 37 ถึง 58 องศา Int'l Bonds และ US Bonds สั้นมากและเกือบตั้งฉาก" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="14" fill="#181818" stroke-linecap="round">
+    <line x1="110" y1="300" x2="110" y2="40" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="30" y1="300" x2="460" y2="300" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="110" y1="300" x2="330" y2="300" stroke="#181818" stroke-width="4"/>
+    <line x1="110" y1="300" x2="343.6" y2="131.4" stroke="#2455d6" stroke-width="3"/>
+    <line x1="110" y1="300" x2="286.7" y2="116.9" stroke="#2455d6" stroke-width="3"/>
+    <line x1="110" y1="300" x2="231.3" y2="209.1" stroke="#007f8f" stroke-width="3"/>
+    <line x1="110" y1="300" x2="211.5" y2="183" stroke="#007f8f" stroke-width="3"/>
+    <line x1="110" y1="300" x2="194.7" y2="163" stroke="#007f8f" stroke-width="3"/>
+    <line x1="110" y1="300" x2="105.2" y2="223.4" stroke="#a65f00" stroke-width="3"/>
+    <line x1="110" y1="300" x2="107.9" y2="271.6" stroke="#a65f00" stroke-width="3"/>
+    <g paint-order="stroke" stroke="#fff" stroke-width="4">
+      <text x="330" y="320" text-anchor="end">US Large Growth 24.5%</text>
+      <text x="350" y="128">US Small Growth</text>
+      <text x="294" y="112">Int'l Emerg.</text>
+      <text x="239" y="214">Int'l Dev.</text>
+      <text x="219" y="186">US Large Value</text>
+      <text x="202" y="160">US Small Value</text>
+      <text x="98" y="222" text-anchor="end">Int'l Bonds</text>
+      <text x="100" y="268" text-anchor="end">US Bonds</text>
+    </g>
+    <path d="M 180 300 A 70 70 0 0 0 166.7 259" fill="none" stroke="#2455d6" stroke-width="2"/>
+    <text x="184" y="284" fill="#2455d6">36°</text>
+  </g>
+</svg>
+<figcaption>แต่ละลูกศรคือสินทรัพย์หนึ่งกลุ่ม ความยาวคือความผันผวนต่อปี (US Small Growth ยาวสุด 32.0% US Bonds สั้นสุด 3.2%) มุมจากลูกศรดำ US Large Growth คือ $\arccos\rho$ ที่คำนวณจาก covariance ใน workbook ของคอร์ส: หุ้นทั้งหกกลุ่มอยู่ในช่วง 36 ถึง 58 องศา bond สองกลุ่มอยู่ที่ราว 94 องศา (เกือบตั้งฉาก) มุมเทียบกับลูกศรดำเป็นค่าจริง แต่มุมระหว่างลูกศรอื่นด้วยกันในรูปนี้ไม่ใช่ค่าจริง เพราะแปดลูกศรอยู่ในพื้นที่หลายมิติเกินกระดาษ</figcaption>
+</figure>
+
+<section class="formula">
+<h4>ขั้นที่ 7 — ความเสี่ยงของพอร์ตสองสินทรัพย์คือความยาวของผลบวกลูกศร</h4>
+<p>ถ้าสินทรัพย์เป็นลูกศรที่ยาวเท่าความผันผวนและทำมุม $\arccos\rho$ กัน พอร์ตก็เป็นผลบวกของลูกศรที่ย่อตามน้ำหนัก ความผันผวนของพอร์ตคือความยาวของผลบวกนั้น ใช้ตัวอย่างสองสินทรัพย์จากคอร์ส: variance 0.1 กับ 0.5 correlation 0.25 ถือ $x$ ในตัวแรกและ $1-x$ ในตัวที่สอง</p>
+<div class="math">\[
+\begin{aligned}
+\sigma_{12}&=\rho\,\sigma_1\sigma_2=0.25\sqrt{0.1(0.5)}\approx0.0559,\\
+\sigma_p^2&=x^2\sigma_1^2+(1-x)^2\sigma_2^2\\
+&\quad+2x(1-x)\sigma_{12},\\
+x=0.5:\ \sigma_p^2&=0.025+0.125+0.02795\\
+&=0.17795,\quad \sigma_p\approx0.4218.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>สูตร variance ของพอร์ตคือ $\|x\mathbf v_1+(1-x)\mathbf v_2\|^2$ ที่กระจายด้วย dot product: กำลังสองของสองลูกศรบวกพจน์ไขว้ $2x(1-x)\,\mathbf v_1^{\mathsf T}\mathbf v_2$ และ $\mathbf v_1^{\mathsf T}\mathbf v_2=\|\mathbf v_1\|\|\mathbf v_2\|\cos\theta=\sigma_1\sigma_2\rho=\sigma_{12}$ พจน์ไขว้จึงเป็น covariance พอดี ไม่ใช่เรื่องบังเอิญ</p>
+<p>ลูกศรครึ่งหนึ่งยาว $0.5\sqrt{0.1}=0.158$ กับ $0.5\sqrt{0.5}=0.354$ ถ้าชี้ทางเดียวกัน ($\rho=1$) ความยาวรวมคือ $0.158+0.354=0.512$ ถ้าตั้งฉาก ($\rho=0$) คือ $\sqrt{0.025+0.125}=0.387$ ถ้าตรงข้าม ($\rho=-1$) เหลือ $0.354-0.158=0.195$ ที่ $\rho=0.25$ ได้ 0.422 การกระจายความเสี่ยงช่วยมากแค่ไหนจึงขึ้นกับมุม: ยิ่งมุมกว้าง ผลบวกยิ่งสั้นกว่าผลรวมความยาว</p>
+</div>
+</section>
+
+<figure class="plot">
+<h4>รูป — ผลบวกของลูกศรสองเส้นที่ทำมุม 75.5 องศา</h4>
+<svg viewBox="0 0 480 290" role="img" aria-label="ลูกศรสั้นยาว 0.158 นอนตามแนวนอน ต่อด้วยลูกศรยาว 0.354 ที่หักขึ้นเป็นมุม 75.5 องศาจากแนวเดิม ผลบวกคือลูกศรเขียวยาว 0.422 ส่วนเส้นประแนวนอนยาว 0.512 คือกรณี correlation หนึ่ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a65pb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a65po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a65pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#047857"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="60" y1="260" x2="367" y2="260" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 4"/>
+    <line x1="367" y1="252" x2="367" y2="268" stroke="#5b6472" stroke-width="2"/>
+    <text x="367" y="284" text-anchor="middle" font-size="14" fill="#5b6472">ρ = 1: 0.512</text>
+    <line x1="60" y1="260" x2="152" y2="260" stroke="#2455d6" stroke-width="4" marker-end="url(#a65pb)"/>
+    <line x1="154.9" y1="260" x2="207.2" y2="57.5" stroke="#a65f00" stroke-width="4" marker-end="url(#a65po)"/>
+    <line x1="60" y1="260" x2="206" y2="57" stroke="#047857" stroke-width="3.5" marker-end="url(#a65pg)"/>
+    <path d="M 204.9 260 A 50 50 0 0 0 167.4 211.6" fill="none" stroke="#181818" stroke-width="2"/>
+    <text x="196" y="236" font-size="14">75.5°</text>
+    <text x="100" y="282" text-anchor="middle" fill="#2455d6" font-size="14">0.5σ₁ = 0.158</text>
+    <text x="218" y="150" fill="#a65f00">0.5σ₂ = 0.354</text>
+    <text x="40" y="140" fill="#047857">σₚ = 0.422</text>
+  </g>
+</svg>
+<figcaption>ลูกศรน้ำเงินคือสินทรัพย์แรกย่อตามน้ำหนัก 0.5 ลูกศรส้มคือสินทรัพย์ที่สองย่อแบบเดียวกัน หักขึ้นเป็นมุม $\arccos0.25=75.5$ องศาจากแนวของลูกศรแรก ลูกศรเขียวคือผลบวก ยาว 0.422 ซึ่งเป็นความผันผวนของพอร์ต เส้นประเทาคือความยาวถ้าทั้งสองชี้ทางเดียวกัน (0.512) ความต่าง 0.09 คือสิ่งที่การกระจายลงทุนได้มาจากมุม ทุกความยาวในรูปใช้สเกลเดียวกัน</figcaption>
+</figure>
+
+<section class="formula">
+<h4>ขั้นที่ 8 — projection หา hedge ที่ทำให้ส่วนเหลือสั้นที่สุด</h4>
+<p>ถือ basket ที่ผลตอบแทนหักค่าเฉลี่ยแล้วคือ $\mathbf x$ และจะ short เครื่องมือ hedge ที่ผลตอบแทนหักค่าเฉลี่ยแล้วคือ $\mathbf y$ เป็นสัดส่วน $h$ ของ basket ผลที่เหลือคือ $\mathbf e=\mathbf x-h\mathbf y$ เลือก $h$ ให้ความยาวกำลังสองของ $\mathbf e$ (คือ sample variance คูณ $n-1$) ต่ำที่สุด</p>
+<div class="math">\[
+\begin{aligned}
+\|\mathbf x-h\mathbf y\|^2&=\|\mathbf x\|^2-2h\,\mathbf x^{\mathsf T}\mathbf y+h^2\|\mathbf y\|^2,\\
+h^*&=\frac{\mathbf x^{\mathsf T}\mathbf y}{\|\mathbf y\|^2}=\frac{s_{xy}}{s_y^2}=\hat\rho\,\frac{s_x}{s_y},\\
+\mathbf e^{\mathsf T}\mathbf y&=\mathbf x^{\mathsf T}\mathbf y-h^*\|\mathbf y\|^2=0,\\
+s_e^2&=s_x^2-\frac{s_{xy}^2}{s_y^2}=s_x^2\big(1-\hat\rho^2\big).
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>บรรทัดแรกเป็นพาราโบลาใน $h$ อนุพันธ์ $-2\mathbf x^{\mathsf T}\mathbf y+2h\|\mathbf y\|^2=0$ ให้ $h^*$ ในบรรทัดสอง ซึ่งคือ $t$ ตัวเดียวกับในการพิสูจน์ Cauchy–Schwarz หาร $n-1$ ทั้งเศษและส่วนได้รูปสถิติ บรรทัดสามบอกว่าที่ $h^*$ ส่วนเหลือตั้งฉากกับ hedge พอดี: ถ้ายังไม่ตั้งฉาก แปลว่ายังมีส่วนที่ชี้ตาม $\mathbf y$ ให้ตัดเพิ่มได้ บรรทัดสุดท้ายแทน $h^*$ กลับ ได้ variance ที่เหลือเป็นสัดส่วน $1-\hat\rho^2$ ของเดิม</p>
+<p>ตัวอย่างสามวัน $\mathbf x=(1,-1,0)$, $\mathbf y=(1,0,-1)$: $h^*=1/2$, $\mathbf e=(0.5,-1,0.5)$ ตรวจ $\mathbf e^{\mathsf T}\mathbf y=0.5-0.5=0$ และ $\|\mathbf e\|^2=1.5=2(1-0.5^2)$ ถ้าใช้ $h=1$ แทน ส่วนเหลือคือ $(0,-1,1)$ ยาวกำลังสอง 2 ยาวกว่า</p>
+</div>
+</section>
+
+<figure class="plot">
+<h4>รูป — hedge ที่ดีที่สุดคือเงาที่ตกตั้งฉาก</h4>
+<svg viewBox="0 0 480 300" role="img" aria-label="ลูกศร y แนวนอนคือ hedge ลูกศร x ทำมุม 60 องศาคือ basket เงาของ x บน y ยาวครึ่งหนึ่งของ y เส้นตั้งฉากจากปลาย x ลงมาคือส่วนเหลือยาว 1.225 เส้นประจากปลาย y ไปปลาย x คือส่วนเหลือเมื่อ h เท่ากับ 1 ยาว 1.414" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a65hb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a65ho" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a65hr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d82632"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="40" y1="260" x2="300" y2="260" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="80" y1="260" x2="232" y2="260" stroke="#a65f00" stroke-width="3.5" marker-end="url(#a65ho)"/>
+    <line x1="80" y1="260" x2="157.8" y2="260" stroke="#a65f00" stroke-width="7" stroke-opacity="0.45"/>
+    <line x1="80" y1="260" x2="156" y2="128.5" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a65hb)"/>
+    <line x1="157.8" y1="260" x2="157.8" y2="129" stroke="#d82632" stroke-width="3" marker-end="url(#a65hr)"/>
+    <line x1="235.6" y1="260" x2="160" y2="129" stroke="#5b6472" stroke-width="2" stroke-dasharray="6 4"/>
+    <polyline points="157.8,248 169.8,248 169.8,260" fill="none" stroke="#181818" stroke-width="1.5"/>
+    <text x="242" y="265" fill="#a65f00">y (hedge)</text>
+    <text x="50" y="118" fill="#2455d6">x (basket)</text>
+    <text x="118" y="282" text-anchor="middle" fill="#a65f00" font-size="14">h*y = 0.5y</text>
+    <text x="166" y="196" fill="#d82632">e ยาว 1.225</text>
+    <text x="210" y="180" fill="#5b6472" font-size="14">h = 1: ยาว 1.414</text>
+    <path d="M 120 260 A 40 40 0 0 0 100 225.4" fill="none" stroke="#181818" stroke-width="2"/>
+    <text x="124" y="240" font-size="14">60°</text>
+  </g>
+</svg>
+<figcaption>ลูกศรส้มคือเครื่องมือ hedge $\mathbf y$ ลูกศรน้ำเงินคือ basket $\mathbf x$ ทั้งคู่ยาว $\sqrt2$ และทำมุม 60 องศา (ข้อมูลสามวันชุดเดิม หมุนให้ $\mathbf y$ นอน) แถบส้มจางคือเงาของ $\mathbf x$ บนทิศ $\mathbf y$ ยาวครึ่งหนึ่งของ $\mathbf y$ จึงได้ $h^*=0.5$ เส้นแดงคือส่วนเหลือที่ตั้งฉากกับ $\mathbf y$ ยาว $\sqrt{1.5}\approx1.225$ เส้นประเทาคือส่วนเหลือถ้าใช้ $h=1$ ยาว $\sqrt2\approx1.414$ ในสามเหลี่ยมมุมฉาก เส้นตั้งฉากสั้นที่สุดเสมอ</figcaption>
+</figure>
+
+<section class="example">
+<h4>ขั้นที่ 9 — beta คือ projection: hedge หุ้นเล็กด้วยหุ้นใหญ่</h4>
+<p>regression ของผลตอบแทนส่วนเกินของสินทรัพย์ $j$ บนผลตอบแทนส่วนเกินของตลาด ให้ค่าสัมประสิทธิ์ $\beta_j=\operatorname{cov}(r_j,r_m)/\operatorname{var}(r_m)$ ซึ่งคือ $h^*$ ตัวเดียวกัน residual ไม่สัมพันธ์กับตลาด (ตั้งฉาก) และความเสี่ยงแยกเป็นสองส่วนแบบพีทาโกรัส: $\sigma_j^2=\beta_j^2\sigma_m^2+\operatorname{var}(\varepsilon)$ ตาม <a href="15.2.html">CAPM</a> ขั้นนี้ใช้ตัวเลขจริงจาก covariance matrix ชุดเดิม</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> long US Small Growth \$12 ล้าน และ hedge ด้วย US Large Growth ใช้ variance และ covariance รายปี 0.102488, 0.059852, 0.063497 จากขั้นอ่าน correlation ด้านบน</p>
+<div class="math">\[
+\begin{aligned}
+\beta&=\frac{0.063497}{0.059852}\approx1.061,\\
+\hat\rho^2&=0.811^2\approx0.657,\\
+\sigma_e&=0.3201\sqrt{1-0.657}\approx18.74\%,\\
+\beta\sigma_{LG}&=1.061(24.46\%)\approx25.95\%,\\
+25.95^2+18.74^2&\approx32.01^2.
+\end{aligned}
+\]</div>
+<p><strong>คำตอบ:</strong> short US Large Growth $1.061\times\$12$ ล้าน $\approx\$12.73$ ล้าน ความผันผวนลดจาก 32.01% เหลือ 18.74% ต่อปี variance หายไป 65.7% แต่ความผันผวนลดลงแค่ 41.5% เพราะความผันผวนคือรากของ variance บรรทัดสุดท้ายคือพีทาโกรัส: ส่วนที่ตลาดอธิบายได้กับส่วนเหลือตั้งฉากกัน กำลังสองจึงบวกกันได้พอดี</p>
+<p>ตัวเลขนี้เป็นค่าประมาณจากข้อมูลในอดีต covariance ในอนาคตเปลี่ยนได้ โดยเฉพาะช่วงตลาดตึงเครียดที่ correlation มักสูงขึ้น และยังมีต้นทุนการ short ค่าซื้อขาย และการปรับ hedge เมื่อราคาเปลี่ยน</p>
+</section>
+
+<figure class="plot">
+<h4>รูป — ความเสี่ยงแยกเป็นส่วนของตลาดกับส่วนเฉพาะตัวที่ตั้งฉากกัน</h4>
+<svg viewBox="0 0 480 290" role="img" aria-label="สามเหลี่ยมมุมฉาก ด้านนอนยาว 25.95 คือส่วนที่ตลาดอธิบาย ด้านตั้งยาว 18.74 คือส่วนเหลือ ด้านตรงข้ามมุมฉากยาว 32.01 คือความผันผวนรวม" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <line x1="60" y1="250" x2="267.6" y2="250" stroke="#2455d6" stroke-width="5"/>
+    <line x1="267.6" y1="250" x2="267.6" y2="100.1" stroke="#d82632" stroke-width="5"/>
+    <line x1="60" y1="250" x2="267.6" y2="100.1" stroke="#181818" stroke-width="4"/>
+    <polyline points="255.6,250 255.6,238 267.6,238" fill="none" stroke="#5b6472" stroke-width="1.5"/>
+    <text x="164" y="274" text-anchor="middle" fill="#2455d6">βσₘ = 25.95% (ตลาด)</text>
+    <text x="278" y="170" fill="#d82632">σₑ = 18.74%</text>
+    <text x="278" y="194" fill="#d82632">(ส่วนเหลือ)</text>
+    <text x="150" y="160" text-anchor="middle" transform="rotate(-35.8 150 160)">σ รวม = 32.01%</text>
+    <text x="300" y="80" font-size="14">ตลาดอธิบาย 65.7% ของ variance</text>
+    <text x="300" y="104" font-size="14">เหลือ 34.3%</text>
+  </g>
+</svg>
+<figcaption>ความยาวทุกด้านใช้สเกลเดียวกัน (หน่วยจุดเปอร์เซ็นต์ต่อปี) ด้านนอนคือความผันผวนที่มาจาก US Large Growth ($\beta\sigma_m$) ด้านตั้งคือความผันผวนที่ hedge เอาออกไม่ได้ ด้านเอียงคือความผันผวนของ US Small Growth เอง มุมที่จุดเริ่มคือ 35.8 องศา ซึ่งคือมุมระหว่างสองสินทรัพย์ในรูปลูกศรแปดกลุ่ม hedge ตัดด้านนอนทิ้ง เหลือด้านตั้ง</figcaption>
+</figure>
+
 <section class="pitfall">
-<h2>มุมฉากไม่ได้แปลว่าเป็นอิสระทางสถิติ</h2>
-<p>ให้ $X$ มีค่า −1, 0, 1 อย่างละหนึ่งในสาม และให้ $Y=X^2$ จะได้ $E[X]=0$, $E[Y]=2/3$ และ $E[XY]=E[X^3]=0$ จึงมี covariance และ correlation เป็นศูนย์ แต่เมื่อรู้ $X$ ก็รู้ $Y$ แน่นอน ทั้งคู่ไม่ independent</p>
-<p>Orthogonality ของ centered observations จึงบอกเพียงการไม่สัมพันธ์เชิงเส้นในตัวอย่าง ข้อสรุปว่า zero population correlation ทำให้ independent ต้องมีเงื่อนไขเพิ่มเติม เช่น joint Normal ที่ไม่เสื่อมสภาพ ไม่ใช่แค่เห็น scatter plot คล้ายระฆังทีละตัว</p>
-<p>อีกด้านหนึ่ง correlation สูงไม่ได้บอกสัดส่วน hedge ด้วยตัวมันเอง ต้องคูณอัตราส่วน SD ด้วย และไม่รับประกันว่าความสัมพันธ์จากข้อมูลเก่าจะคงเดิมใน stress period</p>
+<h4>ความผิดที่ทำให้อ่านมุมผิด</h4>
+<p><strong>ไม่หักค่าเฉลี่ย:</strong> โจทย์ต้นหน้า cosine ของข้อมูลดิบคือ 0.714 แต่ correlation คือ −1 ทิศของคำตอบกลับกันเลย</p>
+<p><strong>ตั้งฉากไม่ได้แปลว่าเป็นอิสระ:</strong> ให้ $X$ เป็น −1, 0, 1 อย่างละหนึ่งในสาม และ $Y=X^2$ จะได้ $E[X]=0$ และ $E[XY]=E[X^3]=0$ covariance จึงเป็นศูนย์ แต่รู้ $X$ ก็รู้ $Y$ ทันที correlation ศูนย์บอกแค่ว่าไม่มีความสัมพันธ์แบบเส้นตรง (ดูต่อใน <a href="8.3.html">zero covariance is not independence</a>)</p>
+<p><strong>ใช้ correlation เป็น hedge ratio:</strong> correlation ของหุ้นเล็กกับหุ้นใหญ่คือ 0.811 แต่ hedge ratio คือ 1.061 ต้องคูณอัตราส่วนความผันผวน $32.01/24.46$ ด้วย ถ้าใช้ 0.811 จะ hedge ขาดไปราว \$3 ล้านบนสถานะ \$12 ล้าน</p>
+<p><strong>สับสนการลด variance กับการลดความผันผวน:</strong> variance ลด 65.7% แต่ความผันผวนลด 41.5% รายงานว่า “ความเสี่ยงลดสองในสาม” จึงเกินจริง</p>
+<p><strong>คิดว่า $\hat\rho$ เป็นลบแปลว่าต้อง short hedge มากขึ้น:</strong> ถ้า $\hat\rho\lt0$ จะได้ $h^*\lt0$ ซึ่งแปลว่าต้อง <em>long</em> เครื่องมือ hedge เพราะ residual นิยามเป็น $\mathbf x-h\mathbf y$</p>
 </section>
+
+<section class="prose">
+<h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+<p>ทุกครั้งที่โต๊ะ hedge พอร์ตหุ้นด้วย index future หรือ ETF ขนาดที่ใช้คือ beta ซึ่งคือ projection ของหน้านี้ ตัวเลขที่ต้องรายงานคู่กันเสมอคือ $1-\hat\rho^2$ ซึ่งบอกว่ายังเหลือความเสี่ยงเท่าไรหลัง hedge เมื่อมีเครื่องมือ hedge หลายตัว หลักเดียวกันขยายเป็นการ project ลงบน span ของหลายทิศพร้อมกัน ซึ่งคือ <a href="15.1.html">OLS regression</a> และ <a href="26.5.html">Frisch–Waugh–Lovell</a> ส่วนการเก็บ correlation ของทุกคู่ไว้ในตารางเดียวคือ covariance matrix ใน <a href="8.1.html">mean vector และ covariance matrix</a></p>
+</section>
+
 <section class="example">
-<h2>ตรวจเองใน 10 วินาที</h2>
-<p><strong>ข้อ 1:</strong> ถ้าบวกค่าคงที่ 7 ให้ข้อมูล A ทุกวัน และคูณข้อมูล B ทุกวันด้วย 3 correlation เปลี่ยนไหม?</p>
-<details><summary>ดูเฉลย</summary><p>ไม่เปลี่ยน: การ center ลบค่าคงที่ทิ้ง ส่วนการคูณด้วยจำนวนบวกตัดกันใน cosine แต่ถ้าคูณ B ด้วย −3 เครื่องหมาย correlation กลับด้าน หากทำให้ชุดใดกลายเป็นค่าคงที่ เช่นคูณด้วยศูนย์ จะนิยาม correlation ไม่ได้</p></details>
-<p><strong>ข้อ 2:</strong> สำหรับตัวอย่างสามวัน $\mathbf x=(1,-1,0)$ และ $\mathbf y=(1,0,-1)$ ค่า hedge และ residual คืออะไร?</p>
-<details><summary>ดูเฉลย</summary><p>$h^*=1/2$ และ $\mathbf e=(0.5,-1,0.5)$ ตรวจ $\mathbf e\cdot\mathbf y=0.5-0.5=0$ และ $\|\mathbf e\|^2=1.5=2(1-0.5^2)$ ได้ตรงกัน</p></details>
-<p><strong>ข้อ 3:</strong> ถ้า $s_x=2\%$, $s_y=1\%$ และ $\rho=-0.5$ ต้อง short hedge กี่เท่าของ basket ตามสูตร unconstrained?</p>
-<details><summary>ดูเฉลย</summary><p>$h^*=-0.5(2/1)=-1$ เครื่องหมายลบหมายถึงต้อง <em>long</em> เครื่องมือ hedge ไม่ใช่ short เพราะ residual นิยามเป็น $R_x-hR_y$ ถ้าบังคับให้ทำได้เฉพาะ short ต้องแก้ปัญหาที่มีข้อจำกัดใหม่</p></details>
+<h4>โจทย์ตรวจความเข้าใจ</h4>
+<p><strong>1.</strong> บวก 7 ให้ผลตอบแทนของ A ทุกวัน และคูณผลตอบแทนของ B ทุกวันด้วย 3 correlation เปลี่ยนไหม ถ้าคูณ B ด้วย −3 ล่ะ</p>
+<details><summary>เฉลย</summary><p>บวกค่าคงที่ไม่เปลี่ยน เพราะการหักค่าเฉลี่ยลบมันทิ้งไปพร้อมค่าเฉลี่ย ($\mathbf x$ เดิมทุกช่อง) คูณ 3 ไม่เปลี่ยน เพราะ $\mathbf y$ ยาวขึ้น 3 เท่าแต่ทิศเดิม และ 3 ตัดกันในเศษกับส่วนของ cosine คูณ −3 ทำให้ $\mathbf y$ กลับทิศ correlation เปลี่ยนเครื่องหมาย ขนาดเท่าเดิม</p></details>
+<p><strong>2.</strong> ข้อมูลห้าวัน (จุดเปอร์เซ็นต์ เฉลี่ยศูนย์ทั้งคู่) A $=(1.2,-0.8,0.5,-1.5,0.6)$ และ B $=(0.9,-0.3,1.1,-1.2,-0.5)$ จงหา correlation มุม และ hedge ratio ของ A ด้วย B</p>
+<details><summary>เฉลย</summary><p>$\mathbf a^{\mathsf T}\mathbf b=1.08+0.24+0.55+1.80-0.30=3.37$, $\|\mathbf a\|^2=1.44+0.64+0.25+2.25+0.36=4.94$, $\|\mathbf b\|^2=0.81+0.09+1.21+1.44+0.25=3.80$ correlation $=3.37/\sqrt{4.94(3.80)}\approx0.778$ มุม $\approx38.9$ องศา hedge ratio $=3.37/3.80\approx0.887$ variance ที่เหลือเป็น $1-0.778^2\approx39.5\%$ ของเดิม</p></details>
+<p><strong>3.</strong> basket มีความผันผวน 2% ต่อวัน เครื่องมือ hedge 1% ต่อวัน correlation −0.5 ตามสูตร minimum variance ต้องทำอะไรกับเครื่องมือ hedge เท่าไร</p>
+<details><summary>เฉลย</summary><p>$h^*=\hat\rho\,s_x/s_y=-0.5(2/1)=-1$ คือ <em>ซื้อ</em> เครื่องมือ hedge เท่ากับมูลค่า basket เพราะมันมักขึ้นเมื่อ basket ลง ความผันผวนที่เหลือ $2\%\sqrt{1-0.25}\approx1.73\%$ ต่อวัน</p></details>
 </section>
+
 <section class="code">
-<h2>JavaScript: center ก่อน และปฏิเสธกรณีที่ correlation ไม่มีนิยาม</h2>
-<pre><code class="language-javascript" data-example="6.5">function checkPair(a, b) {
-  if (!Array.isArray(a) || !Array.isArray(b) || !a.length || a.length !== b.length || ![...a, ...b].every(Number.isFinite)) {
-    throw new TypeError('Need matching finite vectors');
-  }
-}
-const dot = (a, b) =&gt; a.reduce((s, x, i) =&gt; s + x * b[i], 0);
-function center(a) {
-  const mean = a.reduce((s, x) =&gt; s + x, 0) / a.length;
-  return a.map(x =&gt; x - mean);
-}
-function cosine(a, b) {
-  checkPair(a, b);
-  const na = Math.hypot(...a), nb = Math.hypot(...b);
-  if (na === 0 || nb === 0) throw new RangeError('Angle undefined for a zero vector');
-  const value = a.reduce((s, x, i) =&gt; s + (x / na) * (b[i] / nb), 0);
-  return Math.max(-1, Math.min(1, value));
-}
+<h4>คำนวณซ้ำด้วย JavaScript</h4>
+<p>สคริปต์หักค่าเฉลี่ยก่อนเสมอ ปฏิเสธข้อมูลคงที่ แล้วคำนวณ correlation มุม hedge ratio และ residual รวมถึงตัวเลขจาก covariance matrix ของคอร์ส</p>
+<details><summary>เปิดดูโค้ด</summary>
+<pre><code class="language-javascript" data-example="6.5">const dot = (a, b) =&gt; a.reduce((s, x, i) =&gt; s + x * b[i], 0);
+const center = a =&gt; { const m = a.reduce((s, x) =&gt; s + x, 0) / a.length; return a.map(x =&gt; x - m); };
+const cosine = (a, b) =&gt; {
+  const na = Math.sqrt(dot(a, a)), nb = Math.sqrt(dot(b, b));
+  if (na === 0 || nb === 0) throw new RangeError('angle undefined for a zero vector');
+  return Math.max(-1, Math.min(1, dot(a, b) / (na * nb)));
+};
 function stats(a, b) {
-  checkPair(a, b);
-  if (a.length &lt; 2) throw new RangeError('Need at least two pairs');
-  if (a.every(x =&gt; x === a[0]) || b.every(x =&gt; x === b[0])) {
-    throw new RangeError('Correlation undefined for constant data');
-  }
-  const x = center(a), y = center(b), xx = dot(x, x), yy = dot(y, y), xy = dot(x, y);
-  if (xx === 0 || yy === 0) throw new RangeError('Correlation undefined for constant data');
-  const n = a.length, rho = cosine(x, y), h = xy / yy;
-  const residual = x.map((v, i) =&gt; v - h * y[i]);
-  return {x, y, xx, yy, xy, cov: xy / (n - 1), sx: Math.sqrt(xx / (n - 1)), sy: Math.sqrt(yy / (n - 1)),
-    rho, degrees: Math.acos(rho) * 180 / Math.PI, h, residual,
-    orthogonality: dot(residual, y), residualVariance: dot(residual, residual) / (n - 1)};
+  if (a.length !== b.length || a.length &lt; 2) throw new RangeError('need matching pairs');
+  const x = center(a), y = center(b), rho = cosine(x, y), h = dot(x, y) / dot(y, y);
+  const e = x.map((v, i) =&gt; v - h * y[i]);
+  return {rho, degrees: Math.acos(rho) * 180 / Math.PI, h, e, eDotY: dot(e, y), ee: dot(e, e)};
 }
-const a = [1.2, -.8, .5, -1.5, .6], b = [.9, -.3, 1.1, -1.2, -.5];
-const five = stats(a, b), portfolio = a.map((x, i) =&gt; .6 * x + .4 * b[i]);
-const varianceB = .000162, varianceQ = .000180, covariance = .000153;
-const h = covariance / varianceQ, deskRho = covariance / Math.sqrt(varianceB * varianceQ);
-const residualVariance = varianceB - covariance ** 2 / varianceQ;
-console.log(JSON.stringify({
-  rawCosine: cosine([1, 2, 3], [3, 2, 1]), centeredRho: stats([1, 2, 3], [3, 2, 1]).rho,
-  three: stats([1, -1, 0], [1, 0, -1]), five, portfolio,
-  portfolioSD: Math.sqrt(dot(center(portfolio), center(portfolio)) / 4),
-  noCovarianceSD: Math.sqrt(.36 * five.sx ** 2 + .16 * five.sy ** 2),
-  shiftedScaledRho: stats(a.map(x =&gt; x + 7), b.map(x =&gt; 3 * x)).rho,
-  nonlinearRho: stats([-1, 0, 1], [1, 0, 1]).rho,
-  h, deskRho, varianceReduction: deskRho ** 2, residualVariance,
-  sdBefore: Math.sqrt(varianceB), sdAfter: Math.sqrt(residualVariance),
-  sdReduction: 1 - Math.sqrt(residualVariance / varianceB),
-  hedgeNotional: -12e6 * h, hedgeSharesAt500: -12e6 * h / 500,
-  figureDot: dot([.3, .5], [1.7, .5]), figureOptimal: dot([2, 1], [1.7, .5]) / dot([1.7, .5], [1.7, .5])
-}));</code></pre>
-<p>ตรวจข้อมูลคงที่ก่อน center ด้วย เพราะแม้ทุกค่าจะเป็น 0.1 ค่าเฉลี่ยที่คำนวณด้วย floating point อาจเป็น 0.10000000000000002 ทำให้ผลรวมกำลังสองเหลือบวกจิ๋วทั้งที่ variance ทางคณิตศาสตร์เป็นศูนย์</p>
-<p>การบีบค่า cosine ให้อยู่ใน [−1,1] ก่อนใช้ arccos มีไว้กันความคลาดเคลื่อนจิ๋วจาก floating point ไม่ใช่สิทธิ์ให้ข้ามการตรวจวัน หน่วย ค่าเฉลี่ย หรือชุดข้อมูลคงที่</p>
+const deg = c =&gt; Math.acos(c) * 180 / Math.PI;
+// course covariance matrix entries (annual)
+const vLG = 0.059852, vSG = 0.102488, vB = 0.001005, cLGSG = 0.063497, cLGB = -0.000579;
+const rhoSG = cLGSG / Math.sqrt(vLG * vSG), rhoB = cLGB / Math.sqrt(vLG * vB);
+const beta = cLGSG / vLG, residVol = Math.sqrt(vSG * (1 - rhoSG ** 2));
+const s1 = Math.sqrt(0.1), s2 = Math.sqrt(0.5), s12 = 0.25 * s1 * s2;
+console.log({
+  rawCosine: cosine([1, 2, 3], [3, 2, 1]), hook: stats([1, 2, 3], [3, 2, 1]),
+  three: stats([1, -1, 0], [1, 0, -1]),
+  angles: [[1, 0, -1], [1, 1, -2], [-1, 2, -1]].map(v =&gt; deg(cosine([1, -1, 0], v))),
+  rhoSG, angleSG: deg(rhoSG), rhoB, angleB: deg(rhoB),
+  portfolioSD: Math.sqrt(0.25 * 0.1 + 0.25 * 0.5 + 2 * 0.25 * s12),
+  beta, residVol, volCut: 1 - residVol / Math.sqrt(vSG), shortDollars: 12e6 * beta,
+  fiveDay: stats([1.2, -0.8, 0.5, -1.5, 0.6], [0.9, -0.3, 1.1, -1.2, -0.5])
+});</code></pre>
+</details>
 </section>
-<details class="jargon"><summary>ศัพท์ที่ใช้ในบทนี้</summary><dl>
-<dt>Inner product / orthogonality</dt><dd>ผลคูณภายในที่ใช้วัดการจับคู่ทิศทาง / การมี inner product เป็นศูนย์</dd>
-<dt>Centering / correlation</dt><dd>หักค่าเฉลี่ยของแต่ละชุด / covariance หารด้วยผลคูณ SD ซึ่งเท่ากับ cosine หลัง centering</dd>
-<dt>Projection / residual</dt><dd>ส่วนของ vector ที่อยู่ตามทิศทางที่เลือก / ส่วนที่เหลือหลังลบออก ที่คำตอบ least squares residual ตั้งฉากกับทิศที่ใช้ fit</dd>
-<dt>Hedge ratio</dt><dd>ตัวคูณของเครื่องมือ hedge ภายใต้ objective และหน่วยที่กำหนด ไม่ใช่ correlation อย่างเดียว</dd>
-</dl></details>
-<details><summary>ที่มาสั้น ๆ</summary><p>Vector analysis ที่พัฒนาในคริสต์ศตวรรษที่ 19 ทำให้การคูณและเรขาคณิตของ vectors ใช้งานเป็นระบบ ขณะเดียวกัน correlation เป็นภาษาสถิติสำหรับการเคลื่อนไหวร่วม การนำข้อมูลที่ centered แล้วมาวางเป็น vector ทำให้สองมุมมองนี้เป็นสมการเดียวกัน โดยไม่ทำให้ข้อจำกัดเชิงสถิติหายไป</p></details>
+
 <section class="takeaways">
-<h2>จากมุมสู่ hedge โดยไม่ข้ามขั้น</h2>
+<h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
 <ul>
-<li>จับคู่วันและหน่วยก่อน จากนั้น center ข้อมูลทั้งสองชุด แล้วจึงตีความ cosine เป็น sample correlation</li>
-<li>ขนาดศูนย์ทำให้มุมไม่มีนิยาม; SD ศูนย์ทำให้ correlation ไม่มีนิยาม อย่าเติมค่าศูนย์แทน</li>
-<li>Minimum-variance hedge แบบ unconstrained คือ $h=s_{xy}/s_y^2$ และ variance ส่วนเหลือเป็น $s_x^2(1-\rho^2)$ สำหรับข้อมูลชุดเดียวกัน</li>
-<li>Variance ที่ลด 80% ไม่ใช่ SD ที่ลด 80% และ sample fit ไม่ใช่หลักประกันผลในอนาคต</li>
-<li>Chapter 6 ทำให้เราอ่าน vector, basis, ขนาดและมุมได้แล้ว Chapter 7 จะรวบรวมการจับคู่เหล่านี้เป็นการทำงานของ matrix</li>
+<li>$\cos\theta=\mathbf x^{\mathsf T}\mathbf y/(\|\mathbf x\|\|\mathbf y\|)$ มาจากการเทียบกฎโคไซน์กับการกระจาย dot product และ Cauchy–Schwarz รับประกันว่าอยู่ระหว่าง −1 ถึง 1</li>
+<li>sample correlation คือ cosine ของข้อมูลที่หักค่าเฉลี่ยแล้ว ไม่หักจะได้ 0.714 แทน −1 ในโจทย์ต้นหน้า</li>
+<li>อ่าน correlation จาก covariance matrix ด้วย $\rho_{ij}=\sigma_{ij}/(\sigma_i\sigma_j)$: หุ้นใหญ่กับหุ้นเล็กสายเติบโตห่างกัน 36 องศา bond เกือบตั้งฉากกับหุ้น</li>
+<li>ความผันผวนของพอร์ตคือความยาวของผลบวกลูกศร พจน์ covariance คือ dot product ของลูกศร ยิ่งมุมกว้างยิ่งกระจายความเสี่ยงได้มาก</li>
+<li>hedge ที่ดีที่สุดคือ projection: $h^*=s_{xy}/s_y^2$ ส่วนเหลือตั้งฉาก และ variance เหลือ $1-\hat\rho^2$ (beta 1.061 ตัด variance 65.7% แต่ตัดความผันผวนแค่ 41.5%)</li>
 </ul>
+<p>บทนี้ทำงานกับ vector ทีละตัวหรือทีละคู่ บทถัดไปรวม vector หลายตัวเป็นตารางเดียวแล้วถามว่าตารางนั้นทำอะไรกับ vector ได้บ้าง เริ่มที่ <a href="7.1.html">what a matrix is</a></p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

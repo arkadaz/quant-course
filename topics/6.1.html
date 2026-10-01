@@ -18,270 +18,519 @@
 <article class="topic" data-number="6.1" data-depends-on="1.3">
 <header class="topic-header">
 <h1><span class="tnum">6.1</span> Row Vectors and Column Vectors</h1>
-<p class="subtitle">จับคู่ข้อมูลให้ถูกช่อง แล้วแยกผลตอบแทน มูลค่าสถานะ และเงินสดให้ชัด</p>
+<p class="subtitle">Vector คือรายการตัวเลขที่ทุกช่องมีชื่อ และการคูณแถวกับคอลัมน์คือการจับคู่ช่องชื่อเดียวกัน คูณ แล้วบวก ซึ่งให้ผลตอบแทนของพอร์ตในบรรทัดเดียว</p>
 </header>
+
 <div class="hook">
-<p>พอร์ตมูลค่าสุทธิ 25 ล้าน USD ถือ AAPL 50%, JPM 30% และ short NVDA 20% วันนี้หุ้นทั้งสามเปลี่ยนราคา +1.2%, −0.6% และ +0.4% ตามลำดับ พอร์ตได้หรือเสียเงินเท่าไร?</p>
-<details><summary>ลองคำนวณก่อนเปิดเฉลย</summary>
-<p>ได้ 85,000 USD: AAPL ช่วย +150,000, JPM ทำให้เสีย 45,000 และ NVDA ที่ short ไว้ทำให้เสียอีก 20,000 รวมเป็นผลตอบแทน +0.34% คำตอบนี้สมมติว่าเงินสดไม่รับดอกเบี้ย และยังไม่รวมเงินปันผล ค่าธรรมเนียมกับค่า borrow หุ้น</p>
+<p>พอร์ตมูลค่าสุทธิ (NAV) \$25 ล้าน ถือ AAPL 50% ของ NAV, JPM 30% และ short NVDA 20% ที่เหลือเป็นเงินสด วันนี้หุ้นทั้งสามขยับ +1.2%, −0.6% และ +0.4% ตามลำดับ (ตัวเลขสมมติ) หัวหน้าโต๊ะถามสองข้อ: พอร์ตได้หรือเสียกี่ดอลลาร์ และถ้าไฟล์ผลตอบแทนส่งมาเรียงเป็น NVDA, JPM, AAPL แต่ไม่มีใครเรียงใหม่ก่อนคำนวณ ตัวเลขในรายงานจะเพี้ยนไปเท่าไร</p>
+<details><summary>ลองตอบก่อนเปิดเฉลย</summary>
+<p>พอร์ตได้ \$85,000 หรือ +0.34% ของ NAV: AAPL ให้ +\$150,000, JPM ทำให้เสีย \$45,000 และ NVDA ที่ short ไว้ทำให้เสีย \$20,000 ส่วนไฟล์ที่เรียงผิด โปรแกรมยังคูณได้ตามปกติ แต่ตอบว่าขาดทุน \$55,000 ห่างจากความจริง \$140,000 เพราะการคูณ vector รู้แค่ตำแหน่ง ไม่รู้ชื่อหุ้น (คำตอบนี้ยังไม่รวมดอกเบี้ยเงินสด ปันผล และค่ายืมหุ้น)</p>
 </details>
-<p>Vector ช่วยเขียนการจับคู่สามครั้งนี้ให้เป็นคำสั่งเดียว แต่ถ้าเรียงชื่อหุ้นผิด คำสั่งที่คำนวณได้ตามปกติอาจตอบว่าขาดทุน 55,000 USD เราจึงต้องตรวจทั้ง <strong>ลำดับ หน่วย และ shape</strong> ไม่ใช่ดูแค่ว่ามีตัวเลขครบสามตัว</p>
 </div>
+
 <section class="prose">
-<h2>1. แต่ละช่องต้องตอบได้ว่าเป็นอะไร</h2>
-<p>Vector ในบทนี้คือชุดตัวเลขที่มีลำดับ ตำแหน่งแรกอาจหมายถึง AAPL ตำแหน่งที่สอง JPM และตำแหน่งที่สาม NVDA ถ้าเปลี่ยนลำดับ ต้องเปลี่ยนข้อมูลทุกชุดที่ใช้จับคู่ตามไปด้วย การบวกและคูณจะไม่ช่วยตรวจชื่อหุ้นแทนเรา</p>
-<p>ต่อไปนี้เป็นพอร์ตสมมติของหุ้นสหรัฐ ไม่ใช่ข้อมูลราคาปัจจุบัน ให้ $N=25{,}000{,}000$ USD เป็นมูลค่าสุทธิเริ่มวัน หรือ NAV น้ำหนักเป็นมูลค่าสถานะที่มีเครื่องหมายหารด้วย $N$ ส่วน return เป็นการเปลี่ยนแปลงราคาในวันเดียวกัน เขียนเปอร์เซ็นต์เป็นเศษส่วนก่อนคูณ</p>
-<div class="table-wrap"><table>
-<thead><tr><th>ช่อง</th><th>หุ้น</th><th>น้ำหนัก $w_i$</th><th>return $r_i$</th><th>มูลค่าสถานะ</th></tr></thead>
+<h4>ภาพรวมก่อนลงสูตร</h4>
+<p>ในหนังสือเล่มนี้ vector คือรายการตัวเลขที่เรียงตามลำดับ และแต่ละตำแหน่งมีความหมายตายตัว ตำแหน่งแรกคือ AAPL ตำแหน่งที่สองคือ JPM ตำแหน่งที่สามคือ NVDA พอร์ตหนึ่งพอร์ตจึงเป็น vector ของน้ำหนัก ผลตอบแทนหนึ่งวันเป็น vector ของผลตอบแทน ราคาวันนี้เป็น vector ของราคา และเงินที่พอร์ตจะได้ในแต่ละสถานการณ์ข้างหน้าก็เป็น vector อีกชุดหนึ่ง</p>
+<p>คำถามแทบทุกข้อของพอร์ตมีรูปเดียวกัน: จับคู่ช่องที่ชื่อเดียวกัน คูณ แล้วบวก น้ำหนักคูณผลตอบแทนได้ผลตอบแทนพอร์ต จำนวนหุ้นคูณราคาได้มูลค่าพอร์ต การดำเนินการนี้เรียกว่า dot product และภาษา matrix เขียนมันเป็น “แถวคูณคอลัมน์” รูปด้านล่างแสดงผลคูณทีละคู่ที่สะสมกันจนเป็นผลตอบแทนพอร์ต 0.34%</p>
+<p>หน้านี้จะตั้งชื่อช่องและหน่วย แยกแถวกับคอลัมน์ด้วย shape หาที่มาของสูตรผลตอบแทนพอร์ตจากนิยามของผลตอบแทน ดูว่าลำดับการคูณเปลี่ยนชนิดของคำตอบอย่างไร มองเงินที่พอร์ตได้ในหลายสถานการณ์เป็นการรวมคอลัมน์ของสินทรัพย์ แล้วจบที่การแปลงน้ำหนักเป็นจำนวนหุ้นและรายการซื้อขาย</p>
+</section>
+
+<figure class="plot">
+<h4>รูป — ผลตอบแทนพอร์ตสะสมจากผลคูณทีละคู่</h4>
+<svg viewBox="0 0 480 300" role="img" aria-label="แผนภูมิน้ำตก แท่งแรก AAPL ขึ้นถึง 0.60 เปอร์เซ็นต์ แท่ง JPM ลดลง 0.18 เหลือ 0.42 แท่ง NVDA ลดลง 0.08 เหลือ 0.34 และแท่งสุดท้ายคือพอร์ต 0.34 เปอร์เซ็นต์" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <line x1="70" y1="192.9" x2="460" y2="192.9" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="135.7" x2="460" y2="135.7" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="78.6" x2="460" y2="78.6" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="40" x2="70" y2="250" stroke="#5b6472" stroke-width="2"/>
+    <line x1="70" y1="250" x2="460" y2="250" stroke="#5b6472" stroke-width="2"/>
+    <text x="62" y="255" text-anchor="end" font-size="14">0</text>
+    <text x="62" y="198" text-anchor="end" font-size="14">0.2</text>
+    <text x="62" y="141" text-anchor="end" font-size="14">0.4</text>
+    <text x="62" y="84" text-anchor="end" font-size="14">0.6</text>
+    <text x="20" y="145" text-anchor="middle" transform="rotate(-90 20 145)">ส่วนร่วมต่อ NAV (%)</text>
+    <rect x="88" y="78.6" width="64" height="171.4" fill="#2455d6"/>
+    <rect x="178" y="78.6" width="64" height="51.4" fill="#d82632"/>
+    <rect x="268" y="130" width="64" height="22.9" fill="#d82632"/>
+    <rect x="358" y="152.9" width="64" height="97.1" fill="#047857"/>
+    <line x1="152" y1="78.6" x2="178" y2="78.6" stroke="#5b6472" stroke-width="2" stroke-dasharray="4 3"/>
+    <line x1="242" y1="130" x2="268" y2="130" stroke="#5b6472" stroke-width="2" stroke-dasharray="4 3"/>
+    <line x1="332" y1="152.9" x2="358" y2="152.9" stroke="#5b6472" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="120" y="70" text-anchor="middle" fill="#2455d6">+0.60</text>
+    <text x="210" y="149" text-anchor="middle" fill="#d82632">−0.18</text>
+    <text x="300" y="172" text-anchor="middle" fill="#d82632">−0.08</text>
+    <text x="390" y="144" text-anchor="middle" fill="#047857">0.34</text>
+    <text x="120" y="272" text-anchor="middle">AAPL</text>
+    <text x="210" y="272" text-anchor="middle">JPM</text>
+    <text x="300" y="272" text-anchor="middle">NVDA</text>
+    <text x="390" y="272" text-anchor="middle">พอร์ต</text>
+    <text x="120" y="292" text-anchor="middle" font-size="14" fill="#5b6472">0.50 × 1.2</text>
+    <text x="210" y="292" text-anchor="middle" font-size="14" fill="#5b6472">0.30 × −0.6</text>
+    <text x="300" y="292" text-anchor="middle" font-size="14" fill="#5b6472">−0.20 × 0.4</text>
+    <text x="390" y="292" text-anchor="middle" font-size="14" fill="#5b6472">ผลรวม</text>
+  </g>
+</svg>
+<figcaption>แต่ละแท่งคือน้ำหนักคูณผลตอบแทนของหุ้นตัวเดียว (บรรทัดล่างสุดใต้แท่ง) แท่งน้ำเงินดันพอร์ตขึ้น แท่งแดงดึงลง และแท่งเขียวคือผลรวม 0.34% ของ NAV ซึ่งเท่ากับ \$85,000 บน NAV \$25 ล้าน สังเกตแท่ง NVDA: ราคาขึ้น แต่พอร์ตเสีย เพราะน้ำหนักติดลบ (short) อยู่แล้ว ตัวเลขบนแท่งคือส่วนร่วมต่อพอร์ต ไม่ใช่ผลตอบแทนของหุ้นแต่ละตัว</figcaption>
+</figure>
+
+<details class="jargon">
+<summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+<dl>
+<dt>Vector และ component</dt>
+<dd>Vector คือรายการตัวเลขที่เรียงตามลำดับ component คือตัวเลขในช่องหนึ่ง ใช้เก็บข้อมูลของหลายสินทรัพย์ในงวดเดียวกัน โดยทุกช่องต้องตอบได้ว่าแทนอะไร วันไหน หน่วยอะไร</dd>
+<dt>Row vector และ column vector</dt>
+<dd>Row vector มีหนึ่งแถว column vector มีหนึ่งคอลัมน์ ตัวเลขเหมือนกันได้ แต่ shape ต่างกัน และ shape กำหนดว่าการคูณจะให้ตัวเลขเดียวหรือให้ตาราง</dd>
+<dt>Shape</dt>
+<dd>ขนาดเขียนเป็น “จำนวนแถว × จำนวนคอลัมน์” เช่น $3\times1$ ใช้ตรวจว่าคูณกันได้หรือไม่ และผลลัพธ์จะมีขนาดเท่าไร</dd>
+<dt>Transpose</dt>
+<dd>การพลิกแถวเป็นคอลัมน์ เขียน $\mathbf w^{\mathsf T}$ ช่องที่ $i,j$ ย้ายไปอยู่ช่อง $j,i$ ลำดับของสินทรัพย์ไม่เปลี่ยน ใช้เปลี่ยน column vector ให้เป็นแถวก่อนคูณ</dd>
+<dt>Dot product</dt>
+<dd>คูณช่องที่ตรงกันแล้วบวกทั้งหมด ได้ตัวเลขเดียว ใช้หาผลตอบแทนพอร์ต มูลค่าพอร์ต และต้นทุนของพอร์ต</dd>
+<dt>Outer product</dt>
+<dd>คอลัมน์คูณแถว ได้ตารางของผลคูณทุกคู่ข้ามช่อง ไม่ใช่ผลตอบแทนพอร์ต จะได้ใช้จริงตอนสร้าง covariance matrix ในบทถัดไป</dd>
+<dt>NAV, net และ gross exposure</dt>
+<dd>NAV คือมูลค่าสุทธิของพอร์ตรวมเงินสด net คือผลรวมมูลค่าสถานะแบบมีเครื่องหมาย gross คือผลรวมขนาดของทุกสถานะไม่สนเครื่องหมาย ใช้บอกว่าพอร์ตเอียงทางไหนและใหญ่แค่ไหน</dd>
+</dl>
+</details>
+
+<details class="symbols">
+<summary>สัญลักษณ์และหน่วย</summary>
+<table>
+<thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>AAPL</td><td>0.50</td><td>0.012</td><td>12.5 ล้าน USD</td></tr>
-<tr><td>2</td><td>JPM</td><td>0.30</td><td>−0.006</td><td>7.5 ล้าน USD</td></tr>
-<tr><td>3</td><td>NVDA</td><td>−0.20</td><td>0.004</td><td>−5 ล้าน USD</td></tr>
+<tr><td>$N$</td><td>NAV ตอนเริ่มงวด</td><td>ดอลลาร์</td></tr>
+<tr><td>$d_i$, $C$</td><td>มูลค่าสถานะที่มีเครื่องหมายของสินทรัพย์ $i$ และเงินสด</td><td>ดอลลาร์</td></tr>
+<tr><td>$\mathbf w$, $w_c$</td><td>น้ำหนักต่อ NAV ของหุ้น และของเงินสด</td><td>ไม่มีหน่วย</td></tr>
+<tr><td>$\mathbf r$, $r_c$</td><td>ผลตอบแทนของหุ้นแต่ละตัวในงวดเดียวกัน และของเงินสด</td><td>เศษส่วน (0.012 คือ 1.2%)</td></tr>
+<tr><td>$\mathbf n$, $\mathbf p$</td><td>จำนวนหุ้นที่มีเครื่องหมาย และราคาต่อหุ้น</td><td>หุ้น, ดอลลาร์ต่อหุ้น</td></tr>
+<tr><td>$S$, $\boldsymbol\theta$</td><td>ตาราง payoff (แถวคือสถานการณ์ คอลัมน์คือสินทรัพย์) และจำนวนที่ถือของแต่ละสินทรัพย์</td><td>ดอลลาร์ต่อหน่วย, หน่วย</td></tr>
+</tbody>
+</table>
+</details>
+
+<section class="formula">
+<h4>ขั้นที่ 1 — ตั้งชื่อช่องและหน่วยก่อนใส่ตัวเลข</h4>
+<p>ก่อนคูณอะไร ต้องตกลงให้ได้ก่อนว่าช่องไหนคือหุ้นตัวไหน ใช้ข้อมูลวันไหน และวัดเป็นหน่วยอะไร มิฉะนั้นเราจะคูณตัวเลขที่ไม่ได้เป็นคู่กันโดยไม่รู้ตัว</p>
+<div class="table-wrap"><table>
+<thead><tr><th>ช่อง</th><th>สินทรัพย์</th><th>มูลค่าสถานะ (ล้านดอลลาร์)</th><th>น้ำหนัก $w_i$</th><th>ผลตอบแทนวันนี้ $r_i$</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>AAPL</td><td>12.5</td><td>0.50</td><td>0.012</td></tr>
+<tr><td>2</td><td>JPM</td><td>7.5</td><td>0.30</td><td>−0.006</td></tr>
+<tr><td>3</td><td>NVDA (short)</td><td>−5</td><td>−0.20</td><td>0.004</td></tr>
+<tr><td>—</td><td>เงินสด</td><td>10</td><td>0.40</td><td>0</td></tr>
 </tbody></table></div>
-<p>น้ำหนักติดลบหมายถึง short: เมื่อราคาหุ้นขึ้น มูลค่าที่ต้องซื้อคืนเพิ่มและพอร์ตเสียเงิน ในโมเดลบัญชีนี้มีเงินสดสุทธิอีก 10 ล้าน USD เพื่อให้ NAV เท่ากับ 25 ล้าน ส่วนหนึ่งของเงินสดอาจต้องวางเป็นหลักประกัน จึงไม่ใช่เงินที่นำไปใช้ได้อย่างอิสระทั้งหมด</p>
-</section>
-<section class="formula">
-<h2>2. แถวกับคอลัมน์ต่างกันตรง shape</h2>
-<p>Column vector มีหนึ่งคอลัมน์ ส่วน row vector มีหนึ่งแถว ตัวเลขเรียงเหมือนเดิม แต่รูปร่างต่างกัน เราจะเก็บน้ำหนักและ return เป็นคอลัมน์ แล้วใช้เครื่องหมาย transpose เมื่ออยากเปลี่ยนเป็นแถว:</p>
 <div class="math">\[
 \begin{aligned}
-\mathbf w&=\begin{bmatrix}0.50\\0.30\\-0.20\end{bmatrix},\\
-\mathbf r&=\begin{bmatrix}0.012\\-0.006\\0.004\end{bmatrix},\\
-\mathbf w^{\mathsf T}&=\begin{bmatrix}0.50&0.30&-0.20\end{bmatrix}.
+w_i&=\frac{d_i}{N},\\
+w_{\text{AAPL}}&=\frac{12.5}{25}=0.50,\\
+w_{\text{NVDA}}&=\frac{-5}{25}=-0.20,\\
+w_c&=1-(0.50+0.30-0.20)\\
+&=0.40,\\
+\mathbf w&=\begin{bmatrix}0.50\\0.30\\-0.20\end{bmatrix},\quad
+\mathbf r=\begin{bmatrix}0.012\\-0.006\\0.004\end{bmatrix}.
 \end{aligned}
 \]</div>
-<p>ทั้ง $\mathbf w$ และ $\mathbf r$ มี shape $3\times1$ ส่วน $\mathbf w^{\mathsf T}$ มี shape $1\times3$ โดยเขียน “จำนวนแถว × จำนวนคอลัมน์” เสมอ Transpose เปลี่ยนแถวเป็นคอลัมน์ ไม่ได้สลับลำดับ AAPL, JPM, NVDA</p>
+<div class="reading">
+<p>น้ำหนักคือมูลค่าสถานะหารด้วย NAV ทั้งพอร์ต ไม่ใช่หารด้วยมูลค่าของส่วนหุ้น เครื่องหมายลบหมายถึง short: ยืมหุ้นมาขายไว้ ถ้าราคาขึ้นเราต้องซื้อคืนแพงขึ้นจึงเสียเงิน เงินสดเป็นช่องที่ทำให้น้ำหนักทุกช่องรวมกันได้หนึ่งพอดี เพราะทุกดอลลาร์ของ NAV ต้องอยู่ที่ใดที่หนึ่ง บรรทัดสุดท้ายวางน้ำหนักกับผลตอบแทนเป็นคอลัมน์ในลำดับ AAPL, JPM, NVDA เดียวกัน และแปลงเปอร์เซ็นต์เป็นเศษส่วนแล้ว (1.2% เป็น 0.012) ก่อนจะคูณอะไรทั้งสิ้น</p>
+<p>เงินสดบางส่วนในพอร์ตที่มี short มักต้องวางเป็นหลักประกันกับนายหน้า จึงใช้ได้ไม่อิสระทั้งก้อน แต่ในการนับ NAV มันยังเป็นของพอร์ต</p>
+</div>
+</section>
+
+<section class="formula">
+<h4>ขั้นที่ 2 — แถว คอลัมน์ และ transpose</h4>
+<p>ตัวเลขชุดเดียวกันวางได้สองแบบ: ตั้งเป็นคอลัมน์หรือนอนเป็นแถว ความต่างนี้ดูเล็กน้อย แต่ขั้นถัดไปจะเห็นว่ามันกำหนดว่าการคูณจะได้ตัวเลขเดียวหรือได้ตารางทั้งตาราง</p>
 <div class="math">\[
 \begin{aligned}
+\mathbf w^{\mathsf T}&=\begin{bmatrix}0.50&amp;0.30&amp;-0.20\end{bmatrix},\\
 (A^{\mathsf T})_{ij}&=A_{ji},\\
-((A^{\mathsf T})^{\mathsf T})_{ij}&=(A^{\mathsf T})_{ji}=A_{ij}.
+A&=\begin{bmatrix}2&amp;3&amp;7\\1&amp;6&amp;5\end{bmatrix},\\
+A^{\mathsf T}&=\begin{bmatrix}2&amp;1\\3&amp;6\\7&amp;5\end{bmatrix}.
 \end{aligned}
 \]</div>
-<p>บรรทัดที่สองอธิบายว่าทำ transpose สองครั้งได้ของเดิม เก็บน้ำหนักเป็นแถวตั้งแต่ต้นก็ได้ แต่ต้องระบุ convention ให้ชัด ไม่มีข้อบังคับว่าข้อมูลน้ำหนักต้องเป็น row vector ในทุกโปรแกรม</p>
+<div class="reading">
+<p>$\mathbf w$ มี shape $3\times1$ ส่วน $\mathbf w^{\mathsf T}$ มี shape $1\times3$ ตัวเลขเรียงเหมือนเดิมทุกตัว transpose แค่สลับเลขแถวกับเลขคอลัมน์ของทุกช่อง: ช่องแถว $j$ คอลัมน์ $i$ ย้ายไปอยู่แถว $i$ คอลัมน์ $j$ ตัวอย่าง matrix $A$ ขนาด $2\times3$ จึงกลายเป็น $3\times2$ แถวแรก $(2,3,7)$ กลายเป็นคอลัมน์แรก</p>
+<p>ทำ transpose สองครั้งได้ของเดิม เพราะสลับดัชนีสองรอบก็กลับที่เดิม $((A^{\mathsf T})^{\mathsf T})_{ij}=(A^{\mathsf T})_{ji}=A_{ij}$ หนังสือเล่มนี้เก็บ vector เป็นคอลัมน์เสมอ และใช้ $^{\mathsf T}$ เมื่ออยากได้แถว ซอฟต์แวร์บางตัวใช้แถวเป็นค่าตั้งต้น ไม่ผิด แต่ต้องรู้ว่าใช้แบบไหนก่อนต่อสูตร</p>
+</div>
 </section>
+
+<figure class="plot">
+<h4>รูป — transpose พลิกทิศ แต่ลำดับช่องอยู่ที่เดิม</h4>
+<svg viewBox="0 0 480 220" role="img" aria-label="คอลัมน์สามช่องสีน้ำเงิน ส้ม ม่วง ของ AAPL JPM NVDA ถูกพลิกเป็นแถวสามช่องที่เรียงสีเดิมจากซ้ายไปขวา" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a61t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#181818"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <rect x="60" y="40" width="80" height="40" fill="#2455d6" fill-opacity="0.18" stroke="#2455d6" stroke-width="2.5"/>
+    <rect x="60" y="80" width="80" height="40" fill="#a65f00" fill-opacity="0.18" stroke="#a65f00" stroke-width="2.5"/>
+    <rect x="60" y="120" width="80" height="40" fill="#6d28d9" fill-opacity="0.18" stroke="#6d28d9" stroke-width="2.5"/>
+    <text x="100" y="65" text-anchor="middle">AAPL</text>
+    <text x="100" y="105" text-anchor="middle">JPM</text>
+    <text x="100" y="145" text-anchor="middle">NVDA</text>
+    <text x="100" y="188" text-anchor="middle">w : 3×1</text>
+    <line x1="160" y1="100" x2="234" y2="100" stroke="#181818" stroke-width="2.5" marker-end="url(#a61t)"/>
+    <text x="197" y="88" text-anchor="middle" font-size="14">transpose</text>
+    <rect x="246" y="80" width="72" height="40" fill="#2455d6" fill-opacity="0.18" stroke="#2455d6" stroke-width="2.5"/>
+    <rect x="318" y="80" width="72" height="40" fill="#a65f00" fill-opacity="0.18" stroke="#a65f00" stroke-width="2.5"/>
+    <rect x="390" y="80" width="72" height="40" fill="#6d28d9" fill-opacity="0.18" stroke="#6d28d9" stroke-width="2.5"/>
+    <text x="282" y="105" text-anchor="middle">AAPL</text>
+    <text x="354" y="105" text-anchor="middle">JPM</text>
+    <text x="426" y="105" text-anchor="middle">NVDA</text>
+    <text x="354" y="150" text-anchor="middle">wᵀ : 1×3</text>
+  </g>
+</svg>
+<figcaption>ซ้ายคือ $\mathbf w$ ที่ตั้งเป็นคอลัมน์ ขวาคือ $\mathbf w^{\mathsf T}$ ที่นอนเป็นแถว สีของช่องบอกว่าเป็นหุ้นตัวไหน ช่องบนสุดกลายเป็นช่องซ้ายสุด ลำดับ AAPL, JPM, NVDA ไม่เปลี่ยน สิ่งที่เปลี่ยนคือ shape จาก $3\times1$ เป็น $1\times3$</figcaption>
+</figure>
+
 <section class="formula">
-<h2>3. คูณแถวกับคอลัมน์เพื่อรวมผลที่จับคู่แล้ว</h2>
-<p>นิยามผลคูณของแถวกับคอลัมน์ที่มีจำนวนช่องเท่ากันคือ คูณช่องที่ตรงกันแล้วบวก เรียกว่า dot product การคูณแบบนี้ให้ตัวเลขเดียว ไม่ใช่รายการของผลคูณสามตัว:</p>
+<h4>ขั้นที่ 3 — สูตรผลตอบแทนพอร์ตมาจากไหน</h4>
+<p>เราอยากได้ผลตอบแทนพอร์ตเป็น “น้ำหนักคูณผลตอบแทนแล้วบวก” แต่ต้องพิสูจน์จากนิยามของผลตอบแทนก่อน คือ (มูลค่าปลายงวด − มูลค่าต้นงวด) หารด้วยมูลค่าต้นงวด ให้สถานะหุ้นแต่ละตัวโตเป็น $d_i(1+r_i)$ และเงินสดโตเป็น $C(1+r_c)$</p>
+<div class="math">\[
+\begin{aligned}
+V_1&=\sum_i d_i(1+r_i)+C(1+r_c),\\
+N&=\sum_i d_i+C,\\
+R_p=\frac{V_1-N}{N}&=\sum_i\frac{d_i}{N}\,r_i+\frac{C}{N}\,r_c\\
+&=\mathbf w^{\mathsf T}\mathbf r+w_cr_c.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>ท่าสำคัญอยู่บรรทัดที่สาม เมื่อลบ $N$ ออกจาก $V_1$ ส่วน “1” ใน $(1+r_i)$ ของทุกช่องรวมกันได้ $\sum_i d_i+C=N$ พอดี จึงหักกันหมด เหลือแต่ส่วนที่โตขึ้น $d_ir_i$ แล้วหารด้วย $N$ ทีละพจน์ได้น้ำหนักคูณผลตอบแทน ไม่ต้องสมมติอะไรเพิ่ม และใช้ได้กับสถานะ short ด้วย เพราะ $d_i$ ติดลบได้ ผลรวม $\sum_iw_ir_i$ คือนิยามของแถวคูณคอลัมน์ $\mathbf w^{\mathsf T}\mathbf r$</p>
+</div>
 <div class="math">\[
 \begin{aligned}
 \mathbf w^{\mathsf T}\mathbf r
- &=\sum_{i=1}^3w_ir_i\\
- &=0.50(0.012)+0.30(-0.006)-0.20(0.004)\\
- &=0.0060-0.0018-0.0008\\
- &=0.0034=0.34\%.
-\end{aligned}
-\]</div>
-<p>มูลค่าสถานะของหุ้น $i$ คือ $Nw_i$ ดังนั้นการเปลี่ยนมูลค่าจากราคาหุ้นคือ $Nw_ir_i$ รวมทุกหุ้นแล้วดึง $N$ ออกมาได้ $N\mathbf w^{\mathsf T}\mathbf r$ ถ้ารวมเงินสดที่มีน้ำหนัก $w_c$ และ return $r_c$ ด้วย จะได้</p>
-<div class="math">\[
-\begin{aligned}
-R_p&=\mathbf w^{\mathsf T}\mathbf r+w_cr_c,\\
-w_c&=1-\sum_iw_i=0.40,\qquad r_c=0,\\
+&=0.50(0.012)+0.30(-0.006)\\
+&\quad-0.20(0.004)\\
+&=0.0060-0.0018-0.0008\\
+&=0.0034,\\
+R_p&=0.0034+0.40(0)=0.34\%,\\
 \Delta V&=NR_p=25{,}000{,}000(0.0034)\\
- &=85{,}000\ \text{USD}.
+&=85{,}000.
 \end{aligned}
 \]</div>
-<p>นี่คือคำตอบของโจทย์ต้นบท เครื่องหมายลบของ short มีอยู่ในน้ำหนักแล้ว จึงไม่ต้องกลับเครื่องหมาย return ของ NVDA ซ้ำอีกครั้ง ผลตอบแทน 0.34% เป็นของ NAV ทั้งพอร์ต ไม่ใช่ค่าเฉลี่ยธรรมดาของ return สามหุ้น</p>
-<figure class="plot">
-<img src="../figures/6.1-1.svg" alt="ผลตอบแทนพอร์ตเกิดจากส่วนร่วมบวก0.60 ลบ0.18 และลบ0.08 จุดเปอร์เซ็นต์ รวมบวก0.34เปอร์เซ็นต์" loading="lazy">
-<figcaption>รูป 6.1a รวม contribution ทีละตัว: +0.60, −0.18 และ −0.08 จุดเปอร์เซ็นต์ ตัวเลขบนแท่งคือส่วนร่วมต่อพอร์ต ไม่ใช่ return ของหุ้นแต่ละตัว</figcaption>
-</figure>
+<div class="reading">
+<p>นี่คือคำตอบของโจทย์ต้นหน้า: กำไร \$85,000 แยกเป็นสามก้อนตามรูปน้ำตกด้านบน: \$150,000, −\$45,000 และ −\$20,000 เครื่องหมายลบของ short อยู่ในน้ำหนักแล้ว จึงไม่ต้องกลับเครื่องหมายผลตอบแทนของ NVDA อีกรอบ และ 0.34% เป็นผลตอบแทนของ NAV ทั้งก้อน ไม่ใช่ค่าเฉลี่ยของผลตอบแทนสามหุ้น ซึ่งเท่ากับ $(1.2-0.6+0.4)/3\approx0.33\%$ บังเอิญใกล้กันแต่คนละความหมาย</p>
+</div>
 </section>
+
 <section class="formula">
-<h2>4. สลับลำดับการคูณแล้วได้คำตอบคนละชนิด</h2>
-<p>กฎตรวจ shape คือมิติด้านในต้องเท่ากัน ส่วนมิติด้านนอกบอก shape ของคำตอบ ดังนั้น row × column ให้ $1\times1$ แต่ column × row ให้ $3\times3$:</p>
+<h4>ขั้นที่ 4 — มิติด้านในต้องเท่ากัน และลำดับการคูณเปลี่ยนชนิดคำตอบ</h4>
+<p>แถวคูณคอลัมน์เป็นกรณีเล็กที่สุดของการคูณ matrix กฎทั่วไปคือ ช่องแถว $i$ คอลัมน์ $j$ ของผลคูณ เท่ากับแถว $i$ ของตัวหน้า dot กับคอลัมน์ $j$ ของตัวหลัง จึงคูณได้เฉพาะเมื่อแถวของตัวหน้ายาวเท่าคอลัมน์ของตัวหลัง</p>
 <div class="math">\[
 \begin{aligned}
-(1\times3)(3\times1)&\longrightarrow1\times1,\\
-(3\times1)(1\times3)&\longrightarrow3\times3,\\
+c_{ij}&=\sum_{k=1}^{d}a_{ik}b_{kj},\\
+(m\times d)(d\times p)&\to m\times p,\\
+(1\times3)(3\times1)&\to1\times1,\\
+(3\times1)(1\times3)&\to3\times3.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>เลขตัวในสองตัว (ตัว $d$) ต้องเท่ากัน เพราะต้องมีคู่ให้จับครบทุกช่อง ส่วนเลขตัวนอกสองตัวบอก shape ของคำตอบ แถวคูณคอลัมน์จึงได้ตัวเลขเดียว แต่ถ้าสลับเป็นคอลัมน์คูณแถว มิติด้านในคือ 1 กับ 1 ซึ่งเท่ากัน คูณได้ แต่ได้ตาราง $3\times3$ ของผลคูณทุกคู่ข้ามหุ้น เรียกว่า outer product</p>
+</div>
+<div class="math">\[
+\begin{aligned}
 \mathbf r\mathbf w^{\mathsf T}
- &=\begin{bmatrix}
-0.0060&0.0036&-0.0024\\
--0.0030&-0.0018&0.0012\\
-0.0020&0.0012&-0.0008
-\end{bmatrix}.
+&=\begin{bmatrix}
+0.0060&amp;0.0036&amp;-0.0024\\
+-0.0030&amp;-0.0018&amp;0.0012\\
+0.0020&amp;0.0012&amp;-0.0008
+\end{bmatrix},\\
+\begin{bmatrix}2&amp;3&amp;7\\1&amp;6&amp;5\end{bmatrix}
+\begin{bmatrix}2\\6\\4\end{bmatrix}
+&=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}
+=\begin{bmatrix}50\\58\end{bmatrix}.
 \end{aligned}
 \]</div>
-<p>ตารางนี้เรียกว่า outer product แต่ละช่องคือ $r_iw_j$ จึงมีการจับคู่ข้ามหุ้นด้วย ไม่ใช่ return รวมของพอร์ต การคูณถูกตาม shape ไม่ได้แปลว่าตอบคำถามที่ต้องการเสมอ ส่วน row × row ใช้กฎ matrix multiplication โดยตรงไม่ได้ในกรณีนี้ เพราะมิติด้านในเป็น 3 กับ 1</p>
-<p>ถ้าทั้งสอง vector ไม่เป็นศูนย์ outer product มี rank หนึ่ง: ทุกคอลัมน์เป็นเพียง $\mathbf r$ ที่คูณด้วยน้ำหนักหนึ่งตัว หาก vector ใดเป็นศูนย์ ผลลัพธ์เป็น matrix ศูนย์และมี rank ศูนย์ แนวคิดเรื่องทิศทางซ้ำนี้จะชัดขึ้นในหัวข้อ 6.2</p>
+<div class="reading">
+<p>ช่องแถว $i$ คอลัมน์ $j$ ของ outer product คือ $r_iw_j$ เช่นช่องบนสุดกลาง $0.012\times0.30=0.0036$ เป็นผลตอบแทน AAPL คูณน้ำหนัก JPM ซึ่งไม่มีความหมายทางบัญชี มีแต่แนวทแยง $0.0060,-0.0018,-0.0008$ ที่เป็นส่วนร่วมของจริง และผลรวมแนวทแยงคือ 0.0034 เท่ากับ dot product พอดี การคูณที่ shape ถูกจึงยังอาจตอบคนละคำถาม</p>
+<p>ตัวอย่างที่สองคือ matrix $2\times3$ คูณคอลัมน์ $3\times1$ ได้ $2\times1$: แต่ละแถว dot กับคอลัมน์แยกกัน ถ้าให้แถวของ matrix เป็นผลตอบแทนหนึ่งวันของหุ้นสามตัว เช่น $R$ ที่แถวแรกคือ $(0.012,-0.006,0.004)$ และแถวที่สองคือ $(-0.010,0.005,-0.020)$ แล้วคูณ $\mathbf w$ จะได้ผลตอบแทนพอร์ตสองวันพร้อมกัน: วันแรก 0.0034 วันที่สอง $0.50(-0.010)+0.30(0.005)-0.20(-0.020)=0.0005$ โดยสมมติว่าปรับพอร์ตกลับน้ำหนักเดิมทุกเช้า ถ้าถือจำนวนหุ้นคงที่ น้ำหนักจะลอยไปตามราคา และใช้ $\mathbf w$ ชุดเดิมไม่ได้</p>
+</div>
 </section>
-<section class="example">
-<h2>5. shape ตรงแล้ว ยังต้องตรวจลำดับและหน่วย</h2>
-<p>สมมติข้อมูล return ส่งมาในลำดับ NVDA, JPM, AAPL แต่เราใช้กับน้ำหนักเดิมโดยไม่จัดลำดับใหม่ โปรแกรมยังคูณ vector สามช่องได้ แต่จะคำนวณคนละพอร์ต:</p>
-<div class="math">\[
-\begin{aligned}
-R_{\text{wrong}}&=0.50(0.004)+0.30(-0.006)-0.20(0.012)\\
- &=-0.0022=-0.22\%,\\
-N R_{\text{wrong}}&=-55{,}000\ \text{USD}.
-\end{aligned}
-\]</div>
-<div class="table-wrap"><table>
-<thead><tr><th>สิ่งที่ตรวจ</th><th>ตัวอย่างความผิดที่ shape ไม่จับให้</th></tr></thead>
-<tbody>
-<tr><td>ชื่อและลำดับสินทรัพย์</td><td>เอา return ของ NVDA ไปคูณน้ำหนัก AAPL</td></tr>
-<tr><td>ช่วงเวลา</td><td>ผสมน้ำหนักปลายวันกับ return ที่เกิดก่อนซื้อ</td></tr>
-<tr><td>หน่วย</td><td>ใช้ 1.2 แทน 0.012 ทำให้ผลมากขึ้น 100 เท่า</td></tr>
-<tr><td>นิยาม return</td><td>บางตัวรวมปันผล บางตัวใช้แค่การเปลี่ยนราคา</td></tr>
-<tr><td>ข้อมูลขาด</td><td>แทนราคาที่ไม่มีด้วยศูนย์จนดูเหมือนราคาไม่เปลี่ยน</td></tr>
-</tbody></table></div>
-<p>ในงานจริงควรจับคู่ด้วยรหัสสินทรัพย์และเวลาอย่างชัดเจน ก่อนแปลงเป็นชุดตัวเลขเพื่อคำนวณ รายการยาวเท่ากันเป็นเพียงเงื่อนไขจำเป็นข้อหนึ่ง ไม่ใช่หลักฐานว่าข้อมูลเข้าคู่กันแล้ว</p>
-</section>
+
+<figure class="plot">
+<h4>รูป — shape ของผลคูณสามแบบ</h4>
+<svg viewBox="0 0 480 290" role="img" aria-label="บนซ้าย แถวสามช่องคูณคอลัมน์สามช่องได้ช่องเดียว บนขวา คอลัมน์สามช่องคูณแถวสามช่องได้ตารางสามคูณสาม ล่าง matrix สองแถวสามคอลัมน์คูณคอลัมน์สามช่องได้คอลัมน์สองช่อง หนึ่งช่องต่อหนึ่งวัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <text x="20" y="22">แถว × คอลัมน์</text>
+    <g stroke-width="2">
+      <rect x="20" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="44" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="68" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="120" y="36" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="120" y="60" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="120" y="84" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="176" y="60" width="24" height="24" fill="#047857" fill-opacity="0.35" stroke="#047857"/>
+    </g>
+    <text x="106" y="78" text-anchor="middle">×</text>
+    <text x="160" y="78" text-anchor="middle">=</text>
+    <text x="56" y="132" text-anchor="middle" font-size="14">1×3</text>
+    <text x="132" y="132" text-anchor="middle" font-size="14">3×1</text>
+    <text x="188" y="132" text-anchor="middle" font-size="14">1×1</text>
+
+    <text x="250" y="22">คอลัมน์ × แถว</text>
+    <g stroke-width="2">
+      <rect x="250" y="36" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="250" y="60" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="250" y="84" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="300" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="324" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="348" y="60" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="398" y="36" width="72" height="72" fill="#6d28d9" fill-opacity="0.15" stroke="#6d28d9"/>
+      <line x1="422" y1="36" x2="422" y2="108" stroke="#6d28d9"/>
+      <line x1="446" y1="36" x2="446" y2="108" stroke="#6d28d9"/>
+      <line x1="398" y1="60" x2="470" y2="60" stroke="#6d28d9"/>
+      <line x1="398" y1="84" x2="470" y2="84" stroke="#6d28d9"/>
+      <rect x="398" y="36" width="24" height="24" fill="#047857" fill-opacity="0.35" stroke="none"/>
+      <rect x="422" y="60" width="24" height="24" fill="#047857" fill-opacity="0.35" stroke="none"/>
+      <rect x="446" y="84" width="24" height="24" fill="#047857" fill-opacity="0.35" stroke="none"/>
+    </g>
+    <text x="287" y="78" text-anchor="middle">×</text>
+    <text x="385" y="78" text-anchor="middle">=</text>
+    <text x="262" y="132" text-anchor="middle" font-size="14">3×1</text>
+    <text x="336" y="132" text-anchor="middle" font-size="14">1×3</text>
+    <text x="434" y="132" text-anchor="middle" font-size="14">3×3</text>
+
+    <line x1="20" y1="150" x2="460" y2="150" stroke="#d7dce3" stroke-width="1.5"/>
+    <text x="20" y="176">matrix × คอลัมน์ (หนึ่งแถวต่อหนึ่งวัน)</text>
+    <g stroke-width="2">
+      <rect x="20" y="196" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="44" y="196" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="68" y="196" width="24" height="24" fill="#a65f00" fill-opacity="0.2" stroke="#a65f00"/>
+      <rect x="20" y="220" width="24" height="24" fill="#a65f00" fill-opacity="0.45" stroke="#a65f00"/>
+      <rect x="44" y="220" width="24" height="24" fill="#a65f00" fill-opacity="0.45" stroke="#a65f00"/>
+      <rect x="68" y="220" width="24" height="24" fill="#a65f00" fill-opacity="0.45" stroke="#a65f00"/>
+      <rect x="120" y="184" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="120" y="208" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="120" y="232" width="24" height="24" fill="#2455d6" fill-opacity="0.2" stroke="#2455d6"/>
+      <rect x="176" y="196" width="24" height="24" fill="#047857" fill-opacity="0.2" stroke="#047857"/>
+      <rect x="176" y="220" width="24" height="24" fill="#047857" fill-opacity="0.45" stroke="#047857"/>
+    </g>
+    <text x="106" y="226" text-anchor="middle">×</text>
+    <text x="160" y="226" text-anchor="middle">=</text>
+    <line x1="204" y1="208" x2="232" y2="208" stroke="#5b6472" stroke-width="1.5"/>
+    <line x1="204" y1="232" x2="232" y2="232" stroke="#5b6472" stroke-width="1.5"/>
+    <text x="238" y="213">วันที่ 1 → 0.34%</text>
+    <text x="238" y="237">วันที่ 2 → 0.05%</text>
+    <text x="56" y="276" text-anchor="middle" font-size="14">2×3</text>
+    <text x="132" y="276" text-anchor="middle" font-size="14">3×1</text>
+    <text x="188" y="276" text-anchor="middle" font-size="14">2×1</text>
+  </g>
+</svg>
+<figcaption>สีน้ำเงินคือน้ำหนัก สีส้มคือผลตอบแทน สีเขียวคือคำตอบที่ใช้ได้ บนซ้าย: แถวยาว 3 พบคอลัมน์ยาว 3 จับคู่ได้ครบ ได้ช่องเดียวคือผลตอบแทนพอร์ต บนขวา: สลับลำดับแล้วได้ตาราง $3\times3$ สีม่วง มีแต่แนวทแยงสีเขียวที่เป็นส่วนร่วมของจริง ล่าง: matrix ผลตอบแทนสองวันคูณน้ำหนัก ได้ผลตอบแทนพอร์ตวันละหนึ่งช่อง (แถวสีเข้มให้ช่องสีเข้ม)</figcaption>
+</figure>
+
 <section class="formula">
-<h2>6. จากน้ำหนักสู่ exposure และ NAV</h2>
-<p>Dollar exposure คือมูลค่าสถานะที่มีเครื่องหมาย Net exposure บวกตามเครื่องหมาย ส่วน gross exposure บวกค่าสัมบูรณ์ จึงแยกกันได้ว่า “สุทธิเอียงเท่าไร” กับ “ถือสถานะรวมใหญ่เท่าไร”:</p>
+<h4>ขั้นที่ 5 — มองตามคอลัมน์: เงินที่พอร์ตได้ในแต่ละสถานการณ์</h4>
+<p>matrix คูณคอลัมน์อ่านได้สองแบบ แบบแถวคือ dot product ทีละแถว อย่างที่เพิ่งทำ แบบคอลัมน์คือหยิบคอลัมน์ของแต่ละสินทรัพย์มาคูณจำนวนที่ถือแล้วบวก แบบหลังเป็นมุมมองหลักของการ hedge และของหน้าถัดไป ตัวอย่างนี้มีสองสถานการณ์ปีหน้า: ราคาขึ้นหรือราคาลง หุ้นวันนี้ราคา \$100 จะมีค่า \$120 หรือ \$80 ส่วน bond วันนี้ราคา \$100 จ่าย \$105 ทั้งสองกรณี เราถือหุ้น 10 หน่วยและ bond 5 หน่วย</p>
 <div class="math">\[
 \begin{aligned}
-\mathbf d=N\mathbf w
- &=\begin{bmatrix}12{,}500{,}000\\7{,}500{,}000\\-5{,}000{,}000\end{bmatrix}\ \text{USD},\\
-\text{Net}&=\sum_i d_i=15{,}000{,}000\ \text{USD},\\
-\text{Gross}&=\sum_i|d_i|=25{,}000{,}000\ \text{USD},\\
-\text{NAV}&=\sum_i d_i+\text{cash}\\
- &=15{,}000{,}000+10{,}000{,}000\\
- &=25{,}000{,}000\ \text{USD}.
+S&=\begin{bmatrix}120&amp;105\\80&amp;105\end{bmatrix},\quad
+\boldsymbol\theta=\begin{bmatrix}10\\5\end{bmatrix},\\
+\mathbf p^{\mathsf T}\boldsymbol\theta&=100(10)+100(5)=1{,}500,\\
+S\boldsymbol\theta&=\begin{bmatrix}120(10)+105(5)\\80(10)+105(5)\end{bmatrix}
+=\begin{bmatrix}1{,}725\\1{,}325\end{bmatrix},\\
+S\boldsymbol\theta&=10\begin{bmatrix}120\\80\end{bmatrix}
++5\begin{bmatrix}105\\105\end{bmatrix}.
 \end{aligned}
 \]</div>
-<figure class="plot">
-<img src="../figures/6.1-2.svg" alt="มูลค่าสถานะAAPL12.5ล้าน JPM7.5ล้าน และNVDAติดลบ5ล้านUSD" loading="lazy">
-<figcaption>รูป 6.1b น้ำหนักแปลงเป็น USD โดยคูณ NAV เดียวกัน แท่งติดลบแสดงภาระจาก short ไม่ใช่เงินสดที่หายไปทันที</figcaption>
-</figure>
-<figure class="plot">
-<img src="../figures/6.1-3.svg" alt="net exposure15ล้านและgross exposure25ล้านUSD" loading="lazy">
-<figcaption>รูป 6.1c เปรียบเทียบ net กับ gross notional คำว่า deployed capital ในหัวรูปไม่ควรอ่านเป็นเงินสดที่ใช้จริง: gross ไม่ใช่ cash, margin หรือประมาณการความเสียหายสูงสุด</figcaption>
-</figure>
-<p>ถ้าหุ้นทั้งสามขึ้นพร้อมกัน 1% พอร์ตหุ้นจะได้ $0.60\times1\%=0.60\%$ ของ NAV แต่ตลาดจริงไม่ได้บังคับให้ทุกหุ้นขยับเท่ากัน Net ศูนย์จึงไม่ใช่หลักประกันว่าไม่มี market risk และ gross เท่ากันก็ไม่ได้หมายความว่าสองพอร์ตมีความผันผวนเท่ากัน</p>
+<div class="reading">
+<p>แถวของ $S$ คือสถานการณ์ คอลัมน์คือสินทรัพย์ ต้นทุนวันนี้คือราคาคูณจำนวนแล้วบวก ได้ \$1,500 อ่านแบบแถว: ถ้าราคาขึ้น พอร์ตจ่าย $120(10)+105(5)=1{,}725$ ดอลลาร์ ถ้าราคาลงจ่าย 1,325 อ่านแบบคอลัมน์ (บรรทัดสุดท้าย): payoff ของพอร์ตคือ 10 ชุดของคอลัมน์หุ้นบวก 5 ชุดของคอลัมน์ bond ทั้งสองแบบให้ตัวเลขเดียวกันเพราะเป็นผลบวกชุดเดียวกันที่จัดกลุ่มต่างกัน</p>
+<p>มุมมองคอลัมน์ทำให้ payoff กลายเป็นจุดในระนาบที่แกนหนึ่งคือ “เงินที่ได้ถ้าราคาขึ้น” อีกแกนคือ “เงินที่ได้ถ้าราคาลง” ดังรูปถัดไป คำถามว่าพอร์ตแบบไหนสร้างได้บ้างจากหุ้นกับ bond จึงกลายเป็นคำถามว่าลูกศรสองเส้นนี้ผสมกันไปถึงจุดไหนได้บ้าง</p>
+</div>
 </section>
+
+<figure class="plot">
+<h4>รูป — payoff ของพอร์ตคือลูกศรหุ้นต่อด้วยลูกศร bond</h4>
+<svg viewBox="0 0 480 330" role="img" aria-label="ระนาบสองแกน แกนนอนคือเงินที่ได้ถ้าราคาขึ้น แกนตั้งคือเงินที่ได้ถ้าราคาลง ลูกศรน้ำเงิน 10 หน่วยหุ้นไปถึง 1200 กับ 800 ต่อด้วยลูกศรส้ม 5 หน่วย bond ไปถึง 1725 กับ 1325 ซึ่งเป็นปลายลูกศรเขียวของพอร์ต" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a61b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a61o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a61g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#047857"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="150" y1="290" x2="150" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="240" y1="290" x2="240" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="330" y1="290" x2="330" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="60" y1="200" x2="440" y2="200" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="60" y1="110" x2="440" y2="110" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="60" y1="290" x2="440" y2="290" stroke="#5b6472" stroke-width="2"/>
+    <line x1="60" y1="290" x2="60" y2="30" stroke="#5b6472" stroke-width="2"/>
+    <text x="60" y="308" text-anchor="middle" font-size="14">0</text>
+    <text x="150" y="308" text-anchor="middle" font-size="14">500</text>
+    <text x="240" y="308" text-anchor="middle" font-size="14">1,000</text>
+    <text x="330" y="308" text-anchor="middle" font-size="14">1,500</text>
+    <text x="52" y="205" text-anchor="end" font-size="14">500</text>
+    <text x="52" y="115" text-anchor="end" font-size="14">1,000</text>
+    <text x="250" y="326" text-anchor="middle">เงินที่ได้ถ้าราคาขึ้น (ดอลลาร์)</text>
+    <text x="16" y="165" text-anchor="middle" transform="rotate(-90 16 165)">เงินที่ได้ถ้าราคาลง (ดอลลาร์)</text>
+    <line x1="60" y1="290" x2="154.5" y2="195.5" stroke="#a65f00" stroke-width="2" stroke-dasharray="5 4"/>
+    <line x1="154.5" y1="195.5" x2="370.5" y2="51.5" stroke="#2455d6" stroke-width="2" stroke-dasharray="5 4"/>
+    <line x1="60" y1="290" x2="273" y2="148" stroke="#2455d6" stroke-width="3" marker-end="url(#a61b)"/>
+    <line x1="276" y1="146" x2="368" y2="54" stroke="#a65f00" stroke-width="3" marker-end="url(#a61o)"/>
+    <line x1="60" y1="290" x2="367" y2="54" stroke="#047857" stroke-width="3" marker-end="url(#a61g)"/>
+    <circle cx="370.5" cy="51.5" r="5" fill="#047857"/>
+    <text x="250" y="190" fill="#2455d6">10 × หุ้น</text>
+    <text x="330" y="120" fill="#a65f00">5 × bond</text>
+    <text x="362" y="40" text-anchor="end" fill="#047857">พอร์ต (1,725, 1,325)</text>
+    <text x="105" y="214" fill="#a65f00" font-size="14">5 × bond</text>
+  </g>
+</svg>
+<figcaption>ลูกศรน้ำเงินคือ 10 หน่วยของหุ้น ไปถึงจุด (1,200, 800) ต่อด้วยลูกศรส้ม 5 หน่วยของ bond ซึ่งชี้ทแยง 45 องศาเพราะ bond จ่ายเท่ากันทั้งสองกรณี ปลายทางคือจุดเขียว (1,725, 1,325) ซึ่งเป็น payoff ของพอร์ต เส้นประคืออีกเส้นทางหนึ่ง (เอา bond ก่อนแล้วค่อยหุ้น) ที่ไปถึงจุดเดียวกัน เพราะการบวก vector สลับลำดับได้ แกนทั้งสองใช้สเกลเดียวกัน</figcaption>
+</figure>
+
+<section class="formula">
+<h4>ขั้นที่ 6 — จากน้ำหนักเป็นดอลลาร์: net, gross และ NAV</h4>
+<p>รายงานความเสี่ยงไม่ได้ถามแค่ผลตอบแทน แต่ถามด้วยว่าพอร์ตเอียงไปทางไหนและใหญ่แค่ไหน คำตอบได้จาก vector มูลค่าสถานะ $\mathbf d=N\mathbf w$ (หน่วยล้านดอลลาร์)</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf d=N\mathbf w&=\begin{bmatrix}12.5\\7.5\\-5\end{bmatrix},\\
+\text{net}=\sum_i d_i&=15,\\
+\text{gross}=\sum_i|d_i|&=25,\\
+\text{NAV}=\text{net}+C&=15+10=25.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>net บวกตามเครื่องหมาย จึงบอกว่าพอร์ตเอียงขึ้นสุทธิเท่าไร: \$15 ล้าน หรือ 60% ของ NAV ส่วน gross บวกขนาดโดยทิ้งเครื่องหมาย จึงบอกว่าพอร์ตถือสถานะรวมใหญ่แค่ไหน: \$25 ล้าน หรือ 100% ของ NAV ตัวเลขนี้เท่ากับ NAV เพราะบังเอิญ ไม่ใช่กฎ ถ้า short เพิ่ม gross จะเกิน NAV ได้ gross คือสิ่งที่หน้า <a href="6.4.html">norms</a> เรียกว่า L1 norm ของ $\mathbf d$</p>
+<p>ถ้าหุ้นทั้งสามขยับขึ้นพร้อมกัน 1% พอร์ตได้ $0.60\times1\%=0.60\%$ ของ NAV แต่ตลาดจริงไม่บังคับให้ทุกหุ้นขยับเท่ากัน พอร์ตที่ net เป็นศูนย์จึงยังขาดทุนได้ถ้าหุ้นฝั่ง long ลงขณะที่ฝั่ง short ขึ้น</p>
+</div>
+</section>
+
+<figure class="plot">
+<h4>รูป — มูลค่าสถานะเป็นดอลลาร์</h4>
+<img src="../figures/6.1-2.svg" alt="มูลค่าสถานะ AAPL 12.5 ล้าน JPM 7.5 ล้าน และ NVDA ติดลบ 5 ล้านดอลลาร์" loading="lazy">
+<figcaption>แต่ละแท่งคือน้ำหนักคูณ NAV เดียวกัน \$25 ล้าน แท่งติดลบคือภาระจาก short ซึ่งต้องซื้อหุ้นคืนในอนาคต ไม่ใช่เงินสดที่หายไปทันที net คือผลรวมความสูงแบบมีเครื่องหมาย (15) gross คือผลรวมความยาวแท่ง (25)</figcaption>
+</figure>
+
 <section class="example">
-<h2>7. แปลงน้ำหนักเป็นจำนวนหุ้น: อย่าทำเงินสดตกหล่น</h2>
-<p>เปลี่ยนมาใช้พอร์ตสมมติอีกชุด: NAV 10 ล้าน USD และหุ้นสหรัฐสี่ตัว A–D ที่ราคา 142, 68, 205 และ 33 USD ต่อหุ้น ตั้งเป้าน้ำหนัก 35%, 25%, 30%, 10% หากซื้อหุ้นเศษส่วนได้ จำนวนที่ต้องการคือมูลค่าเป้าหมายหารด้วยราคาต่อหุ้น:</p>
+<h4>ขั้นที่ 7 — แปลงน้ำหนักเป็นจำนวนหุ้น แล้ว rebalance ด้วยการลบ vector</h4>
+<p>น้ำหนักเป็นแค่สัดส่วน สิ่งที่ส่งให้โบรกเกอร์คือจำนวนหุ้น ขั้นนี้ใช้พอร์ตสมมติอีกชุด NAV \$10 ล้าน หุ้นสี่ตัว A–D</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ราคา $\mathbf p=(142,68,205,33)$ ดอลลาร์ต่อหุ้น น้ำหนักเป้าหมาย 35%, 25%, 30%, 10% ซื้อได้เฉพาะหุ้นเต็มตัว จึงปัดเป็นจำนวนเต็มที่ใกล้ที่สุด</p>
 <div class="math">\[
 \begin{aligned}
 n_i^*&=\frac{Nw_i}{p_i},\\
-n_A^*&=\frac{10{,}000{,}000(0.35)}{142}
- \approx24{,}647.8873.
+n_A^*&=\frac{10{,}000{,}000(0.35)}{142}\approx24{,}647.9,\\
+V&=\mathbf n^{\mathsf T}\mathbf p=10{,}000{,}005,\\
+C&=10{,}000{,}000-V=-5.
 \end{aligned}
 \]</div>
-<p>สมมติซื้อได้เฉพาะจำนวนเต็มและปัดใกล้ที่สุด เราได้ตารางต่อไปนี้ การปัดเป็นกฎคำนวณเบื้องต้น ยังไม่ใช่อัลกอริทึมที่รับประกันว่าใช้เงินไม่เกินงบ:</p>
 <div class="table-wrap"><table>
-<thead><tr><th>หุ้น</th><th>ราคา USD</th><th>เป้าหมาย</th><th>จำนวนหุ้นที่ปัด</th><th>มูลค่า USD</th></tr></thead>
+<thead><tr><th>หุ้น</th><th>ราคา (ดอลลาร์)</th><th>เป้าหมาย</th><th>จำนวนที่ปัด</th><th>มูลค่า (ดอลลาร์)</th></tr></thead>
 <tbody>
 <tr><td>A</td><td>142</td><td>35%</td><td>24,648</td><td>3,500,016</td></tr>
 <tr><td>B</td><td>68</td><td>25%</td><td>36,765</td><td>2,500,020</td></tr>
 <tr><td>C</td><td>205</td><td>30%</td><td>14,634</td><td>2,999,970</td></tr>
 <tr><td>D</td><td>33</td><td>10%</td><td>30,303</td><td>999,999</td></tr>
 </tbody></table></div>
+<p><strong>คำตอบ:</strong> มูลค่าหุ้นรวม $\mathbf n^{\mathsf T}\mathbf p$ คือ \$10,000,005 เกินงบ \$5 การปัดไม่ได้สร้างเงิน 5 ดอลลาร์ แต่ทำให้เงินสดติดลบ 5 ดอลลาร์ NAV ยังเป็น \$10 ล้าน ถ้าห้ามเงินสดติดลบ ให้ลด D ลงหนึ่งหุ้น จะเหลือเงินสด \$28</p>
+<p>ต่อมาเปลี่ยนเป้าหมายเป็น 25% ทุกตัว (ราคาเดิม) ปัดแบบเดิมได้จำนวนใหม่ รายการที่ต้องส่งคำสั่งคือผลลบช่องต่อช่อง และมูลค่าของแต่ละคำสั่งคือจำนวนคูณราคาทีละช่อง</p>
 <div class="math">\[
 \begin{aligned}
-V_{\text{stocks}}&=\mathbf n^{\mathsf T}\mathbf p=10{,}000{,}005,\\
-\text{cash}&=10{,}000{,}000-V_{\text{stocks}}=-5,\\
-\text{NAV}&=V_{\text{stocks}}+\text{cash}=10{,}000{,}000.
+\mathbf n_{\text{new}}&=\begin{bmatrix}17{,}606\\36{,}765\\12{,}195\\75{,}758\end{bmatrix},\quad
+\Delta\mathbf n=\begin{bmatrix}-7{,}042\\0\\-2{,}439\\45{,}455\end{bmatrix},\\
+\Delta\mathbf n^{\mathsf T}\mathbf p&=56,\\
+\textstyle\sum_i|\Delta n_i|\,p_i&=2{,}999{,}974.
 \end{aligned}
 \]</div>
-<p>หุ้นที่ปัดแล้วใช้เงินเกินงบ 5 USD ไม่ใช่ทำให้ NAV เพิ่ม 5 USD หากไม่อนุญาตเงินสดติดลบ ต้องปรับจำนวนหุ้น เช่น ลด D หนึ่งหุ้นจะเหลือเงินสด 28 USD วิธีนี้ทำให้อยู่ในงบ แต่ไม่ได้อ้างว่าเป็นวิธีลด tracking error ที่ดีที่สุด</p>
-<p>น้ำหนักต่อ NAV ที่ถูกต้องของชุดปัดเดิมคือ $n_ip_i/10{,}000{,}000$ ได้ 0.3500016, 0.2500020, 0.2999970, 0.0999999 รวมมากกว่าหนึ่งเล็กน้อย และมีน้ำหนักเงินสดติดลบชดเชย ความคลาดเคลื่อนรายหุ้นสูงสุดจากเป้าหมายคือประมาณ 0.03 basis point ของ NAV</p>
-<p>ถ้าหารด้วย 10,000,005 แทน จะได้น้ำหนัก <em>ภายในส่วนหุ้น</em> เช่น A ประมาณ 0.350001425 ตัวเลขเหล่านี้รวมเป็นหนึ่ง แต่ไม่ใช่น้ำหนักต่อ NAV ที่รวมเงินสดแล้ว ต้องเลือกตัวหารให้ตรงกับคำถาม</p>
-<h3>Rebalance ก็เป็นการลบ vector แต่ต้องตรวจเงินที่ตามมา</h3>
-<p>ยังใช้ราคาเดิมและ NAV 10 ล้าน หากเปลี่ยนเป้าหมายเป็น 25% ทุกตัวแล้วปัดใกล้ที่สุดอีกครั้ง จะได้จำนวนใหม่และรายการซื้อขายจากการลบช่องที่ตรงกัน:</p>
-<div class="math">\[
-\begin{aligned}
-\mathbf n_{\text{new}}&=\begin{bmatrix}17{,}606\\36{,}765\\12{,}195\\75{,}758\end{bmatrix},\\
-\Delta\mathbf n=\mathbf n_{\text{new}}-\mathbf n_{\text{old}}
- &=\begin{bmatrix}-7{,}042\\0\\-2{,}439\\45{,}455\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>เครื่องหมายบวกคือซื้อ ลบคือขาย ซื้อสุทธิเพิ่ม 56 USD แต่ยอดซื้อและขายรวมคือ 2,999,974 USD เงินสดเดิม −5 จึงกลายเป็น −61 USD ก่อนค่าธรรมเนียม หากคิดต้นทุนสมมติ 10 basis points ของยอดซื้อขายรวม จะมีต้นทุนอีกราว 2,999.97 USD ไม่ใช่ 10 basis points ของยอดสุทธิ 56 USD</p>
+<p><strong>คำตอบ:</strong> ขาย A 7,042 หุ้น (\$999,964) ขาย C 2,439 หุ้น (\$499,995) ซื้อ D 45,455 หุ้น (\$1,500,015) เงินออกสุทธิแค่ \$56 แต่ยอดซื้อขายรวมเกือบ \$3 ล้าน ถ้าต้นทุนซื้อขาย 10 basis points ของยอดรวม จะเสียราว \$3,000 ไม่ใช่ 10 basis points ของ \$56 เงินสดเดิม −5 ดอลลาร์กลายเป็น −61 ดอลลาร์ก่อนค่าธรรมเนียม</p>
+<p><strong>ตรวจเองใน 10 วินาที:</strong> $45{,}455\times33=1{,}500{,}015$ และ $1{,}500{,}015-999{,}964-499{,}995=56$</p>
 </section>
-<section class="formula">
-<h2>8. หลายวันใช้ matrix เดียว แต่ต้องบอกความหมายของแถว</h2>
-<p>เมื่อแต่ละแถวของ $R$ คือหนึ่งวัน และแต่ละคอลัมน์คือหุ้นตามลำดับเดิม การคูณ $R\mathbf w$ ให้ return รายวันของพอร์ตที่ตั้งน้ำหนัก $\mathbf w$ ก่อนเริ่มแต่ละวัน สมมติยังไม่รวมต้นทุนการปรับพอร์ต:</p>
-<div class="math">\[
-\begin{aligned}
-R&=\begin{bmatrix}
-0.012&-0.006&0.004\\
--0.010&0.005&-0.020
-\end{bmatrix},\\
-R\mathbf w&=\begin{bmatrix}0.0034\\0.0005\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>shape เปลี่ยนเป็น $(2\times3)(3\times1)=2\times1$ เราจึงคำนวณสองวันพร้อมกันได้ แต่หากถือจำนวนหุ้นคงที่โดยไม่ rebalance น้ำหนักจะเปลี่ยนตามราคา ไม่ควรนำ $\mathbf w$ เดิมมาใช้ทุกวันโดยไม่มีคำอธิบาย Matrix ทำให้สูตรสั้นลง ไม่ได้ลบสมมติฐานของกลยุทธ์</p>
+
+<figure class="plot">
+<h4>รูป — รายการซื้อขายจากการลบ vector</h4>
+<svg viewBox="0 0 480 250" role="img" aria-label="แท่งแนวนอน A ขาย 1.00 ล้านดอลลาร์ B ไม่เปลี่ยน C ขาย 0.50 ล้าน D ซื้อ 1.50 ล้าน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <line x1="60" y1="210" x2="420" y2="210" stroke="#5b6472" stroke-width="2"/>
+    <line x1="240" y1="28" x2="240" y2="210" stroke="#5b6472" stroke-width="2"/>
+    <line x1="120" y1="210" x2="120" y2="216" stroke="#5b6472" stroke-width="2"/>
+    <line x1="360" y1="210" x2="360" y2="216" stroke="#5b6472" stroke-width="2"/>
+    <text x="120" y="230" text-anchor="middle" font-size="14">−1</text>
+    <text x="240" y="230" text-anchor="middle" font-size="14">0</text>
+    <text x="360" y="230" text-anchor="middle" font-size="14">+1</text>
+    <text x="240" y="248" text-anchor="middle" font-size="14">มูลค่าคำสั่ง (ล้านดอลลาร์) ขายเป็นลบ ซื้อเป็นบวก</text>
+    <text x="24" y="60">A</text>
+    <text x="24" y="105">B</text>
+    <text x="24" y="150">C</text>
+    <text x="24" y="195">D</text>
+    <rect x="120" y="40" width="120" height="30" fill="#d82632"/>
+    <text x="180" y="61" text-anchor="middle" fill="#fff">−1.00</text>
+    <line x1="240" y1="100" x2="244" y2="100" stroke="#5b6472" stroke-width="2"/>
+    <text x="252" y="105" fill="#5b6472">0</text>
+    <rect x="180" y="130" width="60" height="30" fill="#d82632"/>
+    <text x="174" y="151" text-anchor="end" fill="#d82632">−0.50</text>
+    <rect x="240" y="175" width="180" height="30" fill="#047857"/>
+    <text x="330" y="196" text-anchor="middle" fill="#fff">+1.50</text>
+  </g>
+</svg>
+<figcaption>แต่ละแท่งคือ $\Delta n_i\times p_i$ แท่งแดงคือขาย แท่งเขียวคือซื้อ ความยาวรวมของทุกแท่งคือ \$3.0 ล้าน ซึ่งเป็นฐานของค่าธรรมเนียม แต่ผลบวกแบบมีเครื่องหมายเหลือแค่ \$56 เพราะซื้อกับขายหักกัน สองตัวเลขนี้คือ gross และ net ของ vector รายการซื้อขาย</figcaption>
+</figure>
+
+<section class="pitfall">
+<h4>ความผิดที่ทำให้ตัวเลขผิดโดยไม่มี error</h4>
+<p><strong>ลำดับช่องไม่ตรงกัน:</strong> ใช้ผลตอบแทนเรียง NVDA, JPM, AAPL กับน้ำหนักเรียง AAPL, JPM, NVDA ได้ $0.50(0.004)+0.30(-0.006)-0.20(0.012)=-0.0022$ หรือขาดทุน \$55,000 แทนกำไร \$85,000 shape ถูกทุกอย่าง โปรแกรมจึงไม่เตือน วิธีป้องกันคือจับคู่ด้วยรหัสหุ้นและวันที่ก่อนแปลงเป็น vector</p>
+<p><strong>ลืมแปลงเปอร์เซ็นต์:</strong> ใช้ $(1.2,-0.6,0.4)$ แทน $(0.012,-0.006,0.004)$ ได้ $\mathbf w^{\mathsf T}\mathbf r=0.34$ ถ้าอ่านเป็นเศษส่วนจะกลายเป็นกำไร \$8.5 ล้าน ใหญ่เกินจริง 100 เท่า</p>
+<p><strong>กลับเครื่องหมาย short ซ้ำ:</strong> น้ำหนัก NVDA ติดลบอยู่แล้ว ถ้ากลับเครื่องหมายผลตอบแทนอีกรอบ จะได้ส่วนร่วม $(-0.20)(-0.004)=+0.0008$ รวมเป็น 0.50% หรือ \$125,000 สูงเกินจริง \$40,000</p>
+<p><strong>หารด้วยมูลค่าส่วนหุ้นแล้วคูณด้วย NAV:</strong> ถ้าหารด้วย \$15 ล้าน (net ของหุ้น) จะได้น้ำหนัก $(0.833,0.5,-0.333)$ และผลตอบแทน 0.567% ซึ่งเป็นผลตอบแทนต่อเงินในหุ้น คูณ \$15 ล้านได้ \$85,000 ถูก แต่ถ้าเผลอคูณ \$25 ล้านจะได้ \$141,667 ต้องใช้ตัวหารกับตัวคูณชุดเดียวกัน</p>
+<p><strong>ผสมเวลา:</strong> ใช้น้ำหนักปลายวันกับผลตอบแทนของวันเดียวกัน หมายความว่านับกำไรจากหุ้นที่เพิ่งซื้อตอนปิดตลาด ซึ่งไม่ได้ถือระหว่างวัน น้ำหนักต้องเป็นของต้นงวดที่ผลตอบแทนเริ่มนับ</p>
 </section>
+
+<section class="prose">
+<h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+<p>ระบบ P&amp;L ของโต๊ะเก็บพอร์ตเป็นตารางที่มีรหัสหุ้นกำกับทุกแถว แล้วค่อยแปลงเป็น vector ตอนคำนวณ รูปน้ำตกแบบต้นหน้าเรียกว่า P&amp;L attribution คือการแยกกำไรขาดทุนว่ามาจากสถานะไหน ผู้จัดการพอร์ตดูมันทุกเย็น ส่วนตาราง payoff $S$ ที่แถวคือสถานการณ์และคอลัมน์คือสินทรัพย์ เป็นจุดเริ่มของการตั้งปัญหา hedge แบบ <a href="11.1.html">linear program</a> คือหาจำนวน $\boldsymbol\theta$ ที่ต้นทุน $\mathbf p^{\mathsf T}\boldsymbol\theta$ ต่ำสุดโดยที่ $S\boldsymbol\theta$ ยังจ่ายพอสำหรับภาระทุกสถานการณ์</p>
+</section>
+
 <section class="example">
-<h2>ตรวจเองใน 10 วินาที</h2>
-<p><strong>ข้อ 1:</strong> คงน้ำหนักสามหุ้นเดิม แต่ NVDA ลดลง 0.4% แทนที่จะเพิ่ม 0.4% โดยหุ้นอื่นเหมือนเดิม พอร์ตได้เท่าไร?</p>
-<details><summary>ดูวิธีคิด</summary><p>ส่วนของ short กลายเป็น $(-0.20)(-0.004)=+0.0008$ รวม $0.0060-0.0018+0.0008=0.0050$ หรือ 0.50% คิดเป็น 125,000 USD ไม่ใช่ 85,000 USD การเปลี่ยน return ของ NVDA จาก +0.4% เป็น −0.4% ทำให้ P&amp;L ดีขึ้น 40,000 USD</p></details>
-<p><strong>ข้อ 2:</strong> เพิ่มน้ำหนักทั้งสามตัวเป็นสองเท่าโดยคง NAV 25 ล้าน ผลตอบแทน, gross exposure และเงินสดเปลี่ยนอย่างไร?</p>
-<details><summary>ดูวิธีคิด</summary><p>น้ำหนักเป็น $(1.00,0.60,-0.40)$ ผลตอบแทนราคาหุ้นเป็น 0.68% และ P&amp;L 170,000 USD, gross เป็น 50 ล้าน, net เป็น 30 ล้าน จึงต้องมีเงินสดสุทธิ −5 ล้านเพื่อให้ NAV ยังเป็น 25 ล้าน ผลคูณเชิงเส้นเพิ่มเป็นสองเท่า แต่การกู้และการ short จริงมีข้อจำกัดกับต้นทุนที่โมเดลนี้ยังไม่รวม</p></details>
-<p><strong>ข้อ 3:</strong> คนหนึ่งบอกว่าพอร์ตสี่หุ้นมีมูลค่า 10,000,005 USD อีกคนบอกว่า NAV ยังเป็น 10 ล้าน ทั้งคู่ถูกพร้อมกันได้ไหม?</p>
-<details><summary>ดูคำตอบ</summary><p>ได้ ถ้าคนแรกหมายถึงมูลค่าหุ้นรวม และมีเงินสดสุทธิ −5 USD ส่วนคนหลังรวมเงินสดแล้ว ความขัดแย้งหายไปเมื่อระบุว่าแต่ละตัวเลขนับอะไร</p></details>
+<h4>โจทย์ตรวจความเข้าใจ</h4>
+<p><strong>1.</strong> คงน้ำหนักสามหุ้นเดิม แต่ NVDA ลดลง 0.4% แทนที่จะขึ้น 0.4% หุ้นอื่นเหมือนเดิม พอร์ตได้เท่าไร</p>
+<details><summary>เฉลย</summary><p>ส่วนร่วมของ NVDA เป็น $(-0.20)(-0.004)=+0.0008$ รวม $0.0060-0.0018+0.0008=0.0050$ หรือ 0.50% คูณ \$25 ล้านได้ \$125,000 ดีกว่าเดิม \$40,000 เพราะหุ้นที่ short ไว้ราคาลง</p></details>
+<p><strong>2.</strong> เพิ่มน้ำหนักหุ้นทั้งสามเป็นสองเท่า $(1.00,0.60,-0.40)$ โดย NAV ยัง \$25 ล้าน ผลตอบแทน net, gross และเงินสดเป็นเท่าไร</p>
+<details><summary>เฉลย</summary><p>$\mathbf w^{\mathsf T}\mathbf r$ เป็นสองเท่าคือ 0.68% หรือ \$170,000 มูลค่าสถานะเป็น $(25,15,-10)$ ล้าน net $=30$ ล้าน gross $=50$ ล้าน เงินสด $=25-30=-5$ ล้าน คือต้องกู้ \$5 ล้าน การคูณ vector ด้วย 2 ทำให้ทุกอย่างที่เป็นเชิงเส้นเป็นสองเท่า แต่ต้นทุนกู้และค่ายืมหุ้นจริงไม่ได้อยู่ในการคำนวณนี้</p></details>
+<p><strong>3.</strong> ในตลาดสองสถานการณ์เดิม (หุ้นจ่าย 120 หรือ 80 bond จ่าย 105 ราคาวันนี้ \$100 ทั้งคู่) ถ้า short หุ้น 5 หน่วยและซื้อ bond 10 หน่วย ต้นทุนวันนี้และเงินที่ได้ในแต่ละสถานการณ์เป็นเท่าไร</p>
+<details><summary>เฉลย</summary><p>$\boldsymbol\theta=(-5,10)$ ต้นทุน $100(-5)+100(10)=500$ ดอลลาร์ ถ้าราคาขึ้นได้ $120(-5)+105(10)=450$ ถ้าราคาลงได้ $80(-5)+105(10)=650$ พอร์ตนี้ได้มากกว่าเมื่อหุ้นลง ในรูประนาบ payoff ลูกศรของมันชี้เหนือเส้น 45 องศา</p></details>
 </section>
+
 <section class="code">
-<h2>JavaScript: ตรวจข้อมูลก่อนคำนวณ</h2>
-<p>Array หนึ่งมิติใน JavaScript ไม่ได้บอกเองว่าเป็น row หรือ column ตัวอย่างนี้จึงกำหนด dot product อย่างชัดเจน ตรวจความยาวกับค่าที่เป็นตัวเลข และจัด return ตามชื่อหุ้นก่อนใช้ โค้ดไม่พึ่งแพ็กเกจและใช้ข้อมูลสมมติชุดเดียวกับหน้า</p>
+<h4>คำนวณซ้ำด้วย JavaScript</h4>
+<p>Array ใน JavaScript ไม่รู้ว่าตัวเองเป็นแถวหรือคอลัมน์ โค้ดจึงเขียน dot product ตรง ๆ ตรวจความยาว และจัดผลตอบแทนตามชื่อหุ้นก่อนคูณ ตัวเลขทุกตัวในหน้านี้ออกมาจากสคริปต์นี้</p>
+<details><summary>เปิดดูโค้ด</summary>
 <pre><code class="language-javascript" data-example="6.1">function dot(a, b) {
-  if (!Array.isArray(a) || !Array.isArray(b)) throw new TypeError('Need arrays');
-  if (!a.length || a.length !== b.length) throw new RangeError('Mismatched vector lengths');
-  if (![...a, ...b].every(Number.isFinite)) throw new TypeError('Need finite numbers');
-  return a.reduce((sum, x, i) =&gt; sum + x * b[i], 0);
+  if (a.length !== b.length) throw new RangeError('Mismatched lengths');
+  return a.reduce((s, x, i) =&gt; s + x * b[i], 0);
 }
 const names = ['AAPL', 'JPM', 'NVDA'];
-const w = [.50, .30, -.20];
-const returnsByName = {NVDA: .004, AAPL: .012, JPM: -.006};
-const r = names.map(name =&gt; returnsByName[name]);
-const nav = 25_000_000;
-const net = dot(w, [1, 1, 1]);
-const gross = w.reduce((sum, x) =&gt; sum + Math.abs(x), 0);
-const prices = [142, 68, 205, 33];
-const target = [.35, .25, .30, .10];
-const capital = 10_000_000;
-const shares = target.map((wi, i) =&gt; Math.round(capital * wi / prices[i]));
-const values = shares.map((n, i) =&gt; n * prices[i]);
-const stockValue = dot(shares, prices);
-const next = prices.map(p =&gt; Math.round(capital / 4 / p));
-const trades = next.map((n, i) =&gt; n - shares[i]);
-const turnover = dot(trades.map(Math.abs), prices);
-const outer = r.map(ri =&gt; w.map(wi =&gt; ri * wi));
-console.log(JSON.stringify({
-  return: dot(w, r), pnl: nav * dot(w, r),
-  wrongOrder: dot(w, [.004, -.006, .012]),
-  exposures: w.map(wi =&gt; nav * wi), net, gross, cash: nav * (1 - net),
-  outer, daily: [r, [-.010, .005, -.020]].map(row =&gt; dot(w, row)),
-  shares, values, stockValue, residualCash: capital - stockValue,
-  weightsNAV: values.map(v =&gt; v / capital),
-  weightsStocks: values.map(v =&gt; v / stockValue),
-  next, trades, netTrade: dot(trades, prices), turnover,
-  nextCash: capital - dot(next, prices), cost10bps: turnover * .001,
-  withinBudgetCash: capital - (stockValue - prices[3]),
-  shortGainCase: nav * dot(w, [.012, -.006, -.004])
-}));</code></pre>
-<p>การทำหลายรายการเป็น vector หรือ matrix ช่วยให้ใช้ numerical libraries และตรวจ shape อย่างเป็นระบบได้ แต่ไม่ได้รับประกันว่าทุกการเขียนแบบนี้จะเร็วกว่า loop และยังต้องตรวจข้อกำหนดเรื่องหน่วย เวลา cash และค่าธรรมเนียมแยกต่างหาก</p>
+const w = [0.50, 0.30, -0.20];
+const byName = {NVDA: 0.004, AAPL: 0.012, JPM: -0.006};
+const r = names.map(n =&gt; byName[n]);          // align by name first
+const nav = 25e6;
+const contrib = w.map((x, i) =&gt; x * r[i]);    // 0.006, -0.0018, -0.0008
+const Rp = dot(w, r);                          // 0.0034
+const wrong = dot(w, [0.004, -0.006, 0.012]);  // -0.0022
+const outer = r.map(ri =&gt; w.map(wj =&gt; ri * wj));
+const days = [r, [-0.010, 0.005, -0.020]].map(row =&gt; dot(row, w));
+const S = [[120, 105], [80, 105]], theta = [10, 5];
+const payoff = S.map(row =&gt; dot(row, theta)); // 1725, 1325
+const cost = dot([100, 100], theta);           // 1500
+const d = w.map(x =&gt; nav * x);
+const net = d.reduce((s, x) =&gt; s + x, 0), gross = d.reduce((s, x) =&gt; s + Math.abs(x), 0);
+const p = [142, 68, 205, 33], target = [0.35, 0.25, 0.30, 0.10], cap = 1e7;
+const n = target.map((t, i) =&gt; Math.round(cap * t / p[i]));
+const nNew = p.map(pi =&gt; Math.round(cap / 4 / pi));
+const dn = nNew.map((x, i) =&gt; x - n[i]);
+console.log({contrib, Rp, pnl: nav * Rp, wrongPnl: nav * wrong, outer, days,
+  payoff, cost, d, net, gross, cash: nav - net,
+  n, stockValue: dot(n, p), nNew, dn, netTrade: dot(dn, p),
+  grossTrade: dot(dn.map(Math.abs), p)});</code></pre>
+</details>
 </section>
-<details class="jargon"><summary>ศัพท์และสัญลักษณ์ที่ใช้</summary><dl>
-<dt>Vector / component</dt><dd>ชุดตัวเลขที่มีลำดับ และตัวเลขในแต่ละตำแหน่ง ต้องรู้ว่าตำแหน่งนั้นแทนอะไร</dd>
-<dt>Row / column / shape</dt><dd>หนึ่งแถวหรือหนึ่งคอลัมน์ โดย shape เขียนจำนวนแถวก่อนจำนวนคอลัมน์</dd>
-<dt>Transpose</dt><dd>สลับบทบาทแถวกับคอลัมน์ ไม่ใช่สลับชื่อหรือเรียงสินทรัพย์ใหม่</dd>
-<dt>Dot product / outer product</dt><dd>แบบแรกคูณช่องที่ตรงกันแล้วรวมเป็น scalar; แบบหลังเก็บคู่คูณทุกช่องเป็น matrix</dd>
-<dt>NAV / exposure</dt><dd>NAV เป็นมูลค่าสุทธิที่รวม cash และหนี้ตามโมเดลบัญชี; exposure เป็นมูลค่าสถานะที่ต้องระบุว่าจะดูแบบมีเครื่องหมายหรือค่าสัมบูรณ์</dd>
-<dt>$N,\mathbf w,\mathbf r$</dt><dd>NAV เริ่มงวดเป็น USD, น้ำหนักต่อ NAV และ return ของแต่ละสินทรัพย์ในงวดเดียวกัน</dd>
-<dt>$\mathbf n,\mathbf p$</dt><dd>จำนวนหุ้นที่มีเครื่องหมายและราคาต่อหุ้นเป็น USD; ผลคูณ $\mathbf n^{\mathsf T}\mathbf p$ คือมูลค่าหุ้นสุทธิ ไม่ใช่ NAV ทั้งหมดหากยังมี cash หรือรายการอื่น</dd>
-</dl></details>
-<details><summary>ที่มาสั้น ๆ ของสัญกรณ์</summary><p>ชื่อ matrix ปรากฏในงานของ Sylvester ปี 1850 และ Cayley พัฒนาพีชคณิตของ matrix อย่างเป็นระบบในปี 1858 ต่อมาแนวคิด portfolio selection ของ Markowitz ปี 1952 ทำให้การเขียนน้ำหนัก ผลตอบแทน และความเสี่ยงร่วมกันในรูปนี้มีบทบาทสำคัญทางการเงิน สิ่งที่ควรจำไม่ใช่ปี แต่คือชนิดของข้อมูลและกฎจับคู่ที่สัญกรณ์ช่วยให้เห็น</p></details>
-<section class="pitfall">
-<h2>ข้อผิดพลาดที่สูตรสั้น ๆ อาจซ่อนอยู่</h2>
-<ul>
-<li>row × column ถูก shape แต่จับคู่คนละหุ้น คนละเวลา หรือคนละหน่วย</li>
-<li>กลับเครื่องหมาย return ของหุ้นที่ short ทั้งที่น้ำหนักติดลบอยู่แล้ว</li>
-<li>เรียก gross exposure ว่าเงินสดที่ใช้ หรือเรียก net ศูนย์ว่าไม่มีความเสี่ยง</li>
-<li>ปัดจำนวนหุ้นแล้วเปลี่ยนตัวหารเป็นมูลค่าหุ้นรวม โดยไม่บอกว่าทิ้ง cash ออกจากการคำนวณ</li>
-<li>นำสูตรราคาหุ้นเชิงเส้นไปใช้เป็น P&amp;L ของ option โดยตรง ทั้งที่ยังมีความไม่เชิงเส้นและความไวต่อปัจจัยอื่น</li>
-</ul>
-</section>
+
 <section class="takeaways">
-<h2>ก่อนใช้ vector กับพอร์ตจริง ให้ตอบให้ได้สี่ข้อ</h2>
+<h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
 <ul>
-<li>แต่ละช่องแทนหุ้นใด ใช้วันใด และมีหน่วยอะไร?</li>
-<li>ต้องการ scalar, vector หรือ matrix และ shape ที่คูณกันให้ผลชนิดนั้นหรือไม่?</li>
-<li>ตัวหารของน้ำหนักคือ NAV หรือมูลค่าของส่วนหุ้น และ cash อยู่ตรงไหน?</li>
-<li>ผลลัพธ์รวมต้นทุน ดอกเบี้ย ปันผลและข้อจำกัดซื้อขายแล้วหรือยัง?</li>
+<li>ทุกช่องของ vector ต้องบอกได้ว่าเป็นสินทรัพย์ไหน วันไหน หน่วยอะไร shape ที่ถูกต้องไม่ได้พิสูจน์ว่าข้อมูลเข้าคู่กัน</li>
+<li>ผลตอบแทนพอร์ต $\mathbf w^{\mathsf T}\mathbf r+w_cr_c$ มาจากนิยามของผลตอบแทนโดยตรง เพราะส่วน “1” ของทุกสถานะรวมกันเท่ากับ NAV แล้วหักกันหมด</li>
+<li>$(m\times d)(d\times p)$ ได้ $m\times p$: แถวคูณคอลัมน์ได้ตัวเลขเดียว คอลัมน์คูณแถวได้ตาราง และ matrix คูณ vector ได้หนึ่งคำตอบต่อหนึ่งแถว</li>
+<li>$S\boldsymbol\theta$ อ่านได้สองแบบ: ทีละสถานการณ์ (แถว) หรือเป็นผลรวมคอลัมน์ของสินทรัพย์ที่คูณจำนวนที่ถือ (คอลัมน์)</li>
+<li>net กับ gross ของสถานะหรือของรายการซื้อขายเป็นคนละตัวเลข ค่าธรรมเนียมคิดจาก gross</li>
 </ul>
-<p>เมื่อเขียนแต่ละพอร์ตเป็น vector ได้ คำถามถัดไปคือพอร์ตหนึ่งสร้างจากส่วนผสมของพอร์ตอื่นได้หรือไม่ นั่นคือเรื่อง linear combinations และ linear independence ในหัวข้อ 6.2</p>
+<p>หน้าถัดไป <a href="6.2.html">linear combinations และ linear independence</a> ใช้มุมมองคอลัมน์เต็มตัว: ถามว่าคอลัมน์ของสินทรัพย์ที่มีอยู่ผสมกันไปถึง payoff หรือพอร์ตแบบไหนได้บ้าง และกองทุนชื่อใหม่เพิ่มทางเลือกจริงหรือแค่ซ้ำของเดิม</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

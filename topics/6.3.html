@@ -18,245 +18,445 @@
 <article class="topic" data-number="6.3" data-depends-on="6.1 6.2">
 <header class="topic-header">
 <h1><span class="tnum">6.3</span> Basis</h1>
-<p class="subtitle">พอร์ตเดิม พิกัดใหม่: เปลี่ยนวิธีบรรยายโดยไม่ทำเงินหรือข้อมูลหาย</p>
+<p class="subtitle">Basis คือชุดแกนที่ไม่ซ้ำกันและครอบคลุมครบ ทำให้พอร์ตทุกพอร์ตเขียนเป็นพิกัดได้แบบเดียว และการเปลี่ยนแกนเปลี่ยนแค่คำบรรยาย ไม่ได้เปลี่ยนพอร์ต</p>
 </header>
+
 <div class="hook">
-<p>พอร์ตถือ AAPL 6 ล้าน, JPM 5 ล้าน และ XOM 4 ล้าน USD รวม 15 ล้าน ฝ่ายวิเคราะห์เขียนพิกัดใหม่เป็น 5.5, 0.5 และ 4 ซึ่งบวกกันได้เพียง 10 ล้าน เงินอีก 5 ล้านหายไปไหน?</p>
-<details><summary>ลองคิดก่อนเปิดเฉลย</summary><p>ไม่มีเงินหาย พิกัด 5.5 หมายถึงตะกร้าที่ถือ AAPL และ JPM อย่างละ 5.5 ล้าน ส่วนพิกัด 0.5 หมายถึง long AAPL 0.5 ล้านและ short JPM 0.5 ล้าน รวมกลับได้ AAPL 6, JPM 5 และ XOM 4 ล้านเหมือนเดิม ห้ามบวกพิกัดใหม่เสมือนเป็นมูลค่าหุ้นสามตัว</p></details>
-<p>Basis คือชุดทิศทางที่ใช้บรรยาย vector ส่วน coordinates คือจำนวนที่คูณแต่ละทิศทาง การเปลี่ยน basis ไม่ใช่การซื้อขาย และการมีพิกัดที่อ่านง่ายขึ้นก็ยังไม่ใช่หลักฐานว่าพอร์ตเสี่ยงน้อยลง</p>
+<p>พอร์ตถือ AAPL \$6 ล้าน JPM \$5 ล้าน และ XOM \$4 ล้าน รวม \$15 ล้าน (ตัวเลขสมมติ) ทีมวิเคราะห์ส่งรายงานที่เขียนพอร์ตนี้ด้วย “แกนใหม่” ได้พิกัด 5.5, 0.5 และ 4 ซึ่งบวกกันได้แค่ 10 หัวหน้าถามว่าเงินอีก \$5 ล้านหายไปไหน และถ้าใช้ผลตอบแทนรายหุ้นของวันนี้ (1%, −2%, 0.5%) คูณพิกัดชุดใหม่ตรง ๆ จะได้ P&amp;L ถูกไหม</p>
+<details><summary>ลองตอบก่อนเปิดเฉลย</summary>
+<p>ไม่มีเงินหาย พิกัด 5.5 หมายถึงตะกร้าที่ถือ AAPL และ JPM อย่างละ \$5.5 ล้าน (หนึ่งหน่วยมีสองขา) พิกัด 0.5 หมายถึง long AAPL \$0.5 ล้านคู่กับ short JPM \$0.5 ล้าน (มูลค่าสุทธิศูนย์) รวมกลับได้ AAPL 6, JPM 5, XOM 4 เหมือนเดิม มูลค่าสุทธิคือ $2(5.5)+0+4=15$ ล้าน ส่วน P&amp;L ถ้าคูณพิกัดใหม่กับผลตอบแทนรายหุ้นตรง ๆ จะได้กำไร \$65,000 แต่พอร์ตจริงขาดทุน \$20,000 ต้องแปลงผลตอบแทนให้เป็นของแต่ละตะกร้าก่อน</p>
+</details>
 </div>
+
 <section class="prose">
-<h2>1. เริ่มจาก basis ที่ใช้อยู่โดยไม่รู้ตัว</h2>
-<p>ใช้พอร์ตสมมติหุ้นสหรัฐข้างต้น หน่วยของทุกพิกัดเดิมคือหนึ่งล้าน USD เรียง AAPL, JPM, XOM เราเขียนพอร์ตด้วยแกนที่เลือกหุ้นทีละตัวได้ว่า</p>
+<h4>ภาพรวมก่อนลงสูตร</h4>
+<p>ตัวเลข $(6,5,4)$ เป็นพิกัดเทียบกับแกนที่เราใช้โดยไม่รู้ตัว คือหนึ่งแกนต่อหนึ่งหุ้น แต่เราเลือกแกนชุดอื่นได้ เช่นแกน “ถือ AAPL กับ JPM เท่ากัน” และแกน “ถือ AAPL มากกว่า JPM” พอร์ตเดิมยังเป็นจุดเดิมในพื้นที่ สิ่งที่เปลี่ยนคือวิธีเดินไปถึงจุดนั้น ชุดแกนที่ใช้ได้เรียกว่า basis และจำนวนที่เดินตามแต่ละแกนเรียกว่า coordinates</p>
+<p>แกนชุดหนึ่งจะใช้เป็น basis ได้ต้องผ่านสองเงื่อนไขจาก <a href="6.2.html">linear independence และ linear combinations</a>: span ครบ (ไปถึงทุกพอร์ต) และ independent (ไม่มีแกนซ้ำ ทำให้มีวิธีเดินแบบเดียว) เมื่อผ่านทั้งสองข้อ การเปลี่ยนแกนย้อนกลับได้เสมอ ไม่มีเงินหรือข้อมูลหาย</p>
+<p>หน้านี้จะหาพิกัดใหม่และพิสูจน์ว่าไม่กำกวม เขียนการแปลงเป็น matrix อธิบายว่าทำไมผลรวมพิกัดไม่ใช่มูลค่าพอร์ต แปลงผลตอบแทนให้เข้าคู่กับพิกัดใหม่ ดูว่า basis ที่ตั้งฉากกันมีทางลัดอะไร และแยก “เปลี่ยนแกน” ออกจาก “ตัดแกนทิ้ง”</p>
+</section>
+
+<figure class="plot">
+<h4>รูป — จุดเดิม สองเส้นทาง</h4>
+<svg viewBox="0 0 480 340" role="img" aria-label="ระนาบ AAPL กับ JPM จุดพอร์ตที่ 6 กับ 5 ไปถึงได้ทางแกนเดิม เดินขวา 6 ขึ้น 5 หรือทางแกนใหม่ เดินตามแนวทแยง 5.5 หน่วยแล้วเลี้ยวตั้งฉาก 0.5 หน่วย" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a63b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a63o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    <marker id="a63m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="138" y1="270" x2="138" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="206" y1="270" x2="206" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="274" y1="270" x2="274" y2="30" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="202" x2="330" y2="202" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="134" x2="330" y2="134" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="66" x2="330" y2="66" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="270" x2="340" y2="270" stroke="#5b6472" stroke-width="2"/>
+    <line x1="70" y1="325" x2="70" y2="28" stroke="#5b6472" stroke-width="2"/>
+    <line x1="36" y1="304" x2="308" y2="32" stroke="#2455d6" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <line x1="29.2" y1="229.2" x2="121" y2="321" stroke="#a65f00" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <text x="138" y="290" text-anchor="middle" font-size="14">2</text>
+    <text x="206" y="290" text-anchor="middle" font-size="14">4</text>
+    <text x="274" y="290" text-anchor="middle" font-size="14">6</text>
+    <text x="62" y="207" text-anchor="end" font-size="14">2</text>
+    <text x="62" y="139" text-anchor="end" font-size="14">4</text>
+    <text x="62" y="71" text-anchor="end" font-size="14">6</text>
+    <text x="250" y="312" text-anchor="middle">AAPL (ล้านดอลลาร์)</text>
+    <text x="22" y="150" text-anchor="middle" transform="rotate(-90 22 150)">JPM (ล้านดอลลาร์)</text>
+    <line x1="70" y1="270" x2="271" y2="270" stroke="#5b6472" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a63m)"/>
+    <line x1="274" y1="270" x2="274" y2="103" stroke="#5b6472" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a63m)"/>
+    <line x1="70" y1="270" x2="255" y2="85" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a63b)"/>
+    <line x1="257" y1="83" x2="272" y2="98" stroke="#a65f00" stroke-width="3.5" marker-end="url(#a63o)"/>
+    <line x1="70" y1="270" x2="102" y2="238" stroke="#2455d6" stroke-width="5" marker-end="url(#a63b)"/>
+    <line x1="70" y1="270" x2="102" y2="302" stroke="#a65f00" stroke-width="5" marker-end="url(#a63o)"/>
+    <circle cx="274" cy="100" r="6" fill="#047857"/>
+    <text x="110" y="232" fill="#2455d6">b₁</text>
+    <text x="110" y="314" fill="#a65f00">b₂</text>
+    <text x="150" y="160" fill="#2455d6">5.5 b₁</text>
+    <text x="270" y="72" fill="#a65f00">0.5 b₂</text>
+    <text x="284" y="112" fill="#047857">พอร์ต (6, 5)</text>
+    <text x="284" y="200" fill="#5b6472" font-size="14">6 e₁ + 5 e₂</text>
+  </g>
+</svg>
+<figcaption>ดูแค่ระนาบ AAPL–JPM (XOM อยู่แกนของมันเองไม่เปลี่ยน) เส้นประเทาคือทางเดิม: เดินตามแกน AAPL 6 แล้วตามแกน JPM 5 ลูกศรหนาสั้นสองเส้นที่จุดกำเนิดคือแกนใหม่ $\mathbf b_1=(1,1)$ “ถือเท่ากัน” และ $\mathbf b_2=(1,-1)$ “AAPL มากกว่า JPM” ทางใหม่คือเดินตาม $\mathbf b_1$ 5.5 หน่วยถึง $(5.5,5.5)$ แล้วเลี้ยวตั้งฉากตาม $\mathbf b_2$ อีก 0.5 หน่วย ถึงจุดเขียวเดียวกัน พอร์ตไม่ขยับ เปลี่ยนแค่ตัวเลขที่ใช้บรรยาย</figcaption>
+</figure>
+
+<details class="jargon">
+<summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+<dl>
+<dt>Basis</dt>
+<dd>ชุดแกน (vector) ที่ independent และ span ครบพื้นที่ที่สนใจ ใช้เป็นระบบพิกัด เช่นแกนรายหุ้น แกนตะกร้า หรือแกน factor</dd>
+<dt>Coordinates</dt>
+<dd>ตัวเลขที่คูณแต่ละแกนใน basis แล้วรวมได้ vector เดิม อ่านแยกจาก basis ไม่ได้ เพราะความหมายของพิกัดมาจากแกนที่มันคูณ</dd>
+<dt>Standard basis</dt>
+<dd>แกนที่มี 1 ในช่องเดียวและ 0 ในช่องอื่น เขียน $\mathbf e_1,\mathbf e_2,\ldots$ พิกัดเทียบกับมันคือตัวเลขในแต่ละช่องตรง ๆ เหมาะกับการส่งคำสั่งซื้อขายรายหุ้น</dd>
+<dt>Change of basis</dt>
+<dd>การแปลงพิกัดจาก basis หนึ่งไปอีก basis หนึ่ง ย้อนกลับได้ ไม่ใช่การซื้อขาย และไม่ได้ลดหรือเพิ่มข้อมูล</dd>
+<dt>Dimension</dt>
+<dd>จำนวนแกนใน basis ใดก็ได้ของพื้นที่นั้น ทุก basis ของพื้นที่เดียวกันมีจำนวนแกนเท่ากัน ใช้บอกว่าต้องใช้ตัวเลขกี่ตัวจึงบรรยายได้ครบ</dd>
+<dt>Orthogonal และ orthonormal basis</dt>
+<dd>basis ที่ทุกคู่แกนตั้งฉากกัน (dot product เป็นศูนย์) ถ้าทุกแกนยาวหนึ่งด้วยเรียกว่า orthonormal ใช้หาพิกัดได้ด้วย dot product โดยไม่ต้องแก้สมการ</dd>
+</dl>
+</details>
+
+<details class="symbols">
+<summary>สัญลักษณ์และหน่วย</summary>
+<table>
+<thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+<tbody>
+<tr><td>$\mathbf x=(x_A,x_J,x_X)$</td><td>มูลค่าสถานะ AAPL, JPM, XOM</td><td>ล้านดอลลาร์</td></tr>
+<tr><td>$\mathbf b_1,\mathbf b_2,\mathbf b_3$</td><td>แกน common, relative และ XOM</td><td>ล้านดอลลาร์ต่อหนึ่งหน่วยพิกัด</td></tr>
+<tr><td>$\mathbf c=(c_1,c_2,c_3)$</td><td>พิกัดของพอร์ตเทียบกับแกนใหม่</td><td>หน่วยของแต่ละแกน</td></tr>
+<tr><td>$B$</td><td>matrix ที่วางแกนใหม่เป็นคอลัมน์</td><td>—</td></tr>
+<tr><td>$\mathbf r$, $\mathbf g$</td><td>ผลตอบแทนรายหุ้น และ P&amp;L ต่อหนึ่งหน่วยของแต่ละแกนใหม่</td><td>เศษส่วน, ล้านดอลลาร์ต่อหน่วย</td></tr>
+</tbody>
+</table>
+</details>
+
+<section class="formula">
+<h4>ขั้นที่ 1 — basis ที่ใช้อยู่แล้วโดยไม่รู้ตัว</h4>
+<p>ก่อนเปลี่ยนแกน ต้องเห็นก่อนว่าตัวเลข $(6,5,4)$ เองก็เป็นพิกัดเทียบกับแกนชุดหนึ่ง ลำดับช่องคือ AAPL, JPM, XOM หน่วยล้านดอลลาร์</p>
 <div class="math">\[
 \begin{aligned}
-\mathbf e_1&=\begin{bmatrix}1\\0\\0\end{bmatrix},\quad
-\mathbf e_2=\begin{bmatrix}0\\1\\0\end{bmatrix},\quad
+\mathbf e_1&=\begin{bmatrix}1\\0\\0\end{bmatrix},\
+\mathbf e_2=\begin{bmatrix}0\\1\\0\end{bmatrix},\
 \mathbf e_3=\begin{bmatrix}0\\0\\1\end{bmatrix},\\
 \mathbf x&=6\mathbf e_1+5\mathbf e_2+4\mathbf e_3
 =\begin{bmatrix}6\\5\\4\end{bmatrix}.
 \end{aligned}
 \]</div>
-<p>นี่คือ canonical หรือ standard basis: หนึ่งแกนต่อหนึ่งหุ้น เหมาะกับการดูสถานะและส่งคำสั่งซื้อขาย แต่เราอาจอยากแยก “ถือ AAPL กับ JPM เท่ากัน” ออกจาก “ถือ AAPL มากกว่า JPM” จึงเลือกแกนใหม่:</p>
-<div class="math">\[
-\mathbf b_1=\begin{bmatrix}1\\1\\0\end{bmatrix},\quad
-\mathbf b_2=\begin{bmatrix}1\\-1\\0\end{bmatrix},\quad
-\mathbf b_3=\begin{bmatrix}0\\0\\1\end{bmatrix}.
-\]</div>
+<div class="reading">
+<p>แกน $\mathbf e_1$ คือ “ถือ AAPL \$1 ล้าน ไม่ถืออย่างอื่น” พิกัดเทียบกับ standard basis จึงเป็นตัวเลขในช่องตรง ๆ เราไม่เคยต้องคิดถึงมันเพราะมันสะดวกที่สุดสำหรับการส่งคำสั่งซื้อขาย แต่ถ้าคำถามคือ “พอร์ตนี้เดิมพันกับธนาคารเทียบกับเทคโนโลยีแค่ไหน” แกนรายหุ้นไม่ได้ตอบตรง ๆ จึงอยากได้แกนชุดใหม่</p>
+</div>
 <div class="table-wrap"><table>
-<thead><tr><th>แกน</th><th>หนึ่งหน่วยของพิกัดหมายถึง</th><th>มูลค่าสุทธิของหุ้น</th></tr></thead>
+<thead><tr><th>แกนใหม่</th><th>หนึ่งหน่วยพิกัดคือ</th><th>มูลค่าสุทธิต่อหน่วย</th></tr></thead>
 <tbody>
-<tr><td>$\mathbf b_1$ common</td><td>long AAPL และ JPM อย่างละ 1 ล้าน USD</td><td>2 ล้าน USD</td></tr>
-<tr><td>$\mathbf b_2$ relative</td><td>long AAPL 1 ล้าน และ short JPM 1 ล้าน USD</td><td>ศูนย์</td></tr>
-<tr><td>$\mathbf b_3$ XOM</td><td>long XOM 1 ล้าน USD</td><td>1 ล้าน USD</td></tr>
+<tr><td>$\mathbf b_1=(1,1,0)$ common</td><td>long AAPL \$1 ล้าน และ long JPM \$1 ล้าน</td><td>\$2 ล้าน</td></tr>
+<tr><td>$\mathbf b_2=(1,-1,0)$ relative</td><td>long AAPL \$1 ล้าน และ short JPM \$1 ล้าน</td><td>ศูนย์</td></tr>
+<tr><td>$\mathbf b_3=(0,0,1)$ XOM</td><td>long XOM \$1 ล้าน</td><td>\$1 ล้าน</td></tr>
 </tbody></table></div>
-<p>Common ในที่นี้เป็นชื่อของตะกร้า long-long ไม่ใช่ผลวิจัยว่าหุ้นสองตัวเคลื่อนไหวเหมือนกัน และ relative ที่มี net dollar exposure ศูนย์ก็ยังมีความเสี่ยง ไม่ได้เป็น market-neutral โดยอัตโนมัติ</p>
-<figure class="plot">
-<img src="../figures/6.3-1.svg" alt="จุดพอร์ตเดิมกับแนวแกนสองชุดในภาพประกอบสองมิติ" loading="lazy">
-<figcaption>รูป 6.3a จุดที่มีป้าย same portfolio ไม่ย้ายเมื่อเปลี่ยนแนวแกน ภาพนี้เป็นแนวคิดสองมิติ ไม่ใช่ข้อมูลสามหุ้นหรือมาตราส่วนหนึ่งหน่วยของตัวอย่างในตาราง</figcaption>
-</figure>
 </section>
+
 <section class="formula">
-<h2>2. Basis ต้องสร้างได้ครบ และเขียนได้ไม่กำกวม</h2>
-<p>Basis ของพื้นที่ $V$ ต้องมีสองคุณสมบัติ: span ครบ $V$ และ linearly independent คุณสมบัติแรกทำให้ทุก vector ในพื้นที่มีคำบรรยาย ส่วนคุณสมบัติที่สองทำให้คำบรรยายนั้นมีชุดเดียว</p>
-<p>สำหรับแกนใหม่ ให้ $\mathbf x=(x_A,x_J,x_X)^{\mathsf T}$ เป็นพอร์ตใด ๆ การเขียน $\mathbf x=c_1\mathbf b_1+c_2\mathbf b_2+c_3\mathbf b_3$ เท่ากับแก้</p>
+<h4>ขั้นที่ 2 — สองเงื่อนไขของ basis: มีคำตอบ และมีคำตอบเดียว</h4>
+<p>แกนชุดใหม่ต้องบรรยายพอร์ตได้ทุกพอร์ต และต้องบรรยายได้แบบเดียว ไม่อย่างนั้นสองรายงานอาจให้ตัวเลขต่างกันสำหรับพอร์ตเดียวกัน ขั้นนี้แสดงว่าสองข้อนี้คือ span กับ independence พอดี</p>
+<div class="math">\[
+\begin{aligned}
+\sum_i c_i\mathbf b_i&=\sum_i d_i\mathbf b_i,\\
+\sum_i(c_i-d_i)\,\mathbf b_i&=\mathbf 0,\\
+c_i-d_i&=0,\quad i=1,2,3.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>สมมติพอร์ตเดียวมีพิกัดสองชุด $\mathbf c$ และ $\mathbf d$ ลบสองคำบรรยายออกจากกันได้บรรทัดที่สอง ซึ่งเป็นการผสมแกนแล้วได้ศูนย์ ถ้าแกนเป็น independent ทางเดียวที่ผสมได้ศูนย์คือสัมประสิทธิ์เป็นศูนย์ทุกตัว (นิยามจาก <a href="6.2.html">linear independence</a>) จึงได้ $\mathbf c=\mathbf d$ พิกัดไม่กำกวม ส่วนการมีพิกัดอย่างน้อยหนึ่งชุดสำหรับทุกพอร์ตคือนิยามของ span ครบ ขาดข้อแรกจะมีพอร์ตที่เขียนไม่ได้ ขาดข้อหลังจะมีพอร์ตที่เขียนได้หลายแบบ</p>
+<p>ผลข้างเคียงสำคัญ: ทุก basis ของพื้นที่สามมิติมีสามแกนพอดี น้อยกว่าสามจะ span ได้อย่างมากแค่ระนาบ (rank ไม่เกินจำนวนแกน) มากกว่าสามจะต้องมีตัวซ้ำ ในทำนองเดียวกัน กองทุน A กับ B ใน <a href="6.2.html">linear combinations</a> เป็น basis ของระนาบที่สองกองนั้นสร้างได้ แต่ไม่ใช่ basis ของทั้งสามมิติ ต้องบอกเสมอว่าเป็น basis ของพื้นที่ไหน และจำนวนแกนของ basis ของ range ของ matrix คือ rank ของมัน</p>
+</div>
+</section>
+
+<section class="formula">
+<h4>ขั้นที่ 3 — หาพิกัดใหม่ แล้วคูณกลับเพื่อพิสูจน์</h4>
+<p>ตอนนี้แกนพร้อมแล้ว เขียน $\mathbf x=c_1\mathbf b_1+c_2\mathbf b_2+c_3\mathbf b_3$ ทีละช่องได้สามสมการ แก้ได้ทันทีโดยไม่ต้องเดา</p>
 <div class="math">\[
 \begin{aligned}
 c_1+c_2&=x_A,\\
 c_1-c_2&=x_J,\\
 c_3&=x_X,\\
-c_1&=\frac{x_A+x_J}{2},\qquad
-c_2=\frac{x_A-x_J}{2}.
+c_1&=\frac{x_A+x_J}{2}=\frac{6+5}{2}=5.5,\\
+c_2&=\frac{x_A-x_J}{2}=\frac{6-5}{2}=0.5,\\
+c_3&=4.
 \end{aligned}
 \]</div>
-<p>สูตรนี้ให้คำตอบสำหรับทุกพอร์ตใน $\mathbb R^3$ และเมื่อ $\mathbf x=\mathbf0$ จะบังคับให้ $c_1=c_2=c_3=0$ จึงได้ทั้ง spanning และ independence แกนสามตัวนี้เป็น basis ของ $\mathbb R^3$ จริง ไม่ใช่เพียงตั้งชื่อแล้วเรียกว่า basis</p>
-<details><summary>ทำไม independence จึงรับประกันพิกัดชุดเดียว?</summary>
-<p>สมมติพอร์ตเดียวมีพิกัดสองชุด $\mathbf c$ และ $\mathbf d$ ลบคำบรรยายสองชุดออกจากกัน:</p>
+<div class="reading">
+<p>บวกสองสมการแรกได้ $2c_1=x_A+x_J$ ลบกันได้ $2c_2=x_A-x_J$ สูตรนี้ใช้ได้กับทุกพอร์ต (span ครบ) และให้ค่าเดียว (independent) common จึงเป็นค่าเฉลี่ยของสองหุ้น relative เป็นครึ่งหนึ่งของผลต่าง ตรวจกลับ: $5.5(1,1,0)+0.5(1,-1,0)+4(0,0,1)=(6,5,4)$ ตรงทุกช่อง</p>
+</div>
+<p>วางแกนใหม่เป็น <strong>คอลัมน์</strong> ของ matrix $B$ การคูณกลับกลายเป็น $\mathbf x=B\mathbf c$ และการหาพิกัดคือการคูณด้วย inverse</p>
 <div class="math">\[
 \begin{aligned}
-\sum_i c_i\mathbf b_i&=\sum_i d_i\mathbf b_i,\\
-\sum_i(c_i-d_i)\mathbf b_i&=\mathbf0,\\
-\text{independence}&\ \Longrightarrow\ c_i-d_i=0\ \text{for all }i.
+B&=\begin{bmatrix}1&amp;1&amp;0\\1&amp;-1&amp;0\\0&amp;0&amp;1\end{bmatrix},\quad
+\mathbf x=B\mathbf c,\\
+B^{-1}&=\begin{bmatrix}\tfrac12&amp;\tfrac12&amp;0\\\tfrac12&amp;-\tfrac12&amp;0\\0&amp;0&amp;1\end{bmatrix},\quad
+\mathbf c=B^{-1}\mathbf x,\\
+\det B&=1(-1)-1(1)=-2.
 \end{aligned}
 \]</div>
-<p>จึงได้ $\mathbf c=\mathbf d$ ถ้าขาด spanning อาจมีพอร์ตที่เขียนไม่ได้เลย ถ้าขาด independence อาจมีหลายพิกัดที่เขียนพอร์ตเดียวกันได้</p>
-</details>
-<p>ต้องบอกด้วยว่าเป็น basis ของพื้นที่ใด เช่น A และ B ในหัวข้อ 6.2 เป็น basis ของระนาบที่สองกองนั้นสร้างได้ แต่ไม่ใช่ basis ของทั้ง $\mathbb R^3$ จำนวนแกนของ basis เท่ากับมิติของพื้นที่ที่สนใจ ไม่ใช่จำนวนหุ้นที่ต้องเท่ากันในทุกกรณี</p>
+<div class="reading">
+<p>$B\mathbf c$ คือ linear combination ของคอลัมน์ของ $B$ ด้วยน้ำหนัก $\mathbf c$ ซึ่งคือ $c_1\mathbf b_1+c_2\mathbf b_2+c_3\mathbf b_3$ พอดี (มุมมองคอลัมน์จาก <a href="6.1.html">row และ column vectors</a>) แถวของ $B^{-1}$ อ่านจากสูตรที่เพิ่งแก้: แถวแรกเอาค่าเฉลี่ย AAPL กับ JPM แถวสองเอาครึ่งผลต่าง แถวสามเก็บ XOM ตามเดิม ลองคูณ $B^{-1}B$ แถวแรกกับคอลัมน์แรกได้ $\tfrac12+\tfrac12=1$ แถวแรกกับคอลัมน์สองได้ $\tfrac12-\tfrac12=0$ ครบทุกช่องเป็น identity $I$ matrix จัตุรัสที่คอลัมน์ไม่ซ้ำกัน (rank เต็ม) มี inverse เสมอ และ determinant ที่ไม่เป็นศูนย์คือการตรวจอีกทาง</p>
+</div>
 </section>
-<section class="formula">
-<h2>3. หาพิกัด แล้วคูณกลับเพื่อพิสูจน์ว่าเป็นพอร์ตเดิม</h2>
-<p>แทน $x_A=6,x_J=5,x_X=4$ ลงในสมการที่แก้ไว้ ไม่ต้องเดาส่วนผสม:</p>
-<div class="math">\[
-\begin{aligned}
-c_1&=(6+5)/2=5.5,\\
-c_2&=(6-5)/2=0.5,\qquad c_3=4,\\
-5.5\mathbf b_1+0.5\mathbf b_2+4\mathbf b_3
- &=\begin{bmatrix}5.5+0.5\\5.5-0.5\\4\end{bmatrix}
- =\begin{bmatrix}6\\5\\4\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>นำ basis vectors วางเป็น <strong>คอลัมน์</strong> ของ matrix $B$ จะย่อการคูณกลับเป็น $\mathbf x=B\mathbf c$ และการหาพิกัดเป็น $\mathbf c=B^{-1}\mathbf x$:</p>
-<div class="math">\[
-\begin{aligned}
-B&=\begin{bmatrix}1&1&0\\1&-1&0\\0&0&1\end{bmatrix},\\
-B^{-1}&=\begin{bmatrix}1/2&1/2&0\\1/2&-1/2&0\\0&0&1\end{bmatrix},\\
-\det B&=(1(-1)-1(1))1=-2\ne0.
-\end{aligned}
-\]</div>
-<p>แถวแรกของ inverse ทำหน้าที่หาค่าเฉลี่ย AAPL/JPM แถวที่สองหาครึ่งหนึ่งของผลต่าง แถวที่สามเก็บ XOM ตามเดิม จึงอ่าน inverse ได้จากสมการที่เพิ่งแก้ ไม่ใช่สูตรใหม่ที่ต้องจำโดยไม่มีที่มา</p>
+
 <figure class="plot">
-<img src="../figures/6.3-2.svg" alt="พิกัดcommon5.5 relative0.5 และXOM4ในbasisที่กำหนด" loading="lazy">
-<figcaption>รูป 6.3b แท่งแสดงสัมประสิทธิ์ 5.5, 0.5, 4 ของแกนที่นิยามไว้ ไม่ใช่ variance contribution หรือค่าความเสี่ยงที่ประมาณจากข้อมูลราคา</figcaption>
+<h4>รูป — อ่านพิกัดจากตารางเส้นของแกนใหม่</h4>
+<svg viewBox="0 0 480 345" role="img" aria-label="ระนาบ AAPL กับ JPM มีเส้นทแยงลงซ้ายขวาของค่า common คงที่ และเส้นทแยงขึ้นของค่า relative คงที่ จุดพอร์ตอยู่บนเส้น common 5.5 และเส้น relative 0.5" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <rect x="60" y="30" width="280" height="280" fill="none" stroke="#5b6472" stroke-width="2"/>
+    <g stroke="#2455d6" stroke-width="1.5" stroke-opacity="0.45">
+      <line x1="60" y1="230" x2="140" y2="310"/>
+      <line x1="60" y1="150" x2="220" y2="310"/>
+      <line x1="60" y1="70" x2="300" y2="310"/>
+      <line x1="100" y1="30" x2="340" y2="270"/>
+      <line x1="180" y1="30" x2="340" y2="190"/>
+      <line x1="260" y1="30" x2="340" y2="110"/>
+    </g>
+    <g stroke="#a65f00" stroke-width="1.5" stroke-opacity="0.45">
+      <line x1="60" y1="230" x2="260" y2="30"/>
+      <line x1="60" y1="310" x2="340" y2="30"/>
+      <line x1="140" y1="310" x2="340" y2="110"/>
+    </g>
+    <line x1="220" y1="30" x2="340" y2="150" stroke="#2455d6" stroke-width="3"/>
+    <line x1="100" y1="310" x2="340" y2="70" stroke="#a65f00" stroke-width="3"/>
+    <circle cx="300" cy="110" r="6" fill="#047857"/>
+    <text x="348" y="155" fill="#2455d6">c₁ = 5.5</text>
+    <text x="348" y="75" fill="#a65f00">c₂ = 0.5</text>
+    <text x="348" y="35" fill="#a65f00" font-size="14">c₂ = 0</text>
+    <text x="348" y="115" fill="#a65f00" font-size="14">c₂ = 1</text>
+    <text x="348" y="195" fill="#2455d6" font-size="14">c₁ = 5</text>
+    <text x="348" y="275" fill="#2455d6" font-size="14">c₁ = 4</text>
+    <text x="292" y="132" text-anchor="end" fill="#047857">(6, 5)</text>
+    <text x="60" y="328" text-anchor="middle" font-size="14">0</text>
+    <text x="300" y="328" text-anchor="middle" font-size="14">6</text>
+    <text x="52" y="75" text-anchor="end" font-size="14">6</text>
+    <text x="200" y="342" text-anchor="middle">AAPL (ล้านดอลลาร์)</text>
+    <text x="24" y="170" text-anchor="middle" transform="rotate(-90 24 170)">JPM (ล้านดอลลาร์)</text>
+  </g>
+</svg>
+<figcaption>เส้นน้ำเงินจาง (ลาดลง) คือที่ที่ common มีค่าคงที่ 1, 2, …, 6 ซึ่งคือ AAPL + JPM $=2c_1$ เส้นส้มจาง (ลาดขึ้น) คือที่ที่ relative คงที่ −1, 0, 1 ซึ่งคือ AAPL − JPM $=2c_2$ จุดเขียวอยู่บนเส้นน้ำเงินเข้ม $c_1=5.5$ และเส้นส้มเข้ม $c_2=0.5$ พอดี ตารางเส้นของแกนใหม่หมุนไป 45 องศาจากตารางเดิม แต่จุดอยู่ที่เดิม</figcaption>
 </figure>
-</section>
+
 <section class="example">
-<h2>4. ทำไมพิกัดรวมได้ 10 แต่พอร์ตยังมี 15 ล้าน?</h2>
-<p>แต่ละหน่วยของ common มีสองขา ส่วน relative มี long กับ short หักล้างมูลค่าสุทธิ จึงต้องแปลงตามความหมายของแกนก่อนรวม:</p>
+<h4>ขั้นที่ 4 — ทำไมพิกัดรวมได้ 10 แต่พอร์ตมี 15 ล้าน</h4>
+<p>คำถามในหัวหน้านี้มาจากการบวกพิกัดเหมือนเป็นมูลค่าหุ้น พิกัดแต่ละตัวมีหน่วยเป็น “จำนวนหน่วยของแกนนั้น” ต้องแปลงด้วยความหมายของแกนก่อนรวม</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\mathbf c=(5.5,0.5,4)$ หนึ่งหน่วย common มีมูลค่าสุทธิ \$2 ล้าน หนึ่งหน่วย relative มีศูนย์ หนึ่งหน่วย XOM มี \$1 ล้าน</p>
 <div class="math">\[
 \begin{aligned}
-\text{net stock value}&=2c_1+0c_2+c_3\\
- &=2(5.5)+4=15\ \text{million USD},\\
-c_1+c_2+c_3&=10\quad\text{(not the stock value)}.
+V&=2c_1+0\,c_2+1\,c_3\\
+&=2(5.5)+0+4=15,\\
+c_1+c_2+c_3&=10,\\
+\tilde{\mathbf b}_1&=\tfrac12\mathbf b_1=(0.5,\,0.5,\,0),\\
+5.5\,\mathbf b_1&=11\,\tilde{\mathbf b}_1.
 \end{aligned}
 \]</div>
-<p>ถ้าพอร์ตไม่มีเงินสดหรือหนี้อื่น NAV ก็เท่ากับมูลค่าหุ้น 15 ล้านนี้ การบรรยายใหม่ไม่สร้าง cash flow แม้ผลรวมตัวเลขบนรายงานจะเปลี่ยน</p>
-<p>เรายังย่อแกน common เป็น $\widetilde{\mathbf b}_1=\mathbf b_1/2=(0.5,0.5,0)^{\mathsf T}$ ได้ เพื่อให้หนึ่งหน่วยหมายถึงตะกร้ามูลค่าสุทธิหนึ่งล้าน พิกัด common ต้องเพิ่มเป็นสองเท่า:</p>
-<div class="math">\[
-5.5\mathbf b_1=11\widetilde{\mathbf b}_1,\qquad
-\widetilde{\mathbf c}=\begin{bmatrix}11\\0.5\\4\end{bmatrix}.
-\]</div>
-<p>ยังเป็นพอร์ตเดิม จึงไม่ควรเปรียบเทียบขนาดพิกัดต่างรายงานโดยไม่ตรวจ normalization ของแกนก่อน ตัวเลขพิกัดที่ใหญ่ขึ้นอาจเกิดจากการเปลี่ยนหน่วย ไม่ใช่เพิ่มการลงทุนหรือความเสี่ยง</p>
+<p><strong>คำตอบ:</strong> มูลค่าสุทธิยังเป็น \$15 ล้าน ผลรวม 10 นับตะกร้า common เป็น 5.5 ทั้งที่แต่ละหน่วยมีสองขา ถ้าย่อแกน common ให้หนึ่งหน่วยมีมูลค่า \$1 ล้าน ($\tilde{\mathbf b}_1$) พิกัดต้องเพิ่มเป็น 11 พอร์ตเดิมเป๊ะ ตัวเลขพิกัดใหญ่ขึ้นสองเท่าเพราะเปลี่ยนขนาดของแกน ไม่ได้ซื้ออะไรเพิ่ม</p>
+<p><strong>ตรวจเองใน 10 วินาที:</strong> พิกัดใหม่ $(11,0.5,4)$ กับแกน $\tilde{\mathbf b}_1$ ให้มูลค่า $1(11)+0+4=15$ ตรงกัน</p>
+</section>
+
 <figure class="plot">
-<img src="../figures/6.3-3.svg" alt="เปรียบเทียบพิกัดหุ้น6 5 4กับพิกัดbasisใหม่5.5 0.5 4แยกกันสองชุด" loading="lazy">
-<figcaption>รูป 6.3c สามแท่งซ้ายคือพิกัดรายหุ้น สามแท่งขวาคือพิกัดใน basis ใหม่ อย่านำหกแท่งมารวมเป็นเงินลงทุน และอย่าบังคับให้ผลรวมสามแท่งแต่ละฝั่งเท่ากัน</figcaption>
+<h4>รูป — ตะกร้าใหม่ซ้อนกันเป็นมูลค่ารายหุ้น</h4>
+<svg viewBox="0 0 480 320" role="img" aria-label="แท่ง AAPL สูง 6 ประกอบด้วย common 5.5 กับ relative บวก 0.5 แท่ง JPM สูง 5 คือ common 5.5 ถูก relative หักออก 0.5 แท่ง XOM สูง 4" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <line x1="70" y1="280" x2="420" y2="280" stroke="#5b6472" stroke-width="2"/>
+    <line x1="70" y1="208" x2="420" y2="208" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="136" x2="420" y2="136" stroke="#d7dce3" stroke-width="1.5"/>
+    <line x1="70" y1="64" x2="420" y2="64" stroke="#d7dce3" stroke-width="1.5"/>
+    <text x="62" y="285" text-anchor="end" font-size="14">0</text>
+    <text x="62" y="213" text-anchor="end" font-size="14">2</text>
+    <text x="62" y="141" text-anchor="end" font-size="14">4</text>
+    <text x="62" y="69" text-anchor="end" font-size="14">6</text>
+    <text x="22" y="175" text-anchor="middle" transform="rotate(-90 22 175)">มูลค่า (ล้านดอลลาร์)</text>
+    <rect x="110" y="82" width="60" height="198" fill="#2455d6"/>
+    <rect x="110" y="64" width="60" height="18" fill="#a65f00"/>
+    <rect x="210" y="100" width="60" height="180" fill="#2455d6"/>
+    <rect x="210" y="82" width="60" height="18" fill="none" stroke="#a65f00" stroke-width="2.5" stroke-dasharray="4 3"/>
+    <rect x="310" y="136" width="60" height="144" fill="#047857"/>
+    <text x="140" y="56" text-anchor="middle">6</text>
+    <text x="240" y="74" text-anchor="middle">5</text>
+    <text x="340" y="128" text-anchor="middle">4</text>
+    <text x="278" y="96" fill="#a65f00" font-size="14">−0.5</text>
+    <text x="140" y="300" text-anchor="middle">AAPL</text>
+    <text x="240" y="300" text-anchor="middle">JPM</text>
+    <text x="340" y="300" text-anchor="middle">XOM</text>
+    <rect x="380" y="34" width="14" height="14" fill="#2455d6"/>
+    <text x="400" y="46" font-size="14">common</text>
+    <rect x="380" y="56" width="14" height="14" fill="#a65f00"/>
+    <text x="400" y="68" font-size="14">relative</text>
+    <rect x="380" y="78" width="14" height="14" fill="#047857"/>
+    <text x="400" y="90" font-size="14">XOM</text>
+  </g>
+</svg>
+<figcaption>สีน้ำเงินคือตะกร้า common 5.5 หน่วย ซึ่งใส่ \$5.5 ล้านลงทั้ง AAPL และ JPM (นับสองครั้ง) สีส้มคือ relative 0.5 หน่วย ซึ่งเพิ่ม AAPL \$0.5 ล้าน และหัก JPM \$0.5 ล้าน (กรอบประ) สีเขียวคือ XOM 4 ความสูงสามแท่งรวมเป็น 15 ส่วนผลรวมพิกัด $5.5+0.5+4=10$ ไม่ใช่มูลค่า เพราะน้ำเงินปรากฏสองแท่ง และส้มหักกันเองเป็นศูนย์</figcaption>
 </figure>
-</section>
+
 <section class="formula">
-<h2>5. P&amp;L ต้องเท่าเดิมเมื่อจับคู่กับข้อมูลให้ถูกชุด</h2>
-<p>สมมติในหนึ่งวัน return ของ AAPL, JPM, XOM เป็น 1%, −2%, 0.5% ตามลำดับ โดยไม่รวมปันผลและต้นทุน ใช้หน่วยมูลค่าเดิมเป็นล้าน USD:</p>
+<h4>ขั้นที่ 5 — P&amp;L ต้องเท่าเดิม ถ้าแปลงผลตอบแทนให้เข้าคู่กับพิกัด</h4>
+<p>พอร์ตเดิม P&amp;L เดิม ไม่ว่าจะบรรยายด้วยแกนไหน แต่ dot product ต้องจับคู่ของที่เป็นคู่กัน: พิกัดใหม่ต้องคูณกับ “P&amp;L ต่อหนึ่งหน่วยของแกนใหม่” ไม่ใช่ผลตอบแทนรายหุ้น วันนี้ผลตอบแทน AAPL, JPM, XOM คือ 1%, −2%, 0.5%</p>
 <div class="math">\[
 \begin{aligned}
-\Delta V&=6(0.01)+5(-0.02)+4(0.005)\\
- &=0.06-0.10+0.02=-0.02\ \text{million USD}\\
- &=-20{,}000\ \text{USD}.
+\mathbf x^{\mathsf T}\mathbf r&=6(0.01)+5(-0.02)+4(0.005)\\
+&=0.06-0.10+0.02=-0.02,\\
+\mathbf x^{\mathsf T}\mathbf r&=(B\mathbf c)^{\mathsf T}\mathbf r
+=\mathbf c^{\mathsf T}(B^{\mathsf T}\mathbf r),\\
+\mathbf g=B^{\mathsf T}\mathbf r&=\begin{bmatrix}r_A+r_J\\r_A-r_J\\r_X\end{bmatrix}
+=\begin{bmatrix}-0.01\\0.03\\0.005\end{bmatrix},\\
+\mathbf c^{\mathsf T}\mathbf g&=5.5(-0.01)+0.5(0.03)+4(0.005)\\
+&=-0.055+0.015+0.02=-0.02.
 \end{aligned}
 \]</div>
-<p>ถ้าใช้พิกัด $\mathbf c$ ต้องคิด P&amp;L ต่อหนึ่งหน่วยของแต่ละตะกร้าให้ตรงกัน common ให้ $r_A+r_J$ ส่วน relative ให้ $r_A-r_J$ จึงเขียนเป็น $\mathbf g=B^{\mathsf T}\mathbf r$ ได้ว่า</p>
-<div class="math">\[
-\begin{aligned}
-\mathbf g&=\begin{bmatrix}-0.01\\0.03\\0.005\end{bmatrix},\\
-\mathbf c^{\mathsf T}\mathbf g
- &=5.5(-0.01)+0.5(0.03)+4(0.005)\\
- &=-0.02\ \text{million USD},\\
-\mathbf x^{\mathsf T}\mathbf r
- &=(B\mathbf c)^{\mathsf T}\mathbf r
- =\mathbf c^{\mathsf T}B^{\mathsf T}\mathbf r.
-\end{aligned}
-\]</div>
-<p>$g_1$ เป็น P&amp;L ของสองขาต่อหนึ่งหน่วยพิกัด common ไม่ใช่ return ต่อเงินลงทุนรวมของตะกร้าสองล้าน หากใช้ตะกร้า normalized มูลค่าหนึ่งล้านจากส่วนก่อน return จะเป็น $(r_A+r_J)/2=-0.5\%$ และคูณพิกัด 11 ก็ยังได้ส่วนร่วม −55,000 USD เท่าเดิม</p>
-<p>การคูณ $\mathbf c^{\mathsf T}\mathbf r$ โดยไม่เปลี่ยนข้อมูลที่จับคู่กันจะได้ +65,000 USD ซึ่งผิด และการนำ $B^{-1}\mathbf r$ มาใช้แทน $B^{\mathsf T}\mathbf r$ ก็ไม่ใช่กฎคำนวณ P&amp;L นี้ ชนิดของสิ่งที่แปลงและหน่วยมีความสำคัญกว่าการใช้ matrix ตัวเดียวกันทุกที่</p>
+<div class="reading">
+<p>หน่วยเป็นล้านดอลลาร์ พอร์ตขาดทุน \$20,000 ทั้งสองวิธี ท่าสำคัญอยู่บรรทัดที่สอง: แทน $\mathbf x=B\mathbf c$ แล้วใช้กฎ transpose ของผลคูณ $(B\mathbf c)^{\mathsf T}=\mathbf c^{\mathsf T}B^{\mathsf T}$ (สลับลำดับเมื่อ transpose) วงเล็บ $B^{\mathsf T}\mathbf r$ คือ dot product ของแต่ละแกนกับผลตอบแทน: แกน common หนึ่งหน่วยถือ AAPL กับ JPM อย่างละ \$1 ล้าน จึงได้ $r_A+r_J=-0.01$ ล้าน แกน relative ได้ $r_A-r_J=+0.03$ ล้าน</p>
+<p>ถ้าคูณ $\mathbf c$ กับ $\mathbf r$ ตรง ๆ จะได้ $5.5(0.01)+0.5(-0.02)+4(0.005)=0.065$ คือกำไร \$65,000 ผิดทั้งขนาดและเครื่องหมาย เพราะเอาผลตอบแทนของ AAPL ไปคูณจำนวนตะกร้า common สังเกตด้วยว่าตัวแปลงของผลตอบแทนคือ $B^{\mathsf T}$ ไม่ใช่ $B^{-1}$ ที่ใช้แปลงพิกัด ของสองชนิดนี้แปลงคนละแบบ เพื่อให้ dot product ของมันคงเดิม</p>
+</div>
 </section>
+
+<figure class="plot">
+<h4>รูป — P&amp;L เดียวกัน แบ่งสองแบบ</h4>
+<svg viewBox="0 0 480 300" role="img" aria-label="กลุ่มซ้ายแยกตามหุ้น AAPL บวก 60 JPM ลบ 100 XOM บวก 20 รวมลบ 20 พันดอลลาร์ กลุ่มขวาแยกตามตะกร้า common ลบ 55 relative บวก 15 XOM บวก 20 รวมลบ 20" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <g font-size="15" fill="#181818">
+    <line x1="20" y1="150" x2="470" y2="150" stroke="#5b6472" stroke-width="2"/>
+    <line x1="238" y1="40" x2="238" y2="270" stroke="#d7dce3" stroke-width="1.5"/>
+    <text x="125" y="26" text-anchor="middle">แยกตามหุ้น</text>
+    <text x="362" y="26" text-anchor="middle">แยกตามตะกร้า</text>
+    <rect x="32" y="96" width="36" height="54" fill="#2455d6"/>
+    <rect x="82" y="150" width="36" height="90" fill="#d82632"/>
+    <rect x="132" y="132" width="36" height="18" fill="#2455d6"/>
+    <rect x="182" y="150" width="36" height="18" fill="#6d28d9"/>
+    <text x="50" y="88" text-anchor="middle" font-size="14">+60</text>
+    <text x="100" y="258" text-anchor="middle" font-size="14">−100</text>
+    <text x="150" y="124" text-anchor="middle" font-size="14">+20</text>
+    <text x="200" y="186" text-anchor="middle" font-size="14" fill="#6d28d9">−20</text>
+    <rect x="258" y="150" width="34" height="49.5" fill="#d82632"/>
+    <rect x="318" y="136.5" width="34" height="13.5" fill="#2455d6"/>
+    <rect x="378" y="132" width="34" height="18" fill="#2455d6"/>
+    <rect x="433" y="150" width="34" height="18" fill="#6d28d9"/>
+    <text x="275" y="218" text-anchor="middle" font-size="14">−55</text>
+    <text x="335" y="128" text-anchor="middle" font-size="14">+15</text>
+    <text x="395" y="124" text-anchor="middle" font-size="14">+20</text>
+    <text x="450" y="186" text-anchor="middle" font-size="14" fill="#6d28d9">−20</text>
+    <text x="50" y="285" text-anchor="middle" font-size="14">AAPL</text>
+    <text x="100" y="285" text-anchor="middle" font-size="14">JPM</text>
+    <text x="150" y="285" text-anchor="middle" font-size="14">XOM</text>
+    <text x="200" y="285" text-anchor="middle" font-size="14">รวม</text>
+    <text x="275" y="285" text-anchor="middle" font-size="14">common</text>
+    <text x="335" y="285" text-anchor="middle" font-size="14">relative</text>
+    <text x="395" y="285" text-anchor="middle" font-size="14">XOM</text>
+    <text x="450" y="285" text-anchor="middle" font-size="14">รวม</text>
+  </g>
+</svg>
+<figcaption>หน่วยพันดอลลาร์ ซ้ายคือ $x_ir_i$ รายหุ้น ขวาคือ $c_ig_i$ รายตะกร้า แท่งม่วงคือผลรวม −20 เท่ากันทั้งสองฝั่ง การแบ่งต่างกันเพราะถามคนละคำถาม: ฝั่งขวาบอกว่าวันนี้ “ทั้งสองธนาคารร่วงด้วยกัน” ทำให้เสีย \$55,000 ส่วน “AAPL ชนะ JPM” ช่วยคืนมา \$15,000</figcaption>
+</figure>
+
+<section class="formula">
+<h4>ขั้นที่ 6 — basis ที่ตั้งฉากกันหาพิกัดได้ด้วย dot product</h4>
+<p>ตอนหาพิกัดใหม่ด้านบนเราต้องแก้สมการ แต่แกน $\mathbf b_1,\mathbf b_2,\mathbf b_3$ ชุดนี้ตั้งฉากกันทุกคู่ ($\mathbf b_1^{\mathsf T}\mathbf b_2=1-1+0=0$) ซึ่งเปิดทางลัด: dot product ของพอร์ตกับแกนหนึ่งจะฆ่าแกนอื่นทิ้งหมด</p>
+<div class="math">\[
+\begin{aligned}
+\mathbf b_k^{\mathsf T}\mathbf x&=\sum_i c_i\,\mathbf b_k^{\mathsf T}\mathbf b_i
+=c_k\,\mathbf b_k^{\mathsf T}\mathbf b_k,\\
+c_k&=\frac{\mathbf b_k^{\mathsf T}\mathbf x}{\mathbf b_k^{\mathsf T}\mathbf b_k},\\
+c_1&=\frac{6+5}{2}=5.5,\quad c_2=\frac{6-5}{2}=0.5,\\
+B^{\mathsf T}B&=\begin{bmatrix}2&amp;0&amp;0\\0&amp;2&amp;0\\0&amp;0&amp;1\end{bmatrix}.
+\end{aligned}
+\]</div>
+<div class="reading">
+<p>บรรทัดแรกได้จากการ dot $\mathbf b_k$ เข้ากับ $\mathbf x=\sum_ic_i\mathbf b_i$ ทุกพจน์ที่ $i\ne k$ เป็นศูนย์เพราะตั้งฉาก เหลือพจน์เดียว หารด้วยความยาวกำลังสองของแกนได้พิกัด ไม่ต้องแก้ระบบสมการ $B^{\mathsf T}B$ เป็น diagonal เพราะช่องนอกแนวทแยงคือ dot product ระหว่างแกนต่างกัน ซึ่งเป็นศูนย์ แต่มันยังไม่ใช่ $I$ เพราะ $\mathbf b_1,\mathbf b_2$ ยาว $\sqrt2$ ไม่ใช่ 1 ดังนั้น $B^{-1}\ne B^{\mathsf T}$: ถ้าใช้ $B^{\mathsf T}\mathbf x=(11,1,4)$ เป็นพิกัด จะผิดไปสองเท่าในสองช่องแรก</p>
+<p>ถ้าหารแต่ละแกนด้วยความยาวของมัน ได้ $\mathbf q_1=(1,1,0)/\sqrt2$, $\mathbf q_2=(1,-1,0)/\sqrt2$, $\mathbf q_3=\mathbf b_3$ ซึ่งเป็น orthonormal จะได้ $Q^{\mathsf T}Q=I$ และ $Q^{-1}=Q^{\mathsf T}$: หาพิกัดด้วยการ transpose อย่างเดียว ทางลัดนี้ใช้ไม่ได้กับแกนที่ไม่ตั้งฉาก ดังรูปถัดไป แนวคิดเดียวกันเรื่องการวัดส่วนที่อยู่ตามแกนด้วย dot product คือ projection ใน <a href="6.5.html">inner product, angle และ correlation</a></p>
+</div>
+</section>
+
+<figure class="plot">
+<h4>รูป — ทางลัด dot product พังเมื่อแกนไม่ตั้งฉาก</h4>
+<svg viewBox="0 0 480 350" role="img" aria-label="ระนาบ AAPL กับ JPM แกน common ทแยงและแกน AAPL อย่างเดียวในแนวนอน ทางที่ถูกคือเดินทแยง 5 หน่วยถึง 5 กับ 5 แล้วเดินขวา 1 หน่วยถึง 6 กับ 5 ส่วนเส้นตั้งฉากจากจุดพอร์ตตกที่ 5.5 กับ 5.5 ซึ่งไม่ใช่พิกัดที่ถูก" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+  <defs>
+    <marker id="a63nb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+    <marker id="a63nt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#007f8f"/></marker>
+  </defs>
+  <g font-size="15" fill="#181818">
+    <line x1="50" y1="330" x2="380" y2="330" stroke="#5b6472" stroke-width="2"/>
+    <line x1="50" y1="330" x2="50" y2="20" stroke="#5b6472" stroke-width="2"/>
+    <line x1="50" y1="330" x2="358" y2="22" stroke="#2455d6" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <line x1="50" y1="330" x2="267" y2="113" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a63nb)"/>
+    <line x1="270" y1="110" x2="310" y2="110" stroke="#007f8f" stroke-width="3.5" marker-end="url(#a63nt)"/>
+    <line x1="314" y1="110" x2="292" y2="88" stroke="#5b6472" stroke-width="2" stroke-dasharray="5 4"/>
+    <polyline points="297,93 302,88 297,83" fill="none" stroke="#5b6472" stroke-width="1.5"/>
+    <circle cx="292" cy="88" r="5" fill="none" stroke="#d82632" stroke-width="2.5"/>
+    <circle cx="270" cy="110" r="4" fill="#2455d6"/>
+    <circle cx="314" cy="110" r="6" fill="#047857"/>
+    <line x1="50" y1="330" x2="91" y2="289" stroke="#2455d6" stroke-width="5" marker-end="url(#a63nb)"/>
+    <line x1="50" y1="330" x2="91" y2="330" stroke="#007f8f" stroke-width="5" marker-end="url(#a63nt)"/>
+    <text x="100" y="286" fill="#2455d6">b₁ = (1, 1)</text>
+    <text x="100" y="322" fill="#007f8f">a = (1, 0)</text>
+    <text x="150" y="190" fill="#2455d6">5 b₁</text>
+    <text x="276" y="130" fill="#007f8f">1 a</text>
+    <text x="322" y="116" fill="#047857">(6, 5)</text>
+    <text x="250" y="74" fill="#d82632">(5.5, 5.5)</text>
+    <text x="215" y="348" text-anchor="middle">AAPL (ล้านดอลลาร์)</text>
+    <text x="22" y="180" text-anchor="middle" transform="rotate(-90 22 180)">JPM (ล้านดอลลาร์)</text>
+  </g>
+</svg>
+<figcaption>แกนชุดนี้คือ common $\mathbf b_1=(1,1)$ กับ “AAPL อย่างเดียว” $\mathbf a=(1,0)$ ซึ่งไม่ตั้งฉากกัน พิกัดที่ถูกของ $(6,5)$ คือ $5\mathbf b_1+1\mathbf a$ (เดินทแยง 5 แล้วไปขวา 1) เพราะ JPM มาจาก $\mathbf b_1$ อย่างเดียว ถ้าใช้ทางลัด $\mathbf b_1^{\mathsf T}\mathbf x/\mathbf b_1^{\mathsf T}\mathbf b_1=11/2=5.5$ จะได้จุดวงแดง $(5.5,5.5)$ ซึ่งคือเท้าของเส้นตั้งฉาก (เส้นประ) ไม่ใช่พิกัดที่ถูก ทางลัดใช้ได้เฉพาะเมื่อแกนอื่นตั้งฉากกับ $\mathbf b_1$</figcaption>
+</figure>
+
+<section class="example">
+<h4>ขั้นที่ 7 — เปลี่ยนแกนไม่ใช่ตัดแกนทิ้ง</h4>
+<p>รายงานที่อยากสั้นลงมักทิ้งพิกัดที่ดูเล็ก เช่น relative 0.5 ขั้นนี้วัดว่าการทิ้งพิกัดคือการเปลี่ยนพอร์ตเท่าไร</p>
+<p><strong>โจทย์ให้อะไรมาบ้าง:</strong> พอร์ต $\mathbf x=(6,5,4)$ พิกัด $(5.5,0.5,4)$ ตั้ง $c_2=0$ แล้วสร้างกลับ ผลตอบแทนวันนี้ $\mathbf r=(0.01,-0.02,0.005)$</p>
+<div class="math">\[
+\begin{aligned}
+\hat{\mathbf x}&=5.5\mathbf b_1+0\,\mathbf b_2+4\mathbf b_3
+=(5.5,\,5.5,\,4),\\
+\mathbf e=\mathbf x-\hat{\mathbf x}&=(0.5,\,-0.5,\,0),\\
+\mathbf e^{\mathsf T}\mathbf r&=0.5(0.01)-0.5(-0.02)=0.015,\\
+\hat{\mathbf x}^{\mathsf T}\mathbf r&=-0.02-0.015=-0.035.
+\end{aligned}
+\]</div>
+<p><strong>คำตอบ:</strong> พอร์ตที่ทิ้ง relative ขาดทุน \$35,000 ในวันเดียวกัน ต่างจากพอร์ตจริง \$15,000 แม้มูลค่าเริ่มต้นยังเป็น \$15 ล้านเท่ากัน ส่วนต่าง $\mathbf e$ คือ residual: ข้อมูลที่หายไปพร้อมพิกัดที่ทิ้ง basis เต็มของสามมิติยังมีสามพิกัด การเปลี่ยนแกนจึงไม่ลดข้อมูล ส่วนการตัดแกนคือการเปลี่ยนพอร์ต หรือการประมาณที่ต้องรายงาน residual ด้วย</p>
+<p>หลักเดียวกันใช้กับ <a href="17.4.html">PCA</a>: ถ้าเก็บครบทุกแกนคือการเปลี่ยน basis ล้วน ๆ ถ้าเก็บแค่ไม่กี่แกนแรกคือการตัด และความเสี่ยงที่อยู่ในแกนที่ทิ้งไม่ได้หายไปจากพอร์ตจริง</p>
+</section>
+
 <section class="pitfall">
-<h2>6. เปลี่ยนพิกัดไม่ใช่ตัดพิกัดทิ้ง</h2>
-<p>Basis เต็มสามมิติยังมีสามพิกัด ไม่ได้ลดจำนวนข้อมูล ถ้าเราตัด relative ทิ้งโดยตั้ง $c_2=0$ จะได้พอร์ตอีกชุด:</p>
-<div class="math">\[
-\begin{aligned}
-\widehat{\mathbf x}&=5.5\mathbf b_1+0\mathbf b_2+4\mathbf b_3
- =\begin{bmatrix}5.5\\5.5\\4\end{bmatrix},\\
-\mathbf e=\mathbf x-\widehat{\mathbf x}
- &=\begin{bmatrix}0.5\\-0.5\\0\end{bmatrix},\\
-\mathbf e^{\mathsf T}\mathbf r
- &=0.5(0.01)-0.5(-0.02)=0.015.
-\end{aligned}
-\]</div>
-<p>ในวันที่สมมติ พอร์ตใหม่ขาดทุน 35,000 USD ต่างจากพอร์ตเดิม 15,000 USD แม้มูลค่าหุ้นตอนเริ่มวันยังรวม 15 ล้านเท่ากัน การลบพิกัดจึงเป็นการเปลี่ยนสถานะหรือประมาณข้อมูล โดยมี residual ที่ต้องตรวจ ไม่ใช่เพียงเปลี่ยนวิธีเขียน</p>
-<p>PCA ที่เก็บแกนครบทุกมิติอาจใช้เป็นการเปลี่ยน basis ได้ แต่เมื่อเก็บเพียงบางแกนเพื่อทำ dimensionality reduction เราต้องยอมรับข้อมูลส่วนที่ทิ้ง หรือกำหนดให้พอร์ตอยู่ใน subspace นั้น ความง่ายของรายงานไม่ได้ทำให้ความเสี่ยงส่วนที่ละไว้หายไป</p>
-<h3>Inverse ไม่ใช่ transpose เสมอ</h3>
-<p>Basis ไม่จำเป็นต้องตั้งฉากหรือมีความยาวหนึ่ง แกนของตัวอย่างนี้ตั้งฉากกัน แต่สองแกนแรกยังไม่ใช่ unit vectors จึงมี</p>
-<div class="math">\[
-B^{\mathsf T}B=\begin{bmatrix}2&0&0\\0&2&0\\0&0&1\end{bmatrix}\ne I,
-\qquad
-B^{\mathsf T}\mathbf x=\begin{bmatrix}11\\1\\4\end{bmatrix}\ne\mathbf c.
-\]</div>
-<p>เงื่อนไข $B^{\mathsf T}B=I$ ของ orthonormal basis ต่างหากที่ทำให้ inverse เท่ากับ transpose เราจะใช้ norms และ inner products ในสองหัวข้อถัดไปเพื่ออธิบายความยาวและมุมให้ชัดขึ้น</p>
+<h4>ความผิดที่เกิดเมื่ออ่านพิกัดแยกจากแกน</h4>
+<p><strong>บวกพิกัดเป็นมูลค่า:</strong> $5.5+0.5+4=10$ แต่มูลค่าคือ 15 พิกัดของแกนที่มีหลายขาต้องคูณมูลค่าต่อหน่วยของแกนก่อน</p>
+<p><strong>ใช้ผลตอบแทนรายหุ้นกับพิกัดใหม่:</strong> $\mathbf c^{\mathsf T}\mathbf r=+\$65{,}000$ แทน $-\$20{,}000$ ต้องใช้ $\mathbf g=B^{\mathsf T}\mathbf r$</p>
+<p><strong>เทียบพิกัดข้ามรายงานที่ normalize แกนต่างกัน:</strong> common 5.5 เมื่อวานกับ 11 วันนี้อาจเป็นพอร์ตเดียวกัน ถ้าวันนี้แกนเป็น $(0.5,0.5,0)$ ต้องเทียบแกนพร้อมพิกัดเสมอ</p>
+<p><strong>คิดว่า inverse คือ transpose:</strong> จริงเฉพาะ orthonormal basis กับแกน $\mathbf b$ ในหน้านี้ $B^{\mathsf T}\mathbf x=(11,1,4)$ ไม่ใช่พิกัด $(5.5,0.5,4)$</p>
+<p><strong>คิดว่า relative ที่มูลค่าสุทธิศูนย์ไม่มีความเสี่ยง:</strong> วันนี้ relative 0.5 หน่วยทำเงิน \$15,000 จากการที่ AAPL กับ JPM ขยับต่างกัน 3% มูลค่าสุทธิศูนย์ไม่ได้แปลว่า P&amp;L ศูนย์</p>
 </section>
+
 <section class="prose">
-<h2>7. เลือก basis ให้ตอบงาน แต่ไม่เชื่อชื่อแกนเกินข้อมูล</h2>
-<div class="table-wrap"><table>
-<thead><tr><th>งาน</th><th>สิ่งที่ต้องตรวจ</th></tr></thead>
-<tbody>
-<tr><td>ส่งคำสั่งซื้อขาย</td><td>แปลงกลับเป็นหุ้นที่ trade ได้ จำนวนเงินและหน่วยต้องถูก</td></tr>
-<tr><td>รายงาน factor risk</td><td>แยก basis ที่เลือกเองออกจาก factor loadings ที่ประมาณจากข้อมูล</td></tr>
-<tr><td>เปรียบเทียบรายงานข้ามวัน</td><td>basis เปลี่ยนด้วยหรือไม่? พิกัดอาจขยับแม้พอร์ตคงเดิม</td></tr>
-<tr><td>เลือก hedge</td><td>ตรวจ covariance, beta, ต้นทุนและข้อจำกัด ไม่ใช่เรียงพิกัดจากใหญ่ไปเล็กแล้วตัดสิน</td></tr>
-<tr><td>ใช้แกนที่เกือบซ้ำ</td><td>ตรวจความไวเชิงตัวเลข คำตอบมีชุดเดียวก็ยังไม่รับประกันความเสถียร</td></tr>
-</tbody></table></div>
-<p>ไม่มี basis ที่ “ดีที่สุด” โดยไม่ระบุเป้าหมายทางธุรกิจ แต่ทุก basis ที่อ้างว่าบรรยายพื้นที่เดียวกันแบบ exact ต้องรักษา independence และ spanning ไว้ การตั้งชื่อแกนให้ดูมีความหมายไม่ทดแทนการพิสูจน์สองเงื่อนไขนี้</p>
+<h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+<p>รายงานความเสี่ยงแทบทุกฉบับเป็นการเปลี่ยน basis: <a href="26.1.html">factor model</a> บรรยายพอร์ตหุ้นหลายร้อยตัวด้วยพิกัดของ factor ไม่กี่ตัว (ตลาด ขนาด อุตสาหกรรม) บวกส่วนที่เหลือรายหุ้น และ<a href="26.3.html">การหมุนแกนของ factor</a> ก็เปลี่ยนตัวเลขในรายงานโดยที่พอร์ตไม่ขยับ เวลาเห็นพิกัดเปลี่ยนข้ามวัน ต้องถามก่อนว่ามีการซื้อขายจริง หรือแค่แกนเปลี่ยน ส่วนการส่งคำสั่งต้องแปลงกลับเป็นแกนรายหุ้นเสมอด้วย $\mathbf x=B\mathbf c$ เพราะโบรกเกอร์รับคำสั่งเป็นหุ้น ไม่ใช่เป็นตะกร้า</p>
 </section>
+
 <section class="example">
-<h2>ตรวจเองใน 10 วินาที</h2>
-<p><strong>ข้อ 1:</strong> ถ้าพอร์ตเป็น AAPL 8, JPM 2, XOM 4 ล้าน USD พิกัดใน basis เดิมของบทนี้เท่าไร?</p>
-<details><summary>ดูเฉลย</summary><p>$c_1=(8+2)/2=5$, $c_2=(8-2)/2=3$, $c_3=4$ ตรวจกลับได้ $(5+3,5-3,4)=(8,2,4)$ มูลค่าสุทธิหุ้นคือ $2(5)+4=14$ ล้าน ไม่ใช่ผลรวมพิกัด 12 ล้าน</p></details>
-<p><strong>ข้อ 2:</strong> จากพอร์ตต้นบท ถ้าลด common จาก 5.5 เป็น 4.5 โดยคงพิกัดอื่นเดิม ต้องขายอะไร และได้เงินสดเท่าไร?</p>
-<details><summary>ดูเฉลย</summary><p>ขาย AAPL และ JPM อย่างละ 1 ล้าน USD ได้เงินสด 2 ล้าน ก่อนต้นทุน พอร์ตหุ้นเหลือ $(5,4,4)$ มูลค่า 13 ล้าน หากเก็บเงินสดไว้ NAV ณ ราคาที่ใช้ซื้อขายยังเป็น 15 ล้าน นี่เป็นการ trade จริง ต่างจากการเปลี่ยน basis</p></details>
-<p><strong>ข้อ 3:</strong> ถ้ารายงานวันพรุ่งนี้เปลี่ยนแกน common เป็น $(0.5,0.5,0)$ แล้วพิกัดเพิ่มจาก 5.5 เป็น 11 แปลว่าซื้อเพิ่มหรือไม่?</p>
-<details><summary>ดูเฉลย</summary><p>ไม่จำเป็นเลย เพราะ $11(0.5,0.5,0)=5.5(1,1,0)$ ต้องเปรียบเทียบทั้ง basis และพิกัดร่วมกัน ไม่ใช่ดูเพียงตัวเลขคอลัมน์เดียว</p></details>
+<h4>โจทย์ตรวจความเข้าใจ</h4>
+<p><strong>1.</strong> พอร์ต AAPL \$8 ล้าน JPM \$2 ล้าน XOM \$4 ล้าน มีพิกัดเท่าไรในแกน common, relative, XOM และมูลค่าสุทธิเท่าไร</p>
+<details><summary>เฉลย</summary><p>$c_1=(8+2)/2=5$, $c_2=(8-2)/2=3$, $c_3=4$ ตรวจกลับ $(5+3,\,5-3,\,4)=(8,2,4)$ มูลค่าสุทธิ $2(5)+0(3)+4=14$ ล้าน ไม่ใช่ผลรวมพิกัด 12</p></details>
+<p><strong>2.</strong> จากพอร์ตต้นหน้า ถ้าลด common จาก 5.5 เป็น 4.5 โดยคงพิกัดอื่น ต้องซื้อขายอะไร และนี่เป็นการเปลี่ยน basis หรือไม่</p>
+<details><summary>เฉลย</summary><p>พอร์ตใหม่ $4.5(1,1,0)+0.5(1,-1,0)+4(0,0,1)=(5,4,4)$ ต้องขาย AAPL \$1 ล้านและ JPM \$1 ล้าน ได้เงินสด \$2 ล้าน (ก่อนต้นทุน) นี่คือการซื้อขายจริง เพราะพิกัดเปลี่ยนแต่แกนเดิม ส่วนการเปลี่ยน basis คือแกนเปลี่ยนแต่พอร์ตเดิม</p></details>
+<p><strong>3.</strong> ใช้แกน common $\mathbf b_1=(1,1,0)$ กับ “AAPL อย่างเดียว” $\mathbf a=(1,0,0)$ และ XOM $\mathbf b_3$ หาพิกัดของ $(6,5,4)$ และ P&amp;L ต่อหน่วยแกนสำหรับผลตอบแทนวันนี้</p>
+<details><summary>เฉลย</summary><p>ช่อง JPM มาจาก $\mathbf b_1$ อย่างเดียว จึงได้ $c_1=5$ แล้ว AAPL $=5+c_2=6$ ได้ $c_2=1$ และ $c_3=4$ P&amp;L ต่อหน่วยคือ dot ของแต่ละแกนกับ $\mathbf r$: $(0.01-0.02,\ 0.01,\ 0.005)=(-0.01,0.01,0.005)$ รวม $5(-0.01)+1(0.01)+4(0.005)=-0.02$ ล้าน ตรงกับเดิม ส่วนทางลัด $11/2=5.5$ ใช้ไม่ได้เพราะ $\mathbf a$ ไม่ตั้งฉากกับ $\mathbf b_1$</p></details>
 </section>
+
 <section class="code">
-<h2>JavaScript: เปลี่ยนไป เปลี่ยนกลับ และตรวจ P&amp;L</h2>
-<p>ใช้สูตรที่แก้ด้วยมือสำหรับ basis นี้ แล้วตรวจซ้ำด้วย matrix ที่ระบุอย่างชัดเจน โค้ดนี้เป็นตัวอย่างสามมิติเฉพาะเรื่อง ไม่ใช่ numerical solver สำหรับ matrix ทั่วไป</p>
-<pre><code class="language-javascript" data-example="6.3">function check3(v) {
-  if (!Array.isArray(v) || v.length !== 3 || !v.every(Number.isFinite)) {
-    throw new TypeError('Need three finite coordinates');
-  }
-}
-function coordinates(x) {
-  check3(x);
-  return [(x[0] + x[1]) / 2, (x[0] - x[1]) / 2, x[2]];
-}
-function reconstruct(c) {
-  check3(c);
-  return [c[0] + c[1], c[0] - c[1], c[2]];
-}
-const dot = (a, b) =&gt; a.reduce((sum, x, i) =&gt; sum + x * b[i], 0);
-const mv = (matrix, v) =&gt; matrix.map(row =&gt; dot(row, v));
-const B = [[1, 1, 0], [1, -1, 0], [0, 0, 1]];
-const inverse = [[.5, .5, 0], [.5, -.5, 0], [0, 0, 1]];
-const transpose = B[0].map((_, i) =&gt; B.map(row =&gt; row[i]));
-const x = [6, 5, 4], r = [.01, -.02, .005];
-const c = coordinates(x), g = mv(transpose, r);
-const dropped = reconstruct([c[0], 0, c[2]]);
-const residual = x.map((xi, i) =&gt; xi - dropped[i]);
-const identityInputs = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-console.log(JSON.stringify({
-  x, c, back: reconstruct(c), matrixBack: mv(B, c), inverseResult: mv(inverse, x),
-  inverseAfterB: identityInputs.map(v =&gt; mv(inverse, mv(B, v))),
-  bAfterInverse: identityInputs.map(v =&gt; mv(B, mv(inverse, v))),
-  wrongTranspose: mv(transpose, x),
-  coordinateSum: c.reduce((a, b) =&gt; a + b, 0), netMillions: 2 * c[0] + c[2],
-  rescaledCoordinates: [2 * c[0], c[1], c[2]], g,
+<h4>คำนวณซ้ำด้วย JavaScript</h4>
+<p>สคริปต์แปลงไปและกลับ ตรวจว่า P&amp;L คงเดิมเมื่อใช้ $B^{\mathsf T}\mathbf r$ และแสดงผลของการตัดพิกัด</p>
+<details><summary>เปิดดูโค้ด</summary>
+<pre><code class="language-javascript" data-example="6.3">const dot = (a, b) =&gt; a.reduce((s, x, i) =&gt; s + x * b[i], 0);
+const B = [[1, 1, 0], [1, -1, 0], [0, 0, 1]];        // columns are b1, b2, b3
+const cols = B[0].map((_, j) =&gt; B.map(row =&gt; row[j]));
+const toC = x =&gt; [(x[0] + x[1]) / 2, (x[0] - x[1]) / 2, x[2]];
+const toX = c =&gt; B.map(row =&gt; dot(row, c));          // x = B c
+const x = [6, 5, 4], r = [0.01, -0.02, 0.005];
+const c = toC(x);                                     // 5.5, 0.5, 4
+const g = cols.map(b =&gt; dot(b, r));                   // B^T r = -0.01, 0.03, 0.005
+const viaDot = cols.map(b =&gt; dot(b, x) / dot(b, b));   // orthogonal shortcut
+const dropped = toX([c[0], 0, c[2]]);
+const e = x.map((v, i) =&gt; v - dropped[i]);
+console.log({c, back: toX(c), value: 2 * c[0] + c[2], coordSum: c[0] + c[1] + c[2],
   pnl: 1e6 * dot(x, r), samePnl: 1e6 * dot(c, g), wrongPnl: 1e6 * dot(c, r),
-  dropped, residual, droppedPnl: 1e6 * dot(dropped, r), residualPnl: 1e6 * dot(residual, r),
-  exercise1: coordinates([8, 2, 4]), removeOneCommon: reconstruct([4.5, .5, 4])
-}));</code></pre>
+  viaDot, BtX: cols.map(b =&gt; dot(b, x)),
+  dropped, e, droppedPnl: 1e6 * dot(dropped, r), residualPnl: 1e6 * dot(e, r),
+  exercise1: toC([8, 2, 4])});</code></pre>
+</details>
 </section>
-<details class="jargon"><summary>ศัพท์ที่ใช้ในบทนี้</summary><dl>
-<dt>Basis / coordinates</dt><dd>ชุดแกนที่ independent และ span ครบพื้นที่ / สัมประสิทธิ์ที่ใช้ผสมแกนเพื่อเขียน vector หนึ่ง</dd>
-<dt>Canonical basis</dt><dd>แกนที่เลือกพิกัดทีละช่อง เช่นหนึ่งแกนต่อหนึ่งหุ้น</dd>
-<dt>Change of basis</dt><dd>การเปลี่ยนคำบรรยายที่ย้อนกลับได้ ไม่ใช่การลดมิติหรือซื้อขายสถานะ</dd>
-<dt>Normalization</dt><dd>การกำหนดขนาดหนึ่งหน่วยของแกน พิกัดต้องเปลี่ยนชดเชยเมื่อปรับขนาดแกน</dd>
-<dt>Residual</dt><dd>ส่วนต่างระหว่าง vector จริงกับคำบรรยายหรือค่าประมาณที่สร้างกลับมา</dd>
-</dl></details>
-<details><summary>ที่มาของมุมมองนี้</summary><p>พิกัดแบบคาร์ทีเซียนทำให้เราเขียนตำแหน่งด้วยตัวเลขตามแกนได้ พีชคณิตเชิงเส้นขยายแนวคิดไปสู่ basis ที่ไม่จำเป็นต้องเป็นแกนมาตรฐาน และพื้นที่ที่มีได้มากกว่าสามมิติ ในงานการเงิน ประโยชน์อยู่ที่การเลือกคำบรรยายให้ตรงงาน โดยยังตรวจกลับถึงสินทรัพย์และหน่วยเดิมได้</p></details>
+
 <section class="takeaways">
-<h2>สิ่งที่ต้องจำก่อนอ่านรายงานพิกัดใหม่</h2>
+<h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
 <ul>
-<li>Basis บอกทั้งทิศทางและขนาดของหนึ่งหน่วย ส่วน coordinates บอกจำนวนที่คูณแต่ละแกน ต้องอ่านคู่กัน</li>
-<li>Spanning รับประกันว่ามีคำตอบ และ independence รับประกันว่ามีเพียงชุดเดียวในพื้นที่ที่ระบุ</li>
-<li>เมื่อวางแกนเป็นคอลัมน์: $\mathbf x=B\mathbf c$; ถ้า $B$ เป็นจัตุรัส invertible จึงใช้ $\mathbf c=B^{-1}\mathbf x$ ได้</li>
-<li>การบวกพิกัดหรือใช้ return ชุดเดิมกับพิกัดใหม่อาจผิดหน่วย แม้คำนวณได้ตัวเลขที่ดูสมเหตุผล</li>
-<li>เปลี่ยน basis ไม่ได้ลดความเสี่ยง ตัดพิกัดอาจเปลี่ยนพอร์ตหรือทิ้งข้อมูล และการวัด “ขนาด” ต้องบอกวิธีวัด นี่คือเรื่อง norms ในหัวข้อ 6.4</li>
+<li>basis ต้อง span ครบ (มีพิกัดเสมอ) และ independent (มีพิกัดชุดเดียว) ทุก basis ของสามมิติมีสามแกน</li>
+<li>วางแกนเป็นคอลัมน์ของ $B$: $\mathbf x=B\mathbf c$ และ $\mathbf c=B^{-1}\mathbf x$ พอร์ต $(6,5,4)$ มีพิกัด $(5.5,0.5,4)$</li>
+<li>พิกัดอ่านแยกจากแกนไม่ได้: ผลรวมพิกัด 10 ไม่ใช่มูลค่า 15 และ normalize แกนใหม่ทำให้พิกัดเปลี่ยนเป็น 11 โดยพอร์ตไม่เปลี่ยน</li>
+<li>ผลตอบแทนแปลงด้วย $B^{\mathsf T}$ เพื่อให้ $\mathbf c^{\mathsf T}\mathbf g=\mathbf x^{\mathsf T}\mathbf r$ คงเดิม (ขาดทุน \$20,000 ทั้งสองแบบ)</li>
+<li>แกนตั้งฉากหาพิกัดด้วย dot product ได้ และ orthonormal ให้ inverse เท่ากับ transpose ส่วนการทิ้งพิกัดคือการเปลี่ยนพอร์ต (ต่างกัน \$15,000 ในวันตัวอย่าง)</li>
 </ul>
+<p>เมื่อบรรยายพอร์ตได้ครบแล้ว คำถามถัดไปคือพอร์ต “ใหญ่” แค่ไหน หน้าถัดไป <a href="6.4.html">norms</a> แสดงว่ามีไม้บรรทัดหลายอัน และแต่ละอันตอบคนละคำถาม</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
