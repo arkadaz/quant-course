@@ -15,203 +15,551 @@
   <a href="../chapters/2.html">บทที่ 2</a>
 </nav>
 <article class="topic" data-number="2.4" data-depends-on="2.1 2.2 2.3 1.6">
-<header class="topic-header"><h1>2.4 แบ่งกระแส Poisson: ทำไมสายย่อยจึงเป็นอิสระได้?</h1><p>Poisson Thinning (Splitting) — แยกเหตุการณ์ด้วยการติดป้ายอย่างอิสระ</p></header>
-<section class="hook">
-<h2>แยกคำสั่งกระแสเดียวเป็นสองประเภท แล้วจำนวนจะสัมพันธ์กันไหม?</h2>
-<p>สมมติคำสั่งเข้าระบบตามกระบวนการ Poisson อัตรา 20 คำสั่งต่อนาที แต่ละคำสั่งเป็นประเภท A ด้วยโอกาส 0.6 และ B ด้วยโอกาส 0.4 โดยติดป้ายแต่ละครั้งอย่างอิสระ ถ้าหนึ่งนาทีมี A มาก เราต้องเห็น B น้อยลงหรือไม่?</p>
-<p>ถ้ารู้แล้วว่าคำสั่งรวมมี 20 คำสั่ง คำตอบคือใช่ เพราะ $B=20-A$ แต่ถ้ายังไม่รู้จำนวนรวม จำนวน A และ B กลับเป็น Poisson ที่อิสระกันได้ จุดที่ดูขัดกันนี้แก้ได้ด้วยการแยก <strong>ก่อนรู้จำนวนรวม</strong> ออกจาก <strong>หลังรู้จำนวนรวม</strong></p>
+<header class="topic-header">
+  <h1>2.4 แบ่งกระแส Poisson: ทำไมสายย่อยจึงเป็นอิสระได้?</h1>
+  <p class="subtitle">ถ้าติดป้ายเหตุการณ์ใน Poisson process ทีละตัวอย่างอิสระ แต่ละป้ายเป็น Poisson process ของตัวเอง และทุกสายอิสระกัน</p>
+</header>
+
+<div class="hook">
+  <p>คำสั่งเข้าระบบซื้อขายเป็น Poisson process อัตรา 20 คำสั่งต่อนาที แต่ละคำสั่งเป็นแบบ marketable (จับคู่ทันที เรียกว่า A) ด้วยโอกาส 0.6 หรือแบบ passive (รอในสมุดคำสั่ง เรียกว่า B) ด้วยโอกาส 0.4 อย่างอิสระต่อกัน (แบบจำลองสมมติ) ทีม execution ถามสองข้อ: นาทีที่เห็นคำสั่ง A เยอะผิดปกติ ควรคาดว่าคำสั่ง B จะน้อยลงไหม และถ้ารู้แล้วว่านาทีนี้มีคำสั่งรวม 20 คำสั่ง จำนวน A แกว่งได้แค่ไหน</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ข้อแรก ไม่ ก่อนรู้ยอดรวม จำนวน A เป็น Poisson(12) และ B เป็น Poisson(8) ที่อิสระกัน A เยอะไม่บอกอะไรเกี่ยวกับ B เลย ข้อสอง เมื่อรู้ยอดรวม 20 แล้ว A เป็น Binomial(20, 0.6) มีค่าเฉลี่ย 12 เท่าเดิม แต่ variance เหลือ $20(0.6)(0.4)=4.8$ แทน 12 และ B ถูกล็อกเป็น $20-A$ ทันที สองคำตอบไม่ขัดกัน เพราะใช้ข้อมูลคนละชุด</p></details>
+</div>
+
+<section class="prose">
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>Thinning หรือ splitting คือการเอากระแสเหตุการณ์หนึ่งสาย แล้วโยนเหรียญให้ทุกเหตุการณ์ว่าจะไปสาย A หรือสาย B รูปด้านล่างคือหนึ่งนาทีสมมติ: เส้นบนคือคำสั่งทั้งหมด แต่ละขีดถูกส่งลงไปสายของตัวเองตามสี ผลที่น่าประหลาดใจคือ แต่ละสายยังเป็น Poisson process ด้วยอัตราที่ถูกหาร (12 และ 8 ต่อนาที) และสองสายอิสระกันโดยสิ้นเชิง ทั้งที่มาจากกระแสเดียวกัน</p>
+  <p>ความอิสระนี้ดูขัดกับสามัญสำนึก เพราะ A กับ B แย่งคำสั่งชุดเดียวกัน หน้านี้จะคลายปมด้วยเครื่องมือทั้งบท: แยกกรณี “รู้ยอดรวม” ซึ่งได้ Binomial ออกจาก “ยังไม่รู้ยอดรวม” ใช้ <a href="2.1.html">tower property</a> กับ <a href="2.2.html">law of total variance</a> หาค่าเฉลี่ยและ variance พิสูจน์การแจกแจงด้วย joint pmf แล้วดูว่าแรงสองแรงหักล้างกันพอดีได้อย่างไร</p>
+  <p>ปิดท้ายด้วยเรื่องเงิน: แปลงจำนวน fill เป็นกำไรรายชั่วโมง และดูว่าโอกาส fill ที่ลดลง 10 จุดเปอร์เซ็นต์ทำให้กำไรหายไปเท่าไร</p>
 </section>
-<section class="concept">
-<h2>1. แบบจำลองและหน่วยที่ใช้</h2>
-<p>ข้อมูลในบทนี้เป็นแบบจำลองสมมติ ไม่ใช่ข้อสรุปว่าคำสั่งจริงทุกตลาดเป็น Poisson ให้ $\lambda$ เป็นอัตราเหตุการณ์ต่อหน่วยเวลา $t$ เป็นความยาวช่วง และ $\theta=\lambda t$ เป็นจำนวนเฉลี่ยในช่วงนั้น จึงไม่มีหน่วยเวลาเหลือในพารามิเตอร์ Poisson</p>
-<div class="math">\[N(t)\sim\operatorname{Poisson}(\theta),\qquad\theta=\lambda t.\]</div>
-<ul><li>กระบวนการแม่มีอัตราคงที่ $\lambda$ และจำนวนในช่วงเวลาไม่ทับกันเป็นอิสระ</li><li>แต่ละเหตุการณ์ได้ป้าย A ด้วยโอกาสคงที่ $p$ และ B ด้วย $1-p$ โดยป้ายอิสระต่อกันและอิสระจากเวลา/กระบวนการแม่</li><li>ทุกเหตุการณ์อยู่สายเดียวเท่านั้น ให้ $A(t)$ และ $B(t)$ เป็นจำนวนในแต่ละสาย จึงมี $A(t)+B(t)=N(t)$ ในทุกเส้นทาง</li></ul>
-<p>ตัวอย่างหลักกำหนด $\lambda=20$ คำสั่ง/นาที และ $p=0.6$ ป้าย A ใช้แทนคำสั่งที่จับคู่ได้ทันที (marketable) และ B แทนคำสั่งที่รอในสมุดคำสั่ง (passive) การติดป้ายแบบอิสระเป็นสมมติฐานเพื่อเรียนสูตร ไม่ใช่กลไกที่รับประกันในตลาดจริง</p>
-<figure class="plot"><img src="../figures/2.4-1.svg" alt="เส้นเวลาแบ่งคำสั่งเป็น A และ B กับจุดจำนวนจำลอง 3000 นาที" loading="lazy"><figcaption>ซ้ายเป็นเส้นทางจำลองหนึ่งนาทีของกระแสอัตรา 20 และป้าย A โอกาส 0.6 ขวาเป็นจำนวน A และ B จาก 3,000 นาทีจำลอง จุดถูกขยับเล็กน้อยให้มองเห็นข้อมูลซ้อนกัน ค่าเฉลี่ยใกล้ 12 และ 8 และ correlation ใกล้ศูนย์สอดคล้องกับทฤษฎี แต่รูปจำลองไม่ใช่หลักฐานพิสูจน์ independence</figcaption></figure>
-</section>
+
+<figure class="plot">
+  <h4>รูป — หนึ่งนาทีของกระแสคำสั่ง แยกเป็นสองสาย</h4>
+  <svg viewBox="0 0 480 275" role="img" aria-label="เส้นเวลาหนึ่งนาทีของคำสั่ง 20 คำสั่ง ขีดสีน้ำเงินคือคำสั่งแบบ A 12 คำสั่ง ขีดสีส้มคือคำสั่งแบบ B 8 คำสั่ง ถูกแยกลงไปเป็นสองเส้นเวลาด้านล่าง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="50" y1="70" x2="450" y2="70" stroke="#5b6472" stroke-width="2"/>
+      <line x1="50" y1="150" x2="450" y2="150" stroke="#5b6472" stroke-width="2"/>
+      <line x1="50" y1="225" x2="450" y2="225" stroke="#5b6472" stroke-width="2"/>
+      <g stroke="#2455d6" stroke-width="3">
+        <line x1="95.1" y1="58" x2="95.1" y2="82"/>
+        <line x1="252.6" y1="58" x2="252.6" y2="82"/>
+        <line x1="284" y1="58" x2="284" y2="82"/>
+        <line x1="287.8" y1="58" x2="287.8" y2="82"/>
+        <line x1="313.6" y1="58" x2="313.6" y2="82"/>
+        <line x1="320.4" y1="58" x2="320.4" y2="82"/>
+        <line x1="323.5" y1="58" x2="323.5" y2="82"/>
+        <line x1="329.5" y1="58" x2="329.5" y2="82"/>
+        <line x1="362.5" y1="58" x2="362.5" y2="82"/>
+        <line x1="399.2" y1="58" x2="399.2" y2="82"/>
+        <line x1="432.6" y1="58" x2="432.6" y2="82"/>
+        <line x1="440.8" y1="58" x2="440.8" y2="82"/>
+        <line x1="95.1" y1="138" x2="95.1" y2="162"/>
+        <line x1="252.6" y1="138" x2="252.6" y2="162"/>
+        <line x1="284" y1="138" x2="284" y2="162"/>
+        <line x1="287.8" y1="138" x2="287.8" y2="162"/>
+        <line x1="313.6" y1="138" x2="313.6" y2="162"/>
+        <line x1="320.4" y1="138" x2="320.4" y2="162"/>
+        <line x1="323.5" y1="138" x2="323.5" y2="162"/>
+        <line x1="329.5" y1="138" x2="329.5" y2="162"/>
+        <line x1="362.5" y1="138" x2="362.5" y2="162"/>
+        <line x1="399.2" y1="138" x2="399.2" y2="162"/>
+        <line x1="432.6" y1="138" x2="432.6" y2="162"/>
+        <line x1="440.8" y1="138" x2="440.8" y2="162"/>
+      </g>
+      <g stroke="#a65f00" stroke-width="3">
+        <line x1="116.5" y1="58" x2="116.5" y2="82"/>
+        <line x1="177" y1="58" x2="177" y2="82"/>
+        <line x1="214.1" y1="58" x2="214.1" y2="82"/>
+        <line x1="257.1" y1="58" x2="257.1" y2="82"/>
+        <line x1="276" y1="58" x2="276" y2="82"/>
+        <line x1="356.7" y1="58" x2="356.7" y2="82"/>
+        <line x1="413.1" y1="58" x2="413.1" y2="82"/>
+        <line x1="445.7" y1="58" x2="445.7" y2="82"/>
+        <line x1="116.5" y1="213" x2="116.5" y2="237"/>
+        <line x1="177" y1="213" x2="177" y2="237"/>
+        <line x1="214.1" y1="213" x2="214.1" y2="237"/>
+        <line x1="257.1" y1="213" x2="257.1" y2="237"/>
+        <line x1="276" y1="213" x2="276" y2="237"/>
+        <line x1="356.7" y1="213" x2="356.7" y2="237"/>
+        <line x1="413.1" y1="213" x2="413.1" y2="237"/>
+        <line x1="445.7" y1="213" x2="445.7" y2="237"/>
+      </g>
+      <text x="50" y="44">คำสั่งทั้งหมด: อัตรา 20 ต่อนาที</text>
+      <text x="50" y="126" fill="#2455d6">A (โอกาส 0.6): อัตรา 12 ต่อนาที</text>
+      <text x="50" y="201" fill="#a65f00">B (โอกาส 0.4): อัตรา 8 ต่อนาที</text>
+      <text x="50" y="257" text-anchor="middle" font-size="14">0</text>
+      <text x="150" y="257" text-anchor="middle" font-size="14">15</text>
+      <text x="250" y="257" text-anchor="middle" font-size="14">30</text>
+      <text x="350" y="257" text-anchor="middle" font-size="14">45</text>
+      <text x="450" y="257" text-anchor="middle" font-size="14">60</text>
+      <text x="250" y="273" text-anchor="middle" font-size="14">เวลา (วินาที)</text>
+    </g>
+  </svg>
+  <figcaption>เส้นบนคือคำสั่งทั้งหมดในหนึ่งนาทีสมมติ ขีดน้ำเงินคือคำสั่งที่ได้ป้าย A ขีดส้มคือป้าย B แต่ละขีดถูกส่งลงสายของตัวเองที่ตำแหน่งเวลาเดิม เส้นทางนี้บังเอิญได้ 20, 12 และ 8 พอดีกับค่าเฉลี่ย นาทีอื่นจะต่างไป สังเกตว่าทั้งสามสายมีช่วงว่างยาวและช่วงที่ขีดเกาะกลุ่มเหมือนกัน ซึ่งเป็นลักษณะของ Poisson process</figcaption>
+</figure>
+
+<details class="jargon">
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>Poisson process</dt>
+    <dd>กระแสเหตุการณ์ที่จำนวนในช่วงยาว $t$ เป็น Poisson ค่าเฉลี่ย $\lambda t$ และจำนวนในช่วงเวลาที่ไม่ทับกันอิสระกัน ใช้เป็นแบบจำลองพื้นฐานของคำสั่งที่เข้ามา การผิดนัด หรือการเคลม</dd>
+    <dt>Thinning (splitting)</dt>
+    <dd>การติดป้ายแต่ละเหตุการณ์อย่างอิสระด้วยโอกาสคงที่ แล้วแยกตามป้าย ใช้แตกกระแสคำสั่งตามประเภท ฝั่งซื้อขาย หรือตลาดที่ส่งไป</dd>
+    <dt>Superposition</dt>
+    <dd>ทิศกลับของ thinning: รวม Poisson process ที่อิสระกันหลายสายได้ Poisson process ที่อัตราเป็นผลบวก ใช้รวมกระแสจากหลายแหล่ง</dd>
+    <dt>Probability generating function (PGF)</dt>
+    <dd>$G_N(z)=E[z^N]$ ฟังก์ชันที่เก็บ pmf ของจำนวนเต็มไม่ติดลบไว้เป็นสัมประสิทธิ์ของ $z^n$ ใช้พิสูจน์การแจกแจงและความเป็นอิสระแบบสั้น ๆ</dd>
+    <dt>Overdispersion</dt>
+    <dd>จำนวนที่ variance มากกว่าค่าเฉลี่ย เช่นคำสั่งที่เกาะกลุ่มตามข่าว ทำให้สายย่อยสัมพันธ์กันแบบบวกและไม่อิสระอีกต่อไป</dd>
+  </dl>
+</details>
+
+<details class="symbols">
+  <summary>สัญลักษณ์และหน่วย</summary>
+  <table>
+    <thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead>
+    <tbody>
+      <tr><td>$\lambda$</td><td>อัตราของกระแสแม่</td><td>ครั้งต่อนาที</td></tr>
+      <tr><td>$t$</td><td>ความยาวช่วงเวลา</td><td>นาที</td></tr>
+      <tr><td>$\theta=\lambda t$</td><td>จำนวนเฉลี่ยในช่วง $t$</td><td>ครั้ง</td></tr>
+      <tr><td>$p$</td><td>โอกาสที่เหตุการณ์หนึ่งได้ป้าย A</td><td>ไม่มีหน่วย</td></tr>
+      <tr><td>$N$, $A$, $B$</td><td>จำนวนทั้งหมด จำนวนป้าย A และป้าย B ในช่วงเดียวกัน</td><td>ครั้ง</td></tr>
+    </tbody>
+  </table>
+</details>
+
 <section class="formula">
-<h2>2. หลังรู้จำนวนรวม: ปัญหาคือการนับความสำเร็จแบบ Binomial</h2>
-<p>เมื่อ $N(t)=n$ มีโอกาสติดป้าย A จำนวน $n$ ครั้งอย่างอิสระ จึงได้</p>
-<div class="math">\[
+  <h4>ขั้นที่ 1 — แบบจำลอง: กระแสแม่กับป้ายที่สุ่มอย่างอิสระ</h4>
+  <p>ทุกผลในหน้านี้ขึ้นกับสมมติฐานสามข้อ จึงต้องเขียนให้ครบก่อน และต้องแปลงอัตราต่อเวลาเป็นจำนวนเฉลี่ยในช่วงที่สนใจ</p>
+  <div class="math">\[
 \begin{aligned}
-A(t)\mid N(t)=n&\sim\operatorname{Binomial}(n,p),\\
+N&\sim\operatorname{Poisson}(\theta),\quad\theta=\lambda t,\\
+A+B&=N,\\
+\theta&=20\times1=20\ \ (t=1),\\
+\theta&=20\times5=100\ \ (t=5).
+\end{aligned}
+\]</div>
+  <div class="reading">
+    <p>สมมติฐานสามข้อ: กระแสแม่เป็น Poisson process อัตราคงที่ $\lambda$ แต่ละเหตุการณ์ได้ป้าย A ด้วยโอกาส $p$ คงที่ อิสระต่อกันและอิสระจากกระแสแม่ และทุกเหตุการณ์อยู่สายเดียวเท่านั้น $A+B=N$ จึงจริงในทุกเส้นทาง พารามิเตอร์ของ <a href="1.6.html">Poisson distribution</a> คือจำนวนเฉลี่ย ไม่ใช่อัตรา ถ้า $\lambda$ เป็นต่อนาที $t$ ต้องเป็นนาทีด้วย ช่วงห้านาทีจึงมี $\theta=100$ และค่าเฉลี่ยของ A กับ B ในช่วงนั้นคือ 60 กับ 40</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — จำนวนสะสมเฉลี่ยของกระแสแม่และสองสาย</h4>
+  <img src="../figures/2.4-4.svg" alt="ค่าเฉลี่ยสะสม 20t 12t 8t และผลรวมสายย่อยที่ทับกับกระแสแม่" loading="lazy">
+  <figcaption>เส้นตรงคือจำนวนสะสมเฉลี่ย $20t$, $12t$ และ $8t$ ไม่ใช่เส้นทางจริงซึ่งเป็นขั้นบันได ผลรวมของสองสายทับกับกระแสแม่พอดี การแยกไม่สร้างหรือทำลายเหตุการณ์ ที่ห้านาทีได้ $100=60+40$</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — รู้ยอดรวมแล้ว: เหลือแค่การนับหัวก้อย</h4>
+  <p>เริ่มจากกรณีที่ง่ายกว่า ถ้ารู้แล้วว่านาทีนี้มี $N=n$ คำสั่ง สิ่งที่เหลือสุ่มคือป้ายของ $n$ คำสั่งนั้น ซึ่งเหมือนโยนเหรียญ $n$ ครั้ง</p>
+  <div class="math">\[
+\begin{aligned}
 P(A=k\mid N=n)&=\binom nk p^k(1-p)^{n-k},\\
 E[A\mid N]&=Np,\\
-\operatorname{Var}(A\mid N)&=Np(1-p).
+\operatorname{Var}(A\mid N)&=Np(1-p),\\
+B&=N-A.
 \end{aligned}
 \]</div>
-<p>pmf ใช้สำหรับ $k=0,\ldots,n$ หากรู้ $N=20$ จะได้ค่าเฉลี่ย A เท่ากับ 12 แต่ variance เป็น $20(0.6)(0.4)=4.8$ ไม่ใช่ 12 นี่เป็นการแจกแจงแบบมีเงื่อนไข ไม่ใช่ Poisson</p>
-<figure class="plot"><img src="../figures/2.4-3.svg" alt="Binomial 20 และ 0.6 มีค่าเฉลี่ย 12" loading="lazy"><figcaption>รูปตรึงจำนวนรวมไว้ที่ 20 แล้วแสดง pmf ของจำนวน A เส้นประที่ 12 คือ $np$; ไม่ใช่ pmf แบบยังไม่รู้จำนวนรวม</figcaption></figure>
+  <div class="reading">
+    <p>นี่คือ <a href="1.5.html">binomial distribution</a> ตรงตัว ใช้กับ $k$ ตั้งแต่ 0 ถึง $n$ ถ้า $N=20$ จะได้ค่าเฉลี่ย 12 และ variance $20(0.6)(0.4)=4.8$ บรรทัดสุดท้ายคือจุดสำคัญ: เมื่อรู้ยอดรวม B ถูกกำหนดโดย A ทันที A มากขึ้นหนึ่ง B ต้องน้อยลงหนึ่ง สองสายจึงพึ่งพากันเต็มที่ในโลกที่รู้ยอดรวม</p>
+  </div>
 </section>
+
+<figure class="plot">
+  <h4>รูป — จำนวน A เมื่อรู้ว่ายอดรวมคือ 20</h4>
+  <img src="../figures/2.4-3.svg" alt="Binomial 20 และ 0.6 มีค่าเฉลี่ย 12" loading="lazy">
+  <figcaption>แท่งคือ pmf ของ Binomial(20, 0.6) เส้นประที่ 12 คือ $np$ การแจกแจงนี้ใช้ได้เฉพาะหลังรู้ยอดรวมแล้ว และ A เกิน 20 ไม่ได้</figcaption>
+</figure>
+
 <section class="formula">
-<h2>3. ก่อนรู้จำนวนรวม: ใช้ Tower Property และ EVVE</h2>
-<div class="math">\[
+  <h4>ขั้นที่ 3 — ยังไม่รู้ยอดรวม: เฉลี่ยกลับด้วยกฎสองข้อของบทนี้</h4>
+  <p>ตอนเช้าเราไม่รู้ว่านาทีหน้าจะมีกี่คำสั่ง ผลจากขั้นก่อนเป็นค่าที่ขึ้นกับ $N$ จึงเฉลี่ยกลับได้ด้วย tower property และ law of total variance</p>
+  <div class="math">\[
 \begin{aligned}
-E[A]&=E[Np]=p\theta,\\
-\operatorname{Var}(A)
-&=E[Np(1-p)]+\operatorname{Var}(Np)\\
-&=p(1-p)\theta+p^2\theta=p\theta.
+E[A]&=E\big[E[A\mid N]\big]=E[Np]=p\theta,\\
+\operatorname{Var}(A)&=E\big[Np(1-p)\big]+\operatorname{Var}(Np)\\
+&=p(1-p)\theta+p^2\theta\\
+&=p\theta.
 \end{aligned}
 \]</div>
-<p>ที่ $t=1$ นาที ได้ $E[A]=\operatorname{Var}(A)=12$ และ $E[B]=\operatorname{Var}(B)=8$ แต่ <strong>ค่าเฉลี่ยเท่า variance ยังไม่พิสูจน์ว่าเป็น Poisson</strong> เพราะการแจกแจงอื่นก็มี moments สองตัวนี้เท่ากันได้ ต้องพิสูจน์ pmf หรือฟังก์ชันก่อกำเนิดด้วย</p>
-<p>มองอีกทาง $A=\sum_{i=1}^{N}I_i$ โดย $I_i$ เป็น Bernoulli($p$) อิสระจาก $N$ จึงเป็น random sum จาก 2.3 ที่ $\mu=p$ และ $\sigma^2=p(1-p)$ ให้ผลตรงกับ EVVE พอดี</p>
-<figure class="plot"><img src="../figures/2.4-2.svg" alt="อัตรากระแสแม่ 20 แยกเป็น A 12 และ B 8 คำสั่งต่อนาที" loading="lazy"><figcaption>อัตราแยกเป็น $\lambda p=12$ และ $\lambda(1-p)=8$ คำสั่ง/นาที รวมกลับเป็น 20 การแยกไม่สร้างเหตุการณ์เพิ่ม</figcaption></figure>
+  <div class="reading">
+    <p>บรรทัดที่สองคือ EVVE: ส่วนภายในคือการแกว่งของการติดป้ายเมื่อรู้ยอดรวม ส่วนระหว่างคือการแกว่งของยอดรวมเอง ซึ่งเป็น $p^2\operatorname{Var}(N)=p^2\theta$ เพราะ Poisson มี variance เท่ากับค่าเฉลี่ย สองส่วนรวมกันได้ $p\theta$ พอดี ที่ $\theta=20$, $p=0.6$ ได้ $4.8+7.2=12$</p>
+    <p>มองอีกทาง ให้ $I_i$ เป็น 1 เมื่อเหตุการณ์ที่ $i$ ได้ป้าย A แล้ว $A=\sum_{i=1}^{N}I_i$ คือ <a href="2.3.html">random sum</a> ของตัวบ่งชี้ ที่มี $\mu=p$ และ $\sigma^2=p(1-p)$ ได้ผลเดียวกัน แต่ค่าเฉลี่ยเท่ากับ variance <em>ยังไม่ใช่</em> หลักฐานว่า A เป็น Poisson การแจกแจงอื่นก็มีสองค่านี้เท่ากันได้ ต้องพิสูจน์ทั้ง pmf ในขั้นถัดไป</p>
+  </div>
 </section>
+
+<figure class="plot">
+  <h4>รูป — รู้ยอดรวมกับยังไม่รู้ยอดรวม: ค่าเฉลี่ยเท่ากัน ความกว้างต่างกัน</h4>
+  <svg viewBox="0 0 480 290" role="img" aria-label="แท่งสีน้ำเงินของ Binomial 20 และ 0.6 แคบและสูง แท่งสีส้มของ Poisson 12 กว้างและเตี้ยกว่า ทั้งคู่มีศูนย์กลางที่ 12" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="50" y1="150" x2="455" y2="150"/>
+      </g>
+      <g fill="#2455d6" fill-opacity="0.8">
+        <rect x="134" y="248.7" width="6" height="1.3"/>
+        <rect x="150" y="245.1" width="6" height="4.9"/>
+        <rect x="166" y="235.4" width="6" height="14.6"/>
+        <rect x="182" y="214.5" width="6" height="35.5"/>
+        <rect x="198" y="179" width="6" height="71"/>
+        <rect x="214" y="132.9" width="6" height="117.1"/>
+        <rect x="230" y="90.3" width="6" height="159.7"/>
+        <rect x="246" y="70.3" width="6" height="179.7"/>
+        <rect x="262" y="84.1" width="6" height="165.9"/>
+        <rect x="278" y="125.6" width="6" height="124.4"/>
+        <rect x="294" y="175.4" width="6" height="74.6"/>
+        <rect x="310" y="215" width="6" height="35"/>
+        <rect x="326" y="237.7" width="6" height="12.3"/>
+        <rect x="342" y="246.9" width="6" height="3.1"/>
+        <rect x="358" y="249.5" width="6" height="0.5"/>
+      </g>
+      <g fill="#a65f00" fill-opacity="0.8">
+        <rect x="92" y="249.6" width="6" height="0.4"/>
+        <rect x="108" y="248.2" width="6" height="1.8"/>
+        <rect x="124" y="244.7" width="6" height="5.3"/>
+        <rect x="140" y="237.3" width="6" height="12.7"/>
+        <rect x="156" y="224.5" width="6" height="25.5"/>
+        <rect x="172" y="206.3" width="6" height="43.7"/>
+        <rect x="188" y="184.5" width="6" height="65.5"/>
+        <rect x="204" y="162.6" width="6" height="87.4"/>
+        <rect x="220" y="145.2" width="6" height="104.8"/>
+        <rect x="236" y="135.6" width="6" height="114.4"/>
+        <rect x="252" y="135.6" width="6" height="114.4"/>
+        <rect x="268" y="144.4" width="6" height="105.6"/>
+        <rect x="284" y="159.5" width="6" height="90.5"/>
+        <rect x="300" y="177.6" width="6" height="72.4"/>
+        <rect x="316" y="195.7" width="6" height="54.3"/>
+        <rect x="332" y="211.7" width="6" height="38.3"/>
+        <rect x="348" y="224.5" width="6" height="25.5"/>
+        <rect x="364" y="233.9" width="6" height="16.1"/>
+        <rect x="380" y="240.3" width="6" height="9.7"/>
+        <rect x="396" y="244.5" width="6" height="5.5"/>
+        <rect x="412" y="247" width="6" height="3"/>
+        <rect x="428" y="248.4" width="6" height="1.6"/>
+        <rect x="444" y="249.2" width="6" height="0.8"/>
+      </g>
+      <line x1="50" y1="250" x2="455" y2="250" stroke="#5b6472" stroke-width="2"/>
+      <line x1="252" y1="40" x2="252" y2="250" stroke="#181818" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <rect x="62" y="16" width="16" height="12" fill="#2455d6" fill-opacity="0.8"/>
+      <text x="84" y="27" fill="#2455d6">รู้ว่ารวม 20: Binomial, variance 4.8</text>
+      <rect x="62" y="38" width="16" height="12" fill="#a65f00" fill-opacity="0.8"/>
+      <text x="84" y="49" fill="#a65f00">ยังไม่รู้: Poisson(12), variance 12</text>
+      <text x="44" y="155" text-anchor="end" font-size="14">0.10</text>
+      <text x="44" y="255" text-anchor="end" font-size="14">0</text>
+      <text x="60" y="268" text-anchor="middle" font-size="14">0</text>
+      <text x="124" y="268" text-anchor="middle" font-size="14">4</text>
+      <text x="188" y="268" text-anchor="middle" font-size="14">8</text>
+      <text x="252" y="268" text-anchor="middle" font-size="14">12</text>
+      <text x="316" y="268" text-anchor="middle" font-size="14">16</text>
+      <text x="380" y="268" text-anchor="middle" font-size="14">20</text>
+      <text x="444" y="268" text-anchor="middle" font-size="14">24</text>
+      <text x="252" y="286" text-anchor="middle" font-size="14">จำนวนคำสั่ง A ในหนึ่งนาที</text>
+    </g>
+  </svg>
+  <figcaption>แท่งน้ำเงิน (ซ้ายของแต่ละคู่) คือโอกาสของ A เมื่อรู้ว่ายอดรวมเป็น 20 แท่งส้ม (ขวา) คือโอกาสของ A ก่อนรู้ยอดรวม ทั้งคู่มีศูนย์กลางที่ 12 (เส้นประ) แต่แท่งส้มกระจายกว้างกว่า เพราะรวมความไม่แน่นอนของยอดรวมไว้ด้วย โอกาสที่ A ไม่เกิน 8 คือ 5.7% เมื่อรู้ยอดรวม แต่ 15.5% เมื่อยังไม่รู้ และแท่งส้มเลย 20 ไปได้ แท่งน้ำเงินไม่ได้</figcaption>
+</figure>
+
 <section class="formula">
-<h2>4. พิสูจน์สายเดียว: รวมทุกจำนวนแม่ที่เป็นไปได้</h2>
-<p>ถ้าต้องการ $A=k$ จำนวนแม่ต้องเป็น $n\ge k$ เขียน $j=n-k$ แทนจำนวนที่เหลือ แล้วใช้ผลรวมอนุกรมเอ็กซ์โพเนนเชียล:</p>
-<div class="math">\[
+  <h4>ขั้นที่ 4 — พิสูจน์ว่าสายเดียวเป็น Poisson</h4>
+  <p>ค่าเฉลี่ยกับ variance ยังไม่พอ ขั้นนี้หาโอกาสของ $A=k$ ทุกค่าโดยตรง จะได้ $A=k$ ได้ ยอดรวมต้องเป็น $n\ge k$ สักค่า จึงรวมทุกกรณีของ $n$</p>
+  <div class="math">\[
 \begin{aligned}
-P(A=k)&=\sum_{n=k}^{\infty}\binom nk p^k(1-p)^{n-k}
- e^{-\theta}\frac{\theta^n}{n!}\\
-&=e^{-\theta}\frac{(\theta p)^k}{k!}
- \sum_{j=0}^{\infty}\frac{[\theta(1-p)]^j}{j!}\\
-&=e^{-\theta}\frac{(\theta p)^k}{k!}e^{\theta(1-p)}\\
+P(A=k)&=\sum_{n=k}^{\infty}P(N=n)\,P(A=k\mid N=n)\\
+&=\sum_{n=k}^{\infty}e^{-\theta}\frac{\theta^n}{n!}\cdot\frac{n!}{k!\,(n-k)!}p^k(1-p)^{n-k}\\
+&=e^{-\theta}\frac{(\theta p)^k}{k!}\sum_{j=0}^{\infty}\frac{[\theta(1-p)]^j}{j!}\\
+&=e^{-\theta}\frac{(\theta p)^k}{k!}\,e^{\theta(1-p)}\\
 &=e^{-\theta p}\frac{(\theta p)^k}{k!}.
 \end{aligned}
 \]</div>
-<p>จึงได้ $A(t)\sim\operatorname{Poisson}(\lambda pt)$ เช่นเดียวกัน $B(t)\sim\operatorname{Poisson}(\lambda(1-p)t)$ สูตรรวมกำหนดได้ด้วยข้อตกลงปกติที่พารามิเตอร์เป็นศูนย์: Poisson(0) เท่ากับศูนย์แน่นอน</p>
+  <div class="reading">
+    <p>บรรทัดแรกคือ tower property กับตัวบ่งชี้ของ $A=k$: โอกาสคือค่าเฉลี่ยของโอกาสแบบมีเงื่อนไข บรรทัดที่สองแทน pmf ของ Poisson และ Binomial ตรงนี้ $n!$ ตัดกันทันที บรรทัดที่สามคือท่าสำคัญ: ตั้ง $j=n-k$ คือจำนวนที่ได้ป้าย B แล้วแยก $\theta^n=\theta^k\theta^j$ ทุกอย่างที่ไม่มี $j$ ยกออกนอกผลรวมได้</p>
+    <p>บรรทัดที่สี่ใช้อนุกรมของ $e^x=\sum_{j\ge0}x^j/j!$ บรรทัดสุดท้ายรวมเลขชี้กำลัง $-\theta+\theta(1-p)=-\theta p$ ได้ pmf ของ Poisson ค่าเฉลี่ย $\theta p$ เขียนแบบเดียวกันกับ B ได้ Poisson ค่าเฉลี่ย $\theta(1-p)$ กรณีขอบ $p=0$ หรือ $t=0$ ให้ Poisson(0) ซึ่งเป็นศูนย์แน่นอน</p>
+  </div>
 </section>
+
 <section class="formula">
-<h2>5. พิสูจน์สองสายพร้อมกัน จึงจะสรุปความเป็นอิสระได้</h2>
-<p>เหตุการณ์ $A=k,B=j$ บังคับให้จำนวนแม่เป็น $k+j$ ไม่ต้องรวมค่า $N$ อื่น ๆ อีก:</p>
-<div class="math">\[
+  <h4>ขั้นที่ 5 — พิสูจน์สองสายพร้อมกัน จึงสรุปความอิสระได้</h4>
+  <p>รู้ว่าแต่ละสายเป็น Poisson ยังไม่พอจะบอกว่าอิสระกัน ต้องดูโอกาสร่วม ข่าวดีคือ $A=k$ และ $B=j$ พร้อมกันบังคับให้ $N=k+j$ ไม่ต้องรวมอะไรเลย</p>
+  <div class="math">\[
 \begin{aligned}
-P(A=k,B=j)
-&=P(N=k+j)\binom{k+j}{k}p^k(1-p)^j\\
-&=e^{-\theta}\frac{\theta^{k+j}}{(k+j)!}
- \frac{(k+j)!}{k!j!}p^k(1-p)^j\\
-&=\left[e^{-\theta p}\frac{(\theta p)^k}{k!}\right]\\
-&\quad\times\left[e^{-\theta(1-p)}\frac{(\theta(1-p))^j}{j!}\right]\\
-&=P(A=k)P(B=j).
+P(A=k,\,B=j)&=P(N=k+j)\binom{k+j}{k}p^k(1-p)^j\\
+&=e^{-\theta}\frac{\theta^{k+j}}{(k+j)!}\cdot\frac{(k+j)!}{k!\,j!}p^k(1-p)^j\\
+&=e^{-\theta p}\frac{(\theta p)^k}{k!}\\
+&\quad\times e^{-\theta(1-p)}\frac{[\theta(1-p)]^j}{j!}\\
+&=P(A=k)\,P(B=j).
 \end{aligned}
 \]</div>
-<p>joint pmf แยกเป็นผลคูณสำหรับทุก $k,j\ge0$ จึงพิสูจน์ independence ของจำนวนในช่วงเดียวกัน เมื่อรวมกับความเป็นอิสระของกระแสแม่บนช่วงเวลาไม่ทับกัน และป้ายที่อิสระทุกเหตุการณ์ จะได้ว่า <em>กระบวนการ</em>ลูกเป็น Poisson processes ที่อิสระกันด้วย ไม่ใช่เพียงจำนวน ณ เวลาเดียว</p>
-<p>ตรวจตัวเลขเล็ก ๆ: ถ้า $\theta=2$, $p=1/2$ โอกาส $A=B=1$ เท่ากับ $P(N=2)P(A=1\mid N=2)=(2e^{-2})(1/2)=e^{-2}\approx0.135335$ อีกทางแต่ละสายเป็น Poisson(1), โอกาสได้หนึ่งเท่ากับ $e^{-1}$ คูณกันได้ $e^{-2}$ ตรงกัน</p>
+  <div class="reading">
+    <p>บรรทัดที่สองตัด $(k+j)!$ ทิ้ง บรรทัดที่สามแยก $e^{-\theta}=e^{-\theta p}e^{-\theta(1-p)}$ และ $\theta^{k+j}=\theta^k\theta^j$ แล้วจับคู่ของที่มี $k$ ไว้ด้วยกัน ของที่มี $j$ ไว้ด้วยกัน โอกาสร่วมแยกเป็นผลคูณของโอกาสแต่ละสายได้สำหรับทุก $k$ และ $j$ นี่คือนิยามของ <a href="5.4.html">independence</a></p>
+    <p>ตรวจด้วยตัวเลขเล็ก: $\theta=2$, $p=\tfrac12$ โอกาส $A=B=1$ คือ $P(N=2)\,P(A=1\mid N=2)=2e^{-2}\times\tfrac12=e^{-2}\approx0.1353$ อีกทาง แต่ละสายเป็น Poisson(1) โอกาสที่สายหนึ่งได้ 1 คือ $e^{-1}$ คูณกันได้ $e^{-2}$ ตรงกัน เมื่อรวมกับการที่กระแสแม่อิสระข้ามช่วงเวลาที่ไม่ทับกัน ได้ว่าสองสายเป็น Poisson process ที่อิสระกันทั้งกระบวนการ ไม่ใช่แค่จำนวนในช่วงเดียว</p>
+  </div>
 </section>
+
+<figure class="plot">
+  <h4>รูป — โอกาสร่วมของ A และ B กับเส้นของการรู้ยอดรวม</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="ตารางวงกลมของโอกาสร่วมที่ A เป็น Poisson 3 และ B เป็น Poisson 2 ขนาดวงกลมตามโอกาส เส้นทแยงสีม่วงคือจุดที่ A บวก B เท่ากับ 5" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <line x1="80" y1="90" x2="290" y2="250" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="6 4"/>
+      <g fill="#007f8f" fill-opacity="0.5">
+        <circle cx="80" cy="250" r="5"/>
+        <circle cx="80" cy="218" r="7.1"/>
+        <circle cx="80" cy="186" r="7.1"/>
+        <circle cx="80" cy="154" r="5.8"/>
+        <circle cx="80" cy="122" r="4.1"/>
+        <circle cx="80" cy="58" r="1.5"/>
+        <circle cx="122" cy="250" r="8.7"/>
+        <circle cx="122" cy="218" r="12.2"/>
+        <circle cx="122" cy="186" r="12.2"/>
+        <circle cx="122" cy="154" r="10"/>
+        <circle cx="122" cy="90" r="4.5"/>
+        <circle cx="122" cy="58" r="2.6"/>
+        <circle cx="164" cy="250" r="10.6"/>
+        <circle cx="164" cy="218" r="15"/>
+        <circle cx="164" cy="186" r="15"/>
+        <circle cx="164" cy="122" r="8.7"/>
+        <circle cx="164" cy="90" r="5.5"/>
+        <circle cx="164" cy="58" r="3.2"/>
+        <circle cx="206" cy="250" r="10.6"/>
+        <circle cx="206" cy="218" r="15"/>
+        <circle cx="206" cy="154" r="12.2"/>
+        <circle cx="206" cy="122" r="8.7"/>
+        <circle cx="206" cy="90" r="5.5"/>
+        <circle cx="206" cy="58" r="3.2"/>
+        <circle cx="248" cy="250" r="9.2"/>
+        <circle cx="248" cy="186" r="13"/>
+        <circle cx="248" cy="154" r="10.6"/>
+        <circle cx="248" cy="122" r="7.5"/>
+        <circle cx="248" cy="90" r="4.7"/>
+        <circle cx="248" cy="58" r="2.7"/>
+        <circle cx="290" cy="218" r="10.1"/>
+        <circle cx="290" cy="186" r="10.1"/>
+        <circle cx="290" cy="154" r="8.2"/>
+        <circle cx="290" cy="122" r="5.8"/>
+        <circle cx="290" cy="90" r="3.7"/>
+        <circle cx="290" cy="58" r="2.1"/>
+        <circle cx="332" cy="250" r="5"/>
+        <circle cx="332" cy="218" r="7.1"/>
+        <circle cx="332" cy="186" r="7.1"/>
+        <circle cx="332" cy="154" r="5.8"/>
+        <circle cx="332" cy="122" r="4.1"/>
+        <circle cx="332" cy="90" r="2.6"/>
+        <circle cx="332" cy="58" r="1.5"/>
+        <circle cx="374" cy="250" r="3.3"/>
+        <circle cx="374" cy="218" r="4.7"/>
+        <circle cx="374" cy="186" r="4.7"/>
+        <circle cx="374" cy="154" r="3.8"/>
+        <circle cx="374" cy="122" r="2.7"/>
+        <circle cx="374" cy="90" r="1.7"/>
+        <circle cx="374" cy="58" r="1"/>
+        <circle cx="416" cy="250" r="2"/>
+        <circle cx="416" cy="218" r="2.9"/>
+        <circle cx="416" cy="186" r="2.9"/>
+        <circle cx="416" cy="154" r="2.3"/>
+        <circle cx="416" cy="122" r="1.6"/>
+        <circle cx="416" cy="90" r="1"/>
+      </g>
+      <g fill="#6d28d9" fill-opacity="0.75">
+        <circle cx="80" cy="90" r="2.6"/>
+        <circle cx="122" cy="122" r="7.1"/>
+        <circle cx="164" cy="154" r="12.2"/>
+        <circle cx="206" cy="186" r="15"/>
+        <circle cx="248" cy="218" r="13"/>
+        <circle cx="290" cy="250" r="7.1"/>
+      </g>
+      <text x="250" y="34" text-anchor="middle" fill="#6d28d9">วงม่วง: ช่วงที่ยอดรวมเท่ากับ 5 พอดี</text>
+      <text x="62" y="255" text-anchor="end" font-size="14">0</text>
+      <text x="62" y="191" text-anchor="end" font-size="14">2</text>
+      <text x="62" y="127" text-anchor="end" font-size="14">4</text>
+      <text x="62" y="63" text-anchor="end" font-size="14">6</text>
+      <text x="80" y="276" text-anchor="middle" font-size="14">0</text>
+      <text x="164" y="276" text-anchor="middle" font-size="14">2</text>
+      <text x="248" y="276" text-anchor="middle" font-size="14">4</text>
+      <text x="332" y="276" text-anchor="middle" font-size="14">6</text>
+      <text x="416" y="276" text-anchor="middle" font-size="14">8</text>
+      <text x="248" y="295" text-anchor="middle" font-size="14">จำนวน A (ค่าเฉลี่ย 3)</text>
+      <text transform="translate(24 154) rotate(-90)" text-anchor="middle" font-size="14">จำนวน B (ค่าเฉลี่ย 2)</text>
+    </g>
+  </svg>
+  <figcaption>ช่วงสมมติที่ยอดรวมเฉลี่ย 5 และ $p=0.6$ จึงได้ A เป็น Poisson(3) และ B เป็น Poisson(2) พื้นที่วงกลมเท่ากับโอกาสร่วม ทุกแถวมีรูปร่างเดียวกันแค่ย่อขยาย และทุกคอลัมน์ก็เช่นกัน นี่คือหน้าตาของผลคูณ $P(A=k)P(B=j)$ หรือความอิสระ แต่ถ้าบอกว่ายอดรวมคือ 5 เราเหลือแค่วงม่วงบนเส้นทแยง ซึ่งเมื่อหารด้วยผลรวมของมันจะได้ Binomial(5, 0.6) และบนเส้นนั้น A มากแปลว่า B น้อยเสมอ</figcaption>
+</figure>
+
 <section class="formula">
-<h2>6. วิธีตรวจอีกทาง: Probability Generating Function</h2>
-<p>PGF ของจำนวนเต็มไม่ติดลบ $N$ คือ $G_N(z)=E[z^N]$ เป็นฟังก์ชันที่เก็บ pmf ไว้เป็นสัมประสิทธิ์ของกำลัง $z$ สำหรับ Poisson($\theta$), $G_N(z)=\exp(\theta(z-1))$ เมื่อรู้ $N=n$ ป้ายแต่ละเหตุการณ์มีตัวประกอบ $ps+(1-p)u$ จึงได้ joint PGF:</p>
-<div class="math">\[
+  <h4>ขั้นที่ 6 — อีกทางที่สั้นกว่า: probability generating function</h4>
+  <p>การพิสูจน์ด้วย pmf ต้องจัดพจน์ทีละตัว PGF ทำทั้งหมดในบรรทัดเดียว และขยายไปหลายป้ายได้ทันที ใช้ $0\le s\le1$ และ $0\le u\le1$ ซึ่งทำให้ทุกค่าเฉลี่ยมีค่าจำกัด</p>
+  <div class="math">\[
 \begin{aligned}
-G_{A,B}(s,u)
-&=E[s^Au^B]\\
-&=E[(ps+(1-p)u)^N]\\
-&=\exp\{\theta[ps+(1-p)u-1]\}\\
-&=\exp\{\theta p(s-1)\}\\
-&\quad\times\exp\{\theta(1-p)(u-1)\}.
+G_N(z)&=E[z^N]=\sum_{n\ge0}e^{-\theta}\frac{(\theta z)^n}{n!}\\
+&=e^{\theta(z-1)},\\
+E[s^Au^B\mid N=n]&=\big(ps+(1-p)u\big)^n,\\
+E[s^Au^B]&=G_N\big(ps+(1-p)u\big)\\
+&=e^{\theta p(s-1)}\,e^{\theta(1-p)(u-1)}.
 \end{aligned}
 \]</div>
-<p>สำหรับ $s,u\in[0,1]$ PGF นิยามได้ และผลคูณสุดท้ายคือ PGF ของ Poisson สองตัวแยกกัน จึงให้ผลเดียวกับ joint pmf หากมี $r$ ป้ายที่ไม่ทับกัน ด้วยโอกาส $p_1,\ldots,p_r$ รวมเป็น 1 จะได้ $G(z_1,\ldots,z_r)=\prod_{a=1}^r\exp\{\theta p_a(z_a-1)\}$ ดังนั้นจำนวนแต่ละสายเป็น Poisson($\theta p_a$) ที่อิสระกัน</p>
+  <div class="reading">
+    <p>บรรทัดแรกใช้อนุกรมของ $e^x$ อีกครั้ง บรรทัดที่สองคือหัวใจ: เมื่อรู้ $N=n$ เหตุการณ์แต่ละตัวให้ตัวคูณ $s$ ถ้าได้ป้าย A (โอกาส $p$) หรือ $u$ ถ้าได้ป้าย B (โอกาส $1-p$) และป้ายอิสระกัน ค่าเฉลี่ยของผลคูณจึงเป็นผลคูณของค่าเฉลี่ย $n$ ตัว บรรทัดที่สามคือ tower property: แทน $z$ ด้วย $ps+(1-p)u$ แล้วแยกเลขชี้กำลัง</p>
+    <p>ผลลัพธ์เป็นฟังก์ชันของ $s$ คูณฟังก์ชันของ $u$ แยกกันเด็ดขาด แต่ละตัวเป็น PGF ของ Poisson ค่าเฉลี่ย $\theta p$ และ $\theta(1-p)$ จึงได้ทั้งการแจกแจงและความอิสระ ถ้ามี $r$ ป้ายด้วยโอกาส $p_1,\ldots,p_r$ ที่รวมเป็น 1 ผลคูณจะมี $r$ ตัว และทุกสายเป็น Poisson ที่อิสระกัน</p>
+  </div>
 </section>
-<section class="concept">
-<h2>7. คลายปริศนา: รู้จำนวนรวมแล้วทำไมกลับไม่อิสระ?</h2>
-<p>ภายใต้ $N=n$ เรามี $B=n-A$ ดังนั้น $\operatorname{Cov}(A,B\mid N=n)=-np(1-p)$ เมื่อ $n\gt0$ และ $0\lt p\lt1$ covariance นี้ติดลบแน่นอน แต่ก่อนรู้ $N$ ยังมีอีกแรงหนึ่ง: ช่วงที่จำนวนแม่มาก ค่าเฉลี่ยของทั้ง A และ B สูงขึ้นพร้อมกัน</p>
-<div class="math">\[
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — คลายปม: แรงสองแรงที่หักล้างกันพอดี</h4>
+  <p>ทำไมรู้ยอดรวมแล้วสองสายสวนทางกัน แต่ไม่รู้แล้วกลับอิสระ ขั้นนี้วัดสองแรงด้วย covariance โดยใช้ law of total variance ในรูปของ covariance ซึ่งพิสูจน์แบบเดียวกันทุกบรรทัด แค่ใช้ผลคูณแทนกำลังสอง</p>
+  <div class="math">\[
 \begin{aligned}
-\operatorname{Cov}(A,B)
-&=E[\operatorname{Cov}(A,B\mid N)]\\
-&\quad+\operatorname{Cov}(E[A\mid N],E[B\mid N])\\
-&=-p(1-p)E[N]+p(1-p)\operatorname{Var}(N)\\
-&=p(1-p)(\operatorname{Var}(N)-E[N]).
+\operatorname{Cov}(A,B)&=E\big[\operatorname{Cov}(A,B\mid N)\big]\\
+&\quad+\operatorname{Cov}\big(E[A\mid N],E[B\mid N]\big)\\
+&=E\big[-Np(1-p)\big]\\
+&\quad+\operatorname{Cov}\big(Np,\,N(1-p)\big)\\
+&=p(1-p)\big(\operatorname{Var}(N)-E[N]\big).
 \end{aligned}
 \]</div>
-<p>สำหรับ Poisson สองแรงหักล้างกันพอดี covariance จึงเป็นศูนย์ แต่การสรุป independence ยังอาศัย joint pmf/PGF ที่พิสูจน์แล้ว ไม่ใช่อาศัย covariance ศูนย์อย่างเดียว สูตร covariance บรรทัดสุดท้ายใช้กับจำนวนแม่ทั่วไปที่มี variance จำกัดและการติดป้ายอิสระ ถ้าจำนวนแม่มี variance มากกว่าค่าเฉลี่ย สองสายจะมี covariance บวก จึงไม่อิสระ</p>
-<p>ถ้าสลับส่ง A, B, A, B แบบ round-robin จำนวนสองสายจะต่างกันไม่เกินหนึ่ง (เมื่อเริ่มส่ง A) และป้ายไม่อิสระแล้ว สายลูกจึงไม่ใช่ผลจากทฤษฎี thinning แบบนี้ การแบ่งให้สมดุลกับการสุ่มแบ่งเป็นคนละเป้าหมาย</p>
+  <div class="reading">
+    <p>แรงแรกเป็นลบ: เมื่อรู้ $N$ ตัว B คือ $N-A$ ดังนั้น $\operatorname{Cov}(A,B\mid N)=-\operatorname{Var}(A\mid N)=-Np(1-p)$ แรงที่สองเป็นบวก: นาทีที่คำสั่งรวมเยอะ ค่าเฉลี่ยของทั้ง A และ B สูงขึ้นพร้อมกัน ขนาดของมันคือ $p(1-p)\operatorname{Var}(N)$</p>
+    <p>Poisson มี $\operatorname{Var}(N)=E[N]$ สองแรงจึงหักล้างกันพอดีและ covariance เป็นศูนย์ ความอิสระเต็มรูปมาจากการพิสูจน์ด้วย joint pmf ไม่ได้มาจาก covariance ศูนย์อย่างเดียว (<a href="8.3.html">zero covariance is not independence</a>) แต่สูตรนี้บอกว่าถ้ากระแสแม่ไม่ใช่ Poisson อะไรจะเกิด: ถ้าคำสั่งเกาะกลุ่มจน variance มากกว่าค่าเฉลี่ย สองสายจะเคลื่อนไปด้วยกัน ถ้ายอดรวมคงที่ สองสายจะสวนทางกัน</p>
+  </div>
 </section>
-<section class="worked-example">
-<h2>8. เปลี่ยนช่วงเวลาจากหนึ่งนาทีเป็นห้านาที</h2>
-<div class="math">\[
+
+<figure class="plot">
+  <h4>รูป — covariance ของสองสายเมื่อความแกว่งของยอดรวมเปลี่ยน</h4>
+  <svg viewBox="0 0 480 280" role="img" aria-label="เส้นตรงของ covariance เทียบกับ variance ของยอดรวมที่ค่าเฉลี่ย 20 ตัดศูนย์ที่ variance เท่ากับ 20 ซึ่งคือ Poisson จุดซ้ายล่างคือยอดรวมคงที่ covariance ลบ 4.8 จุดขวาบนคือ variance 40 covariance บวก 4.8" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="70" y1="50" x2="440" y2="50"/>
+        <line x1="70" y1="210" x2="440" y2="210"/>
+        <line x1="154.1" y1="30" x2="154.1" y2="230"/>
+        <line x1="322.3" y1="30" x2="322.3" y2="230"/>
+      </g>
+      <line x1="70" y1="130" x2="440" y2="130" stroke="#181818" stroke-width="1.5"/>
+      <line x1="70" y1="30" x2="70" y2="230" stroke="#181818" stroke-width="1.5"/>
+      <line x1="70" y1="210" x2="440" y2="34" stroke="#6d28d9" stroke-width="3"/>
+      <circle cx="70" cy="210" r="7" fill="#d82632"/>
+      <circle cx="238.2" cy="130" r="7" fill="#047857"/>
+      <circle cx="406.4" cy="50" r="7" fill="#a65f00"/>
+      <text x="84" y="232" fill="#d82632" font-size="14">รู้ยอดรวม (คงที่ 20): −4.8</text>
+      <text x="248" y="152" fill="#047857" font-size="14">Poisson: Var = ค่าเฉลี่ย = 20</text>
+      <text x="398" y="36" text-anchor="end" fill="#a65f00" font-size="14">เกาะกลุ่ม Var 40: +4.8</text>
+      <text x="62" y="55" text-anchor="end" font-size="14">4.8</text>
+      <text x="62" y="135" text-anchor="end" font-size="14">0</text>
+      <text x="62" y="215" text-anchor="end" font-size="14">−4.8</text>
+      <text x="70" y="250" text-anchor="middle" font-size="14">0</text>
+      <text x="154.1" y="250" text-anchor="middle" font-size="14">10</text>
+      <text x="238.2" y="250" text-anchor="middle" font-size="14">20</text>
+      <text x="322.3" y="250" text-anchor="middle" font-size="14">30</text>
+      <text x="406.4" y="250" text-anchor="middle" font-size="14">40</text>
+      <text x="255" y="272" text-anchor="middle" font-size="14">Var(N) ของยอดรวม เมื่อค่าเฉลี่ยคงที่ 20</text>
+      <text transform="translate(20 130) rotate(-90)" text-anchor="middle" font-size="14">Cov(A, B)</text>
+    </g>
+  </svg>
+  <figcaption>เส้นม่วงคือ $0.24\,(\operatorname{Var}(N)-20)$ เมื่อ $p=0.6$ และยอดรวมเฉลี่ย 20 จุดแดงคือกรณียอดรวมคงที่ 20 (variance ศูนย์) สองสายสวนทางกัน จุดเขียวคือ Poisson ที่ variance เท่ากับค่าเฉลี่ย covariance เป็นศูนย์พอดี จุดส้มคือกระแสที่เกาะกลุ่มจน variance เป็น 40 สองสายไปทางเดียวกัน Poisson เป็นจุดเดียวบนเส้นนี้ที่สองแรงสมดุล</figcaption>
+</figure>
+
+<figure class="plot">
+  <h4>รูป — ตรวจด้วยการจำลอง 3,000 นาที</h4>
+  <img src="../figures/2.4-1.svg" alt="เส้นเวลาแบ่งคำสั่งเป็น A และ B กับจุดจำนวนจำลอง 3000 นาที" loading="lazy">
+  <figcaption>ซ้ายคือเส้นทางจำลองหนึ่งนาทีของกระแสอัตรา 20 ที่ติดป้าย A ด้วยโอกาส 0.6 ขวาคือจำนวน A และ B จาก 3,000 นาทีจำลอง (ขยับจุดเล็กน้อยให้เห็นจุดที่ซ้อนกัน) กลุ่มจุดเป็นก้อนกลมไม่เอียง ค่าเฉลี่ยใกล้ 12 และ 8 สอดคล้องกับความอิสระ แต่การจำลองเป็นแค่การตรวจ ไม่ใช่การพิสูจน์</figcaption>
+</figure>
+
+<section class="example">
+  <h4>ขั้นที่ 8 — จาก fill เป็นกำไรรายชั่วโมง</h4>
+  <p>ทีม execution สนใจเงิน ไม่ใช่จำนวน ขั้นนี้ใช้ thinning หาจำนวน fill แล้วแปลงเป็นกำไรเมื่อกำไรต่อ fill คงที่</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ส่งคำสั่งเป็น Poisson อัตรา 120 ครั้งต่อชั่วโมง แต่ละคำสั่ง fill ด้วยโอกาส 0.35 อย่างอิสระ กำไรคงที่ \$45 ต่อ fill (สมมติ) ให้ $K$ เป็นจำนวน fill และ $Q=45K$ เป็นกำไรในหนึ่งชั่วโมง</p>
+  <div class="math">\[
 \begin{aligned}
-\theta&=20(5)=100,\\
-A(5)&\sim\operatorname{Poisson}(60),\\
-B(5)&\sim\operatorname{Poisson}(40).
+K&\sim\operatorname{Poisson}(120\times0.35=42),\\
+E[Q]&=45(42)=1{,}890,\\
+\operatorname{SD}(Q)&=45\sqrt{42}\approx291.63,\\
+\frac{\operatorname{SD}(Q)}{E[Q]}&=\frac{1}{\sqrt{42}}\approx15.4\%.
 \end{aligned}
 \]</div>
-<p>ค่าเฉลี่ยและ variance ของ A เท่ากับ 60 ของ B เท่ากับ 40 รวมแล้วค่าเฉลี่ย 100 และ variance 100 เพราะสองสายอิสระ ขณะที่บนเส้นทางจริง $A(5)+B(5)=N(5)$ เสมอ ไม่ใช่ 100 เสมอ</p>
-<figure class="plot"><img src="../figures/2.4-4.svg" alt="ค่าเฉลี่ยสะสม 20t 12t 8t และผลรวมสายย่อยที่ทับกับกระแสแม่" loading="lazy"><figcaption>เส้นตรงคือจำนวนสะสมคาดหมาย ไม่ใช่เส้นทางจำนวนจริงที่ต้องเป็นขั้นบันได เส้นผลรวม A+B ทับกับ 20t และที่ห้านาทีได้ค่าเฉลี่ย 100=60+40</figcaption></figure>
+  <p><strong>คำตอบ:</strong> กำไรเฉลี่ย \$1,890 ต่อชั่วโมง SD \$291.63 บรรทัดสุดท้ายคือ coefficient of variation ซึ่งเหลือ $1/\sqrt{\theta}$ เพราะทั้งค่าเฉลี่ยและ SD คูณ 45 เหมือนกัน วันทำงาน 7 ชั่วโมงที่อัตราคงเดิม ได้ค่าเฉลี่ย $7(1{,}890)=13{,}230$ แต่ SD โตแค่ $\sqrt7$ เท่าเป็น $45\sqrt{294}\approx771.59$ เพราะ Poisson process มีจำนวนในแต่ละชั่วโมงอิสระกัน</p>
+  <p>ถ้าคู่แข่งเร็วขึ้นจนโอกาส fill ลดเหลือ 0.25 จะได้ $K\sim\operatorname{Poisson}(30)$ กำไรเฉลี่ย \$1,350 SD $45\sqrt{30}\approx246.48$ กำไรหายไป \$540 ต่อชั่วโมง หรือ $540/1{,}890\approx28.6\%$ ไม่ใช่ 10% เพราะโอกาสลด 10 <em>จุดเปอร์เซ็นต์</em> จากฐาน 35% และ CV เพิ่มเป็น $1/\sqrt{30}\approx18.3\%$ แม้ SD เป็นดอลลาร์จะลดลง</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\sqrt{42}\approx6.48$ คูณ 45 ได้ราว 292 และ $0.25/0.35=0.714$ คือเหลือกำไร 71.4% หายไป 28.6%</p>
 </section>
-<section class="worked-example">
-<h2>9. จากจำนวน fills ไปสู่กำไรรายชั่วโมง</h2>
-<p>ตัวอย่างใหม่สมมติส่งคำสั่งเป็น Poisson อัตรา 120 ครั้ง/ชั่วโมง แต่ละคำสั่งจับคู่ได้ด้วยโอกาสอิสระ 0.35 ให้ $K$ เป็นจำนวน fills ในหนึ่งชั่วโมง จะได้ $K\sim\operatorname{Poisson}(42)$ และ EVVE ตรวจได้ว่า</p>
-<div class="math">\[
-\begin{aligned}
-E[K]&=120(0.35)=42,\\
-\operatorname{Var}(K)&=120(0.35)(0.65)+120(0.35^2)\\
-&=27.3+14.7=42.
-\end{aligned}
-\]</div>
-<p><strong>เริ่มด้วยสมมติฐานกำไรคงที่</strong> 45 USD ต่อ fill ให้กำไรชั่วโมงนั้นเป็น $Q=45K$ จึงได้ $E[Q]=1{,}890$ USD, $\operatorname{SD}(Q)=45\sqrt{42}\approx291.63$ USD และ CV ซึ่งเป็นอัตราส่วน SD ต่อค่าเฉลี่ยเท่ากับ $1/\sqrt{42}\approx15.43\%$ การเขียนค่าเฉลี่ย ±1 SD ไม่ได้หมายถึงช่วงผลลัพธ์ที่รับประกัน</p>
-<p>หากอัตราคงเดิมตลอดวันทำงาน 7 ชั่วโมง ค่าเฉลี่ยกำไรต่อวันเท่ากับ $7(1{,}890)=13{,}230$ USD ส่วน SD ของผลรวมเจ็ดชั่วโมงเพิ่มด้วย $\sqrt7$ ไม่ใช่ 7 เพราะ Poisson process มี increments อิสระ</p>
-<p>ถ้าโอกาสจับคู่ลดเหลือ 0.25 โดยตรึงอัตราส่งและกำไรต่อ fill ไว้ จำนวนเฉลี่ยเหลือ 30 กำไรเฉลี่ย 1,350 USD/ชั่วโมง และ SD $45\sqrt{30}\approx246.48$ USD กำไรที่ลดลงคือ 540 USD/ชั่วโมง หรือ 3,780 USD ต่อวัน 7 ชั่วโมง คิดเป็น $540/1{,}890\approx28.57\%$ ไม่ใช่ 10%: โอกาสลด 10 <em>จุดเปอร์เซ็นต์</em> จากฐานเดิม 35%</p>
-<p>แม้ SD สัมบูรณ์ลดลง แต่ CV เพิ่มเป็น $1/\sqrt{30}\approx18.26\%$ เพราะค่าเฉลี่ยลดเร็วกว่า SD สำหรับกำไรต่อ fill คงที่ หากลดจำนวนเฉลี่ยเหลือหนึ่งในสี่ CV จะเพิ่มสองเท่า นี่เป็นผลของแบบจำลอง ไม่ใช่ข้อพิสูจน์ว่าความถี่สูงให้กำไรดีกว่าเสมอ</p>
-</section>
-<section class="worked-example">
-<h2>10. ถ้ากำไรต่อ fill ไม่คงที่ ต้องกลับไปใช้ random sum</h2>
-<p>คง $K\sim\operatorname{Poisson}(42)$ แต่ให้กำไรแต่ละ fill เป็น iid อิสระจาก $K$ มีค่าเฉลี่ย 45 และ SD 200 USD กำไรรวมจึงเป็น compound Poisson ไม่ใช่ $45K$ โดยค่าเฉลี่ยและ SD ของยอดในช่วงหนึ่งชั่วโมงใช้หน่วย USD ส่วน variance ใช้ USD²:</p>
-<div class="math">\[
+
+<section class="example">
+  <h4>ขั้นที่ 9 — กำไรต่อ fill ไม่คงที่: กลับไปใช้ random sum</h4>
+  <p>ในความจริงกำไรต่อ fill แกว่งมาก ขั้นนี้ให้มันสุ่ม แล้วดูว่าความเสี่ยงที่คิดจากจำนวนอย่างเดียวพลาดไปเท่าไร</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $K\sim\operatorname{Poisson}(42)$ เหมือนเดิม กำไรต่อ fill เป็น iid อิสระจาก $K$ ค่าเฉลี่ย \$45 SD \$200</p>
+  <div class="math">\[
 \begin{aligned}
 E[Q]&=42(45)=1{,}890,\\
 \operatorname{Var}(Q)&=42(200^2)+42(45^2)\\
-&=1{,}680{,}000+85{,}050=1{,}765{,}050,\\
-\operatorname{SD}(Q)&\approx1{,}328.55\text{ USD}.
+&=1{,}680{,}000+85{,}050\\
+&=1{,}765{,}050,\\
+\operatorname{SD}(Q)&\approx1{,}328.55.
 \end{aligned}
 \]</div>
-<p>SD สูงกว่ากรณีกำไรคงที่ประมาณ 4.56 เท่า ภายใต้เงื่อนไข iid และจำนวนอิสระ ค่า 291.63 เป็นส่วนจากจำนวนอย่างเดียวและเป็นขอบล่างเมื่อคงค่าเฉลี่ยต่อ fill ไว้ แต่ไม่ใช่ขอบล่างสากลหากเปลี่ยนการพึ่งพากันของจำนวนกับกำไร ในตลาดจริง adverse selection คือการได้จับคู่ในจังหวะที่อีกฝ่ายได้เปรียบด้านข้อมูล ซึ่งอาจทำให้โอกาสจับคู่กับกำไรสัมพันธ์กันและทำลายสมมติฐานของตัวอย่าง</p>
+  <p><strong>คำตอบ:</strong> SD \$1,328.55 ต่อชั่วโมง ใหญ่กว่ากรณีกำไรคงที่ 4.56 เท่า สูตรคือ variance ของ compound Poisson ใน <a href="2.3.html">random sums</a> ส่วน 85,050 คือส่วนจากจำนวนซึ่งเท่ากับ $291.63^2$ จากขั้นก่อนพอดี ความเสี่ยงที่คิดจากจำนวนอย่างเดียวจึงเป็นแค่เศษเสี้ยว</p>
+  <p>ข้อควรระวังในตลาดจริงคือ adverse selection: คำสั่ง passive มักได้ fill ในจังหวะที่อีกฝ่ายรู้ข้อมูลดีกว่า โอกาส fill จึงสัมพันธ์กับกำไรต่อ fill และป้ายไม่อิสระจากผลลัพธ์อีกต่อไป สูตรของหน้านี้ใช้ไม่ได้ตรง ๆ</p>
 </section>
-<section class="exercise">
-<h2>ลองทำก่อนเปิดเฉลย</h2>
-<ol><li>กระแส 10 เหตุการณ์/นาที ติดป้าย A โอกาส 0.3 ในสองนาที จงหาการแจกแจง A และ B ก่อนรู้จำนวนรวม แล้วหา variance ของ A เมื่อรู้ว่าจำนวนรวมเป็น 20
-<details><summary>เฉลย</summary><p>ก่อนรู้จำนวนรวม A เป็น Poisson(6), B เป็น Poisson(14) และอิสระกัน เมื่อรู้ $N=20$ จะได้ $A\mid N=20\sim\operatorname{Binomial}(20,0.3)$ มี variance $20(0.3)(0.7)=4.2$ ไม่ใช่ 6</p></details></li>
-<li>ถ้า $p=0$, $p=1$ หรือ $t=0$ สูตรยังใช้ได้ไหม?
-<details><summary>เฉลย</summary><p>ได้ โดย Poisson(0) เป็นศูนย์แน่นอน เมื่อ $p=0$ A ว่างและ B เท่ากระแสแม่; เมื่อ $p=1$ กลับกัน; เมื่อ $t=0$ ทั้งสองเป็นศูนย์ ตัวแปรคงที่เป็นอิสระจากอีกตัวตามนิยาม</p></details></li>
-<li>ถ้าจำนวนแม่มีค่าเฉลี่ย 20 แต่ variance 40 และยังติดป้ายอิสระด้วย $p=0.6$ จะเกิดอะไร?
-<details><summary>เฉลย</summary><p>$E[A]=12$ แต่ $\operatorname{Var}(A)=0.24(20)+0.36(40)=19.2$ และ $\operatorname{Cov}(A,B)=0.24(40-20)=4.8$ จึงไม่ใช่คู่ Poisson อิสระของตัวอย่างหลัก</p></details></li></ol>
-</section>
-<section class="code">
-<h2>JavaScript: ตรวจ joint pmf, ผลรวม marginal และกำไรจริงในตัวอย่าง</h2>
-<pre><code class="language-javascript" data-example="2.4">const factorial = n =&gt; { let v = 1; for (let i = 2; i &lt;= n; i++) v *= i; return v; };
-const poisson = (k, theta) =&gt; Math.exp(-theta) * theta ** k / factorial(k);
-const choose = (n, k) =&gt; factorial(n) / (factorial(k) * factorial(n - k));
-const joint = (k, j, theta, p) =&gt; poisson(k + j, theta) * choose(k + j, k) * p ** k * (1 - p) ** j;
-const split = (theta, p) =&gt; ({a: theta * p, b: theta * (1 - p),
-  conditionalVarianceAtMean: theta * p * (1 - p),
-  varianceA: theta * p * (1 - p) + theta * p ** 2});
-let maxJointError = 0, maxMarginalError = 0, mass = 0;
-for (let k = 0; k &lt;= 30; k++) {
-  let marginal = 0;
-  for (let j = 0; j &lt;= 30; j++) {
-    const q = joint(k, j, 2, 0.5);
-    mass += q; marginal += q;
-    maxJointError = Math.max(maxJointError, Math.abs(q - poisson(k, 1) * poisson(j, 1)));
-  }
-  maxMarginalError = Math.max(maxMarginalError, Math.abs(marginal - poisson(k, 1)));
-}
-const profit = p =&gt; {
-  const fills = 120 * p, mean = fills * 45, sd = 45 * Math.sqrt(fills);
-  return {fills, mean, sd, cv: sd / mean, dailyMean: 7 * mean};
-};
-const base = profit(0.35), lower = profit(0.25);
-const randomProfitVariance = 42 * (200 ** 2 + 45 ** 2);
-console.log(JSON.stringify({mass, maxJointError, maxMarginalError,
-  tinyJoint: joint(1, 1, 2, 0.5), oneMinute: split(20, 0.6), fiveMinutes: split(100, 0.6),
-  base, lower, hourlyLoss: base.mean - lower.mean,
-  relativeLoss: 1 - lower.mean / base.mean,
-  dailySD: 45 * Math.sqrt(42 * 7),
-  randomProfitVariance, randomProfitSD: Math.sqrt(randomProfitVariance),
-  sdRatio: Math.sqrt(randomProfitVariance) / base.sd,
-  noA: split(20, 0), noB: split(20, 1), zeroTime: split(0, 0.6),
-  drill: split(20, 0.3), overdispersedVariance: 0.24 * 20 + 0.36 * 40,
-  overdispersedCovariance: 0.24 * (40 - 20)}));</code></pre>
-<p>ควรได้ <code>mass</code> ใกล้ 1, ความต่างของ joint และ marginal ใกล้ศูนย์, <code>tinyJoint ≈ 0.135335</code> และ <code>randomProfitVariance = 1765050</code> การรวมถึง 30 ในโค้ดเป็นการตรวจเชิงตัวเลขที่เหลือหางเล็กมากสำหรับ Poisson(1) ส่วนบทพิสูจน์ด้านบนรวมถึงอนันต์</p>
-</section>
+
 <section class="pitfall">
-<h2>เงื่อนไขที่ต้องตรวจเมื่อออกจากโจทย์สมมติ</h2>
-<ul><li>จำนวนในแต่ละช่วงเป็น Poisson และอิสระข้ามช่วงจริงหรือไม่? ข่าวอาจทำให้คำสั่งเกาะกลุ่ม อัตราสุ่มร่วมกันอาจทำให้สายลูกสัมพันธ์กัน</li><li>ป้ายแต่ละเหตุการณ์อิสระและมี $p$ คงที่หรือไม่? การเลือกตามคิว ความเร็ว หรือการสลับแบบกำหนดล่วงหน้าไม่ใช่ iid marking</li><li>หากอัตรา $\lambda(t)$ และโอกาส $p(t)$ เปลี่ยนตามเวลาที่กำหนดแน่นอน ยังขยายเป็น nonhomogeneous Poisson thinning ได้ โดยค่าเฉลี่ย A ในช่วงคือ $\int\lambda(s)p(s)\,ds$ แต่ต้องมีสมมติฐานกระแสและป้ายอิสระ ไม่ใช่นำค่าเฉลี่ยสองตัวมาคูณแทนอินทิกรัลโดยไม่มีเหตุผล</li><li>อย่าใช้ sample correlation ใกล้ศูนย์เป็นหลักฐาน independence หรือใช้ค่าเฉลี่ยเท่า variance เป็นหลักฐาน Poisson เพียงอย่างเดียว</li></ul>
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>ใช้ Poisson หลังรู้ยอดรวม:</strong> ถ้ารู้แล้วว่ามี 20 คำสั่ง จำนวน A มี variance 4.8 ไม่ใช่ 12 ช่วงความเชื่อมั่นจะกว้างเกินไปเกือบ 1.6 เท่า ($\sqrt{12/4.8}\approx1.58$)</p>
+  <p><strong>แบ่งแบบสลับกันแทนการสุ่ม:</strong> ส่ง A, B, A, B สลับกันทำให้สองสายต่างกันไม่เกินหนึ่งเสมอ ป้ายไม่อิสระ สายลูกไม่ใช่ Poisson และไม่อิสระกัน การแบ่งให้สมดุลกับการแบ่งแบบสุ่มเป็นคนละเรื่อง</p>
+  <p><strong>กระแสแม่เกาะกลุ่ม:</strong> ถ้าจำนวนคำสั่งรวมมีค่าเฉลี่ย 20 แต่ variance 40 จะได้ $\operatorname{Var}(A)=0.24(20)+0.36(40)=19.2$ ไม่ใช่ 12 และ $\operatorname{Cov}(A,B)=+4.8$ สองสายขึ้นลงพร้อมกันตามข่าว</p>
+  <p><strong>ใช้ correlation ตัวอย่างใกล้ศูนย์เป็นหลักฐาน:</strong> covariance ศูนย์ไม่ได้แปลว่าอิสระ และค่าเฉลี่ยเท่ากับ variance ไม่ได้แปลว่าเป็น Poisson ต้องตรวจการแจกแจงทั้งก้อน</p>
+  <p><strong>หน่วยของอัตรากับเวลาไม่ตรงกัน:</strong> อัตรา 20 ต่อนาทีกับช่วง 30 วินาทีให้ $\theta=20\times0.5=10$ ไม่ใช่ $20\times30=600$</p>
 </section>
+
+<section class="prose">
+  <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
+  <p>Thinning ใช้แตกกระแสคำสั่งตามฝั่งซื้อขาย ตามตลาดปลายทาง หรือตามประเภทคำสั่ง แล้วทำแบบจำลองแต่ละสายแยกกัน superposition ใช้ในทิศกลับ: คำสั่งจากตลาดสามแห่งที่อิสระกันด้วยอัตรา 5, 8 และ 7 ต่อนาที รวมเป็น Poisson อัตรา 20</p>
+  <p>อีกงานที่ใช้บ่อยคือการจำลองกระแสที่อัตราเปลี่ยนตามเวลา เช่นคำสั่งเข้ามา 40 ต่อนาทีตอนเปิดตลาดแต่เหลือ 10 ต่อนาทีตอนเที่ยง วิธี thinning ของ Lewis และ Shedler สร้างเหตุการณ์ที่อัตราสูงสุดคงที่ 40 แล้วเก็บแต่ละเหตุการณ์ที่เวลา $t$ ไว้ด้วยโอกาส $\lambda(t)/40$ เช่นตอนเที่ยงเก็บไว้ 25% ผลคือกระแสที่มีอัตรา $\lambda(t)$ พอดี เป็นงานประจำของ <a href="17.5.html">Monte Carlo</a> สำหรับคำสั่งซื้อขายและการผิดนัดของสินเชื่อ</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> กระแส 10 เหตุการณ์ต่อนาที ติดป้าย A ด้วยโอกาส 0.3 ในช่วงสองนาที A และ B มีการแจกแจงอะไร และถ้ารู้ว่ายอดรวมในสองนาทีคือ 20 variance ของ A เป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>$\theta=10\times2=20$ ก่อนรู้ยอดรวม A เป็น Poisson($20\times0.3=6$) และ B เป็น Poisson($20\times0.7=14$) ที่อิสระกัน เมื่อรู้ยอดรวม 20 จะได้ A เป็น Binomial(20, 0.3) variance $20(0.3)(0.7)=4.2$ ไม่ใช่ 6</p></details>
+  <p><strong>2.</strong> แม่ไก่ออกไข่จำนวนเป็น Poisson ค่าเฉลี่ย 10 ฟอง แต่ละฟองฟักเป็นลูกไก่ด้วยโอกาส 0.3 อย่างอิสระ โอกาสที่ไม่ได้ลูกไก่เลยเป็นเท่าไร และถ้าบอกว่ามีไข่ไม่ฟัก 5 ฟอง ค่าเฉลี่ยของลูกไก่เปลี่ยนไหม</p>
+  <details><summary>เฉลย</summary><p>จำนวนลูกไก่เป็น Poisson($10\times0.3=3$) โอกาสได้ศูนย์ตัวคือ $e^{-3}\approx0.0498$ ไข่ที่ไม่ฟักเป็น Poisson(7) ที่อิสระจากจำนวนลูกไก่ การรู้ว่ามีไข่ไม่ฟัก 5 ฟองจึงไม่เปลี่ยนอะไร ค่าเฉลี่ยของลูกไก่ยังเป็น 3 ต่างจากการรู้จำนวนไข่ทั้งหมด ซึ่งจะเปลี่ยนเป็น Binomial</p></details>
+  <p><strong>3.</strong> จำนวนคำสั่งรวมมีค่าเฉลี่ย 20 แต่ variance 40 ยังติดป้าย A ด้วยโอกาส 0.6 อย่างอิสระ จงหา $E[A]$, $\operatorname{Var}(A)$ และ $\operatorname{Cov}(A,B)$</p>
+  <details><summary>เฉลย</summary><p>tower property ให้ $E[A]=0.6(20)=12$ EVVE ให้ $\operatorname{Var}(A)=0.6(0.4)(20)+0.6^2(40)=4.8+14.4=19.2$ และสูตร covariance ให้ $0.24(40-20)=4.8$ ค่าเฉลี่ยยังเท่าเดิม แต่ A ไม่ใช่ Poisson และ A กับ B ไม่อิสระกัน</p></details>
+</section>
+
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>โค้ดตรวจว่า joint pmf ที่สร้างจากกระแสแม่เท่ากับผลคูณของ Poisson สองตัวในทุกช่องของตาราง คำนวณ variance แบบรู้และไม่รู้ยอดรวม และตัวเลขกำไรรายชั่วโมง</p>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="2.4">const fact = n =&gt; { let v = 1; for (let i = 2; i &lt;= n; i++) v *= i; return v; };
+const pois = (k, th) =&gt; Math.exp(-th) * th ** k / fact(k);
+const choose = (n, k) =&gt; fact(n) / (fact(k) * fact(n - k));
+// P(A = k, B = j) built from the parent stream
+const joint = (k, j, th, p) =&gt;
+  pois(k + j, th) * choose(k + j, k) * p ** k * (1 - p) ** j;
+
+let maxError = 0;
+for (let k = 0; k &lt;= 30; k++) for (let j = 0; j &lt;= 30; j++) {
+  const gap = joint(k, j, 5, 0.6) - pois(k, 3) * pois(j, 2);
+  maxError = Math.max(maxError, Math.abs(gap));
+}
+const tiny = joint(1, 1, 2, 0.5);                 // e^-2 = 0.1353
+
+const varGiven20 = 20 * 0.6 * 0.4;                // 4.8
+const varBefore = 20 * 0.6 * 0.4 + 0.6 ** 2 * 20; // 12
+const covOver = 0.24 * (40 - 20);                 // 4.8
+
+const hour = p =&gt; {
+  const fills = 120 * p;
+  return {fills, mean: 45 * fills, sd: 45 * Math.sqrt(fills), cv: 1 / Math.sqrt(fills)};
+};
+const base = hour(0.35), slower = hour(0.25);     // 1890 / 291.63, 1350 / 246.48
+const randomVar = 42 * (200 ** 2 + 45 ** 2);      // 1765050
+console.log({maxError, tiny, varGiven20, varBefore, covOver, base, slower,
+  lost: base.mean - slower.mean, randomSD: Math.sqrt(randomVar)});</code></pre>
+  </details>
+</section>
+
 <section class="takeaways">
-<h2>บทเรียนที่รวมเครื่องมือทั้งบท</h2>
-<ul><li>หลังรู้ $N=n$ การแบ่งแบบอิสระเป็น Binomial; ก่อนรู้จำนวนและกระแสแม่เป็น Poisson สายลูกเป็น Poisson</li><li>Tower Property ให้ค่าเฉลี่ย EVVE ให้ variance ส่วน joint pmf หรือ PGF พิสูจน์การแจกแจงและ independence</li><li>อัตราลูกคือ $\lambda p$ และ $\lambda(1-p)$ แต่พารามิเตอร์จำนวนในช่วงยาว $t$ ต้องคูณ $t$ ด้วยเสมอ</li><li>independence ก่อนรู้จำนวนรวมไม่ขัดกับการพึ่งพากันหลังรู้จำนวนรวม เพราะเป็นคนละข้อมูลที่ใช้ conditioning</li><li>เมื่อแปลงจำนวนเป็นกำไร ต้องระบุว่ากำไรต่อเหตุการณ์คงที่หรือสุ่ม และตรวจเงื่อนไข random sum เพิ่ม</li></ul>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>หลังรู้ยอดรวม $N=n$ การติดป้ายอย่างอิสระให้ Binomial($n,p$) และสองสายสวนทางกันเต็มที่</li>
+    <li>ก่อนรู้ยอดรวม ถ้ากระแสแม่เป็น Poisson($\theta$) สาย A เป็น Poisson($\theta p$) สาย B เป็น Poisson($\theta(1-p)$) และอิสระกัน: อัตรา 20 แยกเป็น 12 กับ 8</li>
+    <li>tower property ให้ค่าเฉลี่ย law of total variance ให้ variance ส่วน joint pmf หรือ PGF พิสูจน์การแจกแจงและความอิสระ</li>
+    <li>covariance ของสองสายคือ $p(1-p)(\operatorname{Var}(N)-E[N])$ Poisson เป็นกรณีที่สองแรงหักล้างกันพอดี กระแสที่เกาะกลุ่มให้ covariance บวก</li>
+    <li>โอกาส fill ที่ลด 10 จุดเปอร์เซ็นต์จาก 35% ทำให้กำไรหาย 28.6% และกำไรต่อ fill ที่สุ่มทำให้ความเสี่ยงสูงกว่าที่คิดจากจำนวน 4.56 เท่า</li>
+  </ul>
+  <p>บทนี้ใช้การ condition บนข้อมูลบางส่วนเพื่อแตกโจทย์ บทต่อไปเริ่มที่ <a href="3.1.html">law of large numbers</a> ซึ่งตอบว่าทำไมค่าเฉลี่ยจากข้อมูลจริงจำนวนมากจึงเข้าใกล้ค่าเฉลี่ยในแบบจำลองที่เราคำนวณมาตลอดบท</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
