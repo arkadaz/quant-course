@@ -18,328 +18,442 @@
 <article class="topic" data-number="7.3" data-depends-on="1.4 5.5 6.1 7.1 7.2">
 <header class="topic-header">
 <h1><span class="tnum">7.3</span> Matrix Multiplication</h1>
-<p class="subtitle">คูณแถวกับคอลัมน์ เพื่อรวมหลายขั้นตอนโดยไม่ทำความหมายของข้อมูลหาย</p>
+<p class="subtitle">การคูณ matrix คือการต่อเครื่องแปลงสองเครื่องให้เป็นเครื่องเดียว กติกาแถวคูณคอลัมน์ตามมาจากการแทนค่าขั้นแรกลงในขั้นที่สอง ไม่ได้ถูกตั้งขึ้นลอย ๆ</p>
 </header>
+
 <div class="hook">
-<p>พอร์ตสมมติลงเงินในหุ้นสหรัฐ 50% หุ้นกู้สหรัฐ 30% และทองคำที่วัดราคาเป็น USD อีก 20% หุ้นจึงแบกความเสี่ยงครึ่งหนึ่งด้วยหรือไม่?</p>
-<details><summary>ดูคำตอบภายใต้โมเดลที่จะคำนวณในบทนี้</summary><p>ไม่จำเป็น ภายใต้ volatilities และ correlations ที่กำหนดด้านล่าง หุ้นได้ส่วนแบ่งความเสี่ยงประมาณ 85.84% และพอร์ตมี SD 9.60% ต่อปี นี่เป็นการจัดสรรความเสี่ยงจาก covariance model ไม่ใช่ความน่าจะเป็นที่หุ้นจะทำให้พอร์ตขาดทุน</p></details>
-<p>เราจะสร้างกติกาการคูณจากการต่อการแปลงสองขั้น แล้วใช้กติกาเดียวกันกับ payoff, factor exposures และ covariance ไม่ต้องจำวิธีคำนวณคนละชุดสำหรับแต่ละงาน</p>
+  <p>พอร์ตสมมติลงเงินในหุ้นสหรัฐ 50% หุ้นกู้สหรัฐ 30% และทองคำ 20% กรรมการถามว่าหุ้นซึ่งได้เงินครึ่งหนึ่ง แบกความเสี่ยงของพอร์ตครึ่งหนึ่งด้วยหรือเปล่า สมมติความผันผวนรายปี 18%, 6% และ 15% correlation หุ้นกับหุ้นกู้ −0.20 หุ้นกับทอง 0.05 หุ้นกู้กับทอง 0.25</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ใช่ครึ่งเดียว หุ้นแบก 85.84% ของ variance พอร์ต หุ้นกู้ 1.46% ทองคำ 12.70% และพอร์ตมีความผันผวน 9.60% ต่อปี หุ้นทั้งผันผวนสูงสุด และหุ้นกู้ซึ่งสัมพันธ์ติดลบกับหุ้นยังช่วยหักความเสี่ยงบางส่วนออก ตัวเลขทั้งหมดได้จากการคูณ matrix สองรอบ: $\Sigma\mathbf w$ แล้ว $\mathbf w^{\mathsf T}(\Sigma\mathbf w)$</p></details>
 </div>
-<section class="formula">
-<h2>1. ทำไมกติกาต้องเป็นแถวคูณคอลัมน์?</h2>
-<p>สมมติขั้นแรกแปลง input $\mathbf x$ เป็น $\mathbf y=Q\mathbf x$ แล้วขั้นที่สองแปลงเป็น $\mathbf z=P\mathbf y$ ถ้า $Q$ มีขนาด $n\times p$ และ $P$ มีขนาด $m\times n$ เราต้องการตารางเดียวที่รับ input $p$ ช่องแล้วส่ง output $m$ ช่อง</p>
-<p>แทนสูตรของขั้นแรกลงในขั้นที่สอง แล้วจัดกลุ่มตาม input เดิม:</p>
-<div class="math">\[
-\begin{aligned}
-y_j&=\sum_{k=1}^{p}Q_{jk}x_k,\\
-z_i&=\sum_{j=1}^{n}P_{ij}y_j
- =\sum_{j=1}^{n}P_{ij}\sum_{k=1}^{p}Q_{jk}x_k\\
- &=\sum_{k=1}^{p}\left(\sum_{j=1}^{n}P_{ij}Q_{jk}\right)x_k,\\
-(PQ)_{ik}&:=\sum_{j=1}^{n}P_{ij}Q_{jk}.
-\end{aligned}
-\]</div>
-<p>วงเล็บคือสัมประสิทธิ์ของ $x_k$ ที่ส่งถึง output $z_i$: แถว $i$ ของ $P$ จับคู่กับคอลัมน์ $k$ ของ $Q$ แล้วบวกทุกเส้นทางผ่านตัวกลาง $j$ นี่จึงเป็นกติกาที่ทำให้ $(PQ)\mathbf x=P(Q\mathbf x)$ ไม่ใช่กติกาที่ตั้งขึ้นโดยไม่มีเหตุผล</p>
-<p>ดัชนีกลางมี $n$ ค่าเท่ากันทั้งสองตาราง จึงต้องมี shape $(m\times n)(n\times p)\to m\times p$ แต่ shape ตรงยังไม่พอ ชื่อและหน่วยของตัวกลางต้องตรงด้วย เช่นทั้งสองตารางต้องเรียง factors ในลำดับเดียวกัน</p>
-</section>
-<section class="example">
-<h2>2. Matrix–vector อ่านได้ทั้งทีละแถวและทีละคอลัมน์</h2>
-<p>ใช้ payoff table เดิมจาก 7.2 แถวเป็นสองสถานะ คอลัมน์เป็นสามสัญญา แต่ละช่องมีหน่วย USD ต่อหน่วยสัญญา และถือจำนวนหน่วย $(2,6,4)$:</p>
-<div class="math">\[
-\begin{aligned}
-S&=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},\qquad
-\boldsymbol\theta=\begin{bmatrix}2\\6\\4\end{bmatrix},\\
-S\boldsymbol\theta
- &=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}
- =\begin{bmatrix}50\\58\end{bmatrix},\\
-S\boldsymbol\theta
- &=2\begin{bmatrix}2\\1\end{bmatrix}
- +6\begin{bmatrix}3\\6\end{bmatrix}
- +4\begin{bmatrix}7\\5\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>มุมมองแถวถามว่า “ในสถานะนี้ทุกสัญญารวมกันจ่ายเท่าไร” มุมมองคอลัมน์ถามว่า “แต่ละสัญญาเติม payoff เท่าไรให้ทุกสถานะ” ทั้งสองนับเงินชุดเดียวกัน จึงต้องได้ 50 และ 58 USD เหมือนกัน</p>
-<p>หากคูณแต่ละคอลัมน์ด้วยจำนวนสัญญาแต่ยังไม่รวม จะได้ตาราง contributions $\begin{bmatrix}4&18&28\\2&36&20\end{bmatrix}$ ซึ่งมีประโยชน์ แต่ยังไม่ใช่ payoff รวม ต้องบวกแต่ละแถวอีกครั้ง อย่าสับสน elementwise multiplication หรือ broadcasting กับ matrix multiplication</p>
-<p>ตัวอย่างขนาดที่ต่างกันชัด ๆ: ถ้า $v=(1,-2)^{\mathsf T}$ จะมี $v^{\mathsf T}v=1+4=5$ แต่ $vv^{\mathsf T}=\begin{bmatrix}1&-2\\-2&4\end{bmatrix}$ เป็นตาราง คอลัมน์ที่สองเท่ากับ −2 เท่าของคอลัมน์แรก จึงมีเพียงหนึ่งทิศอิสระ ไม่ได้กลับด้านได้เพียงเพราะมีสี่ช่อง</p>
-</section>
-<section class="formula">
-<h2>3. เปลี่ยนวงเล็บได้ แต่สลับลำดับไม่ได้</h2>
-<p>ให้ $P,Q$ เป็นกติกาสองขั้นดังนี้ และ input เป็น $(1,1)^{\mathsf T}$:</p>
-<div class="math">\[
-\begin{aligned}
-P&=\begin{bmatrix}1&2\\0&1\end{bmatrix},\qquad
-Q=\begin{bmatrix}1&0\\3&1\end{bmatrix},\\
-Q\begin{bmatrix}1\\1\end{bmatrix}
- &=\begin{bmatrix}1\\4\end{bmatrix},\qquad
-P\begin{bmatrix}1\\4\end{bmatrix}=\begin{bmatrix}9\\4\end{bmatrix},\\
-PQ&=\begin{bmatrix}1+6&2\\3&1\end{bmatrix}
- =\begin{bmatrix}7&2\\3&1\end{bmatrix},\\
-(PQ)\begin{bmatrix}1\\1\end{bmatrix}
- &=\begin{bmatrix}9\\4\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>แต่ $QP=\begin{bmatrix}1&2\\3&7\end{bmatrix}$ ส่ง input เดิมไป $(3,10)^{\mathsf T}$ เพราะเป็นการทำ $P$ ก่อน $Q$ เราจึงเปลี่ยนวงเล็บเพื่อจัดงานได้ แต่ห้ามเปลี่ยนลำดับขั้นตอนโดยถือว่าคำตอบจะเหมือนเดิม</p>
-<p>สำหรับสาม matrices ที่มิติต่อกันได้ ทั้ง $P(QR)$ และ $(PQ)R$ มีสมาชิกช่อง $i\ell$ เป็นผลรวมเดียวกัน $\sum_j\sum_k P_{ij}Q_{jk}R_{k\ell}$ จึงเท่ากันในเลขคณิตแม่นตรง นี่คือ associativity ไม่ใช่ commutativity</p>
-</section>
-<section class="example">
-<h2>4. จากตำแหน่งหุ้นสู่ factor exposures</h2>
-<p>คราวนี้กำหนด $A$ ให้ <strong>แถวเป็น factors และคอลัมน์เป็น assets</strong> ตั้งแต่ต้น ต่างจากการจัดตารางใน 7.1–7.2 แถวเรียง Market/Quality/Rates และคอลัมน์เรียง AAPL/MSFT/JPM ทุก loading เป็นตัวเลขสมมติ:</p>
-<div class="math">\[
-A=\begin{bmatrix}1.0&0.8&0.6\\0.3&0.5&0.2\\0.1&0.2&0.4\end{bmatrix},
-\qquad \mathbf w=\begin{bmatrix}2\\-1\\1\end{bmatrix}
-\ \text{million USD}.
-\]</div>
-<p>ทั้งสาม factors วัดเป็น returns ของพอร์ต factor ในงวดเดียวกันและสเกลที่กำหนดไว้ Rates ในตัวอย่างนี้จึงไม่ใช่การใส่ yield change เป็น basis points โดยตรง ถ้าเปลี่ยนหน่วย factor ต้องเปลี่ยน loadings ให้สอดคล้องกัน</p>
-<figure class="plot">
-<img src="../figures/7.3-3.svg" alt="ตาราง A มีแถว Market Quality Rates และคอลัมน์ AAPL MSFT JPM" loading="lazy">
-<figcaption>รูป 7.3c ชื่อแกนบอกว่า $A\mathbf w$ ให้ factor exposures การที่ตารางนี้เป็นจัตุรัสไม่ได้ทำให้ $A^{\mathsf T}\mathbf w$ ตอบคำถามเดียวกัน</figcaption>
-</figure>
-<div class="math">\[
-\begin{aligned}
-y_M&=1.0(2)+0.8(-1)+0.6(1)=1.8,\\
-y_Q&=0.3(2)+0.5(-1)+0.2(1)=0.3,\\
-y_R&=0.1(2)+0.2(-1)+0.4(1)=0.4,\\
-\mathbf y=A\mathbf w&=\begin{bmatrix}1.8\\0.3\\0.4\end{bmatrix}
-\ \text{million USD}.
-\end{aligned}
-\]</div>
-<figure class="plot">
-<img src="../figures/7.3-1.svg" alt="แต่ละหุ้นมีส่วนร่วมต่อแต่ละ factor และผลรวมแถวเป็น exposure" loading="lazy">
-<figcaption>รูป 7.3a แต่ละแท่งคือ loading คูณสถานะของหุ้นหนึ่งตัว จุดสีเข้มคือผลรวมใน factor นั้น ขา short ให้ contribution ติดลบได้</figcaption>
-</figure>
-<figure class="plot">
-<img src="../figures/7.3-2.svg" alt="exposures ต่อ Market Quality Rates เท่ากับ 1.8 0.3 0.4 ล้าน USD" loading="lazy">
-<figcaption>รูป 7.3b หน่วยล้าน USD ต่อหนึ่งหน่วย factor return ตามสเกลที่กำหนด ถ้า Market +1% โดยตรึง factors อื่น ส่วนจาก Market คือ 18,000 USD ไม่ใช่กำไรรวมที่รับประกัน</figcaption>
-</figure>
-<p>ถ้าจะคำนวณสองพอร์ตพร้อมกัน วาง positions ของแต่ละพอร์ตเป็นคอลัมน์ของ $W$ แล้วใช้กติกาเดิมกับแต่ละคอลัมน์:</p>
-<div class="math">\[
-\begin{aligned}
-W&=\begin{bmatrix}2&-1\\-1&2\\1&0\end{bmatrix},\\
-AW&=\begin{bmatrix}1.8&0.6\\0.3&0.7\\0.4&0.3\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>เช่นช่อง Market ของพอร์ตที่สองคือ $1(-1)+0.8(2)+0.6(0)=0.6$ ล้าน USD กติกาไม่ได้เปลี่ยนเมื่อเพิ่มจำนวนพอร์ต เพียงมี input หลายคอลัมน์</p>
-</section>
-<section class="formula">
-<h2>5. ต่อไปถึง P&amp;L ในหลาย scenarios</h2>
-<p>ให้ $F$ มีแถวเป็น scenarios และคอลัมน์เป็น factor shocks เรียง Market/Quality/Rates เหมือน $A$:</p>
-<div class="math">\[
-F=\begin{bmatrix}0.01&-0.02&0.005\\-0.02&0.01&-0.01\end{bmatrix}.
-\]</div>
-<p>คำนวณ exposure ก่อนแล้วค่อยใส่ shocks ได้ $F(Aw)$ หรือรวมกติกาเป็น $FA$ ก่อนแล้วคูณ positions ทั้งสองทางต้องให้ส่วนของ P&amp;L ที่โมเดลอธิบายเท่ากัน:</p>
-<div class="math">\[
-\begin{aligned}
-FA&=\begin{bmatrix}0.0045&-0.001&0.004\\-0.018&-0.013&-0.014\end{bmatrix},\\
-F(Aw)&=\begin{bmatrix}0.018-0.006+0.002\\-0.036+0.003-0.004\end{bmatrix}\\
- &=(FA)w=\begin{bmatrix}0.014\\-0.037\end{bmatrix}
- \ \text{million USD}.
-\end{aligned}
-\]</div>
-<p>$FA$ จึงเป็นตาราง modeled returns ของหุ้นในแต่ละ scenario ส่วนผลลัพธ์สุดท้ายเป็น 14,000 และ −37,000 USD ยังไม่รวม residual return, cash flows และต้นทุนอื่น การเปลี่ยนวงเล็บไม่ทำให้ส่วนที่โมเดลละไว้หายไป</p>
-<details><summary>ควรคูณ matrices รวมไว้ก่อนเสมอหรือไม่?</summary>
-<p>ไม่เสมอ การคูณ dense matrix $m\times n$ กับ $n\times p$ แบบตรงไปตรงมาใช้ scalar multiplications ประมาณ $mnp$ ครั้ง ไม่ได้โตแบบกำลังสามในทุก shape</p>
-<p>เช่นแปลง 500 assets ผ่าน 3 factors ไป 1,000 scenarios การทำสองขั้นกับพอร์ตเดียวใช้ประมาณ $3(500)+1{,}000(3)=4{,}500$ ครั้ง แต่สร้าง matrix รวมก่อนใช้ $1{,}000(3)(500)=1{,}500{,}000$ ครั้ง แล้วแต่ละพอร์ตยังต้องคูณอีก 500,000 ครั้ง</p>
-<p>จึงต้องดู shapes, จำนวนครั้งที่นำผลกลับมาใช้ และหน่วยความจำ ตัวเลขเหล่านี้เป็นการนับงานของวิธีพื้นฐาน ไม่ใช่ benchmark ของทุกไลบรารี และใน floating point การเปลี่ยนวงเล็บอาจให้ค่าท้ายทศนิยมต่างกันเมื่อเกิดการหักล้างของจำนวนต่างขนาด</p>
-</details>
-</section>
-<section class="formula">
-<h2>6. นับทุกคู่ในข้อมูล: สร้าง sample covariance</h2>
-<p>ถ้าข้อมูลมี $N$ วันที่ตรงกันและ $d$ assets ให้ $X$ เป็น returns ที่ <strong>หักค่าเฉลี่ยของแต่ละคอลัมน์แล้ว</strong> ดังนั้น $X$ มีขนาด $N\times d$ การคูณ $X^{\mathsf T}X$ จะรวมผลคูณ return ของทุกคู่ assets ข้ามวันที่ตรงกัน:</p>
-<div class="math">\[
-\begin{aligned}
-(X^{\mathsf T}X)_{ij}&=\sum_{t=1}^{N}X_{ti}X_{tj},\\
-\widehat\Sigma_{ij}&=\frac{1}{N-1}\sum_{t=1}^{N}X_{ti}X_{tj},\\
-\widehat\Sigma&=\frac{X^{\mathsf T}X}{N-1},\qquad N\ge2.
-\end{aligned}
-\]</div>
-<p>นี่คือนิยาม sample covariance แบบตัวหาร $N-1$ การอ้างว่า unbiased ต้องมีสมมติฐาน เช่นข้อมูล i.i.d. ที่มี finite second moments การใช้ตัวหารนี้ไม่แก้ปัญหาวันไม่ตรง missing values หรือข้อมูลสัมพันธ์กันตามเวลาให้เอง</p>
-<p>ตัวอย่างสามวันต่อไปนี้วัด return เป็นเปอร์เซ็นต์: 2 หมายถึง 2% ทั้งสองคอลัมน์มีค่าเฉลี่ยศูนย์อยู่แล้ว:</p>
-<div class="math">\[
-\begin{aligned}
-X&=\begin{bmatrix}2&-1\\-1&2\\-1&-1\end{bmatrix},\\
-X^{\mathsf T}X
- &=\begin{bmatrix}4+1+1&-2-2+1\\-2-2+1&1+4+1\end{bmatrix}
- =\begin{bmatrix}6&-3\\-3&6\end{bmatrix},\\
-\widehat\Sigma&=\begin{bmatrix}3&-1.5\\-1.5&3\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>หน่วยของตารางนี้คือจุดเปอร์เซ็นต์ยกกำลังสอง ถ้าแปลง returns เป็นเศษส่วนก่อน ตาราง covariance จะเล็กลง 10,000 เท่า ไม่ใช่ 100 เท่า พอร์ตน้ำหนัก $(0.6,0.4)$ มี returns $(0.8,0.2,-1)$ จุดเปอร์เซ็นต์ จึงมี sample variance $(0.64+0.04+1)/2=0.84$ ในหน่วยเดียวกัน</p>
-<p>วันที่เดียวไม่พอสำหรับ sample covariance แบบนี้ เพราะตัวหารเป็นศูนย์ Outer product ของ observation เดียวจึงไม่ใช่ตัวประมาณ sample covariance แบบหัก sample mean นี้ และแม้มีหลายวัน matrix ก็อาจ singular ได้: centered columns มีผลรวมศูนย์ จึงอยู่ในพื้นที่มิติไม่เกิน $N-1$ เราจะศึกษาผลต่อ invertibility ใน 7.5</p>
-</section>
-<section class="example">
-<h2>7. คลี่โจทย์เปิด: เงินครึ่งหนึ่ง แบกความเสี่ยงเท่าไร?</h2>
-<p>ตั้งสมมติฐานใหม่สำหรับ returns หนึ่งปี ไม่ใช่ใช้ข้อมูลสามวันข้างบนประมาณ: หุ้นสหรัฐมี SD 18%, หุ้นกู้สหรัฐ 6%, ทองคำในหน่วย USD 15% กำหนด correlations หุ้น–หุ้นกู้ −0.20, หุ้น–ทอง 0.05, หุ้นกู้–ทอง 0.25 และน้ำหนัก $w=(0.5,0.3,0.2)^{\mathsf T}$</p>
-<p>ใช้ $\Sigma_{ij}=\rho_{ij}\sigma_i\sigma_j$ เช่น covariance หุ้น–หุ้นกู้คือ $(-0.2)(0.18)(0.06)=-0.00216$ จึงสร้างตารางในหน่วย return เศษส่วนยกกำลังสองได้:</p>
-<div class="math">\[
-\Sigma=\begin{bmatrix}
-0.0324&-0.00216&0.00135\\
--0.00216&0.0036&0.00225\\
-0.00135&0.00225&0.0225
-\end{bmatrix}.
-\]</div>
-<p>คูณรอบแรก $u=\Sigma w$ รวม covariance ของแต่ละ asset กับพอร์ต คูณรอบที่สอง $w^{\mathsf T}u$ รวมเป็น variance ตามสูตรที่พิสูจน์ใน 7.2:</p>
-<div class="math">\[
-\begin{aligned}
-u_1&=0.0324(0.5)-0.00216(0.3)+0.00135(0.2)\\
- &=0.015822,\\
-u_2&=-0.00216(0.5)+0.0036(0.3)+0.00225(0.2)\\
- &=0.000450,\\
-u_3&=0.00135(0.5)+0.00225(0.3)+0.0225(0.2)\\
- &=0.005850,\\
-V=w^{\mathsf T}\Sigma w
- &=0.007911+0.000135+0.001170=0.009216,\\
-\sigma_p&=\sqrt{V}=0.096=9.60\%.
-\end{aligned}
-\]</div>
-<p>กำหนด variance contribution ของ asset $i$ เป็น $c_i=w_i u_i$ จะมี $\sum_i c_i=V$ โดยตรง หาก $\sigma_p\gt0$ กำหนด SD contribution เป็น $c_i/\sigma_p$ ผลรวมจะเป็น $V/\sigma_p=\sigma_p$ และส่วนแบ่งทั้งสองแบบเป็น $c_i/V$ เท่ากัน</p>
-<div class="table-wrap"><table>
-<thead><tr><th>สินทรัพย์</th><th>น้ำหนักเงิน</th><th>$c_i$</th><th>ส่วนแบ่งความเสี่ยง</th></tr></thead>
-<tbody>
-<tr><td>หุ้นสหรัฐ</td><td>50%</td><td>0.007911</td><td>85.84%</td></tr>
-<tr><td>หุ้นกู้สหรัฐ</td><td>30%</td><td>0.000135</td><td>1.46%</td></tr>
-<tr><td>ทองคำใน USD</td><td>20%</td><td>0.001170</td><td>12.70%</td></tr>
-</tbody></table></div>
-<p>หุ้นมี SD contribution $0.007911/0.096=0.08240625$ หรือประมาณ 8.24 จุดเปอร์เซ็นต์จาก SD รวม 9.60% นี่คือที่มาของคำตอบ 85.84% ไม่ใช่ “โอกาส 85.84% ที่หุ้นจะทำให้ขาดทุน” ส่วนแบ่งขึ้นกับทั้งน้ำหนักและ covariance ที่เลือกใช้</p>
-<p>Contribution ติดลบก็เป็นไปได้เมื่อสินทรัพย์ช่วย hedge พอร์ต ส่วนแบ่งจึงไม่ใช่ probability และไม่จำเป็นต้องอยู่ในช่วง 0–100% ทุกตัว ไม่มีเหตุผลให้แปลงค่าติดลบเป็นศูนย์เพื่อทำให้รายงานดูสวย</p>
-</section>
+
 <section class="prose">
-<h2>8. ใช้ตัวเลขนี้ปรับพอร์ต ต้องถามเพิ่มอะไร?</h2>
-<details><summary>Marginal risk: เพิ่มน้ำหนักตัวเดียว หรือย้ายเงินจากอีกตัว?</summary>
-<p>ถ้าตรึง weights อื่น จาก 7.2 จะมี $V_h=V+2hu_i+h^2\Sigma_{ii}$ เมื่อเพิ่ม weight ตัว $i$ ทีละ $h$ ให้ $\sigma_h=\sqrt{V_h}$ ใช้การคูณด้วยผลบวกของรากได้:</p>
-<div class="math">\[
-\begin{aligned}
-\frac{\sigma_h-\sigma_p}{h}
- &=\frac{2u_i+h\Sigma_{ii}}{\sigma_h+\sigma_p}
- \longrightarrow\frac{u_i}{\sigma_p},\\
-\frac{u}{\sigma_p}&=\begin{bmatrix}0.1648125\\0.0046875\\0.0609375\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>แต่การย้ายเงินหนึ่งจุดเปอร์เซ็นต์จากหุ้นกู้ไปหุ้นเปลี่ยนสอง weights พร้อมกัน การประมาณอันดับแรกคือ $0.01(0.1648125-0.0046875)=0.00160125$ หรือ SD เพิ่มประมาณ 0.160125 จุดเปอร์เซ็นต์ คำนวณใหม่ด้วยน้ำหนัก $(0.51,0.29,0.20)$ ได้ SD 9.760877% ซึ่งต่างเล็กน้อยเพราะรวมผลไม่เชิงเส้นด้วย</p>
-</details>
-<details><summary>Risk parity: เงินเท่ากันไม่ใช่เงื่อนไข เป้าหมายคือ contributions เท่ากัน</summary>
-<p>สำหรับสาม assets ในโมเดลนี้ risk parity แบบเท่ากันตั้งเป้า $w_i(\Sigma w)_i/V=1/3$ ทุกตัว ลองหาค่าบวก $x_i$ ที่ทำให้ $x_i(\Sigma x)_i=1$ ก่อน แล้วค่อย normalize เป็น $w_i=x_i/\sum_jx_j$ Contributions ทั้งสามจะถูกหารด้วยค่าร่วมเดียวกัน จึงยังเท่ากัน</p>
-<p>เมื่อตรึง $x_j$ ตัวอื่นไว้ ให้ $b_i=\sum_{j\ne i}\Sigma_{ij}x_j$ สมการของตัวที่ $i$ เป็น quadratic ซึ่งเลือกรากบวกได้:</p>
-<div class="math">\[
-\begin{aligned}
-\Sigma_{ii}x_i^2+b_ix_i-1&=0,\\
-x_i&=\frac{-b_i+\sqrt{b_i^2+4\Sigma_{ii}}}{2\Sigma_{ii}}.
-\end{aligned}
-\]</div>
-<p>อัปเดตทีละตัววนซ้ำจน contributions เข้าใกล้เป้าหมาย โค้ดท้ายบททำขั้นตอนนี้กับ $\Sigma$ ที่กำหนด ได้ weights ประมาณ $(0.2114644,0.5869298,0.2016058)$ และ SD 6.0950% ต่อปี ทุก variance contribution ประมาณ 0.001238303</p>
-<p>หากใช้ weights ปัดสี่ตำแหน่ง $(0.2115,0.5869,0.2016)$ ส่วนแบ่งจะใกล้หนึ่งในสาม ไม่ใช่เท่ากันเป๊ะ การขยาย exposure ราว $9.60/6.0950\approx1.57506$ เท่าทำให้ SD กลับระดับเดิมภายใต้โมเดล แต่ไม่รับประกัน expected return และต้องนับ financing, costs และ leverage constraints แยกต่างหาก</p>
-</details>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>งานบน desk หลายอย่างเป็นสายพาน: เงินที่ถือกลายเป็น exposure ต่อ factor แล้ว exposure กลายเป็นกำไรขาดทุนใน scenario ต่าง ๆ หรือผลตอบแทนรายวันกลายเป็น covariance แล้ว covariance กับน้ำหนักกลายเป็นความเสี่ยง ทุกลูกศรในสายพานคือ matrix หนึ่งตัว และการคูณ matrix คือการรวมลูกศรสองอันเป็นอันเดียว</p>
+  <p>กติกาการคูณ “แถวคูณคอลัมน์” มาจากคำถามเดียว: ถ้าต่อเครื่องแปลงสองเครื่อง เครื่องรวมต้องหน้าตาอย่างไร คำตอบบังคับให้ลำดับสำคัญ ทำ $Q$ ก่อน $P$ กับทำ $P$ ก่อน $Q$ ได้ผลต่างกัน ดังรูปด้านล่าง แต่การจัดวงเล็บใหม่ไม่เปลี่ยนคำตอบ เปลี่ยนแค่ปริมาณงาน</p>
+  <p>หน้านี้สร้างกติกาจากการแทนค่า อ่านผลคูณได้สองแบบ ต่อสายพาน factor ไป scenario สร้าง sample covariance จากข้อมูลดิบด้วยการคูณครั้งเดียว แล้วตอบคำถามของกรรมการด้วยการแบ่งความเสี่ยงเป็นรายสินทรัพย์ ปิดด้วยตัวอย่าง asset class จริงแปดกลุ่ม</p>
+</section>
+
 <figure class="plot">
-<img src="../figures/7.3-4.svg" alt="เปรียบเทียบน้ำหนักเงิน 50 30 20 กับส่วนแบ่งความเสี่ยงและน้ำหนัก risk parity ในตัวอย่างสมมติ" loading="lazy">
-<figcaption>รูป 7.3d เปรียบเทียบเงินกับความเสี่ยงตามตัวเลขสมมติ หมายเหตุ: label สินทรัพย์แรกในรูปเดิมยังเป็น “Thai stocks” แต่บทนี้ใช้หุ้นสหรัฐตามสมมติฐานที่ระบุ ตัวเลขไม่ใช่สถิติที่สังเกตจากตลาดไทยหรือสหรัฐ แท่ง risk-parity คือ weights ปัดเศษ ไม่ใช่ค่าความเสี่ยงของพอร์ตใหม่</figcaption>
+  <h4>รูป — ทำ Q ก่อนแล้ว P กับทำ P ก่อนแล้ว Q จบคนละที่</h4>
+  <svg viewBox="0 0 480 310" role="img" aria-label="สี่เหลี่ยมหนึ่งหน่วยถูกแปลงเป็นสี่เหลี่ยมด้านขนานสองแบบ สีน้ำเงินคือ PQ ซึ่งแบนเอียงไปทางขวา สีส้มคือ QP ซึ่งสูงชัน จุด 1,1 เดินไป 9,4 ตามเส้นทางสีน้ำเงิน และไป 3,10 ตามเส้นทางสีส้ม" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="a73b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+      <marker id="a73o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="110" y1="25" x2="110" y2="280"/><line x1="160" y1="25" x2="160" y2="280"/><line x1="210" y1="25" x2="210" y2="280"/><line x1="260" y1="25" x2="260" y2="280"/><line x1="310" y1="25" x2="310" y2="280"/>
+        <line x1="60" y1="230" x2="315" y2="230"/><line x1="60" y1="180" x2="315" y2="180"/><line x1="60" y1="130" x2="315" y2="130"/><line x1="60" y1="80" x2="315" y2="80"/><line x1="60" y1="30" x2="315" y2="30"/>
+      </g>
+      <line x1="60" y1="280" x2="315" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <line x1="60" y1="25" x2="60" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <polygon points="60,280 235,205 285,180 110,255" fill="#2455d6" fill-opacity="0.15" stroke="#2455d6" stroke-width="2.5"/>
+      <polygon points="60,280 85,205 135,30 110,105" fill="#a65f00" fill-opacity="0.15" stroke="#a65f00" stroke-width="2.5"/>
+      <polygon points="60,280 85,280 85,255 60,255" fill="#5b6472" fill-opacity="0.3" stroke="#5b6472" stroke-width="1.5"/>
+      <polyline points="85,255 85,180 281,180" fill="none" stroke="#2455d6" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a73b)"/>
+      <polyline points="85,255 135,255 135,34" fill="none" stroke="#a65f00" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#a73o)"/>
+      <circle cx="85" cy="255" r="5" fill="#181818"/>
+      <circle cx="285" cy="180" r="6" fill="#2455d6"/>
+      <circle cx="135" cy="30" r="6" fill="#a65f00"/>
+      <g fill="#5b6472" font-size="13" text-anchor="middle">
+        <text x="110" y="297">2</text><text x="160" y="297">4</text><text x="210" y="297">6</text><text x="260" y="297">8</text><text x="310" y="297">10</text>
+      </g>
+      <g fill="#5b6472" font-size="13" text-anchor="end">
+        <text x="54" y="234">2</text><text x="54" y="184">4</text><text x="54" y="134">6</text><text x="54" y="84">8</text><text x="54" y="34">10</text>
+      </g>
+      <text x="292" y="172" fill="#2455d6" font-size="14">(9, 4)</text>
+      <text x="145" y="36" fill="#a65f00" font-size="14">(3, 10)</text>
+      <text x="330" y="70" fill="#2455d6" font-size="14">Q ก่อน แล้ว P</text>
+      <text x="326" y="90" fill="#2455d6" font-size="13">(1,1) → (1,4) → (9,4)</text>
+      <text x="330" y="130" fill="#a65f00" font-size="14">P ก่อน แล้ว Q</text>
+      <text x="326" y="150" fill="#a65f00" font-size="13">(1,1) → (3,1) → (3,10)</text>
+      <text x="330" y="200" fill="#5b6472" font-size="14">เทา: สี่เหลี่ยมหนึ่งหน่วย</text>
+      <text x="330" y="222" fill="#5b6472" font-size="14">ทั้งสองรูปมีพื้นที่ 1</text>
+    </g>
+  </svg>
+  <figcaption>$P=\begin{bmatrix}1&amp;2\\0&amp;1\end{bmatrix}$ เฉือนไปทางขวา $Q=\begin{bmatrix}1&amp;0\\3&amp;1\end{bmatrix}$ เฉือนขึ้นด้านบน สี่เหลี่ยมเทาคือจัตุรัสหนึ่งหน่วย ทำ $Q$ ก่อนแล้ว $P$ (เครื่องรวมคือ $PQ$) ได้สี่เหลี่ยมด้านขนานสีน้ำเงินที่แบนเอียง จุด $(1,1)$ ขึ้นไป $(1,4)$ ก่อนแล้วเลื่อนขวาไป $(9,4)$ ทำกลับลำดับ (เครื่องรวมคือ $QP$) ได้รูปสีส้มที่สูงชัน และจุดเดียวกันไปจบที่ $(3,10)$ ทั้งสองรูปมีพื้นที่ 1 เท่ากัน แต่เป็นคนละรูป ลำดับของการคูณ matrix จึงสลับไม่ได้</figcaption>
 </figure>
+
+<details class="jargon">
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>Matrix multiplication $PQ$</dt>
+    <dd>matrix ของเครื่องรวมที่ทำ $Q$ ก่อนแล้วทำ $P$ ช่อง $(i,k)$ คือแถว $i$ ของ $P$ จับคู่กับคอลัมน์ $k$ ของ $Q$ ใช้ต่อสายพานการคำนวณ</dd>
+    <dt>Associativity</dt>
+    <dd>$(PQ)R=P(QR)$ จัดวงเล็บใหม่ได้โดยคำตอบไม่เปลี่ยน ใช้เลือกลำดับที่ใช้งานน้อยที่สุด</dd>
+    <dt>Non-commutativity</dt>
+    <dd>$PQ$ กับ $QP$ โดยทั่วไปไม่เท่ากัน แม้ทั้งสองคูณได้ ต้องรักษาลำดับของขั้นตอนเสมอ</dd>
+    <dt>Elementwise product</dt>
+    <dd>คูณช่องที่ตรงกันโดยไม่รวมตามดัชนีกลาง เป็นคนละ operation กับการคูณ matrix ใช้ทำตาราง contribution ก่อนรวม</dd>
+    <dt>Sample covariance</dt>
+    <dd>$X^{\mathsf T}X/(N-1)$ เมื่อ $X$ คือผลตอบแทน $N$ วันที่หักค่าเฉลี่ยแล้ว ใช้ประมาณ covariance จากข้อมูล</dd>
+    <dt>Risk contribution</dt>
+    <dd>$c_i=w_i(\Sigma\mathbf w)_i$ ส่วนของ variance พอร์ตที่ยกให้สินทรัพย์ $i$ ผลรวมทุกตัวเท่ากับ variance พอร์ตพอดี ใช้ตอบว่าความเสี่ยงมาจากไหน</dd>
+  </dl>
+</details>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — ทำไมกติกาต้องเป็นแถวคูณคอลัมน์</h4>
+  <p>ขั้นแรกแปลง input $\mathbf x$ ($p$ ช่อง) เป็น $\mathbf y=Q\mathbf x$ ($n$ ช่อง) ขั้นที่สองแปลง $\mathbf y$ เป็น $\mathbf z=P\mathbf y$ ($m$ ช่อง) เราอยากได้ตารางเดียวที่ส่ง $\mathbf x$ ไป $\mathbf z$ ตรง ๆ จึงแทนขั้นแรกลงในขั้นที่สอง แล้วจัดกลุ่มตาม input เดิม</p>
+  <div class="math">\[\begin{aligned}
+y_j&amp;=\sum_{k=1}^{p}Q_{jk}x_k,\\
+z_i&amp;=\sum_{j=1}^{n}P_{ij}y_j
+=\sum_{j=1}^{n}P_{ij}\sum_{k=1}^{p}Q_{jk}x_k\\
+&amp;=\sum_{k=1}^{p}\Big(\sum_{j=1}^{n}P_{ij}Q_{jk}\Big)x_k,\\
+(PQ)_{ik}&amp;:=\sum_{j=1}^{n}P_{ij}Q_{jk}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดที่สามสลับลำดับของผลรวมสองชั้น ซึ่งทำได้เสมอกับผลรวมจำกัด แล้วสิ่งที่อยู่ในวงเล็บคือน้ำหนักที่ $x_k$ ส่งไปถึง $z_i$ ผ่านทุกทางกลาง $j$ นั่นคือนิยามของช่อง $(i,k)$ ของเครื่องรวม: แถว $i$ ของ $P$ จับคู่กับคอลัมน์ $k$ ของ $Q$ แล้วบวก กติกานี้จึงถูกเลือกมาเพื่อให้ $(PQ)\mathbf x=P(Q\mathbf x)$ พอดี</p>
+    <p>ดัชนีกลาง $j$ ต้องมีจำนวนเท่ากันทั้งสองตาราง ขนาดจึงต้องเป็น $(m\times n)(n\times p)\to m\times p$ แต่ขนาดตรงยังไม่พอ ชื่อของตัวกลางต้องตรงด้วย เช่น factor ในตารางแรกต้องเรียงลำดับเดียวกับ factor ในตารางที่สอง</p>
+  </div>
 </section>
+
 <section class="example">
-<h2>ตรวจเองใน 10 วินาที</h2>
-<p><strong>ข้อ 1:</strong> เผลอใช้ $A^{\mathsf T}w$ ในตัวอย่างสาม factors โปรแกรมคูณได้และช่องแรกยังเป็น 1.8 ทำไมยังผิด?</p>
-<details><summary>ดูเฉลย</summary><p>เพราะนิยาม $A$ หน้านี้มี factor rows/asset columns ต้องใช้ $Aw$ ผลจาก transpose เป็น $(1.8,1.3,1.4)$ ไม่ใช่ $(1.8,0.3,0.4)$ ช่องแรกตรงกันโดยบังเอิญจึงใช้เป็นหลักฐานว่าจับคู่ข้อมูลถูกไม่ได้</p></details>
-<p><strong>ข้อ 2:</strong> ในพอร์ต 50/30/20 ถ้า covariance ทุกช่องเพิ่มสี่เท่า โดย weights คงเดิม ส่วนแบ่งความเสี่ยงเปลี่ยนหรือไม่?</p>
-<details><summary>ดูเฉลย</summary><p>Variance และ $c_i$ เพิ่มสี่เท่าเหมือนกัน ส่วนแบ่ง $c_i/V$ จึงเท่าเดิม แต่ SD เพิ่มสองเท่าเป็น 19.20% สัดส่วนที่ดูเหมือนเดิมไม่ได้แปลว่าความเสี่ยงเป็นจำนวนเท่าเดิม</p></details>
-<p><strong>ข้อ 3:</strong> ถ้า sample returns ทุกช่องในคอลัมน์หนึ่งเพิ่มค่าคงที่ เช่นเพิ่ม 5 จุดเปอร์เซ็นต์ sample covariance ต้องเปลี่ยนหรือไม่?</p>
-<details><summary>ดูเฉลย</summary><p>ไม่เปลี่ยนเมื่อหักค่าเฉลี่ยของคอลัมน์อย่างถูกต้อง เพราะค่าเฉลี่ยเพิ่มเท่ากัน ความเบี่ยงเบนแต่ละวันจึงเท่าเดิม หากโค้ดใช้ raw $X^{\mathsf T}X$ โดยไม่ center คำตอบอาจเปลี่ยน ซึ่งบอกว่ากำลังคำนวณคนละสิ่ง</p></details>
+  <h4>ขั้นที่ 2 — ผลคูณเดียว อ่านได้สองแบบ</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตาราง payoff จาก <a href="7.2.html">Transpose</a> แถวคือสถานะขึ้นและลง คอลัมน์คือสัญญาสามตัว หน่วยดอลลาร์ต่อสัญญา ถือ $\boldsymbol\theta=(2,6,4)^{\mathsf T}$</p>
+  <div class="math">\[\begin{aligned}
+S\boldsymbol\theta&amp;=\begin{bmatrix}2&amp;3&amp;7\\1&amp;6&amp;5\end{bmatrix}\begin{bmatrix}2\\6\\4\end{bmatrix}
+=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}\\
+&amp;=2\begin{bmatrix}2\\1\end{bmatrix}+6\begin{bmatrix}3\\6\end{bmatrix}+4\begin{bmatrix}7\\5\end{bmatrix}
+=\begin{bmatrix}50\\58\end{bmatrix}.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> \$50 ในสถานะขึ้น และ \$58 ในสถานะลง มุมแถวถามว่า “ในสถานะนี้ ทุกสัญญารวมกันจ่ายเท่าไร” มุมคอลัมน์ถามว่า “แต่ละสัญญาเติม payoff ให้ทุกสถานะเท่าไร” แล้วต่อลูกศรหัวต่อหางตามรูปด้านล่าง นับเงินก้อนเดียวกัน จึงได้ผลเดียวกัน</p>
+  <p>ถ้าคูณแต่ละคอลัมน์ด้วยจำนวนสัญญาแต่ไม่บวก จะได้ตาราง contribution $\begin{bmatrix}4&amp;18&amp;28\\2&amp;36&amp;20\end{bmatrix}$ ซึ่งมีประโยชน์ แต่ยังไม่ใช่ payoff ต้องบวกตามแถวอีกครั้ง ใน numpy เครื่องหมาย <code>*</code> ให้ตารางนี้ (คูณทีละช่องแบบ broadcasting) ส่วน <code>@</code> ให้ผลคูณ matrix</p>
 </section>
-<section class="code">
-<h2>JavaScript: คำนวณตัวอย่างและตรวจ assumptions ที่โค้ดตรวจได้</h2>
-<pre><code class="language-javascript" data-example="7.3">function shape(A) {
-  if (!Array.isArray(A) || !A.length || !Array.isArray(A[0]) || !A[0].length) {
-    throw new TypeError('Need a nonempty rectangular matrix');
-  }
-  const n = A[0].length;
-  if ([...A].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
-    throw new TypeError('Need a finite rectangular matrix');
-  }
-  return [A.length, n];
-}
-function transpose(A) {
-  const [, n] = shape(A);
-  return Array.from({length: n}, (_, j) =&gt; A.map(row =&gt; row[j]));
-}
-function multiply(A, B) {
-  const [, n] = shape(A), [m] = shape(B);
-  if (n !== m) throw new RangeError('Matrix dimensions do not match');
-  const Bt = transpose(B);
-  return A.map(row =&gt; Bt.map(col =&gt; row.reduce((s, x, i) =&gt; s + x * col[i], 0)));
-}
-const column = xs =&gt; xs.map(x =&gt; [x]);
-const matvec = (A, x) =&gt; multiply(A, column(x)).map(row =&gt; row[0]);
-const dot = (a, b) =&gt; multiply([a], column(b))[0][0];
-function sampleCovariance(rows) {
-  const [N, n] = shape(rows);
-  if (N &lt; 2) throw new RangeError('Need at least two observations');
-  // Shift before averaging so constant columns stay exactly zero.
-  const offsets = rows.map(row =&gt; row.map((x, j) =&gt; x - rows[0][j]));
-  const means = Array.from({length: n}, (_, j) =&gt; offsets.reduce((s, row) =&gt; s + row[j] / N, 0));
-  const centered = offsets.map(row =&gt; row.map((x, j) =&gt; x - means[j]));
-  return multiply(transpose(centered), centered).map(row =&gt; row.map(x =&gt; x / (N - 1)));
-}
-const Sigma = [[.0324, -.00216, .00135], [-.00216, .0036, .00225], [.00135, .00225, .0225]];
-function risk(weights) {
-  const u = matvec(Sigma, weights), V = dot(weights, u);
-  if (!Number.isFinite(V) || V &lt;= 0) throw new RangeError('Positive finite variance required for risk shares');
-  const sd = Math.sqrt(V), contributions = weights.map((w, i) =&gt; w * u[i]);
-  return {u, V, sd, contributions, shares: contributions.map(c =&gt; c / V),
-    volContributions: contributions.map(c =&gt; c / sd), marginalVol: u.map(x =&gt; x / sd)};
-}
-function equalRiskExample() {
-  // This iteration is for the fixed, positive-definite Sigma example above.
-  const x = Sigma.map((row, i) =&gt; 1 / Math.sqrt(row[i]));
-  for (let iteration = 0; iteration &lt; 1000; iteration++) {
-    for (let i = 0; i &lt; x.length; i++) {
-      const a = Sigma[i][i], b = Sigma[i].reduce((s, c, j) =&gt; s + (j === i ? 0 : c * x[j]), 0);
-      x[i] = (-b + Math.sqrt(b * b + 4 * a)) / (2 * a);
-    }
-    const products = matvec(Sigma, x).map((u, i) =&gt; u * x[i]);
-    if (Math.max(...products.map(p =&gt; Math.abs(p - 1))) &lt; 1e-12) {
-      const total = x.reduce((s, v) =&gt; s + v, 0);
-      return {weights: x.map(v =&gt; v / total), iterations: iteration + 1, products};
-    }
-  }
-  throw new Error('Equal-risk iteration did not converge');
-}
-const A = [[1, .8, .6], [.3, .5, .2], [.1, .2, .4]], positions = [2, -1, 1];
-const W = [[2, -1], [-1, 2], [1, 0]], F = [[.01, -.02, .005], [-.02, .01, -.01]];
-const S = [[2, 3, 7], [1, 6, 5]], theta = [2, 6, 4];
-const P = [[1, 2], [0, 1]], Q = [[1, 0], [3, 1]], v = column([1, -2]);
-const rows = [[2, -1], [-1, 2], [-1, -1]], rp = equalRiskExample();
-console.log(JSON.stringify({
-  payoffs: matvec(S, theta), contributions: S.map(row =&gt; row.map((x, j) =&gt; x * theta[j])),
-  inner: multiply(transpose(v), v), outer: multiply(v, transpose(v)),
-  PQ: multiply(P, Q), QP: multiply(Q, P), sequential: matvec(P, matvec(Q, [1, 1])),
-  composed: matvec(multiply(P, Q), [1, 1]), reversed: matvec(Q, matvec(P, [1, 1])),
-  exposures: matvec(A, positions), wrongOrientation: matvec(transpose(A), positions), multiple: multiply(A, W),
-  scenarioMatrix: multiply(F, A), scenariosUSD: matvec(F, matvec(A, positions)).map(x =&gt; x * 1e6),
-  composedScenariosUSD: matvec(multiply(F, A), positions).map(x =&gt; x * 1e6),
-  sampleCov: sampleCovariance(rows), shiftedCov: sampleCovariance(rows.map(([x, y]) =&gt; [x + 5, y - 3])),
-  decimalCov: sampleCovariance(rows.map(row =&gt; row.map(x =&gt; x / 100))),
-  samplePortfolioVariance: dot([.6, .4], matvec(sampleCovariance(rows), [.6, .4])),
-  main: risk([.5, .3, .2]), budgetTrade: risk([.51, .29, .2]), rp, riskParity: risk(rp.weights),
-  roundedRP: risk([.2115, .5869, .2016]), leverage: .096 / risk(rp.weights).sd
-}));</code></pre>
+
+<figure class="plot">
+  <h4>รูป — ผลคูณคือการต่อคอลัมน์หัวต่อหาง</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="ระนาบ payoff สถานะขึ้นกับสถานะลง ลูกศรน้ำเงินสั้นคือสองเท่าของสัญญา 1 ลูกศรส้มคือหกเท่าของสัญญา 2 ลูกศรเขียวคือสี่เท่าของสัญญา 3 ต่อกันไปจบที่ 50 58 ลูกศรม่วงจากจุดเริ่มคือผลรวม" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="a73c1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2455d6"/></marker>
+      <marker id="a73c2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a65f00"/></marker>
+      <marker id="a73c3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#047857"/></marker>
+      <marker id="a73c4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6d28d9"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="110" y1="35" x2="110" y2="280"/><line x1="150" y1="35" x2="150" y2="280"/><line x1="190" y1="35" x2="190" y2="280"/><line x1="230" y1="35" x2="230" y2="280"/><line x1="270" y1="35" x2="270" y2="280"/>
+        <line x1="70" y1="240" x2="290" y2="240"/><line x1="70" y1="200" x2="290" y2="200"/><line x1="70" y1="160" x2="290" y2="160"/><line x1="70" y1="120" x2="290" y2="120"/><line x1="70" y1="80" x2="290" y2="80"/><line x1="70" y1="40" x2="290" y2="40"/>
+      </g>
+      <line x1="70" y1="280" x2="290" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <line x1="70" y1="35" x2="70" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <line x1="70" y1="280" x2="84" y2="273" stroke="#2455d6" stroke-width="3.5" marker-end="url(#a73c1)"/>
+      <line x1="86" y1="272" x2="157" y2="131" stroke="#a65f00" stroke-width="3" marker-end="url(#a73c2)"/>
+      <line x1="158" y1="128" x2="266" y2="50" stroke="#047857" stroke-width="3" marker-end="url(#a73c3)"/>
+      <line x1="70" y1="280" x2="266" y2="51" stroke="#6d28d9" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#a73c4)"/>
+      <line x1="270" y1="48" x2="270" y2="280" stroke="#5b6472" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="70" y1="48" x2="270" y2="48" stroke="#5b6472" stroke-width="1" stroke-dasharray="3 3"/>
+      <circle cx="270" cy="48" r="5" fill="#6d28d9"/>
+      <g fill="#5b6472" font-size="13" text-anchor="middle">
+        <text x="70" y="296">0</text><text x="110" y="296">10</text><text x="150" y="296">20</text><text x="190" y="296">30</text><text x="230" y="296">40</text><text x="270" y="296">50</text>
+      </g>
+      <g fill="#5b6472" font-size="13" text-anchor="end">
+        <text x="64" y="244">10</text><text x="64" y="204">20</text><text x="64" y="164">30</text><text x="64" y="124">40</text><text x="64" y="84">50</text><text x="64" y="52">58</text>
+      </g>
+      <text x="300" y="60" fill="#6d28d9" font-size="14">Sθ = (50, 58)</text>
+      <text x="300" y="120" fill="#2455d6" font-size="14">2 × สัญญา 1 = (4, 2)</text>
+      <text x="300" y="145" fill="#a65f00" font-size="14">6 × สัญญา 2 = (18, 36)</text>
+      <text x="300" y="170" fill="#047857" font-size="14">4 × สัญญา 3 = (28, 20)</text>
+      <text x="300" y="215" fill="#5b6472" font-size="13">แกนนอน: payoff สถานะขึ้น</text>
+      <text x="300" y="235" fill="#5b6472" font-size="13">แกนตั้ง: payoff สถานะลง</text>
+      <text x="300" y="255" fill="#5b6472" font-size="13">(ดอลลาร์)</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละคอลัมน์ของ $S$ คือลูกศรหนึ่งอัน (payoff ของสัญญาหนึ่งหน่วยในสองสถานะ) ยืดตามจำนวนที่ถือแล้วต่อหัวต่อหาง: น้ำเงินสั้น ๆ คือสัญญา 1 สองหน่วย ส้มคือสัญญา 2 หกหน่วย เขียวคือสัญญา 3 สี่หน่วย ปลายทางคือ $(50,58)$ ลูกศรม่วงประคือผลคูณ $S\boldsymbol\theta$ เส้นประจางลงไปที่แกนสองแกนคือมุมแถว: พิกัดแนวนอน 50 คือแถวสถานะขึ้น พิกัดแนวตั้ง 58 คือแถวสถานะลง</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — จัดวงเล็บใหม่ได้ สลับลำดับไม่ได้</h4>
+  <p>ใช้สองการเฉือนจากรูปภาพรวม $P=\begin{bmatrix}1&amp;2\\0&amp;1\end{bmatrix}$ และ $Q=\begin{bmatrix}1&amp;0\\3&amp;1\end{bmatrix}$ ส่ง input $(1,1)$ ผ่านทีละขั้น แล้วเทียบกับเครื่องรวม</p>
+  <div class="math">\[\begin{aligned}
+Q\begin{bmatrix}1\\1\end{bmatrix}&amp;=\begin{bmatrix}1\\4\end{bmatrix},\quad
+P\begin{bmatrix}1\\4\end{bmatrix}=\begin{bmatrix}9\\4\end{bmatrix},\\
+PQ&amp;=\begin{bmatrix}1+6&amp;2\\3&amp;1\end{bmatrix}=\begin{bmatrix}7&amp;2\\3&amp;1\end{bmatrix},\\
+QP&amp;=\begin{bmatrix}1&amp;2\\3&amp;7\end{bmatrix},\quad
+QP\begin{bmatrix}1\\1\end{bmatrix}=\begin{bmatrix}3\\10\end{bmatrix}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>$PQ$ ส่ง $(1,1)$ ไป $(7+2,3+1)=(9,4)$ ตรงกับการทำทีละขั้น ส่วน $QP$ คือการทำ $P$ ก่อน จึงไปจบที่ $(3,10)$ ตัวเลขอ่านจากขวาไปซ้าย: ใน $PQ\mathbf x$ ตัวที่อยู่ติด $\mathbf x$ ทำงานก่อน</p>
+    <p>สามตาราง $P(QR)$ กับ $(PQ)R$ เท่ากันเสมอ เพราะช่อง $(i,\ell)$ ของทั้งสองแบบคือผลรวมก้อนเดียวกัน $\sum_j\sum_kP_{ij}Q_{jk}R_{k\ell}$ แค่บวกคนละลำดับ คุณสมบัตินี้เรียกว่า associativity เราจึงย้ายวงเล็บเพื่อประหยัดงานได้ แต่ห้ามสลับตำแหน่งของ matrix สองตัว</p>
+  </div>
 </section>
+
+<section class="example">
+  <h4>ขั้นที่ 4 — ต่อสายพาน: เงินที่ถือ ไป exposure ไป scenario</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตาราง loading $A$ ($3\times2$ หุ้นคูณ factor) และพอร์ต $\mathbf w=(2,-1,0.5)$ ล้านดอลลาร์จาก <a href="7.1.html">What a Matrix Is</a> ซึ่งมี exposure $\mathbf e=A^{\mathsf T}\mathbf w=(2.25,0.95)$ และ scenario สมมติสามแบบเป็นแถวของ $F$ (คอลัมน์ Market, Quality)</p>
+  <div class="math">\[\begin{aligned}
+F&amp;=\begin{bmatrix}0.01&amp;-0.02\\-0.03&amp;0.01\\0.02&amp;0.02\end{bmatrix},\\
+F\mathbf e&amp;=\begin{bmatrix}0.0225-0.0190\\-0.0675+0.0095\\0.0450+0.0190\end{bmatrix}
+=\begin{bmatrix}0.0035\\-0.0580\\0.0640\end{bmatrix},\\
+FA^{\mathsf T}&amp;=\begin{bmatrix}0.004&amp;0.005&amp;0.001\\-0.032&amp;-0.025&amp;-0.038\\0.032&amp;0.022&amp;0.044\end{bmatrix}.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> กำไรขาดทุนจากแบบจำลองในสาม scenario คือ +\$3,500, −\$58,000 และ +\$64,000 ทาง $F(A^{\mathsf T}\mathbf w)$ ได้ผลเดียวกับ $(FA^{\mathsf T})\mathbf w$ เช่นแถวที่สอง $2(-0.032)-(-0.025)+0.5(-0.038)=-0.058$ ตาราง $FA^{\mathsf T}$ มีความหมายของตัวเอง: แถวคือ scenario คอลัมน์คือหุ้น ช่องคือผลตอบแทนแบบจำลองของหุ้นนั้นใน scenario นั้น</p>
+  <p>วงเล็บไม่เปลี่ยนคำตอบ แต่เปลี่ยนงานมาก การคูณ $m\times n$ กับ $n\times p$ แบบตรงไปตรงมาใช้การคูณตัวเลข $mnp$ ครั้ง ระบบจริงที่มี 500 หุ้น 10 factor และ 1,000 scenario ทำสองขั้นกับพอร์ตเดียวใช้ $500(10)+1{,}000(10)=15{,}000$ ครั้ง แต่ถ้าสร้าง $FA^{\mathsf T}$ ก่อนใช้ $1{,}000(10)(500)=5$ ล้านครั้ง แล้วยังต้องคูณกับพอร์ตอีก 500,000 ครั้ง สร้างตารางรวมก็ต่อเมื่อต้องการผลตอบแทนรายหุ้นในแต่ละ scenario จริง ๆ</p>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — sample covariance จากข้อมูลดิบด้วยการคูณครั้งเดียว</h4>
+  <p>มีผลตอบแทน $N$ วันของสินทรัพย์ $d$ ตัว เรียงเป็นตาราง $X$ ขนาด $N\times d$ แถวคือวัน คอลัมน์คือสินทรัพย์ <strong>หลังหักค่าเฉลี่ยของแต่ละคอลัมน์แล้ว</strong> covariance ประมาณจากข้อมูลคือค่าเฉลี่ยของผลคูณส่วนเบี่ยงเบนทุกคู่ ซึ่งการคูณ $X^{\mathsf T}X$ ทำให้ครบในคำสั่งเดียว</p>
+  <div class="math">\[\begin{aligned}
+(X^{\mathsf T}X)_{ij}&amp;=\sum_{t=1}^{N}X_{ti}X_{tj},\\
+X^{\mathsf T}X&amp;=\sum_{t=1}^{N}\mathbf x_t\mathbf x_t^{\mathsf T},\\
+\widehat\Sigma&amp;=\frac{X^{\mathsf T}X}{N-1},\qquad N\ge2.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรก: แถว $i$ ของ $X^{\mathsf T}$ คือคอลัมน์ $i$ ของ $X$ (ข้อมูลทุกวันของสินทรัพย์ $i$) จึงจับคู่วันต่อวันกับสินทรัพย์ $j$ แล้วบวก บรรทัดที่สองมองอีกทาง: ทุกวัน $t$ ให้ <a href="7.2.html">outer product</a> หนึ่งตาราง $\mathbf x_t\mathbf x_t^{\mathsf T}$ แล้วบวกทุกวัน ตัวหาร $N-1$ แทน $N$ ชดเชยการที่ค่าเฉลี่ยเองก็ประมาณจากข้อมูลชุดเดียวกัน ซึ่งทำให้ไม่มี bias เมื่อข้อมูลแต่ละวันอิสระและมาจากการแจกแจงเดียวกัน</p>
+  </div>
+  <p>ข้อมูลสามวันสมมติเป็นเปอร์เซ็นต์ ค่าเฉลี่ยแต่ละคอลัมน์เป็นศูนย์อยู่แล้ว</p>
+  <div class="math">\[\begin{aligned}
+X&amp;=\begin{bmatrix}2&amp;-1\\-1&amp;2\\-1&amp;-1\end{bmatrix},\\
+X^{\mathsf T}X&amp;=\begin{bmatrix}4+1+1&amp;-2-2+1\\-2-2+1&amp;1+4+1\end{bmatrix}
+=\begin{bmatrix}6&amp;-3\\-3&amp;6\end{bmatrix},\\
+\widehat\Sigma&amp;=\begin{bmatrix}3&amp;-1.5\\-1.5&amp;3\end{bmatrix}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ช่องนอกแนวทแยง −3 คือผลรวมของพื้นที่สี่เหลี่ยมมีเครื่องหมายในรูปด้านล่าง หน่วยของตารางคือเปอร์เซ็นต์ยกกำลังสอง ถ้าแปลงผลตอบแทนเป็นเศษส่วนก่อน ทุกช่องจะเล็กลง $100^2=10{,}000$ เท่า ไม่ใช่ 100 เท่า ตรวจอีกทางด้วยพอร์ตน้ำหนัก $(0.6,0.4)$: ผลตอบแทนรายวันคือ $0.8,\ 0.2,\ -1$ variance ตัวอย่าง $(0.64+0.04+1)/2=0.84$ และสูตร $\mathbf w^{\mathsf T}\widehat\Sigma\mathbf w=0.36(3)+2(0.24)(-1.5)+0.16(3)=0.84$ ตรงกัน</p>
+    <p>ข้อสังเกตที่สำคัญมากในงานจริง: covariance ของ $d$ สินทรัพย์มีตัวเลขที่ต้องประมาณ $d(d+1)/2$ ตัว 500 หุ้นคือ 125,250 ตัว แต่วันเดียวให้แค่ outer product ตารางเดียวที่ทุกแถวเป็นรูปแบบเดียวกัน ข้อมูลไม่กี่วันจึงสร้างตารางที่ “ขาดทิศ” ซึ่ง <a href="7.5.html">rank และ invertibility</a> จะนับให้ดูว่าขาดไปเท่าไร</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — covariance คือค่าเฉลี่ยของพื้นที่สี่เหลี่ยมมีเครื่องหมาย</h4>
+  <svg viewBox="0 0 480 280" role="img" aria-label="จุดสามจุดของผลตอบแทนสามวัน แต่ละจุดลากสี่เหลี่ยมจากจุดกำเนิด วันที่หนึ่งและสองเป็นสี่เหลี่ยมสีแดงพื้นที่ลบสอง วันที่สามเป็นสีน้ำเงินพื้นที่บวกหนึ่ง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="100" y1="10" x2="100" y2="260"/><line x1="150" y1="10" x2="150" y2="260"/><line x1="250" y1="10" x2="250" y2="260"/><line x1="300" y1="10" x2="300" y2="260"/><line x1="350" y1="10" x2="350" y2="260"/>
+        <line x1="100" y1="10" x2="350" y2="10"/><line x1="100" y1="60" x2="350" y2="60"/><line x1="100" y1="110" x2="350" y2="110"/><line x1="100" y1="210" x2="350" y2="210"/><line x1="100" y1="260" x2="350" y2="260"/>
+      </g>
+      <rect x="200" y="160" width="100" height="50" fill="#d82632" fill-opacity="0.22" stroke="#d82632" stroke-width="2"/>
+      <rect x="150" y="60" width="50" height="100" fill="#d82632" fill-opacity="0.22" stroke="#d82632" stroke-width="2"/>
+      <rect x="150" y="160" width="50" height="50" fill="#2455d6" fill-opacity="0.25" stroke="#2455d6" stroke-width="2"/>
+      <line x1="100" y1="160" x2="350" y2="160" stroke="#5b6472" stroke-width="2"/>
+      <line x1="200" y1="10" x2="200" y2="260" stroke="#5b6472" stroke-width="2"/>
+      <circle cx="300" cy="210" r="6" fill="#181818"/>
+      <circle cx="150" cy="60" r="6" fill="#181818"/>
+      <circle cx="150" cy="210" r="6" fill="#181818"/>
+      <text x="308" y="230" font-size="14">วัน 1 (2, −1)</text>
+      <text x="104" y="48" font-size="14">วัน 2 (−1, 2)</text>
+      <text x="104" y="232" font-size="14" text-anchor="start">วัน 3</text>
+      <text x="250" y="190" text-anchor="middle" fill="#d82632" font-size="14">−2</text>
+      <text x="175" y="115" text-anchor="middle" fill="#d82632" font-size="14">−2</text>
+      <text x="175" y="190" text-anchor="middle" fill="#2455d6" font-size="14">+1</text>
+      <g fill="#5b6472" font-size="13" text-anchor="middle">
+        <text x="150" y="176">−1</text><text x="250" y="176">1</text><text x="300" y="176">2</text>
+      </g>
+      <text x="350" y="152" text-anchor="end" fill="#5b6472" font-size="13">สินทรัพย์ 1 (%)</text>
+      <text x="206" y="24" fill="#5b6472" font-size="13">สินทรัพย์ 2 (%)</text>
+      <text x="368" y="80" font-size="14">ผลรวมพื้นที่</text>
+      <text x="368" y="102" font-size="14">−2 − 2 + 1 = −3</text>
+      <text x="368" y="130" font-size="14">หาร N − 1 = 2</text>
+      <text x="368" y="152" font-size="14" fill="#d82632">Cov = −1.5</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละวันคือจุดหนึ่งจุด (หักค่าเฉลี่ยแล้ว) สี่เหลี่ยมจากจุดกำเนิดถึงจุดนั้นมีพื้นที่ $x\cdot y$ ซึ่งคือช่องนอกแนวทแยงของ outer product วันนั้น จุดที่อยู่ในจตุภาคขวาบนหรือซ้ายล่างให้พื้นที่บวก (น้ำเงิน) จุดในจตุภาคที่เหลือให้พื้นที่ลบ (แดง) สองวันแรกสินทรัพย์ทั้งสองขยับสวนกันแรง วันที่สามขยับไปด้วยกันเบา ๆ ผลรวม −3 หารด้วย 2 ได้ covariance −1.5 เปอร์เซ็นต์ยกกำลังสอง</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — คลี่ hook: เงินครึ่งหนึ่ง แบกความเสี่ยงเท่าไร</h4>
+  <p>สร้าง covariance จากความผันผวนกับ correlation ก่อน ช่อง $\Sigma_{ij}=\rho_{ij}\sigma_i\sigma_j$ เขียนเป็นผลคูณ matrix สามตัวได้ เมื่อ $D$ คือ diagonal matrix ของความผันผวน และ $C$ คือ correlation matrix</p>
+  <div class="math">\[\begin{aligned}
+\Sigma&amp;=DCD,\quad D=\operatorname{diag}(0.18,\,0.06,\,0.15),\\
+\Sigma&amp;=\begin{bmatrix}0.0324&amp;-0.00216&amp;0.00135\\-0.00216&amp;0.0036&amp;0.00225\\0.00135&amp;0.00225&amp;0.0225\end{bmatrix},\\
+\mathbf u=\Sigma\mathbf w&amp;=\begin{bmatrix}0.015822\\0.000450\\0.005850\end{bmatrix},\quad \mathbf w=\begin{bmatrix}0.5\\0.3\\0.2\end{bmatrix},\\
+V=\mathbf w^{\mathsf T}\mathbf u&amp;=0.007911+0.000135+0.001170\\
+&amp;=0.009216,\qquad\sigma_p=\sqrt V=0.0960.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>$D$ ทางซ้ายคูณแถว $i$ ด้วย $\sigma_i$ $D$ ทางขวาคูณคอลัมน์ $j$ ด้วย $\sigma_j$ ช่อง $(i,j)$ จึงเป็น $\sigma_i\rho_{ij}\sigma_j$ เช่นหุ้นกับหุ้นกู้ $0.18(-0.2)(0.06)=-0.00216$ จากนั้นคูณสองรอบ รอบแรก $\mathbf u=\Sigma\mathbf w$ ให้ covariance ของแต่ละสินทรัพย์กับพอร์ต (ตามที่เห็นใน <a href="7.2.html">Transpose</a>) รอบที่สองถ่วง $\mathbf u$ ด้วยน้ำหนักได้ variance พอร์ต</p>
+    <p>สามพจน์ในบรรทัด $V$ คือ $c_i=w_iu_i$ ผลรวมเท่ากับ $V$ พอดี จึงใช้แบ่ง variance ได้: หุ้น $0.007911/0.009216=85.84\%$ หุ้นกู้ $1.46\%$ ทองคำ $12.70\%$ ถ้าอยากแบ่งเป็นหน่วยความผันผวนก็หาร $c_i$ ด้วย $\sigma_p$ ได้ 8.24, 0.14 และ 1.22 จุดเปอร์เซ็นต์ ผลรวม 9.60 สัดส่วนเท่าเดิม</p>
+  </div>
+  <p>ส่วนแบ่งเหล่านี้ไม่ใช่โอกาส และไม่จำเป็นต้องอยู่ระหว่าง 0 ถึง 100% สินทรัพย์ที่ช่วย hedge พอร์ตจะมี $c_i$ ติดลบได้ ถ้าโปรแกรมรายงานตัดค่าติดลบเป็นศูนย์เพื่อให้กราฟวงกลมดูสวย ผลรวมจะไม่เท่ากับ variance อีกต่อไป</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — แบ่งเงินกับแบ่งความเสี่ยง ไม่ใช่เรื่องเดียวกัน</h4>
+  <svg viewBox="0 0 480 270" role="img" aria-label="แท่งแนวนอนสี่แท่ง แท่งแรกเงิน 50 30 20 แท่งที่สองความเสี่ยง 85.8 1.5 12.7 แท่งที่สามเงินแบบ risk parity 21.1 58.7 20.2 แท่งที่สี่ความเสี่ยงแบบ risk parity 33.3 เท่ากันสามส่วน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="14" fill="#181818">
+      <text x="140" y="70" text-anchor="end">เงิน</text>
+      <text x="140" y="120" text-anchor="end">ความเสี่ยง</text>
+      <text x="140" y="180" text-anchor="end">เงิน (parity)</text>
+      <text x="140" y="230" text-anchor="end">ความเสี่ยง (parity)</text>
+      <text x="300" y="30" text-anchor="middle" fill="#5b6472">พอร์ต 50/30/20</text>
+      <text x="300" y="150" text-anchor="middle" fill="#5b6472">พอร์ต risk parity</text>
+      <rect x="150" y="50" width="150" height="30" fill="#2455d6"/><rect x="300" y="50" width="90" height="30" fill="#047857"/><rect x="390" y="50" width="60" height="30" fill="#a65f00"/>
+      <rect x="150" y="100" width="257.5" height="30" fill="#2455d6"/><rect x="407.5" y="100" width="4.4" height="30" fill="#047857"/><rect x="411.9" y="100" width="38.1" height="30" fill="#a65f00"/>
+      <rect x="150" y="160" width="63.4" height="30" fill="#2455d6"/><rect x="213.4" y="160" width="176.1" height="30" fill="#047857"/><rect x="389.5" y="160" width="60.5" height="30" fill="#a65f00"/>
+      <rect x="150" y="210" width="100" height="30" fill="#2455d6"/><rect x="250" y="210" width="100" height="30" fill="#047857"/><rect x="350" y="210" width="100" height="30" fill="#a65f00"/>
+      <g fill="#fff" text-anchor="middle">
+        <text x="225" y="70">50%</text><text x="345" y="70">30%</text><text x="420" y="70">20%</text>
+        <text x="278" y="120">85.8%</text><text x="431" y="120">12.7%</text>
+        <text x="181" y="180">21.1%</text><text x="301" y="180">58.7%</text><text x="420" y="180">20.2%</text>
+        <text x="200" y="230">33.3%</text><text x="300" y="230">33.3%</text><text x="400" y="230">33.3%</text>
+      </g>
+      <text x="409" y="146" text-anchor="middle" fill="#047857" font-size="12">1.5%</text>
+      <rect x="150" y="252" width="12" height="12" fill="#2455d6"/><text x="168" y="263">หุ้น</text>
+      <rect x="220" y="252" width="12" height="12" fill="#047857"/><text x="238" y="263">หุ้นกู้</text>
+      <rect x="300" y="252" width="12" height="12" fill="#a65f00"/><text x="318" y="263">ทองคำ</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละแท่งยาวเท่ากับ 100% แท่งบนสุดคือน้ำหนักเงินของพอร์ตใน hook แท่งที่สองคือส่วนแบ่ง variance $c_i/V$ ของพอร์ตเดียวกัน หุ้นได้เงินครึ่งเดียวแต่แบกความเสี่ยงเกือบ 86% หุ้นกู้ได้เงิน 30% แต่แบกแค่ 1.5% สองแท่งล่างคือพอร์ต risk parity ในขั้นถัดไป ซึ่งเลือกน้ำหนักเงินให้ส่วนแบ่งความเสี่ยงเท่ากันสามส่วน ต้องให้เงินกับหุ้นกู้ถึง 58.7%</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — ย้ายเงินหนึ่งจุด ความเสี่ยงเปลี่ยนเท่าไร</h4>
+  <p>กรรมการถามต่อ: ถ้าย้ายเงิน 1% จากหุ้นกู้ไปหุ้น ความผันผวนพอร์ตขึ้นเท่าไร ให้เพิ่มน้ำหนักตัว $i$ ทีละ $h$ โดยตรึงตัวอื่น จากการกระจาย $\mathbf w^{\mathsf T}\Sigma\mathbf w$ จะได้ $V_h=V+2hu_i+h^2\Sigma_{ii}$ แล้วหาอัตราเปลี่ยนของความผันผวน</p>
+  <div class="math">\[\begin{aligned}
+\frac{\sigma_h-\sigma_p}{h}&amp;=\frac{V_h-V}{h(\sigma_h+\sigma_p)}
+=\frac{2u_i+h\Sigma_{ii}}{\sigma_h+\sigma_p}\\
+&amp;\longrightarrow\frac{u_i}{\sigma_p}\quad(h\to0),\\
+\frac{\mathbf u}{\sigma_p}&amp;=\begin{bmatrix}0.1648\\0.0047\\0.0609\end{bmatrix},\\
+\Delta\sigma&amp;\approx0.01(0.1648-0.0047)=0.0016.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกใช้ $\sigma_h-\sigma_p=(\sigma_h^2-\sigma_p^2)/(\sigma_h+\sigma_p)$ ซึ่งเลี่ยงการหาอนุพันธ์ของรากที่สองตรง ๆ เมื่อ $h$ เล็กลง $\sigma_h$ เข้าใกล้ $\sigma_p$ ตัวส่วนจึงเป็น $2\sigma_p$ ได้ marginal risk $u_i/\sigma_p$ การย้ายเงินเปลี่ยนสองน้ำหนักพร้อมกัน (+1% หุ้น −1% หุ้นกู้) จึงใช้ผลต่างของสองตัว ได้ประมาณ +0.16 จุดเปอร์เซ็นต์ คำนวณตรงด้วยน้ำหนัก $(0.51,0.29,0.20)$ ได้ 9.7609% เทียบกับ $9.60+0.16=9.76$ ต่างกันนิดเดียวเพราะพจน์ $h^2$</p>
+    <p>สังเกตความเชื่อมโยง: $\sum_iw_i\,(u_i/\sigma_p)=V/\sigma_p=\sigma_p$ marginal risk ถ่วงด้วยน้ำหนักให้ความผันผวนพอร์ตคืนมาพอดี เรื่องนี้ขยายเป็น <a href="26.4.html">การแยกความเสี่ยงด้วย MCR</a> ใน factor model</p>
+  </div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 8 — risk parity: ให้ทุกสินทรัพย์แบกความเสี่ยงเท่ากัน</h4>
+  <p>ถ้าต้องการให้ $c_i=w_i(\Sigma\mathbf w)_i$ เท่ากันทุกตัว เงื่อนไขเป็นสมการกำลังสองที่พันกัน วิธีง่ายคือหา $x_i\gt0$ ที่ทำให้ $x_i(\Sigma\mathbf x)_i=1$ ทุกตัว แล้วค่อยหารด้วยผลรวม ซึ่งไม่เปลี่ยนความเท่ากันของส่วนแบ่ง ตรึงตัวอื่นไว้ ให้ $b_i=\sum_{j\ne i}\Sigma_{ij}x_j$</p>
+  <div class="math">\[\begin{aligned}
+\Sigma_{ii}x_i^2+b_ix_i-1&amp;=0,\\
+x_i&amp;=\frac{-b_i+\sqrt{b_i^2+4\Sigma_{ii}}}{2\Sigma_{ii}},\\
+\mathbf w_{\text{rp}}&amp;\approx(0.2115,\ 0.5869,\ 0.2016),\\
+\sigma_{\text{rp}}&amp;\approx6.095\%.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>เลือกรากบวกของสมการกำลังสอง แล้ววนอัปเดตทีละตัวจนไม่ขยับ (โค้ดท้ายหน้าทำให้ดู) ผลคือหุ้นกู้ได้เงินมากที่สุดเพราะผันผวนน้อยและช่วย hedge หุ้น พอร์ตนี้ผันผวน 6.095% ถ้าอยากได้ความผันผวน 9.60% เท่าเดิม ต้องขยายทุกขาด้วย leverage $9.60/6.095\approx1.575$ เท่า ซึ่งต้องมีต้นทุนกู้ยืมและวงเงินรองรับ และ risk parity ไม่ได้รับประกันผลตอบแทนเฉลี่ยใด ๆ มันแค่จัดความเสี่ยงตาม covariance ที่ใส่เข้าไป</p>
+  </div>
+</section>
+
+<section class="example">
+  <h4>ขั้นที่ 9 — asset class จริงแปดกลุ่ม น้ำหนักเท่ากัน</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> covariance รายปีของ asset class แปดกลุ่มที่ประมาณจากข้อมูลในอดีต ความผันผวนตั้งแต่ 3.17% (พันธบัตรสหรัฐ) ถึง 32.0% (หุ้นเล็ก growth สหรัฐ) ลงเงินกลุ่มละ 12.5% เท่ากัน ตารางนี้สมมาตรครบทุกช่อง ถามว่าใครแบกความเสี่ยง</p>
+  <p><strong>คำตอบ:</strong> คำนวณ $\mathbf u=\Sigma\mathbf w$ และ $c_i=w_iu_i$ แบบเดียวกับขั้นก่อน ได้ความผันผวนพอร์ต 14.73% ต่อปี พันธบัตรสองกลุ่มได้เงินรวม 25% แต่แบกความเสี่ยงรวมแค่ 0.27% หุ้นหกกลุ่มที่ได้เงิน 75% แบกถึง 99.73% หุ้นเล็ก growth สหรัฐกลุ่มเดียวแบก 24.43% เพราะผันผวนสูงและสัมพันธ์สูงกับหุ้นกลุ่มอื่น “กระจายเงินเท่ากัน” จึงไม่ได้แปลว่า “กระจายความเสี่ยงเท่ากัน”</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ผลรวมของแปดแท่งในรูปด้านล่างต้องเป็น 100% และเส้นประที่ 12.5% คือส่วนแบ่งที่ทุกกลุ่มจะได้ถ้าความเสี่ยงเท่ากับเงิน</p>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ส่วนแบ่งความเสี่ยงของพอร์ตน้ำหนักเท่ากันแปดกลุ่ม</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="แท่งแนวนอนแปดแท่งของส่วนแบ่งความเสี่ยง พันธบัตรสหรัฐ 0.03 พันธบัตรต่างประเทศ 0.24 หุ้นใหญ่ growth 18.23 หุ้นใหญ่ value 11.13 หุ้นเล็ก growth 24.43 หุ้นเล็ก value 12.29 หุ้นตลาดพัฒนาแล้ว 12.82 หุ้นตลาดเกิดใหม่ 20.83 เปอร์เซ็นต์ เส้นประที่ 12.5" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="14" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="270" y1="30" x2="270" y2="262"/><line x1="370" y1="30" x2="370" y2="262"/>
+      </g>
+      <line x1="170" y1="30" x2="170" y2="262" stroke="#5b6472" stroke-width="2"/>
+      <g text-anchor="end">
+        <text x="164" y="50">พันธบัตรสหรัฐ</text>
+        <text x="164" y="78">พันธบัตรต่างประเทศ</text>
+        <text x="164" y="106">หุ้นใหญ่ growth</text>
+        <text x="164" y="134">หุ้นใหญ่ value</text>
+        <text x="164" y="162">หุ้นเล็ก growth</text>
+        <text x="164" y="190">หุ้นเล็ก value</text>
+        <text x="164" y="218">หุ้นตลาดพัฒนาแล้ว</text>
+        <text x="164" y="246">หุ้นตลาดเกิดใหม่</text>
+      </g>
+      <g fill="#047857">
+        <rect x="170" y="36" width="1.5" height="18"/>
+        <rect x="170" y="64" width="2.4" height="18"/>
+      </g>
+      <g fill="#2455d6">
+        <rect x="170" y="92" width="182.3" height="18"/>
+        <rect x="170" y="120" width="111.3" height="18"/>
+        <rect x="170" y="148" width="244.3" height="18"/>
+        <rect x="170" y="176" width="122.9" height="18"/>
+        <rect x="170" y="204" width="128.2" height="18"/>
+        <rect x="170" y="232" width="208.3" height="18"/>
+      </g>
+      <g font-size="13">
+        <text x="178" y="50">0.03</text><text x="178" y="78">0.24</text>
+        <text x="358" y="106">18.2</text><text x="287" y="134">11.1</text><text x="420" y="162">24.4</text>
+        <text x="299" y="190">12.3</text><text x="304" y="218">12.8</text><text x="384" y="246">20.8</text>
+      </g>
+      <line x1="295" y1="26" x2="295" y2="262" stroke="#d82632" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="299" y="24" fill="#d82632" font-size="13">น้ำหนักเงิน 12.5%</text>
+      <g fill="#5b6472" font-size="13" text-anchor="middle">
+        <text x="170" y="278">0</text><text x="270" y="278">10</text><text x="370" y="278">20</text>
+      </g>
+      <text x="320" y="296" text-anchor="middle" fill="#5b6472" font-size="13">ส่วนแบ่ง variance ของพอร์ต (%)</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละแท่งคือ $c_i/V$ ของ asset class หนึ่งกลุ่ม เมื่อทุกกลุ่มได้เงิน 12.5% เท่ากัน (เส้นประแดง) แท่งเขียวสองแท่งบนสุดคือพันธบัตร ซึ่งแทบมองไม่เห็นเพราะแบกความเสี่ยงรวมไม่ถึง 0.3% แท่งน้ำเงินคือหุ้นหกกลุ่ม หุ้นเล็ก growth กับหุ้นตลาดเกิดใหม่แบกเกินส่วนของเงินมาก ความเสี่ยงของพอร์ตนี้เกือบทั้งหมดคือความเสี่ยงหุ้น</figcaption>
+</figure>
+
 <section class="pitfall">
-<h2>ตรวจรูปแบบผ่าน ไม่ได้แปลว่าโมเดลถูก</h2>
-<p>โค้ดตรวจตัวเลขจำกัด มิติ แถวที่ขาด และจำนวน observations ได้ แต่ไม่รู้ว่า timestamps ของแต่ละ asset ตรงกันจริงหรือไม่ ไม่รู้ units จากตัวเลขล้วน ๆ และไม่ประเมินว่า covariance สมมติจะใช้พยากรณ์อนาคตได้ดีเพียงใด</p>
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>คูณทีละช่องแทนคูณ matrix:</strong> <code>S * theta</code> ใน numpy ให้ตาราง contribution $\begin{bmatrix}4&amp;18&amp;28\\2&amp;36&amp;20\end{bmatrix}$ ไม่ใช่ payoff $(50,58)$ ถ้านำตารางนี้ไปใช้ต่อ ทุกขั้นถัดไปจะผิดโดยไม่มี error</p>
+  <p><strong>สลับลำดับ:</strong> $QP$ ส่ง $(1,1)$ ไป $(3,10)$ แต่ $PQ$ ส่งไป $(9,4)$ กับ matrix จัตุรัส ขนาดถูกทั้งคู่ โปรแกรมไม่เตือน</p>
+  <p><strong>ไม่ได้หักค่าเฉลี่ย:</strong> บวก 5 จุดเปอร์เซ็นต์ให้ทุกวันของสินทรัพย์แรก ข้อมูลเป็น $(7,4,4)$ ค่า $(X^{\mathsf T}X)_{11}$ แบบไม่หักค่าเฉลี่ยกระโดดจาก 6 เป็น $49+16+16=81$ ทั้งที่การแกว่งไม่ได้เปลี่ยนเลย หักค่าเฉลี่ยก่อนจะได้ 6 เท่าเดิม</p>
+  <p><strong>เปอร์เซ็นต์ยกกำลังสอง:</strong> covariance 3 ในหน่วย %² คือ 0.0003 ในหน่วยเศษส่วน (หาร 10,000) ไม่ใช่ 0.03</p>
+  <p><strong>สับสนเงินกับความเสี่ยง:</strong> รายงานว่าหุ้น “ครึ่งหนึ่งของความเสี่ยง” เพราะได้เงินครึ่งหนึ่ง ทั้งที่ส่วนแบ่ง variance คือ 85.84%</p>
 </section>
-<details class="jargon"><summary>ศัพท์ที่ใช้สรุปวิธีคิด</summary><dl>
-<dt>Matrix multiplication</dt><dd>การรวมผลคูณผ่านดัชนีกลาง เพื่อประกอบ linear maps หรือคำนวณหลาย dot products พร้อมกัน</dd>
-<dt>Composition / associativity</dt><dd>การต่อกติกา / การเปลี่ยนวงเล็บโดยไม่เปลี่ยนลำดับ ในเลขคณิตแม่นตรง</dd>
-<dt>Elementwise multiplication</dt><dd>คูณช่องที่จับคู่กันโดยยังไม่รวมตามดัชนีกลาง เป็นคนละ operation แม้อาจใช้สร้าง contributions ก่อนรวมได้</dd>
-<dt>Risk contribution / risk parity</dt><dd>การแบ่งความเสี่ยงตาม covariance model / การเลือก weights ให้ contributions เป็นไปตามเป้าหมาย ไม่ใช่การทำนายว่า asset ใดจะทำให้ขาดทุน</dd>
-</dl></details>
-<details><summary>ที่มาสั้น ๆ</summary><p>กฎการคูณ matrices พัฒนาจากงานระบบสมการและการประกอบการแปลงในศตวรรษที่ 19 รวมถึงงานของ Binet และ Cayley สิ่งที่ควรจำไม่ใช่ชื่อกฎ แต่คือการแทนสมการขั้นแรกลงในขั้นที่สองแล้วรวมเส้นทางผ่านตัวแปรกลาง เหตุผลเดียวกันนี้ยังใช้กับการคำนวณพอร์ตและ covariance วันนี้</p></details>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> เพิ่ม scenario ที่สี่ Market −1% และ Quality −1% ให้พอร์ตในขั้นสายพาน ได้กำไรขาดทุนเท่าไร คิดผ่าน exposure</p>
+  <details><summary>เฉลย</summary><p>$\mathbf e=(2.25,0.95)$ ดังนั้น $2.25(-0.01)+0.95(-0.01)=-0.0225-0.0095=-0.032$ ล้าน คือขาดทุน \$32,000 ตรวจทีละหุ้น: ผลตอบแทนแบบจำลองคือ $(-0.016,-0.011,-0.022)$ แล้ว $2(-0.016)-(-0.011)+0.5(-0.022)=-0.032+0.011-0.011=-0.032$ ตรงกัน</p></details>
+  <p><strong>2.</strong> ในพอร์ต 50/30/20 ถ้าทุกช่องของ covariance เพิ่มสี่เท่า (เช่นตลาดเข้าช่วงวิกฤตที่ความผันผวนเพิ่มสองเท่าทุกตัว correlation เท่าเดิม) ส่วนแบ่งความเสี่ยงและความผันผวนพอร์ตเปลี่ยนอย่างไร</p>
+  <details><summary>เฉลย</summary><p>$\mathbf u$ และทุก $c_i$ เพิ่มสี่เท่าเท่ากับ $V$ ส่วนแบ่ง $c_i/V$ จึงยังเป็น 85.84%, 1.46%, 12.70% แต่ความผันผวนเพิ่มสองเท่าเป็น 19.20% สัดส่วนที่ดูนิ่งไม่ได้แปลว่าความเสี่ยงเป็นจำนวนเท่าเดิม</p></details>
+  <p><strong>3.</strong> ใช้ข้อมูลสามวันในขั้น sample covariance หาความผันผวนรายวันของพอร์ตน้ำหนัก $(0.5,0.5)$ ในหน่วยเปอร์เซ็นต์ แล้วอธิบายว่าทำไมต่ำกว่าความผันผวนของสินทรัพย์เดี่ยว</p>
+  <details><summary>เฉลย</summary><p>$\mathbf w^{\mathsf T}\widehat\Sigma\mathbf w=0.25(3)+2(0.25)(-1.5)+0.25(3)=0.75-0.75+0.75=0.75$ %² ความผันผวน $\sqrt{0.75}\approx0.866\%$ ต่อวัน สินทรัพย์เดี่ยวผันผวน $\sqrt3\approx1.732\%$ พอร์ตต่ำกว่าครึ่งเพราะ covariance −1.5 ทำให้สองตัวหักล้างกัน ตรวจด้วยข้อมูลตรง: ผลตอบแทนพอร์ตรายวัน $0.5,\ 0.5,\ -1$ variance $(0.25+0.25+1)/2=0.75$ ตรงกัน</p></details>
+</section>
+
+<section class="code">
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>โค้ดตรวจว่าเครื่องรวมให้ผลเท่ากับการทำทีละขั้น สร้าง sample covariance แบ่งความเสี่ยงของพอร์ตใน hook และหาน้ำหนัก risk parity</p>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="7.3">const T = A =&gt; A[0].map((_, j) =&gt; A.map(r =&gt; r[j]));
+function mul(A, B) {
+  if (A[0].length !== B.length) throw new Error('inner sizes do not match');
+  const Bt = T(B);
+  return A.map(r =&gt; Bt.map(c =&gt; r.reduce((s, x, k) =&gt; s + x * c[k], 0)));
+}
+const mv = (A, x) =&gt; A.map(r =&gt; r.reduce((s, a, j) =&gt; s + a * x[j], 0));
+const dot = (a, b) =&gt; a.reduce((s, x, i) =&gt; s + x * b[i], 0);
+
+const P = [[1, 2], [0, 1]], Q = [[1, 0], [3, 1]];
+console.log(mv(mul(P, Q), [1, 1]), mv(P, mv(Q, [1, 1])), mv(mul(Q, P), [1, 1]));
+
+const A = [[1.2, 0.4], [0.9, 0.2], [1.5, 0.7]], w = [2, -1, 0.5];
+const F = [[0.01, -0.02], [-0.03, 0.01], [0.02, 0.02]];
+const e = mv(T(A), w);
+console.log(mv(F, e), mv(mul(F, T(A)), w));       // 0.0035 -0.058 0.064 twice
+
+const X = [[2, -1], [-1, 2], [-1, -1]];           // centred, percent
+console.log(mul(T(X), X).map(r =&gt; r.map(v =&gt; v / 2))); // [[3,-1.5],[-1.5,3]]
+
+const sd = [0.18, 0.06, 0.15];
+const C = [[1, -0.2, 0.05], [-0.2, 1, 0.25], [0.05, 0.25, 1]];
+const S = C.map((r, i) =&gt; r.map((c, j) =&gt; sd[i] * c * sd[j]));
+function risk(wt) {
+  const u = mv(S, wt), V = dot(wt, u);
+  return { sd: Math.sqrt(V), shares: wt.map((x, i) =&gt; x * u[i] / V),
+           marginal: u.map(x =&gt; x / Math.sqrt(V)) };
+}
+console.log(risk([0.5, 0.3, 0.2]));               // 0.096, 0.8584 0.0146 0.1270
+console.log(risk([0.51, 0.29, 0.2]).sd);          // 0.09761
+
+const x = S.map((r, i) =&gt; 1 / Math.sqrt(r[i]));
+for (let it = 0; it &lt; 500; it++) for (let i = 0; i &lt; 3; i++) {
+  const a = S[i][i], b = S[i].reduce((s, c, j) =&gt; s + (j === i ? 0 : c * x[j]), 0);
+  x[i] = (-b + Math.sqrt(b * b + 4 * a)) / (2 * a);
+}
+const tot = x.reduce((s, v) =&gt; s + v, 0), rp = x.map(v =&gt; v / tot);
+console.log(rp, risk(rp));                        // 0.2115 0.5869 0.2016, sd 0.06095</code></pre>
+  </details>
+</section>
+
 <section class="takeaways">
-<h2>ก่อนใช้ผลคูณเป็นคำตอบทางการเงิน</h2>
-<ul>
-<li>บอก input, output และตัวกลางให้ได้ก่อน: จำนวนมิติตรงกันไม่ได้แปลว่าชื่อหรือหน่วยตรงกัน</li>
-<li>อ่านได้ทั้งแถวคูณคอลัมน์และการรวมคอลัมน์ถ่วงน้ำหนัก เปลี่ยนวงเล็บได้แต่ไม่สลับลำดับ</li>
-<li>Sample covariance ต้อง center, align วันที่และระบุหน่วย จำนวนแถวมากขึ้นไม่ได้รับประกันว่าตารางกลับด้านได้</li>
-<li>น้ำหนักเงินไม่ใช่ risk share; $\Sigma w$ ยังเป็น covariance vector ไม่ใช่ SD ของพอร์ต</li>
-<li>คำนวณได้ไม่เท่ากับโมเดลถูก ต้องแยกข้อจำกัดข้อมูล การประมาณ และต้นทุนการนำผลไปใช้</li>
-</ul>
-<p>หัวข้อ 7.4 จะใช้กติกาเหล่านี้เขียนเงื่อนไขที่พอร์ตต้องทำให้ได้ และแยกว่าระบบที่เขียนถูกมิติมีคำตอบที่ซื้อขายได้จริงหรือไม่</p>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>อธิบายว่ากติกา $(PQ)_{ik}=\sum_jP_{ij}Q_{jk}$ มาจากการแทนขั้นแรกลงในขั้นที่สอง และ $PQ\mathbf x$ ทำ $Q$ ก่อน</li>
+    <li>อ่าน $S\boldsymbol\theta$ ได้ทั้งแบบทีละแถวและแบบต่อคอลัมน์หัวต่อหาง และแยกมันออกจากการคูณทีละช่อง</li>
+    <li>ย้ายวงเล็บเพื่อประหยัดงานได้ (15,000 เทียบกับ 5 ล้านครั้ง) แต่สลับลำดับไม่ได้ ($(9,4)$ กับ $(3,10)$)</li>
+    <li>สร้าง sample covariance เป็น $X^{\mathsf T}X/(N-1)$ จากข้อมูลที่หักค่าเฉลี่ยแล้ว และระวังหน่วยยกกำลังสอง</li>
+    <li>แบ่ง variance พอร์ตด้วย $c_i=w_i(\Sigma\mathbf w)_i$: หุ้นที่ได้เงิน 50% แบก 85.84% และพอร์ตน้ำหนักเท่ากันแปดกลุ่มแบกความเสี่ยงหุ้น 99.73%</li>
+  </ul>
+  <p>หน้านี้ใช้ matrix ทำการคำนวณ หน้าถัดไป <a href="7.4.html">Linear Functions and Linear Constraints</a> ใช้ matrix เขียนข้อบังคับ: วงเงิน ห้าม short หรือ payoff ที่ต้องไม่ต่ำกว่าภาระ แล้วดูว่าชุดของแผนที่ผ่านทุกข้อหน้าตาเป็นอย่างไร</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">

@@ -18,276 +18,415 @@
 <article class="topic" data-number="7.2" data-depends-on="1.4 5.5 6.5 7.1">
 <header class="topic-header">
 <h1><span class="tnum">7.2</span> Transpose</h1>
-<p class="subtitle">สลับบทบาทของแถวและคอลัมน์ โดยไม่ทำข้อมูลหลุดจากชื่อของมัน</p>
+<p class="subtitle">transpose พลิกตารางข้ามแนวทแยง ช่องแถว $i$ คอลัมน์ $j$ ย้ายไปแถว $j$ คอลัมน์ $i$ พร้อมชื่อของมัน ตารางเดิมจึงตอบคำถามในทิศกลับได้โดยไม่ต้องสร้างข้อมูลใหม่</p>
 </header>
+
 <div class="hook">
-<p>พอร์ตเดิมมี payoff สองสถานะเท่ากับ 50 และ 58 USD โปรแกรมจัดตารางจาก $2\times3$ เป็น $3\times2$ เพื่อเปลี่ยนทิศทางการคูณ ตัวเลขยังอยู่ครบและ shape ถูก แต่คำตอบกลับเป็น 70 และ 32 USD เกิดอะไรขึ้น?</p>
-<details><summary>ดูสาเหตุ แล้วค่อยสร้างตัวอย่างด้วยกัน</summary><p>โปรแกรมอาจใช้ reshape แทน transpose การเรียงตัวเลขใหม่ให้ได้จำนวนแถวที่ต้องการ ไม่ได้รักษาความสัมพันธ์ระหว่างสินทรัพย์กับสถานะ ต้องตรวจว่าช่องแถว $i$ คอลัมน์ $j$ ย้ายไปแถว $j$ คอลัมน์ $i$ จริง ไม่ใช่ดู shape อย่างเดียว</p></details>
-<p>บทนี้ใช้ matrices ของจำนวนจริง เราจะเริ่มจากการย้ายช่องหนึ่งช่อง แล้วใช้กติกาเดียวกันอธิบาย dot product, ลำดับผลคูณ และสูตรความเสี่ยงพอร์ต</p>
+  <p>ตาราง payoff มีสองแถว (สถานะขึ้น สถานะลง) และสามคอลัมน์ (สัญญาสามตัว) ช่องละกี่ดอลลาร์ต่อหนึ่งสัญญา พอร์ตถือสัญญา 2, 6 และ 4 หน่วย จึงได้ \$50 ในสถานะขึ้นและ \$58 ในสถานะลง วันหนึ่งโปรแกรมใหม่ต้องการคูณจากอีกด้าน จึงแปลงตารางเป็นสามแถวสองคอลัมน์ ขนาดถูก คูณผ่าน แต่ได้ \$70 กับ \$32 เงินรวมสองสถานะหายไป \$6 เกิดอะไรขึ้น</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>โปรแกรมใช้ reshape แทน transpose reshape อ่านตัวเลขทีละแถวแล้วเทใส่ช่องใหม่ตามลำดับ ตัวเลขครบ ขนาดถูก แต่ payoff ของสัญญาที่ 3 ในสถานะขึ้นไปนั่งคู่กับ payoff ของสัญญาที่ 1 ในสถานะลง โปรแกรมจึงคูณจำนวนสัญญากับ payoff ผิดตัว transpose ที่ถูกต้องให้ $(50,58)$ เท่าเดิม เงินไม่ได้หายจากพอร์ต มันหายจากการจับคู่ข้อมูล</p></details>
 </div>
+
 <section class="prose">
-<h2>1. Transpose ย้ายช่องอย่างไร?</h2>
-<p>นิยาม $A^{\mathsf T}$ โดยให้ $(A^{\mathsf T})_{ji}=A_{ij}$ ทุกช่อง ดังนั้น $A$ ขนาด $m\times n$ กลายเป็น $A^{\mathsf T}$ ขนาด $n\times m$ ตัวเลขไม่ได้เปลี่ยน แต่ชื่อแถวกับชื่อคอลัมน์ย้ายตามมันไป</p>
-<p>ใช้ตาราง loadings สมมติชุดเดิมเพื่อฝึก แต่ในหน้านี้สินทรัพย์แถวที่สามเป็น SPY ตามรูป แทน JPM ในหัวข้อ 7.1 ตัวเลขไม่ใช่ผลประมาณ loadings ของ SPY จริง และไม่ควรนำไปสร้าง hedge โดยตรง:</p>
-<div class="math">\[
-\begin{aligned}
-A&=\begin{bmatrix}1.2&0.4\\0.9&0.2\\1.5&0.7\end{bmatrix},\\
-A^{\mathsf T}&=\begin{bmatrix}1.2&0.9&1.5\\0.4&0.2&0.7\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>เดิมช่อง SPY–Market คือ $A_{31}=1.5$ หลัง transpose ช่อง Market–SPY คือ $(A^{\mathsf T})_{13}=1.5$ ยังเป็น loading ของ SPY ต่อ Market เหมือนเดิม ไม่ได้กลายเป็น loading ของ Market ต่อ SPY</p>
+  <h4>ภาพรวมก่อนลงสูตร</h4>
+  <p>ใน <a href="7.1.html">หน้าที่แล้ว</a> ตาราง loading เดียวตอบได้สองคำถาม ส่ง factor shock เข้าทางคอลัมน์ได้ผลตอบแทนหุ้น หรือส่งเงินที่ถือเข้าทางแถวได้ exposure ของพอร์ต การเปลี่ยนทิศนี้ต้องพลิกตารางให้คอลัมน์กลายเป็นแถว เรียกว่า transpose และเขียน $A^{\mathsf T}$ กติกามีข้อเดียว: ช่องแถว $i$ คอลัมน์ $j$ ไปอยู่แถว $j$ คอลัมน์ $i$ ชื่อของแถวและคอลัมน์ย้ายตามตัวเลขไปด้วย</p>
+  <p>รูปด้านล่างใช้สีแทนชื่อสัญญา transpose ทำให้แต่ละแถวใหม่เป็นสัญญาเดียวกันทั้งแถว ส่วน reshape ที่โปรแกรมใน hook ใช้ ทำให้สัญญาปนกันในแถวเดียว ทั้งสองได้ตาราง $3\times2$ เหมือนกัน การตรวจแค่ขนาดจึงจับความผิดนี้ไม่ได้</p>
+  <p>หน้านี้สร้างกฎของ transpose จากการดูทีละช่อง แล้วใช้มันอธิบายสามเรื่องที่ใช้ทั้งเล่ม: dot product คือแถวคูณคอลัมน์ ทำไม transpose ของผลคูณต้องกลับลำดับ และทำไม covariance matrix พลิกแล้วได้ตัวเดิม ซึ่งนำไปสู่สูตรความเสี่ยงพอร์ต $\mathbf w^{\mathsf T}\Sigma\mathbf w$</p>
+</section>
+
 <figure class="plot">
-<img src="../figures/7.2-1.svg" alt="Aมีแถวเป็นAAPL MSFT SPYและคอลัมน์เป็นMarket Quality" loading="lazy">
-<figcaption>รูป 7.2a ก่อน transpose: หุ้นและ ETF อยู่ตามแถว factors อยู่ตามคอลัมน์ ตัวเลขทั้งหกเป็นข้อมูลสมมติสำหรับฝึก</figcaption>
+  <h4>รูป — transpose เก็บสัญญาไว้ด้วยกัน reshape ทำให้ปนกัน</h4>
+  <svg viewBox="0 0 480 330" role="img" aria-label="ด้านบนคือตารางเดิมสองแถวสามคอลัมน์ วงกลมสีบอกสัญญา วงทึบคือสถานะขึ้น วงโปร่งคือสถานะลง ด้านล่างซ้ายคือ transpose ที่แต่ละแถวเป็นสีเดียว ด้านล่างขวาคือ reshape ที่สีปนกันในแถว" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <defs>
+      <marker id="a72a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5b6472"/></marker>
+    </defs>
+    <g font-size="15" fill="#181818">
+      <text x="240" y="24" text-anchor="middle">ตารางเดิม 2×3: แถว = สถานะ, คอลัมน์ = สัญญา</text>
+      <g stroke-width="3">
+        <circle cx="200" cy="60" r="14" fill="#2455d6" stroke="#2455d6"/>
+        <circle cx="240" cy="60" r="14" fill="#a65f00" stroke="#a65f00"/>
+        <circle cx="280" cy="60" r="14" fill="#047857" stroke="#047857"/>
+        <circle cx="200" cy="100" r="13" fill="#fff" stroke="#2455d6"/>
+        <circle cx="240" cy="100" r="13" fill="#fff" stroke="#a65f00"/>
+        <circle cx="280" cy="100" r="13" fill="#fff" stroke="#047857"/>
+      </g>
+      <text x="168" y="65" text-anchor="end" font-size="14">ขึ้น</text>
+      <text x="168" y="105" text-anchor="end" font-size="14">ลง</text>
+      <g font-size="14">
+        <text x="330" y="55" fill="#2455d6">สัญญา 1</text>
+        <text x="330" y="78" fill="#a65f00">สัญญา 2</text>
+        <text x="330" y="101" fill="#047857">สัญญา 3</text>
+      </g>
+      <g stroke="#5b6472" stroke-width="2" fill="none" marker-end="url(#a72a)">
+        <line x1="215" y1="120" x2="150" y2="150"/>
+        <line x1="265" y1="120" x2="330" y2="150"/>
+      </g>
+      <text x="130" y="168" text-anchor="middle" fill="#047857">transpose 3×2</text>
+      <text x="350" y="168" text-anchor="middle" fill="#d82632">reshape 3×2</text>
+      <g stroke-width="3">
+        <circle cx="110" cy="195" r="14" fill="#2455d6" stroke="#2455d6"/>
+        <circle cx="150" cy="195" r="13" fill="#fff" stroke="#2455d6"/>
+        <circle cx="110" cy="235" r="14" fill="#a65f00" stroke="#a65f00"/>
+        <circle cx="150" cy="235" r="13" fill="#fff" stroke="#a65f00"/>
+        <circle cx="110" cy="275" r="14" fill="#047857" stroke="#047857"/>
+        <circle cx="150" cy="275" r="13" fill="#fff" stroke="#047857"/>
+      </g>
+      <g stroke-width="3">
+        <circle cx="330" cy="195" r="14" fill="#2455d6" stroke="#2455d6"/>
+        <circle cx="370" cy="195" r="14" fill="#a65f00" stroke="#a65f00"/>
+        <circle cx="330" cy="235" r="14" fill="#047857" stroke="#047857"/>
+        <circle cx="370" cy="235" r="13" fill="#fff" stroke="#2455d6"/>
+        <circle cx="330" cy="275" r="13" fill="#fff" stroke="#a65f00"/>
+        <circle cx="370" cy="275" r="13" fill="#fff" stroke="#047857"/>
+      </g>
+      <text x="130" y="316" text-anchor="middle" font-size="14">แต่ละแถวคือสัญญาเดียว</text>
+      <text x="350" y="316" text-anchor="middle" font-size="14">สัญญาปนกันในแถว</text>
+      <text x="240" y="240" text-anchor="middle" fill="#5b6472" font-size="13">ทึบ = ขึ้น</text>
+      <text x="240" y="260" text-anchor="middle" fill="#5b6472" font-size="13">โปร่ง = ลง</text>
+    </g>
+  </svg>
+  <figcaption>สีของวงกลมคือชื่อสัญญา วงทึบคือ payoff ในสถานะขึ้น วงโปร่งคือสถานะลง ตารางเดิมมีสองแถวสามคอลัมน์ transpose (ล่างซ้าย) พลิกข้ามแนวทแยง แถวใหม่แต่ละแถวจึงเป็นสัญญาเดียว คูณกับจำนวนสัญญาแล้วถูกตัว reshape (ล่างขวา) อ่านตัวเลขทีละแถวแล้วเทลงช่องใหม่ แถวกลางมีสัญญา 3 สถานะขึ้นนั่งคู่กับสัญญา 1 สถานะลง ทั้งสองแบบมีขนาด 3×2 เหมือนกัน</figcaption>
 </figure>
-<figure class="plot">
-<img src="../figures/7.2-2.svg" alt="transposeของAมีแถวเป็นMarket Qualityและคอลัมน์เป็นAAPL MSFT SPY" loading="lazy">
-<figcaption>รูป 7.2b หลัง transpose: Market row อ่านได้ 1.2, 0.9, 1.5 โดยชื่อสินทรัพย์ย้ายมาอยู่บนคอลัมน์</figcaption>
-</figure>
-<figure class="plot">
-<img src="../figures/7.2-3.svg" alt="ค่าคอลัมน์MarketของAตรงกับแถวMarketของtransposeทุกสินทรัพย์" loading="lazy">
-<figcaption>รูป 7.2c คอลัมน์เดิมกับแถวใหม่มีค่าเท่ากันทีละสินทรัพย์ สิ่งที่ต้องรักษาคือคู่ชื่อ–ค่า ไม่ใช่เพียงชุดตัวเลขทั้งหมด</figcaption>
-</figure>
-<p>สำหรับ matrix จัตุรัส ลองนึกถึงการสะท้อนช่องข้ามแนวทแยง ไม่ใช่การหมุนกระดาษ 90 องศา การหมุนจะกลับลำดับของแกนหนึ่งด้วย ส่วน transpose ใช้กติกาสลับดัชนีข้างต้นเท่านั้น</p>
-</section>
-<section class="formula">
-<h2>2. กฎพื้นฐานตามมาจากการดูทีละช่อง</h2>
-<p>สลับแถวกับคอลัมน์สองครั้งต้องกลับช่องเดิม ส่วนการบวกและการคูณด้วย scalar ทำทีละช่อง จึงสลับก่อนหรือหลังได้ เมื่อ $A,B$ มีขนาดเดียวกัน:</p>
-<div class="math">\[
-\begin{aligned}
-((A^{\mathsf T})^{\mathsf T})_{ij}&=(A^{\mathsf T})_{ji}=A_{ij},\\
-((A+B)^{\mathsf T})_{ij}&=A_{ji}+B_{ji}
- =(A^{\mathsf T}+B^{\mathsf T})_{ij},\\
-((cA)^{\mathsf T})_{ij}&=cA_{ji}=(cA^{\mathsf T})_{ij}.
-\end{aligned}
-\]</div>
-<p>ดังนั้น $(A^{\mathsf T})^{\mathsf T}=A$, $(A+B)^{\mathsf T}=A^{\mathsf T}+B^{\mathsf T}$ และ $(cA)^{\mathsf T}=cA^{\mathsf T}$ แต่ transpose <strong>ไม่ใช่ inverse</strong> โดยทั่วไป เช่น $D=\operatorname{diag}(2,3)$ มี $D^{\mathsf T}=D$ แต่ $D^{\mathsf T}D=\operatorname{diag}(4,9)$ ไม่ใช่ identity</p>
-<p>Matrix ที่ $A^{\mathsf T}=A$ เรียกว่า symmetric ต้องเป็นจัตุรัสและมี $A_{ij}=A_{ji}$ ทุกคู่ ไม่ได้หมายความว่าทุกช่องมีค่าเท่ากัน หรือว่า matrix จัตุรัสทุกตัวจะ symmetric</p>
-</section>
-<section class="formula">
-<h2>3. ย้าย transpose ไปอีกที่ ก็เปลี่ยนคำถามได้</h2>
-<p>ให้ $\mathbf u=(1,-2,3)^{\mathsf T}$ และ $\mathbf v=(4,0.5,-1)^{\mathsf T}$ เป็น column vectors ถ้าต้องการจับคู่แล้วรวมเป็นเลขเดียว ต้องวาง row vector ไว้ทางซ้าย:</p>
-<div class="math">\[
-\begin{aligned}
-\mathbf u^{\mathsf T}\mathbf v
- &=1(4)+(-2)(0.5)+3(-1)=0,\\
-(1\times3)(3\times1)&\longrightarrow1\times1,\\
-\mathbf u\mathbf v^{\mathsf T}
- &=\begin{bmatrix}4&0.5&-1\\-8&-1&2\\12&1.5&-3\end{bmatrix},\\
-(3\times1)(1\times3)&\longrightarrow3\times3.
-\end{aligned}
-\]</div>
-<p>Inner product ใช้คู่ดัชนีเดียวกันแล้วบวก จึงได้ scalar ส่วน outer product เก็บผลคูณทุกคู่เป็นตาราง ถึง inner product เป็นศูนย์ outer product ก็ไม่จำเป็นต้องเป็น zero matrix</p>
-<p>สำหรับจำนวนจริง $\mathbf u^{\mathsf T}\mathbf v=\sum_i u_i v_i=\sum_i v_i u_i=\mathbf v^{\mathsf T}\mathbf u$ แต่ outer products สองลำดับไม่จำเป็นต้องเท่ากัน หากทำงานกับจำนวนเชิงซ้อน inner product มาตรฐานต้องใช้ conjugate transpose ซึ่งต่างจาก transpose ที่เราศึกษาที่นี่</p>
-<figure class="plot">
-<img src="../figures/7.2-4.svg" alt="จำนวนแถวของAเท่ากับ3 ของtransposeเท่ากับ2 และของwเท่ากับ3" loading="lazy">
-<figcaption>รูป 7.2d ความสูงแท่งคือจำนวนแถว ไม่ใช่ exposure หรือความเสี่ยง อ่าน shape เต็มด้วย: $A$ เป็น $3\times2$, $A^{\mathsf T}$ เป็น $2\times3$, $w$ เป็น $3\times1$</figcaption>
-</figure>
-</section>
-<section class="formula">
-<h2>4. ทำไม transpose ของผลคูณต้องกลับลำดับ?</h2>
-<p>ให้ $P$ ขนาด $m\times n$ และ $Q$ ขนาด $n\times p$ ผลคูณ $PQ$ ขนาด $m\times p$ หลัง transpose จึงเป็น $p\times m$ ซึ่งเป็นขนาดของ $Q^{\mathsf T}P^{\mathsf T}$ การพิสูจน์ว่าค่าเท่ากันต้องดูทีละช่องด้วย:</p>
-<div class="math">\[
-\begin{aligned}
-((PQ)^{\mathsf T})_{ij}
- &=(PQ)_{ji}=\sum_{k=1}^{n}P_{jk}Q_{ki}\\
- &=\sum_{k=1}^{n}(Q^{\mathsf T})_{ik}(P^{\mathsf T})_{kj}\\
- &=(Q^{\mathsf T}P^{\mathsf T})_{ij},\\
-(PQ)^{\mathsf T}&=Q^{\mathsf T}P^{\mathsf T}.
-\end{aligned}
-\]</div>
-<p>บรรทัดกลางใช้ว่าตัวเลข $P_{jk}$ กับ $Q_{ki}$ คูณสลับกันได้ ไม่ได้สมมติว่า matrices คูณสลับกันได้ หากทั้งสองเป็นจัตุรัส ลำดับผิดอาจยังมี shape ถูก แต่ให้คำตอบผิด:</p>
-<div class="math">\[
-\begin{aligned}
-P&=\begin{bmatrix}1&2\\0&1\end{bmatrix},\quad
-Q=\begin{bmatrix}1&0\\3&1\end{bmatrix},\\
-PQ&=\begin{bmatrix}1+6&2\\3&1\end{bmatrix}
- =\begin{bmatrix}7&2\\3&1\end{bmatrix},\\
-(PQ)^{\mathsf T}=Q^{\mathsf T}P^{\mathsf T}
- &=\begin{bmatrix}7&3\\2&1\end{bmatrix},\\
-P^{\mathsf T}Q^{\mathsf T}
- &=\begin{bmatrix}1&3\\2&7\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>สำหรับสาม matrices ใช้กฎเดิมสองครั้ง: $(PQR)^{\mathsf T}=R^{\mathsf T}(PQ)^{\mathsf T}=R^{\mathsf T}Q^{\mathsf T}P^{\mathsf T}$ ไม่ใช่แค่เติมเครื่องหมาย transpose โดยคงลำดับเดิม</p>
-</section>
-<section class="example">
-<h2>5. คลี่โจทย์เปิด: shape ถูก แต่เงินหายไปไหน?</h2>
-<p>สมมติสัญญาสามตัวจ่ายเงินสิ้นงวดตามสองสถานะดัง $S$ หน่วยของแต่ละช่องคือ USD ต่อหน่วยสัญญา ถือจำนวนหน่วย $\boldsymbol\theta=(2,6,4)^{\mathsf T}$ จึงมี payoff:</p>
-<div class="math">\[
-\begin{aligned}
-S&=\begin{bmatrix}2&3&7\\1&6&5\end{bmatrix},\\
-S\boldsymbol\theta
- &=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}
- =\begin{bmatrix}50\\58\end{bmatrix},\\
-(S\boldsymbol\theta)^{\mathsf T}
- &=\boldsymbol\theta^{\mathsf T}S^{\mathsf T}
- =\begin{bmatrix}50&58\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>คำตอบเปลี่ยนจากคอลัมน์เป็นแถว แต่ payoff ของสถานะเดิมยังเป็นค่าเดิม ส่วน reshape ที่อ่านค่าทีละแถวแล้วจัดใหม่จะทำแบบนี้:</p>
-<div class="math">\[
-\begin{aligned}
-S^{\mathsf T}&=\begin{bmatrix}2&1\\3&6\\7&5\end{bmatrix},\qquad
-\widetilde S=\begin{bmatrix}2&3\\7&1\\6&5\end{bmatrix},\\
-\boldsymbol\theta^{\mathsf T}\widetilde S
- &=\begin{bmatrix}4+42+24&6+6+20\end{bmatrix}\\
- &=\begin{bmatrix}70&32\end{bmatrix}.
-\end{aligned}
-\]</div>
-<p>เงินไม่ได้หายจากพอร์ตจริง แต่โปรแกรมจับคู่จำนวนสัญญากับ payoff ผิดช่อง เหลือรูปตารางที่คูณกันได้แต่เล่าเรื่องคนละเรื่อง และ payoff สองสถานะนี้ยังไม่ใช่ expected profit เพราะยังไม่ให้โอกาสแต่ละสถานะหรือต้นทุนเริ่มต้น</p>
-<p><strong>ข้อควรระวัง:</strong> reshape กลับขนาดเดิมก็อาจคืนข้อมูลเดิมได้เหมือนกัน ดังนั้นการทดสอบ round-trip อย่างเดียวไม่พอ ต้องทดสอบชื่อแกนและ $(S^{\mathsf T})_{ji}=S_{ij}$ ทีละช่องด้วย</p>
-</section>
-<section class="formula">
-<h2>6. Covariance matrix ทำไม transpose แล้วเหมือนเดิม?</h2>
-<p>ให้ $\mathbf R$ เป็น vector ของ returns จำนวนจริงในงวดเดียวกัน มี finite second moments และ $\mu_i=E[R_i]$ จากนิยาม covariance:</p>
-<div class="math">\[
-\begin{aligned}
-\Sigma_{ij}
- &=E[(R_i-\mu_i)(R_j-\mu_j)]\\
- &=E[(R_j-\mu_j)(R_i-\mu_i)]\\
- &=\Sigma_{ji},\qquad \Sigma^{\mathsf T}=\Sigma.
-\end{aligned}
-\]</div>
-<p>สมมาตรเกิดจากการสลับลำดับคูณของตัวเลข ไม่ได้เกิดจากความเป็นอิสระหรือการที่สินทรัพย์มีความเสี่ยงเท่ากัน Covariance นอกแนวทแยงจึงอาจเป็นบวก ลบ หรือศูนย์ได้</p>
-<p>หากตารางที่ประมาณมาไม่สมมาตร ให้ตรวจ labels, วันข้อมูล, วิธีคำนวณและการปัดก่อน เมื่อยืนยันแล้วว่าความต่างเป็นเพียง numerical noise จึงค่อยใช้ $(C+C^{\mathsf T})/2$ เพื่อให้สมมาตร การเฉลี่ยสองด้านไม่ซ่อมข้อมูลผิด และไม่รับประกันว่า matrix จะเป็น covariance ที่ใช้ได้</p>
-</section>
-<section class="formula">
-<h2>7. จาก covariance ไปสู่ variance หนึ่งค่า</h2>
-<p>ให้ $R_p=\mathbf w^{\mathsf T}\mathbf R$ โดย weights เป็นค่าคงที่ การถ่วง returns งวดเดียวกันทำให้ความเบี่ยงเบนจากค่าเฉลี่ยของพอร์ตเป็นผลรวมถ่วงน้ำหนักเช่นกัน:</p>
-<div class="math">\[
-\begin{aligned}
-\operatorname{Var}(R_p)
- &=E\!\left[\left(\sum_i w_i(R_i-\mu_i)\right)^2\right]\\
- &=\sum_i\sum_j w_iw_j E[(R_i-\mu_i)(R_j-\mu_j)]\\
- &=\sum_i\sum_j w_i\Sigma_{ij}w_j
- =\mathbf w^{\mathsf T}\Sigma\mathbf w.
-\end{aligned}
-\]</div>
-<p>Weights อยู่สองข้างเพราะขยายกำลังสอง ไม่ใช่เพราะอยากเติม transpose ให้สูตรดูถูก shape หาก weights สุ่มหรือปรับระหว่างงวด ต้องนิยาม return ของกลยุทธ์ให้ตรงก่อน ไม่ควรใช้สูตร fixed-weight นี้โดยไม่ตรวจเงื่อนไข</p>
-<p>ตัวอย่างสมมติให้ $\Sigma$ เป็น covariance ของ returns หนึ่งปีซึ่งวัดเป็นเศษส่วน และ $\mathbf w=(0.6,0.4)^{\mathsf T}$ เป็นน้ำหนัก ไม่ใช่จำนวนเงิน:</p>
-<div class="math">\[
-\begin{aligned}
-\Sigma&=\begin{bmatrix}0.1&-0.0559\\-0.0559&0.5\end{bmatrix},\\
-\Sigma\mathbf w
- &=\begin{bmatrix}0.06-0.02236\\-0.03354+0.20\end{bmatrix}
- =\begin{bmatrix}0.03764\\0.16646\end{bmatrix},\\
-\sigma_p^2&=0.6(0.03764)+0.4(0.16646)=0.089168,\\
-\sigma_p&=\sqrt{0.089168}\approx0.298610=29.8610\%.
-\end{aligned}
-\]</div>
-<p>ตรวจด้วยสูตรสองสินทรัพย์ได้อีกทาง: $0.6^2(0.1)+2(0.6)(0.4)(-0.0559)+0.4^2(0.5)=0.036-0.026832+0.08=0.089168$ ถ้าเผลอทิ้ง covariance จะได้ 0.116 ซึ่งเป็นคนละโมเดล</p>
-<p>แต่ละช่องของ $\Sigma\mathbf w$ คือ $\sum_j\operatorname{Cov}(R_i,R_j)w_j=\operatorname{Cov}(R_i,R_p)$ จึงไม่ใช่ volatility ของสินทรัพย์ และไม่ใช่ variance ของพอร์ตโดยลำพัง ต้องถ่วงด้วย $\mathbf w^{\mathsf T}$ อีกครั้งเพื่อรวมเป็น scalar</p>
-<details><summary>ถ้าเรียก marginal risk ต้องระบุว่าอะไรเปลี่ยน</summary>
-<p>กำหนด $V(\mathbf w)=\mathbf w^{\mathsf T}\Sigma\mathbf w$ และเปลี่ยนเฉพาะ weight ที่ $i$ ทีละ $h$ โดยตรึงตัวอื่น ใช้ความสมมาตรขยายได้:</p>
-<div class="math">\[
-\begin{aligned}
-V(\mathbf w+h\mathbf e_i)
- &=V(\mathbf w)+2h(\Sigma\mathbf w)_i+h^2\Sigma_{ii},\\
-\lim_{h\to0}\frac{V(\mathbf w+h\mathbf e_i)-V(\mathbf w)}h
- &=2(\Sigma\mathbf w)_i.
-\end{aligned}
-\]</div>
-<p>จึงมีอัตราเปลี่ยน variance เป็นสองเท่าของช่องนั้นใน $\Sigma\mathbf w$ แต่หากการซื้อสินทรัพย์หนึ่งต้องขายอีกตัวเพื่อรักษางบลงทุน จะมีหลาย weights เปลี่ยนพร้อมกัน ห้ามอ่านตัวเลขนี้เป็นผลของ trade แบบนั้นโดยตรง</p>
+
+<details class="jargon">
+  <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
+  <dl>
+    <dt>Transpose $A^{\mathsf T}$</dt>
+    <dd>ตารางที่ได้จากการสลับดัชนีแถวกับคอลัมน์ $(A^{\mathsf T})_{ji}=A_{ij}$ ใช้เปลี่ยนทิศของคำถามที่ตารางตอบ</dd>
+    <dt>Reshape</dt>
+    <dd>การเทตัวเลขชุดเดิมลงตารางขนาดใหม่ตามลำดับการอ่าน ไม่ได้รักษาคู่ชื่อกับค่า ใช้ได้เฉพาะเมื่อรู้ว่าลำดับการอ่านมีความหมายตรงกับที่ต้องการ</dd>
+    <dt>Symmetric matrix</dt>
+    <dd>matrix จัตุรัสที่ $A^{\mathsf T}=A$ คือ $a_{ij}=a_{ji}$ ทุกคู่ covariance matrix เป็นแบบนี้เสมอ ใช้ตรวจความถูกต้องของข้อมูลเบื้องต้น</dd>
+    <dt>Inner product และ outer product</dt>
+    <dd>$\mathbf u^{\mathsf T}\mathbf v$ ให้ตัวเลขเดียว ใช้วัดการจับคู่ของสอง vector ส่วน $\mathbf u\mathbf v^{\mathsf T}$ ให้ตารางผลคูณทุกคู่ ใช้สร้าง covariance จากข้อมูล</dd>
+    <dt>Quadratic form</dt>
+    <dd>นิพจน์ $\mathbf x^{\mathsf T}B\mathbf x$ ที่ให้ตัวเลขเดียว variance ของพอร์ตคือ quadratic form ของ covariance matrix แต่ quadratic form ทุกตัวไม่ได้เป็น variance</dd>
+  </dl>
 </details>
+
+<section class="formula">
+  <h4>ขั้นที่ 1 — นิยามทีละช่อง: ชื่อย้ายตามตัวเลข</h4>
+  <p>เริ่มจากตาราง payoff ใน hook แถวคือสถานะขึ้นและลง คอลัมน์คือสัญญาสามตัว พลิกมันแล้วดูว่าแต่ละช่องไปไหน</p>
+  <div class="math">\[\begin{aligned}
+S&amp;=\begin{bmatrix}2&amp;3&amp;7\\1&amp;6&amp;5\end{bmatrix},\quad
+S^{\mathsf T}=\begin{bmatrix}2&amp;1\\3&amp;6\\7&amp;5\end{bmatrix},\\
+(S^{\mathsf T})_{ji}&amp;=S_{ij},\qquad
+(S^{\mathsf T})_{31}=S_{13}=7,\\
+\boldsymbol\theta&amp;=\begin{bmatrix}2\\6\\4\end{bmatrix},\quad
+\boldsymbol\theta^{\mathsf T}=\begin{bmatrix}2&amp;6&amp;4\end{bmatrix}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>เลข 7 เดิมอยู่แถวสถานะขึ้น คอลัมน์สัญญา 3 หลังพลิกอยู่แถว 3 คอลัมน์ 1 ซึ่งตอนนี้ชื่อว่าแถวสัญญา 3 คอลัมน์สถานะขึ้น ความหมายยังเป็น “สัญญา 3 จ่าย \$7 ในสถานะขึ้น” เหมือนเดิมทุกประการ ตารางขนาด $m\times n$ กลายเป็น $n\times m$ และ column vector พลิกแล้วเป็น row vector</p>
+    <p>วิธีจำที่ไม่พลาด: นึกถึงการส่องกระจกข้ามแนวทแยงที่วิ่งจากมุมซ้ายบนลงขวาล่าง ช่องบนแนวทแยงอยู่ที่เดิม ช่องอื่นสลับฝั่ง มันไม่ใช่การหมุนกระดาษ 90 องศา เพราะการหมุนจะกลับลำดับของแกนหนึ่งด้วย</p>
+  </div>
 </section>
-<section class="pitfall">
-<h2>เป็น scalar และสมมาตร ก็ยังไม่พอจะเรียกว่า variance</h2>
-<p>Quadratic form เป็นคำเรียกนิพจน์ $\mathbf x^{\mathsf T}B\mathbf x$ เมื่อ $B$ จัตุรัส มันให้ scalar เพราะ $(1\times n)(n\times n)(n\times1)$ ลงท้ายที่ $1\times1$ แต่ $B$ ไม่จำเป็นต้องเป็น covariance:</p>
-<div class="math">\[
-\begin{aligned}
-B&=\begin{bmatrix}2&1\\0&3\end{bmatrix},\quad
-\mathbf x=\begin{bmatrix}1\\2\end{bmatrix},\\
-B\mathbf x&=\begin{bmatrix}4\\6\end{bmatrix},\quad
-\mathbf x^{\mathsf T}B\mathbf x=4+12=16.
-\end{aligned}
-\]</div>
-<p>เลข 16 ไม่ใช่ variance โดยอัตโนมัติ และ $B$ นี้ไม่ symmetric แม้เปลี่ยนเป็น symmetric part $(B+B^{\mathsf T})/2$ แล้ว quadratic form ยังได้ 16 เหมือนเดิม ก็ไม่ได้สร้างหลักฐานว่าตัวเลขมาจาก returns ชุดใด</p>
-<p>Covariance ที่ถูกต้องต้องให้ variance ไม่ติดลบสำหรับทุก linear combination ด้วย ลอง matrix ที่ symmetric แต่ใช้ไม่ได้:</p>
-<div class="math">\[
-\begin{aligned}
-C&=\begin{bmatrix}1&2\\2&1\end{bmatrix},\qquad
-\mathbf a=\begin{bmatrix}1\\-1\end{bmatrix},\\
-C\mathbf a&=\begin{bmatrix}-1\\1\end{bmatrix},\qquad
-\mathbf a^{\mathsf T}C\mathbf a=-1-1=-2.
-\end{aligned}
-\]</div>
-<p>Variance ติดลบเป็นไปไม่ได้ Matrix นี้จึงไม่ใช่ covariance ที่ถูกต้อง คุณสมบัติให้ quadratic form ไม่ติดลบสำหรับทุก vector เรียกว่า positive semidefinite ซึ่งจะศึกษาใน 7.6</p>
+
+<section class="formula">
+  <h4>ขั้นที่ 2 — กฎพื้นฐาน และสิ่งที่ transpose ไม่ใช่</h4>
+  <p>กฎของ transpose ทุกข้อพิสูจน์ได้ด้วยการดูช่องเดียว เพราะบวกและคูณด้วยตัวเลขทำทีละช่องอยู่แล้ว เมื่อ $A,B$ ขนาดเท่ากันและ $c$ เป็นตัวเลข</p>
+  <div class="math">\[\begin{aligned}
+\big((A^{\mathsf T})^{\mathsf T}\big)_{ij}&amp;=(A^{\mathsf T})_{ji}=A_{ij},\\
+\big((A+B)^{\mathsf T}\big)_{ij}&amp;=A_{ji}+B_{ji},\\
+\big((cA)^{\mathsf T}\big)_{ij}&amp;=cA_{ji}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>จึงได้ $(A^{\mathsf T})^{\mathsf T}=A$ พลิกสองครั้งกลับที่เดิม $(A+B)^{\mathsf T}=A^{\mathsf T}+B^{\mathsf T}$ และ $(cA)^{\mathsf T}=cA^{\mathsf T}$ matrix ที่พลิกแล้วได้ตัวเดิม $A^{\mathsf T}=A$ เรียกว่า symmetric ต้องเป็นจัตุรัสและ $a_{ij}=a_{ji}$ ทุกคู่ ไม่ได้แปลว่าทุกช่องเท่ากัน</p>
+    <p>ข้อที่คนสับสนบ่อยที่สุด: transpose <strong>ไม่ใช่</strong> inverse inverse คือเครื่องที่ย้อนผลของ matrix กลับ แต่ transpose เป็นแค่การพลิกดัชนี เช่น $D=\begin{bmatrix}2&amp;0\\0&amp;3\end{bmatrix}$ มี $D^{\mathsf T}=D$ แต่ $D^{\mathsf T}D=\begin{bmatrix}4&amp;0\\0&amp;9\end{bmatrix}$ ไม่ใช่ identity ส่วน inverse ที่แท้จริงคือ $\begin{bmatrix}1/2&amp;0\\0&amp;1/3\end{bmatrix}$ รูปด้านล่างแสดงความต่างนี้เป็นภาพ</p>
+  </div>
 </section>
+
+<figure class="plot">
+  <h4>รูป — transpose ของการเฉือนไม่ได้เฉือนกลับ</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="สี่เหลี่ยมจัตุรัสหนึ่งหน่วยเส้นประสีเทา ภาพใต้ P เอียงไปทางขวาเป็นสีม่วง ภาพใต้ P inverse เอียงไปทางซ้ายเป็นสีเขียวแกมฟ้า ภาพใต้ P transpose เอียงขึ้นด้านบนเป็นสีแดง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="120" y1="40" x2="120" y2="270"/><line x1="180" y1="40" x2="180" y2="270"/><line x1="300" y1="40" x2="300" y2="270"/><line x1="360" y1="40" x2="360" y2="270"/><line x1="420" y1="40" x2="420" y2="270"/>
+        <line x1="90" y1="202" x2="450" y2="202"/><line x1="90" y1="142" x2="450" y2="142"/><line x1="90" y1="82" x2="450" y2="82"/>
+      </g>
+      <line x1="90" y1="262" x2="450" y2="262" stroke="#5b6472" stroke-width="2"/>
+      <line x1="240" y1="40" x2="240" y2="280" stroke="#5b6472" stroke-width="2"/>
+      <polygon points="240,262 300,262 420,202 360,202" fill="#6d28d9" fill-opacity="0.18" stroke="#6d28d9" stroke-width="3"/>
+      <polygon points="240,262 300,262 180,202 120,202" fill="#007f8f" fill-opacity="0.18" stroke="#007f8f" stroke-width="3"/>
+      <polygon points="240,262 300,142 300,82 240,202" fill="#d82632" fill-opacity="0.15" stroke="#d82632" stroke-width="3"/>
+      <polygon points="240,262 300,262 300,202 240,202" fill="none" stroke="#5b6472" stroke-width="2" stroke-dasharray="5 4"/>
+      <text x="400" y="190" fill="#6d28d9">P</text>
+      <text x="96" y="190" fill="#007f8f">P⁻¹ ย้อน P ได้</text>
+      <text x="312" y="100" fill="#d82632">Pᵀ ไม่ได้ย้อน</text>
+      <g fill="#5b6472" font-size="14" text-anchor="middle">
+        <text x="120" y="282">−2</text><text x="180" y="282">−1</text><text x="300" y="282">1</text><text x="360" y="282">2</text><text x="420" y="282">3</text>
+      </g>
+      <g fill="#5b6472" font-size="14" text-anchor="end">
+        <text x="234" y="207">1</text><text x="234" y="147">2</text><text x="234" y="87">3</text>
+      </g>
+    </g>
+  </svg>
+  <figcaption>สี่เหลี่ยมเส้นประคือจัตุรัสหนึ่งหน่วย $P=\begin{bmatrix}1&amp;2\\0&amp;1\end{bmatrix}$ เฉือนมันไปทางขวา (ม่วง) inverse $P^{-1}=\begin{bmatrix}1&amp;-2\\0&amp;1\end{bmatrix}$ เฉือนไปทางซ้ายเท่ากัน จึงย้อนกันได้พอดี ส่วน $P^{\mathsf T}=\begin{bmatrix}1&amp;0\\2&amp;1\end{bmatrix}$ (แดง) เฉือนขึ้นด้านบน เป็นการขยับคนละแบบโดยสิ้นเชิง คูณกันได้ $P^{\mathsf T}P=\begin{bmatrix}1&amp;2\\2&amp;5\end{bmatrix}$ ไม่ใช่ identity transpose เท่ากับ inverse เฉพาะ matrix พิเศษที่หมุนโดยไม่ยืด ซึ่งจะพบใน <a href="7.6.html">eigenvalues</a></figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 3 — วาง transpose คนละที่ ได้คำถามคนละแบบ</h4>
+  <p>vector สองตัวที่เป็นคอลัมน์ คูณกันตรง ๆ ไม่ได้เพราะขนาดด้านในไม่ตรง ต้องพลิกตัวหนึ่ง และตำแหน่งที่พลิกเปลี่ยนคำตอบโดยสิ้นเชิง ให้ $\mathbf u=(1,-2,3)^{\mathsf T}$ และ $\mathbf v=(4,0.5,-1)^{\mathsf T}$</p>
+  <div class="math">\[\begin{aligned}
+\mathbf u^{\mathsf T}\mathbf v&amp;=1(4)+(-2)(0.5)+3(-1)=0,\\
+(1\times3)(3\times1)&amp;\longrightarrow1\times1,\\
+\mathbf u\mathbf v^{\mathsf T}&amp;=\begin{bmatrix}4&amp;0.5&amp;-1\\-8&amp;-1&amp;2\\12&amp;1.5&amp;-3\end{bmatrix},\\
+(3\times1)(1\times3)&amp;\longrightarrow3\times3.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>แบบแรกคือ <a href="6.5.html">inner product</a> จับคู่ช่องที่ตรงกันแล้วรวมเป็นตัวเลขเดียว ได้ศูนย์ คือสอง vector ตั้งฉากกัน แบบที่สองคือ outer product เก็บผลคูณทุกคู่ $u_iv_j$ ไว้เป็นตาราง ไม่รวมอะไรเลย inner product เป็นศูนย์ไม่ได้ทำให้ outer product เป็นศูนย์</p>
+    <p>ความยาวกำลังสองของ vector ก็เป็น inner product กับตัวเอง เช่น $\|(1,-2)\|^2=\begin{bmatrix}1&amp;-2\end{bmatrix}\begin{bmatrix}1\\-2\end{bmatrix}=1+4=5$ ส่วน outer product มีลักษณะเฉพาะ: ทุกแถวคือ $\mathbf v$ คูณตัวเลขหนึ่งตัว ดังรูปด้านล่าง ตารางนี้จึงมีทิศอิสระทิศเดียว คือมี <a href="7.5.html">rank</a> เท่ากับ 1 ต่อให้มีเก้าช่องก็ตาม</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — ทุกแถวของ outer product คือรูปแบบเดียวกันที่ถูกยืดหรือกลับ</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="กราฟแท่งสามกลุ่ม แต่ละกลุ่มคือหนึ่งแถวของ u คูณ v transpose กลุ่มแรก 4 0.5 ลบ1 กลุ่มที่สอง ลบ8 ลบ1 2 กลุ่มที่สาม 12 1.5 ลบ3 ทุกกลุ่มมีรูปทรงเดียวกันแต่ขนาดและทิศต่างกัน" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="80" y1="50" x2="450" y2="50"/><line x1="80" y1="90" x2="450" y2="90"/><line x1="80" y1="130" x2="450" y2="130"/><line x1="80" y1="210" x2="450" y2="210"/><line x1="80" y1="250" x2="450" y2="250"/>
+      </g>
+      <line x1="80" y1="170" x2="450" y2="170" stroke="#5b6472" stroke-width="2"/>
+      <line x1="80" y1="45" x2="80" y2="255" stroke="#5b6472" stroke-width="2"/>
+      <g fill="#5b6472" font-size="14" text-anchor="end">
+        <text x="74" y="55">12</text><text x="74" y="95">8</text><text x="74" y="135">4</text><text x="74" y="175">0</text><text x="74" y="215">−4</text><text x="74" y="255">−8</text>
+      </g>
+      <g fill="#2455d6">
+        <rect x="105" y="130" width="26" height="40"/>
+        <rect x="225" y="170" width="26" height="80"/>
+        <rect x="345" y="50" width="26" height="120"/>
+      </g>
+      <g fill="#a65f00">
+        <rect x="137" y="165" width="26" height="5"/>
+        <rect x="257" y="170" width="26" height="10"/>
+        <rect x="377" y="155" width="26" height="15"/>
+      </g>
+      <g fill="#047857">
+        <rect x="169" y="170" width="26" height="10"/>
+        <rect x="289" y="150" width="26" height="20"/>
+        <rect x="409" y="170" width="26" height="30"/>
+      </g>
+      <g text-anchor="middle" font-size="14">
+        <text x="150" y="276">แถว 1: u₁ = 1</text>
+        <text x="270" y="276">แถว 2: u₂ = −2</text>
+        <text x="390" y="276">แถว 3: u₃ = 3</text>
+      </g>
+      <g font-size="14">
+        <text x="100" y="30" fill="#2455d6">คอลัมน์ 1</text>
+        <text x="200" y="30" fill="#a65f00">คอลัมน์ 2</text>
+        <text x="300" y="30" fill="#047857">คอลัมน์ 3</text>
+      </g>
+      <text x="270" y="296" text-anchor="middle" fill="#5b6472" font-size="13">ค่าในแต่ละช่องของ uvᵀ</text>
+    </g>
+  </svg>
+  <figcaption>แต่ละกลุ่มแท่งคือหนึ่งแถวของ $\mathbf u\mathbf v^{\mathsf T}$ สีบอกคอลัมน์ ทั้งสามกลุ่มมีรูปทรงเดียวกับ $\mathbf v=(4,0.5,-1)$ กลุ่มแรกคือ $\mathbf v$ เอง กลุ่มที่สองกลับหัวและยืดสองเท่า กลุ่มที่สามยืดสามเท่า ตารางเก้าช่องนี้จึงเก็บข้อมูลจริงแค่สองชุด คือ $\mathbf u$ กับ $\mathbf v$ นี่คือเหตุผลที่ covariance ซึ่งสร้างจากวันเดียวยังใช้ไม่ได้ ดังจะเห็นใน <a href="7.3.html">matrix multiplication</a></figcaption>
+</figure>
+
 <section class="example">
-<h2>ตรวจเองใน 10 วินาที</h2>
-<p><strong>ข้อ 1:</strong> หลัง transpose ตาราง loadings ช่องแถว Market คอลัมน์ SPY ต้องเป็นเท่าไร และเป็น loading ของใครต่อใคร?</p>
-<details><summary>ดูเฉลย</summary><p>1.5 เป็น loading ของ SPY ต่อ Market ในตารางสมมติเดิม ไม่ใช่ความไวของ Market ต่อ SPY การเปลี่ยนทิศอ่านไม่กลับความหมายทางเศรษฐศาสตร์</p></details>
-<p><strong>ข้อ 2:</strong> ถ้า weights ในตัวอย่าง covariance เพิ่มสองเท่าทั้งคู่ variance และ SD เปลี่ยนอย่างไร?</p>
-<details><summary>ดูเฉลย</summary><p>$(2w)^{\mathsf T}\Sigma(2w)=4w^{\mathsf T}\Sigma w$ จึงได้ variance 0.356672 และ SD ประมาณ 0.597220 หรือ 59.7220% เป็นกรณีเพิ่ม exposures โดยตรึงฐานที่ใช้วัด return ไม่ใช่แค่เปลี่ยนหน่วยของเงิน</p></details>
-<p><strong>ข้อ 3:</strong> Matrix จัตุรัส transpose แล้วไม่เปลี่ยนค่า แปลว่า inverse เท่ากับตัวเดิมหรือไม่?</p>
-<details><summary>ดูเฉลย</summary><p>ไม่แปลว่าอย่างนั้น $D=\operatorname{diag}(2,3)$ เป็น symmetric แต่ inverse คือ $\operatorname{diag}(1/2,1/3)$ เพราะผลคูณจึงได้ identity การเป็น symmetric กับการที่ transpose เท่ากับ inverse เป็นคนละเงื่อนไข</p></details>
+  <h4>ขั้นที่ 4 — คลี่ hook: ขนาดถูก แต่จับคู่ผิด</h4>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $S$ และ $\boldsymbol\theta=(2,6,4)^{\mathsf T}$ จากขั้นแรก หน่วยของ $S$ คือดอลลาร์ต่อสัญญา ต้องการ payoff ในรูป row vector โดยคูณจากด้านซ้าย</p>
+  <div class="math">\[\begin{aligned}
+S\boldsymbol\theta&amp;=\begin{bmatrix}2(2)+3(6)+7(4)\\1(2)+6(6)+5(4)\end{bmatrix}
+=\begin{bmatrix}50\\58\end{bmatrix},\\
+\boldsymbol\theta^{\mathsf T}S^{\mathsf T}
+&amp;=\begin{bmatrix}50&amp;58\end{bmatrix},\\
+\widetilde S&amp;=\begin{bmatrix}2&amp;3\\7&amp;1\\6&amp;5\end{bmatrix}\ \ \text{(reshape)},\\
+\boldsymbol\theta^{\mathsf T}\widetilde S
+&amp;=\begin{bmatrix}4+42+24&amp;6+6+20\end{bmatrix}\\
+&amp;=\begin{bmatrix}70&amp;32\end{bmatrix}.
+\end{aligned}\]</div>
+  <p><strong>คำตอบ:</strong> transpose ให้ \$50 กับ \$58 เท่าเดิม แค่เปลี่ยนจากคอลัมน์เป็นแถว reshape ให้ \$70 กับ \$32 เพราะแถวที่สองของ $\widetilde S$ คือ $(7,1)$ ซึ่งเอา payoff สัญญา 3 สถานะขึ้นมาคู่กับ payoff สัญญา 1 สถานะลง แล้วคูณทั้งคู่ด้วย 6 ซึ่งเป็นจำนวนที่ถือของสัญญา 2 ทุกตัวเลขถูก แต่ไม่มีคู่ไหนเป็นของสัญญาเดียวกัน</p>
+  <p>บทเรียนเชิงปฏิบัติ: reshape กลับขนาดเดิมก็คืนตารางเดิมได้ การทดสอบแบบ “แปลงไปแล้วแปลงกลับ” จึงจับความผิดนี้ไม่ได้ ต้องทดสอบว่า $(S^{\mathsf T})_{ji}=S_{ij}$ ทุกช่อง และตรวจว่าชื่อแกนย้ายตามด้วย ตาราง pandas ที่ใช้ <code>df.T</code> พาชื่อแถวคอลัมน์ไปด้วยให้ ส่วน <code>reshape</code> ของ array ไม่รู้จักชื่ออะไรเลย</p>
 </section>
+
+<section class="formula">
+  <h4>ขั้นที่ 5 — ทำไม transpose ของผลคูณต้องกลับลำดับ</h4>
+  <p>ใน <a href="7.1.html">หน้าที่แล้ว</a> กำไรขาดทุนจากแบบจำลองนับได้สองทาง ทีละหุ้นคือ $\mathbf w^{\mathsf T}(A\mathbf f)$ ทีละ factor คือ $\mathbf e^{\mathsf T}\mathbf f$ กับ $\mathbf e=A^{\mathsf T}\mathbf w$ สองทางเท่ากันเพราะกฎข้อนี้ ให้ $P$ ขนาด $m\times n$ และ $Q$ ขนาด $n\times p$</p>
+  <div class="math">\[\begin{aligned}
+\big((PQ)^{\mathsf T}\big)_{ij}&amp;=(PQ)_{ji}=\sum_{k=1}^{n}P_{jk}Q_{ki}\\
+&amp;=\sum_{k=1}^{n}(Q^{\mathsf T})_{ik}(P^{\mathsf T})_{kj}\\
+&amp;=(Q^{\mathsf T}P^{\mathsf T})_{ij},\\
+(PQ)^{\mathsf T}&amp;=Q^{\mathsf T}P^{\mathsf T}.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดแรกใช้นิยามของ transpose แล้วนิยามการคูณ บรรทัดที่สองคือจุดที่ต้องดูให้ดี: $P_{jk}Q_{ki}$ เป็นผลคูณของ<em>ตัวเลข</em>สองตัว จึงสลับลำดับได้ แล้วเขียนแต่ละตัวใหม่เป็นช่องของ transpose เราไม่ได้สมมติว่า matrix สลับลำดับการคูณได้ ซึ่งไม่จริงโดยทั่วไป เช็กขนาดก็ได้ผลเดียวกัน: $(PQ)^{\mathsf T}$ ขนาด $p\times m$ และ $Q^{\mathsf T}P^{\mathsf T}$ คือ $(p\times n)(n\times m)$ ขนาด $p\times m$ พอดี ส่วน $P^{\mathsf T}Q^{\mathsf T}$ มักคูณไม่ได้ด้วยซ้ำ</p>
+    <p>นึกถึงการใส่ถุงเท้าแล้วใส่รองเท้า การถอดต้องกลับลำดับ ใช้กับกำไรขาดทุน: $\mathbf w^{\mathsf T}A\mathbf f$ เป็นตัวเลขตัวเดียว ซึ่งพลิกแล้วได้ตัวเอง จึงเท่ากับ $(\mathbf w^{\mathsf T}A\mathbf f)^{\mathsf T}=\mathbf f^{\mathsf T}A^{\mathsf T}\mathbf w=\mathbf f^{\mathsf T}\mathbf e$ สามตัวกลับลำดับเป็น $R^{\mathsf T}Q^{\mathsf T}P^{\mathsf T}$ ตามกฎเดิมสองรอบ</p>
+  </div>
+  <p>ถ้าทั้งสองเป็นจัตุรัส ลำดับผิดยังคูณได้และได้ขนาดถูก จึงอันตรายกว่า ลองกับ $P=\begin{bmatrix}1&amp;2\\0&amp;1\end{bmatrix}$ และ $Q=\begin{bmatrix}1&amp;0\\3&amp;1\end{bmatrix}$</p>
+  <div class="math">\[\begin{aligned}
+PQ&amp;=\begin{bmatrix}7&amp;2\\3&amp;1\end{bmatrix},\quad
+(PQ)^{\mathsf T}=Q^{\mathsf T}P^{\mathsf T}=\begin{bmatrix}7&amp;3\\2&amp;1\end{bmatrix},\\
+P^{\mathsf T}Q^{\mathsf T}&amp;=\begin{bmatrix}1&amp;0\\2&amp;1\end{bmatrix}\begin{bmatrix}1&amp;3\\0&amp;1\end{bmatrix}
+=\begin{bmatrix}1&amp;3\\2&amp;7\end{bmatrix}.
+\end{aligned}\]</div>
+</section>
+
+<section class="formula">
+  <h4>ขั้นที่ 6 — covariance matrix พลิกแล้วได้ตัวเดิม</h4>
+  <p>ให้ $R_1,\dots,R_n$ เป็นผลตอบแทนของสินทรัพย์ $n$ ตัวในงวดเดียวกัน ค่าเฉลี่ย $\mu_i$ ช่อง $(i,j)$ ของ covariance matrix คือค่าเฉลี่ยของผลคูณส่วนเบี่ยงเบน</p>
+  <div class="math">\[\begin{aligned}
+\Sigma_{ij}&amp;=E\big[(R_i-\mu_i)(R_j-\mu_j)\big]\\
+&amp;=E\big[(R_j-\mu_j)(R_i-\mu_i)\big]=\Sigma_{ji},\\
+\Sigma^{\mathsf T}&amp;=\Sigma.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ความสมมาตรมาจากเรื่องเดียว: ผลคูณของตัวเลขสองตัวสลับลำดับได้ ไม่ได้มาจากความอิสระ และไม่ได้แปลว่าสินทรัพย์เสี่ยงเท่ากัน ช่องนอกแนวทแยงเป็นบวก ลบ หรือศูนย์ก็ได้ แนวทแยงคือ <a href="1.4.html">variance</a> ของแต่ละตัว รูปด้านล่างทดลองกับข้อมูลสี่วันสมมติ: สลับแกน $x$ กับ $y$ ทำให้กลุ่มจุดสะท้อนข้ามเส้นทแยง แต่ผลคูณ $x\cdot y$ ของทุกวันเท่าเดิม covariance จึงเท่าเดิม สิ่งที่เปลี่ยนคือ variance สองตัวบนแนวทแยงสลับที่กัน</p>
+    <p>ข้อใช้งาน: ตาราง covariance ที่ระบบส่งมาแล้วไม่สมมาตร บอกว่ามีอะไรผิด เช่นชื่อสินทรัพย์เรียงไม่ตรงกัน หรือสองช่องคำนวณจากช่วงวันต่างกัน ต้องหาสาเหตุก่อน การแก้ด้วย $(C+C^{\mathsf T})/2$ ใช้ได้เฉพาะเมื่อยืนยันแล้วว่าความต่างเป็นแค่เศษจากการปัด</p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — สลับแกนแล้ว covariance เท่าเดิม</h4>
+  <svg viewBox="0 0 480 300" role="img" aria-label="จุดสีน้ำเงินสี่จุดคือผลตอบแทนสี่วัน จุดโปร่งสีส้มคือจุดเดียวกันที่สลับแกน สะท้อนข้ามเส้นทแยง เส้นประเชื่อมแต่ละคู่" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <g stroke="#d7dce3" stroke-width="1">
+        <line x1="128" y1="26" x2="128" y2="278"/><line x1="164" y1="26" x2="164" y2="278"/><line x1="236" y1="26" x2="236" y2="278"/><line x1="272" y1="26" x2="272" y2="278"/><line x1="308" y1="26" x2="308" y2="278"/>
+        <line x1="92" y1="62" x2="344" y2="62"/><line x1="92" y1="98" x2="344" y2="98"/><line x1="92" y1="134" x2="344" y2="134"/><line x1="92" y1="206" x2="344" y2="206"/><line x1="92" y1="242" x2="344" y2="242"/>
+      </g>
+      <line x1="92" y1="170" x2="344" y2="170" stroke="#5b6472" stroke-width="2"/>
+      <line x1="200" y1="26" x2="200" y2="278" stroke="#5b6472" stroke-width="2"/>
+      <line x1="92" y1="278" x2="344" y2="26" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <g stroke="#5b6472" stroke-width="1.2" stroke-dasharray="3 3">
+        <line x1="308" y1="134" x2="236" y2="62"/>
+        <line x1="164" y1="134" x2="236" y2="206"/>
+        <line x1="164" y1="170" x2="200" y2="206"/>
+        <line x1="164" y1="242" x2="128" y2="206"/>
+      </g>
+      <g fill="#2455d6">
+        <circle cx="308" cy="134" r="6"/><circle cx="164" cy="134" r="6"/><circle cx="164" cy="170" r="6"/><circle cx="164" cy="242" r="6"/>
+      </g>
+      <g fill="#fff" stroke="#a65f00" stroke-width="2.5">
+        <circle cx="236" cy="62" r="7"/><circle cx="236" cy="206" r="7"/><circle cx="200" cy="206" r="7"/><circle cx="128" cy="206" r="7"/>
+      </g>
+      <g fill="#5b6472" font-size="13" text-anchor="middle">
+        <text x="128" y="186">−2</text><text x="272" y="186">2</text><text x="308" y="186">3</text>
+        <text x="190" y="102" text-anchor="end">2</text><text x="190" y="246" text-anchor="end">−2</text>
+      </g>
+      <text x="344" y="162" text-anchor="end" fill="#5b6472" font-size="14">x (%)</text>
+      <text x="206" y="40" fill="#5b6472" font-size="14">y (%)</text>
+      <circle cx="362" cy="210" r="6" fill="#2455d6"/>
+      <text x="374" y="215" font-size="14">วันจริง (x, y)</text>
+      <circle cx="362" cy="236" r="7" fill="#fff" stroke="#a65f00" stroke-width="2.5"/>
+      <text x="374" y="241" font-size="14">สลับแกน (y, x)</text>
+      <text x="356" y="270" font-size="14">Cov = 4/3 ทั้งคู่</text>
+    </g>
+  </svg>
+  <figcaption>จุดน้ำเงินคือผลตอบแทนสี่วันสมมติ $(3,1),(-1,1),(-1,0),(-1,-2)$ เปอร์เซ็นต์ ค่าเฉลี่ยเป็นศูนย์ทั้งสองแกน จุดส้มคือจุดเดียวกันที่สลับแกน จึงสะท้อนข้ามเส้นทแยงประ ผลคูณรายวัน $3,-1,0,2$ ไม่เปลี่ยนเมื่อสลับ ผลรวม 4 หารด้วย $4-1=3$ ได้ covariance $4/3$ ทั้งสองแบบ แต่ variance ของแกนนอนกับแกนตั้ง (4 และ 2) สลับที่กัน กลุ่มจุดเปลี่ยนรูป แต่ช่องนอกแนวทแยงไม่ขยับ</figcaption>
+</figure>
+
+<section class="formula">
+  <h4>ขั้นที่ 7 — variance ของพอร์ตคือ $\mathbf w^{\mathsf T}\Sigma\mathbf w$</h4>
+  <p>ผลตอบแทนพอร์ตที่น้ำหนักคงที่คือ $R_p=\mathbf w^{\mathsf T}\mathbf R=\sum_iw_iR_i$ ส่วนเบี่ยงเบนจากค่าเฉลี่ยของพอร์ตจึงเป็นผลรวมถ่วงน้ำหนักของส่วนเบี่ยงเบนรายตัว ยกกำลังสองแล้วเฉลี่ย</p>
+  <div class="math">\[\begin{aligned}
+\operatorname{Var}(R_p)&amp;=E\Big[\Big(\sum_iw_i(R_i-\mu_i)\Big)^2\Big]\\
+&amp;=\sum_i\sum_jw_iw_j\,E\big[(R_i-\mu_i)(R_j-\mu_j)\big]\\
+&amp;=\sum_i\sum_jw_i\Sigma_{ij}w_j=\mathbf w^{\mathsf T}\Sigma\mathbf w.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>บรรทัดที่สองคือการกระจายกำลังสองของผลรวม ได้ผลคูณครบทุกคู่ $(i,j)$ แล้วดึงน้ำหนักซึ่งเป็นค่าคงที่ออกนอกค่าเฉลี่ย บรรทัดสุดท้ายเขียนผลรวมสองชั้นเป็นแถวคูณ matrix คูณคอลัมน์ $\mathbf w$ อยู่สองข้างเพราะกำลังสองให้น้ำหนักสองตัว ไม่ใช่เพราะอยากเติม transpose ให้ขนาดพอดี ผลออกมาขนาด $(1\times n)(n\times n)(n\times1)$ คือตัวเลขเดียว</p>
+  </div>
+  <p>ตัวอย่างสองสินทรัพย์: variance รายปี 0.1 และ 0.5 correlation −0.25 จึงมี covariance $-0.25\sqrt{0.1}\sqrt{0.5}\approx-0.0559$ น้ำหนัก $\mathbf w=(0.6,0.4)^{\mathsf T}$</p>
+  <div class="math">\[\begin{aligned}
+\Sigma&amp;=\begin{bmatrix}0.1&amp;-0.0559\\-0.0559&amp;0.5\end{bmatrix},\\
+\Sigma\mathbf w&amp;=\begin{bmatrix}0.06-0.02236\\-0.03354+0.20\end{bmatrix}
+=\begin{bmatrix}0.03764\\0.16646\end{bmatrix},\\
+\sigma_p^2&amp;=0.6(0.03764)+0.4(0.16646)\\
+&amp;=0.089168,\\
+\sigma_p&amp;=\sqrt{0.089168}\approx0.2986.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ความผันผวนของพอร์ตคือ 29.86% ต่อปี ตรวจด้วยสูตรสองสินทรัพย์ก็ได้ $0.6^2(0.1)+2(0.6)(0.4)(-0.0559)+0.4^2(0.5)=0.036-0.026832+0.08=0.089168$ เลข 2 ข้างหน้าพจน์ไขว้มาจากสองช่องนอกแนวทแยงที่เท่ากันเพราะความสมมาตร ดังรูปด้านล่าง ถ้าลืมพจน์ไขว้จะได้ 0.116 ซึ่งคือพอร์ตในโลกที่ correlation เป็นศูนย์ ไม่ใช่พอร์ตนี้</p>
+    <p>แต่ละช่องของ $\Sigma\mathbf w$ มีความหมายของตัวเอง: $(\Sigma\mathbf w)_i=\sum_j\operatorname{Cov}(R_i,R_j)w_j=\operatorname{Cov}(R_i,R_p)$ คือ covariance ของสินทรัพย์ $i$ กับพอร์ตทั้งก้อน หารด้วย $\sigma_p^2$ ได้ 0.42 และ 1.87 สินทรัพย์ที่สองมีน้ำหนักแค่ 40% แต่ขยับไปกับพอร์ตแรงกว่าพอร์ตเกือบสองเท่า เรื่องการแบ่งความเสี่ยงแบบนี้ทำต่อใน <a href="7.3.html">matrix multiplication</a></p>
+  </div>
+</section>
+
+<figure class="plot">
+  <h4>รูป — สี่ช่องของ variance พอร์ต และสองช่องไขว้ที่เท่ากัน</h4>
+  <svg viewBox="0 0 480 320" role="img" aria-label="ตารางสองคูณสองของพจน์ variance พื้นที่สี่เหลี่ยมแทนขนาด ช่องแนวทแยงสีน้ำเงิน 0.036 และ 0.08 ช่องไขว้สีแดงลบ 0.0134 สองช่องขนาดเท่ากันสะท้อนข้ามแนวทแยง" style="display:block;width:100%;height:auto;background:#fff;border-radius:.25rem">
+    <g font-size="15" fill="#181818">
+      <text x="150" y="30" text-anchor="middle" font-size="14">สินทรัพย์ 1</text>
+      <text x="310" y="30" text-anchor="middle" font-size="14">สินทรัพย์ 2</text>
+      <text x="12" y="99" font-size="14">สินทรัพย์ 1</text>
+      <text x="12" y="239" font-size="14">สินทรัพย์ 2</text>
+      <line x1="90" y1="42.5" x2="380" y2="296" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="6 5"/>
+      <rect x="109.75" y="54.75" width="80.5" height="80.5" fill="#2455d6"/>
+      <rect x="250" y="175" width="120" height="120" fill="#2455d6"/>
+      <rect x="285.45" y="70.45" width="49.1" height="49.1" fill="#d82632"/>
+      <rect x="125.45" y="210.45" width="49.1" height="49.1" fill="#d82632"/>
+      <text x="150" y="100" text-anchor="middle" fill="#fff" font-size="14">+0.0360</text>
+      <text x="310" y="240" text-anchor="middle" fill="#fff">+0.0800</text>
+      <text x="310" y="140" text-anchor="middle" fill="#d82632" font-size="14">−0.0134</text>
+      <text x="150" y="280" text-anchor="middle" fill="#d82632" font-size="14">−0.0134</text>
+      <text x="392" y="70" font-size="14">รวมสี่ช่อง</text>
+      <text x="392" y="92" font-size="14">= 0.0892</text>
+      <text x="392" y="130" font-size="14" fill="#5b6472">σ ≈ 29.9%</text>
+    </g>
+  </svg>
+  <figcaption>ช่อง $(i,j)$ คือพจน์ $w_iw_j\Sigma_{ij}$ พื้นที่ของสี่เหลี่ยมแทนขนาดของพจน์ น้ำเงินคือบวก แดงคือลบ ช่องบนแนวทแยงคือ $0.6^2(0.1)=0.036$ และ $0.4^2(0.5)=0.08$ สองช่องไขว้คือ $0.6(0.4)(-0.0559)\approx-0.0134$ เท่ากันเป๊ะ และอยู่ตรงข้ามกันบนเส้นทแยงประ นี่คือที่มาของเลข 2 ในสูตรสองสินทรัพย์ correlation ติดลบทำให้สองช่องไขว้หักความเสี่ยงออกจากพอร์ต</figcaption>
+</figure>
+
+<section class="pitfall">
+  <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
+  <p><strong>ใช้ reshape แทน transpose:</strong> ได้ขนาดถูกแต่จับคู่ผิด payoff เปลี่ยนจาก $(50,58)$ เป็น $(70,32)$ โดยไม่มี error ใด ๆ</p>
+  <p><strong>ลืมกลับลำดับ:</strong> เขียน $(PQ)^{\mathsf T}$ เป็น $P^{\mathsf T}Q^{\mathsf T}$ กับ matrix จัตุรัสยังคูณได้ แต่ได้ $\begin{bmatrix}1&amp;3\\2&amp;7\end{bmatrix}$ แทน $\begin{bmatrix}7&amp;3\\2&amp;1\end{bmatrix}$</p>
+  <p><strong>ใช้ transpose แทน inverse:</strong> $D=\operatorname{diag}(2,3)$ พลิกแล้วได้ตัวเดิม ถ้าใช้ $D^{\mathsf T}$ “ย้อน” การยืด จะยืดซ้ำเป็น 4 และ 9 แทนที่จะกลับเป็น 1</p>
+  <p><strong>quadratic form ไม่ได้เป็น variance เสมอ:</strong> $B=\begin{bmatrix}2&amp;1\\0&amp;3\end{bmatrix}$ กับ $\mathbf x=(1,2)$ ให้ $\mathbf x^{\mathsf T}B\mathbf x=4+12=16$ ตัวเลขเดียวเหมือนกัน แต่ $B$ ไม่สมมาตร จึงไม่ใช่ covariance ของอะไรเลย และต่อให้สมมาตร ก็ยังใช้ไม่ได้เสมอ: $C=\begin{bmatrix}1&amp;2\\2&amp;1\end{bmatrix}$ กับ $\mathbf a=(1,-1)$ ให้ $\mathbf a^{\mathsf T}C\mathbf a=1-2-2+1=-2$ variance ติดลบเป็นไปไม่ได้ ตารางนี้จึงไม่ใช่ covariance ที่ใช้ได้ เงื่อนไขที่ขาดไปคือ positive semidefinite ซึ่งตรวจด้วย <a href="7.6.html">eigenvalues</a></p>
+  <p><strong>symmetrize เพื่อปิดปัญหา:</strong> เฉลี่ย $(C+C^{\mathsf T})/2$ ทำให้ตารางสมมาตร แต่ถ้าความไม่สมมาตรมาจากชื่อเรียงผิด ค่าเฉลี่ยของสองช่องที่ผิดก็ยังผิด แค่ดูเรียบร้อยขึ้น</p>
+</section>
+
+<section class="example">
+  <h4>โจทย์ตรวจความเข้าใจ</h4>
+  <p><strong>1.</strong> ตาราง loading $A$ ใน <a href="7.1.html">What a Matrix Is</a> มีแถว AAPL, MSFT, JPM และคอลัมน์ Market, Quality หลัง transpose ช่องแถว Market คอลัมน์ JPM มีค่าเท่าไร และเป็นความไวของอะไรต่ออะไร</p>
+  <details><summary>เฉลย</summary><p>1.5 คือช่อง $(A^{\mathsf T})_{13}=A_{31}$ ยังเป็นความไวของ JPM ต่อ Market เหมือนเดิม การพลิกตารางเปลี่ยนทิศที่เราอ่าน ไม่ได้กลับความหมายเป็น “ความไวของ Market ต่อ JPM”</p></details>
+  <p><strong>2.</strong> ในตัวอย่าง variance พอร์ต ถ้าน้ำหนักเพิ่มเป็นสองเท่าทั้งคู่ คือ $(1.2,0.8)$ variance และความผันผวนเป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>$(2\mathbf w)^{\mathsf T}\Sigma(2\mathbf w)=4\,\mathbf w^{\mathsf T}\Sigma\mathbf w=4(0.089168)=0.356672$ ความผันผวน $\sqrt{0.356672}\approx0.5972$ หรือ 59.72% คือสองเท่าของ 29.86% variance โตตามกำลังสองของขนาดพอร์ต ความผันผวนโตเป็นเส้นตรง</p></details>
+  <p><strong>3.</strong> $A$ ขนาด $2\times3$, $B$ ขนาด $3\times4$ และ $\mathbf c$ ขนาด $4\times1$ เขียน $(AB\mathbf c)^{\mathsf T}$ ในรูปผลคูณของ transpose และตรวจขนาดทุกตัว</p>
+  <details><summary>เฉลย</summary><p>$(AB\mathbf c)^{\mathsf T}=\mathbf c^{\mathsf T}B^{\mathsf T}A^{\mathsf T}$ ขนาด $(1\times4)(4\times3)(3\times2)$ ได้ $1\times2$ ตรงกับ $AB\mathbf c$ ที่มีขนาด $2\times1$ ส่วนลำดับเดิม $A^{\mathsf T}B^{\mathsf T}\mathbf c^{\mathsf T}$ คือ $(3\times2)(4\times3)\cdots$ ซึ่งคูณไม่ได้ตั้งแต่คู่แรก</p></details>
+</section>
+
 <section class="code">
-<h2>JavaScript: ตรวจทีละช่อง ไม่ใช่แค่ตรวจ shape</h2>
-<p>โค้ดนี้แทน matrices ด้วย arrays ซ้อนสองชั้น เช่น column vector ใช้ <code>[[1], [2], [3]]</code> ส่วน <code>[1, 2, 3]</code> เป็น list ที่ยังไม่ได้ระบุทิศในสัญญาของฟังก์ชันนี้ จึงไม่รับเป็น matrix</p>
-<pre><code class="language-javascript" data-example="7.2">function shape(A) {
-  if (!Array.isArray(A) || !A.length || !Array.isArray(A[0]) || !A[0].length) {
-    throw new TypeError('Need a nonempty rectangular matrix');
-  }
-  const n = A[0].length;
-  if ([...A].some(row =&gt; !Array.isArray(row) || row.length !== n || ![...row].every(Number.isFinite))) {
-    throw new TypeError('Need a finite rectangular matrix');
-  }
-  return [A.length, n];
-}
-function transpose(A) {
-  const [, n] = shape(A);
-  return Array.from({length: n}, (_, j) =&gt; A.map(row =&gt; row[j]));
-}
+  <h4>คำนวณซ้ำด้วย JavaScript</h4>
+  <p>โค้ดเทียบ transpose กับ reshape ตรวจกฎกลับลำดับ และคำนวณ variance พอร์ตทั้งแบบ matrix และแบบสูตรสองสินทรัพย์</p>
+  <details><summary>เปิดดูโค้ด</summary>
+  <pre><code class="language-javascript" data-example="7.2">const transpose = A =&gt; A[0].map((_, j) =&gt; A.map(row =&gt; row[j]));
 function multiply(A, B) {
-  const [, n] = shape(A), [m] = shape(B);
-  if (n !== m) throw new RangeError('Matrix dimensions do not match');
+  if (A[0].length !== B.length) throw new Error('inner sizes do not match');
   const Bt = transpose(B);
   return A.map(row =&gt; Bt.map(col =&gt; row.reduce((s, x, k) =&gt; s + x * col[k], 0)));
 }
-const column = xs =&gt; xs.map(x =&gt; [x]);
-const A = [[1.2, .4], [.9, .2], [1.5, .7]], At = transpose(A);
-const u = column([1, -2, 3]), v = column([4, .5, -1]);
-const S = [[2, 3, 7], [1, 6, 5]], theta = column([2, 6, 4]);
-const wrongReshape = [[2, 3], [7, 1], [6, 5]];
+const reshape = (A, m, n) =&gt; { const flat = A.flat();
+  return Array.from({length: m}, (_, i) =&gt; flat.slice(i * n, i * n + n)); };
+
+const S = [[2, 3, 7], [1, 6, 5]], thetaRow = [[2, 6, 4]];
+console.log(multiply(thetaRow, transpose(S)));    // [[50, 58]]
+console.log(multiply(thetaRow, reshape(S, 3, 2))); // [[70, 32]]  wrong pairing
+
 const P = [[1, 2], [0, 1]], Q = [[1, 0], [3, 1]];
-const Sigma = [[.1, -.0559], [-.0559, .5]], w = column([.6, .4]);
-const sigmaw = multiply(Sigma, w), variance = multiply(transpose(w), sigmaw)[0][0];
-const B = [[2, 1], [0, 3]], x = column([1, 2]);
-const symmetricPart = B.map((row, i) =&gt; row.map((b, j) =&gt; (b + B[j][i]) / 2));
-const badCov = [[1, 2], [2, 1]], a = column([1, -1]);
-console.log(JSON.stringify({
-  shapeA: shape(A), shapeAt: shape(At), At, twice: transpose(At), witness: At[0][2],
-  allCells: A.every((row, i) =&gt; row.every((value, j) =&gt; At[j][i] === value)),
-  inner: multiply(transpose(u), v), reversedInner: multiply(transpose(v), u), outer: multiply(u, transpose(v)),
-  payoffs: multiply(S, theta), rowPayoffs: multiply(transpose(theta), transpose(S)),
-  wrongPayoffs: multiply(transpose(theta), wrongReshape),
-  transposedProduct: transpose(multiply(P, Q)), reversedProduct: multiply(transpose(Q), transpose(P)),
-  wrongProduct: multiply(transpose(P), transpose(Q)), sigmaw, variance, sd: Math.sqrt(variance),
-  noCovVariance: .6 ** 2 * .1 + .4 ** 2 * .5,
-  doubledVariance: multiply(transpose(column([1.2, .8])), multiply(Sigma, column([1.2, .8])))[0][0],
-  Bx: multiply(B, x), quadratic: multiply(transpose(x), multiply(B, x))[0][0],
-  symmetricQuadratic: multiply(transpose(x), multiply(symmetricPart, x))[0][0],
-  invalidVariance: multiply(transpose(a), multiply(badCov, a))[0][0]
-}));</code></pre>
+console.log(transpose(multiply(P, Q)));             // [[7,3],[2,1]]
+console.log(multiply(transpose(Q), transpose(P)));  // same
+console.log(multiply(transpose(P), transpose(Q)));  // [[1,3],[2,7]] wrong order
+
+const Sigma = [[0.1, -0.0559], [-0.0559, 0.5]], w = [[0.6], [0.4]];
+const Sw = multiply(Sigma, w);                      // 0.03764, 0.16646
+const V = multiply(transpose(w), Sw)[0][0];         // 0.089168
+console.log(Sw, V, Math.sqrt(V),
+  0.36 * 0.1 + 2 * 0.24 * -0.0559 + 0.16 * 0.5,    // same V
+  Sw.map(r =&gt; r[0] / V));                           // 0.42, 1.87
+
+const days = [[3, 1], [-1, 1], [-1, 0], [-1, -2]];
+const cov = d =&gt; d.reduce((s, [x, y]) =&gt; s + x * y, 0) / (d.length - 1);
+console.log(cov(days), cov(days.map(([x, y]) =&gt; [y, x]))); // 4/3 both</code></pre>
+  </details>
 </section>
-<details class="jargon"><summary>ศัพท์และสิ่งที่อย่าสับสน</summary><dl>
-<dt>Transpose</dt><dd>สลับดัชนีแถวและคอลัมน์ของข้อมูล โดยชื่อแกนต้องย้ายตาม</dd>
-<dt>Reshape</dt><dd>จัดรูป array ใหม่ตามลำดับที่กำหนด ไม่ใช่การสลับดัชนีตามนิยาม transpose</dd>
-<dt>Symmetric</dt><dd>Matrix จัตุรัสที่เท่ากับ transpose ของตัวเอง ไม่ได้แปลว่าเป็น inverse ของตัวเอง</dd>
-<dt>Quadratic form</dt><dd>นิพจน์ $x^{\mathsf T}Bx$ ที่ให้ scalar สำหรับ square matrix B; จะเป็น variance ต้องมีเงื่อนไขเพิ่มเติม</dd>
-</dl></details>
-<details><summary>ที่มาสั้น ๆ</summary><p>งานพีชคณิต matrix ของ Cayley ในศตวรรษที่ 19 ทำให้การจัดรูปผลรวมและ quadratic forms มีภาษากระชับ ต่อมาแนวคิด mean–variance ของ Markowitz ในปี 1952 ทำให้ covariance เป็นแกนกลางของการเลือกพอร์ต แต่ variance คำนวณด้วยผลรวมสองชั้นได้อยู่แล้ว Transpose ช่วยเขียนและตรวจโครงสร้าง ไม่ได้สร้างความเสี่ยงขึ้นจากสัญกรณ์</p></details>
+
 <section class="takeaways">
-<h2>ก่อนส่งตารางต่อให้ระบบอื่น</h2>
-<ul>
-<li>ตรวจชื่อแกนและค่าทีละช่อง: $(A^{\mathsf T})_{ji}=A_{ij}$; shape และ round-trip อย่างเดียวไม่พอ</li>
-<li>Transpose ของผลคูณต้องกลับลำดับ แม้ลำดับผิดยังคูณกันได้</li>
-<li>Inner product เป็น scalar แต่ outer product เป็น matrix; วาง transpose คนละที่คือถามคนละคำถาม</li>
-<li>Covariance ต้อง symmetric และให้ variance ไม่ติดลบ ไม่ใช่ทุก quadratic form จะเป็นความเสี่ยง</li>
-</ul>
-<p>เมื่อรู้ว่าตัวเลขแต่ละช่องย้ายไปไหนแล้ว หัวข้อ 7.3 จะดูว่าการคูณสอง matrices รวมกติกาหลายขั้นเข้าด้วยกันอย่างไร</p>
+  <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
+  <ul>
+    <li>$(A^{\mathsf T})_{ji}=A_{ij}$ ชื่อแถวคอลัมน์ย้ายตามตัวเลข และ reshape ไม่ใช่ transpose แม้ได้ขนาดเดียวกัน ($70,32$ แทน $50,58$)</li>
+    <li>transpose ไม่ใช่ inverse: การเฉือน $P$ ถูกย้อนด้วย $P^{-1}$ ไม่ใช่ $P^{\mathsf T}$</li>
+    <li>$\mathbf u^{\mathsf T}\mathbf v$ ให้ตัวเลขเดียว $\mathbf u\mathbf v^{\mathsf T}$ ให้ตารางที่ทุกแถวเป็นรูปแบบเดียวกัน</li>
+    <li>$(PQ)^{\mathsf T}=Q^{\mathsf T}P^{\mathsf T}$ เพราะผลคูณของตัวเลขสลับได้ และนี่คือเหตุผลที่กำไรขาดทุนนับทีละหุ้นหรือทีละ factor ได้เท่ากัน</li>
+    <li>covariance matrix สมมาตรเสมอ variance พอร์ตคือ $\mathbf w^{\mathsf T}\Sigma\mathbf w$ (0.089168 ในตัวอย่าง) และ $\Sigma\mathbf w$ คือ covariance ของแต่ละสินทรัพย์กับพอร์ต</li>
+  </ul>
+  <p>ทั้งหน้านี้ใช้การคูณ matrix ไปหลายรอบโดยยังไม่ได้ถามว่ากติกา “แถวคูณคอลัมน์” มาจากไหน หน้าถัดไป <a href="7.3.html">Matrix Multiplication</a> สร้างกติกานี้จากการต่อเครื่องแปลงสองเครื่อง แล้วใช้มันแบ่งความเสี่ยงของพอร์ตให้แต่ละสินทรัพย์</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
