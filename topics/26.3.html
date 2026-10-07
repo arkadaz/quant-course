@@ -18,16 +18,59 @@
 <article class="topic" data-number="26.3" data-depends-on="7.5 7.6 8.2 8.9 15.1 17.4 26.1 26.2">
 <header class="topic-header">
   <h1><span class="tnum">26.3</span> Rotations, Projections, and Push-Outs</h1>
-  <p class="subtitle">factor model เดียวกันเขียนได้หลายแบบโดยที่ผลตอบแทน กำไรขาดทุนรวม และความเสี่ยงรวมไม่ขยับ แต่คำตอบว่า factor ไหนทำเงินหรือเสียเงินขยับตามแบบที่เลือก และการลดหรือเพิ่มจำนวน factor มีราคาที่ต้องจ่าย</p>
+  <p class="subtitle">factor model ตัวเดียวกันเขียนได้หลายแบบ ทุกแบบให้ผลตอบแทนของหุ้น กำไรขาดทุนรวม และความเสี่ยงรวมเท่ากัน แต่คำตอบว่า factor ไหนทำเงินหรือเสียเงินเปลี่ยนตามแบบที่เลือก ส่วนการลดหรือเพิ่มจำนวน factor มีราคาที่ต้องจ่าย</p>
 </header>
 <div class="hook">
-  <p>พอร์ต dollar-neutral ที่ถือ A \$3 ล้าน B −\$2 ล้าน C \$4 ล้าน D −\$5 ล้าน เสียเงินจาก factor \$66,000 ในวันเดียว รายงาน A บอกว่า momentum เสีย \$69,000 tech ได้ \$3,000 และ market \$0 รายงาน B จาก risk model ตัวเดียวกันที่ผู้ให้บริการแปลงให้ factor ไม่สัมพันธ์กัน บอกว่า market เสีย \$5,528 momentum เสีย \$61,272 และ tech ได้ \$800 ผู้จัดการพอร์ตแย้งว่า “exposure ต่อ market ของเราเป็นศูนย์ รายงาน B ต้องผิด” จริงไหม?</p>
-  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่จริง ทั้งสองฉบับถูก รวมได้ −\$66,000 เท่ากัน และให้ความเสี่ยงจาก factor \$48,063 ต่อวันเท่ากัน รายงาน B วัด factor แต่ละตัวหลังหักส่วนที่ขยับตามตลาดออก momentum ขยับตามตลาดด้วย correlation −0.20 เดิมพัน momentum \$13.8 ล้าน จึงพก beta ต่อตลาดไว้ $13.8\times(-0.07)=-0.966$ ล้าน tech พกอีก +0.275 ล้าน รวม −\$0.691 ล้าน วันที่ตลาดขึ้น 0.80% จึงเสีย \$5,528 ในบรรทัด market การแบ่งเป็นการเลือกระบบพิกัด ยอดรวมไม่เคยขึ้นกับมัน</p></details>
+  <p>ทุกเช้า ทีมความเสี่ยงของกองทุนได้รายงานฉบับหนึ่ง รายงานนี้บอกว่าเมื่อวานพอร์ตได้หรือเสียเงินเพราะอะไร เช่น เพราะตลาดทั้งตลาดขึ้น หรือเพราะหุ้นกลุ่มหนึ่งถูกเทขาย การแบ่งกำไรขาดทุนตามต้นเหตุแบบนี้เรียกว่า attribution</p>
+  <p>พอร์ตในเรื่องนี้คือพอร์ตหุ้นสี่ตัวจากหน้า<a href="26.1.html">สมการ factor model</a> ตัวเลขลบแปลว่าขาย short คือยืมหุ้นมาขาย และได้เงินเมื่อราคาลง</p>
+  <ul>
+    <li>หุ้น A ซื้อไว้ \$3 ล้าน</li>
+    <li>หุ้น B ขาย short \$2 ล้าน (เขียนเป็น −\$2 ล้าน)</li>
+    <li>หุ้น C ซื้อไว้ \$4 ล้าน</li>
+    <li>หุ้น D ขาย short \$5 ล้าน (เขียนเป็น −\$5 ล้าน)</li>
+  </ul>
+  <p>เงินฝั่งซื้อเท่าฝั่งขายพอดี เพราะ $3-2+4-5=0$ พอร์ตแบบนี้เรียกว่า dollar-neutral</p>
+  <p>รายงานใช้ factor model คือแบบจำลองที่บอกว่าหุ้นทุกตัวขยับตามแรงร่วมไม่กี่ตัว แรงร่วมนี้เรียกว่า factor ในที่นี้มีสามตัว</p>
+  <ul>
+    <li>market คือการขึ้นลงของตลาดทั้งตลาด เมื่อวานขึ้น 0.80%</li>
+    <li>momentum คือแรงที่ดันหุ้นที่ราคาวิ่งดีมาก่อน เมื่อวานลง 0.50%</li>
+    <li>tech คือแรงที่ดันหุ้นกลุ่มเทคโนโลยี เมื่อวานขึ้น 0.30%</li>
+  </ul>
+  <p>หน้า<a href="26.1.html">สมการ factor model</a>คำนวณไว้แล้วว่าพอร์ตนี้เดิมพันกับ factor แต่ละตัวเท่าไร ตัวเลขนี้เรียกว่า exposure หน่วยเป็น \$ ล้าน ของพอร์ตนี้คือ market 0, momentum 13.8 และ tech 1 (market เป็น 0 เพราะเงินซื้อเท่ากับเงินขายพอดี)</p>
+  <p>กำไรขาดทุนจาก factor หนึ่งตัวคือ exposure คูณการขยับของ factor นั้น หน่วยของผลคูณคือ \$1 ล้าน × 1% = \$10,000 เช่น exposure 13.8 ต่อ momentum แปลว่า ถ้า momentum ขยับ 1% พอร์ตได้หรือเสีย $13.8\times\$10{,}000=\$138{,}000$</p>
+  <p>รายงาน A ใช้วิธีนี้ตรง ๆ คือเอา exposure คูณการขยับของเมื่อวาน</p>
+  <div class="math">\[\begin{aligned}\text{market}&amp;:\ 0\times0.80=0,\\\text{momentum}&amp;:\ 13.8\times(-0.50)=-6.90,\\\text{tech}&amp;:\ 1\times0.30=0.30.\end{aligned}\]</div>
+  <p>หน่วยละ \$10,000 รายงาน A จึงบอกว่า market \$0, momentum −\$69,000 และ tech +\$3,000 รวมกันได้ $0-6.90+0.30=-6.60$ หน่วย คือ −\$66,000</p>
+  <p>รายงาน B มาจาก risk model ตัวเดียวกัน (risk model คือชุดตัวเลขของ factor model ที่บริษัทผู้ให้บริการขาย) ต่างกันตรงที่ผู้ให้บริการแปลง factor ทั้งสามให้ “ไม่สัมพันธ์กัน” คือรู้ว่า factor ตัวหนึ่งขยับไปทางไหน ก็ยังเดาไม่ได้เลยว่าอีกตัวจะขยับทางไหน รายงาน B บอกว่า</p>
+  <ul>
+    <li>market −\$5,528</li>
+    <li>momentum −\$61,272</li>
+    <li>tech +\$800</li>
+  </ul>
+  <p>หน้านี้จะคำนวณตัวเลขชุดนี้ให้ดูทีละขั้น ตอนนี้ดูแค่ยอดรวม $-5{,}528-61{,}272+800=-66{,}000$ เท่ารายงาน A พอดี</p>
+  <p>ผู้จัดการพอร์ตแย้งว่า “exposure ต่อ market ของเราเป็นศูนย์ รายการ market ต้องเป็นศูนย์ รายงาน B ผิดแน่” จริงไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่จริง ทั้งสองฉบับถูก ยอดรวมเท่ากันที่ −\$66,000 ความเสี่ยงจาก factor ก็เท่ากันที่ \$48,063 ต่อวัน (ความเสี่ยงจาก factor คือ SD ของกำไรขาดทุนรายวันส่วนที่มาจาก factor หน้านี้จะคำนวณให้ดูว่าทั้งสองแบบได้เท่ากัน)</p><p>ที่ต่างกันคือวิธีแบ่ง รายงาน B วัด momentum และ tech หลังหักส่วนที่ขยับตามตลาดออกก่อน ส่วนที่หักออกไม่ได้หายไป มันไปรวมอยู่ในรายการ market</p><p>ตัววัดว่า factor หนึ่งขยับตามตลาดแค่ไหนคือ beta ความหมายคือ เมื่อตลาดขยับ 1% factor นั้นขยับตามโดยเฉลี่ยกี่ % beta คือ covariance กับตลาด หารด้วย variance ของตลาด เขียน covariance เป็น correlation $\rho$ คูณความผันผวนสองตัว แล้วตัดกันได้</p><div class="math">\[\begin{aligned}\beta&amp;=\frac{\rho\,\sigma\,\sigma_{\rm mkt}}{\sigma_{\rm mkt}^2}=\frac{\rho\,\sigma}{\sigma_{\rm mkt}}.\end{aligned}\]</div><p>$\sigma$ คือความผันผวนรายวันของ factor นั้น และ $\sigma_{\rm mkt}$ คือของตลาด ตัวเลขที่ต้องใช้มาจากหน้า<a href="26.1.html">สมการ factor model</a></p><ul><li>ความผันผวนรายวัน market 1.00%, momentum 0.35%, tech 0.55%</li><li>correlation กับตลาด momentum −0.20, tech +0.50</li></ul><div class="math">\[\begin{aligned}\beta_{\rm mom}&amp;=\frac{-0.20\times0.35}{1.00}=-0.07,\\\beta_{\rm tech}&amp;=\frac{0.50\times0.55}{1.00}=0.275.\end{aligned}\]</div><p>เดิมพัน momentum \$13.8 ล้าน จึงแอบพกเดิมพันตลาดไว้ด้วย tech \$1 ล้าน ก็พกอีกส่วนหนึ่ง รวมสองส่วนแล้วคูณกับตลาดที่ขึ้น 0.80%</p><div class="math">\[\begin{aligned}13.8\times(-0.07)&amp;=-0.966,\\-0.966+1\times0.275&amp;=-0.691,\\-0.691\times0.80&amp;=-0.5528.\end{aligned}\]</div><p>คิดเป็นเงิน $-0.5528\times\$10{,}000=-\$5{,}528$ ตรงกับรายการ market ของรายงาน B การแบ่งกำไรขาดทุนจึงเป็นแค่การเลือกแกนวัด เหมือนเลือกแกนของกราฟ ยอดรวมไม่ขึ้นกับแกนที่เลือก</p></details>
 </div>
 <section class="prose">
   <h4>ภาพรวมก่อนลงสูตร</h4>
-  <p>ใน<a href="26.1.html">สมการ factor model</a> เราเขียน $\mathbf B\mathbf f$ ราวกับว่า loading และ factor return เป็นของที่มีอยู่จริงในธรรมชาติ แต่ถ้าแทรก $\mathbf C^{-1}\mathbf C$ ซึ่งคูณกันได้ identity เข้าไปตรงกลาง ผลคูณไม่เปลี่ยนเลย ที่เปลี่ยนคือสิ่งที่เราเรียกว่า “factor” ข้อมูลผลตอบแทนจึงเลือกแบบให้เราไม่ได้ ต้องเลือกเอง เหมือนเลือกทิศของแกนในกราฟ จุดเดิมอยู่ที่เดิม แต่พิกัดของมันเปลี่ยนตามแกน การแปลงแบบนี้เรียกว่า rotation</p>
-  <p>รูปข้างล่างคือความคิดทั้งหมดในภาพเดียว ลูกศรคือเดิมพันของพอร์ตในพิกัดที่ทำให้ความยาวเท่ากับความเสี่ยง วาดด้วยแกนสองชุด ความยาวเท่ากันทุกชุด (ความเสี่ยงรวมไม่ขยับ) แต่เงาบนแต่ละแกนต่างกัน (การแบ่งเปลี่ยน) จากนั้นหน้านี้ดูอีกสองการแปลงที่เปลี่ยนจำนวน factor คือ projection ที่ลด และ push-out ที่เพิ่ม ซึ่งไม่ฟรีเหมือน rotation</p>
+  <p>สองรายงานใน hook ขัดกันได้อย่างไรทั้งที่ใช้ model ตัวเดียวกัน คำตอบอยู่ในวิธีเขียน factor model เอง หน้า<a href="26.1.html">สมการ factor model</a>เขียนผลตอบแทนของหุ้นทุกตัวในหนึ่งวันเป็น</p>
+  <div class="math">\[\mathbf r=\boldsymbol\alpha+\mathbf B\mathbf f+\boldsymbol\epsilon\]</div>
+  <p>ของในสมการนี้ที่หน้านี้ใช้ตลอดมีดังนี้</p>
+  <ul>
+    <li>$\mathbf r$ คือ vector ผลตอบแทนของหุ้นสี่ตัวในวันนั้น หน่วยเป็น %</li>
+    <li>$\mathbf f=(0.80,\ -0.50,\ 0.30)\%$ คือการขยับของ market, momentum, tech ในวันนั้น เรียกว่า factor return</li>
+    <li>$\mathbf B$ คือ matrix loading แถวหนึ่งคือหุ้นหนึ่งตัว คอลัมน์หนึ่งคือ factor หนึ่งตัว loading บอกว่าหุ้นตัวนั้นรับแรงของ factor นั้นกี่เท่า คอลัมน์ market เป็น 1 ทุกตัว คอลัมน์ momentum คือคะแนน momentum ของหุ้นแต่ละตัว (1.2, −0.4, 0.6, −1.4) คอลัมน์ tech เป็น 1 สำหรับหุ้นเทคโนโลยี (A กับ B) และ 0 สำหรับหุ้นอื่น ตัวเลขทั้งหมดมาจากหน้า<a href="26.1.html">สมการ factor model</a></li>
+    <li>$\boldsymbol\alpha$ กับ $\boldsymbol\epsilon$ คือส่วนที่เป็นเรื่องของหุ้นแต่ละตัวเอง เช่น ข่าวของบริษัทนั้น เรียกรวมกันว่าส่วนเฉพาะตัว หรือ residual</li>
+    <li>$\mathbf w=(3,\ -2,\ 4,\ -5)$ คือเงินที่ถือในหุ้นแต่ละตัว หน่วยเป็น \$ ล้าน</li>
+    <li>$\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ คือ exposure ของพอร์ต ช่องที่ $j$ คือผลรวมของเงินในหุ้นแต่ละตัวคูณ loading ของหุ้นตัวนั้นต่อ factor ตัวที่ $j$</li>
+  </ul>
+  <div class="math">\[\mathbf B=\begin{bmatrix}1&amp;1.2&amp;1\\1&amp;-0.4&amp;1\\1&amp;0.6&amp;0\\1&amp;-1.4&amp;0\end{bmatrix}\]</div>
+  <p>ลองคำนวณ $\mathbf b$ เองเพื่อให้เห็นว่าตัวเลข 0, 13.8 และ 1 ใน hook มาจากไหน แต่ละแถวข้างล่างคือหนึ่งคอลัมน์ของ $\mathbf B$ คูณกับ $\mathbf w$</p>
+  <div class="math">\[\begin{aligned}b_{\rm mkt}&amp;=3-2+4-5=0,\\b_{\rm mom}&amp;=3(1.2)+(-2)(-0.4)\\&amp;\quad+4(0.6)+(-5)(-1.4)\\&amp;=3.6+0.8+2.4+7=13.8,\\b_{\rm tech}&amp;=3(1)+(-2)(1)=1.\end{aligned}\]</div>
+  <p>ส่วนที่ factor อธิบายได้คือผลคูณ $\mathbf B\mathbf f$ เราเขียนมันราวกับว่า loading และ factor return เป็นของที่มีอยู่จริงในธรรมชาติ แต่ลองแทรก $\mathbf C^{-1}\mathbf C$ เข้าไปตรงกลาง โดย $\mathbf C$ เป็น matrix สี่เหลี่ยมจัตุรัสตัวไหนก็ได้ที่มี inverse เพราะ $\mathbf C^{-1}\mathbf C=\mathbf I$ ผลคูณจึงไม่เปลี่ยนเลย สิ่งที่เปลี่ยนคือของที่เราเรียกว่า “factor”</p>
+  <p>แปลว่าข้อมูลผลตอบแทนเลือกแบบให้เราไม่ได้ เราต้องเลือกเอง เหมือนเลือกทิศของแกนในกราฟ จุดเดิมยังอยู่ที่เดิม แต่พิกัดของมันเปลี่ยนตามแกนที่เลือก การแปลงแบบนี้เรียกว่า rotation (ในวงการนี้เรียก rotation แม้ $\mathbf C$ จะไม่ใช่การหมุนจริงก็ตาม)</p>
+  <p>รูปข้างล่างสรุปความคิดนี้ในภาพเดียว ลูกศรคือเดิมพันของพอร์ต วาดในพิกัดที่ทำให้ความยาวของลูกศรเท่ากับความเสี่ยง แล้วอ่านด้วยแกนสองชุด ความยาวเท่ากันทั้งสองชุด เพราะความเสี่ยงรวมไม่เปลี่ยน แต่เงาบนแต่ละแกนต่างกัน เพราะการแบ่งเปลี่ยน</p>
+  <p>หลังจาก rotation หน้านี้ดูอีกสองการแปลงที่เปลี่ยนจำนวน factor คือ projection ที่ลดจำนวน factor และ push-out ที่เพิ่ม factor ใหม่ สองการแปลงนี้ไม่ฟรีเหมือน rotation แต่ละอย่างมีราคาที่ต้องจ่าย</p>
 </section>
 <figure class="plot">
   <h4>รูป — ลูกศรเดียวกัน อ่านด้วยแกนสองชุด</h4>
@@ -54,22 +97,33 @@
       <text x="203" y="160" text-anchor="end">ยาว 4.83</text>
     </g>
   </svg>
-  <figcaption>ตัดพอร์ตในโจทย์ให้เหลือสอง factor คือ market กับ momentum (exposure 0 กับ 13.8) แล้ววาดในพิกัดที่ factor ไม่สัมพันธ์กันและผันผวนหนึ่งหน่วย ความยาวของลูกศรจึงเท่ากับความเสี่ยง $13.8\times0.35=4.83$ หรือ \$48,300 ต่อวัน แกนเทาให้ market รับทุกอย่างที่ขยับตามตลาดก่อน เงาคือ −0.97 บน market กับ 4.73 บน momentum ที่หักตลาดแล้ว แกนม่วงหมุนไปให้ momentum รับก่อน ลูกศรจึงนอนบนแกน momentum ทั้งหมด (4.83 กับ 0) ความยาวเท่ากัน การแบ่งต่างกัน วันที่ market +0.80% momentum −0.50% แกนเทาโทษ market −\$7,728 กับ momentum −\$61,272 แกนม่วงโทษ momentum −\$69,000 ทั้งก้อน รวม −\$69,000 เท่ากัน</figcaption>
+  <figcaption><p>เพื่อให้วาดบนกระดาษสองมิติได้ รูปนี้ตัด tech ออก เหลือสอง factor คือ market กับ momentum ซึ่ง exposure เป็น 0 กับ 13.8 แกนในรูปถูกปรับให้ factor ไม่สัมพันธ์กัน และแต่ละตัวผันผวนหนึ่งหน่วย ในพิกัดแบบนี้ ความยาวของลูกศรเท่ากับความเสี่ยงจาก factor พอดี</p><p>ความยาวนั้นหาได้ง่าย เพราะ exposure ต่อ market เป็นศูนย์ ความเสี่ยงทั้งหมดจึงมาจาก momentum ตัวเดียว เท่ากับ exposure ต่อ momentum คูณความผันผวนรายวันของมัน 0.35% คือ $13.8\times0.35=4.83$ หน่วย หรือ $4.83\times\$10{,}000=\$48{,}300$ ต่อวัน</p><p>แกนเทาให้ market รับทุกอย่างที่ขยับตามตลาดก่อน เงาของลูกศรบนแกน market คือ $13.8\times(-0.07)=-0.97$ (−0.07 คือ beta ของ momentum ต่อตลาดจาก hook) เงาบนแกน “momentum หลังหักตลาด” คือ 4.73 (ขั้น Cholesky ข้างล่างคำนวณให้ดู) แกนม่วงหมุนไปให้ momentum รับก่อน ลูกศรจึงนอนบนแกน momentum ทั้งเส้น พิกัดเป็น 4.83 กับ 0</p><p>ในวันที่ market ขึ้น 0.80% และ momentum ลง 0.50% สองชุดแกนแบ่งความผิดต่างกัน แกนม่วงโทษ momentum ทั้งก้อน $13.8\times(-0.50)=-6.90$ หน่วย หรือ −\$69,000 แกนเทาโทษ market ก่อน $-0.966\times0.80=-0.7728$ หน่วย หรือ −\$7,728 ส่วนที่เหลือเป็นของ momentum $-6.90-(-0.7728)=-6.1272$ หน่วย หรือ −\$61,272 ทั้งสองแบบรวมได้ −\$69,000 เท่ากัน ตัวเลข market ในรูปนี้ต่างจาก −\$5,528 ในรายงาน B เพราะรูปนี้ไม่มี tech</p></figcaption>
 </figure>
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Rotation</dt><dd>การเปลี่ยน loading เป็น $\mathbf B\mathbf C^{-1}$ และ factor return เป็น $\mathbf C\mathbf f$ พร้อมกัน ด้วย matrix $\mathbf C$ ที่มี inverse จำนวน factor เท่าเดิมและทุกอย่างที่วัดได้เท่าเดิม ใช้ให้มุมมองที่ต่างกันกับคนใช้ model คนละกลุ่ม</dd>
-    <dt>Rotational indeterminacy</dt><dd>ข้อเท็จจริงที่ factor model เขียนได้หลายแบบที่ทำนายเหมือนกันหมด ข้อมูลผลตอบแทนจึงเลือกแบบให้เราไม่ได้ ต้องเลือกเองแล้วตรึงไว้</dd>
-    <dt>Whitening</dt><dd>rotation ที่ทำให้ covariance ของ factor ใหม่เป็น identity คือไม่สัมพันธ์กันและ variance เป็นหนึ่ง ความเสี่ยงจาก factor จึงเป็นผลบวกกำลังสองของ exposure และอ่าน exposure เป็นความผันผวนได้ตรง ๆ</dd>
-    <dt>Centring และ z-scoring</dt><dd>การลบค่าเฉลี่ยออกจากคอลัมน์ loading (และหารด้วยส่วนเบี่ยงเบนมาตรฐาน) ให้อ่านง่ายว่าหุ้นรับ factor มากกว่าค่าเฉลี่ยแค่ไหน เป็น rotation ได้เฉพาะเมื่อ vector ที่เป็น 1 ทุกตัวอยู่ใน range ของ $\mathbf B$</dd>
-    <dt>Projection</dt><dd>การลดเหลือ factor น้อยลงโดยเลือก factor return ใหม่ที่ทำให้ส่วนของ factor ใกล้ของเดิมที่สุด ตัวดำเนินการของมันทำซ้ำแล้วได้ผลเดิม (idempotent)</dd>
-    <dt>Push-out</dt><dd>การเพิ่ม factor ใหม่โดยใช้เฉพาะส่วนของ loading ใหม่ที่ตั้งฉากกับทุกคอลัมน์เดิม factor return เก่าจึงไม่ขยับ</dd>
+    <dt>Factor, loading, factor return</dt><dd>factor คือแรงร่วมที่ดันหุ้นหลายตัวพร้อมกัน เช่น ตลาดทั้งตลาด loading คือตัวเลขที่บอกว่าหุ้นตัวหนึ่งรับแรงนั้นกี่เท่า factor return คือขนาดที่แรงนั้นขยับในวันหนึ่ง หน่วยเป็น %</dd>
+    <dt>Exposure</dt><dd>เดิมพันของทั้งพอร์ตต่อ factor หนึ่งตัว คือผลรวมของเงินที่ถือในหุ้นแต่ละตัวคูณ loading ของหุ้นตัวนั้น เขียนรวมเป็น $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ หน่วยเป็น \$ ล้าน</dd>
+    <dt>Attribution</dt><dd>การแบ่งกำไรขาดทุนของพอร์ตตามต้นเหตุ ส่วนของ factor ตัวที่ $j$ คือ exposure คูณ factor return $b_jf_j$</dd>
+    <dt>ความเสี่ยงจาก factor</dt><dd>SD ของกำไรขาดทุนรายวันของพอร์ต เฉพาะส่วนที่มาจาก factor เท่ากับ $\sqrt{\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b}$ ในหน้านี้คือ \$48,063 ต่อวัน</dd>
+    <dt>Residual (ส่วนเฉพาะตัว)</dt><dd>ส่วนของผลตอบแทนหุ้นที่ factor อธิบายไม่ได้ เช่น ข่าวของบริษัทนั้นเอง factor model สมมติว่า residual ของหุ้นคนละตัวไม่สัมพันธ์กัน</dd>
+    <dt>ไม่สัมพันธ์กัน (uncorrelated)</dt><dd>correlation เป็นศูนย์ รู้ว่าตัวหนึ่งขยับทางไหนก็ยังเดาไม่ได้ว่าอีกตัวจะขยับทางไหน</dd>
+    <dt>Beta</dt><dd>เมื่อตลาดขยับ 1% ของอีกอย่างหนึ่งขยับตามโดยเฉลี่ยกี่ % คำนวณจาก covariance กับตลาด หารด้วย variance ของตลาด</dd>
+    <dt>Cholesky</dt><dd>การแยก covariance matrix เป็น $\mathbf L\mathbf L^{\mathsf T}$ โดย $\mathbf L$ เป็น matrix สามเหลี่ยมล่าง ใช้สร้าง factor ชุดใหม่ที่ไม่สัมพันธ์กัน ตัวแรกเต็มตัว ตัวถัดไปหักส่วนที่ขยับตามตัวก่อนหน้าออก</dd>
+    <dt>Rotation</dt><dd>การเปลี่ยน loading เป็น $\mathbf B\mathbf C^{-1}$ และเปลี่ยน factor return เป็น $\mathbf C\mathbf f$ พร้อมกัน โดย $\mathbf C$ เป็น matrix ที่มี inverse จำนวน factor เท่าเดิม และทุกอย่างที่วัดได้จริงเท่าเดิม ใช้ทำให้ model ตัวเดียวกันมีหน้าตาที่เหมาะกับคนอ่านแต่ละกลุ่ม</dd>
+    <dt>Rotational indeterminacy</dt><dd>ข้อเท็จจริงที่ว่า factor model ตัวหนึ่งเขียนได้หลายแบบ และทุกแบบทำนายผลตอบแทนเหมือนกันหมด ข้อมูลจึงเลือกแบบให้เราไม่ได้ เราต้องเลือกเองแล้วใช้แบบนั้นตลอด</dd>
+    <dt>Whitening</dt><dd>rotation ที่ทำให้ covariance ของ factor ใหม่เป็น identity คือ factor ใหม่ไม่สัมพันธ์กันเลย และแต่ละตัวมี variance เป็น 1 ผลคือความเสี่ยงจาก factor เท่ากับรากที่สองของผลบวกกำลังสองของ exposure อ่านง่ายเหมือนความยาวของ vector</dd>
+    <dt>Centring และ z-scoring</dt><dd>centring คือการลบค่าเฉลี่ยออกจากคอลัมน์ loading z-scoring คือ centring แล้วหารด้วย SD (standard deviation) ของคอลัมน์ด้วย ทำให้อ่านได้ว่าหุ้นรับ factor มากกว่าหุ้นเฉลี่ยแค่ไหน การลบค่าเฉลี่ยเป็น rotation ได้เฉพาะเมื่อ vector ที่เป็น 1 ทุกตัวเขียนเป็นผลรวมถ่วงของคอลัมน์ของ $\mathbf B$ ได้</dd>
+    <dt>Projection</dt><dd>การลดจำนวน factor โดยเลือก factor return ใหม่ที่ทำให้ส่วนของ factor ใกล้ของเดิมที่สุด เหมือนฉายเงาลงพื้น ฉายเงาซ้ำก็ได้เงาเดิม</dd>
+    <dt>Push-out</dt><dd>การเพิ่ม factor ใหม่โดยใช้เฉพาะส่วนของ loading ใหม่ที่ตั้งฉากกับทุกคอลัมน์เดิม ผลคือ factor return เก่าไม่ขยับเลย</dd>
   </dl>
 </details>
 <details class="symbols">
   <summary>สัญลักษณ์และหน่วย</summary>
   <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$\mathbf B,\ \mathbf f,\ \mathbf w,\ \mathbf b$</td><td>matrix loading, factor return ของวันนั้น, เงินที่ถือในหุ้นแต่ละตัว และ exposure ของพอร์ต $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$</td><td>ไม่มีหน่วย, %, \$ ล้าน, \$ ล้าน</td></tr>
+    <tr><td>$\boldsymbol\Omega_f$</td><td>covariance ของ factor return ทั้งสามตัว</td><td>(% ต่อวัน)²</td></tr>
+    <tr><td>$m$</td><td>จำนวน factor ในหน้านี้ $m=3$</td><td>ตัว</td></tr>
     <tr><td>$\mathbf C$</td><td>matrix $m\times m$ ที่มี inverse ใช้ rotate</td><td>ตามการแปลง</td></tr>
     <tr><td>$\tilde{\mathbf B},\ \tilde{\mathbf f},\ \tilde{\boldsymbol\Omega}_f,\ \tilde{\mathbf b}$</td><td>loading, factor return, covariance และ exposure หลัง rotate</td><td>ตามการแปลง</td></tr>
     <tr><td>$\mathbf L$</td><td>Cholesky factor ที่ $\boldsymbol\Omega_f=\mathbf L\mathbf L^{\mathsf T}$</td><td>% ต่อวัน</td></tr>
@@ -81,7 +135,14 @@
 </details>
 <section class="formula">
   <h4>ขั้นที่ 1 — rotation: อะไรคงที่และอะไรไม่</h4>
-  <p>นี่เป็นแค่การเขียนใหม่ ไม่ใช่ข้อสมมติใหม่ แทรก $\mathbf C^{-1}\mathbf C=\mathbf I$ ระหว่าง $\mathbf B$ กับ $\mathbf f$ แล้วจับกลุ่มใหม่ จากนั้นตามดูว่า covariance, exposure, กำไรขาดทุนจาก factor และความเสี่ยงจาก factor เปลี่ยนอย่างไร</p>
+  <p>ก่อนจะเชื่อรายงาน B เราต้องรู้ให้แน่ว่าการแปลงแบบนี้เปลี่ยนอะไรได้บ้าง และเปลี่ยนอะไรไม่ได้ ขั้นนี้ไม่ได้เพิ่มข้อสมมติใหม่ มันแค่เขียนของเดิมใหม่</p>
+  <p>แทรก $\mathbf C^{-1}\mathbf C=\mathbf I$ ระหว่าง $\mathbf B$ กับ $\mathbf f$ แล้วจับกลุ่มใหม่ ตั้งชื่อของใหม่ว่า $\tilde{\mathbf B}=\mathbf B\mathbf C^{-1}$ (loading ใหม่) และ $\tilde{\mathbf f}=\mathbf C\mathbf f$ (factor return ใหม่) จากนั้นตามดูของอีกสี่อย่าง</p>
+  <ul>
+    <li>covariance ของ factor ใหม่ $\tilde{\boldsymbol\Omega}_f$</li>
+    <li>exposure ใหม่ $\tilde{\mathbf b}=\tilde{\mathbf B}^{\mathsf T}\mathbf w$</li>
+    <li>กำไรขาดทุนรวมจาก factor $\tilde{\mathbf b}^{\mathsf T}\tilde{\mathbf f}$</li>
+    <li>variance ของกำไรขาดทุนจาก factor $\tilde{\mathbf b}^{\mathsf T}\tilde{\boldsymbol\Omega}_f\tilde{\mathbf b}$ (รากที่สองของมันคือความเสี่ยงจาก factor)</li>
+  </ul>
   <div class="math">\[
 \begin{aligned}
 \mathbf B\mathbf f&=\mathbf B\mathbf C^{-1}\mathbf C\mathbf f\\
@@ -93,36 +154,81 @@
 &=\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดแรกบอกว่าผลตอบแทนของหุ้นทุกตัวไม่ขยับ และคอลัมน์ของ $\tilde{\mathbf B}$ กินพื้นที่เดียวกับคอลัมน์ของ $\mathbf B$ บรรทัดที่สองคือ<a href="8.2.html">กฎ covariance ของการแปลงเชิงเส้น</a> บรรทัดที่สามใช้ $(\mathbf B\mathbf C^{-1})^{\mathsf T}=\mathbf C^{-\mathsf T}\mathbf B^{\mathsf T}$ ($\mathbf C^{-\mathsf T}$ คือ inverse ของ $\mathbf C^{\mathsf T}$) สองบรรทัดสุดท้ายคือหัวใจ ทุกคู่ $\mathbf C^{-1}\mathbf C$ ตัดกันหมด กำไรขาดทุนรวมจาก factor และความเสี่ยงรวมจาก factor จึงเท่าเดิมเสมอ ส่วนเฉพาะตัวไม่ถูกแตะเลย</p><p>สิ่งที่ขยับได้คือแต่ละก้อน $\tilde b_j\tilde f_j$ และความเสี่ยงราย factor นั่นคือเสรีภาพของเครื่องมือนี้ และเป็นอันตรายของมันด้วย ข้อดีคือเลือกแบ่งให้ตรงกับคำถามของคนอ่านได้ ข้อเสียคือคนอ่านสองคนที่ใช้คนละแบบจะเถียงกันเรื่องตัวเลขที่ถูกทั้งคู่</p></div>
+  <div class="reading"><p>ใจความคือ ทุกที่ที่ $\mathbf C$ โผล่เข้ามา มันมาเป็นคู่กับ $\mathbf C^{-1}$ แล้วตัดกันเหลือ $\mathbf I$ เสมอ ผลตอบแทนของหุ้นทุกตัวจึงเท่าเดิม กำไรขาดทุนรวมจาก factor เท่าเดิม และความเสี่ยงรวมจาก factor เท่าเดิม ส่วนเฉพาะตัว $\boldsymbol\alpha+\boldsymbol\epsilon$ ไม่ถูกแตะเลย</p><p>มีสองจุดที่ต้องรู้ว่าทำไมทำได้ covariance ใหม่ได้จาก<a href="8.2.html">กฎ covariance ของการแปลงเชิงเส้น</a> ถ้า $\tilde{\mathbf f}=\mathbf C\mathbf f$ แล้ว $\operatorname{cov}(\tilde{\mathbf f})=\mathbf C\operatorname{cov}(\mathbf f)\mathbf C^{\mathsf T}$ ส่วน exposure ใหม่ใช้กฎ transpose ของผลคูณที่กลับลำดับ $(\mathbf B\mathbf C^{-1})^{\mathsf T}=\mathbf C^{-\mathsf T}\mathbf B^{\mathsf T}$ โดย $\mathbf C^{-\mathsf T}$ คือ inverse ของ $\mathbf C^{\mathsf T}$ exposure จึงแปลงด้วย $\mathbf C^{-\mathsf T}$ ซึ่งสวนทางกับ factor return ที่แปลงด้วย $\mathbf C$ การแปลงสวนทางกันนี้เองที่ทำให้ผลคูณของสองอย่างไม่เปลี่ยน</p><p>สิ่งที่เปลี่ยนได้คือแต่ละก้อน $\tilde b_j\tilde f_j$ และความเสี่ยงของ factor แต่ละตัว นี่คืออิสระของเครื่องมือนี้ และเป็นอันตรายของมันด้วย ข้อดีคือเราเลือกแบ่งให้ตรงกับคำถามของคนอ่านได้ ข้อเสียคือคนสองคนที่ใช้คนละแบบจะเถียงกันเรื่องตัวเลขที่ถูกทั้งคู่ แบบเดียวกับผู้จัดการพอร์ตใน hook</p></div>
 </section>
 <section class="example">
   <h4>ขั้นที่ 2 — rotation แรก: ดึงค่าเฉลี่ยออกจากคอลัมน์ tech</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> model สี่หุ้นสาม factor เดิม อยากให้คอลัมน์ tech มีค่าเฉลี่ยศูนย์แทน (1, 1, 0, 0) ที่ค่าเฉลี่ย 0.5 การลบ 0.5 จากทุกแถวคือการบวก $\mathbf e\boldsymbol\nu^{\mathsf T}$ เข้าไปใน $\mathbf B$ และเพราะคอลัมน์ market คือ $\mathbf e$ พอดี จึงเขียน $\mathbf e=\mathbf B\mathbf a$ ได้ด้วย $\mathbf a=(1, 0, 0)$</p>
+  <p>ผู้ให้บริการ risk model มักส่ง loading แบบที่ลบค่าเฉลี่ยของคอลัมน์ออกแล้ว เพราะคนอ่านอยากรู้ว่าหุ้นตัวหนึ่งรับ factor มากกว่าหุ้นทั่วไปแค่ไหน ไม่ใช่ตัวเลขดิบ ลองทำแบบนี้กับคอลัมน์ tech แล้วดูว่าการแบ่งกำไรขาดทุนเปลี่ยนอย่างไร</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> คอลัมน์ tech ของ $\mathbf B$ คือ (1, 1, 0, 0) ค่าเฉลี่ยของมันคือ $(1+1+0+0)/4=0.5$ ถ้าลบ 0.5 ออกจากทุกแถว คอลัมน์ tech จะกลายเป็น (0.5, 0.5, −0.5, −0.5) ซึ่งมีค่าเฉลี่ยศูนย์ เราอยากรู้ว่าการลบนี้เป็น rotation หรือไม่ จึงต้องเขียนมันเป็น matrix ให้ได้ ของที่ต้องใช้มีสามอย่าง</p>
+  <ul>
+    <li>$\mathbf e=(1,\ 1,\ 1,\ 1)$ คือ vector ที่เป็น 1 ทุกตัว หนึ่งช่องต่อหุ้นหนึ่งตัว</li>
+    <li>$\boldsymbol\nu=(0,\ 0,\ -0.5)$ คือค่าที่บวกเข้าแต่ละคอลัมน์ คอลัมน์ market กับ momentum ไม่บวกอะไร คอลัมน์ tech บวก −0.5 ทุกแถว การบวกนี้เขียนได้ว่า $\mathbf B+\mathbf e\boldsymbol\nu^{\mathsf T}$ เพราะ $\mathbf e\boldsymbol\nu^{\mathsf T}$ คือ matrix ที่ทุกแถวเป็น (0, 0, −0.5)</li>
+    <li>$\mathbf a=(1,\ 0,\ 0)$ คือตัวเลือกคอลัมน์แรก คอลัมน์ market ของ $\mathbf B$ เป็น 1 ทุกตัว จึงเขียน $\mathbf e=\mathbf B\mathbf a$ ได้</li>
+  </ul>
+  <p>ข้อสุดท้ายสำคัญที่สุด เพราะมันทำให้ดึง $\mathbf B$ ออกมาเป็นตัวหน้าได้ การลบค่าเฉลี่ยจึงกลายเป็นการคูณ $\mathbf B$ ด้วย matrix ตัวหนึ่ง เทียบกับรูป $\tilde{\mathbf B}=\mathbf B\mathbf C^{-1}$ ในขั้นที่ 1 จะได้ $\mathbf C^{-1}=\mathbf I+\mathbf a\boldsymbol\nu^{\mathsf T}$ เราเดาว่า $\mathbf C=\mathbf I-\mathbf a\boldsymbol\nu^{\mathsf T}$ แล้วจะตรวจว่าเดาถูกในคำตอบ จากนั้นหา factor return ใหม่ $\tilde{\mathbf f}=\mathbf C\mathbf f$ และ exposure ใหม่ $\tilde{\mathbf b}$</p>
   <div class="math">\[
 \begin{aligned}
-\boldsymbol\nu&=(0,\ 0,\ -0.5),\\
 \tilde{\mathbf B}&=\mathbf B+\mathbf e\boldsymbol\nu^{\mathsf T}\\
+&=\mathbf B+\mathbf B\mathbf a\boldsymbol\nu^{\mathsf T}\\
 &=\mathbf B(\mathbf I+\mathbf a\boldsymbol\nu^{\mathsf T}),\\
 \mathbf C&=\mathbf I-\mathbf a\boldsymbol\nu^{\mathsf T},\\
-\tilde{\mathbf f}&=\mathbf f-\mathbf a(\boldsymbol\nu^{\mathsf T}\mathbf f)\\
+\boldsymbol\nu^{\mathsf T}\mathbf f&=-0.5(0.30)=-0.15,\\
+\tilde{\mathbf f}&=\mathbf C\mathbf f=\mathbf f-\mathbf a(\boldsymbol\nu^{\mathsf T}\mathbf f)\\
+&=\mathbf f+0.15\,\mathbf a\\
 &=(0.95,\ -0.50,\ 0.30),\\
-\tilde{\mathbf b}&=\mathbf b+\boldsymbol\nu\,(\mathbf e^{\mathsf T}\mathbf w),\\
-\tilde\sigma_{\rm mkt}^2&=1+0.25(0.3025)+0.275\\
-&=1.350625,\\
-\tilde\sigma_{\rm mkt}&=1.1622.
+\tilde{\mathbf b}&=\tilde{\mathbf B}^{\mathsf T}\mathbf w\\
+&=(\mathbf I+\boldsymbol\nu\mathbf a^{\mathsf T})\mathbf B^{\mathsf T}\mathbf w\\
+&=\mathbf b+\boldsymbol\nu\,(\mathbf B\mathbf a)^{\mathsf T}\mathbf w\\
+&=\mathbf b+\boldsymbol\nu\,(\mathbf e^{\mathsf T}\mathbf w).
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> $(\mathbf I+\mathbf a\boldsymbol\nu^{\mathsf T})(\mathbf I-\mathbf a\boldsymbol\nu^{\mathsf T})=\mathbf I$ เพราะ $\boldsymbol\nu^{\mathsf T}\mathbf a=0$ จึงเป็น rotation จริง คอลัมน์ tech กลายเป็น (0.5, 0.5, −0.5, −0.5) ครึ่งหนึ่งของ tech ที่ถูกดึงออกไปต้องไปอยู่ที่ไหนสักแห่ง มันไปอยู่ที่ market ซึ่งกลายเป็น $0.80+0.5(0.30)=0.95\%$ และความผันผวนของ market ใหม่เป็น 1.1622% ต่อวัน (บรรทัด $\tilde\sigma^2_{\rm mkt}$ คือ $\operatorname{var}(f_1+0.5f_3)=1+0.25\,\sigma_3^2+2(0.5)\operatorname{cov}(f_1,f_3)$) พอร์ตของเรามี $\mathbf e^{\mathsf T}\mathbf w=\text{NMV}=0$ exposure จึงเท่าเดิม และการแบ่งยังเป็น \$0, −\$69,000, +\$3,000 แต่พอร์ต long ล้วน (3, 2, 4, 5) ที่มี exposure (14, −1.8, 5) จะถูกแบ่งจาก +\$112,000, +\$9,000, +\$15,000 เป็น +\$133,000, +\$9,000, −\$6,000 รวม +\$136,000 เท่าเดิม</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> exposure ต่อ tech ใหม่ของพอร์ต long คือ $5-0.5(14)=-2$ แปลว่าถือ tech น้อยกว่าครึ่งหนึ่งของตลาด บรรทัด tech จึงกลายเป็นลบ $-2(0.30)=-0.60$ หรือ −\$6,000</p>
+  <p>ตอนหา $\tilde{\mathbf f}$ เราจับกลุ่ม $\mathbf a\boldsymbol\nu^{\mathsf T}\mathbf f=\mathbf a(\boldsymbol\nu^{\mathsf T}\mathbf f)$ ได้ เพราะ $\boldsymbol\nu^{\mathsf T}\mathbf f$ เป็นตัวเลขตัวเดียว ตอนหา $\tilde{\mathbf b}$ เราใช้ $\mathbf a^{\mathsf T}\mathbf B^{\mathsf T}=(\mathbf B\mathbf a)^{\mathsf T}=\mathbf e^{\mathsf T}$ ซึ่งก็คือข้อเท็จจริงเดิมว่าคอลัมน์ market เป็น 1 ทุกตัว ผลคือ $\mathbf e^{\mathsf T}\mathbf w$ เป็นเงินรวมของพอร์ต (เงินซื้อลบเงินขาย)</p>
+  <p><strong>คำตอบ:</strong> ต้องตรวจก่อนว่าเดาถูก คือ $\mathbf C=\mathbf I-\mathbf a\boldsymbol\nu^{\mathsf T}$ เป็น inverse ของ $\mathbf I+\mathbf a\boldsymbol\nu^{\mathsf T}$ จริง กระจายผลคูณแล้ว พจน์ $+\mathbf a\boldsymbol\nu^{\mathsf T}$ กับ $-\mathbf a\boldsymbol\nu^{\mathsf T}$ ตัดกัน เหลือพจน์เดียวที่มี $\boldsymbol\nu^{\mathsf T}\mathbf a$ อยู่ข้างใน และ $\boldsymbol\nu^{\mathsf T}\mathbf a=0(1)+0(0)+(-0.5)(0)=0$</p>
+  <div class="math">\[(\mathbf I+\mathbf a\boldsymbol\nu^{\mathsf T})(\mathbf I-\mathbf a\boldsymbol\nu^{\mathsf T})=\mathbf I-\mathbf a(\boldsymbol\nu^{\mathsf T}\mathbf a)\boldsymbol\nu^{\mathsf T}=\mathbf I\]</div>
+  <p>การลบค่าเฉลี่ยครั้งนี้จึงเป็น rotation จริง ครึ่งหนึ่งของ tech ที่ถูกดึงออกจากคอลัมน์ tech ต้องไปอยู่ที่ไหนสักแห่ง มันไปอยู่ที่ market ดังนั้น factor return ของ market ใหม่คือ $\tilde f_1=0.80+0.5(0.30)=0.95\%$</p>
+  <p>market ใหม่คือ $f_1+0.5f_3$ มันจึงผันผวนมากขึ้นด้วย ใช้สูตร variance ของผลบวก $\operatorname{var}(X+cY)=\operatorname{var}X+c^2\operatorname{var}Y+2c\operatorname{cov}(X,Y)$ ตัวเลขที่ต้องใช้มาจากความผันผวนและ correlation ในหน้า<a href="26.1.html">สมการ factor model</a> (ขั้นที่ 4 จะใช้ชุดเดียวกันอีก)</p>
+  <ul>
+    <li>$\operatorname{var}f_1=1.00^2=1$</li>
+    <li>$\operatorname{var}f_3=0.55^2=0.3025$</li>
+    <li>$\operatorname{cov}(f_1,f_3)=0.50\times1.00\times0.55=0.275$ (0.50 คือ correlation ของ market กับ tech)</li>
+  </ul>
+  <div class="math">\[
+\begin{aligned}
+\tilde\sigma_{\rm mkt}^2&amp;=\operatorname{var}(f_1+0.5f_3)\\
+&amp;=1+0.5^2(0.3025)+2(0.5)(0.275)\\
+&amp;=1+0.075625+0.275\\
+&amp;=1.350625,\\
+\tilde\sigma_{\rm mkt}&amp;=\sqrt{1.350625}=1.1622.
+\end{aligned}
+\]</div>
+  <p>ความผันผวนของ market ใหม่จึงเป็น 1.1622% ต่อวัน แทนที่จะเป็น 1.00%</p>
+  <p>แล้วกำไรขาดทุนของพอร์ตเราเปลี่ยนไหม พอร์ตของเรามีเงินซื้อเท่าเงินขาย $\mathbf e^{\mathsf T}\mathbf w=3-2+4-5=0$ ดังนั้น $\tilde{\mathbf b}=\mathbf b+\boldsymbol\nu(0)=\mathbf b$ exposure เท่าเดิม และการแบ่งยังเป็น \$0, −\$69,000, +\$3,000 เหมือนรายงาน A</p>
+  <p>ความต่างจะเห็นในพอร์ตที่ซื้ออย่างเดียว ลองพอร์ต $\mathbf w=(3,\ 2,\ 4,\ 5)$ \$ ล้าน คือซื้อหุ้นทั้งสี่ตัว รวม \$14 ล้าน exposure ของมันคำนวณแบบเดียวกับภาพรวม</p>
+  <div class="math">\[\begin{aligned}b_1&amp;=3+2+4+5=14,\\b_2&amp;=3(1.2)+2(-0.4)\\&amp;\quad+4(0.6)+5(-1.4)\\&amp;=3.6-0.8+2.4-7=-1.8,\\b_3&amp;=3+2=5.\end{aligned}\]</div>
+  <p>หลังดึงค่าเฉลี่ย exposure ต่อ market กับ momentum เท่าเดิม เพราะ $\boldsymbol\nu$ มีศูนย์ในสองช่องแรก แต่ exposure ต่อ tech เปลี่ยนเป็น $\tilde b_3=b_3+(-0.5)(\mathbf e^{\mathsf T}\mathbf w)$ ก้อนกำไรขาดทุนก่อนและหลังดึงค่าเฉลี่ยเป็นดังนี้ (หน่วย \$10,000)</p>
+  <div class="math">\[
+\begin{aligned}
+b_1f_1&=14(0.80)=11.2,\\
+b_2f_2&=-1.8(-0.50)=0.9,\\
+b_3f_3&=5(0.30)=1.5,\\
+\tilde b_1\tilde f_1&=14(0.95)=13.3,\\
+\tilde b_3&=5-0.5(14)=-2,\\
+\tilde b_3\tilde f_3&=-2(0.30)=-0.6.
+\end{aligned}
+\]</div>
+  <p>ก่อนดึงค่าเฉลี่ย การแบ่งคือ +\$112,000, +\$9,000, +\$15,000 หลังดึงค่าเฉลี่ยคือ +\$133,000, +\$9,000, −\$6,000 ยอดรวมเท่ากัน $11.2+0.9+1.5=13.3+0.9-0.6=13.6$ หรือ +\$136,000</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> exposure ต่อ tech ใหม่ของพอร์ตซื้ออย่างเดียวคือ $5-0.5(14)=-2$ ติดลบเพราะพอร์ตถือหุ้น tech \$5 ล้าน น้อยกว่าครึ่งหนึ่งของเงินทั้งหมด \$14 ล้าน ก้อน tech จึงเป็นลบ $-2(0.30)=-0.60$ หรือ −\$6,000</p>
 </section>
 <figure class="plot">
   <h4>รูป — ดึงค่าเฉลี่ยออกจากคอลัมน์หนึ่ง แล้วมันไปโผล่ที่ market</h4>
   <img src="../figures/26.3-2.svg" alt="แผงบนแท่ง loading tech ก่อน 1 1 0 0 และหลัง 0.5 0.5 ลบ 0.5 ลบ 0.5 แผงล่าง factor return ก่อน 0.80 ลบ 0.50 0.30 หลัง 0.95 ลบ 0.50 0.30" loading="lazy">
-  <figcaption>แผงบนคือ loading ของ tech ในหุ้น A ถึง D ก่อน (1, 1, 0, 0) สีเทา และหลังดึงค่าเฉลี่ย 0.50 ออก (0.5, 0.5, −0.5, −0.5) สีน้ำเงิน แผงล่างคือ factor return ของวันนั้นในหน่วย % market ขยับจาก 0.80 เป็น 0.95 ส่วน momentum −0.50 และ tech 0.30 ไม่ขยับ ผลตอบแทนหุ้นทั้งสี่ตัวเท่าเดิมทุกหลัก ของที่หายจากคอลัมน์หนึ่งย้ายไปอยู่อีกคอลัมน์ ไม่ได้หายไปไหน</figcaption>
+  <figcaption>แผงบนคือ loading ของ tech ในหุ้น A ถึง D แท่งเทาคือก่อนดึงค่าเฉลี่ย (1, 1, 0, 0) แท่งน้ำเงินคือหลังลบค่าเฉลี่ย 0.5 ออก (0.5, 0.5, −0.5, −0.5) แผงล่างคือ factor return ของวันนั้น หน่วยเป็น % ให้ดูว่า market ขยับจาก 0.80 เป็น $0.80+0.5(0.30)=0.95$ ส่วน momentum −0.50 และ tech 0.30 เท่าเดิม ผลตอบแทนของหุ้นทั้งสี่ตัวเท่าเดิมทุกหลัก ของที่หายจากคอลัมน์ tech ย้ายไปอยู่ที่ market ไม่ได้หายไปไหน</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 3 — เมื่อไรการดึงค่าเฉลี่ยไม่ใช่ rotation</h4>
-  <p>การดึงค่าเฉลี่ยที่เพิ่งทำได้ผลเพราะ $\mathbf e$ อยู่ใน range ของ $\mathbf B$ ลองดู model ปัจจัยเดียวที่ไม่มีคอลัมน์ market หุ้นสองตัวมี loading 1.5 กับ 0.5 ถ้าดึงค่าเฉลี่ย 1.0 ออก จะได้ 0.5 กับ −0.5 rotation ของ model ปัจจัยเดียวคือการคูณ loading ด้วยตัวเลข $c$ ตัวเดียว มี $c$ ตัวไหนไหมที่พาแบบแรกไปเป็นแบบที่สอง</p>
+  <p>การดึงค่าเฉลี่ยในขั้นที่แล้วเป็น rotation ได้ เพราะเราเขียน $\mathbf e=\mathbf B\mathbf a$ ได้ คือ $\mathbf e$ อยู่ใน <a href="7.5.html">range</a> ของ $\mathbf B$ (เขียนเป็นผลรวมถ่วงของคอลัมน์ของ $\mathbf B$ ได้) ถ้าเขียนไม่ได้จะเกิดอะไรขึ้น ข้อนี้ต้องรู้ก่อนจะ z-score model ไหนก็ตาม (z-score คือลบค่าเฉลี่ยของคอลัมน์ออก แล้วหารด้วย SD ของคอลัมน์)</p>
+  <p>ลองดู model เล็กที่สุดที่ไม่มีคอลัมน์ market (ตัวเลขสมมติ) มี factor ตัวเดียวและหุ้นสองตัว loading ของหุ้นทั้งสองคือ 1.5 กับ 0.5 ค่าเฉลี่ยคือ $(1.5+0.5)/2=1.0$ ลบค่าเฉลี่ยออกแล้วได้ $1.5-1.0=0.5$ กับ $0.5-1.0=-0.5$</p>
+  <p>ใน model ที่มี factor ตัวเดียว $\mathbf C$ เป็น matrix ขนาด 1×1 คือตัวเลข $c$ ตัวเดียว rotation จึงทำได้แค่คูณ loading ทุกตัวด้วย $c$ เดียวกัน คำถามคือ มี $c$ ตัวไหนไหมที่พา (1.5, 0.5) ไปเป็น (0.5, −0.5)</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf B&=\begin{bmatrix}1.5\\0.5\end{bmatrix},\quad\tilde{\mathbf B}=\begin{bmatrix}0.5\\-0.5\end{bmatrix},\\
@@ -130,7 +236,7 @@ c(1.5)&=0.5\ \to\ c=\tfrac13,\\
 c(0.5)&=-0.5\ \to\ c=-1.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>สองแถวต้องการ $c$ คนละค่า จึงไม่มี rotation ไหนพา model หนึ่งไปเป็นอีก model ในรูปข้างล่าง rotation พา loading ได้แค่ตามเส้นตรงผ่านจุดกำเนิด แต่การลบค่าเฉลี่ยพามันหลุดออกจากเส้น model เดิมบอกว่าสองหุ้นขยับทางเดียวกันเสมอ model ที่ดึงค่าเฉลี่ยบอกว่าขยับสวนทางกันเสมอ พอร์ตที่ถือสองตัวเท่ากัน \$1 ล้าน มี exposure 2 ใน model แรก แต่ 0 ใน model ที่สอง ถ้า factor ผันผวน 1% ต่อวัน model แรกบอกว่าเสี่ยง \$20,000 ต่อวัน model ที่สองบอกว่าไม่มีความเสี่ยงจาก factor เลย</p><p>กติกาคือ z-scoring จะเป็น rotation ได้เฉพาะเมื่อ $\mathbf e$ เขียนเป็นผลรวมถ่วงของคอลัมน์ loading ได้ ซึ่งเกิดในสองกรณีที่พบบ่อย คือ model มีคอลัมน์ market (เรียกอีกชื่อว่า country หรือ intercept) หรือมีชุด industry ที่รวมกันได้ 1 ทุกแถว ถ้าไม่มี มันคือ model ใหม่ที่ทำนายความเสี่ยงและแบ่งกำไรขาดทุนต่างออกไปจริง ๆ</p></div>
+  <div class="reading"><p>หุ้นตัวแรกต้องการ $c=\tfrac13$ แต่หุ้นตัวที่สองต้องการ $c=-1$ ไม่มีตัวเลขเดียวที่ทำได้ทั้งสองอย่าง จึงไม่มี rotation ไหนพา model หนึ่งไปเป็นอีก model ในรูปข้างล่าง rotation พา loading ไปได้แค่ตามเส้นตรงที่ผ่านจุดกำเนิด แต่การลบค่าเฉลี่ยพามันหลุดออกจากเส้นนั้น</p><p>ผลที่ตามมาไม่ใช่เรื่องเล็ก model เดิมบอกว่าสองหุ้นขยับไปทางเดียวกันเสมอ เพราะ loading เป็นบวกทั้งคู่ แต่ model ที่ลบค่าเฉลี่ยแล้วบอกว่าสองหุ้นขยับสวนทางกันเสมอ ลองพอร์ตที่ซื้อหุ้นทั้งสองตัว ตัวละ \$1 ล้าน และให้ factor ผันผวน $\sigma=1\%$ ต่อวัน (สมมติ) แล้วหา exposure ใน model เดิม $b$ และใน model ที่ลบค่าเฉลี่ย $\tilde b$</p><div class="math">\[\begin{aligned}b&amp;=1.5(1)+0.5(1)=2,\\b\sigma&amp;=2\times1=2,\\\tilde b&amp;=0.5(1)+(-0.5)(1)=0.\end{aligned}\]</div><p>หน่วยของ $b\sigma$ คือ \$1 ล้าน × 1% = \$10,000 model เดิมจึงบอกว่าพอร์ตนี้เสี่ยงจาก factor $2\times\$10{,}000=\$20{,}000$ ต่อวัน แต่ model ที่ลบค่าเฉลี่ยบอกว่าพอร์ตนี้ไม่มีความเสี่ยงจาก factor เลย สอง model นี้จึงไม่ใช่ model เดียวกันอีกต่อไป</p><p>กติกาที่ได้คือ z-scoring เป็น rotation ได้เฉพาะเมื่อ $\mathbf e$ เขียนเป็นผลรวมถ่วงของคอลัมน์ loading ได้ ส่วนการหารด้วย SD ไม่เป็นปัญหา เพราะการคูณคอลัมน์ด้วยตัวเลขคือการใช้ $\mathbf C$ แบบแนวทแยง ซึ่งมี inverse เสมอ</p><p>เงื่อนไขนี้จริงในสองกรณีที่พบบ่อย กรณีแรก model มีคอลัมน์ market ที่เป็น 1 ทุกตัว (บางที่เรียกว่า country หรือ intercept) กรณีที่สอง model มีชุดคอลัมน์ industry (กลุ่มอุตสาหกรรม เช่น ธนาคาร พลังงาน) ที่หุ้นทุกตัวอยู่ในหนึ่ง industry พอดี คอลัมน์ industry ทั้งหมดจึงรวมกันได้ 1 ทุกแถว ถ้าไม่มีทั้งสองกรณี การ z-score คือการสร้าง model ใหม่ ที่ทำนายความเสี่ยงและแบ่งกำไรขาดทุนต่างออกไปจริง ๆ</p></div>
 </section>
 <figure class="plot">
   <h4>รูป — rotation เลื่อนได้แค่ตามเส้นเดิม การลบค่าเฉลี่ยหลุดออกจากเส้น</h4>
@@ -159,48 +265,118 @@ c(0.5)&=-0.5\ \to\ c=-1.
       <text x="258" y="172" fill="#5b6472">ลบ (1, 1)</text>
     </g>
   </svg>
-  <figcaption>model ปัจจัยเดียว หุ้นสองตัว ไม่มีคอลัมน์ market จุดน้ำเงินคือ loading เดิม (1.5, 0.5) เส้นน้ำเงินทึบคือทุกที่ที่ rotation พาไปได้ ซึ่งคือการคูณด้วย $c$ ตัวเดียว จุดแดงคือ loading หลังลบค่าเฉลี่ย 1.0 ออกจากทั้งสองแถว (ลูกศรประ) มันอยู่บนเส้นประแดงซึ่งเป็นอีกทิศหนึ่ง ไม่มี $c$ ไหนพาจุดน้ำเงินไปถึงจุดแดงได้ จึงเป็น model ใหม่ ถ้า model มีคอลัมน์ (1, 1) อยู่แล้ว ลูกศรประจะอยู่ใน range ของ $\mathbf B$ และการลบค่าเฉลี่ยกลายเป็น rotation</figcaption>
+  <figcaption>model ที่มี factor ตัวเดียว หุ้นสองตัว และไม่มีคอลัมน์ market แกนนอนคือ loading ของหุ้นตัวที่ 1 แกนตั้งคือ loading ของหุ้นตัวที่ 2 จุดน้ำเงินคือ loading เดิม (1.5, 0.5) เส้นน้ำเงินทึบคือทุกจุดที่ rotation พาไปได้ ซึ่งคือการคูณด้วยตัวเลข $c$ ตัวเดียว ลูกศรประคือการลบ (1, 1) พาไปถึงจุดแดง (0.5, −0.5) ซึ่งอยู่บนเส้นประแดงอีกทิศหนึ่ง ไม่มี $c$ ไหนพาจุดน้ำเงินไปถึงจุดแดงได้ ผลจึงเป็น model ใหม่ ถ้า model มีคอลัมน์ (1, 1) อยู่แล้ว ทิศของลูกศรประจะอยู่ใน range ของ $\mathbf B$ และการลบค่าเฉลี่ยจะกลายเป็น rotation</figcaption>
 </figure>
 <section class="example">
   <h4>ขั้นที่ 4 — rotation ที่สอง: ทำให้ factor ไม่สัมพันธ์กันด้วย Cholesky</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\boldsymbol\Omega_f$ ของสาม factor (ความผันผวนรายวัน 1.00%, 0.35%, 0.55% และ correlation −0.20, +0.50, −0.10) ต้องการ $\mathbf C$ ที่ทำให้ $\mathbf C\boldsymbol\Omega_f\mathbf C^{\mathsf T}=\mathbf I$ แยก $\boldsymbol\Omega_f=\mathbf L\mathbf L^{\mathsf T}$ ด้วย <a href="8.9.html">Cholesky</a> แล้วใช้ $\mathbf C=\mathbf L^{-1}$ เพราะ $\mathbf L^{-1}\mathbf L\mathbf L^{\mathsf T}\mathbf L^{-\mathsf T}=\mathbf I$ จากนั้น $\tilde{\mathbf f}=\mathbf L^{-1}\mathbf f$ ได้จากการแทนค่าไปข้างหน้า และ $\tilde{\mathbf b}=\mathbf L^{\mathsf T}\mathbf b$</p>
+  <p>ตอนนี้มาสร้างรายงาน B เอง ผู้ให้บริการอยากได้ factor ชุดใหม่ที่ไม่สัมพันธ์กันเลย และแต่ละตัวมี variance เป็น 1 ข้อดีคือ covariance ของ factor ใหม่กลายเป็น $\mathbf I$ ความเสี่ยงจาก factor จึงเหลือแค่ $\sqrt{\tilde{\mathbf b}^{\mathsf T}\mathbf I\,\tilde{\mathbf b}}=\sqrt{\tilde b_1^2+\tilde b_2^2+\tilde b_3^2}$ อ่านง่ายเหมือนความยาวของ vector ในภาษา matrix เราต้องการ $\mathbf C$ ที่ทำให้ $\mathbf C\boldsymbol\Omega_f\mathbf C^{\mathsf T}=\mathbf I$</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ตัวเลขของ factor ทั้งสามตัวจากหน้า<a href="26.1.html">สมการ factor model</a></p>
+  <ul>
+    <li>ความผันผวนรายวัน $\sigma_1=1.00\%$ (market), $\sigma_2=0.35\%$ (momentum), $\sigma_3=0.55\%$ (tech)</li>
+    <li>correlation $\rho_{21}=-0.20$ (market กับ momentum), $\rho_{31}=+0.50$ (market กับ tech), $\rho_{32}=-0.10$ (momentum กับ tech)</li>
+  </ul>
+  <p>ก่อนอื่นต้องเขียน $\boldsymbol\Omega_f$ ออกมาเป็นตัวเลข ช่องนอกแนวทแยงคือ covariance $\omega_{ij}=\rho_{ij}\sigma_i\sigma_j$ ช่องแนวทแยงคือ variance $\omega_{ii}=\sigma_i^2$</p>
   <div class="math">\[
 \begin{aligned}
-L_{11}&=1,\ L_{21}=-0.07,\ L_{31}=0.275,\\
-L_{22}&=\sqrt{0.1225-0.0049}\\
-&=0.34293,\\
-L_{32}&=\frac{-0.01925+0.01925}{0.34293}=0,\\
-L_{33}&=\sqrt{0.3025-0.075625}\\
-&=0.47631,\\
-\tilde f_1&=0.80,\\
-\tilde f_2&=\frac{-0.444}{0.34293}=-1.2947,\\
-\tilde f_3&=\frac{0.08}{0.47631}=0.1680,\\
-\tilde b_1&=-0.07(13.8)+0.275\\
-&=-0.691,\\
-\tilde b_2&=0.34293(13.8)=4.7324,\\
-\tilde b_3&=0.47631(1)=0.4763.
+\omega_{11}&=1.00^2=1,\\
+\omega_{22}&=0.35^2=0.1225,\\
+\omega_{33}&=0.55^2=0.3025,\\
+\omega_{21}&=-0.20(1.00)(0.35)=-0.07,\\
+\omega_{31}&=0.50(1.00)(0.55)=0.275,\\
+\omega_{32}&=-0.10(0.35)(0.55)=-0.01925.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> $-0.444=-0.50-(-0.07)(0.80)$ และ $0.08=0.30-0.275(0.80)$ ก้อนกำไรขาดทุนคือ $(-0.691)(0.80)=-0.5528$, $4.7324(-1.2947)=-6.1272$ และ $0.4763(0.1680)=0.0800$ หรือ −\$5,528, −\$61,272 และ +\$800 รวม −\$66,000 เท่ารายงานเดิม ความเสี่ยงคือผลบวกกำลังสอง $0.4775+22.3957+0.2269=23.1001$ ตรงกับที่คำนวณไว้ตอนแยกความเสี่ยงสองก้อน จึงได้ \$48,063 เท่าเดิม นี่คือรายงาน B ของ hook</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\mathbf L\mathbf L^{\mathsf T}$ ช่อง (2, 2) ต้องได้ $0.07^2+0.34293^2=0.0049+0.1176=0.1225$ ตรงกับ variance ของ momentum</p>
+  <p>วิธีหา $\mathbf C$ คือแยก $\boldsymbol\Omega_f=\mathbf L\mathbf L^{\mathsf T}$ ด้วย <a href="8.9.html">Cholesky</a> โดย $\mathbf L$ เป็น matrix สามเหลี่ยมล่าง (ช่องเหนือแนวทแยงเป็นศูนย์) แล้วใช้ $\mathbf C=\mathbf L^{-1}$ เหตุผลคือ $\mathbf L^{-1}(\mathbf L\mathbf L^{\mathsf T})\mathbf L^{-\mathsf T}=\mathbf I$ พอดี</p>
+  <p>Cholesky หาช่องของ $\mathbf L$ ทีละคอลัมน์จากซ้ายไปขวา แต่ละช่องได้จากการเทียบช่องเดียวกันของ $\mathbf L\mathbf L^{\mathsf T}$ กับ $\boldsymbol\Omega_f$ แล้วหักส่วนที่ช่องก่อนหน้าใช้ไปแล้ว</p>
+  <div class="math">\[\begin{aligned}L_{jj}&amp;=\sqrt{\omega_{jj}-\textstyle\sum_{k\lt j}L_{jk}^2},\\L_{ij}&amp;=\frac{\omega_{ij}-\sum_{k\lt j}L_{ik}L_{jk}}{L_{jj}},\quad i\gt j.\end{aligned}\]</div>
+  <p>แทนตัวเลขทีละช่องได้ดังนี้ ($L_{31}L_{21}=0.275\times(-0.07)=-0.01925$ จึงหักกับ $\omega_{32}$ หมดพอดี)</p>
+  <div class="math">\[
+\begin{aligned}
+L_{11}&=\sqrt{\omega_{11}}=1,\\
+L_{21}&=\omega_{21}/L_{11}=-0.07,\\
+L_{31}&=\omega_{31}/L_{11}=0.275,\\
+L_{22}&=\sqrt{\omega_{22}-L_{21}^2}\\
+&=\sqrt{0.1225-0.0049}\\
+&=0.34293,\\
+L_{32}&=\frac{\omega_{32}-L_{31}L_{21}}{L_{22}}\\
+&=\frac{-0.01925+0.01925}{0.34293}=0,\\
+L_{33}&=\sqrt{\omega_{33}-L_{31}^2-L_{32}^2}\\
+&=\sqrt{0.3025-0.075625}\\
+&=0.47631.
+\end{aligned}
+\]</div>
+  <p>มี $\mathbf L$ แล้ว ต้องหาของใหม่สองอย่าง อย่างแรกคือ factor return ใหม่ $\tilde{\mathbf f}=\mathbf L^{-1}\mathbf f$ ไม่ต้องหา inverse ทั้งก้อน แค่แก้สมการ $\mathbf L\tilde{\mathbf f}=\mathbf f$ จากแถวบนลงล่าง เพราะ $\mathbf L$ เป็นสามเหลี่ยมล่าง แถวแรกมีตัวไม่รู้ตัวเดียว แถวถัดไปใช้ค่าที่เพิ่งได้ (เรียกว่าการแทนค่าไปข้างหน้า) อย่างที่สองคือ exposure ใหม่ $\tilde{\mathbf b}=\mathbf C^{-\mathsf T}\mathbf b=\mathbf L^{\mathsf T}\mathbf b$ จากกฎในขั้นที่ 1 โดย $\mathbf b=(0,\ 13.8,\ 1)$</p>
+  <div class="math">\[
+\begin{aligned}
+\tilde f_1&=0.80/L_{11}=0.80,\\
+\tilde f_2&=\frac{f_2-L_{21}\tilde f_1}{L_{22}}\\
+&=\frac{-0.50+0.07(0.80)}{0.34293}\\
+&=\frac{-0.444}{0.34293}=-1.2947,\\
+\tilde f_3&=\frac{f_3-L_{31}\tilde f_1-L_{32}\tilde f_2}{L_{33}}\\
+&=\frac{0.30-0.275(0.80)}{0.47631}\\
+&=\frac{0.08}{0.47631}=0.1680,\\
+\tilde b_1&=L_{11}b_1+L_{21}b_2+L_{31}b_3\\
+&=0-0.07(13.8)+0.275(1)\\
+&=-0.691,\\
+\tilde b_2&=L_{22}b_2+L_{32}b_3\\
+&=0.34293(13.8)=4.7324,\\
+\tilde b_3&=L_{33}b_3=0.47631(1)=0.4763.
+\end{aligned}
+\]</div>
+  <p><strong>คำตอบ:</strong> ก้อนกำไรขาดทุนแต่ละก้อนคือ exposure ใหม่คูณ factor return ใหม่ (หน่วย \$10,000)</p>
+  <div class="math">\[
+\begin{aligned}
+\tilde b_1\tilde f_1&=(-0.691)(0.80)=-0.5528,\\
+\tilde b_2\tilde f_2&=4.7324(-1.2947)=-6.1272,\\
+\tilde b_3\tilde f_3&=0.4763(0.1680)=0.0800,\\
+\textstyle\sum_j\tilde b_j\tilde f_j&=-0.5528-6.1272+0.08\\
+&=-6.60.
+\end{aligned}
+\]</div>
+  <p>คูณแต่ละก้อนด้วย \$10,000 จะได้รายงาน B ของ hook พอดี คือ market −\$5,528, momentum −\$61,272, tech +\$800 และรวม −\$66,000 เท่ารายงาน A</p>
+  <p>ความเสี่ยงก็ต้องเท่าเดิมด้วย มาตรวจกัน เพราะ factor ใหม่มี covariance เป็น $\mathbf I$ variance ของกำไรขาดทุนจาก factor จึงเหลือแค่ผลบวกกำลังสองของ exposure ใหม่</p>
+  <div class="math">\[
+\begin{aligned}
+\tilde{\mathbf b}^{\mathsf T}\mathbf I\,\tilde{\mathbf b}&=0.691^2+4.7324^2+0.4763^2\\
+&=0.4775+22.3957+0.2269\\
+&=23.1001,\\
+\sqrt{23.1001}&=4.8063.
+\end{aligned}
+\]</div>
+  <p>เทียบกับ variance ที่คิดจาก exposure เดิมและ $\boldsymbol\Omega_f$ เดิม ซึ่งหน้า<a href="26.1.html">สมการ factor model</a>ก็คำนวณไว้ เพราะ $b_1=0$ จึงเหลือแค่ช่องของ momentum กับ tech</p>
+  <div class="math">\[\begin{aligned}\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b&amp;=b_2^2\omega_{22}+b_3^2\omega_{33}+2b_2b_3\omega_{32}\\&amp;=13.8^2(0.1225)+1^2(0.3025)\\&amp;\quad+2(13.8)(1)(-0.01925)\\&amp;=23.3289+0.3025-0.5313\\&amp;=23.1001.\end{aligned}\]</div>
+  <p>ได้ 23.1001 เท่ากันทุกหลัก ความเสี่ยงจาก factor จึงเป็น $4.8063\times\$10{,}000=\$48{,}063$ ต่อวันทั้งสองแบบ</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> ช่อง (2, 2) ของ $\mathbf L\mathbf L^{\mathsf T}$ ต้องได้ variance ของ momentum $0.07^2+0.34293^2=0.0049+0.1176=0.1225$ ตรงกับ $0.35^2$</p>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 5 — อ่านรายงาน B: beta ต่อตลาดที่ซ่อนอยู่</h4>
-  <p>ทำไมรายงาน B ใส่ −\$5,528 ในบรรทัด market ทั้งที่ $b_1=0$? เขียนสามก้อนที่เพิ่งได้ใหม่ด้วย beta ของ factor แต่ละตัวต่อ market คือ $\beta_2=-0.07/1$ และ $\beta_3=0.275/1$ (covariance หารด้วย variance ของ market) ให้ $f_1, f_2, f_3$ คือ market, momentum, tech</p>
+  <p>ตัวเลขของรายงาน B ถูกแล้ว แต่ยังไม่ตอบผู้จัดการพอร์ตว่าทำไมรายการ market ได้ −\$5,528 ทั้งที่ exposure ต่อ market $b_1=0$ เราต้องแปลสามก้อนที่เพิ่งได้กลับมาเป็นภาษาของ factor เดิม</p>
+  <p>ให้ $f_1, f_2, f_3$ คือ factor return ของ market, momentum, tech ตามลำดับ เครื่องมือที่ใช้คือ beta ของ factor แต่ละตัวต่อ market แบบเดียวกับใน hook คือ covariance กับ market หารด้วย variance ของ market</p>
+  <div class="math">\[\begin{aligned}\beta_2&amp;=\frac{\omega_{21}}{\omega_{11}}=\frac{-0.07}{1}=-0.07,\\\beta_3&amp;=\frac{\omega_{31}}{\omega_{11}}=\frac{0.275}{1}=0.275.\end{aligned}\]</div>
+  <p>สังเกตว่า $\beta_2=L_{21}$ และ $\beta_3=L_{31}$ พอดี เพราะ $L_{21}=\omega_{21}/L_{11}$ และ $L_{11}=\sqrt{\omega_{11}}=1$ ทีนี้แทนค่า $\mathbf L$ ลงในสามก้อนของขั้นที่แล้ว ตัว $L_{22}$ และ $L_{33}$ ตัดกันเอง (เช่นในก้อน momentum $\tilde b_2=L_{22}b_2$ และ $\tilde f_2$ มี $L_{22}$ เป็นตัวหาร) และใช้ $L_{32}=0$ จะเหลือรูปที่อ่านง่าย</p>
   <div class="math">\[
 \begin{aligned}
-\tilde b_1\tilde f_1&=(b_1+\beta_2b_2+\beta_3b_3)f_1,\\
-\tilde b_2\tilde f_2&=b_2(f_2-\beta_2f_1),\\
-\tilde b_3\tilde f_3&=b_3(f_3-\beta_3f_1),\\
-\tilde b_1\tilde f_1&=(0-0.966+0.275)(0.80)\\
-&=-0.5528.
+\tilde b_1\tilde f_1&amp;=(b_1+\beta_2b_2+\beta_3b_3)f_1,\\
+\tilde b_2\tilde f_2&amp;=L_{22}b_2\cdot\frac{f_2-\beta_2f_1}{L_{22}}\\
+&amp;=b_2(f_2-\beta_2f_1),\\
+\tilde b_3\tilde f_3&amp;=b_3(f_3-\beta_3f_1),\\
+\tilde b_1\tilde f_1&amp;=(0-0.966+0.275)(0.80)\\
+&amp;=-0.5528.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>Cholesky ตามลำดับ market, momentum, tech คือการ regress factor แต่ละตัวบนตัวที่มาก่อน บรรทัด market จึงเก็บ beta ต่อตลาดของทุก exposure เดิมพัน momentum \$13.8 ล้าน พก beta $13.8(-0.07)=-0.966$ ล้าน ส่วน tech พก +0.275 ล้าน รวม −\$0.691 ล้าน บรรทัด momentum เหลือแค่ส่วนที่ไม่ขยับตามตลาด $-0.50+0.07(0.80)=-0.444\%$ บทเรียนคือ ผลตอบแทนของพอร์ตตอบสนองต่อ factor ผ่าน beta ไม่ใช่ผ่าน exposure พอร์ตที่ exposure ต่อ market เป็นศูนย์ยังขยับตามตลาดได้ผ่าน factor อื่นที่สัมพันธ์กับมัน</p><p>การวาง factor ที่สนใจไว้ลำดับแรกของ Cholesky ให้มันรับกำไรขาดทุนได้มากที่สุดเท่าที่ข้อมูลยอม วิธีนี้ใช้ในรายงานหลังจบงวดในชื่อ maximal attribution เช่นอยากรู้ว่าเสียเงินเพราะตลาดเท่าไรเมื่อนับทุกช่องทาง บรรทัด tech เป็นรูปง่ายแบบนี้เพราะในตัวอย่างนี้ $L_{32}=0$ พอดี คือ momentum กับ tech ไม่สัมพันธ์กันหลังหักตลาด ถ้าไม่เป็นศูนย์ บรรทัด tech จะเก็บส่วนที่ขยับตาม momentum ด้วย</p></div>
+  <div class="reading"><p>Cholesky ตามลำดับ market, momentum, tech ทำสิ่งเดียวกับการ regress factor แต่ละตัวบน factor ที่มาก่อนมัน (regress คือหาว่าตัวหนึ่งขยับตามอีกตัวกี่เท่า แล้วหักส่วนนั้นออก) “momentum” ในรายงาน B จึงไม่ใช่ momentum เต็มตัว มันคือ $f_2-\beta_2f_1$ คือส่วนของ momentum ที่เหลือหลังหักส่วนที่ขยับตามตลาดออก วันนี้ส่วนนี้คือ $-0.50-(-0.07)(0.80)=-0.444\%$ ส่วนที่ถูกหักออกไม่ได้หายไป มันไปรวมอยู่ในรายการ market</p><p>รายการ market จึงเก็บเดิมพันตลาดที่แฝงอยู่ในทุก exposure เดิมพัน momentum \$13.8 ล้าน แฝงเดิมพันตลาด $13.8(-0.07)=-0.966$ ล้าน tech \$1 ล้าน แฝงอีก $1(0.275)=0.275$ ล้าน รวมเป็น $-0.966+0.275=-0.691$ ล้าน วันที่ตลาดขึ้น 0.80% รายการนี้จึงเสีย $0.691\times0.80\times\$10{,}000=\$5{,}528$</p><p>บทเรียนคือ พอร์ตขยับตามตลาดผ่าน beta ไม่ใช่ผ่าน exposure ต่อ market อย่างเดียว พอร์ตที่ exposure ต่อ market เป็นศูนย์ ยังขยับตามตลาดได้ผ่าน factor อื่นที่สัมพันธ์กับตลาด</p><p>factor ที่วางไว้ลำดับแรกของ Cholesky ได้รับกำไรขาดทุนมากที่สุดเท่าที่ข้อมูลยอม รายงานหลังจบงวดใช้วิธีนี้ในชื่อ maximal attribution เช่น เมื่ออยากรู้ว่าเสียเงินเพราะตลาดเท่าไร ถ้านับทุกช่องทาง ก้อน tech มีรูปง่ายแบบนี้เพราะตัวอย่างนี้ $L_{32}=0$ พอดี คือ momentum กับ tech ไม่สัมพันธ์กันเลยหลังหักตลาด ถ้า $L_{32}$ ไม่เป็นศูนย์ ก้อน tech จะต้องหักส่วนที่ขยับตาม momentum ออกด้วย</p></div>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 6 — whitening อีกแบบ ได้การแบ่งอีกแบบ</h4>
-  <p>Cholesky ไม่ใช่ทางเดียวที่ทำให้ covariance เป็น identity อีกทางคือใช้ <a href="7.6.html">eigenvector</a> แบบเดียวกับ <a href="17.4.html">PCA</a>: $\boldsymbol\Omega_f=\mathbf U\mathbf S\mathbf U^{\mathsf T}$ แล้วใช้ $\mathbf C=\mathbf S^{-1/2}\mathbf U^{\mathsf T}$ ค่าในบรรทัดท้ายคำนวณด้วยโค้ดท้ายหน้า</p>
+  <p>รายงาน B ทำให้ factor ไม่สัมพันธ์กันได้ แต่มันเป็นทางเดียวหรือเปล่า ถ้าไม่ใช่ ผู้ให้บริการอีกเจ้าอาจส่งรายงานฉบับที่สามที่ต่างออกไปอีก ขั้นนี้ลองอีกทางหนึ่งแล้วดูว่าเกิดอะไรขึ้น</p>
+  <p>ทางที่สองใช้ <a href="7.6.html">eigenvector</a> แบบเดียวกับ <a href="17.4.html">PCA</a> ของที่ต้องใช้มีดังนี้</p>
+  <ul>
+    <li>แยก $\boldsymbol\Omega_f=\mathbf U\mathbf S\mathbf U^{\mathsf T}$ โดยคอลัมน์ของ $\mathbf U$ คือ eigenvector ซึ่งตั้งฉากกันและยาวหนึ่งหน่วย ($\mathbf U^{\mathsf T}\mathbf U=\mathbf I$)</li>
+    <li>$\mathbf S$ เป็น matrix แนวทแยงของ eigenvalue แต่ละ eigenvalue คือ variance ของ factor ในทิศ eigenvector นั้น</li>
+    <li>ใช้ $\mathbf C=\mathbf S^{-1/2}\mathbf U^{\mathsf T}$ คือหมุนไปตามทิศ eigenvector ก่อน แล้วหารแต่ละทิศด้วยรากที่สองของ variance ของมัน</li>
+    <li>จากนั้นลองหมุนผลลัพธ์ต่อด้วย matrix ตั้งฉาก $\mathbf Q$ ตัวไหนก็ได้ ($\mathbf Q\mathbf Q^{\mathsf T}=\mathbf I$) เพื่อดูว่ายัง whiten อยู่หรือไม่</li>
+  </ul>
+  <p>ตัวเลข eigenvalue และสามก้อนกำไรขาดทุนในสองแถวท้ายของสูตรข้างล่าง หาด้วยมือยาก จึงคำนวณด้วยโค้ดท้ายหน้า (สามก้อนนั้นมีหน่วยเป็นดอลลาร์)</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf C&=\mathbf S^{-1/2}\mathbf U^{\mathsf T},\\
@@ -214,7 +390,7 @@ L_{33}&=\sqrt{0.3025-0.075625}\\
 &\qquad -59{,}823.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดแรกใช้ $\mathbf U^{\mathsf T}\mathbf U=\mathbf I$ บรรทัดที่สองบอกว่าถ้าหมุนผลลัพธ์ต่อด้วย matrix ตั้งฉาก $\mathbf Q$ ใด ๆ ก็ยัง whiten อยู่ นี่คือสิ่งที่รูปแกนสองชุดตอนต้นหน้าวาด ในพิกัดที่ whiten แล้ว การเปลี่ยนแบบคือการหมุนแกนจริง ๆ ความยาว (ความเสี่ยง) จึงไม่เปลี่ยน “factor ที่ไม่สัมพันธ์กัน” มีได้นับไม่ถ้วนแบบ และแต่ละแบบแบ่งกำไรขาดทุนไม่เหมือนกัน</p><p>แบบ eigenvector ให้สามก้อนรวม −\$66,000 เท่าเดิม ทิศที่สามซึ่ง variance เล็กที่สุดเกือบเป็น momentum ล้วน (0.087, 0.996, −0.025) จึงรับไป −\$59,823 แต่ factor ใหม่ไม่มีชื่อที่คนอ่านรายงานเข้าใจ นี่คือราคาของการเลือก whitening แบบนี้ ยังมี rotation อีกแบบที่ใช้กัน คือทำให้คอลัมน์ loading ตั้งฉากกันและยาวหนึ่งหน่วย ($\tilde{\mathbf B}^{\mathsf T}\tilde{\mathbf B}=\mathbf I$) ด้วย SVD ของ $\mathbf B$</p></div>
+  <div class="reading"><p>ใจความคือ factor ที่ไม่สัมพันธ์กันมีได้นับไม่ถ้วนแบบ เมื่อ whiten ได้แล้วหนึ่งครั้ง จะหมุนต่อด้วย $\mathbf Q$ ตั้งฉากตัวไหนก็ยัง whiten อยู่ เพราะ $\mathbf Q\mathbf I\mathbf Q^{\mathsf T}=\mathbf Q\mathbf Q^{\mathsf T}=\mathbf I$ จุดที่ทำให้ $\mathbf S^{-1/2}\mathbf U^{\mathsf T}$ ใช้ได้คือ $\mathbf U^{\mathsf T}\mathbf U=\mathbf I$ ซึ่งตัด $\mathbf U$ ทิ้งทั้งสองข้าง เหลือ $\mathbf S^{-1/2}\mathbf S\,\mathbf S^{-1/2}=\mathbf I$</p><p>นี่คือสิ่งที่รูปแกนสองชุดตอนต้นหน้าวาดไว้ ในพิกัดที่ whiten แล้ว การเปลี่ยนจากแบบหนึ่งไปอีกแบบคือการหมุนแกนจริง ๆ ความยาวของลูกศร ซึ่งคือความเสี่ยง จึงไม่เปลี่ยน แต่เงาบนแต่ละแกน ซึ่งคือการแบ่งกำไรขาดทุน เปลี่ยนทุกครั้ง</p><p>แบบ eigenvector ให้สามก้อนรวมกันได้เท่าเดิม $-6{,}156.7-20.5-59{,}822.8=-66{,}000$ (ในสูตรข้างบนปัดเป็นดอลลาร์เต็ม ผลบวกจึงดูเหมือนคลาดไป \$1) ทิศที่สามมี variance เล็กที่สุด โค้ดท้ายหน้าบอกว่า eigenvector ของมันคือ (0.087, 0.996, −0.025) ตัวเลขกลางเกือบเป็น 1 แปลว่าทิศนี้เกือบเป็น momentum ล้วน มันจึงรับก้อนใหญ่ไป −\$59,823</p><p>ปัญหาคือ factor ใหม่ทั้งสามไม่มีชื่อที่คนอ่านรายงานเข้าใจ นี่คือราคาของ whitening แบบนี้</p><p>ยังมี rotation อีกแบบที่ใช้กัน คือทำให้คอลัมน์ loading ตั้งฉากกันและยาวหนึ่งหน่วย ($\tilde{\mathbf B}^{\mathsf T}\tilde{\mathbf B}=\mathbf I$) ด้วย SVD ของ $\mathbf B$ (SVD คือการแยก matrix เป็นการหมุน การยืดตามแกน และการหมุนอีกครั้ง)</p></div>
 </section>
 <figure class="plot">
   <h4>รูป — สามรายงานจาก model เดียวกัน ยอดรวมเท่ากันทุกฉบับ</h4>
@@ -261,44 +437,80 @@ L_{33}&=\sqrt{0.3025-0.075625}\\
       <text x="390" y="286" text-anchor="middle">eigenvector</text>
     </g>
   </svg>
-  <figcaption>หน่วยเป็นพันดอลลาร์ ทุกกลุ่มคือวันเดียวกัน พอร์ตเดียวกัน model เดียวกัน รายงาน A ใช้ loading ดิบ (ตัวที่ 1, 2, 3 คือ market, momentum, tech) แบบ Cholesky คือรายงาน B (market ที่รวม beta ทุกช่องทาง, momentum หลังหักตลาด, tech หลังหักตลาด) แบบ eigenvector ใช้ทิศที่ไม่มีชื่อ แท่งดำยาวเท่ากันทุกกลุ่มที่ −66 แต่แท่งสีย้ายไปมา ทิศที่สามของแบบ eigenvector รับ −60 เพราะมันเกือบเป็น momentum ล้วน</figcaption>
+  <figcaption>หน่วยเป็นพันดอลลาร์ ทั้งสามกลุ่มคือวันเดียวกัน พอร์ตเดียวกัน model เดียวกัน กลุ่มซ้ายคือรายงาน A ที่ใช้ loading เดิม ตัวที่ 1, 2, 3 คือ market, momentum, tech กลุ่มกลางคือแบบ Cholesky หรือรายงาน B ตัวที่ 1 คือ market ที่รวมเดิมพันตลาดที่แฝงในทุก exposure ตัวที่ 2 และ 3 คือ momentum และ tech หลังหักตลาด กลุ่มขวาคือแบบ eigenvector ซึ่งใช้สามทิศที่ไม่มีชื่อ ให้ดูแท่งดำ มันยาวเท่ากันทุกกลุ่มที่ −66 แต่แท่งสีย้ายไปมา ทิศที่สามของแบบ eigenvector รับไป −60 เพราะทิศนั้นเกือบเป็น momentum ล้วน</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 7 — projection: สาม factor เหลือสอง</h4>
-  <p>บางครั้งอยากได้ model ที่เล็กลง เพราะ loading บางคอลัมน์เปลี่ยนเร็วจน hedge ไม่ทัน เพราะไม่เชื่อ factor บางตัวของผู้ให้บริการ หรือเพราะคนใช้บางกลุ่มอยากได้ model ง่าย ๆ ให้ $\mathbf A$ คือสองคอลัมน์แรกของ $\mathbf B$ (market กับ momentum) เลือก factor return ใหม่ $\mathbf g$ ที่ทำให้ส่วนของ factor ใกล้ของเดิมที่สุด ซึ่งคือ least squares ของ <a href="15.1.html">OLS</a> ที่ใช้ $\mathbf B\mathbf f$ เป็นตัวแปรตาม</p>
+  <p>rotation เปลี่ยนแค่หน้าตา จำนวน factor เท่าเดิม แต่บางครั้งโต๊ะ (ทีมที่ดูแลพอร์ต) อยากได้ model ที่มี factor น้อยลงจริง ๆ เหตุผลที่พบบ่อยมีสามข้อ</p>
+  <ul>
+    <li>loading บางคอลัมน์เปลี่ยนเร็วจน hedge ไม่ทัน (hedge คือการซื้อขายของอื่นเพื่อหักล้างเดิมพันนั้น)</li>
+    <li>โต๊ะไม่เชื่อ factor บางตัวของผู้ให้บริการ</li>
+    <li>คนใช้บางกลุ่มอยากได้ model ง่าย ๆ</li>
+  </ul>
+  <p>ลองตัด tech ทิ้ง เหลือ market กับ momentum ให้ $\mathbf A$ คือสองคอลัมน์แรกของ $\mathbf B$ และ $\mathbf g$ คือ factor return สองตัวของ model เล็ก คำถามคือ $\mathbf g$ ควรเป็นเท่าไร model เล็กอธิบายส่วนของ factor ได้แค่ $\mathbf A\mathbf g$ เราจึงเลือก $\mathbf g$ ที่ทำให้ $\mathbf A\mathbf g$ ใกล้ $\mathbf B\mathbf f$ ของ model ใหญ่ที่สุด วัดความใกล้ด้วยผลบวกกำลังสองของส่วนต่าง นี่คือ <a href="15.1.html">OLS</a> ที่ใช้ $\mathbf B\mathbf f$ เป็นตัวแปรตาม และใช้คอลัมน์ของ $\mathbf A$ เป็นตัวแปรอิสระ คำตอบของ OLS คือสูตร normal equations ที่รู้จักกันแล้ว</p>
   <div class="math">\[
 \begin{aligned}
 \mathbf g&=\operatorname*{arg\,min}_{\mathbf g}\lVert\mathbf B\mathbf f-\mathbf A\mathbf g\rVert^2\\
+&=(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}\mathbf B\mathbf f\\
 &=\mathbf H\mathbf f,\\
-\mathbf H&=(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}\mathbf B\\
-&=\begin{bmatrix}1&amp;0&amp;0.5\\0&amp;1&amp;0.2041\end{bmatrix},\\
-\mathbf g&=(0.95,\ -0.4388),\\
+\mathbf H&=(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}\mathbf B,\\
 \boldsymbol\Omega_g&=\mathbf H\boldsymbol\Omega_f\mathbf H^{\mathsf T},\\
-\sqrt{\mathbf b_A^{\mathsf T}\boldsymbol\Omega_g\mathbf b_A}&=\$49{,}226.
+\mathbf b_A&=\mathbf A^{\mathsf T}\mathbf w=(0,\ 13.8).
 \end{aligned}
 \]</div>
-  <div class="reading"><p>$\mathbf A^{\mathsf T}\mathbf A=\operatorname{diag}(4, 3.92)$ เพราะ momentum รวมกันได้ศูนย์ คอลัมน์ที่สามของ $\mathbf H$ จึงคือ regression ของ tech บน (1, momentum) ได้ค่าคงที่ 0.5 และความชัน $0.8/3.92=0.2041$ market ใหม่ดูดครึ่งหนึ่งของ tech และ momentum ใหม่ดูด 0.2041 ของ tech เพราะหุ้น tech ในตัวอย่างนี้มี momentum สูงกว่าเฉลี่ย</p><p>$\mathbf P=\mathbf A(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}$ ทำซ้ำแล้วได้ผลเดิม $\mathbf P\mathbf P=\mathbf P$ จึงเรียกว่า projection เหมือนเงาบนพื้น ฉายเงาซ้ำก็ได้เงาเดิม model เล็กรายงานความเสี่ยงจาก factor \$49,226 สูงกว่า \$48,063 อยู่ 2.4% เพราะผ่าน $\mathbf H$ exposure ต่อ momentum 13.8 พา exposure ต่อ tech $13.8(0.2041)=2.816$ มาด้วย แทนค่าจริง 1</p><p>ส่วนที่ทิ้งไป $\mathbf B\mathbf f-\mathbf A\mathbf g$ ไหลไปอยู่ใน residual วันนี้ −\$5,449 ย้ายจาก factor ไปเป็น “เฉพาะตัว” (−\$60,551 บวก −\$5,449 เท่ากับ −\$66,000) และ residual ใหม่มีส่วนร่วมของ tech ซึ่งขัดกับข้อสมมติว่า $\boldsymbol\Omega_\epsilon$ เป็น diagonal การใช้ที่พบบ่อยที่สุดคือแบบนี้ คือ model เล็กที่คอลัมน์เป็นส่วนหนึ่งของ model ใหญ่</p></div>
+  <div class="reading"><p>ใจความคือ model เล็กไม่ได้ทิ้ง tech ไปเฉย ๆ มันเอา tech ไปแบ่งใส่ factor ที่เหลือ เท่าที่ factor ที่เหลือเลียนแบบ tech ได้ $\mathbf H$ คือตัวบอกว่าแบ่งอย่างไร</p><p>covariance ของ factor ใหม่ $\boldsymbol\Omega_g$ ได้จาก<a href="8.2.html">กฎ covariance ของการแปลงเชิงเส้น</a>เหมือนขั้นที่ 1 เพราะ $\mathbf g=\mathbf H\mathbf f$ เป็นการแปลงเชิงเส้นของ $\mathbf f$ ส่วน $\mathbf b_A$ คือ exposure ของพอร์ตใน model เล็ก ซึ่งก็คือสองช่องแรกของ $\mathbf b$</p><p>ต่างจาก rotation ตรงที่ $\mathbf H$ เป็น matrix ขนาด 2×3 ไม่มี inverse ข้อมูลบางส่วนจึงหายไปจากส่วนของ factor จริง ที่เหลือของขั้นนี้ดูว่ามันหายไปไหน และทำให้ตัวเลขความเสี่ยงเปลี่ยนเท่าไร</p></div>
+  <p>เริ่มจากหา $\mathbf H$ สองคอลัมน์แรกของ $\mathbf B$ คือ $\mathbf A$ เอง และ OLS ของ $\mathbf A$ บนตัวมันเองได้ค่าที่ fit พอดี สองคอลัมน์แรกของ $\mathbf H$ จึงเป็น identity เหลือคอลัมน์ที่สามซึ่งเป็นของ tech คือ $(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}\mathbf t$ ต้องใช้ผลคูณภายในของสามคอลัมน์นี้</p>
+  <ul>
+    <li>market $\mathbf e=(1,\,1,\,1,\,1)$</li>
+    <li>momentum $\mathbf m=(1.2,\,-0.4,\,0.6,\,-1.4)$</li>
+    <li>tech $\mathbf t=(1,\,1,\,0,\,0)$</li>
+  </ul>
+  <div class="math">\[\begin{aligned}\mathbf e^{\mathsf T}\mathbf e&amp;=4,\\\mathbf e^{\mathsf T}\mathbf m&amp;=1.2-0.4+0.6-1.4=0,\\\mathbf m^{\mathsf T}\mathbf m&amp;=1.44+0.16+0.36+1.96\\&amp;=3.92,\\\mathbf e^{\mathsf T}\mathbf t&amp;=1+1=2,\\\mathbf m^{\mathsf T}\mathbf t&amp;=1.2-0.4=0.8.\end{aligned}\]</div>
+  <p>$\mathbf A^{\mathsf T}\mathbf A$ มีช่องเป็น $\mathbf e^{\mathsf T}\mathbf e$, $\mathbf e^{\mathsf T}\mathbf m$ และ $\mathbf m^{\mathsf T}\mathbf m$ เพราะ $\mathbf e^{\mathsf T}\mathbf m=0$ (คะแนน momentum รวมกันได้ศูนย์) มันจึงเป็น matrix แนวทแยง $\operatorname{diag}(4,\ 3.92)$ การ inverse จึงแค่หารทีละช่อง</p>
+  <div class="math">\[\begin{aligned}H_{13}&amp;=\frac{\mathbf e^{\mathsf T}\mathbf t}{\mathbf e^{\mathsf T}\mathbf e}=\frac24=0.5,\\H_{23}&amp;=\frac{\mathbf m^{\mathsf T}\mathbf t}{\mathbf m^{\mathsf T}\mathbf m}=\frac{0.8}{3.92}=0.2041,\\\mathbf H&amp;=\begin{bmatrix}1&amp;0&amp;0.5\\0&amp;1&amp;0.2041\end{bmatrix},\\g_1&amp;=0.80+0.5(0.30)=0.95,\\g_2&amp;=-0.50+0.2041(0.30)\\&amp;=-0.4388.\end{aligned}\]</div>
+  <p>market ใหม่ดูด tech ไปครึ่งหนึ่ง เหมือนการดึงค่าเฉลี่ยในขั้นที่ 2 ส่วน momentum ใหม่ดูด tech ไป 0.2041 เท่า เพราะหุ้น tech ในตัวอย่างนี้ (A กับ B) มีคะแนน momentum รวมกันเป็นบวก $1.2-0.4=0.8$</p>
+  <p>ต่อไปคือความเสี่ยงของพอร์ตใน model เล็ก เพราะ exposure ต่อ market เป็นศูนย์ จึงใช้แค่ช่อง momentum ของ $\boldsymbol\Omega_g$ ซึ่งคือ variance ของ $g_2=f_2+0.2041f_3$ ใช้สูตร variance ของผลบวกแบบในขั้นที่ 2 กับตัวเลข $\omega_{22}=0.1225$, $\omega_{33}=0.3025$, $\omega_{32}=-0.01925$ จากขั้น Cholesky</p>
+  <div class="math">\[\begin{aligned}\operatorname{var}g_2&amp;=0.1225+0.2041^2(0.3025)\\&amp;\quad+2(0.2041)(-0.01925)\\&amp;=0.1225+0.01260-0.00786\\&amp;=0.12724,\\\mathbf b_A^{\mathsf T}\boldsymbol\Omega_g\mathbf b_A&amp;=13.8^2(0.12724)=24.232,\\\sqrt{24.232}&amp;=4.9226.\end{aligned}\]</div>
+  <p>model เล็กจึงรายงานความเสี่ยงจาก factor $4.9226\times\$10{,}000=\$49{,}226$ ต่อวัน สูงกว่า \$48,063 ของ model ใหญ่ เพราะ $49{,}226/48{,}063=1.024$ คือสูงกว่า 2.4%</p>
+  <p>สาเหตุเห็นได้เมื่อแปล exposure ของ model เล็กกลับเป็นภาษาของ model ใหญ่ด้วย $\mathbf H^{\mathsf T}\mathbf b_A$ ช่อง tech ได้ $0.5(0)+0.2041(13.8)=2.816$ แปลว่า model เล็กมองว่าพอร์ตถือ tech อยู่ 2.816 ทั้งที่พอร์ตถือ tech จริงแค่ 1 เพราะ exposure ต่อ momentum ลาก tech ติดมาด้วย</p>
+  <p>ทำไมเรียกการแปลงนี้ว่า projection ให้ $\mathbf P=\mathbf A(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}$ ซึ่งทำให้ $\mathbf A\mathbf g=\mathbf P\mathbf B\mathbf f$ ถ้าใช้ $\mathbf P$ สองครั้งจะได้ผลเดิม เพราะ $(\mathbf A^{\mathsf T}\mathbf A)^{-1}$ ตัดกับ $\mathbf A^{\mathsf T}\mathbf A$ ที่อยู่ตรงกลาง</p>
+  <div class="math">\[\begin{aligned}\mathbf P\mathbf P&amp;=\mathbf A(\mathbf A^{\mathsf T}\mathbf A)^{-1}(\mathbf A^{\mathsf T}\mathbf A)(\mathbf A^{\mathsf T}\mathbf A)^{-1}\mathbf A^{\mathsf T}\\&amp;=\mathbf P.\end{aligned}\]</div>
+  <p>เหมือนเงาบนพื้น ฉายเงาซ้ำก็ได้เงาเดิม</p>
+  <p>ส่วนที่ model เล็กอธิบายไม่ได้คือ $\mathbf B\mathbf f-\mathbf A\mathbf g$ ส่วนนี้ไม่ได้หายไป มันไหลไปอยู่ใน residual เพราะ $\mathbf A\mathbf g=\mathbf A\mathbf H\mathbf f$ และสองคอลัมน์แรกของ $\mathbf B-\mathbf A\mathbf H$ เป็นศูนย์ ส่วนที่เหลือจึงเป็น $f_3$ คูณ vector $\mathbf d$ ตัวเดียว</p>
+  <div class="math">\[\begin{aligned}\mathbf B\mathbf f-\mathbf A\mathbf g&amp;=(\mathbf B-\mathbf A\mathbf H)\mathbf f=f_3\,\mathbf d,\\\mathbf d&amp;=\mathbf t-0.5\,\mathbf e-0.2041\,\mathbf m\\&amp;=(0.2551,\ 0.5816,\\&amp;\qquad -0.6224,\ -0.2143).\end{aligned}\]</div>
+  <p>กำไรขาดทุนจาก factor ของ model เล็กวันนี้คือ $\mathbf b_A^{\mathsf T}\mathbf g=13.8(-0.4388)=-6.0551$ หรือ −\$60,551 ส่วนต่างจาก model ใหญ่ $-6.60-(-6.0551)=-0.5449$ หรือ −\$5,449 ย้ายจากรายการ factor ไปอยู่ในรายการเฉพาะตัว ตรวจได้จาก $\mathbf w^{\mathsf T}\mathbf d=b_3-0.5b_1-0.2041b_2=1-0-2.816=-1.816$ (tech จริงลบ tech ที่ model เล็กเห็น) แล้ว $0.30\times(-1.816)=-0.5449$</p>
+  <p>ราคาอีกข้อซ่อนอยู่ใน residual ใหม่ ทุกวัน residual ได้ $f_3\,\mathbf d$ เพิ่มเข้ามา โดย $\mathbf d$ เป็น vector ชุดเดิมทุกวัน residual ของหุ้นทั้งสี่ตัวจึงขยับพร้อมกันตาม tech ซึ่งขัดกับข้อสมมติของ factor model ว่าส่วนเฉพาะตัวของหุ้นแต่ละตัวไม่สัมพันธ์กัน ($\boldsymbol\Omega_\epsilon$ เป็น diagonal) ถึงอย่างนั้น การใช้งานแบบนี้ก็พบบ่อยที่สุด คือ model เล็กที่คอลัมน์ทั้งหมดเป็นส่วนหนึ่งของ model ใหญ่</p>
 </section>
 <figure class="plot">
   <h4>รูป — model สอง factor พูดอะไรได้ และราคาที่จ่าย</h4>
   <img src="../figures/26.3-3.svg" alt="แผงซ้ายแท่งส่วนของ factor ของหุ้นสี่ตัวจาก model สามและสอง factor แผงขวาความเสี่ยง 48,063 เทียบ 49,226 บวก 2.4 เปอร์เซ็นต์" loading="lazy">
-  <figcaption>แผงซ้ายคือส่วนที่ factor อธิบายได้ของหุ้น A ถึง D ในหน่วย % แท่งน้ำเงินจาก model สาม factor (0.50, 1.30, 0.50, 1.50) แท่งส้มจาก model สอง factor ที่ใกล้ที่สุด (0.42, 1.13, 0.69, 1.56) ช่องว่างระหว่างสองแท่งคือ $\mathbf B\mathbf f-\mathbf A\mathbf g$ ที่ไหลไปอยู่ใน residual แผงขวาคือความเสี่ยงจาก factor ของพอร์ตต่อวัน \$48,063 กับ \$49,226 ต่างกัน +2.4% model เล็กไม่ได้รายงานต่ำกว่าเสมอ</figcaption>
+  <figcaption>แผงซ้ายคือส่วนที่ factor อธิบายได้ของหุ้น A ถึง D ในหน่วย % แท่งน้ำเงินคือ $\mathbf B\mathbf f=(0.50,\ 1.30,\ 0.50,\ 1.50)$ จาก model สาม factor (ตัวเลขชุดเดียวกับหน้า<a href="26.1.html">สมการ factor model</a>) แท่งส้มคือ $\mathbf A\mathbf g=(0.42,\ 1.13,\ 0.69,\ 1.56)$ จาก model สอง factor เช่น หุ้น A ได้ $0.95+1.2(-0.4388)=0.42$ ช่องว่างระหว่างสองแท่งคือ $f_3\,\mathbf d$ ที่ไหลไปอยู่ใน residual แผงขวาคือความเสี่ยงจาก factor ของพอร์ตต่อวัน \$48,063 กับ \$49,226 ต่างกัน +2.4% ให้ดูว่า model เล็กไม่ได้รายงานความเสี่ยงต่ำกว่าเสมอ</figcaption>
 </figure>
 <section class="example">
   <h4>ขั้นที่ 8 — push-out: เพิ่ม factor ใหม่ ใช้แค่ส่วนที่ใหม่จริง</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> model ที่สร้างจากข้อมูลช่วงหนึ่งอาจไม่เหมาะกับตลาดตอนนี้ แล้ว residual เริ่มมีโครงสร้างร่วมกัน นักวิจัยเสนอคุณสมบัติใหม่ $\mathbf a=(0.5, -1.5, 1.0, 0.0)$ เป็น loading ของ factor ที่สี่ ส่วนที่ model เดิมมีอยู่แล้วคือ $\mathbf P_B\mathbf a$ ส่วนที่ใหม่จริงคือ $(\mathbf I-\mathbf P_B)\mathbf a$ และใน 4 มิติ ส่วนที่ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ มีทิศเดียวคือ $\mathbf u=(1, -1, -0.8, 0.8)$ ซึ่งหาได้ตอนหาพอร์ตที่ไม่มี exposure ต่อ factor ใดเลย</p>
+  <p>model ที่สร้างจากข้อมูลช่วงหนึ่งอาจไม่เหมาะกับตลาดตอนนี้ อาการที่เห็นคือ residual ของหุ้นหลายตัวเริ่มขยับพร้อมกัน แปลว่ามีแรงร่วมตัวใหม่ที่ model ยังไม่มี นักวิจัยจึงเสนอ factor ตัวที่สี่ คำถามคือ ของที่เสนอมาใหม่จริงแค่ไหน และจะใส่เข้าไปอย่างไรไม่ให้ตัวเลขเก่าพัง</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong></p>
+  <ul>
+    <li>คุณสมบัติใหม่ (ตัวเลขประจำหุ้นแต่ละตัว ใช้เป็น loading ของ factor ที่สี่) $\mathbf a=(0.5,\ -1.5,\ 1.0,\ 0.0)$ (สมมติ)</li>
+    <li>ส่วนที่ model เดิมมีอยู่แล้วคือเงาของ $\mathbf a$ บน range ของ $\mathbf B$ เขียนเป็น $\mathbf P_B\mathbf a$ โดย $\mathbf P_B=\mathbf B(\mathbf B^{\mathsf T}\mathbf B)^{-1}\mathbf B^{\mathsf T}$ แบบเดียวกับ $\mathbf P$ ในขั้นที่ 7 ส่วนที่ใหม่จริงคือส่วนที่เหลือ $(\mathbf I-\mathbf P_B)\mathbf a$</li>
+    <li>มีหุ้น 4 ตัวแต่มีคอลัมน์ 3 คอลัมน์ ทิศที่ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ จึงเหลือ $4-3=1$ ทิศ คือ $\mathbf u=(1,\ -1,\ -0.8,\ 0.8)$</li>
+  </ul>
+  <p>ตรวจว่า $\mathbf u$ ตั้งฉากกับทุกคอลัมน์จริง: market $1-1-0.8+0.8=0$, momentum $1.2+0.4-0.48-1.12=0$, tech $1-1=0$ ในเมื่อส่วนที่ใหม่จริงต้องอยู่บนทิศ $\mathbf u$ ทิศเดียว การหามันจึงเป็นแค่การฉาย $\mathbf a$ ลงบน $\mathbf u$ ด้วยสูตรเงาบนเส้นตรง $\dfrac{\mathbf a^{\mathsf T}\mathbf u}{\mathbf u^{\mathsf T}\mathbf u}\mathbf u$ โดย $\mathbf a^{\mathsf T}\mathbf u=0.5+1.5-0.8+0=1.2$ และ $\mathbf u^{\mathsf T}\mathbf u=1+1+0.64+0.64=3.28$</p>
   <div class="math">\[
 \begin{aligned}
 \hat{\mathbf a}&=(\mathbf I-\mathbf P_B)\,\mathbf a\\
 &=\frac{\mathbf a^{\mathsf T}\mathbf u}{\mathbf u^{\mathsf T}\mathbf u}\,\mathbf u=\frac{1.2}{3.28}\,\mathbf u\\
 &=(0.3659,\ -0.3659,\\
 &\qquad -0.2927,\ 0.2927),\\
-\lVert\mathbf a\rVert&=\sqrt{3.5}=1.8708,\\
-\lVert\hat{\mathbf a}\rVert&=0.6626,\\
-\frac{\lVert\hat{\mathbf a}\rVert^2}{\lVert\mathbf a\rVert^2}&=\frac{0.4390}{3.5}=12.5\%.
+\lVert\mathbf a\rVert^2&amp;=0.25+2.25+1+0=3.5,\\
+\lVert\hat{\mathbf a}\rVert^2&amp;=\frac{1.2^2}{3.28}=0.4390,\\
+\frac{\lVert\hat{\mathbf a}\rVert}{\lVert\mathbf a\rVert}&amp;=\frac{\sqrt{0.4390}}{\sqrt{3.5}}\\
+&amp;=\frac{0.6626}{1.8708}=35.4\%,\\
+\frac{\lVert\hat{\mathbf a}\rVert^2}{\lVert\mathbf a\rVert^2}&amp;=\frac{0.4390}{3.5}=12.5\%.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> $\mathbf a^{\mathsf T}\mathbf u=0.5+1.5-0.8+0=1.2$ ส่วนที่ใหม่จริงยาว 35.4% ของเดิม แต่ความยาวไม่บวกกัน ความยาวกำลังสองบวกกัน (แบบเดียวกับตอนแยก <a href="26.2.html">alpha spanned และ alpha orthogonal</a>) จึงต้องอ่านว่า 87.5% ของคุณสมบัติที่เสนอมา model เดิมมีอยู่แล้ว เหลือของใหม่ 12.5% model ที่ขยายคือ $\mathbf r=\boldsymbol\alpha_\perp+\mathbf B\mathbf f+\hat{\mathbf a}g+\boldsymbol\eta$ โดย $\hat{\mathbf a}^{\mathsf T}\mathbf B=\mathbf 0$ เงื่อนไขนี้จำเป็น ถ้าคอลัมน์ใหม่มีส่วนที่ซ้ำกับคอลัมน์เก่า ส่วนนั้นจะเขียนเป็น $\mathbf B\mathbf c\,g$ แล้วบวกเข้า $\mathbf B\mathbf f$ ได้ factor return เดิมจึงต้องเปลี่ยนตาม</p>
+  <p><strong>คำตอบ:</strong> ส่วนที่ใหม่จริงยาว 35.4% ของความยาวเดิม แต่ความยาวบวกกันไม่ได้ ที่บวกกันได้คือความยาวกำลังสอง เพราะส่วนที่มีอยู่แล้วกับส่วนที่ใหม่ตั้งฉากกัน (ทฤษฎีบทพีทาโกรัส แบบเดียวกับตอนแยก <a href="26.2.html">alpha spanned และ alpha orthogonal</a>) จึงต้องอ่านว่า $100\%-12.5\%=87.5\%$ ของคุณสมบัติที่เสนอมา model เดิมมีอยู่แล้ว เหลือของใหม่จริงแค่ 12.5%</p>
+  <p>model ที่ขยายแล้วเขียนได้เป็น $\mathbf r=\boldsymbol\alpha_\perp+\mathbf B\mathbf f+\hat{\mathbf a}g+\boldsymbol\eta$ โดย $g$ คือ factor return ของ factor ใหม่ $\boldsymbol\alpha_\perp$ คือส่วนของ alpha ที่ factor อธิบายไม่ได้ (ตามหน้า<a href="26.2.html">alpha spanned และ alpha orthogonal</a>) และ $\boldsymbol\eta$ คือ residual ที่เหลือ ข้อสำคัญคือ $\hat{\mathbf a}^{\mathsf T}\mathbf B=\mathbf 0$ เงื่อนไขนี้จำเป็น ถ้าคอลัมน์ใหม่มีส่วนที่ซ้ำกับคอลัมน์เก่า ส่วนนั้นเขียนได้เป็น $\mathbf B\mathbf c\,g$ แล้วรวมเข้ากับของเดิมได้ $\mathbf B\mathbf f+\mathbf B\mathbf c\,g=\mathbf B(\mathbf f+\mathbf c\,g)$ factor return เดิมจึงต้องเปลี่ยนตาม</p>
   <p><strong>ตรวจเองใน 10 วินาที:</strong> $\hat{\mathbf a}$ ต้องรวมกันได้ศูนย์เพราะตั้งฉากกับคอลัมน์ market $0.3659-0.3659-0.2927+0.2927=0$</p>
 </section>
 <figure class="plot">
@@ -308,7 +520,10 @@ L_{33}&=\sqrt{0.3025-0.075625}\\
 </figure>
 <section class="example">
   <h4>ขั้นที่ 9 — ทำไมต้องใช้ส่วนที่ตั้งฉาก: ตัวเลขเก่าไม่ขยับ</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ผลตอบแทนวันนี้ (0.90, 1.05, 0.65, 0.90)% ประมาณ factor return ด้วย <a href="15.1.html">OLS</a> ข้ามหุ้นสามแบบ คือบน $\mathbf B$ อย่างเดียว บน $\mathbf B$ บวก $\mathbf a$ ดิบ และบน $\mathbf B$ บวก $\hat{\mathbf a}$</p>
+  <p>ในชีวิตจริงเราไม่เห็น factor return ตรง ๆ เราเห็นแค่ผลตอบแทนของหุ้น ทุกวันผู้ให้บริการจึงประมาณ factor return ด้วย <a href="15.1.html">OLS</a> ข้ามหุ้น คือหา $\hat{\mathbf f}$ ที่ทำให้ $\mathbf B\hat{\mathbf f}$ ใกล้ผลตอบแทนของหุ้นวันนั้นที่สุด ขั้นนี้ดูว่าการเพิ่มคอลัมน์ใหม่ทำให้ค่าประมาณของ factor เก่าเปลี่ยนไหม</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ผลตอบแทนวันนี้ของหุ้นทั้งสี่ตัวคือส่วนของ factor บวกส่วนเฉพาะตัว ตัวเลขจากหน้า<a href="26.1.html">สมการ factor model</a></p>
+  <div class="math">\[\begin{aligned}\mathbf r&amp;=\mathbf B\mathbf f+\boldsymbol\epsilon\\&amp;=(0.50,\ 1.30,\ 0.50,\ 1.50)\\&amp;\quad+(0.40,\ -0.25,\ 0.15,\ -0.60)\\&amp;=(0.90,\ 1.05,\ 0.65,\ 0.90)\%.\end{aligned}\]</div>
+  <p>เราประมาณ factor return จาก $\mathbf r$ สามแบบ คือใช้ $\mathbf B$ อย่างเดียว ใช้ $\mathbf B$ บวกคอลัมน์ $\mathbf a$ ดิบ และใช้ $\mathbf B$ บวกคอลัมน์ $\hat{\mathbf a}$ ที่ตั้งฉากแล้ว ตัวเลขข้างล่างคำนวณด้วยโค้ดท้ายหน้า</p>
   <div class="math">\[
 \begin{aligned}
 \hat{\mathbf f}_{\mathbf B}&=(0.7299,\ -0.1128,\ 0.2902),\\
@@ -318,29 +533,32 @@ L_{33}&=\sqrt{0.3025-0.075625}\\
 &\qquad 0.2902,\ 0.0417).
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> ใส่ $\mathbf a$ ดิบแล้ว factor return เก่าทั้งสามตัวขยับ market ของวันนี้จาก 0.7299% เป็น 0.6958% และจะขยับแบบนี้ทุกวันในประวัติ รายงานย้อนหลังทั้งหมดเปลี่ยน ใส่ $\hat{\mathbf a}$ แล้วสามตัวเดิมเท่าเดิมทุกหลัก และ factor ใหม่ได้ 0.0417 เท่ากันทั้งสองแบบ หน้า <a href="26.5.html">Frisch–Waugh–Lovell</a> พิสูจน์ว่าเป็นแบบนี้เสมอ ค่าประมาณบน $\mathbf B$ ต่างจาก $\mathbf f$ จริง (0.80, −0.50, 0.30) เพราะหุ้นแค่สี่ตัวทำให้ส่วนเฉพาะตัวรั่วเข้าไปในค่าประมาณ หน้านั้นวัดขนาดของการรั่วนี้ด้วย</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> ค่าของ factor ใหม่คือ $\hat{\mathbf a}^{\mathsf T}\mathbf r/\hat{\mathbf a}^{\mathsf T}\hat{\mathbf a}=0.01829/0.4390=0.0417$ ใช้แค่คอลัมน์ใหม่คอลัมน์เดียว เพราะมันตั้งฉากกับคอลัมน์เก่าทั้งหมด</p>
+  <p><strong>คำตอบ:</strong> ใส่ $\mathbf a$ ดิบแล้ว factor return เก่าทั้งสามตัวขยับหมด market ของวันนี้เปลี่ยนจาก 0.7299% เป็น 0.6958% ลดลง $0.7299-0.6958=0.0341$ จุด และจะขยับแบบนี้ทุกวันในประวัติ รายงานย้อนหลังทั้งหมดจึงเปลี่ยน ส่วนการใส่ $\hat{\mathbf a}$ ทำให้สามตัวเดิมเท่าเดิมทุกหลัก และ factor ใหม่ได้ 0.0417 เท่ากันทั้งสองแบบ หน้า <a href="26.5.html">Frisch–Waugh–Lovell</a> พิสูจน์ว่าเป็นแบบนี้เสมอ</p>
+  <p>อีกเรื่องที่ต้องสังเกต ค่าประมาณบน $\mathbf B$ อย่างเดียวคือ (0.7299, −0.1128, 0.2902) ต่างจาก $\mathbf f$ จริง (0.80, −0.50, 0.30) เพราะมีหุ้นแค่สี่ตัว ส่วนเฉพาะตัว $\boldsymbol\epsilon$ จึงรั่วเข้าไปในค่าประมาณ หน้านั้นวัดขนาดของการรั่วนี้ด้วย</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> เพราะคอลัมน์ใหม่ตั้งฉากกับคอลัมน์เก่าทั้งหมด ค่าของ factor ใหม่จึงหาได้จากคอลัมน์ใหม่คอลัมน์เดียว ใช้ $\hat{\mathbf a}=0.3659\,\mathbf u$ และ $\mathbf u^{\mathsf T}\mathbf r=0.90-1.05-0.52+0.72=0.05$</p>
+  <div class="math">\[\begin{aligned}\hat{\mathbf a}^{\mathsf T}\mathbf r&amp;=0.3659\times0.05=0.01829,\\\hat g&amp;=\frac{\hat{\mathbf a}^{\mathsf T}\mathbf r}{\hat{\mathbf a}^{\mathsf T}\hat{\mathbf a}}=\frac{0.01829}{0.4390}=0.0417.\end{aligned}\]</div>
 </section>
 <section class="pitfall">
   <h4>ความผิดที่เปลี่ยนเรื่องเล่าโดยไม่มีอะไรจริงเปลี่ยน</h4>
-  <p><strong>เทียบ attribution ข้าม model คนละแบบ:</strong> บรรทัด momentum ของวันเดียวกันเป็น −\$69,000 ในรายงาน A และ −\$61,272 ในรายงาน B และไม่มีชื่อเลยในแบบ eigenvector ถ้าเปลี่ยนแบบกลางปีแล้วเทียบก่อนกับหลัง จะสรุปผิดเรื่องฝีมือทั้งที่โลกไม่ได้เปลี่ยน</p>
-  <p><strong>z-score โดยไม่มีคอลัมน์ market:</strong> ตัวอย่างหุ้นสองตัวข้างบนแสดงว่าพอร์ตเดียวกันเสี่ยง \$20,000 ต่อวันใน model หนึ่ง และไม่มีความเสี่ยงจาก factor เลยในอีก model ตัวเลขทั้งสองดูสมเหตุสมผล จึงไม่มีใครสังเกต</p>
-  <p><strong>คิดว่า model เล็กรายงานความเสี่ยงต่ำกว่าเสมอ:</strong> model สอง factor รายงานสูงกว่า 2.4% เพราะ exposure ที่ถูกตัดถูกพับเข้าไปใน factor ที่เหลือ ทิศของความคลาดขึ้นกับโครงสร้างของแต่ละกรณี ต้องวัดทุกครั้ง</p>
-  <p><strong>เพิ่มคุณสมบัติใหม่แบบดิบ:</strong> market ของวันนี้ขยับ 0.034 จุดจากการเพิ่มคอลัมน์เดียว และขยับแบบนี้ทุกวันย้อนหลัง รายงานผลงานเก่าทั้งหมดเปลี่ยนโดยไม่มีใครตั้งใจ</p>
+  <p><strong>เทียบ attribution ข้าม model คนละแบบ:</strong> ถ้าเปลี่ยนแบบของ model กลางปีแล้วเทียบตัวเลขก่อนกับหลัง จะสรุปผิดเรื่องฝีมือทั้งที่โลกไม่ได้เปลี่ยน วันเดียวกัน บรรทัด momentum ในรายงาน A คือ $13.8\times(-0.50)=-6.90$ หรือ −\$69,000 แต่ในรายงาน B คือ $4.7324\times(-1.2947)=-6.1272$ หรือ −\$61,272 และในแบบ eigenvector ไม่มีบรรทัดชื่อ momentum เลย ทุกแบบถูกหมด แต่ตอบคนละคำถาม</p>
+  <p><strong>z-score โดยไม่มีคอลัมน์ market:</strong> การลบค่าเฉลี่ยใน model ที่ไม่มีคอลัมน์ market คือการสร้าง model ใหม่ ไม่ใช่ rotation ในตัวอย่างหุ้นสองตัวข้างบน พอร์ตเดียวกันเสี่ยง $b\sigma=2\times1=2$ หน่วย หรือ \$20,000 ต่อวันใน model เดิม แต่ใน model ที่ลบค่าเฉลี่ย $\tilde b=0.5-0.5=0$ คือไม่มีความเสี่ยงจาก factor เลย ตัวเลขทั้งสองดูสมเหตุสมผล จึงไม่มีใครสังเกต</p>
+  <p><strong>คิดว่า model เล็กรายงานความเสี่ยงต่ำกว่าเสมอ:</strong> ตัด factor ออกแล้วความเสี่ยงอาจสูงขึ้นก็ได้ model สาม factor ให้ $\sqrt{23.1001}=4.8063$ หรือ \$48,063 แต่ model สอง factor ให้ $\sqrt{24.232}=4.9226$ หรือ \$49,226 สูงกว่า 2.4% เพราะ exposure ที่ถูกตัดถูกพับเข้าไปใน factor ที่เหลือ ทิศของความคลาดขึ้นกับโครงสร้างของแต่ละกรณี ต้องวัดทุกครั้ง</p>
+  <p><strong>เพิ่มคุณสมบัติใหม่แบบดิบ:</strong> ใส่ $\mathbf a$ ดิบแทน $\hat{\mathbf a}$ ทำให้ factor return เก่าเปลี่ยนย้อนหลังทุกวัน market ของวันนี้ขยับ $0.7299-0.6958=0.0341$ จุดจากการเพิ่มคอลัมน์เดียว รายงานผลงานเก่าทั้งหมดจึงเปลี่ยนโดยไม่มีใครตั้งใจ ถ้าใช้ $\hat{\mathbf a}$ market ยังเป็น 0.7299 เท่าเดิม</p>
 </section>
 <section class="prose">
   <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
-  <p>ผู้ให้บริการ risk model ส่ง model เดียวกันในหลายหน้าตา คือ loading ดิบ แบบที่ z-score แล้ว และบางครั้งแบบที่ factor ไม่สัมพันธ์กัน โต๊ะเลือกแบบเดียวที่คนอ่านรายงานเข้าใจแล้วตรึงไว้ รายงาน A ตอบว่า “เดิมพันไหนที่เราถือ” รายงาน B ตอบว่า “ถ้าหักตลาดออกแล้ว เดิมพันไหนทำงาน” แบบ eigenvector เหมาะกับการคำนวณ แต่ไม่มีชื่อให้คน</p>
-  <p>projection ใช้ทำ model ย่อให้คนที่ไม่ต้องการ factor ทั้งร้อยตัว โดยรู้ว่าส่วนที่ทิ้งไปไหลไปอยู่ใน residual และ push-out ใช้ทดสอบคุณสมบัติใหม่โดยไม่แตะ factor return ในประวัติ ถ้าไม่มีอะไรก็ทิ้งไป ถ้ามีค่อยตัดสินว่าจะรับเข้า model ถาวร</p>
+  <p>ผู้ให้บริการ risk model ส่ง model เดียวกันมาในหลายหน้าตา เช่น loading ดิบ แบบที่ z-score แล้ว และบางครั้งแบบที่ factor ไม่สัมพันธ์กัน โต๊ะเลือกแบบเดียวที่คนอ่านรายงานเข้าใจ แล้วใช้แบบนั้นตลอด เพื่อให้ตัวเลขเทียบข้ามเวลาได้</p>
+  <p>แต่ละแบบตอบคำถามต่างกัน รายงาน A ตอบว่า “เราถือเดิมพันอะไรอยู่” รายงาน B ตอบว่า “ถ้าหักตลาดออกแล้ว เดิมพันไหนทำเงิน” แบบ eigenvector เหมาะกับการคำนวณ แต่ไม่มีชื่อที่คนเข้าใจ</p>
+  <p>projection ใช้ทำ model ย่อให้คนที่ไม่ต้องการ factor ทั้งร้อยตัว โดยรู้ว่าส่วนที่ทิ้งไปไหลไปอยู่ใน residual ส่วน push-out ใช้ทดสอบคุณสมบัติใหม่โดยไม่แตะ factor return ในประวัติ ถ้าของใหม่ไม่ช่วยอะไรก็ทิ้งไป ถ้าช่วยค่อยตัดสินว่าจะรับเข้า model ถาวร</p>
 </section>
 <section class="example">
   <h4>โจทย์ตรวจความเข้าใจ</h4>
-  <p><strong>1.</strong> พอร์ตซื้อ A อย่างเดียว \$2 ล้าน ในวันเดียวกัน กำไรขาดทุนจาก factor แบ่งอย่างไร ก่อนและหลังดึงค่าเฉลี่ยของ tech</p>
-  <details><summary>เฉลย</summary><p>$\mathbf b=(2, 2.4, 2)$ ก่อน: $2(0.80)=1.60$, $2.4(-0.50)=-1.20$, $2(0.30)=0.60$ คือ +\$16,000, −\$12,000, +\$6,000 หลัง: $\tilde{\mathbf b}=\mathbf b+\boldsymbol\nu(2)=(2, 2.4, 1)$ กับ $\tilde{\mathbf f}=(0.95, -0.50, 0.30)$ ได้ +\$19,000, −\$12,000, +\$3,000 รวม +\$10,000 เท่ากันทั้งสองแบบ</p></details>
-  <p><strong>2.</strong> พอร์ต long ล้วน (3, 2, 4, 5) ในรายงานแบบ Cholesky แต่ละบรรทัดเป็นเท่าไร</p>
-  <details><summary>เฉลย</summary><p>$\mathbf b=(14, -1.8, 5)$ ใช้สูตร beta ของการอ่านรายงาน B: market $(14+(-0.07)(-1.8)+0.275(5))(0.80)=15.501(0.80)=12.4008$ momentum $-1.8(-0.444)=0.7992$ tech $5(0.08)=0.40$ คือ +\$124,008, +\$7,992, +\$4,000 รวม +\$136,000 เท่ารายงานเดิม</p></details>
-  <p><strong>3.</strong> นักวิจัยเสนอคุณสมบัติ (0.2, 0.2, −0.2, −0.2) มีอะไรใหม่ไหม</p>
-  <details><summary>เฉลย</summary><p>$\mathbf a^{\mathsf T}\mathbf u=0.2(1)+0.2(-1)+(-0.2)(-0.8)+(-0.2)(0.8)=0.2-0.2+0.16-0.16=0$ ส่วนที่ใหม่จริงจึงเป็นศูนย์ทั้งหมด เพราะคุณสมบัตินี้คือ 0.4 เท่าของคอลัมน์ tech ลบ 0.2 เท่าของคอลัมน์ market ซึ่ง model มีอยู่แล้ว ตรวจ: $0.4(1, 1, 0, 0)-0.2(1, 1, 1, 1)=(0.2, 0.2, -0.2, -0.2)$</p></details>
+  <p><strong>1.</strong> พอร์ตเล็กอีกพอร์ตหนึ่งซื้อหุ้น A อย่างเดียว \$2 ล้าน ไม่ถือตัวอื่น ($\mathbf w=(2,\ 0,\ 0,\ 0)$) ในวันเดียวกับ hook ผู้จัดการพอร์ตอยากรู้ว่า กำไรขาดทุนจาก factor แบ่งเป็นสามก้อนอย่างไร ก่อนและหลังดึงค่าเฉลี่ยออกจากคอลัมน์ tech และยอดรวมเท่ากันไหม</p>
+  <details><summary>เฉลย</summary><p>exposure คือแถวของหุ้น A ใน $\mathbf B$ คูณ 2 คือ $\mathbf b=2\times(1,\ 1.2,\ 1)=(2,\ 2.4,\ 2)$ ก่อนดึงค่าเฉลี่ยใช้ $\mathbf f=(0.80,\ -0.50,\ 0.30)$ (หน่วย \$10,000)</p><div class="math">\[\begin{aligned}2(0.80)&amp;=1.60,\\2.4(-0.50)&amp;=-1.20,\\2(0.30)&amp;=0.60.\end{aligned}\]</div><p>คือ +\$16,000, −\$12,000, +\$6,000 รวม $1.60-1.20+0.60=1.00$ หรือ +\$10,000</p><p>หลังดึงค่าเฉลี่ย เงินรวมของพอร์ตคือ $\mathbf e^{\mathsf T}\mathbf w=2$ จึงได้ exposure และ factor return ใหม่ดังนี้</p><div class="math">\[\begin{aligned}\tilde{\mathbf b}&amp;=\mathbf b+\boldsymbol\nu(2)=(2,\ 2.4,\ 1),\\\tilde{\mathbf f}&amp;=(0.95,\ -0.50,\ 0.30),\\2(0.95)&amp;=1.90,\\2.4(-0.50)&amp;=-1.20,\\1(0.30)&amp;=0.30.\end{aligned}\]</div><p>คือ +\$19,000, −\$12,000, +\$3,000 รวม $1.90-1.20+0.30=1.00$ หรือ +\$10,000 เท่ากันทั้งสองแบบ ก้อน tech \$3,000 ย้ายไปอยู่ที่ market</p></details>
+  <p><strong>2.</strong> กลับไปที่พอร์ตซื้ออย่างเดียว $\mathbf w=(3,\ 2,\ 4,\ 5)$ \$ ล้าน จากขั้นที่ 2 ซึ่งมี $\mathbf b=(14,\ -1.8,\ 5)$ ถ้าผู้ให้บริการส่งรายงานแบบ Cholesky (แบบรายงาน B) มาให้ แต่ละบรรทัดเป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ใช้สูตรสามก้อนของขั้นที่ 5 กับ $\beta_2=-0.07$, $\beta_3=0.275$, $f_2-\beta_2f_1=-0.444$ และ $f_3-\beta_3f_1=0.30-0.275(0.80)=0.08$ (หน่วย \$10,000)</p><div class="math">\[\begin{aligned}\text{market}&amp;:\ (14+(-0.07)(-1.8)\\&amp;\qquad+0.275(5))(0.80)\\&amp;=15.501(0.80)=12.4008,\\\text{momentum}&amp;:\ -1.8(-0.444)=0.7992,\\\text{tech}&amp;:\ 5(0.08)=0.40.\end{aligned}\]</div><p>คือ +\$124,008, +\$7,992, +\$4,000 รวม $12.4008+0.7992+0.40=13.6$ หรือ +\$136,000 เท่ากับยอดในขั้นที่ 2</p></details>
+  <p><strong>3.</strong> นักวิจัยอีกคนเสนอคุณสมบัติใหม่ $\mathbf a=(0.2,\ 0.2,\ -0.2,\ -0.2)$ เป็น factor ตัวที่สี่ และบอกว่ามันจับแรงที่ model ยังไม่มี ก่อนรับเข้า model ต้องรู้ว่ามันมีส่วนที่ใหม่จริงเท่าไร</p>
+  <details><summary>เฉลย</summary><p>ฉายลงบนทิศ $\mathbf u=(1,\ -1,\ -0.8,\ 0.8)$ ที่ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ เหมือนขั้นที่ 8</p><div class="math">\[\begin{aligned}\mathbf a^{\mathsf T}\mathbf u&amp;=0.2(1)+0.2(-1)\\&amp;\quad+(-0.2)(-0.8)+(-0.2)(0.8)\\&amp;=0.2-0.2+0.16-0.16=0.\end{aligned}\]</div><p>ส่วนที่ใหม่จริงจึงเป็นศูนย์ทั้งหมด เพราะคุณสมบัตินี้คือ 0.4 เท่าของคอลัมน์ tech ลบ 0.2 เท่าของคอลัมน์ market ซึ่ง model มีอยู่แล้ว ตรวจ: $0.4(1,\ 1,\ 0,\ 0)-0.2(1,\ 1,\ 1,\ 1)=(0.2,\ 0.2,\ -0.2,\ -0.2)$</p></details>
 </section>
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>

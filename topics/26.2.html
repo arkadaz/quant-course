@@ -18,16 +18,62 @@
 <article class="topic" data-number="26.2" data-depends-on="3.5 6.4 6.5 7.5 15.1 26.1">
 <header class="topic-header">
   <h1><span class="tnum">26.2</span> Alpha Spanned and Alpha Orthogonal</h1>
-  <p class="subtitle">ผลตอบแทนคาดหวังของหุ้นแยกได้เป็นส่วนที่ชี้ไปตามทิศของ factor กับส่วนที่ตั้งฉากกับทุก factor ส่วนแรกคือเดิมพันครั้งเดียว ส่วนหลังคือเดิมพันหลายร้อยครั้งที่ความเสี่ยงหักล้างกันเอง</p>
+  <p class="subtitle">ผลตอบแทนพิเศษที่สัญญาณทายไว้ (alpha) แยกได้เป็นสองส่วน ส่วนแรกซ้ำกับสิ่งที่ factor ให้อยู่แล้ว มันคือเดิมพันครั้งเดียว ส่วนที่สองตั้งฉากกับทุก factor มันคือเดิมพันหลายร้อยครั้งที่ความเสี่ยงหักล้างกันเอง</p>
 </header>
 <div class="hook">
-  <p>ทีมวิจัยเสนอสัญญาณสองตัว ตัวแรกบอกทิศของหุ้น 500 ตัว คาดผลตอบแทนเฉลี่ยตัวละ 2% ต่อปีโดยไม่มี exposure ต่อ factor ใดเลย หุ้นแต่ละตัวมีความผันผวนเฉพาะตัวไม่เกิน 35% ต่อปี ตัวที่สองบอกว่า momentum factor จะให้ 3% ต่อปีที่ความผันผวน 8% ตัวที่สองดูดีกว่าทุกทาง ผลตอบแทนสูงกว่าและเสี่ยงน้อยกว่า ถ้าเลือกได้ตัวเดียว ควรเลือกตัวไหน?</p>
-  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ตัวแรก มันได้ Sharpe Ratio อย่างน้อย 1.278 ต่อปี ส่วนตัวที่สองได้ $3/8=0.375$ ตัวแรกคือเดิมพัน 500 ครั้งที่ความเสี่ยงหักล้างกันเอง ตัวที่สองคือเดิมพันครั้งเดียวไม่ว่าจะซื้อหุ้นกี่ตัว ถ้าขยายเป็น 2,000 หุ้น ตัวแรกได้ 2.556 ตัวที่สองยัง 0.375 และถ้าเอาสองตัวมารวมกันอย่างดีที่สุดได้ 1.332 ดีกว่าตัวแรกคนเดียวแค่ 4.2%</p></details>
+  <p>กองทุนเชิงปริมาณ (quant fund) คือกองทุนที่ใช้ข้อมูลและ model ตัดสินใจซื้อขายหุ้น แทนความเห็นของคน กองทุนแบบนี้มีทีมวิจัยที่คอยหา “สัญญาณ” สัญญาณคือกฎที่ใช้ข้อมูลทายว่าหุ้นตัวไหนจะให้ผลตอบแทนดีกว่าปกติ และตัวไหนจะแย่กว่าปกติ ปีนี้ทีมเสนอสัญญาณมาสองตัว แต่กองทุนรับได้ตัวเดียว</p>
+  <p>กองทุนตัดสินด้วยตัววัดชื่อ Sharpe Ratio (ย่อว่า SR) มันคือผลตอบแทนคาดหวังต่อปี หารด้วยความผันผวนต่อปี ความผันผวนคือ SD (standard deviation) ของผลตอบแทน มันวัดว่าผลตอบแทนแกว่งมากแค่ไหน SR จึงบอกว่าได้ผลตอบแทนเท่าไรต่อความเสี่ยงหนึ่งหน่วย ยิ่งสูงยิ่งคุ้ม</p>
+  <p>ก่อนดูตัวเลข ต้องรู้จักอีกสองคำ หุ้นหลายตัวมักขึ้นลงพร้อมกันเพราะแรงร่วมบางอย่าง เช่น ทั้งตลาดขึ้น แรงร่วมแบบนี้เรียกว่า factor ส่วนการแกว่งที่หุ้นตัวหนึ่งแกว่งเองคนเดียว เช่น จากข่าวของบริษัทนั้น เรียกว่าส่วนเฉพาะตัว</p>
+  <p><strong>สัญญาณที่ 1</strong> ทายหุ้นทีละตัว (ตัวเลขสมมติ)</p>
+  <ul>
+    <li>ทายหุ้น $n=500$ ตัว</li>
+    <li>สัญญาณทายว่าหุ้นแต่ละตัวจะให้ผลตอบแทนต่างจากที่ factor บอก โดยเฉลี่ยตัวละ $\mu=2\%$ ต่อปี บางตัวดีกว่า บางตัวแย่กว่า</li>
+    <li>กองทุนซื้อตัวที่ดีกว่า และขายตัวที่แย่กว่าแบบ short (ยืมหุ้นมาขายก่อน แล้วซื้อคืนทีหลัง จึงได้กำไรเมื่อราคาตก) จึงเก็บส่วนต่างนี้ได้ทุกตัว</li>
+    <li>พอร์ตที่สร้างจากสัญญาณนี้ไม่ขยับตาม factor ใดเลย (ศัพท์คือไม่มี exposure ต่อ factor) จึงเหลือแต่การแกว่งเฉพาะตัว</li>
+    <li>ความผันผวนเฉพาะตัวของหุ้นแต่ละตัวไม่เกิน $\sigma_{\max}=35\%$ ต่อปี</li>
+  </ul>
+  <p><strong>สัญญาณที่ 2</strong> ทาย factor ตัวเดียวคือ momentum (ตัวเลขสมมติ) momentum คือแรงที่ทำให้หุ้นที่ราคาวิ่งดีมาตลอดปีที่แล้วยังวิ่งดีต่อ</p>
+  <ul>
+    <li>พอร์ตที่เดิมพันกับ momentum ให้ผลตอบแทนคาดหวัง 3% ต่อปี</li>
+    <li>พอร์ตนี้มีความผันผวน 8% ต่อปี</li>
+    <li>SR ของมันจึงเป็น $\text{SR}_2=3/8=0.375$</li>
+  </ul>
+  <p>มองผ่าน ๆ สัญญาณที่ 2 ดีกว่าทุกทาง ผลตอบแทน 3% สูงกว่า 2% และความผันผวน 8% ต่ำกว่า 35% มาก ถ้าเลือกได้ตัวเดียว ควรเลือกตัวไหน?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ควรเลือกสัญญาณที่ 1 ตัวเลขทุกตัวในเฉลยนี้ หน้านี้จะคำนวณให้ดูทีละขั้น</p><p>สัญญาณที่ 1 คือเดิมพันเล็ก ๆ 500 ครั้งที่ไม่เกี่ยวกัน ผลตอบแทนรวมโตตามจำนวนหุ้น แต่การแกว่งของหุ้นแต่ละตัวหักล้างกันเองบางส่วน ความผันผวนรวมจึงโตช้ากว่า หน้านี้จะพิสูจน์ว่า SR ของมันมีขอบล่าง (ค่าต่ำสุดที่รับประกันได้) ดังนี้</p>
+  <div class="math">\[\begin{aligned}\text{SR}_1&amp;\ge\frac{\sqrt n\,\mu}{\sigma_{\max}}\\&amp;=\frac{\sqrt{500}\times0.02}{0.35}\\&amp;=1.278\end{aligned}\]</div>
+  <p>สัญญาณที่ 2 คือเดิมพันครั้งเดียว ซื้อหุ้นกี่ตัวก็ยังเป็นเดิมพันบน momentum ตัวเดิม SR จึงค้างที่ 0.375</p><p>ถ้าขยายเป็น 2,000 หุ้น สัญญาณที่ 1 ยิ่งทิ้งห่าง ส่วนสัญญาณที่ 2 ยังได้ 0.375 เท่าเดิม แล้วถ้าถือทั้งสองตัวล่ะ? ที่ 500 หุ้น ถ้าแบ่งความเสี่ยงให้ดีที่สุด SR ของพอร์ตรวม (เขียนว่า $\text{SR}_{1+2}$) ดีกว่าสัญญาณที่ 1 ตัวเดียวแค่นิดเดียว</p>
+  <div class="math">\[\begin{aligned}n=2{,}000:\ \text{SR}_1&amp;\ge\frac{\sqrt{2{,}000}\times0.02}{0.35}\\&amp;=2.556,\\\text{SR}_{1+2}&amp;=\sqrt{1.278^2+0.375^2}\\&amp;=1.332,\\\frac{1.332}{1.278}-1&amp;=4.2\%.\end{aligned}\]</div></details>
 </div>
 <section class="prose">
   <h4>ภาพรวมก่อนลงสูตร</h4>
-  <p>ใน<a href="26.1.html">สมการ factor model</a> มี $\boldsymbol\alpha$ ซึ่งคือผลตอบแทนคาดหวังที่ factor ไม่ได้ให้ ตัวละหุ้น นักวิจัยสัญญาณทั้งอาชีพคือการหามัน แต่ $\boldsymbol\alpha$ ที่หาได้มักปนสองอย่างที่มีค่าต่างกันมาก ลองนึกถึงโลกที่มีหุ้นสองตัวกับ factor เดียวคือ market ที่ loading เป็น 1 ทั้งคู่ ถ้าสัญญาณบอกว่าหุ้นแรกจะให้ 3% หุ้นที่สองจะให้ 1% เราเขียนได้ว่า $(3, 1)=(2, 2)+(1, -1)$ ก้อนแรกบอกว่า “ทั้งสองตัวดีกว่าที่ market ให้ 2%” ซึ่งก็คือเดิมพันว่า market จะขึ้น ก้อนที่สองบอกว่า “หุ้นแรกดีกว่าหุ้นที่สอง” ซึ่งเก็บได้ด้วยการซื้อหุ้นแรกขายหุ้นที่สองเท่ากัน โดยไม่สนเลยว่า market จะไปทางไหน</p>
-  <p>ก้อนแรกชี้ไปตามทิศของคอลัมน์ loading เรียกว่า alpha spanned ก้อนที่สองตั้งฉากกับทุกคอลัมน์ เรียกว่า alpha orthogonal การแยกคือ projection แบบเดียวกับ <a href="15.1.html">OLS regression</a> หน้านี้จะแยก $\boldsymbol\alpha$ ของหุ้นสี่ตัวด้วยมือ ดูว่าทำไมก้อนแรกแยกไม่ออกจากผลตอบแทนของ factor สร้างพอร์ตจากก้อนที่สองแล้วหาขอบล่างของ Sharpe Ratio ที่โตตาม $\sqrt n$ ดันผลนี้ไปจนได้ตัวเลขที่เป็นไปไม่ได้เพื่อดูว่าข้อสมมติข้อไหนต้องยอม แล้วปิดด้วยการรวมสองชนิดเข้าด้วยกัน</p>
+  <p>หน้า<a href="26.1.html">สมการ factor model</a>เขียนผลตอบแทนของหุ้นทุกตัวไว้ในสมการเดียว $\mathbf r=\boldsymbol\alpha+\mathbf B\mathbf f+\boldsymbol\epsilon$ ทวนสั้น ๆ ว่าแต่ละตัวคืออะไร</p>
+  <ul>
+    <li>$\mathbf r$ คือ vector ผลตอบแทนของหุ้น $n$ ตัว หุ้นละหนึ่งช่อง</li>
+    <li>$\mathbf f$ คือผลตอบแทนของ factor $m$ ตัว</li>
+    <li>$\mathbf B$ คือ loadings matrix ขนาด $n\times m$ ช่องแถว $i$ คอลัมน์ $j$ (เรียกว่า loading) บอกว่าเมื่อ factor $j$ ขยับ 1% หุ้น $i$ ขยับตามกี่ %</li>
+    <li>$\boldsymbol\epsilon$ คือส่วนเฉพาะตัว มีค่าเฉลี่ยศูนย์</li>
+    <li>$\boldsymbol\alpha$ คือผลตอบแทนคาดหวังส่วนที่ factor ไม่ได้ให้ เรียกว่า alpha นักวิจัยสัญญาณใช้ทั้งอาชีพหามัน</li>
+  </ul>
+  <p>ปัญหาคือ alpha ที่ทีมวิจัยหาได้มักปนของสองอย่างที่มีค่าต่างกันมาก ดูโลกที่เล็กที่สุดก่อน</p>
+  <ul>
+    <li>โลกนี้มีหุ้นสองตัว และมี factor ตัวเดียวคือ market (การขึ้นลงของทั้งตลาด)</li>
+    <li>หุ้นทั้งสองมี loading 1 แปลว่าตลาดขึ้น 1% หุ้นทั้งสองขึ้นตาม 1% คอลัมน์ของ $\mathbf B$ จึงเป็น $(1, 1)$</li>
+    <li>สัญญาณบอกว่า alpha ของหุ้นแรกคือ 3% และของหุ้นที่สองคือ 1% ต่อปี (สมมติ) จึงได้ $\boldsymbol\alpha=(3, 1)$</li>
+  </ul>
+  <p>ส่วนที่ market อธิบายได้ต้องหน้าตาเหมือนคอลัมน์ $(1, 1)$ คือเป็น $(c, c)$ เท่ากันทั้งสองหุ้น เราอยากได้ $c$ ที่ทำให้ $(c, c)$ ใกล้ $(3, 1)$ ที่สุด ระยะกำลังสองระหว่างสองจุดคือ $(3-c)^2+(1-c)^2$ จุดต่ำสุดอยู่ที่อนุพันธ์เป็นศูนย์</p>
+  <div class="math">\[\begin{aligned}\frac{d}{dc}\big[(3-c)^2+(1-c)^2\big]&amp;=-2(3-c)-2(1-c)\\&amp;=4c-8=0,\\c&amp;=2.\end{aligned}\]</div>
+  <p>$c=2$ คือค่าเฉลี่ยของ 3 กับ 1 พอดี ส่วนที่เหลือคือ $(3-2, 1-2)=(1, -1)$ จึงแยกได้แบบนี้</p>
+  <div class="math">\[(3, 1)=(2, 2)+(1, -1)\]</div>
+  <p>ก้อน $(2, 2)$ บอกว่า “ทั้งสองหุ้นจะดีกว่าปกติ 2%” เพราะทั้งสองตัวขยับตาม market แบบ 1 ต่อ 1 คำพูดนี้จึงเท่ากับ “market จะให้มากกว่าที่คิด 2%” มันคือเดิมพันว่าตลาดจะขึ้น ไม่ใช่ฝีมือเลือกหุ้น</p>
+  <p>ก้อน $(1, -1)$ บอกว่า “หุ้นแรกจะดีกว่าหุ้นที่สอง” ก้อนนี้เก็บได้ด้วยการซื้อหุ้นแรก และ short หุ้นที่สองเป็นเงินเท่ากัน ถ้าตลาดขึ้น 1% ฝั่งซื้อได้ 1% ฝั่ง short เสีย 1% หักล้างกันพอดี กำไรจึงไม่ขึ้นกับตลาดเลย</p>
+  <p>ก้อนแรกชี้ไปตามคอลัมน์ของ $\mathbf B$ เรียกว่า alpha spanned ก้อนที่สองตั้งฉากกับทุกคอลัมน์ เพราะ $(1, -1)\cdot(1, 1)=1-1=0$ เรียกว่า alpha orthogonal วิธีแยกคือ projection แบบเดียวกับ <a href="15.1.html">OLS regression</a></p>
+  <p>หน้านี้ทำสี่เรื่องตามลำดับ</p>
+  <ul>
+    <li>แยก alpha ของหุ้นสี่ตัวด้วยมือ แล้ววัดว่าแต่ละก้อนใหญ่แค่ไหน</li>
+    <li>ดูว่าทำไมก้อน spanned แยกไม่ออกจากผลตอบแทนของ factor</li>
+    <li>สร้างพอร์ตจากก้อน orthogonal แล้วหาขอบล่างของ SR ซึ่งโตตาม $\sqrt n$ เมื่อมีหุ้น $n$ ตัว จากนั้นดันผลนี้ไปจนได้ตัวเลขที่เป็นไปไม่ได้ เพื่อดูว่าข้อสมมติข้อไหนต้องยอม</li>
+    <li>รวมสองชนิดเข้าด้วยกัน แล้วดูว่าได้เพิ่มเท่าไร</li>
+  </ul>
 </section>
 <figure class="plot">
   <h4>รูป — alpha หนึ่งลูกศร แตกเป็นสองลูกศรที่ตั้งฉากกัน</h4>
@@ -65,142 +111,204 @@
       <text x="240" y="126" fill="#a65f00">orthogonal (1, −1)</text>
     </g>
   </svg>
-  <figcaption>โลกสมมติที่มีหุ้นสองตัวกับ factor เดียว (market, loading 1 ทั้งคู่) ลูกศรดำคือ alpha ของสัญญาณ (3, 1)% ต่อปี เส้นประน้ำเงินคือทุกอย่างที่ factor พูดได้ ลูกศรน้ำเงินคือเงาของ alpha บนเส้นนั้น (2, 2) ซึ่งเป็นเดิมพันบน market ลูกศรส้มคือส่วนที่เหลือ (1, −1) ซึ่งตั้งฉากกับเส้นพอดี (มุมฉากที่จุด (2, 2)) และเก็บได้ด้วยการซื้อหุ้น 1 ขายหุ้น 2 เท่ากัน ความยาวกำลังสองบวกกันได้ $10=8+2$</figcaption>
+  <figcaption>ภาพของโลกสองหุ้นข้างบน แกนนอนคือ alpha ของหุ้น 1 แกนตั้งคือ alpha ของหุ้น 2 หน่วยเป็น % ต่อปี ลูกศรดำคือ alpha ของสัญญาณ $(3, 1)$ เส้นประน้ำเงินคือทุกจุด $(c, c)$ ที่ market อธิบายได้ ลูกศรน้ำเงินคือเงาของลูกศรดำบนเส้นนั้น $(2, 2)$ มันคือเดิมพันบน market ลูกศรส้มคือส่วนที่เหลือ $(1, -1)$ มันตั้งฉากกับเส้นประพอดี (ดูเครื่องหมายมุมฉากที่จุด (2, 2)) และเก็บได้ด้วยการซื้อหุ้น 1 ขายหุ้น 2 เป็นเงินเท่ากัน ความยาวกำลังสองบวกกันได้แบบ Pythagoras คือ $3^2+1^2=(2^2+2^2)+(1^2+1^2)$ หรือ $10=8+2$</figcaption>
 </figure>
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
-    <dt>Alpha</dt><dd>ผลตอบแทนคาดหวังส่วนเกินที่ factor ไม่ได้ให้ เขียนเป็น vector ตัวละหุ้น $\boldsymbol\alpha$ เป็นสิ่งที่นักวิจัยสัญญาณพยายามหา</dd>
-    <dt>Alpha spanned</dt><dd>ส่วนของ $\boldsymbol\alpha$ ที่เขียนเป็นผลรวมถ่วงของคอลัมน์ $\mathbf B$ ได้ คือเดิมพันว่า factor จะให้ผลตอบแทนมากกว่าที่คิด ไม่ใช่การรู้เรื่องของหุ้นแต่ละตัว</dd>
-    <dt>Alpha orthogonal</dt><dd>ส่วนของ $\boldsymbol\alpha$ ที่ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ เก็บได้ด้วยพอร์ตที่ไม่มี exposure ต่อ factor เลย ความเสี่ยงของพอร์ตนั้นจึงเป็นความเสี่ยงเฉพาะตัวล้วน</dd>
-    <dt>Projection</dt><dd>การหาจุดใน range ของ $\mathbf B$ ที่ใกล้ $\boldsymbol\alpha$ ที่สุด ส่วนที่เหลือตั้งฉากกับ range พอดี เป็นการคำนวณเดียวกับ OLS ที่ให้ $\boldsymbol\alpha$ เป็นตัวแปรตาม</dd>
-    <dt>Breadth</dt><dd>จำนวนเดิมพันที่เป็นอิสระกัน ยิ่งมาก ความเสี่ยงยิ่งหักล้างกัน และ Sharpe Ratio โตตามรากที่สองของมัน</dd>
-    <dt>Smart beta</dt><dd>ชื่อทางการตลาดของกองทุนที่ถือ factor ตามกติกาที่ประกาศไว้ ค่าธรรมเนียมต่ำ ใช้เป็นราคาตลาดของ alpha spanned</dd>
+    <dt>Factor</dt><dd>แรงร่วมที่ทำให้หุ้นหลายตัวขยับพร้อมกัน เช่น market (ทั้งตลาด) momentum (หุ้นที่ราคาวิ่งดีมาก่อนมักวิ่งต่อ) หรือกลุ่มอุตสาหกรรมอย่าง tech</dd>
+    <dt>Loading และ exposure</dt><dd>loading บอกว่าหุ้นหนึ่งตัวขยับตาม factor แรงแค่ไหน เก็บไว้ใน $\mathbf B$ ส่วน exposure คือตัวเลขเดียวกันของทั้งพอร์ต $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ บอกว่าเมื่อ factor ขยับ 1% พอร์ตได้หรือเสียเท่าไร</dd>
+    <dt>Alpha</dt><dd>ผลตอบแทนคาดหวังส่วนที่ factor ไม่ได้ให้ เขียนเป็น vector $\boldsymbol\alpha$ หุ้นละหนึ่งช่อง เป็นสิ่งที่นักวิจัยสัญญาณพยายามหา</dd>
+    <dt>Alpha spanned</dt><dd>ส่วนของ $\boldsymbol\alpha$ ที่เขียนเป็นคอลัมน์ของ $\mathbf B$ คูณน้ำหนักแล้วบวกกันได้ มันคือเดิมพันว่า factor จะให้ผลตอบแทนมากกว่าที่คิด ไม่ใช่ความรู้เรื่องหุ้นแต่ละตัว</dd>
+    <dt>Alpha orthogonal</dt><dd>ส่วนของ $\boldsymbol\alpha$ ที่ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ เก็บได้ด้วยพอร์ตที่ไม่ขยับตาม factor ใดเลย ความเสี่ยงของพอร์ตนั้นจึงเป็นความเสี่ยงเฉพาะตัวล้วน</dd>
+    <dt>Projection</dt><dd>การหาจุดใน range ของ $\mathbf B$ (ทุก vector ที่เขียนเป็น $\mathbf B\boldsymbol\lambda$ ได้) ที่ใกล้ $\boldsymbol\alpha$ ที่สุด ส่วนที่เหลือตั้งฉากกับ range พอดี เป็นการคำนวณเดียวกับ OLS ที่ให้ $\boldsymbol\alpha$ เป็นตัวแปรตาม</dd>
+    <dt>Sharpe Ratio (SR)</dt><dd>ผลตอบแทนคาดหวังต่อปี หารด้วยความผันผวนต่อปี บอกว่าได้ผลตอบแทนเท่าไรต่อความเสี่ยงหนึ่งหน่วย</dd>
+    <dt>ความผันผวนเฉพาะตัว</dt><dd>SD ของส่วนเฉพาะตัว $\epsilon_i$ ของหุ้น $i$ คือการแกว่งที่เหลือหลังหักส่วนที่ factor อธิบายได้</dd>
+    <dt>Breadth</dt><dd>จำนวนเดิมพันที่เป็นอิสระกัน ยิ่งมาก ความเสี่ยงยิ่งหักล้างกัน และ SR โตตามรากที่สองของมัน</dd>
+    <dt>Smart beta</dt><dd>กองทุนที่ถือ factor ตามกติกาที่ประกาศไว้ล่วงหน้า และเก็บค่าธรรมเนียมต่ำ ใครอยากได้เดิมพัน factor ก็ซื้อจากกองทุนแบบนี้ได้ ค่าธรรมเนียมของมันจึงเป็นราคาตลาดของ alpha spanned และไม่ควรมีใครจ่ายแพงกว่านั้นเพื่อของชิ้นเดียวกัน</dd>
   </dl>
 </details>
 <details class="symbols">
   <summary>สัญลักษณ์และหน่วย</summary>
   <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์</th><th>ความหมาย</th><th>หน่วย</th></tr></thead><tbody>
+    <tr><td>$n,\ m$</td><td>จำนวนหุ้น และจำนวน factor</td><td>ตัว</td></tr>
+    <tr><td>$\mathbf r,\ \mathbf f,\ \boldsymbol\epsilon$</td><td>ผลตอบแทนของหุ้น ผลตอบแทนของ factor และส่วนเฉพาะตัว</td><td>% ต่อปี</td></tr>
     <tr><td>$\boldsymbol\alpha,\ \boldsymbol\alpha_\parallel,\ \boldsymbol\alpha_\perp$</td><td>alpha ของหุ้นทุกตัว ส่วน spanned และส่วน orthogonal</td><td>% ต่อปี</td></tr>
-    <tr><td>$\boldsymbol\lambda$</td><td>น้ำหนักที่ทำให้คอลัมน์ของ $\mathbf B$ รวมเป็น $\boldsymbol\alpha_\parallel$</td><td>% ต่อปีต่อ loading</td></tr>
-    <tr><td>$\mathbf B,\ \mathbf u$</td><td>loadings matrix ของหุ้นสี่ตัว และทิศที่ $\mathbf B^{\mathsf T}\mathbf u=\mathbf 0$</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$\boldsymbol\lambda$</td><td>น้ำหนักที่คูณคอลัมน์ของ $\mathbf B$ แล้วรวมได้ $\boldsymbol\alpha_\parallel$</td><td>% ต่อปีต่อ loading</td></tr>
+    <tr><td>$\mathbf B,\ \mathbf u$</td><td>loadings matrix ของหุ้นสี่ตัว และทิศที่ $\mathbf B^{\mathsf T}\mathbf u=\mathbf 0$ (พอร์ตที่ไม่ขยับตาม factor ใดเลย)</td><td>ไม่มีหน่วย</td></tr>
+    <tr><td>$\mathbf w,\ \mathbf b$</td><td>เงินที่ลงในหุ้นแต่ละตัว (บวกคือซื้อ ลบคือขาย) และ exposure ของพอร์ตต่อ factor $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$</td><td>ตามหน่วยเงินที่ใช้</td></tr>
+    <tr><td>$\boldsymbol\Omega_f$</td><td>covariance matrix ของผลตอบแทน factor</td><td>(% ต่อปี)²</td></tr>
     <tr><td>$\sigma_i,\ \sigma_{\max}$</td><td>ความผันผวนเฉพาะตัวของหุ้น $i$ และค่าที่ใหญ่ที่สุด</td><td>% ต่อปี</td></tr>
     <tr><td>$\mu$</td><td>ค่าเฉลี่ยของ $\lvert[\boldsymbol\alpha_\perp]_i\rvert$ ต่อหุ้นหนึ่งตัว</td><td>% ต่อปี</td></tr>
-    <tr><td>$\lVert\mathbf x\rVert,\ \lVert\mathbf x\rVert_1$</td><td>ความยาวแบบ Euclidean และผลรวมของขนาด</td><td>ตามหน่วยของ $\mathbf x$</td></tr>
+    <tr><td>$\lVert\mathbf x\rVert,\ \lVert\mathbf x\rVert_1$</td><td>ความยาวแบบ Euclidean และผลรวมของขนาดทุกช่อง</td><td>ตามหน่วยของ $\mathbf x$</td></tr>
     <tr><td>$\text{SR}$</td><td>Sharpe Ratio ผลตอบแทนคาดหวังหารด้วยความผันผวน</td><td>ต่อปี</td></tr>
+    <tr><td>$\Phi$</td><td>โอกาสสะสมของ normal มาตรฐาน คือโอกาสที่ค่าออกมาต่ำกว่าค่าที่ใส่</td><td>ไม่มีหน่วย</td></tr>
   </tbody></table></div>
 </details>
 <section class="formula">
   <h4>ขั้นที่ 1 — แยก $\boldsymbol\alpha$ ด้วย projection</h4>
-  <p>ทุก vector ใน $n$ มิติเขียนเป็นส่วนที่อยู่ใน <a href="7.5.html">range ของ $\mathbf B$</a> บวกส่วนที่ตั้งฉากกับทุกคอลัมน์ได้แบบเดียว หาส่วนแรกด้วย normal equations ของ <a href="15.1.html">OLS</a> โดยให้ $\boldsymbol\alpha$ เป็นตัวแปรตาม และคอลัมน์ของ $\mathbf B$ เป็นตัวแปรอธิบาย สองบรรทัดแรกคือนิยาม</p>
+  <p>โลกสองหุ้นแยกด้วยมือได้ง่าย แต่กองทุนจริงมีหุ้นหลายร้อยตัวและ factor หลายสิบตัว ขั้นนี้จึงเขียนการแยกเดียวกันให้ใช้ได้กับหุ้นกี่ตัวก็ได้</p>
+  <p>ในโลกสองหุ้น ส่วนที่ factor อธิบายได้คือทุกจุด $(c, c)$ ในโลกทั่วไป มันคือทุก vector ที่เขียนเป็น $\mathbf B\boldsymbol\lambda$ ได้ คือเอาคอลัมน์ของ $\mathbf B$ มาคูณน้ำหนักแล้วบวกกัน น้ำหนัก $\boldsymbol\lambda$ มี $m$ ตัว factor ละหนึ่งตัว ชุดของ vector แบบนี้ทั้งหมดเรียกว่า <a href="7.5.html">range ของ $\mathbf B$</a></p>
+  <p>เราอยากเขียน $\boldsymbol\alpha$ เป็นสองส่วน ส่วนแรกอยู่ใน range ส่วนที่สอง $\boldsymbol\alpha_\perp$ ตั้งฉากกับทุกคอลัมน์ของ $\mathbf B$ คำว่า “ตั้งฉากกับทุกคอลัมน์” เขียนเป็นสมการได้ว่า $\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp=\mathbf 0$ เพราะช่องที่ $j$ ของ $\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp$ คือผลคูณจุดของคอลัมน์ $j$ กับ $\boldsymbol\alpha_\perp$ เมื่อมีสองเงื่อนไขนี้แล้ว ก็แก้หา $\boldsymbol\lambda$ ได้</p>
   <div class="math">\[
 \begin{aligned}
-\boldsymbol\alpha&=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp,\\
-\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp&=\mathbf 0,\\
-\mathbf B^{\mathsf T}\boldsymbol\alpha&=\mathbf B^{\mathsf T}\mathbf B\boldsymbol\lambda,\\
-\boldsymbol\lambda&=(\mathbf B^{\mathsf T}\mathbf B)^{-1}\mathbf B^{\mathsf T}\boldsymbol\alpha,\\
-\boldsymbol\alpha_\parallel&:=\mathbf B\boldsymbol\lambda.
+\boldsymbol\alpha&amp;=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp,\\
+\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp&amp;=\mathbf 0,\\
+\mathbf B^{\mathsf T}\boldsymbol\alpha&amp;=\mathbf B^{\mathsf T}\mathbf B\boldsymbol\lambda,\\
+\boldsymbol\lambda&amp;=(\mathbf B^{\mathsf T}\mathbf B)^{-1}\mathbf B^{\mathsf T}\boldsymbol\alpha,\\
+\boldsymbol\alpha_\parallel&amp;:=\mathbf B\boldsymbol\lambda.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดที่สามได้จากการคูณบรรทัดแรกด้วย $\mathbf B^{\mathsf T}$ แล้วใช้บรรทัดที่สอง ก้อน $\boldsymbol\alpha_\perp$ จึงหายไป เหลือสมการที่แก้ $\boldsymbol\lambda$ ได้เมื่อคอลัมน์ของ $\mathbf B$ เป็นอิสระกัน คำตอบมีแบบเดียว เพราะถ้ามีสองแบบ ผลต่างของมันต้องอยู่ใน range ของ $\mathbf B$ และตั้งฉากกับ range พร้อมกัน ซึ่งมีแค่ vector ศูนย์</p><p>$\boldsymbol\lambda$ อ่านได้ว่า $\boldsymbol\alpha$ ก้อนนี้เดิมพันอะไร ตัวที่ $j$ คือผลตอบแทนเพิ่มที่ $\boldsymbol\alpha$ บอกเป็นนัยว่า factor $j$ จะให้ต่อ loading หนึ่งหน่วย ในโลกสองหุ้นของรูปด้านบน $\lambda=2$ คือ “market จะให้เพิ่ม 2%”</p></div>
+  <div class="reading"><p>จังหวะสำคัญคือคูณสมการแรกด้วย $\mathbf B^{\mathsf T}$ ทั้งสองข้าง ก้อน $\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp$ เป็นศูนย์ตามเงื่อนไขตั้งฉาก จึงหายไป เหลือสมการที่มีตัวไม่รู้แค่ $\boldsymbol\lambda$ สมการนี้คือ normal equations ของ <a href="15.1.html">OLS</a> พอดี โดยให้ $\boldsymbol\alpha$ เป็นตัวแปรตาม และคอลัมน์ของ $\mathbf B$ เป็นตัวแปรอธิบาย ได้ $\boldsymbol\lambda$ แล้ว ก็ตั้งชื่อก้อนแรกว่า $\boldsymbol\alpha_\parallel=\mathbf B\boldsymbol\lambda$ (เครื่องหมาย $:=$ แปลว่า “ให้นิยามว่า”) นี่คือก้อน spanned ส่วน $\boldsymbol\alpha_\perp=\boldsymbol\alpha-\boldsymbol\alpha_\parallel$ คือก้อน orthogonal</p><p>สมการนี้แก้ได้เมื่อคอลัมน์ของ $\mathbf B$ เป็นอิสระกัน คือไม่มีคอลัมน์ไหนเขียนเป็นผลรวมของคอลัมน์อื่นได้ เพราะตอนนั้น $\mathbf B^{\mathsf T}\mathbf B$ หา inverse ได้ และคำตอบมีแบบเดียว ทำไมมีแบบเดียว? ถ้ามีสองแบบ ผลต่างของสองแบบต้องอยู่ใน range และตั้งฉากกับ range พร้อมกัน มันจึงตั้งฉากกับตัวเอง แต่ vector เดียวที่ตั้งฉากกับตัวเองคือ vector ศูนย์ สองแบบจึงเป็นแบบเดียวกัน</p><p>$\boldsymbol\lambda$ บอกว่า $\boldsymbol\alpha$ ก้อนนี้เดิมพันอะไร $\lambda_j$ คือผลตอบแทนเพิ่มที่ $\boldsymbol\alpha$ บอกเป็นนัยว่า factor $j$ จะให้ ต่อ loading หนึ่งหน่วย ลองกับโลกสองหุ้น ที่นั่น $\mathbf B=(1, 1)^{\mathsf T}$ จึงได้ $\lambda=\dfrac{1\times3+1\times1}{1\times1+1\times1}=\dfrac{4}{2}=2$ คือ “market จะให้เพิ่ม 2%” ตรงกับค่าเฉลี่ยที่หาได้ในภาพรวม</p></div>
 </section>
 <section class="example">
   <h4>ขั้นที่ 2 — หุ้นสี่ตัว แยกด้วยมือ</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\mathbf B$ ของหุ้นสี่ตัวกับ factor market, momentum, tech จาก<a href="26.1.html">สมการ factor model</a> และ alpha สมมติ $\boldsymbol\alpha=(2.0, 0.5, 1.5, -0.5)\%$ ต่อปี ที่นั่นพบว่าทิศเดียวที่ตั้งฉากกับทุกคอลัมน์คือ $\mathbf u=(1, -1, -0.8, 0.8)$ ส่วน orthogonal จึงเป็นเงาของ $\boldsymbol\alpha$ บนเส้น $\mathbf u$</p>
+  <p>สูตรของขั้นก่อนยังเป็นตัวอักษรล้วน ขั้นนี้ลองกับโลกที่ใหญ่ขึ้นอีกนิด มีหุ้นสี่ตัวและ factor สามตัว เพื่อดูด้วยตัวเลขจริงว่า alpha หนึ่งชุดแตกออกเป็นอะไรบ้าง</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ใช้หุ้นสี่ตัว A, B, C, D ชุดเดียวกับหน้า<a href="26.1.html">สมการ factor model</a> หุ้นชุดนี้มี factor สามตัว</p>
+  <ul>
+    <li>market: ทุกหุ้นมี loading 1</li>
+    <li>momentum: loading คือ z-score ของผลตอบแทนย้อนหลังราวหนึ่งปี z-score คือผลตอบแทนของหุ้นตัวนั้นลบค่าเฉลี่ยของทุกตัว แล้วหารด้วย SD ค่าบวกแปลว่าราคาวิ่งดีกว่าเพื่อน</li>
+    <li>tech: loading เป็น 1 ถ้าหุ้นอยู่ในกลุ่ม tech (A กับ B) และเป็น 0 ถ้าไม่อยู่</li>
+  </ul>
+  <p>เมื่อเอา loading ทั้งหมดมาเรียงกัน ได้ loadings matrix ข้างล่าง แถวคือหุ้น A ถึง D คอลัมน์คือ market, momentum, tech</p>
+  <div class="math">\[\mathbf B=\begin{bmatrix}1&amp;1.2&amp;1\\1&amp;-0.4&amp;1\\1&amp;0.6&amp;0\\1&amp;-1.4&amp;0\end{bmatrix}\]</div>
+  <p>alpha ที่สัญญาณให้ (สมมติ) เรียงตาม A, B, C, D คือ $\boldsymbol\alpha=(2.0, 0.5, 1.5, -0.5)\%$ ต่อปี</p>
+  <p>หน้าเดียวกันนั้นหา vector $\mathbf u=(1, -1, -0.8, 0.8)$ ไว้แล้ว ให้อ่านมันเป็นพอร์ต: ซื้อ A \$1, short B \$1, short C \$0.8 และซื้อ D \$0.8 พอร์ตนี้ไม่ขยับตาม factor ใดเลย ตรวจได้ด้วยการคูณจุด $\mathbf u$ กับแต่ละคอลัมน์</p>
+  <div class="math">\[\begin{aligned}\text{market}:&amp;\ 1-1-0.8+0.8=0,\\\text{momentum}:&amp;\ 1.2+0.4-0.48-1.12=0,\\\text{tech}:&amp;\ 1-1+0+0=0.\end{aligned}\]</div>
+  <p>ทั้งสามตัวเป็นศูนย์ จึงเขียนได้ว่า $\mathbf B^{\mathsf T}\mathbf u=\mathbf 0$ หุ้นมี 4 ตัว factor มี 3 ตัว ที่ว่างที่ตั้งฉากกับทุกคอลัมน์จึงเหลือ $4-3=1$ มิติ คือเส้นตรงตามทิศ $\mathbf u$ เส้นเดียว</p>
+  <p>ดังนั้น $\boldsymbol\alpha_\perp$ ต้องเป็น $c\,\mathbf u$ โดย $c$ คือเลขตัวหนึ่งที่ยังไม่รู้ วิธีหา $c$ คือคูณจุด $\boldsymbol\alpha$ กับ $\mathbf u$ ก้อน spanned หายไป เพราะมันตั้งฉากกับ $\mathbf u$ เหลือ $\boldsymbol\alpha^{\mathsf T}\mathbf u=c\,\mathbf u^{\mathsf T}\mathbf u$ จึงได้ $c=\boldsymbol\alpha^{\mathsf T}\mathbf u/\mathbf u^{\mathsf T}\mathbf u$ นี่คือเงาของ $\boldsymbol\alpha$ บนเส้น $\mathbf u$</p>
   <div class="math">\[
 \begin{aligned}
-\boldsymbol\alpha^{\mathsf T}\mathbf u&=2.0-0.5-1.2-0.4\\
-&=-0.1,\\
-\mathbf u^{\mathsf T}\mathbf u&=1+1+0.64+0.64\\
-&=3.28,\\
-\boldsymbol\alpha_\perp&=\frac{-0.1}{3.28}\,\mathbf u\\
-&=(-0.0305,\ 0.0305,\\
-&\qquad 0.0244,\ -0.0244),\\
-\boldsymbol\alpha_\parallel&=\boldsymbol\alpha-\boldsymbol\alpha_\perp\\
-&=(2.0305,\ 0.4695,\\
-&\qquad 1.4756,\ -0.4756).
+\boldsymbol\alpha^{\mathsf T}\mathbf u&amp;=2.0-0.5-1.2-0.4\\
+&amp;=-0.1,\\
+\mathbf u^{\mathsf T}\mathbf u&amp;=1+1+0.64+0.64\\
+&amp;=3.28,\\
+c&amp;=\frac{-0.1}{3.28}=-0.0305,\\
+\boldsymbol\alpha_\perp&amp;=c\,\mathbf u\\
+&amp;=(-0.0305,\ 0.0305,\\
+&amp;\qquad 0.0244,\ -0.0244),\\
+\boldsymbol\alpha_\parallel&amp;=\boldsymbol\alpha-\boldsymbol\alpha_\perp\\
+&amp;=(2.0305,\ 0.4695,\\
+&amp;\qquad 1.4756,\ -0.4756).
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> alpha 2.00% ของ A แยกเป็น 2.0305% ที่ factor อธิบายได้ กับ −0.0305% ที่เป็นของ A เอง แก้ $\boldsymbol\lambda$ จากแถว C และ D ที่ไม่มี tech: $\lambda_1+0.6\lambda_2=1.4756$ กับ $\lambda_1-1.4\lambda_2=-0.4756$ ลบกันได้ $2\lambda_2=1.9512$ จึงได้ $\lambda_2=0.9756$, $\lambda_1=0.8902$ และแถว A ให้ $\lambda_3=2.0305-0.8902-1.1707=-0.0305$ สัญญาณนี้แทบทั้งก้อนคือการเดิมพันว่า market จะให้เพิ่ม 0.89% และ momentum เพิ่ม 0.98% ต่อปี</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\boldsymbol\alpha_\perp$ ต้องรวมกันได้ศูนย์เพราะตั้งฉากกับคอลัมน์ market $-0.0305+0.0305+0.0244-0.0244=0$ และแถว B ต้องได้ $0.8902-0.4(0.9756)-0.0305=0.4695$ ตรงกับ $\boldsymbol\alpha_\parallel$</p>
+  <p><strong>คำตอบ:</strong> alpha 2.00% ของ A แยกเป็นสองก้อน ก้อนแรก 2.0305% คือส่วนที่ factor อธิบายได้ ก้อนที่สอง −0.0305% คือส่วนที่เป็นของ A เอง หุ้นตัวอื่นก็เป็นแบบเดียวกัน ก้อน orthogonal เล็กมากทุกตัว</p>
+  <p>ต่อไปอยากรู้ว่าก้อน spanned เดิมพันกับ factor ตัวไหน จึงต้องหา $\boldsymbol\lambda=(\lambda_1, \lambda_2, \lambda_3)$ ที่ทำให้ $\mathbf B\boldsymbol\lambda=\boldsymbol\alpha_\parallel$ โดย $\lambda_1, \lambda_2, \lambda_3$ คือส่วนที่ยกให้ market, momentum และ tech ตามลำดับ แถว C กับ D มี loading ของ tech เป็น 0 จึงไม่มี $\lambda_3$ อยู่ในสองแถวนี้ เราจึงแก้ $\lambda_1$ กับ $\lambda_2$ จากสองแถวนี้ก่อน เอาแถว D ลบออกจากแถว C แล้ว $\lambda_1$ หายไป จากนั้นใช้แถว A หา $\lambda_3$</p>
+  <div class="math">\[
+\begin{aligned}
+\lambda_1+0.6\lambda_2&amp;=1.4756,\\
+\lambda_1-1.4\lambda_2&amp;=-0.4756,\\
+2\lambda_2&amp;=1.9512,\\
+\lambda_2&amp;=0.9756,\\
+\lambda_1&amp;=1.4756-0.6\times0.9756\\
+&amp;=0.8902,\\
+\lambda_3&amp;=2.0305-0.8902-1.2\times0.9756\\
+&amp;\approx-0.030.
+\end{aligned}
+\]</div>
+  <p>ถ้าไม่ปัดเศษระหว่างทาง จะได้ $\lambda_3=-0.0305$ สรุปคือสัญญาณนี้แทบทั้งก้อนเป็นการเดิมพันสองเรื่อง เรื่องแรกคือ market จะให้เพิ่ม 0.89% ต่อปี เรื่องที่สองคือ momentum จะให้เพิ่ม 0.98% ต่อปี ส่วน tech แทบเป็นศูนย์</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> $\boldsymbol\alpha_\perp$ ตั้งฉากกับคอลัมน์ market ซึ่งเป็น 1 ทุกช่อง ผลรวมของมันจึงต้องเป็นศูนย์: $-0.0305+0.0305+0.0244-0.0244=0$ และ $\boldsymbol\lambda$ ต้องสร้างแถว B ของ $\boldsymbol\alpha_\parallel$ คืนมาได้: $0.8902-0.4\times0.9756-0.0305=0.4695$</p>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 3 — ขนาดของสองส่วนบวกกันแบบ Pythagoras</h4>
-  <p>สองส่วนตั้งฉากกัน เพราะ $\boldsymbol\alpha_\parallel^{\mathsf T}\boldsymbol\alpha_\perp=\boldsymbol\lambda^{\mathsf T}\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp=0$ ความยาวกำลังสอง (<a href="6.4.html">norm</a> ยกกำลังสอง) จึงบวกกันได้ ตัวเลขนี้บอกว่า alpha ของสัญญาณเป็นชนิดไหนเท่าไร</p>
+  <p>ขั้นก่อนได้สองก้อน แต่ละก้อนเป็น vector สี่ช่อง ผู้จัดการกองทุนอยากได้ตัวเลขเดียวที่ตอบว่า “สัญญาณนี้เป็นเดิมพัน factor กี่ %” ตัววัดที่ใช้คือความยาวกำลังสอง (<a href="6.4.html">norm</a> ยกกำลังสอง) เขียนว่า $\lVert\mathbf x\rVert^2$ คือผลบวกกำลังสองของทุกช่องของ $\mathbf x$</p>
+  <p>ทำไมใช้ตัววัดนี้ได้? เพราะสองก้อนตั้งฉากกัน ผลคูณจุดของมันเป็นศูนย์</p>
+  <div class="math">\[\begin{aligned}\boldsymbol\alpha_\parallel^{\mathsf T}\boldsymbol\alpha_\perp&amp;=\boldsymbol\lambda^{\mathsf T}\mathbf B^{\mathsf T}\boldsymbol\alpha_\perp\\&amp;=\boldsymbol\lambda^{\mathsf T}\mathbf 0=0.\end{aligned}\]</div>
+  <p>สองก้อนที่ตั้งฉากกันเหมือนสองขาของสามเหลี่ยมมุมฉาก ความยาวกำลังสองจึงบวกกันได้แบบ Pythagoras ส่วนความยาวกำลังสองของก้อน orthogonal หาได้ตรง ๆ เพราะ $\boldsymbol\alpha_\perp=c\,\mathbf u$ จึงได้ $\lVert\boldsymbol\alpha_\perp\rVert^2=c^2\,\mathbf u^{\mathsf T}\mathbf u$ และ $c=-0.1/3.28$ จากขั้นก่อน</p>
   <div class="math">\[
 \begin{aligned}
-\lVert\boldsymbol\alpha\rVert^2&=\lVert\boldsymbol\alpha_\parallel\rVert^2+\lVert\boldsymbol\alpha_\perp\rVert^2,\\
-\lVert\boldsymbol\alpha\rVert^2&=4+0.25+2.25+0.25\\
-&=6.75,\\
-\lVert\boldsymbol\alpha_\perp\rVert^2&=\frac{(-0.1)^2}{3.28}=0.00305,\\
-\lVert\boldsymbol\alpha_\perp\rVert&=0.0552,\\
-\frac{\lVert\boldsymbol\alpha_\parallel\rVert^2}{\lVert\boldsymbol\alpha\rVert^2}&=\frac{6.74695}{6.75}=99.95\%.
+\lVert\boldsymbol\alpha\rVert^2&amp;=\lVert\boldsymbol\alpha_\parallel\rVert^2+\lVert\boldsymbol\alpha_\perp\rVert^2,\\
+\lVert\boldsymbol\alpha\rVert^2&amp;=2.0^2+0.5^2+1.5^2+0.5^2\\
+&amp;=4+0.25+2.25+0.25\\
+&amp;=6.75,\\
+\lVert\boldsymbol\alpha_\perp\rVert^2&amp;=c^2\,\mathbf u^{\mathsf T}\mathbf u=\frac{(-0.1)^2}{3.28}\\
+&amp;=0.00305,\\
+\lVert\boldsymbol\alpha_\perp\rVert&amp;=\sqrt{0.00305}=0.0552,\\
+\lVert\boldsymbol\alpha_\parallel\rVert^2&amp;=6.75-0.00305=6.74695,\\
+\frac{\lVert\boldsymbol\alpha_\parallel\rVert^2}{\lVert\boldsymbol\alpha\rVert^2}&amp;=\frac{6.74695}{6.75}=99.95\%.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ในโลกสี่หุ้นสาม factor เกือบทั้งหมดเป็น alpha spanned เพราะที่ว่างสำหรับส่วน orthogonal มีแค่ $n-m=1$ มิติ ที่หุ้น 500 ตัวกับ factor 60 ตัว ที่ว่างนั้นมี 440 มิติ และนั่นคือเหตุที่การโตตาม $\sqrt n$ ข้างล่างมีพลังในโลกจริงแต่ไม่มีในตัวอย่างเล็กนี้</p></div>
+  <div class="reading"><p>ในโลกสี่หุ้นสาม factor alpha เกือบทั้งหมดเป็น spanned เหตุผลคือเรื่องที่ว่าง ก้อน spanned มีที่ให้อยู่ $m=3$ มิติ แต่ก้อน orthogonal มีที่ให้อยู่แค่ $n-m=4-3=1$ มิติ alpha ที่ชี้ไปทางไหนก็ได้จึงมักมีเงาส่วนใหญ่ตกอยู่บนสามมิตินั้น</p><p>โลกจริงต่างออกไปมาก สมมติกองทุนเทรดหุ้น 500 ตัว โดยใช้ risk model (factor model ที่กองทุนใช้วัดความเสี่ยง) ที่มี factor 60 ตัว ที่ว่างของก้อน orthogonal จะมี $500-60=440$ มิติ นี่คือเหตุที่การโตตาม $\sqrt n$ ในขั้นหลัง ๆ มีพลังในโลกจริง แต่ไม่มีในตัวอย่างเล็กนี้</p></div>
 </section>
 <figure class="plot">
   <h4>รูป — alpha ของหุ้นสี่ตัว แทบทั้งหมดเป็นเดิมพัน factor</h4>
   <img src="../figures/26.2-1.svg" alt="แผงซ้ายแท่ง alpha spanned กับ alpha orthogonal ของหุ้น A ถึง D แผงขวาลูกศร alpha แตกเป็นเงาบนระนาบกับส่วนที่ตั้งฉาก" loading="lazy">
-  <figcaption>แผงซ้ายคือตัวเลขที่เพิ่งแยกได้ แท่งน้ำเงินคือ $\boldsymbol\alpha_\parallel$ (2.0305, 0.4695, 1.4756, −0.4756) แท่งส้มคือ $\boldsymbol\alpha_\perp$ ซึ่งเตี้ยจนแทบมองไม่เห็น (ไม่เกิน 0.0305) จุดดำคือ alpha รวม หน่วยเป็น % ต่อปี แผงขวาเป็นภาพวาดประกอบ ไม่ได้วาดตามสเกล ลูกศร alpha แตกเป็นเงาบนระนาบของคอลัมน์ $\mathbf B$ กับส่วนที่ตั้งฉากขึ้นมา เหมือนรูปสองหุ้นด้านบนแต่ในมิติที่มากขึ้น</figcaption>
+  <figcaption>แผงซ้ายคือตัวเลขที่เพิ่งแยกได้ หุ้นละหนึ่งกลุ่มแท่ง หน่วยเป็น % ต่อปี แท่งน้ำเงินคือก้อน spanned $\boldsymbol\alpha_\parallel=(2.0305, 0.4695, 1.4756, -0.4756)$ แท่งส้มคือก้อน orthogonal $\boldsymbol\alpha_\perp$ ซึ่งเตี้ยจนแทบมองไม่เห็น เพราะขนาดไม่เกิน 0.0305 จุดดำคือ alpha รวม ซึ่งเท่ากับแท่งน้ำเงินบวกแท่งส้ม แผงขวาเป็นภาพประกอบ ไม่ได้วาดตามสเกล ลูกศร alpha แตกเป็นเงาบนระนาบที่คอลัมน์ของ $\mathbf B$ สร้างขึ้น กับส่วนที่ตั้งฉากกับระนาบ เหมือนรูปสองหุ้นด้านบน แต่มีมิติมากขึ้น</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 4 — ทำไม alpha spanned แยกไม่ออกจากผลตอบแทนของ factor</h4>
-  <p>ใส่ $\boldsymbol\alpha=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp$ กลับลงสมการ factor model แล้วจัดกลุ่มใหม่ โดยแยก factor return เป็นค่าเฉลี่ย $\mathbb E[\mathbf f]$ บวกส่วนที่แกว่ง ดูว่าข้อมูลผลตอบแทนเห็นอะไร และพอร์ตต้องทำอะไรถึงจะเก็บส่วน spanned ได้</p>
+  <p>ขั้นนี้ตอบคำถามว่า ทำไมไม่ควรนับก้อน spanned เป็นฝีมือเลือกหุ้น วิธีคือใส่ $\boldsymbol\alpha=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp$ กลับลงสมการ factor model แล้วดูว่าข้อมูลผลตอบแทนมองเห็นอะไร เพื่อให้เห็นชัด แยกผลตอบแทนของ factor $\mathbf f$ เป็นสองส่วน คือค่าเฉลี่ย $\mathbb E[\mathbf f]$ บวกส่วนที่แกว่งรอบค่าเฉลี่ย $\mathbf f-\mathbb E[\mathbf f]$</p>
+  <p>จากนั้นดูฝั่งพอร์ต พอร์ต $\mathbf w$ คือเงินที่ลงในหุ้นแต่ละตัว บวกคือซื้อ ลบคือ short exposure ของพอร์ตคือ $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ มันบอกว่าเมื่อ factor แต่ละตัวขยับ 1% พอร์ตได้หรือเสียเท่าไร แถวสุดท้ายข้างล่างคือผลตอบแทนที่พอร์ตได้จากก้อน spanned</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf r&=\boldsymbol\alpha_\perp+\mathbf B\boldsymbol\lambda+\mathbf B\mathbf f+\boldsymbol\epsilon\\
-&=\boldsymbol\alpha_\perp+\mathbf B\big(\boldsymbol\lambda+\mathbb E[\mathbf f]\big)\\
-&\quad+\mathbf B\big(\mathbf f-\mathbb E[\mathbf f]\big)+\boldsymbol\epsilon,\\
-\mathbf w^{\mathsf T}\mathbf B\boldsymbol\lambda&=\mathbf b^{\mathsf T}\boldsymbol\lambda.
+\mathbf r&amp;=\boldsymbol\alpha_\perp+\mathbf B\boldsymbol\lambda+\mathbf B\mathbf f+\boldsymbol\epsilon\\
+&amp;=\boldsymbol\alpha_\perp+\mathbf B\big(\boldsymbol\lambda+\mathbb E[\mathbf f]\big)\\
+&amp;\quad+\mathbf B\big(\mathbf f-\mathbb E[\mathbf f]\big)+\boldsymbol\epsilon,\\
+\mathbf w^{\mathsf T}\mathbf B\boldsymbol\lambda&amp;=(\mathbf B^{\mathsf T}\mathbf w)^{\mathsf T}\boldsymbol\lambda=\mathbf b^{\mathsf T}\boldsymbol\lambda.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>บรรทัดที่สองบอกว่าข้อมูลเห็นแค่ผลรวม $\boldsymbol\lambda+\mathbb E[\mathbf f]$ แยกไม่ออกว่า “หุ้นมี alpha $\mathbf B\boldsymbol\lambda$” หรือ “factor ให้ผลตอบแทนคาดหวังสูงขึ้น $\boldsymbol\lambda$” ทั้งสองแบบให้ผลตอบแทนหุ้นเหมือนกันทุกวัน จึงนิยมตั้ง $\boldsymbol\lambda=\mathbf 0$ แล้วนับส่วนนี้รวมเข้าไปในผลตอบแทนคาดหวังของ factor เหลือ $\boldsymbol\alpha_\perp$ เป็น alpha ตัวจริง ทั้งหน้าที่เหลือของบทใช้ข้อตกลงนี้</p><p>บรรทัดสุดท้ายบอกว่าพอร์ตเก็บ alpha spanned ได้ก็ต่อเมื่อ $\mathbf b\neq\mathbf 0$ จึงต้องแบก $\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b$ ไปด้วย ความเสี่ยงนี้ไม่ลดไม่ว่าจะถือหุ้นกี่ตัว เพราะทุกหุ้นรับ factor ตัวเดียวกัน และเดิมพันแบบนี้ซื้อได้ถูกจากกองทุน smart beta</p></div>
+  <div class="reading"><p>หลังจัดกลุ่มใหม่ $\boldsymbol\lambda$ ไม่ได้อยู่ตัวเดียว มันติดอยู่กับ $\mathbb E[\mathbf f]$ เสมอ ข้อมูลจึงเห็นแค่ผลรวม $\boldsymbol\lambda+\mathbb E[\mathbf f]$ ลองนึกถึงสองโลก โลกแรกหุ้นมี alpha $\mathbf B\boldsymbol\lambda$ และ factor ให้ผลตอบแทนเฉลี่ย $\mathbb E[\mathbf f]$ โลกที่สองหุ้นไม่มี alpha ก้อนนี้ แต่ factor ให้ผลตอบแทนเฉลี่ยสูงขึ้นเป็น $\mathbb E[\mathbf f]+\boldsymbol\lambda$ สองโลกให้ผลตอบแทนหุ้นเหมือนกันทุกวัน ไม่มีข้อมูลชุดไหนบอกได้ว่าเราอยู่โลกไหน</p><p>ข้อตกลงที่ใช้กันจึงคือตั้ง $\boldsymbol\lambda=\mathbf 0$ แล้วนับก้อนนี้เป็นผลตอบแทนคาดหวังของ factor เหลือ $\boldsymbol\alpha_\perp$ เป็น alpha ตัวจริง หน้าที่เหลือของบทนี้ใช้ข้อตกลงนี้ทั้งหมด</p><p>แถวสุดท้ายบอกว่าพอร์ตจะเก็บก้อน spanned ได้ก็ต่อเมื่อ $\mathbf b\neq\mathbf 0$ คือต้องถือ factor ไว้ พอถือ factor ก็ต้องแบกความเสี่ยงของ factor มาด้วย ความเสี่ยงนั้นวัดด้วย variance $\mathbf b^{\mathsf T}\boldsymbol\Omega_f\mathbf b$ โดย $\boldsymbol\Omega_f$ คือ covariance matrix ของผลตอบแทน factor</p><p>ความเสี่ยงนี้ไม่ลดลงไม่ว่าจะถือหุ้นกี่ตัว เพราะทุกหุ้นขยับตาม factor ตัวเดียวกัน จึงไม่มีอะไรหักล้างกัน อีกเรื่องคือเดิมพันแบบนี้ซื้อได้ถูกจากกองทุน smart beta (กองทุนค่าธรรมเนียมต่ำที่ถือ factor ตามกติกาที่ประกาศไว้) จึงไม่ควรนับเป็นฝีมือที่ต้องจ่ายแพง</p></div>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 5 — พอร์ตที่เก็บ alpha orthogonal</h4>
-  <p>คราวนี้สร้างพอร์ตที่ชี้ไปทาง $\boldsymbol\alpha_\perp$ พอดี ปรับให้ยาวหนึ่งหน่วย แล้วหาผลตอบแทนคาดหวังกับ variance ของมัน เพราะ $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ พอร์ตนี้ไม่มี exposure ต่อ factor เลย</p>
+  <p>ขั้นก่อนบอกว่าก้อน spanned ไม่ใช่ฝีมือ ตอนนี้จึงมาเก็บก้อนที่มีค่าจริง คือก้อน orthogonal เราสร้างพอร์ตที่ชี้ไปทาง $\boldsymbol\alpha_\perp$ พอดี แล้วหารด้วยความยาวของมัน ให้พอร์ตยาวหนึ่งหน่วย การหารนี้ไม่เปลี่ยน SR เพราะผลตอบแทนและความผันผวนถูกหารด้วยเลขเดียวกัน แต่ทำให้สูตรสั้นลง</p>
+  <p>เป้าหมายคือหา SR ของพอร์ตนี้ จึงต้องรู้ผลตอบแทนคาดหวังและ variance ของมัน ก่อนคำนวณ ต้องสมมติเพิ่มหนึ่งข้อ: ส่วนเฉพาะตัวของหุ้นต่างตัวไม่สัมพันธ์กัน และหุ้น $i$ มีความผันผวนเฉพาะตัว $\sigma_i$ อีกเรื่องที่รู้แล้วคือพอร์ตนี้ชี้ไปทาง $\boldsymbol\alpha_\perp$ ซึ่งตั้งฉากกับทุกคอลัมน์ จึงได้ $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ คือพอร์ตไม่ขยับตาม factor ใดเลย</p>
   <div class="math">\[
 \begin{aligned}
-\mathbf w&=\frac{\boldsymbol\alpha_\perp}{\lVert\boldsymbol\alpha_\perp\rVert},\\
-\mathbb E[\mathbf w^{\mathsf T}\mathbf r]&=\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp=\lVert\boldsymbol\alpha_\perp\rVert,\\
-\operatorname{var}(\mathbf w^{\mathsf T}\mathbf r)&=\frac{\sum_i\sigma_i^2[\boldsymbol\alpha_\perp]_i^2}{\sum_i[\boldsymbol\alpha_\perp]_i^2}\\
-&\le\sigma_{\max}^2,\\
-\text{SR}&\ge\frac{\lVert\boldsymbol\alpha_\perp\rVert}{\sigma_{\max}}.
+\mathbf w&amp;=\frac{\boldsymbol\alpha_\perp}{\lVert\boldsymbol\alpha_\perp\rVert},\\
+\mathbf B^{\mathsf T}\mathbf w&amp;=\mathbf 0,\\
+\mathbb E[\mathbf w^{\mathsf T}\mathbf r]&amp;=\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp\\
+&amp;\quad+(\mathbf B^{\mathsf T}\mathbf w)^{\mathsf T}\big(\boldsymbol\lambda+\mathbb E[\mathbf f]\big)\\
+&amp;=\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp=\lVert\boldsymbol\alpha_\perp\rVert,\\
+\operatorname{var}(\mathbf w^{\mathsf T}\mathbf r)&amp;=\textstyle\sum_iw_i^2\sigma_i^2\\
+&amp;=\frac{\sum_i\sigma_i^2[\boldsymbol\alpha_\perp]_i^2}{\sum_i[\boldsymbol\alpha_\perp]_i^2}\\
+&amp;\le\sigma_{\max}^2,\\
+\text{SR}&amp;\ge\frac{\lVert\boldsymbol\alpha_\perp\rVert}{\sigma_{\max}}.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ผลตอบแทนคาดหวังของพอร์ตมีสามก้อน ก้อน $\boldsymbol\alpha_\parallel$ กับก้อน factor หายเพราะ $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ ก้อน $\boldsymbol\epsilon$ มีค่าเฉลี่ยศูนย์ เหลือ $\lVert\boldsymbol\alpha_\perp\rVert^2/\lVert\boldsymbol\alpha_\perp\rVert$ ผลตอบแทนคาดหวังจึงเท่ากับความยาวของ $\boldsymbol\alpha_\perp$ ไม่ใช่ค่าเฉลี่ยของมัน และความยาวโตเมื่อหุ้นมากขึ้น</p><p>variance เหลือแต่ส่วนเฉพาะตัว คือค่าเฉลี่ยถ่วงของ $\sigma_i^2$ ด้วยน้ำหนัก $[\boldsymbol\alpha_\perp]_i^2$ ค่าเฉลี่ยถ่วงไม่มีทางเกินตัวที่ใหญ่ที่สุด ขอบนี้หยาบ แต่ใช้ได้จริงเพราะ $\sigma_{\max}$ มีเพดานในทางปฏิบัติ หุ้นสหรัฐที่ผันผวนเฉพาะตัวมากที่สุดอยู่ราว 40% ต่อปี (ถ้าส่วนเฉพาะตัวไม่เป็น diagonal ใช้ eigenvalue ที่ใหญ่ที่สุดของ $\boldsymbol\Omega_\epsilon$ แทน $\sigma_{\max}^2$)</p></div>
+  <div class="reading"><p>ผลตอบแทนคาดหวังของพอร์ตมาจากสามก้อนของ $\mathbf r$ ก้อนที่ติด factor ทั้งหมดหายไป เพราะ $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ ก้อน $\boldsymbol\epsilon$ มีค่าเฉลี่ยศูนย์ เหลือแค่ $\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp=\lVert\boldsymbol\alpha_\perp\rVert^2/\lVert\boldsymbol\alpha_\perp\rVert=\lVert\boldsymbol\alpha_\perp\rVert$ จุดที่ควรสังเกตคือผลตอบแทนคาดหวังเท่ากับ<em>ความยาว</em>ของ $\boldsymbol\alpha_\perp$ ไม่ใช่ค่าเฉลี่ยของมัน และความยาวโตเมื่อมีหุ้นมากขึ้น อีกสองขั้นข้างหน้าจะใช้เรื่องนี้</p><p>variance ก็เหลือแต่ส่วนเฉพาะตัว เพราะส่วน factor ถูก $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ ตัดทิ้งเหมือนกัน และส่วนเฉพาะตัวไม่สัมพันธ์กัน variance จึงเป็นผลบวก $\sum_iw_i^2\sigma_i^2$ ไม่มีพจน์ไขว้ ให้ $[\boldsymbol\alpha_\perp]_i$ คือช่องที่ $i$ ของ $\boldsymbol\alpha_\perp$ เมื่อแทน $w_i=[\boldsymbol\alpha_\perp]_i/\lVert\boldsymbol\alpha_\perp\rVert$ ลงไป จะได้ค่าเฉลี่ยถ่วงน้ำหนักของ $\sigma_i^2$ โดยน้ำหนักคือ $[\boldsymbol\alpha_\perp]_i^2$ ค่าเฉลี่ยถ่วงไม่มีทางเกินตัวที่ใหญ่ที่สุด จึงไม่เกิน $\sigma_{\max}^2$ พอ variance ไม่เกิน $\sigma_{\max}^2$ ความผันผวนก็ไม่เกิน $\sigma_{\max}$ SR จึงไม่ต่ำกว่า $\lVert\boldsymbol\alpha_\perp\rVert/\sigma_{\max}$</p><p>ขอบนี้หยาบ แต่ใช้ได้จริง เพราะ $\sigma_{\max}$ มีเพดานในทางปฏิบัติ Paleologo (The Elements of Quantitative Investing) ให้ตัวเลขว่าหุ้นสหรัฐที่ความผันผวนเฉพาะตัวสูงที่สุดอยู่ราว 40% ต่อปี ถ้าส่วนเฉพาะตัวของหุ้นต่างตัวสัมพันธ์กัน ให้ใช้ eigenvalue ที่ใหญ่ที่สุดของ $\boldsymbol\Omega_\epsilon$ (covariance matrix ของส่วนเฉพาะตัว) แทน $\sigma_{\max}^2$</p></div>
 </section>
 <section class="example">
   <h4>ขั้นที่ 6 — ในโลกสี่หุ้น พอร์ตนี้ได้เท่าไร</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> $\boldsymbol\alpha_\perp$ ที่เพิ่งได้ และความผันผวนเฉพาะตัวรายปีของ A, B, C, D เป็น 30%, 34%, 28% และ 40% (สมมติ) พอร์ตคือ $\mathbf w=-\mathbf u/\sqrt{3.28}$ ซึ่งมี $w_i^2$ เป็น $(1, 1, 0.64, 0.64)/3.28$</p>
+  <p>สูตรของขั้นก่อนยังไม่มีตัวเลข ขั้นนี้กลับไปที่หุ้นสี่ตัว A, B, C, D แล้วถามว่า ถ้าสร้างพอร์ตเก็บก้อน orthogonal ที่เพิ่งแยกได้ จะได้ SR เท่าไร</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong></p>
+  <ul>
+    <li>$\boldsymbol\alpha_\perp=c\,\mathbf u$ โดย $c=-0.0305$ และ $\mathbf u=(1, -1, -0.8, 0.8)$ จากการแยกด้วยมือข้างบน</li>
+    <li>ความยาวของมัน $\lVert\boldsymbol\alpha_\perp\rVert=0.0552\%$ ต่อปี จากขั้น Pythagoras ข้างบน</li>
+    <li>ความผันผวนเฉพาะตัวรายปีของ A, B, C, D คือ $\sigma_i=30\%, 34\%, 28\%, 40\%$ (สมมติ)</li>
+  </ul>
+  <p>พอร์ตคือ $\mathbf w=\boldsymbol\alpha_\perp/\lVert\boldsymbol\alpha_\perp\rVert$ เพราะ $c$ ติดลบ การหารด้วยความยาวจึงเหลือ $\mathbf w=-\mathbf u/\sqrt{3.28}$ ($\sqrt{3.28}$ คือความยาวของ $\mathbf u$) ยกกำลังสองแล้วได้ $w_i^2=u_i^2/3.28$ เครื่องหมายหายไป ตอนนี้แทนลงสูตรของขั้นก่อน โดยคิด $\sigma_i$ เป็น % จึงได้ variance เป็น %²</p>
   <div class="math">\[
 \begin{aligned}
-\mathbb E[\mathbf w^{\mathsf T}\mathbf r]&=0.0552\%,\\
-\textstyle\sum_iu_i^2\sigma_i^2&=900+1{,}156\\
-&\quad+0.64(784+1{,}600)\\
-&=3{,}581.76,\\
-\operatorname{var}&=\frac{3{,}581.76}{3.28}=1{,}092,\\
-\sqrt{1{,}092}&=33.05\%,\\
-\text{SR}&=\frac{0.0552}{33.05}=0.0017.
+\mathbb E[\mathbf w^{\mathsf T}\mathbf r]&amp;=\lVert\boldsymbol\alpha_\perp\rVert=0.0552\%,\\
+\textstyle\sum_iu_i^2\sigma_i^2&amp;=1(30^2)+1(34^2)\\
+&amp;\quad+0.64(28^2)+0.64(40^2)\\
+&amp;=900+1{,}156+501.76+1{,}024\\
+&amp;=3{,}581.76,\\
+\operatorname{var}&amp;=\frac{3{,}581.76}{3.28}=1{,}092,\\
+\sqrt{1{,}092}&amp;=33.05\%,\\
+\text{SR}&amp;=\frac{0.0552}{33.05}=0.0017.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> Sharpe Ratio แค่ 0.0017 ต่อปี แทบเป็นศูนย์ ขอบล่างให้ $0.0552/40=0.0014$ ต่ำกว่าค่าจริงนิดเดียว ในโลกที่หุ้นน้อยและ factor เกือบเท่าหุ้น alpha orthogonal แทบไม่มีที่อยู่</p>
+  <p><strong>คำตอบ:</strong> Sharpe Ratio ได้แค่ 0.0017 ต่อปี แทบเป็นศูนย์ ขอบล่างของขั้นก่อนให้ $\lVert\boldsymbol\alpha_\perp\rVert/\sigma_{\max}=0.0552/40=0.0014$ ต่ำกว่าค่าจริงนิดเดียว ในโลกที่หุ้นน้อยและจำนวน factor เกือบเท่าจำนวนหุ้น alpha orthogonal แทบไม่มีที่อยู่</p>
   <p><strong>ตรวจเองใน 10 วินาที:</strong> $33.05\%$ ต้องอยู่ระหว่างความผันผวนต่ำสุด 28% กับสูงสุด 40% เพราะ variance เป็นค่าเฉลี่ยถ่วงของ $\sigma_i^2$</p>
 </section>
 <section class="formula">
   <h4>ขั้นที่ 7 — ความยาวโตตาม $\sqrt n$</h4>
-  <p>ถ้าหุ้นมี $n$ ตัว และขนาดเฉลี่ยของ $[\boldsymbol\alpha_\perp]_i$ เท่ากับ $\mu$ ความยาวโตแค่ไหน? ใช้ Cauchy–Schwarz (ผลคูณจุดไม่เกินความยาวคูณกัน จาก<a href="6.5.html">inner product และมุม</a>) กับ vector ของเครื่องหมาย $\mathbf s$ ที่ตัวละ $\pm1$ ตามเครื่องหมายของ $[\boldsymbol\alpha_\perp]_i$ ซึ่งยาว $\sqrt n$ แล้วแทนลงขอบของขั้นก่อน</p>
+  <p>ตัวอย่างสี่หุ้นได้ SR แทบเป็นศูนย์ เพราะก้อน orthogonal สั้นมาก แต่ขั้นก่อนบอกว่าผลตอบแทนคาดหวังเท่ากับ<em>ความยาว</em>ของ $\boldsymbol\alpha_\perp$ คำถามจึงเป็นว่า ถ้าหุ้นมี $n$ ตัว และแต่ละช่องของ $\boldsymbol\alpha_\perp$ มีขนาดเฉลี่ย $\mu$ (ไม่นับเครื่องหมาย) ความยาวโตแค่ไหน?</p>
+  <p>เครื่องมือที่ใช้คือ Cauchy–Schwarz: ผลคูณจุดของสอง vector ไม่เกินความยาวของมันคูณกัน (จากหน้า<a href="6.5.html">inner product และมุม</a>) เราใช้มันกับ vector เครื่องหมาย $\mathbf s$ ช่องที่ $i$ ของ $\mathbf s$ เป็น $+1$ หรือ $-1$ ตามเครื่องหมายของ $[\boldsymbol\alpha_\perp]_i$ ทุกช่องมีขนาด 1 จึงได้ $\lVert\mathbf s\rVert=\sqrt n$ และ $\mathbf s^{\mathsf T}\boldsymbol\alpha_\perp$ คือผลรวมของขนาดทุกช่อง ซึ่งเขียนว่า $\lVert\boldsymbol\alpha_\perp\rVert_1$ ได้ขอบของความยาวแล้ว ก็แทนลงขอบ SR ของขั้นก่อน</p>
   <div class="math">\[
 \begin{aligned}
-\lVert\boldsymbol\alpha_\perp\rVert_1&=\sum_i\lvert[\boldsymbol\alpha_\perp]_i\rvert=n\mu,\\
-\lVert\boldsymbol\alpha_\perp\rVert_1&=\mathbf s^{\mathsf T}\boldsymbol\alpha_\perp\le\sqrt n\,\lVert\boldsymbol\alpha_\perp\rVert,\\
-\lVert\boldsymbol\alpha_\perp\rVert&\ge\frac{n\mu}{\sqrt n}=\sqrt n\,\mu,\\
-\text{SR}&\ge\frac{\sqrt n\,\mu}{\sigma_{\max}},\\
-n=500:&\quad\frac{22.3607(0.02)}{0.35}=1.278.
+\lVert\boldsymbol\alpha_\perp\rVert_1&amp;=\sum_i\lvert[\boldsymbol\alpha_\perp]_i\rvert=n\mu,\\
+\lVert\boldsymbol\alpha_\perp\rVert_1&amp;=\mathbf s^{\mathsf T}\boldsymbol\alpha_\perp\\
+&amp;\le\lVert\mathbf s\rVert\,\lVert\boldsymbol\alpha_\perp\rVert=\sqrt n\,\lVert\boldsymbol\alpha_\perp\rVert,\\
+\lVert\boldsymbol\alpha_\perp\rVert&amp;\ge\frac{n\mu}{\sqrt n}=\sqrt n\,\mu,\\
+\text{SR}&amp;\ge\frac{\lVert\boldsymbol\alpha_\perp\rVert}{\sigma_{\max}}\ge\frac{\sqrt n\,\mu}{\sigma_{\max}},\\
+n=500:\ \text{SR}&amp;\ge\frac{\sqrt{500}\times0.02}{0.35}\\
+&amp;=\frac{22.3607\times0.02}{0.35}=1.278.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>นี่คือตัวเลขของ hook สัญญาณที่ทายหุ้นแต่ละตัวได้แค่ 2% ต่อปี ซึ่งเทียบกับความผันผวน 35% ของหุ้นตัวเดียวแล้วดูไร้ค่า กลับได้ Sharpe Ratio 1.278 เมื่อทำพร้อมกัน 500 ครั้ง ขอบนี้เป็นเท่ากับเมื่อทุกหุ้นมี $\lvert[\boldsymbol\alpha_\perp]_i\rvert$ และ $\sigma_i$ เท่ากัน</p><p>มองอีกแบบด้วยเงินหุ้นละ \$1 ล้านตามทิศของสัญญาณ ผลตอบแทนคาดหวังรวมโตตาม $n$ เพราะทุกเดิมพันได้ $\mu$ แต่ variance ของส่วนเฉพาะตัวที่ไม่สัมพันธ์กันบวกกันได้ ความผันผวนรวมจึงโตแค่ $\sqrt n$ (แบบเดียวกับที่<a href="3.1.html">กฎจำนวนมาก</a>ทำให้ค่าเฉลี่ยนิ่งขึ้น) อัตราส่วนจึงโตตาม $\sqrt n$ รูปข้างล่างวาดสองเส้นนี้ หุ้น 2,000 ตัวได้ 2.556 สี่เท่าของหุ้นได้สองเท่าของ Sharpe Ratio โดยฝีมือต่อหุ้นเท่าเดิม</p></div>
+  <div class="reading"><p>นี่คือตัวเลขในเฉลยของ hook สัญญาณที่ทายหุ้นแต่ละตัวได้แค่ 2% ต่อปี ดูไร้ค่าเมื่อเทียบกับความผันผวน 35% ของหุ้นตัวเดียว แต่พอทำพร้อมกัน 500 ครั้ง กลับได้ Sharpe Ratio 1.278 ขอบนี้กลายเป็นค่าจริงพอดี (ไม่ใช่แค่ขอบ) เมื่อทุกหุ้นมี $\lvert[\boldsymbol\alpha_\perp]_i\rvert$ เท่ากัน และ $\sigma_i$ เท่ากัน</p><p>ทำไมยิ่งหุ้นมาก SR ยิ่งสูง? ลองนึกว่าลงเงินหุ้นละ \$1 ล้านตามทิศของสัญญาณ ผลตอบแทนคาดหวังรวมโตตาม $n$ เพราะทุกเดิมพันได้ $\mu$ เท่ากัน แต่ variance ของส่วนเฉพาะตัวที่ไม่สัมพันธ์กันบวกกันตรง ๆ variance จึงโตตาม $n$ และความผันผวนซึ่งเป็นรากที่สองของ variance โตแค่ $\sqrt n$ (แบบเดียวกับที่<a href="3.1.html">กฎจำนวนมาก</a>ทำให้ค่าเฉลี่ยนิ่งขึ้น) อัตราส่วน $n/\sqrt n=\sqrt n$ จึงโตตาม $\sqrt n$ รูปข้างล่างวาดสองเส้นนี้</p><p>ผลที่ได้คือ ถ้าเพิ่มหุ้นสี่เท่า SR จะเพิ่มสองเท่า ($\sqrt4=2$) โดยฝีมือต่อหุ้นเท่าเดิม เช่น หุ้น 2,000 ตัวได้ $2\times1.278=2.556$</p></div>
 </section>
 <figure class="plot">
   <h4>รูป — ผลตอบแทนโตเป็นเส้นตรง ความเสี่ยงโตแบบรากที่สอง</h4>
@@ -237,42 +345,66 @@ n=500:&\quad\frac{22.3607(0.02)}{0.35}=1.278.
       <text x="432" y="116" text-anchor="end" fill="#a65f00">7.83</text>
     </g>
   </svg>
-  <figcaption>พอร์ตที่ลงหุ้นละ \$1 ล้านตามทิศของสัญญาณ ทุกหุ้นมี alpha orthogonal 2% และความผันผวนเฉพาะตัว 35% ต่อปี เส้นน้ำเงินคือผลตอบแทนคาดหวัง $0.02n$ ล้านดอลลาร์ ขึ้นเป็นเส้นตรง เส้นส้มคือความผันผวน $0.35\sqrt n$ ล้านดอลลาร์ ซึ่งโค้งลง สองเส้นตัดกันที่ $n=(0.35/0.02)^2\approx306$ ซึ่งคือ Sharpe Ratio 1 พอดี ที่ 500 หุ้นได้ 10.0 ต่อ 7.83 คือ 1.278 ยิ่งไปทางขวา ช่องว่างระหว่างสองเส้นยิ่งถ่าง</figcaption>
+  <figcaption>รูปนี้วาดพอร์ตที่ลงเงินหุ้นละ \$1 ล้านตามทิศของสัญญาณ ทุกหุ้นมี alpha orthogonal 2% และความผันผวนเฉพาะตัว 35% ต่อปี แกนนอนคือจำนวนหุ้น $n$ แกนตั้งคือล้านดอลลาร์ต่อปี เส้นน้ำเงินคือผลตอบแทนคาดหวัง $0.02n$ ล้านดอลลาร์ มันขึ้นเป็นเส้นตรง เส้นส้มคือความผันผวน $0.35\sqrt n$ ล้านดอลลาร์ มันชันน้อยลงเรื่อย ๆ จุดดำคือจุดที่สองเส้นเท่ากัน ตรงนั้น Sharpe Ratio เป็น 1 พอดี หาได้จาก $0.02n=0.35\sqrt n$ จึงได้ $\sqrt n=17.5$ และ $n=17.5^2\approx306$ ที่ 500 หุ้น เส้นน้ำเงินอยู่ที่ $0.02\times500=10.0$ เส้นส้มอยู่ที่ $0.35\times\sqrt{500}=7.83$ หารกันได้ $10.0/7.83=1.278$ ยิ่งไปทางขวา สองเส้นยิ่งห่างกัน</figcaption>
 </figure>
 <section class="example">
   <h4>ขั้นที่ 8 — ดันผลนี้ไปจนสุด แล้วดูว่าอะไรต้องยอม</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> ขอบที่เพิ่งได้ ที่ $\mu=2\%$ และ $\sigma_{\max}=35\%$ ต่อปี ปล่อยให้ $n$ โตขึ้นเรื่อย ๆ แล้วถามว่าปีที่ขาดทุนเกิดบ่อยแค่ไหน ถ้าผลตอบแทนรายปีเป็น <a href="1.9.html">normal</a> ปีที่ขาดทุนคือปีที่ผลตอบแทนต่ำกว่าค่าเฉลี่ยเกิน SR เท่าของความผันผวน โอกาสจึงเป็น $\Phi(-\text{SR})$</p>
+  <p>ถ้าเพิ่มหุ้นแล้ว SR โตได้เรื่อย ๆ กองทุนก็แค่เพิ่มหุ้นไปเรื่อย ๆ ฟังดูดีเกินจริง ขั้นนี้ลองดันสูตรไปจนสุด เพื่อดูว่าตรงไหนเริ่มเป็นไปไม่ได้</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong></p>
+  <ul>
+    <li>ขอบที่เพิ่งได้ $\text{SR}\ge\sqrt n\,\mu/\sigma_{\max}$ โดยใช้ $\mu=2\%$ และ $\sigma_{\max}=35\%$ ต่อปีเหมือน hook</li>
+    <li>ปล่อยให้จำนวนหุ้น $n$ โตขึ้นเรื่อย ๆ</li>
+  </ul>
+  <p>คำถามคือ ปีที่พอร์ตขาดทุนจะเกิดบ่อยแค่ไหน ก่อนตอบ ต้องแปลง SR เป็นโอกาสขาดทุน ให้ผลตอบแทนรายปี $R$ เป็น <a href="1.9.html">normal</a> ที่มีค่าเฉลี่ย $m$ และความผันผวน $s$ ดังนั้น $\text{SR}=m/s$ ปีที่ขาดทุนคือปีที่ $R\lt0$ เมื่อแปลงเป็น normal มาตรฐาน $Z=(R-m)/s$ จะได้</p>
+  <div class="math">\[\begin{aligned}P(R\lt0)&amp;=P\Big(Z\lt\frac{0-m}{s}\Big)\\&amp;=\Phi(-\text{SR}).\end{aligned}\]</div>
+  <p>ตอนนี้แทนจำนวนหุ้นหลายค่าลงในขอบ $\sqrt n\times0.02/0.35$</p>
   <div class="math">\[
 \begin{aligned}
-n=100&:\ \text{SR}\ge0.571,\\
-n=500&:\ \text{SR}\ge1.278,\\
-n=2{,}000&:\ \text{SR}\ge2.556,\\
-n=8{,}000&:\ \text{SR}\ge5.111,\\
-n=100{,}000&:\ \text{SR}\ge18.07,\\
-\Phi(-18.07)&\approx2.7\times10^{-73}.
+n=100&amp;:\ \text{SR}\ge0.571,\\
+n=500&amp;:\ \text{SR}\ge1.278,\\
+n=2{,}000&amp;:\ \text{SR}\ge2.556,\\
+n=8{,}000&amp;:\ \text{SR}\ge5.111,\\
+n=100{,}000&amp;:\ \text{SR}\ge18.07,\\
+\Phi(-18.07)&amp;\approx2.7\times10^{-73},\\
+\frac{1}{2.7\times10^{-73}}&amp;\approx3.7\times10^{72}.
 \end{aligned}
 \]</div>
-  <p><strong>คำตอบ:</strong> Sharpe Ratio 18.07 แปลว่าปีที่ขาดทุนเกิดราวหนึ่งครั้งใน $3.7\times10^{72}$ ปี นานกว่าอายุเอกภพราว $1.4\times10^{10}$ ปีจนไม่มีความหมาย ไม่มีกองทุนไหนใกล้ตัวเลขนี้ ข้อสมมติมีสามข้อ คือ model ถูก ความผันผวนเฉพาะตัวมีเพดาน และ $\mu$ ไม่ลดเมื่อ $n$ โต ข้อที่สองตรวจได้ในข้อมูลและเป็นจริง ข้อที่ต้องยอมคือข้อที่สาม alpha ต่อหุ้นต้องหดเมื่อจักรวาลใหญ่ขึ้น หุ้นตัวที่ 2,000 เล็กกว่า สภาพคล่องต่ำกว่า และทายยากกว่าตัวที่ 50 ถ้าจะให้ Sharpe Ratio ไม่โตไปเรื่อย ๆ $\mu$ ต้องหดเร็วอย่างน้อยเท่า $1/\sqrt n$</p>
-  <p><strong>ตรวจเองใน 10 วินาที:</strong> จาก 500 ไป 2,000 คือสี่เท่า Sharpe Ratio ต้องสองเท่า $2(1.278)=2.556$ และจาก 2,000 ไป 8,000 ก็สองเท่าอีก ได้ 5.111</p>
+  <p>ค่า $\Phi(-18.07)$ ไกลเกินตาราง normal ทั่วไป จึงคำนวณจาก series ของหาง normal ในโค้ด JavaScript ท้ายหน้า</p>
+  <p><strong>คำตอบ:</strong> ที่หุ้นแสนตัว Sharpe Ratio เป็น 18.07 แปลว่าปีที่ขาดทุนเกิดราวหนึ่งครั้งใน $3.7\times10^{72}$ ปี อายุเอกภพราว $1.4\times10^{10}$ ปีเท่านั้น ตัวเลขนี้จึงไม่มีความหมาย และไม่มีกองทุนไหนใกล้มันเลย</p>
+  <p>แปลว่ามีข้อสมมติบางข้อผิด ข้อสมมติมีสามข้อ</p>
+  <ul>
+    <li>model ถูก</li>
+    <li>ความผันผวนเฉพาะตัวมีเพดาน ข้อนี้ตรวจได้ในข้อมูลและเป็นจริง</li>
+    <li>$\mu$ ไม่ลดลงเมื่อ $n$ โต</li>
+  </ul>
+  <p>ข้อที่ต้องยอมคือข้อที่สาม alpha ต่อหุ้นต้องหดเมื่อจักรวาลหุ้นใหญ่ขึ้น (จักรวาลหุ้นคือรายชื่อหุ้นทั้งหมดที่กองทุนเลือกซื้อขายได้) เหตุผลคือหุ้นตัวที่ 2,000 เล็กกว่า ซื้อขายยากกว่า และทายยากกว่าหุ้นตัวที่ 50 ถ้าจะให้ SR ไม่โตไปเรื่อย ๆ $\sqrt n\,\mu$ ต้องไม่โต $\mu$ จึงต้องหดเร็วอย่างน้อยเท่า $1/\sqrt n$</p>
+  <p><strong>ตรวจเองใน 10 วินาที:</strong> จาก 500 ไป 2,000 คือสี่เท่า Sharpe Ratio ต้องสองเท่า: $2\times1.278=2.556$ และจาก 2,000 ไป 8,000 ก็สองเท่าอีก: $2\times2.556\approx5.11$</p>
 </section>
 <figure class="plot">
   <h4>รูป — Sharpe Ratio ของสองสัญญาณเมื่อจำนวนหุ้นเพิ่ม</h4>
   <img src="../figures/26.2-2.svg" alt="เส้นน้ำเงินไต่ขึ้นตามรากที่สองของจำนวนหุ้น จุด 0.57 1.28 2.56 5.11 เส้นส้มแนวนอนที่ 0.375" loading="lazy">
-  <figcaption>แกนนอนคือจำนวนหุ้นราว 50 ถึง 25,000 สเกล log แกนตั้งคือ Sharpe Ratio ต่อปี เส้นน้ำเงินคือขอบล่าง $\sqrt n(0.02)/0.35$ จุดดำที่ 100, 500, 2,000 และ 8,000 หุ้นเขียนว่า 0.57, 1.28, 2.56 และ 5.11 เส้นส้มคือเดิมพัน momentum ที่ $3/8=0.375$ ไม่ขยับเลยเพราะซื้อหุ้นเพิ่มไม่ได้ทำให้เดิมพันครั้งเดียวกลายเป็นหลายครั้ง เส้นน้ำเงินจะไต่ไปจนถึงตัวเลขที่เป็นไปไม่ได้ ถ้า alpha ต่อหุ้นไม่หด</figcaption>
+  <figcaption>รูปนี้เทียบสองสัญญาณของ hook เมื่อจำนวนหุ้นเพิ่ม แกนนอนคือจำนวนหุ้นราว 50 ถึง 25,000 วาดแบบสเกล log คือระยะเท่ากันบนแกนหมายถึงการคูณเท่ากัน แกนตั้งคือ Sharpe Ratio ต่อปี เส้นน้ำเงินคือขอบล่างของสัญญาณที่ 1 $\sqrt n\times0.02/0.35$ จุดดำคือค่าที่คำนวณไว้ข้างบน ที่ 100, 500, 2,000 และ 8,000 หุ้นได้ 0.57, 1.28, 2.56 และ 5.11 เส้นส้มคือเดิมพัน momentum ที่ $3/8=0.375$ มันไม่ขยับเลย เพราะซื้อหุ้นเพิ่มไม่ได้ทำให้เดิมพันครั้งเดียวกลายเป็นหลายครั้ง ถ้า alpha ต่อหุ้นไม่หด เส้นน้ำเงินจะไต่ไปจนถึงตัวเลขที่เป็นไปไม่ได้</figcaption>
 </figure>
 <section class="formula">
   <h4>ขั้นที่ 9 — รวมสองชนิดเข้าด้วยกัน</h4>
-  <p>กองทุนจริงมีทั้งสองอย่าง ถ้าสองกลยุทธ์ไม่สัมพันธ์กัน มี Sharpe Ratio $s_1$ กับ $s_2$ และแบ่งความเสี่ยงให้ $x_1$ กับ $x_2$ ผลตอบแทนคาดหวังคือ $x_1s_1+x_2s_2$ ส่วนความผันผวนคือ $\sqrt{x_1^2+x_2^2}$ ถามว่าแบ่งอย่างไรได้ Sharpe Ratio รวมสูงสุด</p>
+  <p>เฉลยของ hook บอกว่าถือทั้งสองสัญญาณได้ดีกว่าแค่นิดเดียว ขั้นนี้พิสูจน์ตัวเลขนั้น กองทุนจริงมักถือทั้งสองอย่าง คือ alpha orthogonal และเดิมพัน factor (factor bet) จึงต้องรู้ว่าควรแบ่งความเสี่ยงอย่างไร และรวมแล้วได้เท่าไร</p>
+  <p>ให้สองกลยุทธ์ไม่สัมพันธ์กัน และตั้งชื่อดังนี้</p>
+  <ul>
+    <li>$s_1, s_2$ คือ Sharpe Ratio ของกลยุทธ์ที่ 1 และ 2</li>
+    <li>$x_1, x_2$ คือความเสี่ยงที่แบ่งให้แต่ละกลยุทธ์ วัดเป็นความผันผวนของเงินที่ลงในกลยุทธ์นั้น</li>
+  </ul>
+  <p>เพราะ SR คือผลตอบแทนหารด้วยความผันผวน กลยุทธ์ที่ $i$ จึงให้ผลตอบแทนคาดหวัง $x_is_i$ และเพราะสองกลยุทธ์ไม่สัมพันธ์กัน variance รวมคือ $x_1^2+x_2^2$ ความผันผวนรวมจึงเป็น $\sqrt{x_1^2+x_2^2}$ คำถามคือแบ่ง $x_1, x_2$ อย่างไรได้ Sharpe Ratio รวมสูงสุด</p>
   <div class="math">\[
 \begin{aligned}
-\text{SR}(\mathbf x)&=\frac{x_1s_1+x_2s_2}{\sqrt{x_1^2+x_2^2}}\\
-&\le\sqrt{s_1^2+s_2^2},\\
-\sqrt{1.278^2+0.375^2}&=\sqrt{1.6327+0.1406}\\
-&=1.3316,\\
-\frac{1.3316}{1.2778}-1&=4.2\%.
+\text{SR}(\mathbf x)&amp;=\frac{x_1s_1+x_2s_2}{\sqrt{x_1^2+x_2^2}}\\
+&amp;\le\sqrt{s_1^2+s_2^2},\\
+\sqrt{1.2778^2+0.375^2}&amp;=\sqrt{1.6327+0.1406}\\
+&amp;=1.3316,\\
+\frac{1.3316}{1.2778}-1&amp;=4.2\%.
 \end{aligned}
 \]</div>
-  <div class="reading"><p>ตัวเศษคือผลคูณจุดของ $(x_1, x_2)$ กับ $(s_1, s_2)$ Cauchy–Schwarz บอกว่าไม่เกินความยาวคูณกัน หารด้วยความยาวของ $\mathbf x$ แล้วเหลือ $\sqrt{s_1^2+s_2^2}$ ได้เท่ากับขอบเมื่อแบ่งความเสี่ยงตามสัดส่วน Sharpe Ratio ($\mathbf x$ ขนานกับ $\mathbf s$) Sharpe Ratio ของแหล่งที่ไม่สัมพันธ์กันจึงต่อกันเป็นสามเหลี่ยมมุมฉาก เหมือนความผันผวน</p><p>momentum ได้ส่วนแบ่งของ $s^2$ แค่ $0.1406/1.7733=7.9\%$ จึงยก Sharpe Ratio รวมได้ 4.2% ทั้งที่ตัวมันเองได้ 0.375 การบวกแบบกำลังสองลงโทษแหล่งที่เล็กกว่าหนัก ต้องมี factor bet ที่ดีเท่า 1.278 ถึงจะเพิ่มได้ 41% ($\sqrt2-1$)</p></div>
+  <p>ที่นี่ใช้ $s_1=1.2778$ (ค่าก่อนปัดเป็น 1.278) และ $s_2=0.375$</p>
+  <div class="reading"><p>ตัวเศษคือผลคูณจุดของ $\mathbf x=(x_1, x_2)$ กับ $\mathbf s=(s_1, s_2)$ Cauchy–Schwarz บอกว่ามันไม่เกิน $\lVert\mathbf x\rVert\,\lVert\mathbf s\rVert$ ตัวส่วนคือ $\lVert\mathbf x\rVert$ พอดี หารแล้วจึงเหลือ $\lVert\mathbf s\rVert=\sqrt{s_1^2+s_2^2}$ ค่านี้ได้จริงเมื่อ $\mathbf x$ ขนานกับ $\mathbf s$ คือแบ่งความเสี่ยงตามสัดส่วน Sharpe Ratio ของแต่ละกลยุทธ์ Sharpe Ratio ของแหล่งที่ไม่สัมพันธ์กันจึงต่อกันเป็นสามเหลี่ยมมุมฉาก เหมือนความผันผวน</p><p>ทำไม momentum ช่วยได้น้อย? เพราะมันได้ส่วนแบ่งของ $s_1^2+s_2^2$ แค่ $0.1406/1.7733=7.9\%$ จึงยก Sharpe Ratio รวมได้แค่ 4.2% ทั้งที่ตัวมันเองได้ 0.375 การบวกแบบกำลังสองลงโทษแหล่งที่เล็กกว่าหนัก ถ้าอยากได้เพิ่มมาก ต้องมี factor bet ที่ดีเท่ากันคือ 1.278 ตอนนั้น SR รวมเป็น $\sqrt{2}\times1.278=1.807$ เพิ่มขึ้น $\sqrt2-1=41\%$</p></div>
 </section>
 <figure class="plot">
   <h4>รูป — Sharpe Ratio ของสองแหล่งต่อกันเป็นสามเหลี่ยมมุมฉาก</h4>
@@ -302,23 +434,100 @@ n=100{,}000&:\ \text{SR}\ge18.07,\\
 </figure>
 <section class="pitfall">
   <h4>ความผิดที่ทำให้ตีราคาสัญญาณผิด</h4>
-  <p><strong>รายงาน alpha โดยไม่ฉายก่อน:</strong> สัญญาณของหุ้นสี่ตัวมี alpha ยาว 2.598 แต่ 99.95% ของความยาวกำลังสองคือเดิมพันบน market กับ momentum ถ้าไม่ฉาย จะเรียกเดิมพัน factor ว่าฝีมือเลือกหุ้น และตั้งค่าธรรมเนียมผิดราคา</p>
-  <p><strong>อ่าน $\sqrt n$ ว่าเป็นของฟรี:</strong> ถ้า $\mu$ คงที่ หุ้นแสนตัวให้ Sharpe Ratio 18.07 ซึ่งเป็นไปไม่ได้ สิ่งที่สูตรไม่รวมคือต้นทุนการเทรด สภาพคล่อง และความจริงที่ว่าหุ้นที่เพิ่มเข้ามาทายยากกว่า สูตรนี้เป็นเพดาน ไม่ใช่คำสัญญา</p>
-  <p><strong>ลืมว่าการแยกขึ้นกับ $\mathbf B$:</strong> ถ้าใช้ model ที่มีแค่ market กับ momentum กับ alpha ชุดเดิม $\boldsymbol\alpha_\perp$ ยาว 0.0619 แทน 0.0552 คือยาวขึ้น 12% เพราะส่วนที่เคยเป็นเดิมพัน tech กลายเป็น “alpha” สัญญาณที่ตั้งฉากกับ model ของผู้ให้บริการเจ้าหนึ่งอาจเป็น spanned บางส่วนใน model ของอีกเจ้า</p>
+  <p><strong>รายงาน alpha โดยไม่ฉายก่อน:</strong> ความผิดคือเอา alpha ทั้งก้อนไปนับเป็นฝีมือเลือกหุ้น ในตัวอย่างสี่หุ้น alpha ทั้งก้อนยาว $\lVert\boldsymbol\alpha\rVert=\sqrt{6.75}=2.598$ ดูเหมือนมีฝีมือมาก แต่พอฉายลงบน $\mathbf B$ แล้ว ส่วนที่เป็นฝีมือจริงยาวแค่ $\lVert\boldsymbol\alpha_\perp\rVert=0.0552$ ที่เหลือ $6.74695/6.75=99.95\%$ ของความยาวกำลังสองคือเดิมพันบน market กับ momentum ถ้าไม่ฉาย จะเรียกเดิมพัน factor ว่าฝีมือ และตั้งค่าธรรมเนียมแพงเกินราคา</p>
+  <p><strong>อ่าน $\sqrt n$ ว่าเป็นของฟรี:</strong> ความผิดคือเชื่อว่าเพิ่มหุ้นแล้ว SR โตได้ไม่จำกัด ถ้า $\mu$ คงที่ หุ้นแสนตัวให้ $\sqrt{100{,}000}\times0.02/0.35=18.07$ ซึ่งเป็นไปไม่ได้ สิ่งที่สูตรไม่รวมคือต้นทุนการเทรด ความยากในการซื้อขายหุ้นเล็ก และความจริงที่ว่าหุ้นที่เพิ่มเข้ามาทายยากกว่า สูตรนี้จึงเป็นเพดาน ไม่ใช่คำสัญญา</p>
+  <p><strong>ลืมว่าการแยกขึ้นกับ $\mathbf B$:</strong> ความผิดคือคิดว่า alpha orthogonal เป็นค่าคงที่ของสัญญาณ ที่จริงมันขึ้นกับว่า model มี factor อะไรบ้าง ลองใช้ alpha ชุดเดิมกับ model ที่มีแค่ market กับ momentum (ตัดคอลัมน์ tech ทิ้ง) สองคอลัมน์ที่เหลือตั้งฉากกันเอง เพราะคอลัมน์ momentum รวมกันได้ $1.2-0.4+0.6-1.4=0$ เมื่อคอลัมน์ตั้งฉากกัน $\mathbf B^{\mathsf T}\mathbf B$ เป็น diagonal $\lambda_j$ แต่ละตัวจึงหาแยกกันได้ เป็นผลคูณจุดของคอลัมน์ $j$ กับ $\boldsymbol\alpha$ หารด้วยความยาวกำลังสองของคอลัมน์นั้น และความยาวกำลังสองของก้อน spanned ก็แยกบวกได้แบบ Pythagoras เป็น $4\lambda_1^2+3.92\lambda_2^2$</p>
+  <div class="math">\[
+\begin{aligned}
+\lambda_1&amp;=\frac{2.0+0.5+1.5-0.5}{4}=0.875,\\
+\lambda_2&amp;=\frac{2.4-0.2+0.9+0.7}{3.92}=0.9694,\\
+\lVert\boldsymbol\alpha_\perp\rVert^2&amp;=6.75-4\lambda_1^2-3.92\lambda_2^2\\
+&amp;=6.75-3.0625-3.68367\\
+&amp;=0.00383,\\
+\lVert\boldsymbol\alpha_\perp\rVert&amp;=\sqrt{0.00383}=0.0619,\\
+\frac{0.0619}{0.0552}&amp;=1.12.
+\end{aligned}
+\]</div>
+  <p>ใน $\lambda_1$ คอลัมน์ market เป็น 1 ทุกช่อง ผลคูณจุดจึงเป็นผลรวมของ $\boldsymbol\alpha$ และความยาวกำลังสองคือ 4 ใน $\lambda_2$ ตัวเศษคือ $1.2(2.0)-0.4(0.5)+0.6(1.5)-1.4(-0.5)$ และ $3.92=1.2^2+0.4^2+0.6^2+1.4^2$ ผลคือ $\boldsymbol\alpha_\perp$ ยาว 0.0619 แทน 0.0552 คือยาวขึ้น 12% เพราะส่วนที่เคยเป็นเดิมพัน tech กลายเป็น “alpha” ไปแล้ว ดังนั้นสัญญาณที่ตั้งฉากกับ model ของผู้ให้บริการเจ้าหนึ่ง อาจเป็น spanned บางส่วนใน model ของอีกเจ้า</p>
 </section>
 <section class="prose">
   <h4>ใช้ทำอะไรบนโต๊ะจริง</h4>
-  <p>ก่อนรับสัญญาณใหม่เข้าระบบ ทีมวิจัยฉายมันลงบน $\mathbf B$ ของ risk model ที่ใช้อยู่ ด้วย regression ข้ามหุ้นในวันเดียวแบบขั้นแรกของหน้านี้ แล้วรายงาน $\boldsymbol\lambda$ กับสัดส่วนของ $\boldsymbol\alpha_\perp$ ส่วน spanned ถูกตีราคาเทียบกับกองทุน factor ราคาถูก ส่วน orthogonal ถูกวัดด้วย Sharpe Ratio หลังหัก factor และขนาดของจักรวาลหุ้นที่มันใช้ได้หลังหักต้นทุน</p>
-  <p>alpha orthogonal จึงเป็นสกุลเงินที่มีค่าที่สุดของการลงทุนเชิงปริมาณ พอร์ตที่เก็บมันอย่างเดียวคือพอร์ตที่ให้ผลตอบแทนคาดหวัง $\boldsymbol\alpha_\perp^{\mathsf T}\mathbf w$ สูงสุด ภายใต้เงื่อนไข $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ (ไม่มี exposure ต่อ factor) และความเสี่ยงเฉพาะตัวไม่เกินงบที่ตั้ง ซึ่งเป็นปัญหาแบบ <a href="12.4.html">Lagrange multipliers</a></p>
+  <p>ก่อนรับสัญญาณใหม่เข้าระบบ ทีมวิจัยฉายมันลงบน $\mathbf B$ ของ risk model ที่กองทุนใช้อยู่ การฉายนี้คือ regression ข้ามหุ้นในวันเดียว แบบเดียวกับขั้นแรกของหน้านี้ คือใช้หุ้นทุกตัวในวันนั้นเป็นข้อมูล โดยมี alpha ของหุ้นเป็นตัวแปรตาม และ loading เป็นตัวแปรอธิบาย</p>
+  <p>ผลที่รายงานมีสองเรื่อง คือ $\boldsymbol\lambda$ (สัญญาณเดิมพัน factor ตัวไหนเท่าไร) และสัดส่วนของ $\boldsymbol\alpha_\perp$ แต่ละส่วนถูกตีราคาต่างกัน</p>
+  <ul>
+    <li>ส่วน spanned ถูกเทียบกับราคาของกองทุน factor ค่าธรรมเนียมต่ำ เพราะซื้อของแบบเดียวกันได้จากที่นั่น</li>
+    <li>ส่วน orthogonal ถูกวัดด้วย Sharpe Ratio หลังหักส่วน factor และด้วยจำนวนหุ้นที่สัญญาณใช้ได้จริงหลังหักต้นทุนการเทรด</li>
+  </ul>
+  <p>alpha orthogonal จึงเป็นของที่มีค่าที่สุดของการลงทุนเชิงปริมาณ พอร์ตที่เก็บมันอย่างเดียวคือพอร์ตที่ให้ผลตอบแทนคาดหวัง $\boldsymbol\alpha_\perp^{\mathsf T}\mathbf w$ สูงสุด โดยมีสองเงื่อนไข เงื่อนไขแรกคือ $\mathbf B^{\mathsf T}\mathbf w=\mathbf 0$ (ไม่มี exposure ต่อ factor) เงื่อนไขที่สองคือความเสี่ยงเฉพาะตัวไม่เกินงบที่ตั้งไว้ โจทย์หาค่าสูงสุดภายใต้เงื่อนไขแบบนี้แก้ด้วย <a href="12.4.html">Lagrange multipliers</a></p>
 </section>
 <section class="example">
   <h4>โจทย์ตรวจความเข้าใจ</h4>
-  <p><strong>1.</strong> สัญญาณคู่หนึ่งบอกว่า A จะชนะ B ปีละ 1% คือ $\boldsymbol\alpha=(0.5, -0.5, 0, 0)\%$ ส่วนไหนเป็นฝีมือเลือกหุ้นจริง และส่วนที่เหลือเดิมพันอะไร</p>
-  <details><summary>เฉลย</summary><p>$\boldsymbol\alpha^{\mathsf T}\mathbf u=0.5+0.5=1$ จึงได้ $\boldsymbol\alpha_\perp=\mathbf u/3.28=(0.3049, -0.3049, -0.2439, 0.2439)$ ความยาวกำลังสอง $1/3.28=0.3049$ จาก $\lVert\boldsymbol\alpha\rVert^2=0.5$ คือ 61.0% เป็นฝีมือจริง ที่เหลือ $\boldsymbol\alpha_\parallel=(0.1951, -0.1951, 0.2439, -0.2439)$ ให้ $\lambda_2=0.2439$, $\lambda_1=0.0976$, $\lambda_3=-0.1951$ ถ้าถือคู่ซื้อ A ขาย B อย่างละ \$1 ล้าน exposure คือ (0, 1.6, 0) ผลตอบแทนคาดหวัง 1% จึงแยกเป็น $1.6(0.2439)=0.39\%$ ที่เป็นเดิมพัน momentum เพราะ A มี momentum สูงกว่า B มาก และ $0.3049+0.3049=0.61\%$ ที่เป็นฝีมือจริง</p></details>
-  <p><strong>2.</strong> ถ้า alpha orthogonal เฉลี่ยหุ้นละ 1% ต่อปี และความผันผวนเฉพาะตัวไม่เกิน 30% ต้องมีหุ้นอย่างน้อยกี่ตัวขอบล่างถึงจะรับประกัน Sharpe Ratio 2</p>
-  <details><summary>เฉลย</summary><p>ต้องการ $\sqrt n(0.01)/0.30\ge2$ คือ $\sqrt n\ge60$ จึง $n\ge3{,}600$ ตัว และนั่นยังสมมติว่าหุ้นตัวที่ 3,600 ทายได้ดีเท่าตัวแรก ซึ่งการดันผลไปจนสุดข้างบนบอกว่าไม่น่าเป็นจริง</p></details>
-  <p><strong>3.</strong> กองทุนมี alpha orthogonal ที่ Sharpe Ratio 1.2 เพิ่ม factor bet ที่ไม่สัมพันธ์กันและมี Sharpe Ratio 0.5 ได้เท่าไร และต้องมี factor bet ดีแค่ไหนถึงจะถึง 1.5</p>
-  <details><summary>เฉลย</summary><p>$\sqrt{1.44+0.25}=\sqrt{1.69}=1.3$ เพิ่มขึ้น 8.3% ถ้าต้องการ 1.5 ต้องมี $s_2=\sqrt{2.25-1.44}=\sqrt{0.81}=0.9$ เกือบสองเท่าของ factor bet ตัวแรก ในภาพสามเหลี่ยม ขาตั้งต้องยาว 0.9 ด้านตรงข้ามถึงจะยาว 1.5</p></details>
+  <p><strong>1.</strong> นักวิจัยคนหนึ่งเสนอสัญญาณแบบ “คู่” กับหุ้นสี่ตัวชุดเดิม (ใช้ $\mathbf B$ และ $\mathbf u$ เดิม) สัญญาณบอกว่า A จะชนะ B ปีละ 1% โดย A ดีกว่าปกติ 0.5% และ B แย่กว่าปกติ 0.5% จึงเขียนได้ว่า $\boldsymbol\alpha=(0.5, -0.5, 0, 0)\%$ ต่อปี ส่วนไหนเป็นฝีมือเลือกหุ้นจริง และส่วนที่เหลือเดิมพันอะไร</p>
+  <details><summary>เฉลย</summary><p>เริ่มจากหาก้อน orthogonal ด้วยวิธีเดียวกับตัวอย่างสี่หุ้น แล้ววัดสัดส่วนด้วยความยาวกำลังสอง</p>
+  <div class="math">\[
+\begin{aligned}
+\boldsymbol\alpha^{\mathsf T}\mathbf u&amp;=0.5(1)+(-0.5)(-1)=1,\\
+c&amp;=\frac{1}{3.28}=0.3049,\\
+\boldsymbol\alpha_\perp&amp;=c\,\mathbf u\\
+&amp;=(0.3049,\ -0.3049,\\
+&amp;\qquad -0.2439,\ 0.2439),\\
+\lVert\boldsymbol\alpha_\perp\rVert^2&amp;=c^2\,\mathbf u^{\mathsf T}\mathbf u=\frac{1}{3.28}=0.3049,\\
+\lVert\boldsymbol\alpha\rVert^2&amp;=0.5^2+0.5^2=0.5,\\
+\frac{0.3049}{0.5}&amp;=61.0\%.
+\end{aligned}
+\]</div>
+  <p>61.0% ของความยาวกำลังสองเป็นฝีมือจริง ส่วนที่เหลือคือก้อน spanned หาได้จาก $\boldsymbol\alpha-\boldsymbol\alpha_\perp$ แล้วแก้ $\boldsymbol\lambda$ จากแถว C กับ D ก่อน เหมือนตัวอย่างสี่หุ้น</p>
+  <div class="math">\[
+\begin{aligned}
+\boldsymbol\alpha_\parallel&amp;=(0.1951,\ -0.1951,\\
+&amp;\qquad 0.2439,\ -0.2439),\\
+2\lambda_2&amp;=0.2439-(-0.2439)\\
+&amp;=0.4878,\\
+\lambda_2&amp;=0.2439,\\
+\lambda_1&amp;=0.2439-0.6\times0.2439\\
+&amp;=0.0976,\\
+\lambda_3&amp;=0.1951-0.0976-1.2\times0.2439\\
+&amp;\approx-0.1951.
+\end{aligned}
+\]</div>
+  <p>ตอนนี้ดูเป็นเงิน ถ้าซื้อ A \$1 ล้าน และ short B \$1 ล้าน พอร์ตคือ $\mathbf w=(1, -1, 0, 0)$ หน่วยล้านดอลลาร์ exposure ของมันคือ $\mathbf b=\mathbf B^{\mathsf T}\mathbf w$ ผลตอบแทนคาดหวัง $\mathbf w^{\mathsf T}\boldsymbol\alpha$ แยกเป็นสองก้อน ก้อน spanned ได้ $\mathbf w^{\mathsf T}\mathbf B\boldsymbol\lambda=\mathbf b^{\mathsf T}\boldsymbol\lambda$ ตามสูตรข้างบน ก้อน orthogonal ได้ $\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp$</p>
+  <div class="math">\[
+\begin{aligned}
+\mathbf b&amp;=(1-1,\ 1.2+0.4,\ 1-1)\\
+&amp;=(0,\ 1.6,\ 0),\\
+\mathbf w^{\mathsf T}\boldsymbol\alpha&amp;=0.5+0.5=1\%,\\
+\mathbf b^{\mathsf T}\boldsymbol\lambda&amp;=1.6\times0.2439=0.39\%,\\
+\mathbf w^{\mathsf T}\boldsymbol\alpha_\perp&amp;=0.3049+0.3049=0.61\%.
+\end{aligned}
+\]</div>
+  <p>ผลตอบแทนคาดหวัง 1% จึงแยกเป็น 0.39% ที่เป็นเดิมพัน momentum กับ 0.61% ที่เป็นฝีมือจริง ($0.39+0.61=1.00$) ก้อน momentum โผล่มาเพราะ A มี loading momentum 1.2 แต่ B มี −0.4 คู่นี้จึงถือ momentum อยู่ $1.2-(-0.4)=1.6$ หน่วยโดยไม่ตั้งใจ</p></details>
+  <p><strong>2.</strong> กองทุนหนึ่งตั้งเป้า Sharpe Ratio 2 ต่อปีจากสัญญาณหุ้นรายตัว ของที่รู้ (สมมติ):</p>
+  <ul>
+    <li>alpha orthogonal เฉลี่ยหุ้นละ $\mu=1\%$ ต่อปี</li>
+    <li>ความผันผวนเฉพาะตัวไม่เกิน $\sigma_{\max}=30\%$ ต่อปี</li>
+  </ul>
+  <p>ต้องมีหุ้นอย่างน้อยกี่ตัว ขอบล่าง $\sqrt n\,\mu/\sigma_{\max}$ ถึงจะรับประกัน Sharpe Ratio 2</p>
+  <details><summary>เฉลย</summary><p>ตั้งขอบล่างให้ไม่ต่ำกว่า 2 แล้วแก้หา $n$</p>
+  <div class="math">\[
+\begin{aligned}
+\frac{\sqrt n\times0.01}{0.30}&amp;\ge2,\\
+\sqrt n&amp;\ge\frac{2\times0.30}{0.01}=60,\\
+n&amp;\ge60^2=3{,}600.
+\end{aligned}
+\]</div>
+  <p>ต้องมีหุ้นอย่างน้อย 3,600 ตัว และนั่นยังสมมติว่าหุ้นตัวที่ 3,600 ทายได้ดีเท่าตัวแรก ซึ่งการดันผลไปจนสุดข้างบนบอกว่าไม่น่าเป็นจริง</p></details>
+  <p><strong>3.</strong> กองทุนมีพอร์ต alpha orthogonal ที่ Sharpe Ratio $s_1=1.2$ ต่อปี ผู้จัดการคิดจะเพิ่ม factor bet ที่ไม่สัมพันธ์กับพอร์ตเดิม และมี Sharpe Ratio $s_2=0.5$ (สมมติ) ถ้าแบ่งความเสี่ยงดีที่สุด Sharpe Ratio รวมเพิ่มขึ้นเท่าไร และถ้าอยากได้ 1.5 ต้องมี factor bet ดีแค่ไหน</p>
+  <details><summary>เฉลย</summary><p>ใช้สูตรรวมสองแหล่ง $\sqrt{s_1^2+s_2^2}$ แล้วแก้กลับหา $s_2$ เมื่อรู้ผลรวม</p>
+  <div class="math">\[
+\begin{aligned}
+\sqrt{1.2^2+0.5^2}&amp;=\sqrt{1.44+0.25}\\
+&amp;=\sqrt{1.69}=1.3,\\
+\frac{1.3}{1.2}-1&amp;=8.3\%,\\
+s_2&amp;=\sqrt{1.5^2-1.2^2}\\
+&amp;=\sqrt{2.25-1.44}=\sqrt{0.81}=0.9.
+\end{aligned}
+\]</div>
+  <p>Sharpe Ratio รวมเป็น 1.3 เพิ่มขึ้น 8.3% ถ้าอยากได้ 1.5 ต้องมี factor bet ที่ Sharpe Ratio 0.9 ซึ่งเกือบสองเท่าของตัวแรก ($0.9/0.5=1.8$) ในภาพสามเหลี่ยม ขาตั้งต้องยาว 0.9 ด้านตรงข้ามมุมฉากถึงจะยาว 1.5</p></details>
 </section>
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
@@ -413,11 +622,11 @@ console.log(JSON.stringify({
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>$\boldsymbol\alpha=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp$ แยกได้แบบเดียวด้วย $\boldsymbol\lambda=(\mathbf B^{\mathsf T}\mathbf B)^{-1}\mathbf B^{\mathsf T}\boldsymbol\alpha$ และความยาวกำลังสองของสองส่วนบวกกันได้</li>
-    <li>alpha spanned แยกไม่ออกจากผลตอบแทนคาดหวังของ factor เก็บได้ด้วย exposure ต่อ factor เท่านั้น ในตัวอย่างสี่หุ้นมันคือ 99.95% ของความยาวกำลังสอง</li>
-    <li>พอร์ต $\boldsymbol\alpha_\perp/\lVert\boldsymbol\alpha_\perp\rVert$ ไม่มี exposure ต่อ factor ได้ผลตอบแทนคาดหวังเท่ากับความยาว และ $\text{SR}\ge\sqrt n\,\mu/\sigma_{\max}$ คือ 1.278 ที่ 500 หุ้น 2% และ 35%</li>
-    <li>ถ้า $\mu$ คงที่ หุ้นแสนตัวให้ 18.07 ซึ่งเป็นไปไม่ได้ ข้อสรุปคือ alpha ต่อหุ้นต้องหดเมื่อจักรวาลใหญ่ขึ้น</li>
-    <li>สองกลยุทธ์ที่ไม่สัมพันธ์กันรวมได้ $\sqrt{s_1^2+s_2^2}$ เมื่อแบ่งความเสี่ยงตาม Sharpe Ratio momentum 0.375 ยก 1.278 ได้แค่ 4.2%</li>
+    <li>alpha แยกได้แบบเดียวเป็น $\boldsymbol\alpha=\mathbf B\boldsymbol\lambda+\boldsymbol\alpha_\perp$ โดย $\boldsymbol\lambda=(\mathbf B^{\mathsf T}\mathbf B)^{-1}\mathbf B^{\mathsf T}\boldsymbol\alpha$ สองส่วนตั้งฉากกัน ความยาวกำลังสองจึงบวกกันได้แบบ Pythagoras</li>
+    <li>alpha spanned แยกไม่ออกจากผลตอบแทนคาดหวังของ factor และเก็บได้ด้วยการถือ factor เท่านั้น ในตัวอย่างสี่หุ้น มันคือ 99.95% ของความยาวกำลังสอง</li>
+    <li>พอร์ต $\boldsymbol\alpha_\perp/\lVert\boldsymbol\alpha_\perp\rVert$ ไม่ขยับตาม factor ใดเลย ผลตอบแทนคาดหวังของมันเท่ากับความยาว $\lVert\boldsymbol\alpha_\perp\rVert$ และ $\text{SR}\ge\sqrt n\,\mu/\sigma_{\max}$ เช่น หุ้น 500 ตัว $\mu=2\%$ $\sigma_{\max}=35\%$ ได้ $\sqrt{500}\times0.02/0.35=1.278$</li>
+    <li>ถ้า $\mu$ คงที่ หุ้นแสนตัวให้ SR 18.07 ซึ่งเป็นไปไม่ได้ ข้อสรุปคือ alpha ต่อหุ้นต้องหดเมื่อจักรวาลหุ้นใหญ่ขึ้น</li>
+    <li>สองกลยุทธ์ที่ไม่สัมพันธ์กันรวมได้ $\sqrt{s_1^2+s_2^2}$ เมื่อแบ่งความเสี่ยงตามสัดส่วน Sharpe Ratio เช่น momentum 0.375 ยก 1.278 ขึ้นได้แค่ 4.2%</li>
   </ul>
   <p>การแยกทั้งหมดนี้ขึ้นกับคอลัมน์ของ $\mathbf B$ แต่คอลัมน์ชุดเดียวกันเขียนได้หลายแบบ หน้าถัดไป <a href="26.3.html">rotation, projection และ push-out</a> แสดงว่าเปลี่ยน $\mathbf B$ ได้อย่างไรโดยที่ผลตอบแทนและความเสี่ยงรวมไม่ขยับ และอะไรที่ขยับ</p>
 </section>
