@@ -22,15 +22,30 @@
 </header>
 
 <div class="hook">
-  <p>หุ้นธนาคารสามตัว JPM, BAC และ WFC (ตัวเลขสมมติ) มีความผันผวนตัวละ 25% ต่อปี และ correlation ทุกคู่ 0.7 พอร์ตลงเงินเท่ากันตัวละหนึ่งในสาม สูตรกระจายความเสี่ยงที่จำกันมาบอกว่าความผันผวนจะลดเหลือ $25\%/\sqrt3\approx14.43\%$ ใช่ไหม</p>
-  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ใช่ สูตรหารด้วย $\sqrt3$ ใช้เมื่อ correlation เป็นศูนย์ ที่ correlation 0.7 variance พอร์ตคือ $0.25^2(1+2\times0.7)/3=0.05$ ความผันผวน $\sqrt{0.05}\approx22.36\%$ ลดลงจาก 25% นิดเดียว เหตุผลเชิงภาพคือ covariance ของสามหุ้นนี้มีทิศ “ขึ้นลงพร้อมกัน” หนึ่งทิศที่ใหญ่มาก (eigenvalue 0.15) และพอร์ตเงินเท่ากันวางตัวอยู่บนทิศนั้นพอดี การกระจายเงินจึงไม่ได้หนีความเสี่ยงร่วมเลย</p></details>
+  <p>นักลงทุนคนหนึ่งไม่อยากถือหุ้นตัวเดียว เพราะกลัวราคาแกว่งแรง เขาจึงแบ่งเงินเท่า ๆ กันซื้อหุ้นธนาคารสหรัฐสามตัว คือ JPM (JPMorgan), BAC (Bank of America) และ WFC (Wells Fargo) เขาหวังว่าพอร์ต (เงินลงทุนทั้งก้อนที่แบ่งไว้ในหลายตัว) จะแกว่งน้อยกว่าหุ้นตัวเดียวมาก</p>
+  <p>ของที่รู้ (ตัวเลขสมมติ):</p>
+  <ul>
+    <li>ความผันผวนของหุ้นแต่ละตัว $\sigma=25\%$ ต่อปี ความผันผวนคือ SD (standard deviation) ของผลตอบแทน บอกว่าผลตอบแทนรายปีมักแกว่งห่างจากค่าเฉลี่ยราวกี่เปอร์เซ็นต์ (ดู <a href="1.4.html">Variance and Standard Deviation</a>)</li>
+    <li>correlation ของทุกคู่ $\rho=0.7$ correlation วัดว่าสองตัวขึ้นลงพร้อมกันแค่ไหน มีค่าตั้งแต่ −1 ถึง 1 ค่า 0.7 แปลว่าส่วนใหญ่ขึ้นลงไปทางเดียวกัน (ดู <a href="6.5.html">Inner Product, Angle, and Correlation</a>)</li>
+    <li>น้ำหนักของแต่ละตัว $w=\tfrac13$ คือลงเงินตัวละหนึ่งในสามของเงินทั้งหมด</li>
+  </ul>
+  <p>เพื่อนคนหนึ่งจำสูตรมาว่า ถ้าแบ่งเงินเท่ากันใน $n$ ตัว ความผันผวนจะหารด้วย $\sqrt n$ จึงคิดว่าพอร์ตนี้ผันผวน $\sigma/\sqrt3=25\%/1.732\approx14.43\%$ ต่อปี</p>
+  <p>ตัวเลข 14.43% ถูกไหม?</p>
+  <details><summary>ลองตอบก่อนเปิดเฉลย</summary><p>ไม่ถูก สูตรหารด้วย $\sqrt n$ ใช้ได้เฉพาะเมื่อหุ้นไม่เกี่ยวกันเลย ($\rho=0$) ที่นี่ต้องคิด variance ของพอร์ตตรง ๆ variance คือความผันผวนยกกำลังสอง $\sigma^2=0.25^2=0.0625$ และ covariance ของแต่ละคู่คือ $\rho\sigma^2$ พอร์ตมีสามพจน์ที่หุ้นจับคู่กับตัวเอง และหกพจน์ที่จับคู่กับตัวอื่น (สามคู่ นับสองรอบ) ทุกพจน์คูณน้ำหนัก $w\times w=\tfrac19$</p>
+  <div class="math">\[\begin{aligned}
+\operatorname{Var}&amp;=\tfrac19\big(3\sigma^2+6\rho\sigma^2\big)=\frac{\sigma^2(1+2\rho)}{3}\\
+&amp;=\frac{0.0625(1+1.4)}{3}=\frac{0.15}{3}=0.05,\\
+\sigma_p&amp;=\sqrt{0.05}\approx22.36\%.
+\end{aligned}\]</div>
+  <p>ความผันผวนของพอร์ต $\sigma_p$ ลดจาก 25% เหลือ 22.36% เท่านั้น ไม่ใช่ 14.43% ทำไมแบ่งเงินแล้วลดได้น้อยแบบนี้ หน้านี้จะตอบด้วยภาพ หุ้นสามตัวนี้มี “ทิศ” หนึ่งที่ทั้งสามขึ้นลงพร้อมกัน ทิศนี้แบก variance ไว้มาก และพอร์ตเงินเท่ากันวางตัวอยู่บนทิศนั้นพอดี การแบ่งเงินจึงหนีความเสี่ยงที่ทั้งสามมีร่วมกันไม่ได้เลย ขั้นสามธนาคารท้ายหน้าจะคำนวณขนาดของทิศนี้ให้ดู</p></details>
 </div>
 
 <section class="prose">
   <h4>ภาพรวมก่อนลงสูตร</h4>
-  <p>matrix $2\times2$ ส่งทุกจุดบนวงกลมหนึ่งหน่วยไปที่ไหนสักแห่ง ส่วนใหญ่ลูกศรถูกทั้งยืดและหมุน แต่มีบางทิศที่ลูกศรไม่หมุนเลย แค่ยาวขึ้นหรือสั้นลง ทิศพิเศษนี้เรียกว่า eigenvector และตัวคูณความยาวเรียกว่า eigenvalue สำหรับ matrix สมมาตร (เช่น covariance) ทิศพิเศษเหล่านี้ตั้งฉากกันเสมอ และเป็นแกนของวงรีที่วงกลมถูกยืดไปเป็น ดังรูปด้านล่าง</p>
-  <p>ในงานความเสี่ยง ภาพนี้มีความหมายตรงตัว: eigenvector ของ covariance คือพอร์ตที่ “ไม่ปนกัน” และ eigenvalue คือ variance ของพอร์ตนั้น ทิศที่ eigenvalue ใหญ่คือความเสี่ยงร่วมที่กระจายไม่ออก ทิศที่ eigenvalue เล็กมากคือที่ที่ optimizer ชอบไปทุ่มน้ำหนัก และถ้ามี eigenvalue ติดลบ ตารางนั้นไม่ใช่ covariance ของอะไรเลย เพราะจะมีพอร์ตที่ variance ติดลบ</p>
-  <p>หน้านี้หา eigenvalue จากสมการ แสดงว่า covariance แยกเป็น หมุน–ยืด–หมุนกลับ ได้เสมอ ใช้มันเขียน variance พอร์ตใหม่ นิยาม positive definite กับ semidefinite ด้วยภาพเส้นระดับ ตรวจด้วย Sylvester's criterion แล้วตอบ hook ด้วยโครงสร้างของหุ้นสามตัว และปิดด้วย covariance จริงของ asset class แปดกลุ่ม</p>
+  <p>ความเสี่ยงของหุ้นหลายตัวเก็บอยู่ในตารางเดียว เรียกว่า covariance matrix ช่องแนวทแยงคือ variance ของแต่ละตัว ช่องอื่นคือ covariance ของแต่ละคู่ (ตัวเลขที่บอกว่าสองตัวขึ้นลงด้วยกันแค่ไหน) ตารางนี้สมมาตร เพราะ covariance ของ A กับ B เท่ากับของ B กับ A คำถามใน hook จึงกลายเป็นคำถามเรื่อง matrix ว่า matrix นี้ “ยืด” ทิศไหนมากที่สุด</p>
+  <p>ลองนึกภาพ matrix $2\times2$ หนึ่งตัว เอามันคูณลูกศรยาวหนึ่งหน่วยทุกทิศรอบวงกลม ลูกศรส่วนใหญ่ถูกทั้งยืดและหมุน แต่มีบางทิศที่ลูกศรไม่หมุนเลย แค่ยาวขึ้นหรือสั้นลง ทิศพิเศษนี้เรียกว่า eigenvector และตัวคูณความยาวเรียกว่า eigenvalue ถ้า matrix สมมาตร ทิศพิเศษเหล่านี้ตั้งฉากกันเสมอ และเป็นแกนยาวกับแกนสั้นของวงรีที่วงกลมถูกยืดไปเป็น ดังรูปด้านล่าง</p>
+  <p>กับ covariance ภาพนี้มีความหมายเรื่องเงินตรง ๆ eigenvector คือพอร์ตแบบหนึ่ง และ eigenvalue คือ variance ของพอร์ตนั้น พอร์ตจากทิศต่างกันขึ้นลงไม่เกี่ยวกันเลย (covariance เป็นศูนย์) ทิศที่ eigenvalue ใหญ่คือความเสี่ยงร่วมที่แบ่งเงินแล้วก็ไม่หาย ทิศที่ eigenvalue เล็กมากคือที่ที่ optimizer (โปรแกรมที่หาน้ำหนักพอร์ตที่ “ดีที่สุด” ให้อัตโนมัติ) ชอบทุ่มเงินลงไป และถ้ามี eigenvalue ติดลบ ตารางนั้นใช้เป็น covariance ไม่ได้ เพราะจะมีพอร์ตที่ variance ติดลบ ซึ่งเป็นไปไม่ได้</p>
+  <p>ลำดับของหน้านี้ เริ่มจากหา eigenvalue ด้วยสมการ แล้วแสดงว่า matrix สมมาตรแยกเป็น “หมุน ยืด หมุนกลับ” ได้เสมอ ใช้ภาพนี้คิด variance ของพอร์ตใหม่ จากนั้นนิยาม positive definite กับ positive semidefinite ด้วยภาพเส้นระดับ และตรวจด้วยมือด้วย Sylvester's criterion แล้วกลับมาตอบ hook ปิดท้ายด้วย covariance จริงของสินทรัพย์แปดกลุ่ม</p>
 </section>
 
 <figure class="plot">
@@ -74,66 +89,95 @@
       <text x="350" y="254">วงรีดำ: หลังคูณ</text>
     </g>
   </svg>
-  <figcaption>ใช้ matrix สมมาตร $M=\begin{bmatrix}3&amp;1\\1&amp;3\end{bmatrix}$ วงกลมเทาคือ vector ยาวหนึ่งหน่วยทุกทิศ วงรีดำคือภาพของมันหลังคูณด้วย $M$ จุดเทาสี่จุดบนแกน เช่น $(1,0)$ ถูกส่งไป $(3,1)$ ปลายลูกศรเทา ซึ่งหมุนออกจากแนวเดิม ส่วนทิศ $(1,1)$ (น้ำเงิน) ไปเป็น $(4,4)$ ยังอยู่บนเส้นประเดิมแต่ยาว 4 เท่า และทิศ $(1,-1)$ (ส้ม) ไปเป็น $(2,-2)$ ยาว 2 เท่า สองทิศนี้คือ eigenvectors สองตัวเลขคือ eigenvalues และมันคือแกนยาวกับแกนสั้นของวงรีพอดี</figcaption>
+  <figcaption>รูปนี้ใช้ matrix สมมาตร $M=\begin{bmatrix}3&amp;1\\1&amp;3\end{bmatrix}$ ที่เลือกมาให้เลขง่าย วงกลมเทาคือปลายของ vector ยาวหนึ่งหน่วยทุกทิศ วงรีดำคือที่ที่ปลายเหล่านั้นไปอยู่หลังคูณด้วย $M$ ให้ดูจุดเทาบนแกน เช่น $(1,0)$ ถูกส่งไปที่ $(3\cdot1+1\cdot0,\ 1\cdot1+3\cdot0)=(3,1)$ คือปลายลูกศรเทา ซึ่งเอียงออกจากแนวเดิม ส่วนทิศน้ำเงิน $(1,1)$ ไปเป็น $(3+1,\ 1+3)=(4,4)$ ยังอยู่บนเส้นประเดิม แค่ยาวขึ้น 4 เท่า และทิศส้ม $(1,-1)$ ไปเป็น $(3-1,\ 1-3)=(2,-2)$ ยาวขึ้น 2 เท่า สองทิศนี้คือ eigenvectors ตัวคูณ 4 กับ 2 คือ eigenvalues และสองทิศนี้คือแกนยาวกับแกนสั้นของวงรีพอดี</figcaption>
 </figure>
 
 <details class="jargon">
   <summary>ศัพท์ที่ใช้ในหัวข้อนี้</summary>
   <dl>
     <dt>Eigenvector และ eigenvalue</dt>
-    <dd>vector $\mathbf u\ne\mathbf 0$ กับตัวเลข $\lambda$ ที่ $A\mathbf u=\lambda\mathbf u$ คือทิศที่ matrix แค่ยืดด้วยตัวคูณ $\lambda$ ใช้หาทิศหลักของความเสี่ยง</dd>
+    <dd>eigenvector คือ vector $\mathbf u$ ที่ไม่ใช่ศูนย์ ซึ่ง matrix $A$ คูณแล้วได้ทิศเดิม แค่ยาวขึ้นหรือสั้นลง เขียนเป็น $A\mathbf u=\lambda\mathbf u$ ตัวคูณความยาว $\lambda$ คือ eigenvalue ใช้หาทิศหลักของความเสี่ยง</dd>
+    <dt>Covariance matrix</dt>
+    <dd>ตารางที่ช่องแนวทแยงคือ variance ของสินทรัพย์แต่ละตัว และช่องอื่นคือ covariance ของแต่ละคู่ ตารางนี้สมมาตรเสมอ</dd>
+    <dt>Quadratic form</dt>
+    <dd>ตัวเลข $\mathbf x^{\mathsf T}A\mathbf x$ ถ้า $A$ เป็น covariance และ $\mathbf x$ เป็นน้ำหนักพอร์ต ตัวเลขนี้คือ variance ของพอร์ต</dd>
     <dt>Spectral decomposition</dt>
-    <dd>การเขียน matrix สมมาตรเป็น $Q\Lambda Q^{\mathsf T}$ คือหมุน ยืดตามแกน แล้วหมุนกลับ ใช้คำนวณ inverse กำลัง และรากที่สองของ covariance</dd>
+    <dd>การเขียน matrix สมมาตรเป็น $Q\Lambda Q^{\mathsf T}$ อ่านว่าหมุน ยืดตามแกน แล้วหมุนกลับ ใช้คำนวณ inverse และรากที่สองของ covariance</dd>
     <dt>Positive semidefinite (PSD)</dt>
-    <dd>matrix สมมาตรที่ $\mathbf x^{\mathsf T}A\mathbf x\ge0$ ทุก $\mathbf x$ คือ eigenvalues ไม่ติดลบ เป็นเงื่อนไขที่ covariance ทุกตัวต้องผ่าน</dd>
+    <dd>matrix สมมาตรที่ $\mathbf x^{\mathsf T}A\mathbf x\ge0$ ทุก $\mathbf x$ ซึ่งเท่ากับว่า eigenvalues ไม่ติดลบสักตัว covariance ทุกตัวต้องผ่านเงื่อนไขนี้</dd>
     <dt>Positive definite (PD)</dt>
-    <dd>$\mathbf x^{\mathsf T}A\mathbf x\gt0$ ทุก $\mathbf x\ne\mathbf 0$ คือ eigenvalues เป็นบวกทั้งหมด covariance แบบนี้ไม่มีพอร์ตที่ความเสี่ยงเป็นศูนย์และกลับด้านได้</dd>
+    <dd>matrix สมมาตรที่ $\mathbf x^{\mathsf T}A\mathbf x\gt0$ ทุก $\mathbf x\ne\mathbf 0$ ซึ่งเท่ากับว่า eigenvalues เป็นบวกทุกตัว covariance แบบนี้ไม่มีพอร์ตไหนที่ความเสี่ยงเป็นศูนย์ และหา inverse ได้</dd>
     <dt>Indefinite</dt>
-    <dd>มีทั้งทิศที่ quadratic form เป็นบวกและเป็นลบ ใช้บอกว่าจุดที่อนุพันธ์เป็นศูนย์เป็นจุดอานม้า ไม่ใช่จุดต่ำสุด</dd>
+    <dd>matrix ที่มีทั้งทิศที่ $\mathbf x^{\mathsf T}A\mathbf x$ เป็นบวกและทิศที่เป็นลบ ถ้าเป็น Hessian ที่จุดราบ จุดนั้นคือจุดอานม้า ไม่ใช่จุดต่ำสุด</dd>
+    <dt>Trace</dt>
+    <dd>ผลรวมของช่องแนวทแยง $\operatorname{tr}A$ ของ covariance คือผลรวม variance ของทุกตัว</dd>
+    <dt>Condition number</dt>
+    <dd>eigenvalue ใหญ่สุดหารด้วยเล็กสุด ยิ่งใหญ่ inverse ยิ่งขยาย error ในข้อมูล (ดู <a href="7.5.html">Rank, Range, and Invertibility</a>)</dd>
     <dt>Principal component (PCA)</dt>
-    <dd>eigenvector ของ covariance เรียงตาม eigenvalue จากมากไปน้อย ใช้สรุปว่าการเคลื่อนไหวของสินทรัพย์จำนวนมากมาจากไม่กี่ทิศ</dd>
+    <dd>eigenvector ของ covariance เรียงจาก eigenvalue มากไปน้อย ใช้สรุปว่าการขยับของสินทรัพย์จำนวนมากมาจากไม่กี่ทิศ</dd>
   </dl>
 </details>
 
 <section class="formula">
   <h4>ขั้นที่ 1 — eigenvector: ทิศที่คูณแล้วยังอยู่บนเส้นเดิม</h4>
-  <p>ทดลองกับ $M$ ในรูปภาพรวม ส่งสามทิศเข้าไปแล้วดูว่าออกมาบนเส้นเดิมไหม</p>
+  <p>ก่อนจะหา eigenvector ด้วยสูตร ลองดูด้วยตาก่อนว่ามันคืออะไร เอา $M$ จากรูปข้างบนมาคูณสามทิศ แล้วดูว่าผลลัพธ์ยังอยู่บนเส้นเดิมไหม “อยู่บนเส้นเดิม” แปลว่าผลลัพธ์เป็น input เดิมคูณตัวเลขตัวหนึ่ง</p>
   <div class="math">\[\begin{aligned}
-M\begin{bmatrix}1\\1\end{bmatrix}&amp;=\begin{bmatrix}4\\4\end{bmatrix}=4\begin{bmatrix}1\\1\end{bmatrix},\\
-M\begin{bmatrix}1\\-1\end{bmatrix}&amp;=\begin{bmatrix}2\\-2\end{bmatrix}=2\begin{bmatrix}1\\-1\end{bmatrix},\\
-M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text{(not a multiple)}.
+M\begin{bmatrix}1\\1\end{bmatrix}&amp;=\begin{bmatrix}3+1\\1+3\end{bmatrix}=4\begin{bmatrix}1\\1\end{bmatrix},\\
+M\begin{bmatrix}1\\-1\end{bmatrix}&amp;=\begin{bmatrix}3-1\\1-3\end{bmatrix}=2\begin{bmatrix}1\\-1\end{bmatrix},\\
+M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ne c\begin{bmatrix}1\\0\end{bmatrix}.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>สองบรรทัดแรกได้ผลเป็นตัวคูณของ input เดิม จึงเป็น eigenvectors ที่มี eigenvalues 4 และ 2 บรรทัดสามได้ $(3,1)$ ซึ่งไม่มีตัวเลขตัวไหนคูณ $(1,0)$ แล้วได้ เพราะพิกัดที่สองจาก 0 กลายเป็น 1 ลูกศรจึงถูกหมุน</p>
-    <p>ถ้า $\mathbf u$ เป็น eigenvector แล้ว $c\mathbf u$ ก็เป็นด้วยทุก $c\ne0$ (เปลี่ยนแค่ความยาวและอาจกลับหัว) จึงนิยมทำให้ยาวหนึ่งหน่วย $\|\mathbf u\|=1$ เพื่อเทียบกันได้ แต่เครื่องหมายยังเลือกได้สองทาง โปรแกรมสองตัวอาจรายงาน $\mathbf u$ กับ $-\mathbf u$ ซึ่งเป็นทิศเดียวกัน eigenvalue ศูนย์แปลว่าทิศนั้นถูกส่งไปศูนย์ คือทิศใน <a href="7.5.html">null space</a></p>
+    <p>ทิศ $(1,1)$ กับ $(1,-1)$ ออกมาเป็นตัวเดิมคูณ 4 และคูณ 2 จึงเป็น eigenvectors และ 4 กับ 2 คือ eigenvalues ของมัน เขียนเป็นนิยามทั่วไปได้ว่า vector $\mathbf u\ne\mathbf 0$ เป็น eigenvector ของ $A$ ถ้า $A\mathbf u=\lambda\mathbf u$ สำหรับตัวเลข $\lambda$ บางตัว ส่วนทิศ $(1,0)$ ออกมาเป็น $(3,1)$ ซึ่งไม่มีตัวเลข $c$ ไหนทำให้ $c\times(1,0)=(3,1)$ ได้ เพราะ $c\times0$ เป็นศูนย์เสมอ แต่พิกัดที่สองของผลลัพธ์คือ 1 ลูกศรนี้จึงถูกหมุน</p>
+    <p>eigenvector มีความยาวได้ทุกแบบ ถ้า $\mathbf u$ เป็น eigenvector แล้ว $2\mathbf u$ หรือ $-\mathbf u$ ก็เป็นด้วย เพราะ $A(c\mathbf u)=c\lambda\mathbf u=\lambda(c\mathbf u)$ เราจึงมักย่อให้ยาวหนึ่งหน่วย $\|\mathbf u\|=1$ เพื่อเทียบกันง่าย แต่เครื่องหมายยังเลือกได้สองทาง โปรแกรมสองตัวอาจตอบ $\mathbf u$ กับ $-\mathbf u$ ซึ่งชี้แนวเดียวกัน ไม่มีตัวไหนผิด และถ้า eigenvalue เป็นศูนย์ แปลว่า matrix ส่งทิศนั้นไปที่ศูนย์ ทิศนั้นจึงอยู่ใน <a href="7.5.html">null space</a></p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 2 — หา eigenvalue: เมื่อไร $A-\lambda I$ บี้ทิศหนึ่งทิ้ง</h4>
-  <p>ย้ายข้าง $A\mathbf u=\lambda\mathbf u$ เป็น $(A-\lambda I)\mathbf u=\mathbf 0$ ถ้า $A-\lambda I$ กลับด้านได้ คำตอบมีแค่ $\mathbf u=\mathbf 0$ ซึ่งไม่นับ eigenvalue จึงต้องทำให้ $A-\lambda I$ singular คือ determinant เป็นศูนย์ ลองกับ covariance รายวันของดัชนีสองตัว (สมมติ) ความผันผวน 2% และ 3% correlation 0.4 เขียนในหน่วยเปอร์เซ็นต์ยกกำลังสอง</p>
+  <p>กับ $M$ เราเดาทิศได้เพราะเลือกเลขง่าย แต่ covariance จริงเดาไม่ได้ จึงต้องมีวิธีที่ใช้ได้ทุกครั้ง เริ่มจากย้ายข้างนิยาม $A\mathbf u=\lambda\mathbf u$ เป็น $(A-\lambda I)\mathbf u=\mathbf 0$ โดย $I$ คือ identity matrix ถ้า $A-\lambda I$ หา inverse ได้ คูณ inverse ทั้งสองข้างจะได้ $\mathbf u=\mathbf 0$ เท่านั้น ซึ่งไม่นับเป็น eigenvector ดังนั้น $\lambda$ ที่เราต้องการคือค่าที่ทำให้ $A-\lambda I$ หา inverse ไม่ได้ คือ determinant เป็นศูนย์ (determinant ศูนย์แปลว่า matrix บี้ระนาบจนแบน ดู <a href="7.5.html">Rank, Range, and Invertibility</a>)</p>
+  <p>ลองกับ covariance ของผลตอบแทนรายวันของดัชนีหุ้นสองตัว (ดัชนีคือตัวเลขที่สรุปราคาหุ้นทั้งกลุ่ม เช่น S&amp;P 500) ตัวเลขสมมติ:</p>
+  <ul>
+    <li>ความผันผวนรายวันของดัชนีแรก $\sigma_1=2\%$ และของดัชนีที่สอง $\sigma_2=3\%$</li>
+    <li>correlation ของสองดัชนี $\rho=0.4$</li>
+  </ul>
+  <p>เขียนทุกช่องในหน่วย %² (เปอร์เซ็นต์ยกกำลังสอง) ช่องแนวทแยงคือ variance $\sigma_1^2=2^2=4$ และ $\sigma_2^2=3^2=9$ ช่องนอกแนวทแยงคือ covariance $\rho\sigma_1\sigma_2=0.4\times2\times3=2.4$ แล้วตั้ง determinant ให้เป็นศูนย์</p>
   <div class="math">\[\begin{aligned}
-\Sigma&amp;=\begin{bmatrix}4&amp;2.4\\2.4&amp;9\end{bmatrix},\quad 2.4=0.4(2)(3),\\
+\Sigma&amp;=\begin{bmatrix}4&amp;2.4\\2.4&amp;9\end{bmatrix},\\
 \det(\Sigma-\lambda I)&amp;=(4-\lambda)(9-\lambda)-2.4^2\\
+&amp;=\lambda^2-13\lambda+36-5.76\\
 &amp;=\lambda^2-13\lambda+30.24=0,\\
-\lambda&amp;=\frac{13\pm\sqrt{169-120.96}}{2}=\frac{13\pm6.9311}{2},\\
-\lambda_1&amp;\approx9.9655,\quad\lambda_2\approx3.0345.
+\lambda&amp;=\frac{13\pm\sqrt{13^2-4(30.24)}}{2}\\
+&amp;=\frac{13\pm\sqrt{48.04}}{2}=\frac{13\pm6.93109}{2},\\
+\lambda_1&amp;\approx9.96554,\quad\lambda_2\approx3.03446.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>สมการกำลังสองนี้คือ characteristic equation สัมประสิทธิ์ของ $\lambda$ คือ trace $4+9=13$ และพจน์คงที่คือ determinant $36-5.76=30.24$ eigenvalues จึงรวมกันได้ 13 และคูณกันได้ 30.24 ใช้ตรวจคำตอบได้ทันที ทั้งสองเป็น variance หน่วย %² ไม่ใช่ความผันผวน ในหน่วยเศษส่วนคือ 0.00099655 และ 0.00030345</p>
-    <p>หาทิศของ $\lambda_1$ จากแถวแรก $(4-\lambda_1)x+2.4y=0$ ได้ $y/x=5.9655/2.4\approx2.4856$ หารด้วยความยาวได้ $\mathbf u_1\approx(0.3732,\ 0.9277)$ ส่วน $\mathbf u_2\approx(-0.9277,\ 0.3732)$ ตั้งฉากกับ $\mathbf u_1$ เลข 2.4856 คือความชันของแกนหลักของกลุ่มข้อมูล ไม่ใช่ regression slope ของดัชนีที่สองบนดัชนีแรก (ซึ่งคือ $2.4/4=0.6$)</p>
+    <p>ปัญหา “หาทิศที่ไม่หมุน” กลายเป็นสมการกำลังสองธรรมดา เรียกว่า characteristic equation แล้วแก้ด้วยสูตรรากของสมการกำลังสอง มีวิธีตรวจคำตอบเร็ว ๆ ด้วย สมการที่มีราก $\lambda_1,\lambda_2$ เขียนได้เป็น $(\lambda-\lambda_1)(\lambda-\lambda_2)=\lambda^2-(\lambda_1+\lambda_2)\lambda+\lambda_1\lambda_2$ เทียบกับสมการข้างบน ผลรวมของ eigenvalues จึงต้องเท่ากับ $4+9=13$ ซึ่งคือผลรวมแนวทแยง (trace) และผลคูณต้องเท่ากับ $30.24$ ซึ่งคือ determinant ลองดู $9.96554+3.03446=13$ และ $9.96554\times3.03446\approx30.24$ ตรงทั้งคู่ ส่วนที่เหลือของหน้าจะปัดเป็น $\lambda_1\approx9.9655$ และ $\lambda_2\approx3.0345$</p>
+    <p>ระวังหน่วย eigenvalues ทั้งสองเป็น variance หน่วย %² ไม่ใช่ความผันผวน ถ้าเขียนเป็นเศษส่วนแทนเปอร์เซ็นต์ ต้องคูณ $(0.01)^2$ ได้ $9.9655\times0.0001=0.00099655$ และ $3.0345\times0.0001=0.00030345$</p>
+  </div>
+  <p>ได้ eigenvalue แล้ว ต่อไปหาทิศของมัน แทน $\lambda_1$ ลงใน $(\Sigma-\lambda_1I)\mathbf u=\mathbf 0$ ให้ $\mathbf u=(x,y)$ แถวแรกของสมการพอให้หาอัตราส่วน $y/x$ ได้ แล้วหารด้วยความยาวให้เหลือยาวหนึ่งหน่วย</p>
+  <div class="math">\[\begin{aligned}
+(4-\lambda_1)x+2.4y&amp;=0,\\
+\frac yx=\frac{\lambda_1-4}{2.4}&amp;=\frac{5.96554}{2.4}\approx2.48564,\\
+\sqrt{1+2.48564^2}&amp;\approx2.67926,\\
+\mathbf u_1&amp;\approx\Big(\frac{1}{2.67926},\ \frac{2.48564}{2.67926}\Big)\\
+&amp;\approx(0.37324,\ 0.92774),\\
+\mathbf u_2&amp;\approx(-0.92774,\ 0.37324).
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ทิศ $\mathbf u_1$ ขึ้นไปทางดัชนีที่สองมากกว่าดัชนีแรก เพราะดัชนีที่สองแกว่งแรงกว่า ส่วน $\mathbf u_2$ ได้จากการสลับพิกัดของ $\mathbf u_1$ แล้วกลับเครื่องหมายตัวหนึ่ง ซึ่งคือ $\mathbf u_1$ หมุน 90° ทางลัดนี้ใช้ได้เพราะ eigenvectors ของ matrix สมมาตรตั้งฉากกันเสมอ (ขั้นถัดไปจะพิสูจน์) ตรวจว่าใช้ได้จริงด้วยการแทนกลับ แถวแรกของ $(\Sigma-\lambda_2I)\mathbf u_2$ คือ $(4-3.03446)(-0.92774)+2.4(0.37324)\approx0$</p>
+    <p>อัตราส่วน 2.48564 คือความชันของแกนยาวของกลุ่มข้อมูล อย่าสับสนกับ regression slope ซึ่งคือความชันของเส้นที่ใช้ทำนายดัชนีที่สองจากดัชนีแรก ตัวนั้นเท่ากับ covariance หารด้วย variance ของดัชนีแรก $2.4/4=0.6$ สองเส้นต่างกันเพราะตอบคนละคำถาม แกนยาวคือทิศที่ข้อมูลแผ่ออกมากที่สุด regression คือเส้นที่ทำนายแกนตั้งจากแกนนอนได้ดีที่สุด</p>
   </div>
 </section>
 
 <figure class="plot">
   <h4>รูป — แกนหลักของกลุ่มข้อมูลจำลองคือ eigenvectors</h4>
   <img src="../figures/7.6-1.svg" alt="จุดผลตอบแทนจำลองสองตัวและทิศ eigenvectors ของ covariance" loading="lazy">
-  <figcaption>จุด 500 จุดจำลองจาก Normal ค่าเฉลี่ยศูนย์ ความผันผวน 2% และ 3% correlation 0.4 (ไม่ใช่ข้อมูลตลาดจริง) เส้นสองเส้นยาวจาก $-2\sqrt{\lambda_i}\,\mathbf u_i$ ถึง $+2\sqrt{\lambda_i}\,\mathbf u_i$ เส้นยาวชี้ทิศ $\mathbf u_1$ ที่กลุ่มจุดยืดออกมากที่สุด เส้นสั้นตั้งฉากกับมัน กลุ่มจุดกระจายตามแกนยาวราว $\sqrt{9.97}\approx3.16\%$ และตามแกนสั้นราว $\sqrt{3.03}\approx1.74\%$</figcaption>
+  <figcaption>แต่ละจุดคือผลตอบแทนหนึ่งวันของดัชนีสองตัว (แกนนอนคือดัชนีแรก แกนตั้งคือดัชนีที่สอง) มี 500 จุด สุ่มจาก Normal ที่ค่าเฉลี่ยศูนย์ และใช้ตัวเลขเดียวกับขั้นก่อน คือความผันผวน 2% กับ 3% และ correlation 0.4 จุดเหล่านี้ไม่ใช่ข้อมูลตลาดจริง ให้ดูเส้นสองเส้นที่ลากผ่านกลาง เส้นยาวชี้ทิศ $\mathbf u_1$ ซึ่งกลุ่มจุดแผ่ออกมากที่สุด เส้นสั้นชี้ทิศ $\mathbf u_2$ ซึ่งตั้งฉากกับเส้นยาว แต่ละเส้นยาวจาก $-2\sqrt{\lambda_i}\,\mathbf u_i$ ถึง $+2\sqrt{\lambda_i}\,\mathbf u_i$ คือข้างละสอง SD เพราะ $\sqrt{\lambda_i}$ คือ SD ของจุดตามทิศนั้น (ขั้นที่ 4 จะแสดงว่า variance ตามทิศ $\mathbf u_i$ เท่ากับ $\lambda_i$) ตามแกนยาว SD คือ $\sqrt{9.97}\approx3.16\%$ ตามแกนสั้นคือ $\sqrt{3.03}\approx1.74\%$</figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 3 — matrix สมมาตร = หมุน แล้วยืด แล้วหมุนกลับ</h4>
-  <p>ทำไมสอง eigenvectors ของ $\Sigma$ ตั้งฉากกันพอดี ใช้ความสมมาตรย้าย $\Sigma$ ข้ามไปอีกฝั่งของ inner product สำหรับ eigenpair สองคู่ที่ eigenvalues ต่างกัน</p>
+  <p>ในตัวอย่างดัชนีสองตัว $\mathbf u_1$ กับ $\mathbf u_2$ ตั้งฉากกันพอดี เช็กได้จาก inner product $0.37324(-0.92774)+0.92774(0.37324)=0$ คำถามคือ นี่เป็นโชคหรือเกิดเสมอ ถ้าเกิดเสมอ เราจะใช้ eigenvectors เป็นแกนพิกัดชุดใหม่ได้ ซึ่งเป็นหัวใจของหน้านี้ วิธีพิสูจน์คือคิดตัวเลข $\mathbf u_i^{\mathsf T}\Sigma\mathbf u_j$ สองทาง โดย $\mathbf u_i,\mathbf u_j$ คือ eigenvectors สองตัวที่มี eigenvalues $\lambda_i\ne\lambda_j$</p>
   <div class="math">\[\begin{aligned}
 \mathbf u_i^{\mathsf T}\Sigma\mathbf u_j&amp;=\lambda_j\,\mathbf u_i^{\mathsf T}\mathbf u_j,\\
 \mathbf u_i^{\mathsf T}\Sigma\mathbf u_j&amp;=(\Sigma\mathbf u_i)^{\mathsf T}\mathbf u_j=\lambda_i\,\mathbf u_i^{\mathsf T}\mathbf u_j,\\
@@ -141,17 +185,20 @@ M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text
 \ \Longrightarrow\ \mathbf u_i^{\mathsf T}\mathbf u_j=0.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>บรรทัดที่สองใช้ $\Sigma^{\mathsf T}=\Sigma$ จาก <a href="7.2.html">Transpose</a> ตัวเลขเดียวกันคำนวณได้สองทาง จึงต้องเท่ากัน และเมื่อ $\lambda_i\ne\lambda_j$ ทางเดียวที่เป็นไปได้คือ inner product เป็นศูนย์ ทฤษฎีที่ใหญ่กว่า (spectral theorem) รับประกันว่า matrix สมมาตรจริงทุกตัวมี eigenvalues เป็นจำนวนจริง และมี eigenvectors ตั้งฉากกันครบทุกมิติ</p>
+    <p>ทางแรกให้ $\Sigma$ คูณ $\mathbf u_j$ ที่อยู่ทางขวาก่อน ได้ $\lambda_j\mathbf u_j$ ทางที่สองให้ $\Sigma$ ไปคูณ $\mathbf u_i$ ทางซ้ายแทน จุดที่ต้องระวังอยู่ตรงนี้ ปกติ $\mathbf u_i^{\mathsf T}\Sigma=(\Sigma^{\mathsf T}\mathbf u_i)^{\mathsf T}$ เพราะ transpose ของผลคูณกลับลำดับ แต่ $\Sigma$ สมมาตร $\Sigma^{\mathsf T}=\Sigma$ (ดู <a href="7.2.html">Transpose</a>) จึงเขียนเป็น $(\Sigma\mathbf u_i)^{\mathsf T}$ ได้ และได้ $\lambda_i$ ออกมา</p>
+    <p>ตัวเลขเดียวกันคิดได้สองทาง ผลจึงต้องเท่ากัน ลบกันได้ $(\lambda_i-\lambda_j)\,\mathbf u_i^{\mathsf T}\mathbf u_j=0$ เมื่อ eigenvalues ต่างกัน วงเล็บแรกไม่ใช่ศูนย์ inner product จึงต้องเป็นศูนย์ คือสองทิศตั้งฉากกัน (inner product ศูนย์คือมุม 90° ดู <a href="6.5.html">Inner Product, Angle, and Correlation</a>) ทฤษฎีที่ใหญ่กว่านี้ ชื่อ spectral theorem รับประกันต่อว่า matrix สมมาตรทุกตัวมี eigenvalues เป็นจำนวนจริง และมี eigenvectors ตั้งฉากกันครบทุกมิติ แม้ eigenvalues บางตัวจะซ้ำกันก็ตาม</p>
   </div>
-  <p>เรียง eigenvectors เป็นคอลัมน์ของ $Q$ และ eigenvalues บนแนวทแยงของ $\Lambda$ จะได้การแยกตัวที่ใช้ทั้งเล่ม</p>
+  <p>เมื่อ eigenvectors ตั้งฉากกันและยาวหนึ่งหน่วย ก็จัดมันเป็นแกนพิกัดชุดใหม่ได้ วาง eigenvectors เป็นคอลัมน์ของ matrix $Q$ และวาง eigenvalues บนแนวทแยงของ matrix $\Lambda$ ซึ่งช่องอื่นเป็นศูนย์ ในตัวอย่างดัชนีสองตัว $Q=\begin{bmatrix}0.37324&amp;-0.92774\\0.92774&amp;0.37324\end{bmatrix}$ และ $\Lambda=\begin{bmatrix}9.9655&amp;0\\0&amp;3.0345\end{bmatrix}$ แล้วจะได้การแยก matrix ที่ใช้ทั้งเล่ม</p>
   <div class="math">\[\begin{aligned}
 \Sigma Q&amp;=Q\Lambda,\quad Q^{\mathsf T}Q=I,\\
-\Sigma&amp;=Q\Lambda Q^{\mathsf T},\quad
-\Sigma^{-1}=Q\Lambda^{-1}Q^{\mathsf T},\\
+\Sigma&amp;=Q\Lambda Q^{\mathsf T},\\
+\Sigma^{-1}&amp;=Q\Lambda^{-1}Q^{\mathsf T},\\
 \operatorname{tr}\Sigma&amp;=\sum_i\lambda_i,\quad\det\Sigma=\prod_i\lambda_i.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>อ่านจากขวาไปซ้าย: $Q^{\mathsf T}$ หมุนให้ eigenvectors มาอยู่บนแกน $\Lambda$ ยืดแต่ละแกนด้วย eigenvalue ของมัน แล้ว $Q$ หมุนกลับ ดังรูปด้านล่าง ที่นี่ $Q^{-1}=Q^{\mathsf T}$ เพราะคอลัมน์ตั้งฉากและยาวหนึ่ง (การหมุนไม่ยืดอะไร จึงย้อนได้ด้วยการพลิก) ซึ่งเป็นกรณีพิเศษที่ transpose เท่ากับ inverse inverse ของ $\Sigma$ ได้มาฟรี ๆ: ยืดด้วย $1/\lambda_i$ แทน ทิศที่ eigenvalue เล็กจึงถูกขยายมากที่สุด</p>
+    <p>$\Sigma Q=Q\Lambda$ คือสมการ $\Sigma\mathbf u_i=\lambda_i\mathbf u_i$ ของทุกคอลัมน์เขียนรวมกันทีเดียว ส่วน $Q^{\mathsf T}Q=I$ มาจากที่ช่อง $(i,j)$ ของ $Q^{\mathsf T}Q$ คือ $\mathbf u_i^{\mathsf T}\mathbf u_j$ ซึ่งเป็น 1 เมื่อ $i=j$ (ยาวหนึ่ง) และเป็น 0 เมื่อ $i\ne j$ (ตั้งฉาก) ดังนั้น inverse ของ $Q$ ก็คือ $Q^{\mathsf T}$ นั่นเอง เอา $Q^{\mathsf T}$ คูณทางขวาของ $\Sigma Q=Q\Lambda$ ทั้งสองข้าง จึงได้ $\Sigma=Q\Lambda Q^{\mathsf T}$</p>
+    <p>อ่านสูตรนี้จากขวาไปซ้าย $Q^{\mathsf T}$ หมุนระนาบจน eigenvectors มาอยู่บนแกน $\Lambda$ ยืดแต่ละแกนด้วย eigenvalue ของแกนนั้น แล้ว $Q$ หมุนกลับ ดังรูปด้านล่าง การหมุนไม่เปลี่ยนความยาวและไม่เปลี่ยนพื้นที่ ทุกอย่างที่ matrix ทำกับขนาดจึงอยู่ใน $\Lambda$ หมด determinant คือตัวคูณพื้นที่ (หรือปริมาตร) จึงเท่ากับผลคูณของตัวยืดบนแนวทแยงของ $\Lambda$ ส่วน trace ใช้กฎที่ว่าสลับลำดับการคูณแล้ว trace เท่าเดิม $\operatorname{tr}(Q\Lambda Q^{\mathsf T})=\operatorname{tr}(\Lambda Q^{\mathsf T}Q)=\operatorname{tr}\Lambda$ จึงเท่ากับผลรวม eigenvalues กรณี $2\times2$ เราเห็นสองข้อนี้แล้วจากสมการกำลังสองในขั้นที่ 2</p>
+    <p>inverse ก็ได้มาฟรี ๆ ถ้า $\Sigma$ ยืดแกนหนึ่งด้วย $\lambda_i$ การย้อนกลับคือคูณแกนนั้นด้วย $1/\lambda_i$ แทน ทิศที่ eigenvalue เล็กจึงถูก inverse ขยายมากที่สุด ในตัวอย่างนี้ $1/\lambda_2=1/3.0345\approx0.3295$ แต่ $1/\lambda_1=1/9.9655\approx0.1003$ ทิศ $\mathbf u_2$ จึงถูกขยายมากกว่า $\lambda_1/\lambda_2=9.9655/3.0345\approx3.28$ เท่า เรื่องนี้จะกลับมาเป็นปัญหาใหญ่ในขั้นสินทรัพย์แปดกลุ่ม</p>
   </div>
 </section>
 
@@ -197,12 +244,12 @@ M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text
       <text x="306" y="232" fill="#a65f00" font-size="13">u₂</text>
     </g>
   </svg>
-  <figcaption>ใช้ $\Sigma$ ของดัชนีสองตัวในขั้นก่อน แต่ยืดด้วย $\sqrt{\lambda_i}$ (3.16 และ 1.74 ความผันผวนตามแต่ละแกน) แทน $\lambda_i$ ให้ภาพพอดีช่อง ช่อง 1: วงกลมกับสอง eigenvectors $\mathbf u_1$ (น้ำเงิน เอียง 68°) และ $\mathbf u_2$ (ส้ม) ช่อง 2: $Q^{\mathsf T}$ หมุนทั้งระนาบจน $\mathbf u_1$ มาอยู่แกนนอน $\mathbf u_2$ มาอยู่แกนตั้ง วงกลมหมุนแล้วหน้าตาเหมือนเดิม ช่อง 3: ยืดแกนนอน 3.16 เท่า แกนตั้ง 1.74 เท่า ได้วงรีตรง ช่อง 4: $Q$ หมุนกลับ วงรีเอียงตาม $\mathbf u_1$ วงรีนี้คือรูปเดียวกับกลุ่มจุดในรูปก่อน</figcaption>
+  <figcaption>รูปนี้ใช้ $\Sigma$ ของดัชนีสองตัว แต่ยืดแต่ละแกนด้วย $\sqrt{\lambda_i}$ แทน $\lambda_i$ คือ $\sqrt{9.9655}\approx3.16$ และ $\sqrt{3.0345}\approx1.74$ ซึ่งเป็นความผันผวน (หน่วย %) ตามแต่ละแกน ภาพจึงพอดีช่อง และวงรีที่ได้มีขนาดเท่าหนึ่ง SD ของกลุ่มจุด matrix ที่ทำแบบนี้ $Q\Lambda^{1/2}Q^{\mathsf T}$ เรียกว่ารากที่สองของ $\Sigma$ ให้ไล่ดูทีละช่อง ช่อง 1 คือวงกลมกับ eigenvectors สองตัว $\mathbf u_1$ (น้ำเงิน เอียง $\arctan(0.92774/0.37324)\approx68^\circ$) และ $\mathbf u_2$ (ส้ม) ช่อง 2 คือ $Q^{\mathsf T}$ หมุนทั้งระนาบจน $\mathbf u_1$ มาอยู่บนแกนนอน และ $\mathbf u_2$ มาอยู่บนแกนตั้ง วงกลมหมุนแล้วหน้าตาเหมือนเดิม ช่อง 3 คือยืดแกนนอน 3.16 เท่า แกนตั้ง 1.74 เท่า ได้วงรีที่วางตรง ช่อง 4 คือ $Q$ หมุนกลับ วงรีจึงเอียงตาม $\mathbf u_1$ และเป็นรูปเดียวกับกลุ่มจุดในรูปก่อน</figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 4 — variance ของพอร์ตในพิกัดของ eigenvectors</h4>
-  <p>พอร์ตน้ำหนัก $\mathbf w$ เขียนในพิกัดใหม่เป็น $\mathbf c=Q^{\mathsf T}\mathbf w$ (คือ $c_i=\mathbf u_i^{\mathsf T}\mathbf w$) แล้วแทนลงในสูตรความเสี่ยง</p>
+  <p>ทีนี้ใช้แกนชุดใหม่ตอบคำถามเรื่องเงิน พอร์ตหนึ่งพอร์ตเขียนเป็นน้ำหนัก $\mathbf w=(w_1,w_2)$ คือสัดส่วนของเงินที่ลงในแต่ละดัชนี variance ของพอร์ตคือ $\mathbf w^{\mathsf T}\Sigma\mathbf w$ (ที่มาอยู่ใน <a href="7.2.html">Transpose</a>) เราอยากรู้ว่าความเสี่ยงนี้มาจากทิศไหนเท่าไร จึงเขียน $\mathbf w$ ในพิกัดของ eigenvectors ให้ $\mathbf c=Q^{\mathsf T}\mathbf w$ คือ $c_i=\mathbf u_i^{\mathsf T}\mathbf w$ ตัวเลข $c_i$ บอกว่าพอร์ตนี้ชี้ไปตามทิศ $\mathbf u_i$ มากแค่ไหน แล้วแทน $\Sigma=Q\Lambda Q^{\mathsf T}$</p>
   <div class="math">\[\begin{aligned}
 \mathbf w^{\mathsf T}\Sigma\mathbf w&amp;=\mathbf w^{\mathsf T}Q\Lambda Q^{\mathsf T}\mathbf w
 =\mathbf c^{\mathsf T}\Lambda\mathbf c=\sum_i\lambda_ic_i^2,\\
@@ -210,8 +257,20 @@ M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text
 \|\mathbf w\|=1:\ \ \lambda_{\min}&amp;\le\mathbf w^{\mathsf T}\Sigma\mathbf w\le\lambda_{\max}.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>ในพิกัดใหม่ไม่มีพจน์ไขว้ เพราะ $\Lambda$ เป็นแนวทแยง variance พอร์ตจึงเป็นผลรวมของ “eigenvalue คูณกำลังสองของน้ำหนักในทิศนั้น” แต่ละพจน์ไม่ติดลบเมื่อ eigenvalues ไม่ติดลบ ถ้า $\|\mathbf w\|=1$ (ความยาวแบบ L2 ไม่ใช่ผลรวมน้ำหนัก) ค่า $c_i^2$ รวมกันได้ 1 variance จึงเป็นค่าเฉลี่ยถ่วงน้ำหนักของ eigenvalues อยู่ระหว่างค่าน้อยสุดกับมากสุดเสมอ รูปด้านล่างหมุน $\mathbf w$ รอบวงกลมให้เห็น</p>
-    <p>ตัวอย่าง $\mathbf w=(0.6,0.4)$: $c_1=0.6(0.3732)+0.4(0.9277)\approx0.5950$ และ $c_2=-0.6(0.9277)+0.4(0.3732)\approx-0.4073$ ได้ $\lambda_1c_1^2\approx3.5285$ กับ $\lambda_2c_2^2\approx0.5035$ รวม 4.032 %² ตรงกับสูตรตรง $0.36(4)+2(0.24)(2.4)+0.16(9)=4.032$ ความผันผวน 2.008% ต่อวัน ทิศแรกแบก 87.51% ของ variance พอร์ตนี้ ต่างจาก 76.66% ($\lambda_1/\operatorname{tr}\Sigma=9.9655/13$) ซึ่งคือสัดส่วนของ variance <em>รวมทุกตัว</em>ที่ทิศแรกอธิบาย ตามเกณฑ์ของ <a href="17.4.html">PCA</a> สองตัวเลขตอบคนละคำถาม</p>
+    <p>ก้าวที่ทำให้สูตรนี้ใช้ได้คือ $\mathbf w^{\mathsf T}Q=(Q^{\mathsf T}\mathbf w)^{\mathsf T}=\mathbf c^{\mathsf T}$ เพราะ transpose ของผลคูณกลับลำดับ ในพิกัดเดิม variance มีพจน์ไขว้ $2w_1w_2\Sigma_{12}$ ปนอยู่ ($\Sigma_{12}$ คือช่องนอกแนวทแยง) ในพิกัดใหม่พจน์ไขว้หายไปหมด เพราะ $\Lambda$ มีแค่แนวทแยง variance ของพอร์ตจึงเป็นแค่ผลรวมของ “eigenvalue คูณกำลังสองของส่วนที่พอร์ตชี้ไปทางนั้น” แต่ละทิศแบกความเสี่ยงของตัวเองแยกกัน ไม่มีใครหักล้างใคร และถ้า eigenvalues ไม่ติดลบ ทุกพจน์ก็ไม่ติดลบ</p>
+    <p>ความยาวของ $\mathbf w$ เท่าเดิมในพิกัดใหม่ เพราะ $Q^{\mathsf T}$ แค่หมุน ไม่ยืด จึงได้ $\|\mathbf w\|^2=\sum_ic_i^2$ ถ้าเลือกพอร์ตที่ยาวหนึ่งหน่วย $\|\mathbf w\|=\sqrt{w_1^2+w_2^2}=1$ (ความยาวแบบ L2 ไม่ใช่ผลรวมน้ำหนักเท่ากับหนึ่ง) ค่า $c_i^2$ จะรวมกันได้ 1 variance จึงเป็นค่าเฉลี่ยถ่วงน้ำหนักของ eigenvalues และค่าเฉลี่ยย่อมอยู่ระหว่างค่าน้อยสุดกับมากสุดเสมอ รูปด้านล่างหมุน $\mathbf w$ รอบวงกลมให้เห็นข้อนี้</p>
+  </div>
+  <p>ลองกับพอร์ตที่ลงเงิน 60% ในดัชนีแรกและ 40% ในดัชนีที่สอง $\mathbf w=(0.6,\ 0.4)$ ใช้ $\mathbf u_1=(0.37324,\ 0.92774)$ และ $\mathbf u_2=(-0.92774,\ 0.37324)$ จากขั้นที่ 2</p>
+  <div class="math">\[\begin{aligned}
+c_1&amp;=0.6(0.37324)+0.4(0.92774)\approx0.59504,\\
+c_2&amp;=-0.6(0.92774)+0.4(0.37324)\approx-0.40735,\\
+\lambda_1c_1^2&amp;=9.96554(0.59504)^2\approx3.5285,\\
+\lambda_2c_2^2&amp;=3.03446(0.40735)^2\approx0.5035,\\
+\mathbf w^{\mathsf T}\Sigma\mathbf w&amp;\approx3.5285+0.5035=4.032.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ตรวจกับสูตรเดิมที่มีพจน์ไขว้ $0.6^2(4)+2(0.6)(0.4)(2.4)+0.4^2(9)=1.44+1.152+1.44=4.032$ ตรงกัน variance ของพอร์ตคือ 4.032 %² ความผันผวนคือ $\sqrt{4.032}\approx2.008\%$ ต่อวัน</p>
+    <p>ข้อมูลใหม่ที่ได้คือส่วนแบ่ง ทิศแรกแบก $3.5285/4.032\approx87.51\%$ ของ variance พอร์ตนี้ อย่าสับสนกับอีกตัวเลขที่ดูคล้ายกัน $\lambda_1/\operatorname{tr}\Sigma=9.9655/13\approx76.66\%$ ตัวนี้คือสัดส่วนของ variance <em>รวมของทั้งสองดัชนี</em> ที่ทิศแรกอธิบายได้ ซึ่งเป็นเกณฑ์ที่ <a href="17.4.html">PCA</a> ใช้ 87.51% ตอบว่า “ความเสี่ยงของพอร์ตนี้มาจากไหน” ส่วน 76.66% ตอบว่า “ตลาดสองดัชนีนี้ขยับตามทิศแรกแค่ไหน” เป็นคนละคำถาม</p>
   </div>
 </section>
 
@@ -244,23 +303,37 @@ M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text
       <text x="16" y="145" transform="rotate(-90 16 145)" text-anchor="middle" fill="#5b6472" font-size="13">variance (%²)</text>
     </g>
   </svg>
-  <figcaption>ทุกจุดบนเส้นโค้งคือพอร์ต $(\cos t,\sin t)$ ซึ่งยาวหนึ่งหน่วยแบบ L2 (ไม่ใช่น้ำหนักรวมเป็นหนึ่ง) variance ขึ้นลงอยู่ระหว่างเส้นประสองเส้นเสมอ สูงสุดเท่ากับ $\lambda_1$ พอดีที่มุม 68° ซึ่งคือทิศ $\mathbf u_1$ และต่ำสุดเท่ากับ $\lambda_2$ ที่ 158° ซึ่งคือ $\mathbf u_2$ จุดเขียวคือพอร์ต $(0.6,0.4)$ หลังหารด้วยความยาว $\sqrt{0.52}$ ได้ $4.032/0.52\approx7.75$ อยู่ระหว่างสองขอบตามสูตรค่าเฉลี่ยถ่วงน้ำหนัก</figcaption>
+  <figcaption>แกนนอนคือมุม $t$ ของพอร์ต $\mathbf w=(\cos t,\sin t)$ ซึ่งยาวหนึ่งหน่วยแบบ L2 เสมอ เพราะ $\cos^2t+\sin^2t=1$ (ไม่ใช่น้ำหนักรวมเป็นหนึ่ง) แกนตั้งคือ variance ของพอร์ตนั้น หน่วย %² ให้ดูว่าเส้นโค้งไม่เคยหลุดออกนอกเส้นประสองเส้น ค่าสูงสุดเท่ากับ $\lambda_1\approx9.97$ พอดีที่มุม 68° ซึ่งคือทิศ $\mathbf u_1$ ค่าต่ำสุดเท่ากับ $\lambda_2\approx3.03$ ที่มุม $68^\circ+90^\circ=158^\circ$ ซึ่งคือทิศ $\mathbf u_2$ จุดเขียวคือพอร์ต $(0.6,\ 0.4)$ ที่ย่อให้ยาวหนึ่งหน่วย มุมของมันคือ $\arctan(0.4/0.6)\approx33.7^\circ$ ความยาวเดิมคือ $\sqrt{0.6^2+0.4^2}=\sqrt{0.52}$ เมื่อหารน้ำหนักด้วย $\sqrt{0.52}$ variance ก็หารด้วย $0.52$ เพราะ variance โตตามกำลังสองของน้ำหนัก จึงได้ $4.032/0.52\approx7.75$ ซึ่งอยู่ระหว่างสองขอบตามสูตรค่าเฉลี่ยถ่วงน้ำหนัก</figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 5 — PSD, PD และ indefinite ดูได้จากเส้นระดับ</h4>
-  <p>covariance ต้องให้ variance ไม่ติดลบกับทุกพอร์ต: $\mathbf w^{\mathsf T}\Sigma\mathbf w=\operatorname{Var}(\mathbf w^{\mathsf T}\mathbf R)\ge0$ ทุก $\mathbf w$ เงื่อนไขนี้เรียกว่า positive semidefinite สูตรจากขั้นก่อนแปลเงื่อนไขนี้เป็นเรื่องของ eigenvalues ทันที</p>
+  <p>ทำไมต้องสนใจเครื่องหมายของ eigenvalue เพราะ variance คือค่าเฉลี่ยของกำลังสอง จึงติดลบไม่ได้ ตาราง $\Sigma$ ที่ใช้เป็น covariance ได้จริงต้องให้ variance ไม่ติดลบกับทุกพอร์ต เขียนเป็น $\mathbf w^{\mathsf T}\Sigma\mathbf w=\operatorname{Var}(\mathbf w^{\mathsf T}\mathbf R)\ge0$ ทุก $\mathbf w$ โดย $\mathbf R$ คือ vector ของผลตอบแทนของสินทรัพย์แต่ละตัว และ $\mathbf w^{\mathsf T}\mathbf R$ คือผลตอบแทนของพอร์ต เงื่อนไขนี้มีชื่อว่า positive semidefinite (PSD) สูตรจากขั้นก่อนแปลมันเป็นเงื่อนไขของ eigenvalues ได้ทันที ในที่นี้เขียน matrix สมมาตรทั่วไปเป็น $A$ และ vector เป็น $\mathbf x$</p>
   <div class="math">\[\begin{aligned}
 \mathbf x^{\mathsf T}A\mathbf x&amp;=\sum_i\lambda_ic_i^2,\\
-\text{PSD}&amp;:\ \text{all }\lambda_i\ge0,\\
-\text{PD}&amp;:\ \text{all }\lambda_i\gt0,\\
+\text{PSD}&amp;:\ \lambda_1,\dots,\lambda_n\ge0,\\
+\text{PD}&amp;:\ \lambda_1,\dots,\lambda_n\gt0,\\
 \mathbf x=\mathbf u_k&amp;\Rightarrow\mathbf x^{\mathsf T}A\mathbf x=\lambda_k.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>ถ้า eigenvalues ไม่ติดลบทั้งหมด ผลรวม $\sum\lambda_ic_i^2$ ไม่มีทางติดลบ ทิศกลับ: ถ้ามี $\lambda_k\lt0$ เลือก $\mathbf x$ เป็น eigenvector ตัวนั้นก็ได้ค่าติดลบทันที PD เข้มกว่า PSD ตรงที่ห้ามมีทิศที่ได้ศูนย์ PSD ที่ไม่ใช่ PD จึงเป็น singular เสมอ (มี eigenvalue ศูนย์) เหมือน sample covariance ของพอร์ตผีใน <a href="7.5.html">Rank, Range, and Invertibility</a></p>
-    <p>รูปด้านล่างใช้ตัวอย่างที่เป็น Hessian ของฟังก์ชัน $f(\mathbf x)=x_1^2+3x_1x_2+x_2^3$ ซึ่งมี gradient เป็นศูนย์สองจุด ที่ $\mathbf x=\mathbf 0$ Hessian คือ $\begin{bmatrix}2&amp;3\\3&amp;0\end{bmatrix}$ มี eigenvalues $1\pm\sqrt{10}\approx4.16$ และ $-2.16$ จึง indefinite จุดนั้นเป็นจุดอานม้า ไม่ใช่จุดต่ำสุด ที่ $\mathbf x=(-9/4,\ 3/2)$ Hessian คือ $\begin{bmatrix}2&amp;3\\3&amp;9\end{bmatrix}$ มี eigenvalues ราว 10.11 และ 0.89 จึง PD และเป็นจุดต่ำสุดเฉพาะที่ เรื่องนี้ใช้เต็ม ๆ ใน <a href="12.3.html">Hessian และเงื่อนไขอันดับสอง</a></p>
+    <p>ทำไม “eigenvalues ไม่ติดลบ” กับ “$\mathbf x^{\mathsf T}A\mathbf x$ ไม่ติดลบทุก $\mathbf x$” จึงเป็นเรื่องเดียวกัน ทางหนึ่ง ถ้า eigenvalues ไม่ติดลบสักตัว ผลรวม $\sum\lambda_ic_i^2$ ก็มีแต่พจน์ที่ไม่ติดลบ จึงติดลบไม่ได้ อีกทาง ถ้ามี $\lambda_k\lt0$ สักตัว ให้เลือก $\mathbf x$ เป็น eigenvector ตัวนั้นเอง จะได้ $c_k=1$ และ $c$ ตัวอื่นเป็นศูนย์ ผลจึงเท่ากับ $\lambda_k$ ซึ่งติดลบทันที</p>
+    <p>positive definite (PD) เข้มกว่า PSD ตรงที่ห้ามมีทิศที่ได้ศูนย์ด้วย คือทุก eigenvalue ต้องเป็นบวก matrix ที่เป็น PSD แต่ไม่ใช่ PD จึงมี eigenvalue ศูนย์อย่างน้อยหนึ่งตัว determinant ซึ่งเป็นผลคูณของ eigenvalues จึงเป็นศูนย์ และหา inverse ไม่ได้ ตัวอย่างคือ sample covariance ของ “พอร์ตผี” ที่ข้อมูลบอกว่าไม่มีความเสี่ยงเลย ใน <a href="7.5.html">Rank, Range, and Invertibility</a></p>
   </div>
-  <p>ระวังข้อเดียว: เกณฑ์ eigenvalue ใช้กับ matrix สมมาตรเท่านั้น $\begin{bmatrix}1&amp;4\\0&amp;1\end{bmatrix}$ มี eigenvalues เป็น 1 ทั้งคู่ แต่ $\mathbf x=(1,-1)$ ให้ $\mathbf x^{\mathsf T}A\mathbf x=1-4+1=-2$</p>
+  <p>เงื่อนไขเดียวกันนี้ใช้กับอีกงานหนึ่งด้วย คือบอกว่าจุดที่ฟังก์ชันราบ (gradient เป็นศูนย์) เป็นก้นหลุม ยอดเขา หรือจุดอานม้า เครื่องมือคือ Hessian ซึ่งเป็น matrix ของอนุพันธ์อันดับสอง บอกความโค้งของฟังก์ชันในแต่ละทิศ (ดู <a href="12.3.html">The Hessian and Second-Order Conditions</a>) ลองกับฟังก์ชัน $f(\mathbf x)=x_1^2+3x_1x_2+x_2^3$ ซึ่งรูปด้านล่างใช้วาด</p>
+  <div class="math">\[\begin{aligned}
+\nabla f&amp;=\begin{bmatrix}2x_1+3x_2\\3x_1+3x_2^2\end{bmatrix},\\
+H&amp;=\begin{bmatrix}2&amp;3\\3&amp;6x_2\end{bmatrix},\\
+x_1&amp;=-\tfrac32x_2,\quad x_2\big(3x_2-\tfrac92\big)=0,\\
+H_0&amp;=\begin{bmatrix}2&amp;3\\3&amp;0\end{bmatrix},\quad H_*=\begin{bmatrix}2&amp;3\\3&amp;9\end{bmatrix},\\
+\lambda(H_0)&amp;=1\pm\sqrt{10}\approx4.16,\ -2.16,\\
+\lambda(H_*)&amp;=\tfrac12\big(11\pm\sqrt{85}\big)\approx10.11,\ 0.89.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>gradient $\nabla f$ คืออนุพันธ์ย่อยของ $f$ เทียบ $x_1$ และเทียบ $x_2$ ส่วน $H$ ได้จากการหาอนุพันธ์ย่อยของ gradient อีกรอบ เช่น ช่องมุมขวาล่างคืออนุพันธ์ของ $3x_1+3x_2^2$ เทียบ $x_2$ ซึ่งคือ $6x_2$ จุดราบหาได้จาก $\nabla f=\mathbf 0$ แถวแรกให้ $x_1=-\tfrac32x_2$ แทนลงแถวที่สองได้ $-\tfrac92x_2+3x_2^2=0$ ซึ่งแยกตัวประกอบเป็น $x_2(3x_2-\tfrac92)=0$ จึงมีจุดราบสองจุด คือ $\mathbf x=\mathbf 0$ กับ $\mathbf x=(-\tfrac94,\ \tfrac32)$ เรียก Hessian ที่สองจุดนี้ว่า $H_0$ และ $H_*$ ตามลำดับ (แทน $x_2=\tfrac32$ ได้ $6x_2=9$)</p>
+    <p>eigenvalues ของแต่ละตัวหาจาก trace กับ determinant เหมือนขั้นที่ 2 $H_0$ มี trace $2+0=2$ และ determinant $2(0)-3^2=-9$ จึงได้ $\lambda^2-2\lambda-9=0$ ส่วน $H_*$ มี trace $2+9=11$ และ determinant $2(9)-3^2=9$ จึงได้ $\lambda^2-11\lambda+9=0$ แล้วแก้ด้วยสูตรรากของสมการกำลังสอง</p>
+    <p>$H_0$ มี eigenvalue บวกหนึ่งตัวและลบหนึ่งตัว จึงเป็น indefinite ฟังก์ชันโค้งขึ้นทิศหนึ่งและโค้งลงอีกทิศ จุด $\mathbf 0$ จึงเป็นจุดอานม้า ไม่ใช่ก้นหลุม ส่วน $H_*$ มี eigenvalues บวกทั้งคู่ จึงเป็น PD ทุกทิศโค้งขึ้น จุด $(-\tfrac94,\ \tfrac32)$ จึงเป็นก้นหลุมเฉพาะที่</p>
+  </div>
+  <p>มีข้อควรระวังหนึ่งข้อ เกณฑ์ eigenvalue ใช้ได้กับ matrix สมมาตรเท่านั้น ลอง $A=\begin{bmatrix}1&amp;4\\0&amp;1\end{bmatrix}$ ซึ่งไม่สมมาตร eigenvalues ของมันคือ 1 กับ 1 เพราะ $\det(A-\lambda I)=(1-\lambda)(1-\lambda)-4(0)=(1-\lambda)^2$ ทั้งคู่บวก แต่ที่ $\mathbf x=(1,-1)$ ได้ $\mathbf x^{\mathsf T}A\mathbf x=1(1)^2+4(1)(-1)+1(-1)^2=-2$ ติดลบ เหตุผลคือ $\mathbf x^{\mathsf T}A\mathbf x$ เป็นตัวเลขตัวเดียว จึงเท่ากับ transpose ของตัวเอง $\mathbf x^{\mathsf T}A^{\mathsf T}\mathbf x$ quadratic form จึงเห็นแค่ค่าเฉลี่ย $\tfrac12(A+A^{\mathsf T})=\begin{bmatrix}1&amp;2\\2&amp;1\end{bmatrix}$ ซึ่งสมมาตร มี trace 2 และ determinant $1-4=-3$ จึงได้ $\lambda^2-2\lambda-3=(\lambda-3)(\lambda+1)=0$ eigenvalues คือ 3 กับ $-1$ ตัวหลังติดลบ ต้องดู eigenvalues ของส่วนสมมาตรนี้แทน</p>
 </section>
 
 <figure class="plot">
@@ -311,38 +384,67 @@ M\begin{bmatrix}1\\0\end{bmatrix}&amp;=\begin{bmatrix}3\\1\end{bmatrix}\ \ \text
       <text x="240" y="264" text-anchor="middle" fill="#5b6472" font-size="13">แกนทุกช่อง: x₁ แนวนอน, x₂ แนวตั้ง จาก −2.5 ถึง 2.5</text>
     </g>
   </svg>
-  <figcaption>แต่ละช่องวาดเส้นที่ $\mathbf x^{\mathsf T}A\mathbf x$ มีค่าเท่ากัน โดย $A$ คือ $\begin{bmatrix}2&amp;3\\3&amp;9\end{bmatrix}$, $\begin{bmatrix}4&amp;2\\2&amp;1\end{bmatrix}$ และ $\begin{bmatrix}2&amp;3\\3&amp;0\end{bmatrix}$ จากซ้ายไปขวา ช่องซ้าย (PD): วงรีซ้อนกันรอบจุดกำเนิด ค่าเพิ่มทุกทิศเหมือนก้นชาม แกนยาวของวงรีชี้ทิศของ eigenvalue เล็ก 0.89 ซึ่งเป็นทิศที่ชามลาดที่สุด ช่องกลาง (PSD ไม่ใช่ PD): เส้นขนาน ตามแนวเส้นประทิศ $(1,-2)$ ค่าไม่เพิ่มเลย คือรางที่มีก้นแบน ตรงกับพอร์ตผีที่ variance เป็นศูนย์ ช่องขวา (indefinite): ไฮเปอร์โบลา ทิศหนึ่งขึ้น (น้ำเงิน ค่าบวก) อีกทิศลง (แดง ค่าลบ) เหมือนอานม้า covariance ที่ได้ภาพแบบช่องขวาคือ covariance ที่เป็นไปไม่ได้</figcaption>
+  <figcaption>แต่ละช่องวาดเส้นระดับ คือเส้นที่ $\mathbf x^{\mathsf T}A\mathbf x$ มีค่าเท่ากันตลอดเส้น เหมือนเส้นชั้นความสูงบนแผนที่ จากซ้ายไปขวา $A$ คือ $H_*=\begin{bmatrix}2&amp;3\\3&amp;9\end{bmatrix}$, $\begin{bmatrix}4&amp;2\\2&amp;1\end{bmatrix}$ และ $H_0=\begin{bmatrix}2&amp;3\\3&amp;0\end{bmatrix}$ ช่องซ้ายเป็น PD เส้นระดับเป็นวงรีซ้อนกันรอบจุดกำเนิด ค่าเพิ่มขึ้นทุกทิศที่เดินออกไป เหมือนชาม แกนยาวของวงรีชี้ไปทางทิศของ eigenvalue เล็ก 0.89 เพราะทางนั้นชามชันน้อยที่สุด ต้องเดินไกลกว่าค่าจะขึ้นเท่ากัน ช่องกลางเป็น PSD แต่ไม่ใช่ PD matrix นี้คือ covariance ของพอร์ตผีใน <a href="7.5.html">Rank, Range, and Invertibility</a> ซึ่งมี eigenvalues 5 กับ 0 (trace $4+1=5$ และ determinant $4(1)-2^2=0$) เส้นระดับเป็นเส้นขนาน ตามแนวเส้นประทิศ $(1,-2)$ ค่าไม่เพิ่มเลย เหมือนรางที่ก้นแบน ทิศนั้นคือพอร์ตผีที่ variance เป็นศูนย์ ช่องขวาเป็น indefinite เส้นระดับเป็นไฮเปอร์โบลา ทิศหนึ่งค่าขึ้น (น้ำเงิน ค่าบวก) อีกทิศค่าลง (แดง ค่าลบ) เหมือนอานม้า ถ้าตาราง covariance ให้ภาพแบบช่องขวา แปลว่ามีพอร์ตที่ variance ติดลบ ตารางนั้นจึงใช้ไม่ได้</figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 6 — Sylvester's criterion: ตรวจ PD โดยไม่ต้องหา eigenvalues</h4>
-  <p>กับ matrix สมมาตร $2\times2$ ที่ $a\gt0$ จัดกำลังสองสมบูรณ์ได้ตรง ๆ</p>
+  <p>การหา eigenvalues ต้องแก้สมการ ซึ่งยากขึ้นเรื่อย ๆ เมื่อ matrix ใหญ่ขึ้น ถ้าอยากรู้แค่ว่า matrix เป็น PD หรือไม่ มีทางลัดที่ไม่ต้องหา eigenvalues เลย ดูกรณี $2\times2$ ก่อน เขียน matrix สมมาตรเป็นตัวอักษร แล้วจัดกำลังสองสมบูรณ์ (สมมติ $a\gt0$ เพื่อให้หารด้วย $a$ ได้)</p>
   <div class="math">\[\begin{aligned}
 A&amp;=\begin{bmatrix}a&amp;b\\b&amp;d\end{bmatrix},\\
 \mathbf x^{\mathsf T}A\mathbf x&amp;=ax_1^2+2bx_1x_2+dx_2^2\\
 &amp;=a\Big(x_1+\frac ba x_2\Big)^2+\frac{ad-b^2}{a}x_2^2.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>ทั้งสองพจน์เป็นกำลังสองคูณสัมประสิทธิ์ ผลรวมเป็นบวกทุก $\mathbf x\ne\mathbf 0$ ก็ต่อเมื่อ $a\gt0$ และ $ad-b^2\gt0$ ตัวเลขสองตัวนี้คือ determinant ของบล็อกบนซ้ายขนาด $1\times1$ และ $2\times2$ (leading principal minors) กรณีทั่วไปเรียกว่า Sylvester's criterion: PD ก็ต่อเมื่อ leading principal minors ทุกขนาดเป็นบวก</p>
-    <p>ตรวจ: covariance รายวัน $a=4\gt0$, $36-5.76=30.24\gt0$ จึง PD Hessian $\begin{bmatrix}2&amp;3\\3&amp;9\end{bmatrix}$ ได้ $2\gt0$ และ $18-9=9\gt0$ PD ส่วน $\begin{bmatrix}2&amp;3\\3&amp;0\end{bmatrix}$ ได้ $0-9=-9\lt0$ ไม่ PD กับดักที่พบบ่อย: เปลี่ยน “บวก” เป็น “ไม่ลบ” เพื่อตรวจ PSD ใช้ไม่ได้ $\begin{bmatrix}0&amp;0\\0&amp;-1\end{bmatrix}$ มี leading minors เป็น 0 กับ 0 แต่ $\mathbf x=(0,1)$ ให้ $-1$ การตรวจ PSD ต้องดู principal minors <em>ทุกตัว</em> (รวมช่องแนวทแยงทุกช่อง) หรือดู eigenvalues</p>
+    <p>การจัดกำลังสองสมบูรณ์ทำให้พจน์ไขว้ $2bx_1x_2$ ไปซ่อนอยู่ในวงเล็บ (กระจายวงเล็บกลับก็ได้ $ax_1^2+2bx_1x_2+\tfrac{b^2}{a}x_2^2$ ส่วนเกิน $\tfrac{b^2}{a}x_2^2$ ถูกหักคืนในพจน์ที่สอง) เหลือสองพจน์ที่เป็นกำลังสองคูณสัมประสิทธิ์ ผลรวมจึงเป็นบวกทุก $\mathbf x\ne\mathbf 0$ ก็ต่อเมื่อสัมประสิทธิ์ทั้งสอง $a$ กับ $\tfrac{ad-b^2}{a}$ เป็นบวก คือ $a\gt0$ และ $ad-b^2\gt0$ ทิศกลับก็จริง ถ้า $a\le0$ เลือก $\mathbf x=(1,0)$ จะได้ค่า $a$ ซึ่งไม่บวก ถ้า $ad-b^2\le0$ เลือก $x_2=1$ กับ $x_1=-b/a$ วงเล็บเป็นศูนย์ เหลือ $\tfrac{ad-b^2}{a}$ ซึ่งไม่บวก</p>
+    <p>ตัวเลข $a$ คือ determinant ของบล็อกมุมบนซ้ายขนาด $1\times1$ และ $ad-b^2$ คือ determinant ของบล็อกมุมบนซ้ายขนาด $2\times2$ determinant ของบล็อกมุมบนซ้ายเหล่านี้เรียกว่า leading principal minors กฎทั่วไปสำหรับ matrix ทุกขนาดชื่อ Sylvester's criterion คือ matrix สมมาตรเป็น PD ก็ต่อเมื่อ leading principal minors ทุกขนาดเป็นบวก</p>
+  </div>
+  <p>ลองตรวจสาม matrix ที่เจอมาแล้ว covariance ของดัชนีสองตัว $\Sigma$ และ Hessian สองตัว $H_*$ กับ $H_0$</p>
+  <div class="math">\[\begin{aligned}
+\Sigma&amp;:\ \ 4\gt0,\quad 4(9)-2.4^2=30.24\gt0,\\
+H_*&amp;:\ \ 2\gt0,\quad 2(9)-3^2=9\gt0,\\
+H_0&amp;:\ \ 2\gt0,\quad 2(0)-3^2=-9\lt0.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>$\Sigma$ และ $H_*$ ผ่านทั้งสองข้อ จึงเป็น PD ตรงกับ eigenvalues ที่หาไว้ ส่วน $H_0$ ตกข้อที่สอง จึงไม่ใช่ PD ตรงกับที่มี eigenvalue ติดลบ</p>
+    <p>มีกับดักที่คนพลาดบ่อย คือเปลี่ยนคำว่า “บวก” เป็น “ไม่ติดลบ” แล้วคิดว่าได้เกณฑ์ตรวจ PSD วิธีนี้ใช้ไม่ได้ ลอง $\begin{bmatrix}0&amp;0\\0&amp;-1\end{bmatrix}$ leading principal minors คือ $0$ กับ $0(-1)-0^2=0$ ไม่ติดลบทั้งคู่ แต่ที่ $\mathbf x=(0,1)$ ได้ $\mathbf x^{\mathsf T}A\mathbf x=-1$ การตรวจ PSD ต้องดู principal minors <em>ทุกตัว</em> ไม่ใช่แค่บล็อกมุมบนซ้าย ซึ่งรวมช่องแนวทแยงทุกช่องด้วย (ช่อง $-1$ จับความผิดนี้ได้ทันที) หรือไม่ก็ดู eigenvalues ตรง ๆ</p>
   </div>
 </section>
 
 <section class="formula">
   <h4>ขั้นที่ 7 — สามธนาคาร: ทิศร่วมหนึ่งทิศ และระนาบ spread สองมิติ</h4>
-  <p>กลับมาที่ hook ความผันผวนเท่ากัน $\sigma=0.25$ correlation ทุกคู่ $\rho$ เขียน covariance ด้วย $\mathbf 1=(1,1,1)$ ได้กะทัดรัด แล้วเดา eigenvectors จากโครงสร้าง</p>
+  <p>ตอนนี้มีเครื่องมือพอจะตอบ hook แล้ว หุ้นธนาคารสามตัวมีความผันผวนเท่ากัน $\sigma=0.25$ จึงมี variance $\sigma^2=0.0625$ เท่ากันทุกตัว และ correlation ทุกคู่เท่ากันคือ $\rho$ ตาราง covariance ขนาด $3\times3$ จึงมีแค่สองค่า ช่องแนวทแยงเป็น $\sigma^2$ ช่องอื่นเป็น $\rho\sigma^2$ เขียนให้สั้นได้ด้วย vector $\mathbf 1=(1,1,1)$ เพราะ $\mathbf 1\mathbf 1^{\mathsf T}$ คือ matrix $3\times3$ ที่เป็นเลข 1 ทุกช่อง ตารางที่สมมาตรขนาดนี้เดา eigenvectors ได้จากรูปร่างของมันเลย</p>
   <div class="math">\[\begin{aligned}
 \Sigma&amp;=\sigma^2\big((1-\rho)I+\rho\,\mathbf 1\mathbf 1^{\mathsf T}\big),\\
-\Sigma\,\mathbf 1&amp;=\sigma^2\big((1-\rho)+3\rho\big)\mathbf 1=\sigma^2(1+2\rho)\,\mathbf 1,\\
+\Sigma\,\mathbf 1&amp;=\sigma^2\big((1-\rho)+3\rho\big)\mathbf 1\\
+&amp;=\sigma^2(1+2\rho)\,\mathbf 1,\\
 \mathbf 1^{\mathsf T}\mathbf v=0:\ \ \Sigma\mathbf v&amp;=\sigma^2(1-\rho)\,\mathbf v,\\
-\rho=0.7:\ \ \lambda_{\text{common}}&amp;=0.0625(2.4)=0.15,\\
-\lambda_{\text{spread}}&amp;=0.0625(0.3)=0.01875\ \ \text{(twice)}.
+\rho=0.7:\ \ \lambda_{\text{common}}&amp;=0.0625(1+1.4)=0.15,\\
+\lambda_{\text{spread}}&amp;=0.0625(1-0.7)=0.01875.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>$\mathbf 1\mathbf 1^{\mathsf T}\mathbf 1=\mathbf 1(\mathbf 1^{\mathsf T}\mathbf 1)=3\,\mathbf 1$ ทิศ “ถือทุกตัวเท่ากัน” จึงเป็น eigenvector ส่วนทิศใดที่ผลรวมพิกัดเป็นศูนย์ (long บางตัว short บางตัว) พจน์ $\mathbf 1\mathbf 1^{\mathsf T}\mathbf v=\mathbf 1(\mathbf 1^{\mathsf T}\mathbf v)$ หายไป เหลือแค่ $(1-\rho)$ trace ตรวจได้: $0.15+2(0.01875)=0.1875=3(0.0625)$</p>
-    <p>ตอบ hook: พอร์ตเงินเท่ากัน $\mathbf w=\mathbf 1/3$ อยู่บนทิศร่วมทั้งหมด variance $=\lambda_{\text{common}}\|\mathbf w\|^2=0.15/3=0.05$ ความผันผวน 22.36% ส่วนพอร์ต spread เช่น long JPM short BAC ขนาดยาวหนึ่ง $(1,-1,0)/\sqrt2$ มีความผันผวน $\sqrt{0.01875}\approx13.69\%$ eigenvalue ของ spread ซ้ำสองครั้ง ระนาบของพอร์ตผลรวมศูนย์ทั้งระนาบเป็น eigenvectors ได้หมด จะเลือกคู่ไหนที่ตั้งฉากกันก็ได้ โปรแกรมสองตัวจึงอาจรายงานทิศต่างกันโดยที่ไม่มีอะไรผิด</p>
+    <p>ทิศแรกที่ลองคือ $\mathbf 1$ คือ “ถือทุกตัวเท่ากัน” จุดสำคัญคือ $\mathbf 1\mathbf 1^{\mathsf T}\mathbf 1=\mathbf 1(\mathbf 1^{\mathsf T}\mathbf 1)=3\,\mathbf 1$ เพราะ $\mathbf 1^{\mathsf T}\mathbf 1=1+1+1=3$ ผลจึงเป็น $\mathbf 1$ คูณตัวเลข ทิศนี้คือ eigenvector เรียกว่าทิศร่วม (common) eigenvalue ของมันคือ $\sigma^2(1+2\rho)$</p>
+    <p>ทิศที่สองคือ vector $\mathbf v$ ใดก็ได้ที่ผลรวมพิกัดเป็นศูนย์ $\mathbf 1^{\mathsf T}\mathbf v=0$ เช่น $(1,-1,0)$ เรียกว่าพอร์ต spread คือซื้อบางตัว (long ได้กำไรเมื่อราคาขึ้น) และขายบางตัว (short คือยืมหุ้นมาขาย ได้กำไรเมื่อราคาลง) ในขนาดที่หักล้างกันพอดี สำหรับ $\mathbf v$ แบบนี้ $\mathbf 1\mathbf 1^{\mathsf T}\mathbf v=\mathbf 1(\mathbf 1^{\mathsf T}\mathbf v)=\mathbf 0$ พจน์ที่มี $\rho$ หายไป เหลือ $\sigma^2(1-\rho)$ vector ที่ผลรวมเป็นศูนย์มีทั้งระนาบ (สองมิติ) eigenvalue นี้จึงซ้ำสองครั้ง ตรวจด้วย trace ได้ $0.15+2(0.01875)=0.1875$ เท่ากับผลรวมแนวทแยง $3(0.0625)=0.1875$</p>
   </div>
-  <p>สูตรเดียวกันบอกช่วงของ correlation ที่เป็นไปได้ eigenvalues ต้องไม่ติดลบ: $1+2\rho\ge0$ และ $1-\rho\ge0$ คือ $-\tfrac12\le\rho\le1$ สำหรับสามตัว ลอง $\rho=-0.6$: ทุกคู่ดูปกติ (อยู่ระหว่าง −1 กับ 1 และแต่ละบล็อก $2\times2$ มี determinant $1-0.36=0.64\gt0$) แต่ $\lambda_{\text{common}}=0.0625(1-1.2)=-0.0125$ พอร์ตเงินเท่ากันจะมี “variance” $-0.0125/3\approx-0.0042$ ซึ่งเป็นไปไม่ได้ ตารางนี้จึงไม่ใช่ covariance ของหุ้นสามตัวใด ๆ เลย</p>
+  <p>ตอบ hook พอร์ตเงินเท่ากันคือ $\mathbf w=\tfrac13\mathbf 1$ ซึ่งชี้ไปตามทิศร่วมทั้งหมด ไม่มีส่วนไหนอยู่ในระนาบ spread เลย variance ของมันจึงมาจาก $\lambda_{\text{common}}$ ตัวเดียว คูณกำลังสองของความยาว</p>
+  <div class="math">\[\begin{aligned}
+\|\mathbf w\|^2&amp;=3\big(\tfrac13\big)^2=\tfrac13,\\
+\mathbf w^{\mathsf T}\Sigma\mathbf w&amp;=\lambda_{\text{common}}\|\mathbf w\|^2=\frac{0.15}{3}=0.05,\\
+\sigma_p&amp;=\sqrt{0.05}\approx22.36\%.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ได้ 22.36% ตรงกับที่คิดตรง ๆ ใน hook แต่ตอนนี้เห็นเหตุผลแล้ว สูตรหารด้วย $\sqrt3$ จะได้ผลก็ต่อเมื่อทุกทิศมี eigenvalue เท่ากัน ซึ่งเกิดเมื่อ $\rho=0$ ที่ $\rho=0.7$ ทิศร่วมใหญ่กว่าทิศ spread ถึง $0.15/0.01875=8$ เท่า และพอร์ตเงินเท่ากันวางอยู่บนทิศใหญ่นั้นพอดี ทิศที่ความเสี่ยงต่ำอยู่ในระนาบ spread ซึ่งต้อง short บางตัว ไม่ใช่การแบ่งเงินซื้ออย่างเดียว เช่น long JPM และ short BAC ขนาดยาวหนึ่งหน่วย $(1,-1,0)/\sqrt2$ ความผันผวนของพอร์ตนี้คือ $\sqrt{0.01875}\approx13.69\%$</p>
+    <p>เพราะ eigenvalue ของ spread ซ้ำสองครั้ง ทุกทิศในระนาบผลรวมศูนย์เป็น eigenvector ได้หมด จะเลือกคู่ไหนที่ตั้งฉากกันก็ได้ โปรแกรมสองตัวจึงอาจรายงาน eigenvectors ของระนาบนี้ต่างกัน โดยที่ไม่มีตัวไหนผิด</p>
+  </div>
+  <p>สูตรเดียวกันยังบอกด้วยว่า correlation ที่เท่ากันทุกคู่ต่ำได้แค่ไหน ลองนึกถึงคนในทีมที่พิมพ์ correlation เองทีละคู่ เพื่อจำลองวิกฤตที่หุ้นสวนทางกันหมด ตารางที่เขาพิมพ์ต้องมี eigenvalues ไม่ติดลบ คือ $1+2\rho\ge0$ และ $1-\rho\ge0$ ซึ่งรวมกันได้ $-\tfrac12\le\rho\le1$ สำหรับสามตัว ถ้าเขาใส่ $\rho=-0.6$ ทุกคู่ดูปกติดี ค่าอยู่ระหว่าง −1 กับ 1 และ correlation matrix ของแต่ละคู่ $\begin{bmatrix}1&amp;-0.6\\-0.6&amp;1\end{bmatrix}$ มี determinant $1-0.36=0.64\gt0$ แต่ทั้งตารางใช้ไม่ได้</p>
+  <div class="math">\[\begin{aligned}
+\lambda_{\text{common}}&amp;=0.0625\big(1+2(-0.6)\big)\\
+&amp;=0.0625(-0.2)=-0.0125,\\
+\mathbf w^{\mathsf T}\Sigma\mathbf w&amp;=\frac{-0.0125}{3}\approx-0.0042.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>พอร์ตเงินเท่ากันจะมี “variance” ติดลบ ซึ่งเป็นไปไม่ได้ ตารางนี้จึงไม่ใช่ covariance ของหุ้นสามตัวใด ๆ เลย เหตุผลเชิงภาพคือ ถ้า A สวนทาง B แรง และ B สวนทาง C แรง A กับ C ก็ต้องขยับไปทางเดียวกัน จะให้ทั้งสามสวนทางกันแรงพร้อมกันทุกคู่ไม่ได้ การตรวจทีละคู่จึงมองไม่เห็นปัญหานี้</p>
+  </div>
 </section>
 
 <figure class="plot">
@@ -378,14 +480,40 @@ A&amp;=\begin{bmatrix}a&amp;b\\b&amp;d\end{bmatrix},\\
       <text x="16" y="150" transform="rotate(-90 16 150)" text-anchor="middle" fill="#5b6472" font-size="13">eigenvalue / σ²</text>
     </g>
   </svg>
-  <figcaption>เส้นน้ำเงินคือ eigenvalue ของทิศร่วม $\sigma^2(1+2\rho)$ เส้นส้มคือของทิศ spread $\sigma^2(1-\rho)$ (หารด้วย $\sigma^2$ แล้ว) ที่ $\rho=0.7$ ทิศร่วมใหญ่กว่า spread 8 เท่า ($2.4/0.3$) จึงกระจายเงินแล้วความเสี่ยงลดน้อย สองเส้นตัดกันที่ $\rho=0$ ซึ่งทุกทิศเท่ากัน บริเวณแดงคือ $\rho\lt-0.5$ ที่ทิศร่วมติดลบ จุดแดงคือ $\rho=-0.6$ ที่ดูเหมือนปกติทีละคู่แต่ใช้ไม่ได้ทั้งตาราง ถ้า $\rho$ ติดลบมาก ทิศร่วมกลับเล็กกว่า spread ทิศร่วมจึงไม่ใช่ “ทิศใหญ่” เสมอไป</figcaption>
+  <figcaption>แกนนอนคือ correlation $\rho$ ที่เท่ากันทุกคู่ แกนตั้งคือ eigenvalue หารด้วย $\sigma^2$ เพื่อให้รูปไม่ขึ้นกับความผันผวน เส้นน้ำเงินคือทิศร่วม $1+2\rho$ เส้นส้มคือทิศ spread $1-\rho$ ที่ $\rho=0.7$ ทิศร่วมได้ $1+1.4=2.4$ ทิศ spread ได้ $1-0.7=0.3$ ทิศร่วมใหญ่กว่า $2.4/0.3=8$ เท่า การแบ่งเงินซื้อจึงลดความเสี่ยงได้น้อย สองเส้นตัดกันที่ $\rho=0$ ซึ่งทุกทิศเท่ากัน และสูตรหารด้วย $\sqrt3$ ใช้ได้พอดี บริเวณแดงคือ $\rho\lt-0.5$ ซึ่งเส้นน้ำเงินต่ำกว่าศูนย์ ตารางใช้ไม่ได้ จุดแดงคือ $\rho=-0.6$ ได้ $1+2(-0.6)=-0.2$ ตารางนี้ดูปกติเมื่อตรวจทีละคู่ แต่ใช้ไม่ได้ทั้งตาราง สังเกตด้วยว่าเมื่อ $\rho$ ติดลบ เส้นน้ำเงินอยู่ต่ำกว่าเส้นส้ม ทิศร่วมจึงไม่ได้เป็นทิศใหญ่เสมอไป</figcaption>
 </figure>
 
 <section class="example">
   <h4>ขั้นที่ 8 — covariance จริงของ asset class แปดกลุ่ม</h4>
-  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> covariance รายปีของแปดกลุ่ม (พันธบัตรสหรัฐ พันธบัตรต่างประเทศ หุ้นสหรัฐสี่กลุ่ม หุ้นตลาดพัฒนาแล้วนอกสหรัฐ และหุ้นตลาดเกิดใหม่) ที่ประมาณจากข้อมูลในอดีต ชุดเดียวกับใน <a href="7.3.html">Matrix Multiplication</a> trace คือผลรวม variance ของแปดกลุ่ม 0.3406</p>
-  <p><strong>คำตอบ:</strong> หา eigenvalues ด้วยโปรแกรม (โค้ดท้ายหน้าใช้วิธี Jacobi ซึ่งหมุนทีละคู่แกนจนนอกแนวทแยงเป็นศูนย์) ได้แปดค่า เป็นบวกทั้งหมด ตารางนี้จึง PD ค่าใหญ่สุด 0.2545 คิดเป็น 74.73% ของ trace eigenvector ของมันมีน้ำหนักบวกในหุ้นทั้งหกกลุ่ม (0.24 ถึง 0.59) และแทบเป็นศูนย์ในพันธบัตร คือทิศ “หุ้นทุกตลาดขึ้นลงพร้อมกัน” ค่าเล็กสุด 0.00063 (0.19%) มี eigenvector ที่เกือบทั้งหมดอยู่ในพันธบัตรสหรัฐ (0.96) อัตราส่วนค่าใหญ่สุดต่อเล็กสุด คือ condition number ราว 403</p>
-  <p>ความหมายเชิงปฏิบัติ: สูตรจัดพอร์ตที่ใช้ $\Sigma^{-1}$ ยืดทิศของ eigenvalue เล็กสุดมากกว่าทิศใหญ่สุด 403 เท่า error เล็ก ๆ ในการประมาณผลตอบแทนคาดหวังตามทิศเล็ก ๆ จึงกลายเป็นน้ำหนักที่ใหญ่โต นี่คือเหตุผลเชิง matrix ที่ mean–variance optimizer ถูกเรียกว่า “ตัวขยาย error” และค่า eigenvalue บนสุดที่ประมาณจากข้อมูลมักสูงกว่าค่าจริง ส่วนค่าล่างสุดมักต่ำกว่าค่าจริง การ shrink จึงดึง eigenvalues เข้าหากัน ตัด eigenvalues เล็กทิ้งทั้งหมดก็ไม่ใช่ทางออก เพราะจะได้ covariance ที่ singular</p>
+  <p>ตัวอย่างที่ผ่านมาใช้ตัวเลขสมมติ ขั้นนี้ลองกับตารางจริง กองทุนขนาดใหญ่มักแบ่งเงินเป็น asset class คือกลุ่มสินทรัพย์ประเภทเดียวกัน เช่น พันธบัตร (ตราสารที่รัฐบาลกู้เงินแล้วจ่ายดอกเบี้ย ราคาแกว่งน้อย) หุ้นใหญ่ หุ้นเล็ก หุ้นต่างประเทศ คำถามคือ ความเสี่ยงของแปดกลุ่มนี้มาจากกี่ทิศจริง ๆ และตารางนี้ปลอดภัยพอจะเอาไปหา inverse ในสูตรจัดพอร์ตไหม</p>
+  <p><strong>โจทย์ให้อะไรมาบ้าง:</strong> covariance ของผลตอบแทนรายปีของแปดกลุ่ม ประมาณจากข้อมูลย้อนหลัง ชุดเดียวกับใน <a href="7.3.html">Matrix Multiplication</a> ตาราง $8\times8$ เต็มอยู่ในโค้ดท้ายหน้า ตารางข้างล่างดึงมาเฉพาะช่องแนวทแยง ซึ่งคือ variance ของแต่ละกลุ่ม ความผันผวนคือรากที่สองของมัน เช่น พันธบัตรสหรัฐ $\sqrt{0.001005}\approx0.0317=3.17\%$</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>กลุ่ม</th><th>variance ต่อปี</th><th>ความผันผวน</th></tr></thead>
+    <tbody>
+      <tr><td>1. พันธบัตรสหรัฐ</td><td>0.001005</td><td>3.17%</td></tr>
+      <tr><td>2. พันธบัตรต่างประเทศ</td><td>0.007277</td><td>8.53%</td></tr>
+      <tr><td>3. หุ้นใหญ่ growth สหรัฐ</td><td>0.059852</td><td>24.46%</td></tr>
+      <tr><td>4. หุ้นใหญ่ value สหรัฐ</td><td>0.029609</td><td>17.21%</td></tr>
+      <tr><td>5. หุ้นเล็ก growth สหรัฐ</td><td>0.102488</td><td>32.01%</td></tr>
+      <tr><td>6. หุ้นเล็ก value สหรัฐ</td><td>0.032056</td><td>17.90%</td></tr>
+      <tr><td>7. หุ้นตลาดพัฒนาแล้วนอกสหรัฐ</td><td>0.028355</td><td>16.84%</td></tr>
+      <tr><td>8. หุ้นตลาดเกิดใหม่</td><td>0.079958</td><td>28.28%</td></tr>
+    </tbody>
+  </table></div>
+  <p>(growth คือหุ้นบริษัทที่ตลาดคาดว่าจะโตเร็ว value คือหุ้นบริษัทที่ราคาถูกเมื่อเทียบกับกำไรหรือทรัพย์สิน) trace คือผลรวมของคอลัมน์ variance ทั้งแปดช่อง $\operatorname{tr}\Sigma=0.001005+0.007277+\dots+0.079958=0.3406$</p>
+  <p><strong>คำตอบ:</strong> ตาราง $8\times8$ แก้สมการ determinant ด้วยมือไม่ไหว จึงหา eigenvalues ด้วยโปรแกรม โค้ดท้ายหน้าใช้วิธี Jacobi ซึ่งหมุนแกนทีละคู่จนช่องนอกแนวทแยงเป็นศูนย์หมด ได้ eigenvalues แปดค่า เป็นบวกทุกค่า ตารางนี้จึงเป็น PD ค่าที่น่าสนใจคือตัวใหญ่สุดกับตัวเล็กสุด</p>
+  <div class="math">\[\begin{aligned}
+\lambda_1&amp;\approx0.25453,\\
+\frac{\lambda_1}{\operatorname{tr}\Sigma}&amp;=\frac{0.25453}{0.3406}\approx74.73\%,\\
+\lambda_8&amp;\approx0.000632,\\
+\frac{\lambda_8}{\operatorname{tr}\Sigma}&amp;=\frac{0.000632}{0.3406}\approx0.19\%,\\
+\kappa&amp;=\frac{\lambda_1}{\lambda_8}=\frac{0.25453}{0.000632}\approx403.
+\end{aligned}\]</div>
+  <div class="reading">
+    <p>ทิศแรกแบก variance รวมเกือบสามในสี่ eigenvector ของมันมีน้ำหนักบวกในหุ้นทั้งหกกลุ่ม ตั้งแต่ 0.24 ถึง 0.59 และแทบเป็นศูนย์ในพันธบัตรสองกลุ่ม ทิศนี้จึงคือ “หุ้นทุกตลาดขึ้นลงพร้อมกัน” เป็นทิศร่วมแบบเดียวกับสามธนาคาร แต่ใหญ่กว่า ส่วนทิศสุดท้ายแทบไม่มี variance เลย eigenvector ของมันเกือบทั้งหมดอยู่ในพันธบัตรสหรัฐ (น้ำหนัก 0.96) ตัวเลข $\kappa$ คือ condition number คือ eigenvalue ใหญ่สุดหารด้วยเล็กสุด</p>
+  </div>
+  <p>ความหมายสำหรับคนจัดพอร์ต สูตรจัดพอร์ตแบบ mean–variance คือ $\mathbf w^*=\tfrac{1}{2\tau}\Sigma^{-1}\boldsymbol\mu$ (ดู <a href="7.5.html">Rank, Range, and Invertibility</a>) โดย $\boldsymbol\mu$ คือผลตอบแทนที่คาดว่าจะได้ของแต่ละกลุ่ม และ $\tau$ คือระดับที่นักลงทุนกลัวความเสี่ยง ขั้นที่ 3 แสดงแล้วว่า $\Sigma^{-1}$ ยืดแต่ละทิศด้วย $1/\lambda_i$ ทิศเล็กสุดจึงถูกยืดมากกว่าทิศใหญ่สุด 403 เท่า แต่ $\boldsymbol\mu$ ประมาณจากข้อมูลย้อนหลัง จึงคลาดจากค่าจริงเสมอ ความคลาดเล็ก ๆ ที่บังเอิญชี้ไปตามทิศเล็ก ๆ จะถูกขยายเป็นน้ำหนักก้อนใหญ่ นี่คือเหตุผลเชิง matrix ที่ทำให้ mean–variance optimizer ถูกเรียกว่า “ตัวขยาย error”</p>
+  <p>ปัญหายังซ้อนอีกชั้น eigenvalue ตัวบนสุดที่ประมาณจากข้อมูลมักสูงกว่าค่าจริง และตัวล่างสุดมักต่ำกว่าค่าจริง condition number ที่เห็นจึงมักใหญ่เกินจริง วิธีแก้ที่นิยมคือ shrink ซึ่งดึง eigenvalues เข้าหากัน (ดู <a href="17.8.html">Covariance Shrinkage (Ledoit-Wolf)</a>) ส่วนการตัด eigenvalues เล็กทิ้งเป็นศูนย์ไม่ใช่ทางออก เพราะจะได้ covariance ที่ determinant เป็นศูนย์ หา inverse ไม่ได้</p>
 </section>
 
 <figure class="plot">
@@ -424,45 +552,68 @@ A&amp;=\begin{bmatrix}a&amp;b\\b&amp;d\end{bmatrix},\\
       <text x="255" y="290" text-anchor="middle" fill="#5b6472" font-size="13">ลำดับ eigenvalue จากใหญ่ไปเล็ก (สัดส่วนของ trace, %)</text>
     </g>
   </svg>
-  <figcaption>แต่ละแท่งคือ $\lambda_i/\operatorname{tr}\Sigma$ ของ covariance รายปีแปดกลุ่ม ทิศแรก (น้ำเงิน) อธิบาย variance รวมเกือบสามในสี่ ทิศที่สองถึงสี่อีกราว 20% ซึ่งเป็นความต่างระหว่างกลุ่มหุ้น เช่นหุ้นเล็ก growth กับหุ้นใหญ่ value ส่วนทิศสุดท้าย (ส้ม) เล็กจนแทบมองไม่เห็น ความผันผวนตามทิศคิดกับพอร์ตยาวหนึ่งหน่วยแบบ L2 ไม่ใช่พอร์ตที่ลงเงินครบ 100% ทุกแท่งสูงกว่าศูนย์ ตารางนี้จึง PD และกลับด้านได้ แต่ condition number 403 บอกว่ากลับด้านแล้วไวต่อ error มาก</figcaption>
+  <figcaption>แต่ละแท่งคือ eigenvalue หนึ่งตัวของ covariance รายปีแปดกลุ่ม คิดเป็นสัดส่วนของ trace $\lambda_i/\operatorname{tr}\Sigma$ เรียงจากใหญ่ไปเล็ก ทิศแรก (น้ำเงิน) อธิบาย variance รวมเกือบสามในสี่ ทิศที่สองถึงสี่รวมกันอีก $8.30+6.38+5.87=20.55\%$ ทิศเหล่านี้คือความต่างระหว่างกลุ่มหุ้นด้วยกัน เช่น หุ้นเล็ก growth ขยับไม่เหมือนหุ้นใหญ่ value ส่วนทิศสุดท้าย (ส้ม) เล็กจนแทบมองไม่เห็น ป้ายบอกความผันผวนตามทิศ เช่น $\sqrt{0.2545}\approx50\%$ คิดกับพอร์ตที่ยาวหนึ่งหน่วยแบบ L2 ไม่ใช่พอร์ตที่ลงเงินรวม 100% ทุกแท่งสูงกว่าศูนย์ ตารางนี้จึงเป็น PD และหา inverse ได้ แต่ condition number 403 เตือนว่า inverse ที่ได้จะไวต่อ error มาก</figcaption>
 </figure>
 
 <section class="formula">
   <h4>ขั้นที่ 9 — PD กับ optimizer: ชามที่มีก้นเดียว</h4>
-  <p>optimizer ด้านความเสี่ยงมักหาค่าต่ำสุดของ $f(\mathbf w)=\tfrac12\mathbf w^{\mathsf T}\Sigma\mathbf w-\boldsymbol\mu^{\mathsf T}\mathbf w$ ขยับ $\mathbf w$ ตามทิศ $\mathbf z$ ด้วยขนาด $t$ แล้วกระจาย</p>
+  <p>ขั้นสุดท้ายตอบว่าทำไม optimizer ถึงต้องการ covariance ที่เป็น PD optimizer ด้านพอร์ตมักหาน้ำหนัก $\mathbf w$ ที่ทำให้คะแนน $f(\mathbf w)=\tfrac12\mathbf w^{\mathsf T}\Sigma\mathbf w-\boldsymbol\mu^{\mathsf T}\mathbf w$ ต่ำที่สุด พจน์แรกคือครึ่งหนึ่งของ variance (ความเสี่ยงที่อยากให้น้อย) พจน์ที่สองคือผลตอบแทนที่คาดว่าจะได้ (ซึ่งอยากให้มาก จึงใส่เครื่องหมายลบ) ตัว $\tfrac12$ ใส่ไว้ให้อนุพันธ์ออกมาสวย เพื่อดูรูปร่างของ $f$ ให้ลองขยับ $\mathbf w$ ไปตามทิศ $\mathbf z$ เป็นระยะ $t$ แล้วกระจายวงเล็บ</p>
   <div class="math">\[\begin{aligned}
-f(\mathbf w+t\mathbf z)&amp;=f(\mathbf w)+t\,\mathbf z^{\mathsf T}(\Sigma\mathbf w-\boldsymbol\mu)\\
+f(\mathbf w+t\mathbf z)&amp;=\tfrac12(\mathbf w+t\mathbf z)^{\mathsf T}\Sigma(\mathbf w+t\mathbf z)\\
+&amp;\quad-\boldsymbol\mu^{\mathsf T}(\mathbf w+t\mathbf z)\\
+&amp;=f(\mathbf w)+t\,\mathbf z^{\mathsf T}(\Sigma\mathbf w-\boldsymbol\mu)\\
 &amp;\quad+\tfrac{t^2}{2}\,\mathbf z^{\mathsf T}\Sigma\mathbf z.
 \end{aligned}\]</div>
   <div class="reading">
-    <p>พจน์ $t^2$ คือความโค้งตามทิศ $\mathbf z$ และ $\Sigma$ ก็คือ Hessian ของ $f$ ถ้า $\Sigma$ เป็น PD ทุกทิศโค้งขึ้น $f$ เป็นชามที่มีก้นเดียว คือจุดที่ $\Sigma\mathbf w=\boldsymbol\mu$ ซึ่งมีคำตอบเดียวเพราะ $\Sigma$ กลับด้านได้ ถ้า $\Sigma$ เป็นแค่ PSD จะมีทิศรางที่ $\mathbf z^{\mathsf T}\Sigma\mathbf z=0$ ถ้า $\boldsymbol\mu$ ให้ผลตอบแทนตามทิศนั้น $f$ ลดได้ไม่สิ้นสุด และถ้า $\Sigma$ indefinite ก็ไม่มีก้นชามเลย optimizer ที่ “converge” บน matrix แบบนั้นเพราะชน constraint ไม่ได้แปลว่าคำตอบมีความหมาย</p>
-    <p>รูปร่างของชามกำหนดความยากของการหาก้นด้วย ชามที่ eigenvalue มากสุดกับน้อยสุดต่างกันมาก (condition number ใหญ่) เป็นหุบแคบยาว วิธี gradient จะวิ่งซิกแซก ซึ่งเป็นเรื่องของ <a href="12.7.html">gradient descent และ Newton's method</a> covariance รายวันของดัชนีสองตัวมี condition number $9.97/3.03\approx3.28$ ชามค่อนข้างกลม ของแปด asset class มี 403</p>
+    <p>ตอนกระจายจะได้พจน์ไขว้สองตัว $\tfrac t2\mathbf w^{\mathsf T}\Sigma\mathbf z$ กับ $\tfrac t2\mathbf z^{\mathsf T}\Sigma\mathbf w$ สองตัวนี้เท่ากันเพราะ $\Sigma$ สมมาตร จึงรวมเป็น $t\,\mathbf z^{\mathsf T}\Sigma\mathbf w$ ได้ ผลที่ได้คือ $f$ ตามแนวเส้นตรงใด ๆ เป็นพาราโบลาในตัวแปร $t$ ความโค้งของพาราโบลานี้คือ $\mathbf z^{\mathsf T}\Sigma\mathbf z$ ซึ่งแปลว่า $\Sigma$ เองคือ Hessian ของ $f$</p>
+    <p>ถ้า $\Sigma$ เป็น PD ทุกทิศโค้งขึ้น $f$ เป็นชามที่มีก้นเดียว ก้นชามคือจุดที่พจน์ $t$ หายไปทุกทิศ คือ $\Sigma\mathbf w=\boldsymbol\mu$ และมีคำตอบเดียวเพราะ $\Sigma$ หา inverse ได้ ถ้า $\Sigma$ เป็นแค่ PSD จะมีทิศราง $\mathbf z$ ที่ $\Sigma\mathbf z=\mathbf 0$ ตามทิศนี้ $f$ เหลือแค่ $f(\mathbf w)-t\,\boldsymbol\mu^{\mathsf T}\mathbf z$ ถ้า $\boldsymbol\mu^{\mathsf T}\mathbf z\gt0$ ($\mathbf z$ ให้ผลตอบแทน) ยิ่ง $t$ ใหญ่ $f$ ยิ่งลด ไม่มีที่สิ้นสุด optimizer จะเพิ่มขนาดพอร์ตไปเรื่อย ๆ และถ้า $\Sigma$ เป็น indefinite ก็ไม่มีก้นชามเลย ถ้า optimizer หยุดได้บน matrix แบบนั้น ก็เพราะชนข้อจำกัด (constraint) เช่น “น้ำหนักแต่ละตัวห้ามเกิน 100%” ไม่ได้แปลว่าคำตอบมีความหมาย</p>
+    <p>รูปร่างของชามยังบอกด้วยว่าหาก้นยากแค่ไหน ถ้า eigenvalue มากสุดกับน้อยสุดต่างกันมาก (condition number ใหญ่) ชามจะเป็นหุบแคบยาว วิธีที่เดินตาม gradient จะวิ่งซิกแซกไปมาระหว่างผนังหุบ เรื่องนี้อยู่ใน <a href="12.7.html">gradient descent และ Newton's method</a> covariance รายวันของดัชนีสองตัวมี condition number $9.9655/3.0345\approx3.28$ ชามจึงค่อนข้างกลม ส่วนของแปด asset class คือ 403 หุบแคบกว่ามาก</p>
   </div>
 </section>
 
 <section class="pitfall">
   <h4>ความผิดที่ให้คำตอบผิดแบบเงียบ ๆ</h4>
-  <p><strong>อ่าน eigenvalue เป็นความผันผวน:</strong> $\lambda_1=9.97$ คือ variance หน่วย %² ความผันผวนคือ $\sqrt{9.97}\approx3.16\%$ ไม่ใช่ 9.97%</p>
-  <p><strong>ยาวหนึ่งหน่วยไม่ใช่ลงเงินครบ:</strong> $\mathbf u_1=(1,1,1)/\sqrt3$ ของสามธนาคารยาวหนึ่งแบบ L2 แต่ลงเงินรวม $\sqrt3\approx173\%$ ความผันผวน 38.73% ของมันเทียบตรง ๆ กับพอร์ตเงินเท่ากัน (22.36%) ไม่ได้</p>
-  <p><strong>สับสนสัดส่วนสองแบบ:</strong> ทิศแรกอธิบาย 76.66% ของ trace แต่แบก 87.51% ของ variance พอร์ต $(0.6,0.4)$ รายงานผิดตัวเลขแล้วตัดสินใจ hedge ผิดขนาด</p>
-  <p><strong>เชื่อ correlation ทีละคู่:</strong> สามหุ้นที่ correlation $-0.6$ ทุกคู่ผ่านการตรวจทีละคู่ แต่มี eigenvalue $-0.0125$ ใช้ใน optimizer จะได้พอร์ตที่ “ความเสี่ยงติดลบ”</p>
-  <p><strong>ใช้เกณฑ์ eigenvalue กับ matrix ไม่สมมาตร:</strong> $\begin{bmatrix}1&amp;4\\0&amp;1\end{bmatrix}$ มี eigenvalues 1 กับ 1 แต่ quadratic form ที่ $(1,-1)$ เป็น $-2$</p>
-  <p><strong>ตัดทิศเล็กทิ้งหมด:</strong> เก็บแค่ eigenvalues ใหญ่ ๆ แล้วตั้งที่เหลือเป็นศูนย์ ได้ covariance ที่ singular ทันที และ optimizer จะหาพอร์ตความเสี่ยงศูนย์ปลอม ๆ ในทิศที่ตัดทิ้ง</p>
+  <p><strong>อ่าน eigenvalue เป็นความผันผวน:</strong> eigenvalue คือ variance ไม่ใช่ความผันผวน ของดัชนีสองตัว $\lambda_1\approx9.97$ มีหน่วย %² ถ้าอ่านว่า “ทิศแรกผันผวน 9.97% ต่อวัน” ค่าที่ถูกคือ $\sqrt{\lambda_1}=\sqrt{9.97}\approx3.16\%$ ต่อวัน ตัวเลขที่อ่านผิดจึงใหญ่เกินไป $9.97/3.16\approx3.2$ เท่า</p>
+  <p><strong>เทียบพอร์ตยาวหนึ่งหน่วยกับพอร์ตที่ลงเงินครบ:</strong> eigenvector ยาวหนึ่งหน่วยแบบ L2 แต่เงินรวมไม่ใช่ 100% ทิศร่วมของสามธนาคาร $\mathbf u_1=(1,1,1)/\sqrt3$ ลงเงินรวม $3/\sqrt3=\sqrt3\approx173\%$ ความผันผวนของมันคือ $\sqrt{0.15}\approx38.73\%$ ถ้าเอาไปเทียบตรง ๆ กับพอร์ตเงินเท่ากัน 22.36% จะสรุปผิดว่าทิศร่วมเสี่ยงกว่ามาก ที่จริงย่อให้ลงเงิน 100% ก่อนก็ได้ค่าเดียวกัน $38.73\%/\sqrt3\approx22.36\%$</p>
+  <p><strong>สับสนส่วนแบ่งสองแบบ:</strong> “ทิศแรกอธิบายตลาดได้แค่ไหน” กับ “ทิศแรกแบกความเสี่ยงของพอร์ตเราเท่าไร” เป็นคนละตัวเลข ของดัชนีสองตัว ตัวแรกคือ $\lambda_1/\operatorname{tr}\Sigma=9.9655/13\approx76.66\%$ ตัวหลังสำหรับพอร์ต $(0.6,\ 0.4)$ คือ $\lambda_1c_1^2/\mathbf w^{\mathsf T}\Sigma\mathbf w=3.5285/4.032\approx87.51\%$ ถ้าใช้ตัวแรกแทนตัวหลัง จะประเมินว่าต้องป้องกันความเสี่ยงทิศแรกน้อยเกินไป</p>
+  <p><strong>เชื่อ correlation ที่ตรวจทีละคู่:</strong> ผ่านทีละคู่ไม่ได้แปลว่าผ่านทั้งตาราง สามหุ้นที่ correlation $-0.6$ ทุกคู่ผ่านการตรวจทีละคู่ เพราะ $1-0.6^2=0.64\gt0$ แต่ทิศร่วมมี eigenvalue $0.0625(1-1.2)=-0.0125$ ถ้าใส่ตารางนี้ใน optimizer มันจะเจอพอร์ตที่ “ความเสี่ยงติดลบ” แล้วทุ่มเงินเข้าไป</p>
+  <p><strong>ใช้เกณฑ์ eigenvalue กับ matrix ไม่สมมาตร:</strong> eigenvalues บวกทั้งหมดไม่ได้รับประกันว่า $\mathbf x^{\mathsf T}A\mathbf x\gt0$ ถ้า $A$ ไม่สมมาตร $A=\begin{bmatrix}1&amp;4\\0&amp;1\end{bmatrix}$ มี eigenvalues 1 กับ 1 แต่ที่ $\mathbf x=(1,-1)$ ได้ $1-4+1=-2$ ต้องดู eigenvalues ของ $\tfrac12(A+A^{\mathsf T})$ ซึ่งคือ 3 กับ $-1$</p>
+  <p><strong>ตัดทิศเล็กทิ้งหมด:</strong> การเก็บแค่ eigenvalues ใหญ่ ๆ แล้วตั้งตัวที่เหลือเป็นศูนย์ทำให้ covariance หา inverse ไม่ได้ทันที เพราะ determinant คือผลคูณของ eigenvalues ซึ่งกลายเป็นศูนย์ ในตารางแปดกลุ่ม ถ้าตั้ง $\lambda_8=0$ optimizer จะเห็นพอร์ตตามทิศที่ 8 (เกือบทั้งหมดเป็นพันธบัตรสหรัฐ) ว่าไม่มีความเสี่ยงเลย ทั้งที่ความผันผวนจริงตามทิศนั้นคือ $\sqrt{0.000632}\approx2.5\%$</p>
 </section>
 
 <section class="example">
   <h4>โจทย์ตรวจความเข้าใจ</h4>
-  <p><strong>1.</strong> ขยายพอร์ต $(0.6,0.4)$ บนดัชนีสองตัวเป็น $(1.2,0.8)$ ส่วนแบ่ง variance ตามสองทิศเปลี่ยนไหม variance และความผันผวนเป็นเท่าไร</p>
-  <details><summary>เฉลย</summary><p>พิกัด $\mathbf c$ คูณ 2 ทุกพจน์ $\lambda_ic_i^2$ คูณ 4 สัดส่วน 87.51% กับ 12.49% จึงเท่าเดิม variance เป็น $4(4.032)=16.128$ %² ความผันผวน $\sqrt{16.128}\approx4.016\%$ ต่อวัน สองเท่าของเดิม</p></details>
-  <p><strong>2.</strong> สินทรัพย์ $n$ ตัว ความผันผวนเท่ากัน correlation ทุกคู่ $\rho$ หา eigenvalue ของทิศร่วม แล้วหา correlation ต่ำสุดที่เป็นไปได้เมื่อ $n=4$</p>
-  <details><summary>เฉลย</summary><p>$\mathbf 1\mathbf 1^{\mathsf T}\mathbf 1=n\mathbf 1$ จึงได้ $\Sigma\mathbf 1=\sigma^2\big((1-\rho)+n\rho\big)\mathbf 1=\sigma^2\big(1+(n-1)\rho\big)\mathbf 1$ ทิศ spread ยังเป็น $\sigma^2(1-\rho)$ ต้องการ $1+(n-1)\rho\ge0$ คือ $\rho\ge-1/(n-1)$ ที่ $n=4$ ได้ $\rho\ge-1/3$ ยิ่งสินทรัพย์มาก correlation ติดลบเท่ากันทุกคู่ยิ่งเป็นไปไม่ได้ เพราะทุกตัวไม่สามารถ “สวนทาง” กับตัวอื่นทุกตัวพร้อมกัน</p></details>
-  <p><strong>3.</strong> ใช้ Sylvester's criterion ตรวจว่า $\begin{bmatrix}0.04&amp;0.02\\0.02&amp;0.05\end{bmatrix}$ (covariance ในสูตรจัดพอร์ตของหน้าก่อน) เป็น PD หรือไม่ แล้วหา eigenvalues</p>
-  <details><summary>เฉลย</summary><p>$a=0.04\gt0$ และ $0.04(0.05)-0.02^2=0.0016\gt0$ จึง PD eigenvalues คือรากของ $\lambda^2-0.09\lambda+0.0016=0$ ได้ $\lambda=(0.09\pm\sqrt{0.0081-0.0064})/2=(0.09\pm0.04123)/2$ คือราว 0.0656 และ 0.0244 ผลรวม 0.09 เท่ากับ trace ผลคูณ 0.0016 เท่ากับ determinant ทั้งคู่บวกตรงกับผลของ Sylvester</p></details>
+  <p><strong>1.</strong> ผู้จัดการพอร์ตถือดัชนีสองตัวในสัดส่วน $\mathbf w=(0.6,\ 0.4)$ อยู่ แล้วตัดสินใจกู้เงินมาลงทุนเพิ่มให้ทุกตำแหน่งใหญ่ขึ้นสองเท่า เป็น $(1.2,\ 0.8)$ ส่วนแบ่ง variance ตามสองทิศ (87.51% กับ 12.49%) เปลี่ยนไหม และ variance กับความผันผวนรายวันใหม่เป็นเท่าไร</p>
+  <details><summary>เฉลย</summary><p>$\mathbf c=Q^{\mathsf T}\mathbf w$ เป็นเชิงเส้นใน $\mathbf w$ เมื่อ $\mathbf w$ คูณ 2 ทุก $c_i$ ก็คูณ 2 และทุกพจน์ $\lambda_ic_i^2$ คูณ $2^2=4$ เท่ากันหมด ส่วนแบ่งจึงเท่าเดิม คือ 87.51% กับ 12.49%</p>
+  <div class="math">\[\begin{aligned}
+\mathbf w^{\mathsf T}\Sigma\mathbf w&amp;=4(4.032)=16.128\ \%^2,\\
+\sigma_p&amp;=\sqrt{16.128}\approx4.016\%=2(2.008\%).
+\end{aligned}\]</div>
+  <p>variance โตสี่เท่า แต่ความผันผวนโตแค่สองเท่า เท่ากับขนาดพอร์ตที่โตขึ้น</p></details>
+  <p><strong>2.</strong> ทีมความเสี่ยงอยากจำลองตลาดที่มีสินทรัพย์ $n$ ตัว ทุกตัวมีความผันผวน $\sigma$ เท่ากัน และ correlation ทุกคู่เป็น $\rho$ เท่ากัน หา eigenvalue ของทิศร่วม $\mathbf 1=(1,\dots,1)$ แล้วหาว่า $\rho$ ต่ำได้สุดเท่าไรเมื่อ $n=4$</p>
+  <details><summary>เฉลย</summary><p>ใช้วิธีเดียวกับสามธนาคาร แต่ตอนนี้ $\mathbf 1^{\mathsf T}\mathbf 1=n$ จึงได้ $\mathbf 1\mathbf 1^{\mathsf T}\mathbf 1=n\mathbf 1$</p>
+  <div class="math">\[\begin{aligned}
+\Sigma\mathbf 1&amp;=\sigma^2\big((1-\rho)+n\rho\big)\mathbf 1\\
+&amp;=\sigma^2\big(1+(n-1)\rho\big)\mathbf 1,\\
+1+(n-1)\rho&amp;\ge0,\\
+\rho&amp;\ge-\frac{1}{n-1},\\
+n=4:\ \ \rho&amp;\ge-\tfrac13.
+\end{aligned}\]</div>
+  <p>ทิศ spread ยังมี eigenvalue $\sigma^2(1-\rho)$ เหมือนเดิม ซึ่งไม่ติดลบอยู่แล้วเมื่อ $\rho\le1$ เงื่อนไขที่บังคับจริงจึงมาจากทิศร่วม ยิ่งมีสินทรัพย์มาก $\rho$ ติดลบได้น้อยลง ($n=3$ ได้ $-\tfrac12$, $n=4$ ได้ $-\tfrac13$) เพราะทุกตัวสวนทางกับตัวอื่นทุกตัวพร้อมกันแรง ๆ ไม่ได้</p></details>
+  <p><strong>3.</strong> ในตัวอย่างสูตรจัดพอร์ตของ <a href="7.5.html">Rank, Range, and Invertibility</a> มีสินทรัพย์สองตัวที่ covariance รายปีคือ $\Sigma=\begin{bmatrix}0.04&amp;0.02\\0.02&amp;0.05\end{bmatrix}$ (ความผันผวน $\sqrt{0.04}=20\%$ และ $\sqrt{0.05}\approx22.4\%$) ก่อนเอาไปหา inverse ให้ใช้ Sylvester's criterion ตรวจว่าเป็น PD หรือไม่ แล้วหา eigenvalues</p>
+  <details><summary>เฉลย</summary><p>leading principal minors คือ $a=0.04\gt0$ และ $0.04(0.05)-0.02^2=0.0016\gt0$ บวกทั้งคู่ จึงเป็น PD จากนั้นหา eigenvalues จาก trace $0.04+0.05=0.09$ และ determinant $0.0016$</p>
+  <div class="math">\[\begin{aligned}
+\lambda^2-0.09\lambda+0.0016&amp;=0,\\
+\lambda&amp;=\frac{0.09\pm\sqrt{0.0081-0.0064}}{2}\\
+&amp;=\frac{0.09\pm0.04123}{2}\\
+&amp;\approx0.0656,\ \ 0.0244.
+\end{aligned}\]</div>
+  <p>ตรวจ ผลรวม $0.0656+0.0244=0.09$ เท่ากับ trace และผลคูณ $0.0656\times0.0244\approx0.0016$ เท่ากับ determinant eigenvalues บวกทั้งคู่ ตรงกับผลของ Sylvester</p></details>
 </section>
 
 <section class="code">
   <h4>คำนวณซ้ำด้วย JavaScript</h4>
-  <p>โค้ดหา eigenvalues ด้วยวิธี Jacobi (หมุนทีละคู่แกนเพื่อลบช่องนอกแนวทแยง ใช้ได้กับ matrix สมมาตร) ตรวจตัวอย่างสองมิติ สามธนาคาร และ covariance แปดกลุ่ม</p>
+  <p>โค้ดนี้หา eigenvalues ด้วยวิธี Jacobi ซึ่งใช้ได้กับ matrix สมมาตรเท่านั้น แต่ละรอบเลือกช่องนอกแนวทแยงหนึ่งคู่ แล้วหมุนแกนสองแกนนั้นจนช่องนั้นเป็นศูนย์ ทำซ้ำจนช่องนอกแนวทแยงหายหมด สิ่งที่เหลือบนแนวทแยงคือ eigenvalues และการหมุนทั้งหมดที่สะสมไว้คือ $Q$ โค้ดตรวจตัวเลขของดัชนีสองตัว สามธนาคาร และ covariance แปดกลุ่ม</p>
   <details><summary>เปิดดูโค้ด</summary>
   <pre><code class="language-javascript" data-example="7.6">function jacobi(A0) {                       // symmetric matrices only
   const n = A0.length, A = A0.map(r =&gt; r.slice());
@@ -512,13 +663,13 @@ console.log(e8.values.map(v =&gt; (100 * v / tr).toFixed(2)), e8.values[0] / e8.
 <section class="takeaways">
   <h4>สิ่งที่ควรตอบได้หลังอ่าน</h4>
   <ul>
-    <li>eigenvector คือทิศที่ matrix ไม่หมุน eigenvalue คือตัวยืด หาได้จาก $\det(A-\lambda I)=0$ และตรวจด้วยผลรวมเท่ากับ trace ผลคูณเท่ากับ determinant</li>
-    <li>matrix สมมาตรแยกเป็น $Q\Lambda Q^{\mathsf T}$ (หมุน ยืด หมุนกลับ) eigenvectors ตั้งฉากกัน และ variance พอร์ตคือ $\sum\lambda_ic_i^2$</li>
-    <li>covariance ต้อง PSD (eigenvalues ไม่ติดลบ) ถ้า PD ด้วยก็ไม่มีพอร์ตความเสี่ยงศูนย์และกลับด้านได้ ตรวจ $2\times2$ ด้วย Sylvester's criterion</li>
-    <li>หุ้นสามตัว correlation 0.7 มีทิศร่วม eigenvalue 0.15 พอร์ตเงินเท่ากันจึงผันผวน 22.36% ไม่ใช่ 14.43% และ correlation ทุกคู่ต้องไม่ต่ำกว่า −0.5</li>
-    <li>covariance จริงแปดกลุ่มมีทิศแรก 74.73% ของ trace และ condition number ราว 403 ซึ่งบอกว่า $\Sigma^{-1}$ ในสูตรจัดพอร์ตไวต่อ error มาก</li>
+    <li>eigenvector คือทิศที่ matrix คูณแล้วไม่หมุน แค่ยืดหรือหด และ eigenvalue คือตัวยืดนั้น หาได้จาก $\det(A-\lambda I)=0$ แล้วตรวจคำตอบได้ทันที ผลรวมของ eigenvalues ต้องเท่ากับ trace และผลคูณต้องเท่ากับ determinant</li>
+    <li>matrix สมมาตรมี eigenvectors ตั้งฉากกันเสมอ จึงแยกเป็น $Q\Lambda Q^{\mathsf T}$ ได้ อ่านว่าหมุน ยืด หมุนกลับ ในพิกัดของ eigenvectors variance ของพอร์ตเหลือแค่ $\sum\lambda_ic_i^2$ ไม่มีพจน์ไขว้</li>
+    <li>covariance ทุกตัวต้องเป็น PSD คือ eigenvalues ไม่ติดลบ ถ้าเป็น PD ด้วย (eigenvalues บวกทุกตัว) ก็ไม่มีพอร์ตไหนที่ความเสี่ยงเป็นศูนย์ และหา inverse ได้ matrix $2\times2$ ตรวจด้วยมือได้ด้วย Sylvester's criterion</li>
+    <li>หุ้นสามตัวที่ correlation 0.7 ทุกคู่มีทิศร่วมที่ eigenvalue 0.15 ใหญ่กว่าทิศ spread 8 เท่า พอร์ตเงินเท่ากันจึงผันผวน 22.36% ไม่ใช่ 14.43% และถ้าทุกคู่ correlation เท่ากัน ค่านั้นต้องไม่ต่ำกว่า −0.5</li>
+    <li>covariance จริงของแปดกลุ่มมีทิศแรกแบก 74.73% ของ trace และ condition number ราว 403 แปลว่า $\Sigma^{-1}$ ในสูตรจัดพอร์ตจะขยาย error ของการประมาณมาก</li>
   </ul>
-  <p>บทนี้ใช้ matrix กับตัวเลขที่ให้มา บทถัดไปนำมาใช้กับตัวแปรสุ่มตรง ๆ เริ่มที่ <a href="8.1.html">mean vector และ covariance matrix</a> ซึ่งอธิบายว่าทำไม covariance ที่สร้างจากตัวแปรสุ่มจริงจึงสมมาตรและ PSD เสมอ และ <a href="../chapters/8.html">บทของ multivariate normal</a> จะใช้ $\Sigma^{-1}$ กับ eigenvalues ทั้งบท</p>
+  <p>หน้านี้ใช้ matrix กับตัวเลขที่ให้มาเฉย ๆ บทถัดไปจะเชื่อมกับตัวแปรสุ่มตรง ๆ เริ่มที่ <a href="8.1.html">mean vector และ covariance matrix</a> ซึ่งอธิบายว่าทำไม covariance ที่สร้างจากตัวแปรสุ่มจริงจึงสมมาตรและเป็น PSD เสมอ และ <a href="../chapters/8.html">บทของ multivariate normal</a> จะใช้ $\Sigma^{-1}$ กับ eigenvalues ตลอดทั้งบท</p>
 </section>
 </article>
 <nav class="book-nav bottom-nav">
